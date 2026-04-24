@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Element Symbol and Name Matching Game Deluxe</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --card: #eaf1fb;
+      --card-border: #c8d8ee;
+      --selected: #ffe9a8;
+      --matched: #bde8c7;
+      --wrong: #f6c1c1;
+      --text: #1f2d3d;
+      --accent: #2f6fed;
+      --accent-2: #5f6f82;
+      --shadow: 0 4px 14px rgba(0,0,0,0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #5a6979;
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    button,
+    select {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: var(--accent-2);
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    select {
+      border: 1px solid #c9d4e2;
+      background: white;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      min-height: 24px;
+      text-align: center;
+      font-weight: bold;
+      color: #2e4358;
+      margin-bottom: 6px;
+    }
+
+    .note {
+      text-align: center;
+      color: #607082;
+      font-size: 0.95rem;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      min-height: 86px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 2px solid var(--card-border);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: bold;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card.selected {
+      background: var(--selected);
+      border-color: #d2a100;
+    }
+
+    .card.matched {
+      background: var(--matched);
+      border-color: #3d9d58;
+      cursor: default;
+    }
+
+    .card.wrong {
+      background: var(--wrong);
+      border-color: #c85e5e;
+    }
+
+    .card.face-down {
+      background: #7e90a8;
+      border-color: #64758b;
+      color: transparent;
+    }
+
+    .card.face-down::after {
+      content: "?";
+      color: white;
+      position: absolute;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .drag-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .drag-column {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .drag-column h2 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .drag-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .drop-zone {
+      min-height: 86px;
+      border-radius: 14px;
+      background: #f6f9fd;
+      border: 2px dashed #b8c8db;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .drop-zone.correct {
+      background: var(--matched);
+      border: 2px solid #3d9d58;
+    }
+
+    .drop-zone.incorrect {
+      background: var(--wrong);
+      border: 2px solid #c85e5e;
+    }
+
+    .draggable {
+      min-height: 86px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 2px solid var(--card-border);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      cursor: grab;
+    }
+
+    .draggable.used {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .best-box {
+      text-align: center;
+      font-size: 0.96rem;
+      color: #506070;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .drag-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      .card,
+      .draggable,
+      .drop-zone {
+        min-height: 74px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <h1>Element Symbol and Name Matching Game</h1>
+      <div class="subtitle">Match chemical symbols to their correct element names.</div>
+
+      <div class="row">
+        <button data-set="first20">Easy: First 20</button>
+        <button data-set="weird">Weird Symbols</button>
+        <button data-set="metals">Metals</button>
+        <button data-set="nonmetals">Nonmetals</button>
+      </div>
+
+      <div class="row">
+        <label for="mode"><strong>Mode:</strong></label>
+        <select id="mode">
+          <option value="match">Match mode</option>
+          <option value="memory">Memory mode</option>
+          <option value="drag">Drag-and-drop mode</option>
+        </select>
+
+        <label for="customCount"><strong>All elements mode:</strong></label>
+        <select id="customCount">
+          <option value="20">20 pairs</option>
+          <option value="30">30 pairs</option>
+          <option value="40">40 pairs</option>
+          <option value="60">60 pairs</option>
+          <option value="80">80 pairs</option>
+          <option value="118" selected>All 118 pairs</option>
+        </select>
+
+        <button id="useAllBtn" class="secondary">Use All Elements</button>
+        <button id="restartBtn" class="secondary">Restart Current Set</button>
+      </div>
+
+      <div class="stats">
+        <div>Set: <span id="setName">Easy: First 20</span></div>
+        <div>Mode: <span id="modeName">Match mode</span></div>
+        <div>Moves: <span id="moves">0</span></div>
+        <div>Matches: <span id="matches">0</span></div>
+        <div>Total pairs: <span id="totalPairs">0</span></div>
+        <div>Time: <span id="timer">00:00</span></div>
+      </div>
+
+      <div class="message" id="message">Choose a game set to begin.</div>
+      <div class="note">Metalloids are not included in the metals or nonmetals presets.</div>
+      <div class="best-box" id="bestScores"></div>
+    </div>
+
+    <div id="gameArea"></div>
+  </div>
+
+  <script>
+    const elements = [
+      {symbol:"H", name:"Hydrogen", category:"nonmetal"},
+      {symbol:"He", name:"Helium", category:"nonmetal"},
+      {symbol:"Li", name:"Lithium", category:"metal"},
+      {symbol:"Be", name:"Beryllium", category:"metal"},
+      {symbol:"B", name:"Boron", category:"metalloid"},
+      {symbol:"C", name:"Carbon", category:"nonmetal"},
+      {symbol:"N", name:"Nitrogen", category:"nonmetal"},
+      {symbol:"O", name:"Oxygen", category:"nonmetal"},
+      {symbol:"F", name:"Fluorine", category:"nonmetal"},
+      {symbol:"Ne", name:"Neon", category:"nonmetal"},
+      {symbol:"Na", name:"Sodium", category:"metal"},
+      {symbol:"Mg", name:"Magnesium", category:"metal"},
+      {symbol:"Al", name:"Aluminium", category:"metal"},
+      {symbol:"Si", name:"Silicon", category:"metalloid"},
+      {symbol:"P", name:"Phosphorus", category:"nonmetal"},
+      {symbol:"S", name:"Sulfur", category:"nonmetal"},
+      {symbol:"Cl", name:"Chlorine", category:"nonmetal"},
+      {symbol:"Ar", name:"Argon", category:"nonmetal"},
+      {symbol:"K", name:"Potassium", category:"metal"},
+      {symbol:"Ca", name:"Calcium", category:"metal"},
+      {symbol:"Sc", name:"Scandium", category:"metal"},
+      {symbol:"Ti", name:"Titanium", category:"metal"},
+      {symbol:"V", name:"Vanadium", category:"metal"},
+      {symbol:"Cr", name:"Chromium", category:"metal"},
+      {symbol:"Mn", name:"Manganese", category:"metal"},
+      {symbol:"Fe", name:"Iron", category:"metal"},
+      {symbol:"Co", name:"Cobalt", category:"metal"},
+      {symbol:"Ni", name:"Nickel", category:"metal"},
+      {symbol:"Cu", name:"Copper", category:"metal"},
+      {symbol:"Zn", name:"Zinc", category:"metal"},
+      {symbol:"Ga", name:"Gallium", category:"metal"},
+      {symbol:"Ge", name:"Germanium", category:"metalloid"},
+      {symbol:"As", name:"Arsenic", category:"metalloid"},
+      {symbol:"Se", name:"Selenium", category:"nonmetal"},
+      {symbol:"Br", name:"Bromine", category:"nonmetal"},
+      {symbol:"Kr", name:"Krypton", category:"nonmetal"},
+      {symbol:"Rb", name:"Rubidium", category:"metal"},
+      {symbol:"Sr", name:"Strontium", category:"metal"},
+      {symbol:"Y", name:"Yttrium", category:"metal"},
+      {symbol:"Zr", name:"Zirconium", category:"metal"},
+      {symbol:"Nb", name:"Niobium", category:"metal"},
+      {symbol:"Mo", name:"Molybdenum", category:"metal"},
+      {symbol:"Tc", name:"Technetium", category:"metal"},
+      {symbol:"Ru", name:"Ruthenium", category:"metal"},
+      {symbol:"Rh", name:"Rhodium", category:"metal"},
+      {symbol:"Pd", name:"Palladium", category:"metal"},
+      {symbol:"Ag", name:"Silver", category:"metal"},
+      {symbol:"Cd", name:"Cadmium", category:"metal"},
+      {symbol:"In", name:"Indium", category:"metal"},
+      {symbol:"Sn", name:"Tin", category:"metal"},
+      {symbol:"Sb", name:"Antimony", category:"metalloid"},
+      {symbol:"Te", name:"Tellurium", category:"metalloid"},
+      {symbol:"I", name:"Iodine", category:"nonmetal"},
+      {symbol:"Xe", name:"Xenon", category:"nonmetal"},
+      {symbol:"Cs", name:"Caesium", category:"metal"},
+      {symbol:"Ba", name:"Barium", category:"metal"},
+      {symbol:"La", name:"Lanthanum", category:"metal"},
+      {symbol:"Ce", name:"Cerium", category:"metal"},
+      {symbol:"Pr", name:"Praseodymium", category:"metal"},
+      {symbol:"Nd", name:"Neodymium", category:"metal"},
+      {symbol:"Pm", name:"Promethium", category:"metal"},
+      {symbol:"Sm", name:"Samarium", category:"metal"},
+      {symbol:"Eu", name:"Europium", category:"metal"},
+      {symbol:"Gd", name:"Gadolinium", category:"metal"},
+      {symbol:"Tb", name:"Terbium", category:"metal"},
+      {symbol:"Dy", name:"Dysprosium", category:"metal"},
+      {symbol:"Ho", name:"Holmium", category:"metal"},
+      {symbol:"Er", name:"Erbium", category:"metal"},
+      {symbol:"Tm", name:"Thulium", category:"metal"},
+      {symbol:"Yb", name:"Ytterbium", category:"metal"},
+      {symbol:"Lu", name:"Lutetium", category:"metal"},
+      {symbol:"Hf", name:"Hafnium", category:"metal"},
+      {symbol:"Ta", name:"Tantalum", category:"metal"},
+      {symbol:"W", name:"Tungsten", category:"metal"},
+      {symbol:"Re", name:"Rhenium", category:"metal"},
+      {symbol:"Os", name:"Osmium", category:"metal"},
+      {symbol:"Ir", name:"Iridium", category:"metal"},
+      {symbol:"Pt", name:"Platinum", category:"metal"},
+      {symbol:"Au", name:"Gold", category:"metal"},
+      {symbol:"Hg", name:"Mercury", category:"metal"},
+      {symbol:"Tl", name:"Thallium", category:"metal"},
+      {symbol:"Pb", name:"Lead", category:"metal"},
+      {symbol:"Bi", name:"Bismuth", category:"metal"},
+      {symbol:"Po", name:"Polonium", category:"metal"},
+      {symbol:"At", name:"Astatine", category:"nonmetal"},
+      {symbol:"Rn", name:"Radon", category:"nonmetal"},
+      {symbol:"Fr", name:"Francium", category:"metal"},
+      {symbol:"Ra", name:"Radium", category:"metal"},
+      {symbol:"Ac", name:"Actinium", category:"metal"},
+      {symbol:"Th", name:"Thorium", category:"metal"},
+      {symbol:"Pa", name:"Protactinium", category:"metal"},
+      {symbol:"U", name:"Uranium", category:"metal"},
+      {symbol:"Np", name:"Neptunium", category:"metal"},
+      {symbol:"Pu", name:"Plutonium", category:"metal"},
+      {symbol:"Am", name:"Americium", category:"metal"},
+      {symbol:"Cm", name:"Curium", category:"metal"},
+      {symbol:"Bk", name:"Berkelium", category:"metal"},
+      {symbol:"Cf", name:"Californium", category:"metal"},
+      {symbol:"Es", name:"Einsteinium", category:"metal"},
+      {symbol:"Fm", name:"Fermium", category:"metal"},
+      {symbol:"Md", name:"Mendelevium", category:"metal"},
+      {symbol:"No", name:"Nobelium", category:"metal"},
+      {symbol:"Lr", name:"Lawrencium", category:"metal"},
+      {symbol:"Rf", name:"Rutherfordium", category:"metal"},
+      {symbol:"Db", name:"Dubnium", category:"metal"},
+      {symbol:"Sg", name:"Seaborgium", category:"metal"},
+      {symbol:"Bh", name:"Bohrium", category:"metal"},
+      {symbol:"Hs", name:"Hassium", category:"metal"},
+      {symbol:"Mt", name:"Meitnerium", category:"metal"},
+      {symbol:"Ds", name:"Darmstadtium", category:"metal"},
+      {symbol:"Rg", name:"Roentgenium", category:"metal"},
+      {symbol:"Cn", name:"Copernicium", category:"metal"},
+      {symbol:"Nh", name:"Nihonium", category:"metal"},
+      {symbol:"Fl", name:"Flerovium", category:"metal"},
+      {symbol:"Mc", name:"Moscovium", category:"metal"},
+      {symbol:"Lv", name:"Livermorium", category:"metal"},
+      {symbol:"Ts", name:"Tennessine", category:"nonmetal"},
+      {symbol:"Og", name:"Oganesson", category:"nonmetal"}
+    ];
+
+    const weirdSymbolSet = ["Na","K","Fe","Cu","Ag","Sn","Sb","W","Au","Hg","Pb"];
+
+    const modeSelect = document.getElementById("mode");
+    const customCountEl = document.getElementById("customCount");
+    const useAllBtn = document.getElementById("useAllBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const setButtons = document.querySelectorAll("button[data-set]");
+
+    const setNameEl = document.getElementById("setName");
+    const modeNameEl = document.getElementById("modeName");
+    const movesEl = document.getElementById("moves");
+    const matchesEl = document.getElementById("matches");
+    const totalPairsEl = document.getElementById("totalPairs");
+    const timerEl = document.getElementById("timer");
+    const messageEl = document.getElementById("message");
+    const bestScoresEl = document.getElementById("bestScores");
+    const gameArea = document.getElementById("gameArea");
+
+    let currentSet = [];
+    let currentSetName = "Easy: First 20";
+    let currentMode = "match";
+
+    let moves = 0;
+    let matches = 0;
+    let timerSeconds = 0;
+    let timerId = null;
+    let timerStarted = false;
+
+    let selectedCards = [];
+    let lockBoard = false;
+
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function formatTime(totalSeconds) {
+      const mins = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+      const secs = (totalSeconds % 60).toString().padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    function startTimer() {
+      if (timerStarted) return;
+      timerStarted = true;
+      timerId = setInterval(() => {
+        timerSeconds++;
+        timerEl.textContent = formatTime(timerSeconds);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      timerStarted = false;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      timerSeconds = 0;
+      timerEl.textContent = "00:00";
+    }
+
+    function updateStats() {
+      setNameEl.textContent = currentSetName;
+      modeNameEl.textContent = modeSelect.options[modeSelect.selectedIndex].text;
+      movesEl.textContent = moves;
+      matchesEl.textContent = matches;
+      totalPairsEl.textContent = currentSet.length;
+    }
+
+    function setMessage(text) {
+      messageEl.textContent = text;
+    }
+
+    function getBestKey() {
+      return `elementGameBest__${currentSetName}__${currentMode}`;
+    }
+
+    function loadBestScore() {
+      const raw = localStorage.getItem(getBestKey());
+      if (!raw) {
+        bestScoresEl.innerHTML = `Best score for this set and mode: none yet`;
+        return;
+      }
+      const best = JSON.parse(raw);
+      bestScoresEl.innerHTML = `Best score for this set and mode: ${best.moves} moves in ${best.time}`;
+    }
+
+    function saveBestScoreIfNeeded() {
+      const key = getBestKey();
+      const current = { moves, seconds: timerSeconds, time: formatTime(timerSeconds) };
+      const existingRaw = localStorage.getItem(key);
+
+      if (!existingRaw) {
+        localStorage.setItem(key, JSON.stringify(current));
+        loadBestScore();
+        return;
+      }
+
+      const existing = JSON.parse(existingRaw);
+      const isBetter =
+        current.moves < existing.moves ||
+        (current.moves === existing.moves && current.seconds < existing.seconds);
+
+      if (isBetter) {
+        localStorage.setItem(key, JSON.stringify(current));
+      }
+
+      loadBestScore();
+    }
+
+    function getFirst20() {
+      return elements.slice(0, 20);
+    }
+
+    function getWeirdSymbols() {
+      return elements.filter(el => weirdSymbolSet.includes(el.symbol));
+    }
+
+    function getMetals() {
+      return elements.filter(el => el.category === "metal");
+    }
+
+    function getNonmetals() {
+      return elements.filter(el => el.category === "nonmetal");
+    }
+
+    function getAllLimited(count) {
+      return elements.slice(0, count);
+    }
+
+    function buildCards(elementSet) {
+      const cards = [];
+      elementSet.forEach((el, index) => {
+        cards.push({ pairId: index, text: el.symbol, type: "symbol" });
+        cards.push({ pairId: index, text: el.name, type: "name" });
+      });
+      return shuffleArray(cards);
+    }
+
+    function beginNewGame(elementSet, label) {
+      currentSet = [...elementSet];
+      currentSetName = label;
+      currentMode = modeSelect.value;
+
+      moves = 0;
+      matches = 0;
+      selectedCards = [];
+      lockBoard = false;
+
+      resetTimer();
+      updateStats();
+      loadBestScore();
+
+      if (currentMode === "match") {
+        renderMatchMode();
+        setMessage("Choose two visible cards to make a match.");
+      } else if (currentMode === "memory") {
+        renderMemoryMode();
+        setMessage("Click cards to flip them over and find a match.");
+      } else if (currentMode === "drag") {
+        renderDragMode();
+        setMessage("Drag each symbol onto the correct element name.");
+      }
+    }
+
+    function checkForWin() {
+      if (matches === currentSet.length) {
+        stopTimer();
+        setMessage(`Well done. You completed ${currentSetName} in ${moves} moves and ${formatTime(timerSeconds)}.`);
+        saveBestScoreIfNeeded();
+      }
+    }
+
+    function renderMatchMode() {
+      const cards = buildCards(currentSet);
+      gameArea.innerHTML = `<div class="board" id="board"></div>`;
+      const board = document.getElementById("board");
+
+      cards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.textContent = card.text;
+        div.dataset.pairId = card.pairId;
+        div.dataset.type = card.type;
+
+        div.addEventListener("click", () => {
+          if (!timerStarted) startTimer();
+          if (lockBoard) return;
+          if (div.classList.contains("matched")) return;
+          if (selectedCards.includes(div)) return;
+          if (selectedCards.length >= 2) return;
+
+          div.classList.add("selected");
+          selectedCards.push(div);
+
+          if (selectedCards.length === 2) {
+            moves++;
+            updateStats();
+            const [a, b] = selectedCards;
+            const isPair = a.dataset.pairId === b.dataset.pairId && a.dataset.type !== b.dataset.type;
+
+            lockBoard = true;
+
+            if (isPair) {
+              a.classList.remove("selected");
+              b.classList.remove("selected");
+              a.classList.add("matched");
+              b.classList.add("matched");
+              matches++;
+              selectedCards = [];
+              lockBoard = false;
+              updateStats();
+              setMessage("Correct match.");
+              checkForWin();
+            } else {
+              a.classList.add("wrong");
+              b.classList.add("wrong");
+              setMessage("Not a match. Try again.");
+              setTimeout(() => {
+                a.classList.remove("selected", "wrong");
+                b.classList.remove("selected", "wrong");
+                selectedCards = [];
+                lockBoard = false;
+              }, 850);
+            }
+          }
+        });
+
+        board.appendChild(div);
+      });
+    }
+
+    function renderMemoryMode() {
+      const cards = buildCards(currentSet);
+      gameArea.innerHTML = `<div class="board" id="board"></div>`;
+      const board = document.getElementById("board");
+
+      cards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "card face-down";
+        div.textContent = card.text;
+        div.dataset.pairId = card.pairId;
+        div.dataset.type = card.type;
+        div.dataset.revealed = "false";
+
+        div.addEventListener("click", () => {
+          if (!timerStarted) startTimer();
+          if (lockBoard) return;
+          if (div.classList.contains("matched")) return;
+          if (div.dataset.revealed === "true") return;
+          if (selectedCards.length >= 2) return;
+
+          div.classList.remove("face-down");
+          div.dataset.revealed = "true";
+          selectedCards.push(div);
+
+          if (selectedCards.length === 2) {
+            moves++;
+            updateStats();
+            const [a, b] = selectedCards;
+            const isPair = a.dataset.pairId === b.dataset.pairId && a.dataset.type !== b.dataset.type;
+            lockBoard = true;
+
+            if (isPair) {
+              a.classList.add("matched");
+              b.classList.add("matched");
+              matches++;
+              selectedCards = [];
+              lockBoard = false;
+              updateStats();
+              setMessage("Correct match.");
+              checkForWin();
+            } else {
+              a.classList.add("wrong");
+              b.classList.add("wrong");
+              setMessage("Not a match. Try again.");
+              setTimeout(() => {
+                a.classList.remove("wrong");
+                b.classList.remove("wrong");
+                a.classList.add("face-down");
+                b.classList.add("face-down");
+                a.dataset.revealed = "false";
+                b.dataset.revealed = "false";
+                selectedCards = [];
+                lockBoard = false;
+              }, 900);
+            }
+          }
+        });
+
+        board.appendChild(div);
+      });
+    }
+
+    function renderDragMode() {
+      const leftCards = shuffleArray(currentSet.map((el, index) => ({
+        pairId: index,
+        text: el.symbol
+      })));
+
+      const rightCards = shuffleArray(currentSet.map((el, index) => ({
+        pairId: index,
+        text: el.name
+      })));
+
+      gameArea.innerHTML = `
+        <div class="drag-layout">
+          <div class="drag-column">
+            <h2>Drag these symbols</h2>
+            <div class="drag-list" id="dragSymbols"></div>
+          </div>
+          <div class="drag-column">
+            <h2>Drop onto the correct names</h2>
+            <div class="drag-list" id="dropNames"></div>
+          </div>
+        </div>
+      `;
+
+      const dragSymbols = document.getElementById("dragSymbols");
+      const dropNames = document.getElementById("dropNames");
+
+      leftCards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "draggable";
+        div.textContent = card.text;
+        div.draggable = true;
+        div.dataset.pairId = card.pairId;
+
+        div.addEventListener("dragstart", e => {
+          if (!timerStarted) startTimer();
+          if (div.classList.contains("used")) {
+            e.preventDefault();
+            return;
+          }
+          e.dataTransfer.setData("text/plain", card.pairId);
+        });
+
+        dragSymbols.appendChild(div);
+      });
+
+      rightCards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "drop-zone";
+        div.textContent = card.text;
+        div.dataset.pairId = card.pairId;
+        div.dataset.filled = "false";
+
+        div.addEventListener("dragover", e => {
+          e.preventDefault();
+        });
+
+        div.addEventListener("drop", e => {
+          e.preventDefault();
+          if (!timerStarted) startTimer();
+          if (div.dataset.filled === "true") return;
+
+          const draggedPairId = e.dataTransfer.getData("text/plain");
+          if (draggedPairId === "") return;
+
+          moves++;
+          updateStats();
+
+          const draggedElement = [...document.querySelectorAll(".draggable")]
+            .find(el => el.dataset.pairId === draggedPairId && !el.classList.contains("used"));
+
+          if (!draggedElement) return;
+
+          if (draggedPairId === div.dataset.pairId) {
+            div.classList.add("correct");
+            div.dataset.filled = "true";
+            div.innerHTML = `${draggedElement.textContent}<br>${card.text}`;
+            draggedElement.classList.add("used");
+            draggedElement.draggable = false;
+            matches++;
+            updateStats();
+            setMessage("Correct match.");
+            checkForWin();
+          } else {
+            div.classList.add("incorrect");
+            setMessage("Not a match. Try again.");
+            setTimeout(() => {
+              div.classList.remove("incorrect");
+            }, 700);
+          }
+        });
+
+        dropNames.appendChild(div);
+      });
+    }
+
+    setButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const setType = btn.dataset.set;
+        if (setType === "first20") beginNewGame(getFirst20(), "Easy: First 20");
+        if (setType === "weird") beginNewGame(getWeirdSymbols(), "Weird Symbols");
+        if (setType === "metals") beginNewGame(getMetals(), "Metals");
+        if (setType === "nonmetals") beginNewGame(getNonmetals(), "Nonmetals");
+      });
+    });
+
+    useAllBtn.addEventListener("click", () => {
+      const count = Number(customCountEl.value);
+      if (count === 118) {
+        beginNewGame(elements, "All Elements");
+      } else {
+        beginNewGame(getAllLimited(count), `All Elements: First ${count}`);
+      }
+    });
+
+    restartBtn.addEventListener("click", () => {
+      beginNewGame(currentSet, currentSetName);
+    });
+
+    modeSelect.addEventListener("change", () => {
+      beginNewGame(currentSet, currentSetName);
+    });
+
+    beginNewGame(getFirst20(), "Easy: First 20");
+  </script>
+</body>
+</html>
