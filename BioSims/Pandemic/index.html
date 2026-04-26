@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pandemic Simulator</title>
+  <title>Pandemic Simulator Plus v3</title>
   <style>
     :root {
       --bg: #eef3f7;
@@ -15,247 +15,99 @@
       --red: #d83c3c;
       --green: #2d9d57;
       --orange: #d1681c;
+      --purple: #7357d8;
+      --teal: #1e9aa6;
       --grey: #7c8791;
       --shadow: rgba(20, 35, 50, 0.08);
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: radial-gradient(circle at top, #f9fbfd 0%, var(--bg) 72%);
       color: var(--text);
     }
-
     .app {
-      max-width: 1440px;
+      max-width: 1460px;
       margin: 0 auto;
       padding: 18px;
       display: grid;
-      grid-template-columns: 350px 1fr;
+      grid-template-columns: 360px 1fr;
       gap: 18px;
     }
-
     .panel, .stage {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: 0 10px 28px var(--shadow);
     }
-
     .panel {
       padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
-
-    h1 {
-      margin: 0;
-      font-size: 1.45rem;
-      line-height: 1.2;
-    }
-
-    .sub {
-      font-size: 0.95rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .group {
-      border-top: 1px solid var(--line);
-      padding-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .row {
-      display: grid;
-      gap: 6px;
-    }
-
+    h1 { margin: 0; font-size: 1.45rem; line-height: 1.2; }
+    .sub { font-size: 0.95rem; color: var(--muted); line-height: 1.45; }
+    .group { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 10px; }
+    .row { display: grid; gap: 6px; }
     .label-line {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      font-size: 0.95rem;
-      font-weight: 700;
+      display: flex; justify-content: space-between; gap: 10px; align-items: center;
+      font-size: 0.95rem; font-weight: 700;
     }
-
-    .value {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      cursor: pointer;
-    }
-
-    .btn-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .btn-row.single {
-      grid-template-columns: 1fr;
-    }
-
+    .value { color: var(--accent); font-weight: 700; }
+    input[type="range"] { width: 100%; cursor: pointer; }
+    .btn-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: #e9eef5;
-      color: var(--text);
-      transition: transform 0.08s ease, opacity 0.2s ease;
+      border: none; border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; background: #e9eef5; color: var(--text);
+      transition: transform 0.08s ease, opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
-
     button:hover { opacity: 0.95; }
     button:active { transform: scale(0.98); }
     button.primary { background: var(--accent); color: white; }
     button.red { background: var(--red); color: white; }
     button.green { background: var(--green); color: white; }
     button.orange { background: var(--orange); color: white; }
-
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .stage {
-      padding: 16px;
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 12px;
-    }
-
-    .stage-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    button.purple { background: var(--purple); color: white; }
+    button.teal { background: var(--teal); color: white; }
+    button.active-toggle { outline: 3px solid rgba(47,111,237,0.18); }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; font-weight: 700; }
+    .stage { padding: 16px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; }
+    .stage-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .badge {
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: #f4f7fb;
-      border: 1px solid var(--line);
-      font-size: 0.9rem;
-      font-weight: 700;
+      padding: 8px 10px; border-radius: 999px; background: #f4f7fb; border: 1px solid var(--line);
+      font-size: 0.9rem; font-weight: 700;
     }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(110px, 1fr));
-      gap: 10px;
-    }
-
-    .stat-card {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .stat-label {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 1.15rem;
-      font-weight: 700;
-    }
-
-    .canvas-grid {
-      display: grid;
-      grid-template-columns: 1.35fr 0.85fr;
-      gap: 14px;
-      min-height: 620px;
-    }
-
+    .stats { display: grid; grid-template-columns: repeat(7, minmax(100px, 1fr)); gap: 10px; }
+    .stat-card { background: #f8fafc; border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; }
+    .canvas-grid { display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 14px; min-height: 650px; }
+    .right-stack { display: grid; grid-template-rows: 1fr 0.9fr; gap: 14px; min-height: 650px; }
     .canvas-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: linear-gradient(180deg, #fbfcfe 0%, #f2f6fa 100%);
-      overflow: hidden;
-      display: grid;
-      grid-template-rows: auto 1fr;
+      border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(180deg, #fbfcfe 0%, #f2f6fa 100%);
+      overflow: hidden; display: grid; grid-template-rows: auto 1fr;
     }
-
     .canvas-title {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      font-weight: 700;
-      color: var(--muted);
+      padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 700; color: var(--muted);
       background: rgba(255,255,255,0.65);
     }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      font-size: 0.92rem;
-      color: var(--muted);
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    canvas { width: 100%; height: 100%; display: block; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.92rem; color: var(--muted); }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
     .dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      display: inline-block;
+      width: 14px; height: 14px; border-radius: 50%; display: inline-block;
       border: 1px solid rgba(0,0,0,0.12);
     }
-
-    .note {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    @media (max-width: 1180px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
-
-      .canvas-grid {
-        grid-template-columns: 1fr;
-        min-height: unset;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
-      }
+    .note { font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      .canvas-grid { grid-template-columns: 1fr; min-height: unset; }
+      .right-stack { min-height: unset; }
+      .stats { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
     }
   </style>
 </head>
@@ -263,27 +115,29 @@
   <div class="app">
     <aside class="panel">
       <div>
-        <h1>Pandemic Simulator</h1>
-        <div class="sub">A spatial disease-spread model showing how infection can move through a population. Explore how transmission, recovery, mortality, vaccination, and mobility affect an outbreak.</div>
+        <h1>Pandemic Simulator Plus v3</h1>
+        <div class="sub">This version keeps the full outbreak history, so graph data no longer disappears off the left side during long runs.</div>
       </div>
 
       <div class="btn-row">
         <button id="playPauseBtn">Play</button>
         <button id="resetBtn" class="orange">Reset</button>
       </div>
-
       <div class="btn-row">
         <button id="step1Btn">Move 1 day</button>
         <button id="step10Btn">Move 10 days</button>
       </div>
-
       <div class="btn-row">
         <button id="seedBtn" class="red">Seed outbreak</button>
         <button id="vaccinateBtn" class="green">Vaccinate 10%</button>
       </div>
-
-      <div class="btn-row single">
-        <button id="downloadBtn" class="primary">Download data (CSV)</button>
+      <div class="btn-row">
+        <button id="lockdownBtn" class="purple">Lockdown: off</button>
+        <button id="masksBtn" class="teal">Masks: off</button>
+      </div>
+      <div class="btn-row">
+        <button id="testingBtn" class="primary">Testing: off</button>
+        <button id="downloadBtn">Download CSV</button>
       </div>
 
       <div class="group">
@@ -292,20 +146,20 @@
           <input id="speed" type="range" min="0.2" max="3" step="0.1" value="1" />
         </div>
         <div class="row">
-          <div class="label-line"><span>Population</span><span id="populationValue" class="value">220</span></div>
-          <input id="population" type="range" min="50" max="600" step="10" value="220" />
+          <div class="label-line"><span>Population</span><span id="populationValue" class="value">240</span></div>
+          <input id="population" type="range" min="60" max="700" step="10" value="240" />
         </div>
         <div class="row">
-          <div class="label-line"><span>Initial infected</span><span id="infectedValue" class="value">3</span></div>
-          <input id="initialInfected" type="range" min="1" max="40" step="1" value="3" />
+          <div class="label-line"><span>Initial infected</span><span id="infectedValue" class="value">4</span></div>
+          <input id="initialInfected" type="range" min="1" max="40" step="1" value="4" />
         </div>
         <div class="row">
           <div class="label-line"><span>Initial vaccinated</span><span id="vaccinatedValue" class="value">10%</span></div>
           <input id="initialVaccinated" type="range" min="0" max="90" step="1" value="10" />
         </div>
         <div class="row">
-          <div class="label-line"><span>Transmission chance</span><span id="transmissionValue" class="value">35%</span></div>
-          <input id="transmission" type="range" min="1" max="100" step="1" value="35" />
+          <div class="label-line"><span>Transmission chance</span><span id="transmissionValue" class="value">34%</span></div>
+          <input id="transmission" type="range" min="1" max="100" step="1" value="34" />
         </div>
         <div class="row">
           <div class="label-line"><span>Contact radius</span><span id="radiusValue" class="value">12 px</span></div>
@@ -316,12 +170,12 @@
           <input id="recoveryDays" type="range" min="2" max="30" step="1" value="9" />
         </div>
         <div class="row">
-          <div class="label-line"><span>Mortality</span><span id="mortalityValue" class="value">4%</span></div>
-          <input id="mortality" type="range" min="0" max="50" step="1" value="4" />
+          <div class="label-line"><span>Mortality</span><span id="mortalityValue" class="value">3%</span></div>
+          <input id="mortality" type="range" min="0" max="50" step="1" value="3" />
         </div>
         <div class="row">
           <div class="label-line"><span>Mobility</span><span id="mobilityValue" class="value">100%</span></div>
-          <input id="mobility" type="range" min="10" max="150" step="1" value="100" />
+          <input id="mobility" type="range" min="10" max="160" step="1" value="100" />
         </div>
       </div>
 
@@ -331,7 +185,7 @@
       </div>
 
       <div class="group note">
-        This is a simplified teaching model. It is useful for discussing transmission, exponential growth, herd immunity, vaccination, mortality, and how changing one variable can alter the outbreak curve.
+        Full history is retained. The S-I-R-D graph compresses all points to fit the graph width, and the daily cases graph buckets long runs so older data stays visible.
       </div>
     </aside>
 
@@ -340,44 +194,34 @@
         <div class="badge-row">
           <div class="badge" id="statusBadge">Outbreak status: contained</div>
           <div class="badge" id="pressureBadge">Hospital pressure: low</div>
+          <div class="badge" id="interventionBadge">Interventions: none</div>
         </div>
       </div>
 
       <div class="stats">
-        <div class="stat-card">
-          <div class="stat-label">Susceptible</div>
-          <div class="stat-value" id="susceptibleStat">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Infected</div>
-          <div class="stat-value" id="infectedStat">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Recovered / immune</div>
-          <div class="stat-value" id="recoveredStat">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Deaths</div>
-          <div class="stat-value" id="deadStat">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Estimated R</div>
-          <div class="stat-value" id="rStat">0.00</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Elapsed time</div>
-          <div class="stat-value" id="timeStat">0 days</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">Susceptible</div><div class="stat-value" id="susceptibleStat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Infected</div><div class="stat-value" id="infectedStat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Recovered / immune</div><div class="stat-value" id="recoveredStat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Deaths</div><div class="stat-value" id="deadStat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Isolated</div><div class="stat-value" id="isolatedStat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Estimated R</div><div class="stat-value" id="rStat">0.00</div></div>
+        <div class="stat-card"><div class="stat-label">Elapsed time</div><div class="stat-value" id="timeStat">0 days</div></div>
       </div>
 
       <div class="canvas-grid">
         <div class="canvas-card">
           <div class="canvas-title">Population map</div>
-          <canvas id="worldCanvas" width="940" height="620"></canvas>
+          <canvas id="worldCanvas" width="920" height="650"></canvas>
         </div>
-        <div class="canvas-card">
-          <div class="canvas-title">Outbreak graph</div>
-          <canvas id="graphCanvas" width="520" height="620"></canvas>
+        <div class="right-stack">
+          <div class="canvas-card">
+            <div class="canvas-title">S-I-R-D graph</div>
+            <canvas id="graphCanvas" width="540" height="360"></canvas>
+          </div>
+          <div class="canvas-card">
+            <div class="canvas-title">Daily new cases</div>
+            <canvas id="casesCanvas" width="540" height="270"></canvas>
+          </div>
         </div>
       </div>
 
@@ -386,6 +230,7 @@
         <div class="legend-item"><span class="dot" style="background:#d83c3c"></span>Infected</div>
         <div class="legend-item"><span class="dot" style="background:#2d9d57"></span>Recovered / immune</div>
         <div class="legend-item"><span class="dot" style="background:#7c8791"></span>Deceased</div>
+        <div class="legend-item"><span class="dot" style="background:#f6c344"></span>Isolated infected</div>
       </div>
     </main>
   </div>
@@ -395,6 +240,8 @@
     const worldCtx = worldCanvas.getContext('2d');
     const graphCanvas = document.getElementById('graphCanvas');
     const graphCtx = graphCanvas.getContext('2d');
+    const casesCanvas = document.getElementById('casesCanvas');
+    const casesCtx = casesCanvas.getContext('2d');
 
     const playPauseBtn = document.getElementById('playPauseBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -402,6 +249,9 @@
     const step10Btn = document.getElementById('step10Btn');
     const seedBtn = document.getElementById('seedBtn');
     const vaccinateBtn = document.getElementById('vaccinateBtn');
+    const lockdownBtn = document.getElementById('lockdownBtn');
+    const masksBtn = document.getElementById('masksBtn');
+    const testingBtn = document.getElementById('testingBtn');
     const downloadBtn = document.getElementById('downloadBtn');
 
     const speedInput = document.getElementById('speed');
@@ -430,14 +280,15 @@
     const infectedStat = document.getElementById('infectedStat');
     const recoveredStat = document.getElementById('recoveredStat');
     const deadStat = document.getElementById('deadStat');
+    const isolatedStat = document.getElementById('isolatedStat');
     const rStat = document.getElementById('rStat');
     const timeStat = document.getElementById('timeStat');
     const statusBadge = document.getElementById('statusBadge');
     const pressureBadge = document.getElementById('pressureBadge');
+    const interventionBadge = document.getElementById('interventionBadge');
 
     const WORLD_W = worldCanvas.width;
     const WORLD_H = worldCanvas.height;
-    const MAX_HISTORY = 260;
 
     let running = false;
     let lastTime = 0;
@@ -445,25 +296,16 @@
     let people = [];
     let history = [];
     let recentLinks = [];
-    let recentDailyInfections = [];
+    let dailyCases = [];
     let lastRt = 0;
+    let lockdownOn = false;
+    let masksOn = false;
+    let testingOn = false;
+    let totalPopulationAtStart = 0;
 
-    function rand(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    function clamp(v, min, max) {
-      return Math.max(min, Math.min(max, v));
-    }
-
-    function pickRandom(array) {
-      return array[Math.floor(Math.random() * array.length)];
-    }
-
-    function updatePlayPauseButton() {
-      playPauseBtn.textContent = running ? 'Pause' : 'Play';
-      playPauseBtn.classList.toggle('primary', running);
-    }
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function pickRandom(array) { return array[Math.floor(Math.random() * array.length)]; }
 
     function updateReadouts() {
       speedValue.textContent = `${Number(speedInput.value).toFixed(1)}×`;
@@ -475,20 +317,37 @@
       recoveryValue.textContent = `${recoveryDaysInput.value} days`;
       mortalityValue.textContent = `${mortalityInput.value}%`;
       mobilityValue.textContent = `${mobilityInput.value}%`;
-      updatePlayPauseButton();
+      playPauseBtn.textContent = running ? 'Pause' : 'Play';
+      playPauseBtn.classList.toggle('primary', running);
+      lockdownBtn.textContent = `Lockdown: ${lockdownOn ? 'on' : 'off'}`;
+      masksBtn.textContent = `Masks: ${masksOn ? 'on' : 'off'}`;
+      testingBtn.textContent = `Testing: ${testingOn ? 'on' : 'off'}`;
+      lockdownBtn.classList.toggle('active-toggle', lockdownOn);
+      masksBtn.classList.toggle('active-toggle', masksOn);
+      testingBtn.classList.toggle('active-toggle', testingOn);
     }
 
     function createPopulation() {
       people = [];
       const total = Number(populationInput.value);
+      totalPopulationAtStart = total;
+      const householdCount = Math.max(8, Math.round(total / 10));
+      const homes = [];
+      for (let i = 0; i < householdCount; i++) homes.push({ x: rand(40, WORLD_W - 40), y: rand(40, WORLD_H - 40) });
+
       for (let i = 0; i < total; i++) {
+        const home = homes[Math.floor(Math.random() * homes.length)];
         people.push({
-          x: rand(10, WORLD_W - 10),
-          y: rand(10, WORLD_H - 10),
+          x: clamp(home.x + rand(-18, 18), 10, WORLD_W - 10),
+          y: clamp(home.y + rand(-18, 18), 10, WORLD_H - 10),
+          homeX: home.x,
+          homeY: home.y,
           vx: rand(-1.2, 1.2),
           vy: rand(-1.2, 1.2),
           state: 'S',
-          infectionAge: 0
+          infectionAge: 0,
+          detected: false,
+          isolated: false
         });
       }
 
@@ -496,10 +355,7 @@
       let vaccinatedCount = 0;
       while (vaccinatedCount < vaccinatedTarget) {
         const p = pickRandom(people);
-        if (p.state === 'S') {
-          p.state = 'R';
-          vaccinatedCount++;
-        }
+        if (p.state === 'S') { p.state = 'R'; vaccinatedCount++; }
       }
 
       let infectedCount = 0;
@@ -518,26 +374,64 @@
       running = false;
       day = 0;
       history = [];
+      dailyCases = [];
       recentLinks = [];
-      recentDailyInfections = [];
       lastRt = 0;
+      lockdownOn = false;
+      masksOn = false;
+      testingOn = false;
       createPopulation();
       updateReadouts();
       recordHistory(0);
       drawWorld(true);
       drawGraph();
+      drawCasesGraph();
+    }
+
+    function effectiveMobility() {
+      let m = Number(mobilityInput.value) / 100;
+      if (lockdownOn) m *= 0.28;
+      return m;
+    }
+
+    function effectiveTransmission() {
+      let t = Number(transmissionInput.value) / 100;
+      if (masksOn) t *= 0.55;
+      return t;
+    }
+
+    function effectiveRadius() {
+      let r = Number(contactRadiusInput.value);
+      if (lockdownOn) r *= 0.72;
+      return r;
     }
 
     function movePeople(dtDays) {
-      const mobility = Number(mobilityInput.value) / 100;
+      const mobility = effectiveMobility();
       for (const p of people) {
         if (p.state === 'D') continue;
-        p.vx += rand(-0.25, 0.25) * dtDays * mobility;
-        p.vy += rand(-0.25, 0.25) * dtDays * mobility;
+        if (p.isolated) {
+          const dx = p.homeX - p.x;
+          const dy = p.homeY - p.y;
+          p.x += dx * 0.18;
+          p.y += dy * 0.18;
+          p.vx = 0;
+          p.vy = 0;
+          continue;
+        }
+
+        p.vx += rand(-0.24, 0.24) * dtDays * Math.max(0.3, mobility);
+        p.vy += rand(-0.24, 0.24) * dtDays * Math.max(0.3, mobility);
+
+        if (lockdownOn) {
+          p.vx += (p.homeX - p.x) * 0.003 * dtDays;
+          p.vy += (p.homeY - p.y) * 0.003 * dtDays;
+        }
+
         const speed = Math.hypot(p.vx, p.vy) || 1;
-        const target = rand(0.6, 1.5) * mobility;
-        p.vx = p.vx / speed * target;
-        p.vy = p.vy / speed * target;
+        const target = rand(0.7, 1.5) * Math.max(0.18, mobility);
+        p.vx = (p.vx / speed) * target;
+        p.vy = (p.vy / speed) * target;
         p.x += p.vx * dtDays * 7;
         p.y += p.vy * dtDays * 7;
 
@@ -549,15 +443,15 @@
     }
 
     function spreadInfection(dtDays) {
-      const radius = Number(contactRadiusInput.value);
+      const radius = effectiveRadius();
       const radiusSq = radius * radius;
-      const transmissionChance = Number(transmissionInput.value) / 100;
-      const newInfected = [];
+      const transmissionChance = effectiveTransmission();
+      const toInfect = [];
       recentLinks = [];
 
       for (let i = 0; i < people.length; i++) {
         const a = people[i];
-        if (a.state !== 'I') continue;
+        if (a.state !== 'I' || a.isolated) continue;
         for (let j = 0; j < people.length; j++) {
           if (i === j) continue;
           const b = people[j];
@@ -566,10 +460,11 @@
           const dy = b.y - a.y;
           const distSq = dx * dx + dy * dy;
           if (distSq <= radiusSq) {
-            const chance = transmissionChance * dtDays * 0.9;
+            let chance = transmissionChance * dtDays * 0.9;
+            if (testingOn && a.detected) chance *= 0.2;
             if (Math.random() < chance) {
-              newInfected.push(b);
-              if (showLinksInput.checked && recentLinks.length < 120) {
+              toInfect.push(b);
+              if (showLinksInput.checked && recentLinks.length < 140) {
                 recentLinks.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y });
               }
             }
@@ -578,14 +473,27 @@
       }
 
       let uniqueNew = 0;
-      for (const p of newInfected) {
+      for (const p of toInfect) {
         if (p.state === 'S') {
           p.state = 'I';
           p.infectionAge = 0;
+          p.detected = false;
+          p.isolated = false;
           uniqueNew++;
         }
       }
       return uniqueNew;
+    }
+
+    function applyTesting(dtDays) {
+      if (!testingOn) return;
+      for (const p of people) {
+        if (p.state !== 'I' || p.detected || p.infectionAge < 2) continue;
+        if (Math.random() < 0.08 * dtDays) {
+          p.detected = true;
+          p.isolated = true;
+        }
+      }
     }
 
     function progressDisease(dtDays) {
@@ -599,25 +507,25 @@
             p.state = 'D';
             p.vx = 0;
             p.vy = 0;
+            p.isolated = false;
           } else {
             p.state = 'R';
+            p.isolated = false;
           }
         }
       }
     }
 
     function countStates() {
-      let susceptible = 0;
-      let infected = 0;
-      let recovered = 0;
-      let dead = 0;
+      let susceptible = 0, infected = 0, recovered = 0, dead = 0, isolated = 0;
       for (const p of people) {
         if (p.state === 'S') susceptible++;
         else if (p.state === 'I') infected++;
         else if (p.state === 'R') recovered++;
         else if (p.state === 'D') dead++;
+        if (p.isolated && p.state === 'I') isolated++;
       }
-      return { susceptible, infected, recovered, dead };
+      return { susceptible, infected, recovered, dead, isolated };
     }
 
     function calculateRt(newCases, activeInfected) {
@@ -629,18 +537,17 @@
     function recordHistory(newCases) {
       const counts = countStates();
       lastRt = calculateRt(newCases, counts.infected || 1);
-      recentDailyInfections.push(newCases);
-      if (recentDailyInfections.length > 14) recentDailyInfections.shift();
       history.push({
         day,
         susceptible: counts.susceptible,
         infected: counts.infected,
         recovered: counts.recovered,
         dead: counts.dead,
+        isolated: counts.isolated,
         newCases,
         r: lastRt
       });
-      if (history.length > MAX_HISTORY) history.shift();
+      dailyCases.push({ day, value: newCases });
       updateStats(counts);
     }
 
@@ -649,6 +556,7 @@
       infectedStat.textContent = counts.infected;
       recoveredStat.textContent = counts.recovered;
       deadStat.textContent = counts.dead;
+      isolatedStat.textContent = counts.isolated;
       rStat.textContent = lastRt.toFixed(2);
       timeStat.textContent = `${Math.round(day)} days`;
 
@@ -665,6 +573,12 @@
       if (pressure > 0.25) pressureText = 'high';
       else if (pressure > 0.12) pressureText = 'moderate';
       pressureBadge.textContent = `Hospital pressure: ${pressureText}`;
+
+      const active = [];
+      if (lockdownOn) active.push('lockdown');
+      if (masksOn) active.push('masks');
+      if (testingOn) active.push('testing');
+      interventionBadge.textContent = `Interventions: ${active.length ? active.join(', ') : 'none'}`;
     }
 
     function simulateDays(daysToAdvance) {
@@ -676,12 +590,14 @@
         day += dtDays;
         movePeople(dtDays);
         totalNewCases += spreadInfection(dtDays);
+        applyTesting(dtDays);
         progressDisease(dtDays);
         remaining -= dtDays;
       }
       recordHistory(totalNewCases);
       drawWorld();
       drawGraph();
+      drawCasesGraph();
     }
 
     function vaccinatePercent(percent = 10) {
@@ -697,6 +613,7 @@
       recordHistory(0);
       drawWorld();
       drawGraph();
+      drawCasesGraph();
     }
 
     function seedOutbreak(count = 5) {
@@ -707,23 +624,36 @@
         const p = susceptibles.splice(index, 1)[0];
         p.state = 'I';
         p.infectionAge = 0;
+        p.detected = false;
+        p.isolated = false;
         done++;
       }
       recordHistory(done);
       drawWorld();
       drawGraph();
+      drawCasesGraph();
     }
 
     function drawWorld(clearAll = false) {
-      if (clearAll || !showTrailsInput.checked) {
-        worldCtx.clearRect(0, 0, WORLD_W, WORLD_H);
-      } else {
-        worldCtx.fillStyle = 'rgba(250, 252, 253, 0.18)';
+      if (clearAll || !showTrailsInput.checked) worldCtx.clearRect(0, 0, WORLD_W, WORLD_H);
+      else {
+        worldCtx.fillStyle = 'rgba(250, 252, 253, 0.22)';
         worldCtx.fillRect(0, 0, WORLD_W, WORLD_H);
       }
 
       worldCtx.fillStyle = '#f6f9fc';
       worldCtx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+      worldCtx.strokeStyle = 'rgba(0,0,0,0.05)';
+      worldCtx.lineWidth = 1;
+      for (let x = 0; x <= WORLD_W; x += 92) {
+        worldCtx.beginPath();
+        worldCtx.moveTo(x, 0); worldCtx.lineTo(x, WORLD_H); worldCtx.stroke();
+      }
+      for (let y = 0; y <= WORLD_H; y += 92) {
+        worldCtx.beginPath();
+        worldCtx.moveTo(0, y); worldCtx.lineTo(WORLD_W, y); worldCtx.stroke();
+      }
 
       if (showLinksInput.checked) {
         worldCtx.strokeStyle = 'rgba(216, 60, 60, 0.18)';
@@ -738,19 +668,29 @@
 
       for (const p of people) {
         let colour = '#6ea8fe';
-        let radius = 4.1;
-        if (p.state === 'I') colour = '#d83c3c';
+        let radius = 4.2;
+        if (p.state === 'I' && p.isolated) colour = '#f6c344';
+        else if (p.state === 'I') colour = '#d83c3c';
         else if (p.state === 'R') colour = '#2d9d57';
-        else if (p.state === 'D') {
-          colour = '#7c8791';
-          radius = 3.5;
-        }
-
+        else if (p.state === 'D') { colour = '#7c8791'; radius = 3.6; }
         worldCtx.fillStyle = colour;
         worldCtx.beginPath();
         worldCtx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         worldCtx.fill();
       }
+    }
+
+    function drawYAxisLabels(ctx, padL, padT, innerH, values, labelFormatter) {
+      ctx.fillStyle = '#70808b';
+      ctx.font = '11px Arial';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      values.forEach(v => {
+        const y = padT + innerH - (v.position * innerH);
+        ctx.fillText(labelFormatter(v.value), padL - 8, y);
+      });
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
     }
 
     function drawGraph() {
@@ -760,17 +700,16 @@
       graphCtx.fillStyle = '#fbfcfe';
       graphCtx.fillRect(0, 0, W, H);
 
-      const padL = 54;
-      const padR = 18;
-      const padT = 18;
-      const padB = 42;
+      const padL = 58, padR = 18, padT = 28, padB = 38;
       const innerW = W - padL - padR;
       const innerH = H - padT - padB;
+      const yMax = Math.max(10, totalPopulationAtStart);
+      const tickCount = 5;
 
       graphCtx.strokeStyle = 'rgba(0,0,0,0.08)';
       graphCtx.lineWidth = 1;
-      for (let i = 0; i <= 5; i++) {
-        const y = padT + innerH * (i / 5);
+      for (let i = 0; i <= tickCount; i++) {
+        const y = padT + innerH * (i / tickCount);
         graphCtx.beginPath();
         graphCtx.moveTo(padL, y);
         graphCtx.lineTo(W - padR, y);
@@ -787,58 +726,127 @@
 
       graphCtx.fillStyle = '#6a7882';
       graphCtx.font = '12px Arial';
-      graphCtx.fillText('People', 18, 14);
-      graphCtx.fillText('Time', W - 48, H - 14);
+      graphCtx.fillText('People', 18, 16);
+      graphCtx.fillText('Time', W - 42, H - 12);
+
+      const yLabels = [];
+      for (let i = 0; i <= tickCount; i++) {
+        const proportion = i / tickCount;
+        yLabels.push({ position: proportion, value: Math.round((1 - proportion) * yMax) });
+      }
+      drawYAxisLabels(graphCtx, padL, padT, innerH, yLabels, v => v);
 
       if (history.length < 2) return;
 
-      const maxPop = Math.max(20,
-        ...history.map(h => h.susceptible),
-        ...history.map(h => h.infected),
-        ...history.map(h => h.recovered),
-        ...history.map(h => h.dead)
-      );
-
-      function mapX(i) {
-        return padL + (i / (history.length - 1)) * innerW;
+      function mapX(i, total) {
+        return padL + (i / Math.max(1, total - 1)) * innerW;
       }
-
       function mapY(v) {
-        return padT + innerH - (v / maxPop) * innerH;
+        const usableMax = yMax * 1.04;
+        return padT + innerH - (v / usableMax) * innerH;
       }
-
-      function drawSeries(getValue, colour, lineWidth = 3) {
+      function drawSeries(getValue, colour, width) {
         graphCtx.beginPath();
         history.forEach((h, i) => {
-          const x = mapX(i);
+          const x = mapX(i, history.length);
           const y = mapY(getValue(h));
           if (i === 0) graphCtx.moveTo(x, y);
           else graphCtx.lineTo(x, y);
         });
         graphCtx.strokeStyle = colour;
-        graphCtx.lineWidth = lineWidth;
+        graphCtx.lineWidth = width;
+        graphCtx.lineJoin = 'round';
+        graphCtx.lineCap = 'round';
         graphCtx.stroke();
       }
 
       drawSeries(h => h.susceptible, '#6ea8fe', 2.8);
-      drawSeries(h => h.infected, '#d83c3c', 3.2);
+      drawSeries(h => h.infected, '#d83c3c', 3.1);
       drawSeries(h => h.recovered, '#2d9d57', 2.8);
       drawSeries(h => h.dead, '#7c8791', 2.4);
 
-      graphCtx.font = '12px Arial';
-      graphCtx.fillStyle = '#6ea8fe';
-      graphCtx.fillText('S', padL + 4, padT + 14);
-      graphCtx.fillStyle = '#d83c3c';
-      graphCtx.fillText('I', padL + 22, padT + 14);
-      graphCtx.fillStyle = '#2d9d57';
-      graphCtx.fillText('R', padL + 38, padT + 14);
-      graphCtx.fillStyle = '#7c8791';
-      graphCtx.fillText('D', padL + 56, padT + 14);
+      graphCtx.fillStyle = '#6ea8fe'; graphCtx.fillText('S', padL + 4, padT - 8);
+      graphCtx.fillStyle = '#d83c3c'; graphCtx.fillText('I', padL + 18, padT - 8);
+      graphCtx.fillStyle = '#2d9d57'; graphCtx.fillText('R', padL + 30, padT - 8);
+      graphCtx.fillStyle = '#7c8791'; graphCtx.fillText('D', padL + 44, padT - 8);
+    }
+
+    function bucketSeries(series, bucketCount) {
+      if (series.length <= bucketCount) return series.map(item => ({ day: item.day, value: item.value }));
+      const bucketSize = series.length / bucketCount;
+      const buckets = [];
+      for (let i = 0; i < bucketCount; i++) {
+        const start = Math.floor(i * bucketSize);
+        const end = Math.min(series.length, Math.floor((i + 1) * bucketSize));
+        let maxValue = 0;
+        let dayValue = series[start]?.day ?? i;
+        for (let j = start; j < end; j++) {
+          if (series[j].value > maxValue) maxValue = series[j].value;
+        }
+        buckets.push({ day: dayValue, value: maxValue });
+      }
+      return buckets;
+    }
+
+    function drawCasesGraph() {
+      const W = casesCanvas.width;
+      const H = casesCanvas.height;
+      casesCtx.clearRect(0, 0, W, H);
+      casesCtx.fillStyle = '#fbfcfe';
+      casesCtx.fillRect(0, 0, W, H);
+
+      const padL = 58, padR = 18, padT = 22, padB = 34;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+
+      const displaySeries = bucketSeries(dailyCases, Math.max(10, Math.floor(innerW / 4)));
+      const maxCases = Math.max(2, ...displaySeries.map(d => d.value || 0));
+      const yMax = Math.max(2, Math.ceil(maxCases * 1.1));
+      const tickCount = 4;
+
+      casesCtx.strokeStyle = 'rgba(0,0,0,0.08)';
+      casesCtx.lineWidth = 1;
+      for (let i = 0; i <= tickCount; i++) {
+        const y = padT + innerH * (i / tickCount);
+        casesCtx.beginPath();
+        casesCtx.moveTo(padL, y);
+        casesCtx.lineTo(W - padR, y);
+        casesCtx.stroke();
+      }
+
+      casesCtx.beginPath();
+      casesCtx.moveTo(padL, padT);
+      casesCtx.lineTo(padL, H - padB);
+      casesCtx.lineTo(W - padR, H - padB);
+      casesCtx.strokeStyle = '#93a4b3';
+      casesCtx.lineWidth = 2;
+      casesCtx.stroke();
+
+      casesCtx.fillStyle = '#6a7882';
+      casesCtx.font = '12px Arial';
+      casesCtx.fillText('Cases', 18, 16);
+      casesCtx.fillText('Time', W - 42, H - 12);
+
+      const yLabels = [];
+      for (let i = 0; i <= tickCount; i++) {
+        const proportion = i / tickCount;
+        yLabels.push({ position: proportion, value: Math.round((1 - proportion) * yMax) });
+      }
+      drawYAxisLabels(casesCtx, padL, padT, innerH, yLabels, v => v);
+
+      if (displaySeries.length < 1) return;
+      const barWidth = innerW / Math.max(1, displaySeries.length);
+      displaySeries.forEach((entry, i) => {
+        const x = padL + i * barWidth;
+        const h = (entry.value / yMax) * innerH;
+        const y = padT + innerH - h;
+        casesCtx.fillStyle = '#d83c3c';
+        casesCtx.fillRect(x + 0.5, y, Math.max(1, barWidth - 1), h);
+      });
     }
 
     function downloadCSV() {
       if (!history.length) recordHistory(0);
-
       const rows = [
         ['setting', 'value'],
         ['population', populationInput.value],
@@ -849,11 +857,12 @@
         ['recovery_days', recoveryDaysInput.value],
         ['mortality_percent', mortalityInput.value],
         ['mobility_percent', mobilityInput.value],
-        ['simulation_speed', Number(speedInput.value).toFixed(1)],
+        ['lockdown', lockdownOn ? 'on' : 'off'],
+        ['masks', masksOn ? 'on' : 'off'],
+        ['testing_isolation', testingOn ? 'on' : 'off'],
         [],
-        ['day', 'susceptible', 'infected', 'recovered_immune', 'deaths', 'new_cases', 'estimated_r']
+        ['day', 'susceptible', 'infected', 'recovered_immune', 'deaths', 'isolated', 'new_cases', 'estimated_r']
       ];
-
       history.forEach(entry => {
         rows.push([
           entry.day.toFixed(2),
@@ -861,20 +870,19 @@
           entry.infected,
           entry.recovered,
           entry.dead,
+          entry.isolated,
           entry.newCases,
           entry.r.toFixed(3)
         ]);
       });
-
       const csv = rows
         .map(row => row.map(value => `${value}`.includes(',') ? `"${`${value}`.replace(/"/g, '""')}"` : `${value}`).join(','))
         .join('\n');
-
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `pandemic_sim_data_day_${Math.round(day)}.csv`;
+      a.download = `pandemic_plus_v3_data_day_${Math.round(day)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -885,26 +893,23 @@
       if (!lastTime) lastTime = ts;
       const dt = Math.min(1.6, (ts - lastTime) / 16.6667);
       lastTime = ts;
-
       if (running) {
         const speed = Number(speedInput.value);
         const daysToAdvance = 0.18 * dt * speed;
         simulateDays(daysToAdvance);
       }
-
       requestAnimationFrame(animate);
     }
 
-    playPauseBtn.addEventListener('click', () => {
-      running = !running;
-      updatePlayPauseButton();
-    });
-
+    playPauseBtn.addEventListener('click', () => { running = !running; updateReadouts(); });
     resetBtn.addEventListener('click', resetSimulation);
     step1Btn.addEventListener('click', () => simulateDays(1));
     step10Btn.addEventListener('click', () => simulateDays(10));
     seedBtn.addEventListener('click', () => seedOutbreak(5));
     vaccinateBtn.addEventListener('click', () => vaccinatePercent(10));
+    lockdownBtn.addEventListener('click', () => { lockdownOn = !lockdownOn; updateReadouts(); updateStats(countStates()); drawWorld(); });
+    masksBtn.addEventListener('click', () => { masksOn = !masksOn; updateReadouts(); updateStats(countStates()); drawWorld(); });
+    testingBtn.addEventListener('click', () => { testingOn = !testingOn; updateReadouts(); updateStats(countStates()); drawWorld(); });
     downloadBtn.addEventListener('click', downloadCSV);
 
     [speedInput, populationInput, initialInfectedInput, initialVaccinatedInput, transmissionInput, contactRadiusInput, recoveryDaysInput, mortalityInput, mobilityInput, showLinksInput, showTrailsInput].forEach(el => {
