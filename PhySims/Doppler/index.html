@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Doppler Effect Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --soft-blue:#e0ecff;
+      --soft-green:#dcfce7;
+      --soft-purple:#ede9fe;
+      --soft-orange:#ffedd5;
+      --danger:#991b1b;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:20px;
+    }
+
+    a.home{
+      display:inline-block;
+      margin-bottom:14px;
+      color:var(--button);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    header{
+      background:linear-gradient(135deg,var(--soft-blue),var(--soft-purple));
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+      margin-bottom:16px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.8rem,3vw,2.6rem);
+    }
+
+    h2{
+      margin:0 0 10px;
+      font-size:1.2rem;
+    }
+
+    h3{
+      margin:0 0 8px;
+      font-size:1rem;
+    }
+
+    p{
+      margin-top:0;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .li-sc div{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:380px 1fr;
+      gap:16px;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 4px 12px rgba(15,23,42,.05);
+    }
+
+    label{
+      display:block;
+      font-weight:700;
+      margin:12px 0 4px;
+    }
+
+    input[type=range]{
+      width:100%;
+    }
+
+    input[type=number],
+    select{
+      width:100%;
+      padding:9px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:1rem;
+      background:#fff;
+    }
+
+    input[type=checkbox]{
+      margin-right:6px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .value{
+      font-weight:700;
+      color:#0f172a;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      background:var(--button);
+      color:white;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      margin:6px 6px 0 0;
+    }
+
+    button:hover{
+      background:var(--button-hover);
+    }
+
+    button.secondary{
+      background:#475569;
+    }
+
+    button.secondary:hover{
+      background:#334155;
+    }
+
+    canvas{
+      width:100%;
+      height:420px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fbfdff;
+    }
+
+    .result{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+    }
+
+    .metric .big{
+      font-size:1.25rem;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .metric .small{
+      font-size:.85rem;
+      color:var(--muted);
+    }
+
+    .wide-metric{
+      margin-top:10px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+      font-weight:700;
+      color:#334155;
+    }
+
+    .formula{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px;
+      margin:8px 0;
+      font-size:.92rem;
+    }
+
+    .note{
+      background:var(--soft-orange);
+      border:1px solid #fed7aa;
+      border-radius:12px;
+      padding:10px;
+      color:#7c2d12;
+      margin-top:10px;
+      font-size:.94rem;
+    }
+
+    .warning{
+      color:var(--danger);
+      font-weight:700;
+      margin-top:8px;
+      min-height:1.3em;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:.92rem;
+    }
+
+    th,
+    td{
+      border:1px solid var(--line);
+      padding:7px;
+      text-align:right;
+    }
+
+    th{
+      background:#f1f5f9;
+    }
+
+    td:first-child,
+    th:first-child{
+      text-align:left;
+    }
+
+    .challenge{
+      background:var(--soft-green);
+      border:1px solid #bbf7d0;
+      border-radius:14px;
+      padding:14px;
+      margin-top:16px;
+    }
+
+    .teacher{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      margin-top:16px;
+      color:#334155;
+    }
+
+    @media (max-width:900px){
+      .grid,
+      .li-sc{
+        grid-template-columns:1fr;
+      }
+
+      .result{
+        grid-template-columns:1fr 1fr;
+      }
+
+      canvas{
+        height:340px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a class="home" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Doppler Effect Simulator</h1>
+      <p>Visualise how waves are compressed or stretched when a source moves relative to an observer.</p>
+    </header>
+
+    <section class="li-sc">
+      <div>
+        <h2>Learning Intention</h2>
+        <p>Students will understand that the Doppler effect occurs when relative motion changes the frequency observed from a wave source.</p>
+      </div>
+      <div>
+        <h2>Success Criteria</h2>
+        <p>Students can describe how source motion affects wavelength and observed frequency, compare approaching and receding motion, and use data to explain a Doppler shift.</p>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>Controls</h2>
+
+        <label for="preset">Preset</label>
+        <select id="preset">
+          <option value="ambulance">Ambulance-style scaled model</option>
+          <option value="water">Water ripple model</option>
+          <option value="fast">Fast source challenge</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <label for="waveSpeed">Wave speed: <span class="value" id="waveSpeedVal"></span> m/s</label>
+        <input id="waveSpeed" type="range" min="5" max="60" step="1" value="30">
+
+        <label for="frequency">Source frequency: <span class="value" id="frequencyVal"></span> Hz</label>
+        <input id="frequency" type="range" min="1" max="8" step="0.1" value="4">
+
+        <label for="speedRatio">Source speed: <span class="value" id="speedRatioVal"></span></label>
+        <input id="speedRatio" type="range" min="0" max="90" step="1" value="35">
+
+        <div class="row">
+          <div>
+            <label for="direction">Source motion</label>
+            <select id="direction">
+              <option value="1">Moving right</option>
+              <option value="-1">Moving left</option>
+            </select>
+          </div>
+          <div>
+            <label for="observer">Observer position</label>
+            <select id="observer">
+              <option value="right">Observer on right</option>
+              <option value="left">Observer on left</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="animationSpeed">Animation speed: <span class="value" id="animationSpeedVal"></span>×</label>
+        <input id="animationSpeed" type="range" min="0" max="2" step="0.1" value="1">
+
+        <label for="showLabels">
+          <input id="showLabels" type="checkbox" checked>
+          Show explanatory labels
+        </label>
+
+        <div>
+          <button id="pauseBtn">Pause</button>
+          <button id="recordBtn">Record trial</button>
+          <button id="csvBtn" class="secondary">Download CSV</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+
+        <div class="formula">
+          Approaching: f observed = f × v ÷ (v − v source)<br>
+          Receding: f observed = f × v ÷ (v + v source)
+        </div>
+
+        <div class="note">
+          This is a scaled classroom model. The visual waves show the pattern clearly, but they do not represent a real siren or ripple tank exactly.
+        </div>
+
+        <div id="warning" class="warning"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Wave visualisation</h2>
+        <canvas id="viz" width="900" height="420"></canvas>
+
+        <section class="result">
+          <div class="metric">
+            <div class="big" id="sourceFreqOut">4.0 Hz</div>
+            <div class="small">Source frequency</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="observedFreqOut">6.2 Hz</div>
+            <div class="small">Observed frequency</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="shiftOut">+55.6%</div>
+            <div class="small">Frequency shift</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="wavelengthOut">4.9 m</div>
+            <div class="small">Wavelength at observer side</div>
+          </div>
+        </section>
+
+        <div class="wide-metric" id="motionOut">
+          Source is approaching the observer.
+        </div>
+      </section>
+    </main>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Trial data</h2>
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Trial</th>
+            <th>Wave speed (m/s)</th>
+            <th>Source frequency (Hz)</th>
+            <th>Source speed (m/s)</th>
+            <th>Motion</th>
+            <th>Observer</th>
+            <th>Observed frequency (Hz)</th>
+            <th>Shift (%)</th>
+            <th>Wavelength at observer side (m)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="challenge">
+      <h2>Student challenge</h2>
+      <p>Record three trials where the source moves towards the observer and three trials where it moves away. Keep the source frequency the same each time. Explain how changing the source speed changes the observed frequency and wavelength.</p>
+    </section>
+
+    <section class="teacher">
+      <h2>Teacher notes</h2>
+      <p>This simulation shows the classical Doppler effect for a moving source and a stationary observer. It is suitable for modelling sound waves, water waves or other waves where the source moves through a medium. It does not model relativistic Doppler shift for light.</p>
+      <p><strong>Assessing the simulation:</strong> Students should identify that the sim helps visualise wavefront compression and spreading. They should also recognise limitations, including the simplified one-dimensional observer model, scaled visual speeds, no reflection or interference, and no shock wave or sonic-boom behaviour.</p>
+    </section>
+  </div>
+
+<script>
+const els = {
+  preset:document.getElementById('preset'),
+  waveSpeed:document.getElementById('waveSpeed'),
+  frequency:document.getElementById('frequency'),
+  speedRatio:document.getElementById('speedRatio'),
+  direction:document.getElementById('direction'),
+  observer:document.getElementById('observer'),
+  animationSpeed:document.getElementById('animationSpeed'),
+  showLabels:document.getElementById('showLabels'),
+  waveSpeedVal:document.getElementById('waveSpeedVal'),
+  frequencyVal:document.getElementById('frequencyVal'),
+  speedRatioVal:document.getElementById('speedRatioVal'),
+  animationSpeedVal:document.getElementById('animationSpeedVal'),
+  sourceFreqOut:document.getElementById('sourceFreqOut'),
+  observedFreqOut:document.getElementById('observedFreqOut'),
+  shiftOut:document.getElementById('shiftOut'),
+  wavelengthOut:document.getElementById('wavelengthOut'),
+  motionOut:document.getElementById('motionOut'),
+  warning:document.getElementById('warning'),
+  pauseBtn:document.getElementById('pauseBtn'),
+  recordBtn:document.getElementById('recordBtn'),
+  csvBtn:document.getElementById('csvBtn'),
+  resetBtn:document.getElementById('resetBtn'),
+  tbody:document.querySelector('#dataTable tbody'),
+  canvas:document.getElementById('viz')
+};
+
+const ctx = els.canvas.getContext('2d');
+
+let trials = [];
+let wavefronts = [];
+let sourceX = 150;
+let sourceY = 210;
+let lastTime = null;
+let simTime = 0;
+let emitTimer = 0;
+let paused = false;
+
+const PIXELS_PER_METRE = 5;
+const OBSERVER_BUFFER = 72;
+const SOURCE_MARGIN = 125;
+
+function fmt(n,d=1){
+  if(!Number.isFinite(n)){
+    return 'N/A';
+  }
+
+  return Number(n).toLocaleString('en-AU',{
+    minimumFractionDigits:d,
+    maximumFractionDigits:d
+  });
+}
+
+function getObserverX(){
+  return els.observer.value === 'right' ? els.canvas.width - 85 : 85;
+}
+
+function isApproachingObserver(direction, observerSide){
+  return (
+    (observerSide === 'right' && direction === 1) ||
+    (observerSide === 'left' && direction === -1)
+  );
+}
+
+function getValues(){
+  const waveSpeed = Number(els.waveSpeed.value);
+  const frequency = Number(els.frequency.value);
+  const speedRatio = Number(els.speedRatio.value) / 100;
+  const sourceSpeed = waveSpeed * speedRatio;
+  const direction = Number(els.direction.value);
+  const observerSide = els.observer.value;
+  const approaching = isApproachingObserver(direction, observerSide);
+
+  const denominator = approaching ? waveSpeed - sourceSpeed : waveSpeed + sourceSpeed;
+  const observedFrequency = frequency * waveSpeed / denominator;
+  const shiftPercent = ((observedFrequency - frequency) / frequency) * 100;
+  const wavelengthAtObserverSide = denominator / frequency;
+
+  return {
+    waveSpeed,
+    frequency,
+    speedRatio,
+    sourceSpeed,
+    direction,
+    observerSide,
+    approaching,
+    observedFrequency,
+    shiftPercent,
+    wavelengthAtObserverSide
+  };
+}
+
+function updateReadouts(){
+  const v = getValues();
+
+  els.waveSpeedVal.textContent = fmt(v.waveSpeed,0);
+  els.frequencyVal.textContent = fmt(v.frequency,1);
+  els.speedRatioVal.textContent = `${Math.round(v.speedRatio * 100)}% of wave speed (${fmt(v.sourceSpeed,1)} m/s)`;
+  els.animationSpeedVal.textContent = fmt(Number(els.animationSpeed.value),1);
+
+  els.sourceFreqOut.textContent = fmt(v.frequency,1) + ' Hz';
+  els.observedFreqOut.textContent = fmt(v.observedFrequency,1) + ' Hz';
+
+  const sign = v.shiftPercent >= 0 ? '+' : '';
+  els.shiftOut.textContent = sign + fmt(v.shiftPercent,1) + '%';
+  els.wavelengthOut.textContent = fmt(v.wavelengthAtObserverSide,1) + ' m';
+
+  els.motionOut.textContent = v.approaching
+    ? 'Source is approaching the observer, so the observed frequency is higher.'
+    : 'Source is receding from the observer, so the observed frequency is lower.';
+
+  if(v.speedRatio > 0.85){
+    els.warning.textContent = 'This model is limited to speeds below the wave speed and does not model shock waves or sonic booms.';
+  } else {
+    els.warning.textContent = '';
+  }
+}
+
+function applyPreset(){
+  if(els.preset.value === 'ambulance'){
+    els.waveSpeed.value = 30;
+    els.frequency.value = 4;
+    els.speedRatio.value = 35;
+    els.direction.value = 1;
+    els.observer.value = 'right';
+    els.animationSpeed.value = 1;
+  }
+
+  if(els.preset.value === 'water'){
+    els.waveSpeed.value = 12;
+    els.frequency.value = 2.5;
+    els.speedRatio.value = 30;
+    els.direction.value = 1;
+    els.observer.value = 'right';
+    els.animationSpeed.value = 1;
+  }
+
+  if(els.preset.value === 'fast'){
+    els.waveSpeed.value = 35;
+    els.frequency.value = 5;
+    els.speedRatio.value = 80;
+    els.direction.value = 1;
+    els.observer.value = 'right';
+    els.animationSpeed.value = 0.8;
+  }
+
+  resetAnimation();
+  updateReadouts();
+}
+
+function setCustom(){
+  els.preset.value = 'custom';
+  updateReadouts();
+}
+
+function resetAnimation(){
+  const v = getValues();
+  const w = els.canvas.width;
+
+  sourceY = els.canvas.height / 2;
+
+  if(v.direction === 1){
+    sourceX = SOURCE_MARGIN;
+  } else {
+    sourceX = w - SOURCE_MARGIN;
+  }
+
+  wavefronts = [];
+  simTime = 0;
+  emitTimer = 0;
+  lastTime = null;
+
+  emitWavefront();
+}
+
+function shouldResetBeforePassing(v){
+  const observerX = getObserverX();
+
+  if(v.approaching && v.direction === 1 && sourceX >= observerX - OBSERVER_BUFFER){
+    return true;
+  }
+
+  if(v.approaching && v.direction === -1 && sourceX <= observerX + OBSERVER_BUFFER){
+    return true;
+  }
+
+  if(!v.approaching && v.direction === 1 && sourceX > els.canvas.width + SOURCE_MARGIN){
+    return true;
+  }
+
+  if(!v.approaching && v.direction === -1 && sourceX < -SOURCE_MARGIN){
+    return true;
+  }
+
+  return false;
+}
+
+function emitWavefront(){
+  wavefronts.push({
+    x:sourceX,
+    y:sourceY,
+    time:simTime
+  });
+
+  if(wavefronts.length > 80){
+    wavefronts.shift();
+  }
+}
+
+function step(timestamp){
+  if(lastTime === null){
+    lastTime = timestamp;
+  }
+
+  let dt = (timestamp - lastTime) / 1000;
+  lastTime = timestamp;
+
+  dt = Math.min(dt, 0.05);
+
+  if(!paused){
+    const v = getValues();
+    const animationSpeed = Number(els.animationSpeed.value);
+    const scaledDt = dt * animationSpeed;
+
+    simTime += scaledDt;
+
+    sourceX += v.direction * v.sourceSpeed * PIXELS_PER_METRE * scaledDt;
+
+    if(shouldResetBeforePassing(v)){
+      resetAnimation();
+    }
+
+    const emissionInterval = 1 / v.frequency;
+    emitTimer += scaledDt;
+
+    while(emitTimer >= emissionInterval){
+      emitWavefront();
+      emitTimer -= emissionInterval;
+    }
+
+    wavefronts = wavefronts.filter(wf => {
+      const age = simTime - wf.time;
+      const radius = v.waveSpeed * PIXELS_PER_METRE * age;
+      return radius < Math.max(els.canvas.width, els.canvas.height) * 1.25;
+    });
+  }
+
+  draw();
+  requestAnimationFrame(step);
+}
+
+function draw(){
+  const v = getValues();
+  const w = els.canvas.width;
+  const h = els.canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  ctx.fillStyle = '#fbfdff';
+  ctx.fillRect(0,0,w,h);
+
+  drawGrid(w,h);
+  drawWavefronts(v);
+  drawObserver(v);
+  drawSource(v);
+  drawInformationText(v);
+  drawFrequencyBar(v);
+
+  if(els.showLabels.checked){
+    drawExplanatoryLabels(v);
+  }
+}
+
+function drawGrid(w,h){
+  ctx.strokeStyle = '#dbe3ef';
+  ctx.lineWidth = 1;
+
+  for(let x = 50; x < w; x += 50){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+
+  for(let y = 50; y < h; y += 50){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(w,y);
+    ctx.stroke();
+  }
+}
+
+function drawWavefronts(v){
+  wavefronts.forEach(wf => {
+    const age = simTime - wf.time;
+    const radius = v.waveSpeed * PIXELS_PER_METRE * age;
+    const alpha = Math.max(0.08, 1 - radius / 700);
+
+    ctx.strokeStyle = `rgba(37,99,235,${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(wf.x,wf.y,radius,0,Math.PI * 2);
+    ctx.stroke();
+  });
+}
+
+function drawObserver(v){
+  const observerX = getObserverX();
+  const observerY = sourceY;
+
+  ctx.fillStyle = '#10b981';
+  ctx.beginPath();
+  ctx.arc(observerX, observerY, 14, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#064e3b';
+  ctx.font = 'bold 14px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Observer', observerX, observerY + 34);
+
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5,5]);
+  ctx.beginPath();
+  ctx.moveTo(observerX, 35);
+  ctx.lineTo(observerX, els.canvas.height - 35);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawSource(v){
+  ctx.fillStyle = '#f97316';
+  ctx.beginPath();
+  ctx.arc(sourceX, sourceY, 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#7c2d12';
+  ctx.font = 'bold 14px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Source', sourceX, sourceY + 42);
+
+  ctx.strokeStyle = '#7c2d12';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(sourceX - 38 * v.direction, sourceY - 35);
+  ctx.lineTo(sourceX + 38 * v.direction, sourceY - 35);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(sourceX + 38 * v.direction, sourceY - 35);
+  ctx.lineTo(sourceX + 25 * v.direction, sourceY - 45);
+  ctx.lineTo(sourceX + 25 * v.direction, sourceY - 25);
+  ctx.closePath();
+  ctx.fillStyle = '#7c2d12';
+  ctx.fill();
+}
+
+function drawInformationText(v){
+  ctx.fillStyle = '#334155';
+  ctx.font = '14px Arial';
+  ctx.textAlign = 'left';
+
+  ctx.fillText('Wave speed: ' + fmt(v.waveSpeed,0) + ' m/s', 18, 28);
+  ctx.fillText('Source speed: ' + fmt(v.sourceSpeed,1) + ' m/s', 18, 50);
+
+  const motionText = v.approaching
+    ? 'Source is approaching the observer'
+    : 'Source is receding from the observer';
+
+  ctx.fillText(motionText, 18, 72);
+}
+
+function drawExplanatoryLabels(v){
+  const w = els.canvas.width;
+  const frontX = v.direction === 1 ? w - 245 : 245;
+  const rearX = v.direction === 1 ? 245 : w - 245;
+
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = '#1d4ed8';
+  ctx.font = 'bold 15px Arial';
+  ctx.fillText('Compressed wavefronts', frontX, 350);
+  ctx.font = '13px Arial';
+  ctx.fillText('Shorter wavelength, higher frequency', frontX, 370);
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = 'bold 15px Arial';
+  ctx.fillText('Spread out wavefronts', rearX, 350);
+  ctx.font = '13px Arial';
+  ctx.fillText('Longer wavelength, lower frequency', rearX, 370);
+}
+
+function drawFrequencyBar(v){
+  const w = els.canvas.width;
+  const baseX = w - 330;
+  const baseY = 28;
+  const barW = 260;
+  const barH = 16;
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.fillRect(baseX, baseY, barW, barH);
+
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.strokeRect(baseX, baseY, barW, barH);
+
+  const ratio = Math.max(0.2, Math.min(2, v.observedFrequency / v.frequency));
+  const markerX = baseX + Math.min(barW, Math.max(0, (ratio - 0.2) / 1.8 * barW));
+
+  ctx.fillStyle = '#2563eb';
+  ctx.beginPath();
+  ctx.moveTo(markerX, baseY - 5);
+  ctx.lineTo(markerX - 6, baseY - 14);
+  ctx.lineTo(markerX + 6, baseY - 14);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#334155';
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Observed frequency compared with source frequency', baseX + barW / 2, baseY + 38);
+}
+
+function recordTrial(){
+  const v = getValues();
+
+  trials.push({
+    waveSpeed:v.waveSpeed,
+    frequency:v.frequency,
+    sourceSpeed:v.sourceSpeed,
+    direction:v.direction === 1 ? 'Moving right' : 'Moving left',
+    observer:v.observerSide === 'right' ? 'Right' : 'Left',
+    relativeMotion:v.approaching ? 'Approaching' : 'Receding',
+    observedFrequency:v.observedFrequency,
+    shiftPercent:v.shiftPercent,
+    wavelengthAtObserverSide:v.wavelengthAtObserverSide
+  });
+
+  renderTable();
+}
+
+function renderTable(){
+  els.tbody.innerHTML = trials.map((t,i)=>{
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${fmt(t.waveSpeed,1)}</td>
+        <td>${fmt(t.frequency,1)}</td>
+        <td>${fmt(t.sourceSpeed,1)}</td>
+        <td>${t.relativeMotion}</td>
+        <td>${t.observer}</td>
+        <td>${fmt(t.observedFrequency,2)}</td>
+        <td>${fmt(t.shiftPercent,1)}</td>
+        <td>${fmt(t.wavelengthAtObserverSide,2)}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function downloadCSV(){
+  const rows = [
+    ['Trial','Wave speed m/s','Source frequency Hz','Source speed m/s','Relative motion','Observer','Observed frequency Hz','Shift percent','Wavelength at observer side m'],
+    ...trials.map((t,i)=>[
+      i + 1,
+      t.waveSpeed.toFixed(2),
+      t.frequency.toFixed(2),
+      t.sourceSpeed.toFixed(2),
+      t.relativeMotion,
+      t.observer,
+      t.observedFrequency.toFixed(3),
+      t.shiftPercent.toFixed(2),
+      t.wavelengthAtObserverSide.toFixed(3)
+    ])
+  ];
+
+  const csv = rows.map(row => {
+    return row.map(cell => `"${String(cell).replaceAll('"','""')}"`).join(',');
+  }).join('\n');
+
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = 'doppler_effect_trials.csv';
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+els.preset.addEventListener('change', applyPreset);
+
+['waveSpeed','frequency','speedRatio','animationSpeed'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{
+    setCustom();
+    resetAnimation();
+  });
+});
+
+['direction','observer'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', ()=>{
+    setCustom();
+    resetAnimation();
+  });
+});
+
+els.showLabels.addEventListener('change', draw);
+
+els.pauseBtn.addEventListener('click', ()=>{
+  paused = !paused;
+  els.pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+});
+
+els.recordBtn.addEventListener('click', recordTrial);
+els.csvBtn.addEventListener('click', downloadCSV);
+
+els.resetBtn.addEventListener('click', ()=>{
+  trials = [];
+  renderTable();
+  els.preset.value = 'ambulance';
+  paused = false;
+  els.pauseBtn.textContent = 'Pause';
+  applyPreset();
+});
+
+applyPreset();
+requestAnimationFrame(step);
+</script>
+</body>
+</html>
