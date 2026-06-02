@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Darwin Simulation</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .home-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #dbe3ef;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .swf-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    embed {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .note {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <section class="panel">
+      <h1>Darwin Simulation</h1>
+      <p>This page uses Ruffle to run the original Flash SWF file in a modern browser.</p>
+
+      <div class="swf-wrap">
+        <embed src="darwin.swf">
+      </div>
+
+      <p class="note">
+        If the simulation does not load, wait a few seconds and refresh the page. Some older Flash files may only partly work in Ruffle.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
