@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Marshall and Warren: Peptic Ulcer Evidence Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --soft-blue:#e0ecff;
+      --soft-green:#dcfce7;
+      --soft-purple:#ede9fe;
+      --soft-orange:#ffedd5;
+      --danger:#991b1b;
+      --orange:#f97316;
+      --green:#16a34a;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:20px;
+    }
+
+    a.home{
+      display:inline-block;
+      margin-bottom:14px;
+      color:var(--button);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    header{
+      background:linear-gradient(135deg,var(--soft-blue),var(--soft-purple));
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+      margin-bottom:16px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.8rem,3vw,2.6rem);
+    }
+
+    h2{
+      margin:0 0 10px;
+      font-size:1.2rem;
+    }
+
+    h3{
+      margin:0 0 8px;
+      font-size:1rem;
+    }
+
+    p{margin-top:0}
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .li-sc div{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:390px 1fr;
+      gap:16px;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 4px 12px rgba(15,23,42,.05);
+    }
+
+    label{
+      display:block;
+      font-weight:700;
+      margin:12px 0 4px;
+    }
+
+    input[type=range]{width:100%}
+
+    select{
+      width:100%;
+      padding:9px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:1rem;
+      background:#fff;
+    }
+
+    .value{
+      font-weight:700;
+      color:#0f172a;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      background:var(--button);
+      color:white;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      margin:6px 6px 0 0;
+    }
+
+    button:hover{background:var(--button-hover)}
+
+    button.secondary{
+      background:#475569;
+    }
+
+    button.secondary:hover{
+      background:#334155;
+    }
+
+    .formula{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px;
+      margin:8px 0;
+      font-size:.92rem;
+    }
+
+    .note{
+      background:var(--soft-orange);
+      border:1px solid #fed7aa;
+      border-radius:12px;
+      padding:10px;
+      color:#7c2d12;
+      margin-top:10px;
+      font-size:.94rem;
+    }
+
+    .warning{
+      color:var(--danger);
+      font-weight:700;
+      margin-top:8px;
+      min-height:1.3em;
+    }
+
+    .evidence-dashboard{
+      display:grid;
+      grid-template-columns:minmax(220px, 0.85fr) minmax(420px, 1.65fr);
+      gap:14px;
+      background:#fbfdff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .dash-card{
+      background:#ffffff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .stomach-card{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      gap:10px;
+    }
+
+    .stomach-svg{
+      width:100%;
+      max-width:260px;
+      height:auto;
+    }
+
+    .subtle{
+      color:var(--muted);
+    }
+
+    .case-pattern{
+      width:100%;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      margin-top:auto;
+    }
+
+    .case-pattern .number{
+      color:var(--green);
+      font-weight:900;
+      font-size:1.45rem;
+      line-height:1.15;
+    }
+
+    .dashboard-right{
+      display:grid;
+      gap:14px;
+    }
+
+    .model-flow{
+      display:grid;
+      grid-template-columns:1fr 56px 1fr;
+      gap:12px;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .model-box{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      min-height:126px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .model-box h3{
+      margin-bottom:8px;
+      font-size:1rem;
+    }
+
+    .model-box p{
+      margin:2px 0;
+      color:#475569;
+    }
+
+    .arrow{
+      font-size:2.4rem;
+      color:var(--button);
+      text-align:center;
+      font-weight:900;
+    }
+
+    .bar-block{
+      margin-top:12px;
+    }
+
+    .bar-label{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:700;
+      margin-bottom:6px;
+      color:#334155;
+    }
+
+    .bar-track{
+      width:100%;
+      height:28px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .bar-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:var(--button);
+      transition:width .25s ease;
+    }
+
+    .bar-fill.orange{
+      background:var(--orange);
+    }
+
+    .bar-value{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .study-bars{
+      display:grid;
+      gap:18px;
+      margin-top:12px;
+    }
+
+    .stacked-track{
+      display:flex;
+      width:100%;
+      height:30px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+
+    .stacked-segment{
+      height:100%;
+    }
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      font-size:.85rem;
+      color:#334155;
+    }
+
+    .legend-item{
+      display:flex;
+      align-items:center;
+      gap:5px;
+    }
+
+    .swatch{
+      width:12px;
+      height:12px;
+      border-radius:3px;
+      display:inline-block;
+    }
+
+    .live-note{
+      margin-top:10px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:14px;
+      padding:10px;
+      color:#1e3a8a;
+      font-size:.94rem;
+      font-weight:700;
+    }
+
+    .result{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+    }
+
+    .metric .big{
+      font-size:1.1rem;
+      font-weight:800;
+      color:#0f172a;
+      line-height:1.25;
+    }
+
+    .metric .small{
+      font-size:.85rem;
+      color:var(--muted);
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .status-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .status-title{
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:6px;
+    }
+
+    .status-text{
+      color:#334155;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .meter-track{
+      width:100%;
+      height:14px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .meter-fill{
+      height:100%;
+      width:0%;
+      background:#2563eb;
+      border-radius:999px;
+      transition:width .25s ease;
+    }
+
+    .interpretation{
+      margin-top:10px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      font-weight:700;
+      color:#334155;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:.9rem;
+    }
+
+    th,
+    td{
+      border:1px solid var(--line);
+      padding:7px;
+      text-align:right;
+      vertical-align:top;
+    }
+
+    th{background:#f1f5f9}
+
+    td:first-child,
+    th:first-child{
+      text-align:left;
+    }
+
+    .limitation-prompt{
+      margin-top:12px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:14px;
+      padding:12px;
+      color:#1e3a8a;
+      font-weight:700;
+    }
+
+    .challenge{
+      background:var(--soft-green);
+      border:1px solid #bbf7d0;
+      border-radius:14px;
+      padding:14px;
+      margin-top:16px;
+    }
+
+    .teacher{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      margin-top:16px;
+      color:#334155;
+    }
+
+    .teacher a{color:#2563eb}
+
+    @media (max-width:1000px){
+      .grid,
+      .li-sc{
+        grid-template-columns:1fr;
+      }
+
+      .evidence-dashboard{
+        grid-template-columns:1fr;
+      }
+
+      .stomach-svg{
+        max-width:220px;
+      }
+
+      .result,
+      .status-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width:650px){
+      .model-flow{
+        grid-template-columns:1fr;
+      }
+
+      .arrow{
+        transform:rotate(90deg);
+      }
+
+      .result,
+      .status-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a class="home" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Marshall and Warren: Peptic Ulcer Evidence Simulator</h1>
+      <p>Investigate how evidence changed the scientific explanation for many peptic ulcers, from stress and acid alone to a model involving <em>Helicobacter pylori</em> and other risk factors.</p>
+    </header>
+
+    <section class="li-sc">
+      <div>
+        <h2>Learning Intention</h2>
+        <p>Students will understand that scientific explanations can change when new evidence challenges an accepted model.</p>
+      </div>
+      <div>
+        <h2>Success Criteria</h2>
+        <p>Students can use evidence from simulated studies to compare competing explanations for peptic ulcers and evaluate limitations in the model.</p>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>Controls</h2>
+
+        <label for="preset">Preset</label>
+        <select id="preset">
+          <option value="marshall">Marshall and Warren style evidence</option>
+          <option value="old">Earlier stress and acid explanation</option>
+          <option value="treatment">Treatment trial focus</option>
+          <option value="nsaid">NSAID confounder focus</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <label for="studyType">Investigation type</label>
+        <select id="studyType">
+          <option value="association">Observation study: ulcer cases versus controls</option>
+          <option value="treatment">Treatment trial: antacid versus antibiotic-based treatment</option>
+          <option value="confounder">Confounder check: more than one cause</option>
+        </select>
+
+        <label for="sampleSize">Sample size per group: <span class="value" id="sampleSizeVal"></span></label>
+        <input id="sampleSize" type="range" min="20" max="400" step="10" value="100">
+
+        <label for="ulcerType">Ulcer focus</label>
+        <select id="ulcerType">
+          <option value="mixed">Mixed peptic ulcers</option>
+          <option value="duodenal">Duodenal ulcer focus</option>
+          <option value="gastric">Gastric ulcer focus</option>
+        </select>
+
+        <label for="hpUlcer">H. pylori positive in ulcer cases: <span class="value" id="hpUlcerVal"></span>%</label>
+        <input id="hpUlcer" type="range" min="20" max="98" step="1" value="85">
+
+        <label for="hpControl">H. pylori positive in controls: <span class="value" id="hpControlVal"></span>%</label>
+        <input id="hpControl" type="range" min="5" max="70" step="1" value="35">
+
+        <label for="nsaid">NSAID contribution to ulcer cases: <span class="value" id="nsaidVal"></span>%</label>
+        <input id="nsaid" type="range" min="0" max="70" step="1" value="12">
+
+        <label for="quality">Evidence quality: <span class="value" id="qualityVal"></span>%</label>
+        <input id="quality" type="range" min="30" max="100" step="5" value="85">
+
+        <div>
+          <button id="runBtn">Run investigation</button>
+          <button id="recordBtn">Record trial</button>
+          <button id="csvBtn" class="secondary">Download CSV</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+
+        <div class="formula">Modelled support combines pattern size, sample size, evidence quality, treatment outcomes and ulcer focus.</div>
+        <div class="note">This is a classroom evidence model, not medical advice. Support scores are modelled values, not real clinical percentages.</div>
+        <div id="warning" class="warning"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Evidence visualisation</h2>
+
+        <section class="evidence-dashboard">
+          <div class="dash-card stomach-card">
+            <svg class="stomach-svg" viewBox="0 0 280 250" role="img" aria-label="Simplified stomach lining model">
+              <path d="M105 30 C45 35 22 88 28 140 C35 205 102 232 170 210 C237 188 255 119 223 64 C196 18 143 11 105 30 Z" fill="#fee2e2" stroke="#991b1b" stroke-width="5"/>
+              <path d="M93 148 C108 170 130 170 144 148" fill="none" stroke="#fb923c" stroke-width="7" stroke-linecap="round"/>
+              <path d="M141 148 C156 171 181 171 195 148" fill="none" stroke="#fb923c" stroke-width="7" stroke-linecap="round"/>
+              <ellipse cx="82" cy="88" rx="12" ry="6" fill="#16a34a" transform="rotate(8 82 88)"/>
+              <ellipse cx="102" cy="110" rx="12" ry="6" fill="#16a34a" transform="rotate(80 102 110)"/>
+              <ellipse cx="135" cy="125" rx="14" ry="7" fill="#16a34a" transform="rotate(20 135 125)"/>
+              <ellipse cx="172" cy="105" rx="14" ry="7" fill="#16a34a" transform="rotate(-8 172 105)"/>
+              <ellipse cx="198" cy="84" rx="13" ry="6" fill="#16a34a" transform="rotate(-32 198 84)"/>
+              <ellipse cx="210" cy="126" rx="13" ry="6" fill="#16a34a" transform="rotate(72 210 126)"/>
+              <ellipse cx="75" cy="145" rx="13" ry="6" fill="#16a34a" transform="rotate(18 75 145)"/>
+              <ellipse cx="115" cy="172" rx="12" ry="6" fill="#16a34a" transform="rotate(105 115 172)"/>
+              <ellipse cx="160" cy="162" rx="13" ry="6" fill="#16a34a" transform="rotate(26 160 162)"/>
+              <ellipse cx="195" cy="157" rx="13" ry="6" fill="#16a34a" transform="rotate(42 195 157)"/>
+            </svg>
+
+            <div>
+              <h3>Stomach lining model</h3>
+              <p class="subtle">Simplified visual: bacteria, acid and tissue damage are symbolic.</p>
+            </div>
+
+            <div class="case-pattern">
+              <h3>Current case pattern</h3>
+              <div class="number" id="dashCasePattern">N/A</div>
+            </div>
+          </div>
+
+          <div class="dashboard-right">
+            <div class="dash-card">
+              <h3 style="text-align:center">Evidence can shift a scientific explanation</h3>
+              <div class="model-flow">
+                <div class="model-box">
+                  <h3>Earlier dominant explanation</h3>
+                  <p>Stress and acid</p>
+                  <p>Lifestyle factors</p>
+                  <p>Long-term acid control</p>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="model-box">
+                  <h3>Evidence-based model</h3>
+                  <p><em>H. pylori</em> in many cases</p>
+                  <p>NSAIDs can also matter</p>
+                  <p>Treatment evidence matters</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <h3>Modelled support from current evidence</h3>
+
+              <div class="bar-block">
+                <div class="bar-label">
+                  <span>H. pylori explanation</span>
+                  <span id="dashBacterialSupportText">N/A</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" id="dashBacterialSupportBar"></div>
+                </div>
+              </div>
+
+              <div class="bar-block">
+                <div class="bar-label">
+                  <span>Stress/acid-only explanation</span>
+                  <span id="dashOldSupportText">N/A</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill orange" id="dashOldSupportBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <h3 id="dashStudyTitle">Study result</h3>
+              <div class="study-bars" id="dashStudyBars"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="live-note">Live model estimate shown. Click Run investigation to generate a simulated study result with random variation.</div>
+
+        <section class="result">
+          <div class="metric">
+            <div class="big" id="metricOne">N/A</div>
+            <div class="small" id="metricOneLabel">Main result</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="metricTwo">N/A</div>
+            <div class="small" id="metricTwoLabel">Comparison</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="bacterialOut">N/A</div>
+            <div class="small">Modelled H. pylori support</div>
+          </div>
+          <div class="metric">
+            <div class="big" id="oldOut">N/A</div>
+            <div class="small">Modelled stress/acid-only support</div>
+          </div>
+        </section>
+
+        <section class="status-grid">
+          <div class="status-card">
+            <div class="status-title">Evidence confidence</div>
+            <div class="status-text" id="confidenceOut">N/A</div>
+            <div class="meter-track"><div class="meter-fill" id="confidenceFill"></div></div>
+          </div>
+          <div class="status-card">
+            <div class="status-title">Scientific consensus model</div>
+            <div class="status-text" id="consensusOut">N/A</div>
+            <div class="meter-track"><div class="meter-fill" id="consensusFill"></div></div>
+          </div>
+        </section>
+
+        <div class="interpretation" id="interpretation">Run an investigation to generate evidence.</div>
+      </section>
+    </main>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Trial data</h2>
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Trial</th>
+            <th>Study type</th>
+            <th>Sample size</th>
+            <th>Main result</th>
+            <th>Comparison result</th>
+            <th>Modelled H. pylori support</th>
+            <th>Modelled stress/acid-only support</th>
+            <th>Evidence confidence</th>
+            <th>Consensus model</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="limitation-prompt">
+        Simulation evaluation prompt: Which variable in this simulation is most simplified? Explain how this model differs from a real clinical investigation.
+      </div>
+    </section>
+
+    <section class="challenge">
+      <h2>Student challenge</h2>
+      <p>Run three different investigation types. Use the evidence to decide whether the earlier stress and acid explanation is enough by itself. Then explain why a stronger scientific model can include more than one cause, such as <em>H. pylori</em> infection and NSAID use.</p>
+    </section>
+
+    <section class="teacher">
+      <h2>Teacher notes</h2>
+      <p>This simulation is designed for modelling scientific investigation and changing explanations. It focuses on evidence, not diagnosis or treatment advice. Students should be encouraged to distinguish association, causation, treatment evidence, sample size, confounding variables and model limitations.</p>
+      <p><strong>Historical context:</strong> Barry Marshall and Robin Warren were awarded the 2005 Nobel Prize in Physiology or Medicine for discovering <em>Helicobacter pylori</em> and its role in gastritis and peptic ulcer disease.</p>
+      <p><strong>Sources:</strong>
+        <a href="https://www.nobelprize.org/prizes/medicine/2005/summary/" target="_blank" rel="noopener noreferrer">Nobel Prize summary</a>,
+        <a href="https://stacks.cdc.gov/view/cdc/40603" target="_blank" rel="noopener noreferrer">CDC H. pylori fact sheet</a>,
+        <a href="https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/symptoms-causes" target="_blank" rel="noopener noreferrer">NIDDK peptic ulcer causes</a>.
+      </p>
+      <p><strong>Assessing the simulation:</strong> Students should identify that the sim helps test how evidence changes explanations, but simplifies real clinical research by using modelled probabilities, simplified treatment categories, and a limited set of risk factors.</p>
+    </section>
+  </div>
+
+<script>
+const els = {
+  preset:document.getElementById('preset'),
+  studyType:document.getElementById('studyType'),
+  sampleSize:document.getElementById('sampleSize'),
+  ulcerType:document.getElementById('ulcerType'),
+  hpUlcer:document.getElementById('hpUlcer'),
+  hpControl:document.getElementById('hpControl'),
+  nsaid:document.getElementById('nsaid'),
+  quality:document.getElementById('quality'),
+  sampleSizeVal:document.getElementById('sampleSizeVal'),
+  hpUlcerVal:document.getElementById('hpUlcerVal'),
+  hpControlVal:document.getElementById('hpControlVal'),
+  nsaidVal:document.getElementById('nsaidVal'),
+  qualityVal:document.getElementById('qualityVal'),
+  metricOne:document.getElementById('metricOne'),
+  metricTwo:document.getElementById('metricTwo'),
+  metricOneLabel:document.getElementById('metricOneLabel'),
+  metricTwoLabel:document.getElementById('metricTwoLabel'),
+  bacterialOut:document.getElementById('bacterialOut'),
+  oldOut:document.getElementById('oldOut'),
+  confidenceOut:document.getElementById('confidenceOut'),
+  consensusOut:document.getElementById('consensusOut'),
+  confidenceFill:document.getElementById('confidenceFill'),
+  consensusFill:document.getElementById('consensusFill'),
+  dashCasePattern:document.getElementById('dashCasePattern'),
+  dashBacterialSupportText:document.getElementById('dashBacterialSupportText'),
+  dashBacterialSupportBar:document.getElementById('dashBacterialSupportBar'),
+  dashOldSupportText:document.getElementById('dashOldSupportText'),
+  dashOldSupportBar:document.getElementById('dashOldSupportBar'),
+  dashStudyTitle:document.getElementById('dashStudyTitle'),
+  dashStudyBars:document.getElementById('dashStudyBars'),
+  interpretation:document.getElementById('interpretation'),
+  warning:document.getElementById('warning'),
+  runBtn:document.getElementById('runBtn'),
+  recordBtn:document.getElementById('recordBtn'),
+  csvBtn:document.getElementById('csvBtn'),
+  resetBtn:document.getElementById('resetBtn'),
+  tbody:document.querySelector('#dataTable tbody')
+};
+
+let latestResult = null;
+let trials = [];
+
+function clamp(value,min,max){
+  return Math.max(min, Math.min(max, value));
+}
+
+function fmt(n,d=1){
+  if(!Number.isFinite(n)) return 'N/A';
+  return Number(n).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+
+function randBinomial(n,p){
+  let count = 0;
+  for(let i = 0; i < n; i++){
+    if(Math.random() < p) count++;
+  }
+  return count;
+}
+
+function expectedCount(n,p){
+  return Math.round(n * p);
+}
+
+function oddsRatio(a,b,c,d){
+  const aa = a + 0.5;
+  const bb = b + 0.5;
+  const cc = c + 0.5;
+  const dd = d + 0.5;
+  return (aa / bb) / (cc / dd);
+}
+
+function applyPreset(){
+  if(els.preset.value === 'marshall'){
+    els.studyType.value = 'association';
+    els.sampleSize.value = 100;
+    els.ulcerType.value = 'mixed';
+    els.hpUlcer.value = 85;
+    els.hpControl.value = 35;
+    els.nsaid.value = 12;
+    els.quality.value = 85;
+  }
+
+  if(els.preset.value === 'old'){
+    els.studyType.value = 'association';
+    els.sampleSize.value = 60;
+    els.ulcerType.value = 'mixed';
+    els.hpUlcer.value = 45;
+    els.hpControl.value = 35;
+    els.nsaid.value = 8;
+    els.quality.value = 55;
+  }
+
+  if(els.preset.value === 'treatment'){
+    els.studyType.value = 'treatment';
+    els.sampleSize.value = 120;
+    els.ulcerType.value = 'duodenal';
+    els.hpUlcer.value = 90;
+    els.hpControl.value = 32;
+    els.nsaid.value = 8;
+    els.quality.value = 90;
+  }
+
+  if(els.preset.value === 'nsaid'){
+    els.studyType.value = 'confounder';
+    els.sampleSize.value = 140;
+    els.ulcerType.value = 'gastric';
+    els.hpUlcer.value = 60;
+    els.hpControl.value = 35;
+    els.nsaid.value = 45;
+    els.quality.value = 80;
+  }
+
+  updateReadouts();
+  latestResult = simulate(false);
+  renderResult(latestResult);
+}
+
+function setCustom(){
+  els.preset.value = 'custom';
+  updateReadouts();
+  latestResult = simulate(false);
+  renderResult(latestResult);
+}
+
+function updateReadouts(){
+  els.sampleSizeVal.textContent = Number(els.sampleSize.value);
+  els.hpUlcerVal.textContent = Number(els.hpUlcer.value);
+  els.hpControlVal.textContent = Number(els.hpControl.value);
+  els.nsaidVal.textContent = Number(els.nsaid.value);
+  els.qualityVal.textContent = Number(els.quality.value);
+
+  const hpUlcer = Number(els.hpUlcer.value);
+  const hpControl = Number(els.hpControl.value);
+
+  if(hpUlcer <= hpControl + 5 && els.studyType.value === 'association'){
+    els.warning.textContent = 'The H. pylori pattern is weak. This will produce weaker support for the bacterial model.';
+  } else {
+    els.warning.textContent = '';
+  }
+}
+
+function getParams(){
+  const p = {
+    studyType:els.studyType.value,
+    sampleSize:Number(els.sampleSize.value),
+    ulcerType:els.ulcerType.value,
+    hpUlcer:Number(els.hpUlcer.value) / 100,
+    hpControl:Number(els.hpControl.value) / 100,
+    nsaid:Number(els.nsaid.value) / 100,
+    quality:Number(els.quality.value) / 100,
+    focusEffect:'Mixed ulcer focus uses the slider values without extra weighting.'
+  };
+
+  if(p.ulcerType === 'duodenal'){
+    p.hpUlcer = clamp(p.hpUlcer + 0.07, 0.01, 0.98);
+    p.nsaid = clamp(p.nsaid * 0.75, 0, 0.70);
+    p.focusEffect = 'Duodenal ulcer focus increases the modelled influence of H. pylori and slightly reduces NSAID contribution.';
+  }
+
+  if(p.ulcerType === 'gastric'){
+    p.hpUlcer = clamp(p.hpUlcer - 0.05, 0.01, 0.98);
+    p.nsaid = clamp(p.nsaid + 0.12, 0, 0.70);
+    p.focusEffect = 'Gastric ulcer focus keeps H. pylori important but makes NSAID contribution more visible.';
+  }
+
+  return p;
+}
+
+function simulate(randomise){
+  const p = getParams();
+
+  if(p.studyType === 'association'){
+    return addMeta(simulateAssociation(p, randomise), p);
+  }
+
+  if(p.studyType === 'treatment'){
+    return addMeta(simulateTreatment(p, randomise), p);
+  }
+
+  return addMeta(simulateConfounder(p, randomise), p);
+}
+
+function addMeta(result,p){
+  const sampleScore = Math.sqrt(p.sampleSize / 400) * 100;
+  const confidenceScore = clamp((p.quality * 100 * 0.55) + (sampleScore * 0.45), 0, 100);
+
+  let confidenceLabel = 'Low confidence';
+  if(confidenceScore >= 85) confidenceLabel = 'Very high confidence';
+  else if(confidenceScore >= 70) confidenceLabel = 'High confidence';
+  else if(confidenceScore >= 45) confidenceLabel = 'Moderate confidence';
+
+  const consensusScore = clamp((result.bacterialSupport - result.oldSupport + 100) / 2, 0, 100);
+
+  let consensusLabel = 'Earlier explanation still dominant';
+  if(consensusScore >= 75) consensusLabel = 'Evidence-based model accepted';
+  else if(consensusScore >= 55) consensusLabel = 'Evidence-based model gaining support';
+  else if(consensusScore >= 35) consensusLabel = 'Competing explanations';
+
+  result.confidenceScore = confidenceScore;
+  result.confidenceLabel = confidenceLabel;
+  result.consensusScore = consensusScore;
+  result.consensusLabel = consensusLabel;
+  result.focusEffect = p.focusEffect;
+
+  return result;
+}
+
+function simulateAssociation(p, randomise){
+  const n = p.sampleSize;
+  const ulcerHp = randomise ? randBinomial(n, p.hpUlcer) : expectedCount(n, p.hpUlcer);
+  const controlHp = randomise ? randBinomial(n, p.hpControl) : expectedCount(n, p.hpControl);
+  const ulcerNoHp = n - ulcerHp;
+  const controlNoHp = n - controlHp;
+  const or = oddsRatio(ulcerHp, ulcerNoHp, controlHp, controlNoHp);
+  const sampleBonus = Math.sqrt(n / 400) * 12;
+  const qualityBonus = p.quality * 12;
+  const bacterialSupport = clamp(18 + Math.log2(or) * 18 + sampleBonus + qualityBonus, 0, 100);
+  const oldSupport = clamp(82 - bacterialSupport * 0.55 + p.nsaid * 12, 0, 100);
+
+  const interpretation = or >= 4
+    ? 'Strong association: ulcer cases are much more likely to test positive for H. pylori than controls.'
+    : or >= 2
+      ? 'Moderate association: the evidence supports further investigation of H. pylori.'
+      : 'Weak association: this single dataset would not strongly challenge the earlier explanation.';
+
+  return {
+    studyType:'Observation study',
+    mainLabel:'Odds ratio',
+    mainValue:or,
+    mainText:fmt(or,2),
+    comparisonLabel:'H. pylori positive',
+    comparisonText:`${ulcerHp}/${n} ulcer cases, ${controlHp}/${n} controls`,
+    bacterialSupport,
+    oldSupport,
+    interpretation,
+    chartType:'association',
+    data:{n, ulcerHp, ulcerNoHp, controlHp, controlNoHp}
+  };
+}
+
+function simulateTreatment(p, randomise){
+  const n = p.sampleSize;
+  const hpInfluence = p.hpUlcer;
+  const nsaidInfluence = p.nsaid;
+  const antacidRecurrenceProb = clamp(0.24 + 0.48 * hpInfluence + 0.26 * nsaidInfluence, 0.08, 0.88);
+  const antibioticRecurrenceProb = clamp(0.08 + 0.10 * (1 - hpInfluence) + 0.34 * nsaidInfluence, 0.03, 0.68);
+  const antacidRecurrence = randomise ? randBinomial(n, antacidRecurrenceProb) : expectedCount(n, antacidRecurrenceProb);
+  const antibioticRecurrence = randomise ? randBinomial(n, antibioticRecurrenceProb) : expectedCount(n, antibioticRecurrenceProb);
+  const antacidRate = antacidRecurrence / n;
+  const antibioticRate = antibioticRecurrence / n;
+  const reduction = antacidRate - antibioticRate;
+  const bacterialSupport = clamp(35 + reduction * 105 + p.quality * 12, 0, 100);
+  const oldSupport = clamp(75 - reduction * 75 + p.nsaid * 10, 0, 100);
+
+  const interpretation = reduction >= 0.30
+    ? 'Treatment evidence: recurrence is much lower with antibiotic-based treatment, supporting the bacterial model.'
+    : reduction >= 0.15
+      ? 'Treatment evidence: antibiotics reduce recurrence, but other factors may still matter.'
+      : 'Treatment evidence is weak in this model, suggesting confounders or poor evidence quality.';
+
+  return {
+    studyType:'Treatment trial',
+    mainLabel:'Recurrence reduction',
+    mainValue:reduction * 100,
+    mainText:fmt(reduction * 100,1) + '%',
+    comparisonLabel:'Recurrence',
+    comparisonText:`${antacidRecurrence}/${n} antacid group, ${antibioticRecurrence}/${n} antibiotic-based group`,
+    bacterialSupport,
+    oldSupport,
+    interpretation,
+    chartType:'treatment',
+    data:{n, antacidRecurrence, antibioticRecurrence, antacidRate, antibioticRate}
+  };
+}
+
+function simulateConfounder(p, randomise){
+  const n = p.sampleSize;
+  const hp = p.hpUlcer;
+  const ns = p.nsaid;
+  const bothProb = hp * ns;
+  const hpOnlyProb = hp * (1 - ns);
+  const nsaidOnlyProb = (1 - hp) * ns;
+
+  let both = randomise ? randBinomial(n, bothProb) : expectedCount(n, bothProb);
+  let hpOnly = randomise ? randBinomial(n - both, hpOnlyProb / Math.max(0.01, 1 - bothProb)) : expectedCount(n, hpOnlyProb);
+  let nsaidOnly = randomise ? randBinomial(n - both - hpOnly, nsaidOnlyProb / Math.max(0.01, 1 - bothProb - hpOnlyProb)) : expectedCount(n, nsaidOnlyProb);
+  let neither = n - both - hpOnly - nsaidOnly;
+
+  if(neither < 0) neither = 0;
+
+  const hpInvolved = both + hpOnly;
+  const nsaidInvolved = both + nsaidOnly;
+  const multipleCauseEvidence = (hpInvolved + nsaidInvolved) / (2 * n);
+  const bacterialSupport = clamp(30 + (hpInvolved / n) * 55 + p.quality * 10, 0, 100);
+  const oldSupport = clamp(70 - multipleCauseEvidence * 55, 0, 100);
+
+  const interpretation = nsaidInvolved / n >= 0.30
+    ? 'Confounder evidence: H. pylori is important, but NSAID use also explains many cases.'
+    : 'Confounder evidence: H. pylori is involved in many cases, while other causes still need to be considered.';
+
+  return {
+    studyType:'Confounder check',
+    mainLabel:'H. pylori involved',
+    mainValue:(hpInvolved / n) * 100,
+    mainText:fmt((hpInvolved / n) * 100,1) + '%',
+    comparisonLabel:'NSAID involved',
+    comparisonText:fmt((nsaidInvolved / n) * 100,1) + '%',
+    bacterialSupport,
+    oldSupport,
+    interpretation,
+    chartType:'confounder',
+    data:{n, hpOnly, nsaidOnly, both, neither}
+  };
+}
+
+function renderResult(result){
+  els.metricOne.textContent = result.mainText;
+  els.metricOneLabel.textContent = result.mainLabel;
+  els.metricTwo.textContent = result.comparisonText;
+  els.metricTwoLabel.textContent = result.comparisonLabel;
+  els.bacterialOut.textContent = fmt(result.bacterialSupport,0) + '%';
+  els.oldOut.textContent = fmt(result.oldSupport,0) + '%';
+
+  els.confidenceOut.textContent = result.confidenceLabel + ' (' + fmt(result.confidenceScore,0) + '%)';
+  els.consensusOut.textContent = result.consensusLabel + ' (' + fmt(result.consensusScore,0) + '%)';
+  els.confidenceFill.style.width = result.confidenceScore + '%';
+  els.consensusFill.style.width = result.consensusScore + '%';
+
+  els.interpretation.textContent = result.interpretation + ' ' + result.focusEffect;
+
+  renderDashboard(result);
+}
+
+function renderDashboard(result){
+  const p = getParams();
+
+  const hp = result.chartType === 'association'
+    ? result.data.ulcerHp / result.data.n * 100
+    : p.hpUlcer * 100;
+
+  els.dashCasePattern.textContent = fmt(hp,0) + '% H. pylori positive';
+
+  els.dashBacterialSupportText.textContent = fmt(result.bacterialSupport,0) + '%';
+  els.dashBacterialSupportBar.style.width = result.bacterialSupport + '%';
+
+  els.dashOldSupportText.textContent = fmt(result.oldSupport,0) + '%';
+  els.dashOldSupportBar.style.width = result.oldSupport + '%';
+
+  els.dashStudyTitle.textContent = result.studyType + ' result';
+
+  if(result.chartType === 'association'){
+    const d = result.data;
+    els.dashStudyBars.innerHTML = `
+      ${makeBar('Ulcer cases H. pylori positive', d.ulcerHp / d.n * 100, false)}
+      ${makeBar('Controls H. pylori positive', d.controlHp / d.n * 100, false)}
+    `;
+  }
+
+  if(result.chartType === 'treatment'){
+    const d = result.data;
+    els.dashStudyBars.innerHTML = `
+      ${makeBar('Recurrence after antacid only', d.antacidRate * 100, true)}
+      ${makeBar('Recurrence after antibiotic-based treatment', d.antibioticRate * 100, false)}
+    `;
+  }
+
+  if(result.chartType === 'confounder'){
+    const d = result.data;
+    const hpOnly = d.hpOnly / d.n * 100;
+    const nsaidOnly = d.nsaidOnly / d.n * 100;
+    const both = d.both / d.n * 100;
+    const neither = d.neither / d.n * 100;
+
+    els.dashStudyBars.innerHTML = `
+      <div>
+        <div class="bar-label">
+          <span>Modelled ulcer cause categories</span>
+          <span>${d.n} cases</span>
+        </div>
+        <div class="stacked-track">
+          <div class="stacked-segment" style="width:${hpOnly}%;background:#2563eb"></div>
+          <div class="stacked-segment" style="width:${nsaidOnly}%;background:#f97316"></div>
+          <div class="stacked-segment" style="width:${both}%;background:#16a34a"></div>
+          <div class="stacked-segment" style="width:${neither}%;background:#94a3b8"></div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch" style="background:#2563eb"></span>H. pylori only: ${fmt(hpOnly,1)}%</span>
+          <span class="legend-item"><span class="swatch" style="background:#f97316"></span>NSAID only: ${fmt(nsaidOnly,1)}%</span>
+          <span class="legend-item"><span class="swatch" style="background:#16a34a"></span>Both: ${fmt(both,1)}%</span>
+          <span class="legend-item"><span class="swatch" style="background:#94a3b8"></span>Neither clear: ${fmt(neither,1)}%</span>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function makeBar(label,value,isOrange){
+  const colourClass = isOrange ? ' orange' : '';
+  return `
+    <div>
+      <div class="bar-label">
+        <span>${label}</span>
+        <span>${fmt(value,1)}%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill${colourClass}" style="width:${value}%"></div>
+      </div>
+    </div>
+  `;
+}
+
+function runInvestigation(){
+  updateReadouts();
+  latestResult = simulate(true);
+  renderResult(latestResult);
+}
+
+function recordTrial(){
+  if(!latestResult){
+    latestResult = simulate(false);
+  }
+
+  trials.push({
+    studyType:latestResult.studyType,
+    sampleSize:Number(els.sampleSize.value),
+    mainResult:latestResult.mainLabel + ': ' + latestResult.mainText,
+    comparisonResult:latestResult.comparisonText,
+    bacterialSupport:latestResult.bacterialSupport,
+    oldSupport:latestResult.oldSupport,
+    confidenceLabel:latestResult.confidenceLabel,
+    confidenceScore:latestResult.confidenceScore,
+    consensusLabel:latestResult.consensusLabel,
+    consensusScore:latestResult.consensusScore,
+    interpretation:latestResult.interpretation + ' ' + latestResult.focusEffect
+  });
+
+  renderTable();
+}
+
+function renderTable(){
+  els.tbody.innerHTML = trials.map((t,i)=>{
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${t.studyType}</td>
+        <td>${t.sampleSize}</td>
+        <td>${t.mainResult}</td>
+        <td>${t.comparisonResult}</td>
+        <td>${fmt(t.bacterialSupport,0)}%</td>
+        <td>${fmt(t.oldSupport,0)}%</td>
+        <td>${t.confidenceLabel} (${fmt(t.confidenceScore,0)}%)</td>
+        <td>${t.consensusLabel} (${fmt(t.consensusScore,0)}%)</td>
+        <td style="text-align:left">${t.interpretation}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function downloadCSV(){
+  const rows = [
+    ['Trial','Study type','Sample size','Main result','Comparison result','Modelled H pylori support percent','Modelled stress acid only support percent','Evidence confidence','Evidence confidence percent','Consensus model','Consensus percent','Interpretation'],
+    ...trials.map((t,i)=>[
+      i + 1,
+      t.studyType,
+      t.sampleSize,
+      t.mainResult,
+      t.comparisonResult,
+      t.bacterialSupport.toFixed(1),
+      t.oldSupport.toFixed(1),
+      t.confidenceLabel,
+      t.confidenceScore.toFixed(1),
+      t.consensusLabel,
+      t.consensusScore.toFixed(1),
+      t.interpretation
+    ])
+  ];
+
+  const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"','""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = 'marshall_warren_ulcer_evidence_trials.csv';
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+els.preset.addEventListener('change', applyPreset);
+
+['studyType','sampleSize','ulcerType','hpUlcer','hpControl','nsaid','quality'].forEach(id => {
+  document.getElementById(id).addEventListener('input', setCustom);
+  document.getElementById(id).addEventListener('change', setCustom);
+});
+
+els.runBtn.addEventListener('click', runInvestigation);
+els.recordBtn.addEventListener('click', recordTrial);
+els.csvBtn.addEventListener('click', downloadCSV);
+
+els.resetBtn.addEventListener('click', () => {
+  trials = [];
+  renderTable();
+  els.preset.value = 'marshall';
+  applyPreset();
+});
+
+applyPreset();
+</script>
+</body>
+</html>
