@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sneeze: Infection Spread Game</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      autoplay: "on",
+      unmuteOverlay: "hidden",
+      contextMenu: true,
+      scale: "showAll",
+      forceScale: true,
+      forceAlign: true,
+      salign: "",
+      allowFullscreen: true
+    };
+  </script>
+
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --button: #2563eb;
+      --button-hover: #1d4ed8;
+      --note-bg: #f8fafc;
+      --warning-bg: #fff7ed;
+      --warning-line: #fed7aa;
+      --warning-text: #7c2d12;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: 100vw;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .home-link,
+    .source-link {
+      display: inline-block;
+      color: var(--button);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .source-link {
+      font-size: 0.95rem;
+      color: #475569;
+    }
+
+    .home-link:hover,
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
+    .fullscreen-button {
+      border: none;
+      border-radius: 10px;
+      background: var(--button);
+      color: white;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .fullscreen-button:hover {
+      background: var(--button-hover);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+    }
+
+    p {
+      margin: 0 0 12px 0;
+      line-height: 1.45;
+    }
+
+    .intro {
+      color: var(--muted);
+      max-width: 1100px;
+    }
+
+    .learning-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .learning-card {
+      background: var(--note-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .learning-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+
+    .teacher-note {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-line);
+      color: var(--warning-text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
+
+    .swf-wrap {
+      width: 96vw;
+      height: calc(100vh - 265px);
+      min-height: 620px;
+      margin: 12px auto 0 auto;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #ruffleHost,
+    #ruffleHost ruffle-player {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+
+    .swf-wrap:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      border-radius: 0;
+      margin: 0;
+    }
+
+    .swf-wrap:fullscreen #ruffleHost,
+    .swf-wrap:fullscreen ruffle-player {
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    @media (max-width: 800px) {
+      .learning-box {
+        grid-template-columns: 1fr;
+      }
+
+      .swf-wrap {
+        width: 98vw;
+        height: calc(100vh - 330px);
+        min-height: 480px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 6px;
+      }
+
+      h1 {
+        font-size: 1.45rem;
+      }
+
+      .panel {
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .fullscreen-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="top-bar">
+      <div class="link-stack">
+        <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+        <a class="source-link" href="https://flashmuseum.org/sneeze/" target="_blank" rel="noopener noreferrer">Flash Museum source page</a>
+        <a class="source-link" href="https://web.archive.org/web/20140226071819/http://www.routesgame.com/games/?challengeId=2" target="_blank" rel="noopener noreferrer">Archived original Routes page</a>
+      </div>
+
+      <button class="fullscreen-button" onclick="openFullscreen()">Full screen</button>
+    </div>
+
+    <section class="panel">
+      <h1>Sneeze: Infection Spread Game</h1>
+
+      <p class="intro">
+        This page uses Ruffle to run an archived Flash-based disease transmission game in a modern browser.
+      </p>
+
+      <div class="learning-box">
+        <div class="learning-card">
+          <strong>Learning Intention</strong>
+          Students will understand that infectious diseases can spread through a population when infected individuals come into contact with others.
+        </div>
+
+        <div class="learning-card">
+          <strong>Success Criteria</strong>
+          Students can explain how movement, timing, contact and transmission affect the spread of infection in a population model.
+        </div>
+      </div>
+
+      <div class="teacher-note">
+        Teacher note: frame this as a disease transmission model. The game places the player in control of infection spread, so it is best used to discuss how hygiene, isolation, contact patterns and timing can affect outbreaks.
+      </div>
+
+      <div class="swf-wrap" id="swfBox">
+        <div id="ruffleHost"></div>
+      </div>
+
+      <p class="note">
+        If the simulation does not load, wait a few seconds and refresh the page. The SWF file must be in the same folder as this page and named <strong>sneeze.swf</strong>.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const SWF_FILE = "sneeze.swf";
+    let sneezePlayer = null;
+
+    function showLoadMessage(message) {
+      const host = document.getElementById("ruffleHost");
+
+      if (!host) return;
+
+      host.innerHTML = `
+        <div style="
+          color: white;
+          font-family: Arial, Helvetica, sans-serif;
+          padding: 20px;
+          line-height: 1.5;
+        ">
+          ${message}
+        </div>
+      `;
+    }
+
+    window.addEventListener("load", function () {
+      const host = document.getElementById("ruffleHost");
+
+      if (!host) {
+        console.error("Missing #ruffleHost element.");
+        return;
+      }
+
+      if (!window.RufflePlayer) {
+        showLoadMessage("Ruffle did not load. Check the Ruffle script link in the page head.");
+        console.error("window.RufflePlayer is not available.");
+        return;
+      }
+
+      try {
+        const ruffle = window.RufflePlayer.newest();
+        sneezePlayer = ruffle.createPlayer();
+
+        sneezePlayer.id = "sneezeRufflePlayer";
+        sneezePlayer.style.width = "100%";
+        sneezePlayer.style.height = "100%";
+        sneezePlayer.style.display = "block";
+
+        sneezePlayer.config = {
+          autoplay: "on",
+          unmuteOverlay: "hidden",
+          contextMenu: true,
+          scale: "showAll",
+          forceScale: true,
+          forceAlign: true,
+          salign: "",
+          allowFullscreen: true
+        };
+
+        host.innerHTML = "";
+        host.appendChild(sneezePlayer);
+
+        const loadResult = sneezePlayer.load({
+          url: SWF_FILE,
+          autoplay: "on",
+          scale: "showAll",
+          forceScale: true,
+          forceAlign: true,
+          salign: "",
+          allowFullscreen: true
+        });
+
+        if (loadResult && typeof loadResult.catch === "function") {
+          loadResult.catch(function (error) {
+            showLoadMessage("The SWF file could not be loaded. Check that the file is named sneeze.swf and is in the same folder as this page.");
+            console.error("SWF load error:", error);
+          });
+        }
+      } catch (error) {
+        showLoadMessage("The Ruffle player failed to start. Check the browser console for details.");
+        console.error("Ruffle setup error:", error);
+      }
+    });
+
+    function openFullscreen() {
+      const swfBox = document.getElementById("swfBox");
+
+      if (sneezePlayer && typeof sneezePlayer.enterFullscreen === "function") {
+        sneezePlayer.enterFullscreen();
+        return;
+      }
+
+      if (!swfBox) {
+        console.error("Missing #swfBox element.");
+        return;
+      }
+
+      if (swfBox.requestFullscreen) {
+        swfBox.requestFullscreen();
+      } else if (swfBox.webkitRequestFullscreen) {
+        swfBox.webkitRequestFullscreen();
+      } else if (swfBox.msRequestFullscreen) {
+        swfBox.msRequestFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>
