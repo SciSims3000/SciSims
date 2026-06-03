@@ -1,17 +1,14 @@
-<script>
-  const SWF_FILE = "thegreatspermrace.swf";
-  let reproductionPlayer = null;
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproduction Race: Fertilisation Simulation</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
 
-  window.addEventListener("load", function () {
-    const ruffle = window.RufflePlayer.newest();
-    reproductionPlayer = ruffle.createPlayer();
-
-    reproductionPlayer.id = "reproductionRufflePlayer";
-    reproductionPlayer.style.width = "100%";
-    reproductionPlayer.style.height = "100%";
-    reproductionPlayer.style.display = "block";
-
-    reproductionPlayer.config = {
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
       autoplay: "on",
       unmuteOverlay: "hidden",
       contextMenu: true,
@@ -21,34 +18,258 @@
       salign: "",
       allowFullscreen: true
     };
+  </script>
 
-    document.getElementById("ruffleHost").appendChild(reproductionPlayer);
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
-    reproductionPlayer.load({
-      url: SWF_FILE,
-      autoplay: "on",
-      scale: "showAll",
-      forceScale: true,
-      forceAlign: true,
-      salign: "",
-      allowFullscreen: true
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --button: #2563eb;
+      --button-hover: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: 100vw;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .home-link,
+    .archive-link {
+      display: inline-block;
+      color: var(--button);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .archive-link {
+      font-size: 0.95rem;
+      color: #475569;
+    }
+
+    .home-link:hover,
+    .archive-link:hover {
+      text-decoration: underline;
+    }
+
+    .fullscreen-button {
+      border: none;
+      border-radius: 10px;
+      background: var(--button);
+      color: white;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .fullscreen-button:hover {
+      background: var(--button-hover);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+    }
+
+    p {
+      margin: 0 0 12px 0;
+      line-height: 1.45;
+    }
+
+    .intro {
+      color: var(--muted);
+      max-width: 1100px;
+    }
+
+    .swf-wrap {
+      width: 96vw;
+      height: calc(100vh - 165px);
+      min-height: 620px;
+      margin: 12px auto 0 auto;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #ruffleHost,
+    #ruffleHost ruffle-player {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+
+    .swf-wrap:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      border-radius: 0;
+      margin: 0;
+    }
+
+    .swf-wrap:fullscreen #ruffleHost,
+    .swf-wrap:fullscreen ruffle-player {
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        padding: 6px;
+      }
+
+      h1 {
+        font-size: 1.45rem;
+      }
+
+      .panel {
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .swf-wrap {
+        width: 98vw;
+        height: calc(100vh - 200px);
+        min-height: 480px;
+      }
+
+      .fullscreen-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="top-bar">
+      <div class="link-stack">
+        <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+        <a class="archive-link" href="https://archive.org/details/thegreatspermrace" target="_blank" rel="noopener noreferrer">
+          Archived original source
+        </a>
+      </div>
+
+      <button class="fullscreen-button" onclick="openFullscreen()">Full screen</button>
+    </div>
+
+    <section class="panel">
+      <h1>Reproduction Race: Fertilisation Simulation</h1>
+
+      <p class="intro">
+        This page uses Ruffle to run an archived Flash-based educational game about fertilisation and reproductive biology in a modern browser.
+      </p>
+
+      <div class="swf-wrap" id="swfBox">
+        <div id="ruffleHost"></div>
+      </div>
+
+      <p class="note">
+        If the simulation does not load, wait a few seconds and refresh the page. The SWF file must be in the same folder as this page and named <strong>thegreatspermrace.swf</strong>.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const SWF_FILE = "thegreatspermrace.swf";
+    let reproductionPlayer = null;
+
+    window.addEventListener("load", function () {
+      const ruffle = window.RufflePlayer.newest();
+      reproductionPlayer = ruffle.createPlayer();
+
+      reproductionPlayer.id = "reproductionRufflePlayer";
+      reproductionPlayer.style.width = "100%";
+      reproductionPlayer.style.height = "100%";
+      reproductionPlayer.style.display = "block";
+
+      reproductionPlayer.config = {
+        autoplay: "on",
+        unmuteOverlay: "hidden",
+        contextMenu: true,
+        scale: "showAll",
+        forceScale: true,
+        forceAlign: true,
+        salign: "",
+        allowFullscreen: true
+      };
+
+      document.getElementById("ruffleHost").appendChild(reproductionPlayer);
+
+      reproductionPlayer.load({
+        url: SWF_FILE,
+        autoplay: "on",
+        scale: "showAll",
+        forceScale: true,
+        forceAlign: true,
+        salign: "",
+        allowFullscreen: true
+      });
     });
-  });
 
-  function openFullscreen() {
-    const swfBox = document.getElementById("swfBox");
+    function openFullscreen() {
+      const swfBox = document.getElementById("swfBox");
 
-    if (reproductionPlayer && typeof reproductionPlayer.enterFullscreen === "function") {
-      reproductionPlayer.enterFullscreen();
-      return;
+      if (reproductionPlayer && typeof reproductionPlayer.enterFullscreen === "function") {
+        reproductionPlayer.enterFullscreen();
+        return;
+      }
+
+      if (swfBox.requestFullscreen) {
+        swfBox.requestFullscreen();
+      } else if (swfBox.webkitRequestFullscreen) {
+        swfBox.webkitRequestFullscreen();
+      } else if (swfBox.msRequestFullscreen) {
+        swfBox.msRequestFullscreen();
+      }
     }
-
-    if (swfBox.requestFullscreen) {
-      swfBox.requestFullscreen();
-    } else if (swfBox.webkitRequestFullscreen) {
-      swfBox.webkitRequestFullscreen();
-    } else if (swfBox.msRequestFullscreen) {
-      swfBox.msRequestFullscreen();
-    }
-  }
-</script>
+  </script>
+</body>
+</html>
