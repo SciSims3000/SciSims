@@ -1,0 +1,54 @@
+<script>
+  const SWF_FILE = "thegreatspermrace.swf";
+  let reproductionPlayer = null;
+
+  window.addEventListener("load", function () {
+    const ruffle = window.RufflePlayer.newest();
+    reproductionPlayer = ruffle.createPlayer();
+
+    reproductionPlayer.id = "reproductionRufflePlayer";
+    reproductionPlayer.style.width = "100%";
+    reproductionPlayer.style.height = "100%";
+    reproductionPlayer.style.display = "block";
+
+    reproductionPlayer.config = {
+      autoplay: "on",
+      unmuteOverlay: "hidden",
+      contextMenu: true,
+      scale: "showAll",
+      forceScale: true,
+      forceAlign: true,
+      salign: "",
+      allowFullscreen: true
+    };
+
+    document.getElementById("ruffleHost").appendChild(reproductionPlayer);
+
+    reproductionPlayer.load({
+      url: SWF_FILE,
+      autoplay: "on",
+      scale: "showAll",
+      forceScale: true,
+      forceAlign: true,
+      salign: "",
+      allowFullscreen: true
+    });
+  });
+
+  function openFullscreen() {
+    const swfBox = document.getElementById("swfBox");
+
+    if (reproductionPlayer && typeof reproductionPlayer.enterFullscreen === "function") {
+      reproductionPlayer.enterFullscreen();
+      return;
+    }
+
+    if (swfBox.requestFullscreen) {
+      swfBox.requestFullscreen();
+    } else if (swfBox.webkitRequestFullscreen) {
+      swfBox.webkitRequestFullscreen();
+    } else if (swfBox.msRequestFullscreen) {
+      swfBox.msRequestFullscreen();
+    }
+  }
+</script>
