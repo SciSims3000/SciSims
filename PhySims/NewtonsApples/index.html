@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newton's Angry Apples</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f8f4e8;
+      --panel: #fffaf0;
+      --ink: #2f2a25;
+      --muted: #665d54;
+      --accent: #8b1e3f;
+      --accent-2: #0f766e;
+      --accent-3: #d97706;
+      --line: #d7c7ad;
+      --good: #217346;
+      --warn: #a16207;
+      --bad: #991b1b;
+      --shadow: rgba(60, 40, 20, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #fff9ed 0%, var(--bg) 55%, #efe1c8 100%);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #ffffffcc;
+      border: 1px solid var(--line);
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4.3rem);
+      letter-spacing: -0.055em;
+      line-height: 0.95;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      color: var(--muted);
+      max-width: 860px;
+    }
+
+    .learning-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: #ffffffdb;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin: 16px 0;
+      box-shadow: 0 10px 24px var(--shadow);
+    }
+
+    .learning-box h2 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--accent-2);
+    }
+
+    .learning-box p {
+      margin: 0;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0;
+      color: var(--accent);
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #ffffffcc, #f8e8d1cc);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-body {
+      padding: 14px 16px 16px;
+    }
+
+    .control-group {
+      display: grid;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px dashed #dbc9ac;
+    }
+
+    .control-group:last-child {
+      border-bottom: none;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .value-pill {
+      min-width: 68px;
+      text-align: right;
+      color: var(--accent-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select,
+    button {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      font: inherit;
+      background: #fffdf7;
+      color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 800;
+      background: var(--accent);
+      color: white;
+      border-color: #68162f;
+      box-shadow: 0 4px 10px var(--shadow);
+      transition: transform 0.08s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button.secondary {
+      background: #fffdf7;
+      color: var(--accent);
+      border-color: var(--line);
+    }
+
+    button.tertiary {
+      background: var(--accent-2);
+      border-color: #0b5e58;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .game-panel {
+      padding: 10px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: #dff4ff;
+      box-shadow: inset 0 0 0 2px #ffffff66;
+    }
+
+    canvas {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(#d7f1ff 0%, #f7fbff 48%, #e9d3a8 49%, #d5a568 100%);
+    }
+
+    .overlay-message {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fffdf2e8;
+      border: 1px solid #d4be96;
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      background: #fffdf7;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      min-height: 72px;
+    }
+
+    .metric .label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wide-section {
+      margin-top: 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdf7;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 860px;
+      font-size: 0.92rem;
+    }
+
+    th,
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #eadcc8;
+      text-align: left;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th {
+      background: #f1e2cb;
+      color: var(--accent);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .student-questions ol {
+      margin: 10px 0 0;
+      padding-left: 1.4rem;
+    }
+
+    .student-questions li {
+      margin-bottom: 8px;
+    }
+
+    .teacher-notes ul {
+      margin: 10px 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .tiny {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+
+
+    .game-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 0;
+    }
+
+    .game-status {
+      margin-top: 10px;
+    }
+
+    .model-note {
+      margin: 10px 2px 0;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      background: #fffdf7;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .mission-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdf7;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+
+    .mission-card strong {
+      display: block;
+      color: var(--accent-2);
+      margin-bottom: 4px;
+    }
+
+    .mission-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status-line {
+      min-height: 48px;
+      border-radius: 14px;
+      background: #fffdf7;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #fffdf7;
+      border: 1px solid var(--line);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid #00000030;
+    }
+
+    @media (max-width: 920px) {
+      .app-grid,
+      .learning-box,
+      .challenge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results,
+      .game-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .page {
+        width: min(100% - 14px, 1180px);
+      }
+
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row,
+      .game-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-body {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Newton's Angry Apples</h1>
+      <p class="subtitle">Launch apples, test variables and use physics evidence to solve a silly projectile-motion puzzle.</p>
+    </header>
+
+    <section class="learning-box" aria-label="Learning intention and success criteria">
+      <div>
+        <h2>Learning Intention</h2>
+        <p>Students will understand that projectile motion is affected by launch angle, launch power, gravity, mass, air resistance and collisions.</p>
+      </div>
+      <div>
+        <h2>Success Criteria</h2>
+        <p>Students can change one variable at a time, collect launch data, compare results and explain how forces and energy affected the motion of the apple.</p>
+      </div>
+    </section>
+
+    <section class="app-grid">
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>Launch Controls</h2>
+          <p class="tiny">Change one variable at a time for a fair test.</p>
+        </div>
+        <div class="panel-body">
+          <div class="control-group">
+            <label for="angle">Launch angle <span class="value-pill" id="angleValue">42°</span></label>
+            <input id="angle" type="range" min="5" max="85" value="42" />
+          </div>
+
+          <div class="control-group">
+            <label for="power">Launch power <span class="value-pill" id="powerValue">85</span></label>
+            <input id="power" type="range" min="10" max="140" value="85" />
+          </div>
+
+          <div class="control-group">
+            <label for="appleType">Apple type</label>
+            <select id="appleType">
+              <option value="regular">Regular Apple: balanced projectile</option>
+              <option value="heavy">Heavy Apple: more mass and momentum</option>
+              <option value="bouncy">Bouncy Apple: more elastic collision</option>
+              <option value="sticky">Sticky Apple: high friction after impact</option>
+              <option value="rocket">Rocket Apple: thrust after launch</option>
+              <option value="metal">Metal Apple: attracted to magnets</option>
+              <option value="ice">Ice Apple: low friction after landing</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="gravityMode">Gravity environment</label>
+            <select id="gravityMode">
+              <option value="earth">Earth: 9.8 m/s²</option>
+              <option value="moon">Moon: 1.6 m/s²</option>
+              <option value="mars">Mars: 3.7 m/s²</option>
+              <option value="jupiter">Jupiter: 24.8 m/s²</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="air">Air resistance <span class="value-pill" id="airValue">20%</span></label>
+            <input id="air" type="range" min="0" max="100" value="20" />
+          </div>
+
+          <div class="control-group">
+            <label for="wind">Wind <span class="value-pill" id="windValue">0</span></label>
+            <input id="wind" type="range" min="-60" max="60" value="0" />
+          </div>
+
+          <div class="control-group">
+            <label for="missionSelect">Mission Mode</label>
+            <select id="missionSelect">
+              <option value="free">Free play: change any variable</option>
+              <option value="angle">Mission 1: Angle Test</option>
+              <option value="gravity">Mission 2: Gravity Test</option>
+              <option value="apple">Mission 3: Apple Type Test</option>
+              <option value="air">Mission 4: Air Resistance Test</option>
+              <option value="magnet">Mission 5: Magnet Challenge</option>
+            </select>
+            <div class="mission-card" id="missionCard">
+              <strong>Free play</strong>
+              <p>Change any variable, then use the launch data to explain what happened.</p>
+            </div>
+            <div class="button-row">
+              <button id="applyMissionBtn" class="tertiary">Apply Mission</button>
+              <button id="nextMissionBtn" class="secondary">Next Mission</button>
+            </div>
+          </div>
+
+          <div class="legend" aria-label="Legend">
+            <span><i class="dot" style="background:#b91c1c;"></i> Apple</span>
+            <span><i class="dot" style="background:#0f766e;"></i> Target block</span>
+            <span><i class="dot" style="background:#7c3aed;"></i> Magnet</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel game-panel">
+        <div class="canvas-wrap">
+          <canvas id="gameCanvas" width="1120" height="630" aria-label="Newton's Angry Apples game canvas"></canvas>
+          <div class="overlay-message">
+            <span class="badge" id="levelBadge">Layout 1: Starter Orchard</span>
+            <span class="badge" id="scoreBadge">Score: 0</span>
+          </div>
+        </div>
+
+        <div class="game-buttons" aria-label="Main game controls">
+          <button id="launchBtn">Launch Apple</button>
+          <button id="resetLevelBtn" class="secondary">Reset Level</button>
+          <button id="nextLevelBtn" class="tertiary">Next Layout</button>
+          <button id="clearDataBtn" class="secondary">Clear Data</button>
+        </div>
+
+        <div class="status-line game-status" id="status">Aim carefully. Try to hit the science blocks with as few launches as possible.</div>
+
+        <div class="results">
+          <div class="metric">
+            <span class="label">Modelled distance</span>
+            <span class="value" id="distanceMetric">0.0 m</span>
+          </div>
+          <div class="metric">
+            <span class="label">Modelled max height</span>
+            <span class="value" id="heightMetric">0.0 m</span>
+          </div>
+          <div class="metric">
+            <span class="label">Highest impact speed</span>
+            <span class="value" id="speedMetric">0.0 m/s</span>
+          </div>
+          <div class="metric">
+            <span class="label">Blocks left</span>
+            <span class="value" id="blocksMetric">0</span>
+          </div>
+        </div>
+        <p class="model-note">Model note: the values are scaled for classroom play. Use them to compare trials, not as exact real-world measurements.</p>
+      </section>
+    </section>
+
+    <section class="panel wide-section">
+      <div class="panel-header">
+        <h2>Launch Data</h2>
+        <p class="tiny">Use this table to compare repeated trials. Export the data if students are graphing results in a spreadsheet.</p>
+      </div>
+      <div class="panel-body">
+        <div class="button-row" style="max-width: 460px;">
+          <button id="exportBtn" class="tertiary">Export CSV</button>
+          <button id="copyBtn" class="secondary">Copy Data</button>
+        </div>
+        <div class="table-wrap" style="margin-top: 12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Trial</th>
+                <th>Layout</th>
+                <th>Apple</th>
+                <th>Angle</th>
+                <th>Power setting</th>
+                <th>Gravity</th>
+                <th>Air resistance</th>
+                <th>Wind</th>
+                <th>Modelled distance</th>
+                <th>Modelled max height</th>
+                <th>Impact speed</th>
+                <th>Blocks hit</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr><td colspan="12">No launch data yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid wide-section">
+      <section class="panel student-questions">
+        <div class="panel-header">
+          <h2>Student Challenge</h2>
+        </div>
+        <div class="panel-body">
+          <ol>
+            <li>Use Mission 1 to find the launch angle that gives the greatest modelled distance on Earth with a Regular Apple.</li>
+            <li>Change only the apple type. Which apple transfers the most energy to the blocks? Use evidence from your trials.</li>
+            <li>Compare Earth and Moon gravity. How does lower gravity change the path of the projectile?</li>
+            <li>Use Mission 4 to increase air resistance. What happens to modelled distance and highest impact speed?</li>
+            <li>Write one conclusion using the structure: “When ___ increased, ___ changed because ___.”</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="panel teacher-notes">
+        <div class="panel-header">
+          <h2>Teacher Notes</h2>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li>This is a simplified model, not a precise physics engine.</li>
+            <li>Good variables for fair testing: angle, launch power, gravity, air resistance, apple type and wind.</li>
+            <li>Useful discussion terms: force, acceleration, gravity, mass, inertia, kinetic energy, momentum, friction and air resistance.</li>
+            <li>For a data task, ask students to run at least five repeated trials while changing only one variable.</li>
+            <li>Limitations include simplified drag, simplified collision behaviour and stylised scoring.</li>
+            <li>Version note: launch power and air resistance have been tuned for classroom playability rather than strict numerical realism.</li>
+          </ul>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const angleEl = document.getElementById("angle");
+    const powerEl = document.getElementById("power");
+    const appleTypeEl = document.getElementById("appleType");
+    const gravityModeEl = document.getElementById("gravityMode");
+    const airEl = document.getElementById("air");
+    const windEl = document.getElementById("wind");
+
+    const angleValue = document.getElementById("angleValue");
+    const powerValue = document.getElementById("powerValue");
+    const airValue = document.getElementById("airValue");
+    const windValue = document.getElementById("windValue");
+
+    const launchBtn = document.getElementById("launchBtn");
+    const resetLevelBtn = document.getElementById("resetLevelBtn");
+    const nextLevelBtn = document.getElementById("nextLevelBtn");
+    const clearDataBtn = document.getElementById("clearDataBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const missionSelect = document.getElementById("missionSelect");
+    const missionCard = document.getElementById("missionCard");
+    const applyMissionBtn = document.getElementById("applyMissionBtn");
+    const nextMissionBtn = document.getElementById("nextMissionBtn");
+
+    const statusEl = document.getElementById("status");
+    const levelBadge = document.getElementById("levelBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
+
+    const distanceMetric = document.getElementById("distanceMetric");
+    const heightMetric = document.getElementById("heightMetric");
+    const speedMetric = document.getElementById("speedMetric");
+    const blocksMetric = document.getElementById("blocksMetric");
+    const dataBody = document.getElementById("dataBody");
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const groundY = 525;
+    const launcher = { x: 105, y: groundY - 24 };
+
+    const gravityModes = {
+      earth: { name: "Earth", g: 9.8, simG: 360 },
+      moon: { name: "Moon", g: 1.6, simG: 95 },
+      mars: { name: "Mars", g: 3.7, simG: 185 },
+      jupiter: { name: "Jupiter", g: 24.8, simG: 740 }
+    };
+
+    const appleTypes = {
+      regular: { name: "Regular", mass: 1.0, radius: 15, restitution: 0.30, friction: 0.72, colour: "#b91c1c", speedMod: 1.0 },
+      heavy: { name: "Heavy", mass: 2.4, radius: 19, restitution: 0.22, friction: 0.64, colour: "#7f1d1d", speedMod: 0.78 },
+      bouncy: { name: "Bouncy", mass: 0.85, radius: 15, restitution: 0.78, friction: 0.88, colour: "#e11d48", speedMod: 1.02 },
+      sticky: { name: "Sticky", mass: 1.1, radius: 16, restitution: 0.05, friction: 0.22, colour: "#9333ea", speedMod: 0.95 },
+      rocket: { name: "Rocket", mass: 1.0, radius: 15, restitution: 0.34, friction: 0.74, colour: "#ea580c", speedMod: 0.95 },
+      metal: { name: "Metal", mass: 1.7, radius: 16, restitution: 0.24, friction: 0.61, colour: "#64748b", speedMod: 0.86 },
+      ice: { name: "Ice", mass: 0.9, radius: 15, restitution: 0.28, friction: 0.96, colour: "#38bdf8", speedMod: 1.03 }
+    };
+
+    const layouts = [
+      {
+        name: "Starter Orchard",
+        targetText: "Start here. Hit the closer science blocks before trying the longer layouts.",
+        blocks: [
+          { x: 520, y: groundY - 42, w: 56, h: 42, hp: 1 },
+          { x: 580, y: groundY - 42, w: 56, h: 42, hp: 1 },
+          { x: 640, y: groundY - 42, w: 56, h: 42, hp: 1 },
+          { x: 550, y: groundY - 86, w: 56, h: 42, hp: 1 },
+          { x: 610, y: groundY - 86, w: 56, h: 42, hp: 1 }
+        ],
+        barriers: [],
+        magnets: []
+      },
+      {
+        name: "Orchard Basics",
+        targetText: "Hit the stacked science blocks.",
+        blocks: [
+          { x: 760, y: groundY - 44, w: 58, h: 44, hp: 1 },
+          { x: 822, y: groundY - 44, w: 58, h: 44, hp: 1 },
+          { x: 884, y: groundY - 44, w: 58, h: 44, hp: 1 },
+          { x: 791, y: groundY - 90, w: 58, h: 44, hp: 1 },
+          { x: 853, y: groundY - 90, w: 58, h: 44, hp: 1 },
+          { x: 822, y: groundY - 136, w: 58, h: 44, hp: 1 }
+        ],
+        barriers: [],
+        magnets: []
+      },
+      {
+        name: "Friction Farm",
+        targetText: "Use mass and energy to clear the low wall.",
+        blocks: [
+          { x: 680, y: groundY - 42, w: 60, h: 42, hp: 1 },
+          { x: 742, y: groundY - 42, w: 60, h: 42, hp: 1 },
+          { x: 804, y: groundY - 42, w: 60, h: 42, hp: 1 },
+          { x: 866, y: groundY - 42, w: 60, h: 42, hp: 1 },
+          { x: 928, y: groundY - 42, w: 60, h: 42, hp: 1 },
+          { x: 742, y: groundY - 86, w: 60, h: 42, hp: 1 },
+          { x: 804, y: groundY - 86, w: 60, h: 42, hp: 1 },
+          { x: 866, y: groundY - 86, w: 60, h: 42, hp: 1 }
+        ],
+        barriers: [
+          { x: 590, y: groundY - 75, w: 24, h: 75, colour: "#8b5e34" }
+        ],
+        magnets: []
+      },
+      {
+        name: "Magnet Mountain",
+        targetText: "Try the Metal Apple near the magnetic field.",
+        blocks: [
+          { x: 790, y: groundY - 48, w: 62, h: 48, hp: 1 },
+          { x: 856, y: groundY - 48, w: 62, h: 48, hp: 1 },
+          { x: 922, y: groundY - 48, w: 62, h: 48, hp: 1 },
+          { x: 823, y: groundY - 98, w: 62, h: 48, hp: 1 },
+          { x: 889, y: groundY - 98, w: 62, h: 48, hp: 1 }
+        ],
+        barriers: [],
+        magnets: [
+          { x: 690, y: groundY - 170, r: 28, strength: 56000 }
+        ]
+      },
+      {
+        name: "Energy Orchard",
+        targetText: "Transfer enough kinetic energy to destroy stronger blocks.",
+        blocks: [
+          { x: 760, y: groundY - 52, w: 70, h: 52, hp: 2 },
+          { x: 834, y: groundY - 52, w: 70, h: 52, hp: 2 },
+          { x: 908, y: groundY - 52, w: 70, h: 52, hp: 2 },
+          { x: 797, y: groundY - 108, w: 70, h: 52, hp: 2 },
+          { x: 871, y: groundY - 108, w: 70, h: 52, hp: 2 },
+          { x: 834, y: groundY - 164, w: 70, h: 52, hp: 2 }
+        ],
+        barriers: [
+          { x: 650, y: groundY - 95, w: 22, h: 95, colour: "#5b4636" }
+        ],
+        magnets: []
+      }
+    ];
+
+
+    const missions = {
+      free: {
+        title: "Free play",
+        text: "Change any variable, then use the launch data to explain what happened.",
+        settings: null
+      },
+      angle: {
+        title: "Mission 1: Angle Test",
+        text: "Fair test focus: keep apple type, launch power, gravity, air resistance and wind the same. Test 20°, 35°, 45°, 60° and 75°.",
+        settings: { layout: 0, angle: 45, power: 80, appleType: "regular", gravityMode: "earth", air: 10, wind: 0 }
+      },
+      gravity: {
+        title: "Mission 2: Gravity Test",
+        text: "Fair test focus: keep angle, launch power, apple type, air resistance and wind the same. Compare Earth, Moon, Mars and Jupiter.",
+        settings: { layout: 0, angle: 45, power: 85, appleType: "regular", gravityMode: "earth", air: 10, wind: 0 }
+      },
+      apple: {
+        title: "Mission 3: Apple Type Test",
+        text: "Fair test focus: keep angle, launch power, gravity, air resistance and wind the same. Compare Regular, Heavy, Bouncy and Ice apples.",
+        settings: { layout: 1, angle: 42, power: 95, appleType: "regular", gravityMode: "earth", air: 15, wind: 0 }
+      },
+      air: {
+        title: "Mission 4: Air Resistance Test",
+        text: "Fair test focus: keep angle, launch power, apple type, gravity and wind the same. Compare air resistance values such as 0%, 20%, 60% and 100%.",
+        settings: { layout: 0, angle: 45, power: 95, appleType: "regular", gravityMode: "earth", air: 0, wind: 0 }
+      },
+      magnet: {
+        title: "Mission 5: Magnet Challenge",
+        text: "Use the Metal Apple and test how the magnetic field changes the path. Try comparing Metal and Regular apples using the same settings.",
+        settings: { layout: 3, angle: 38, power: 90, appleType: "metal", gravityMode: "earth", air: 10, wind: 0 }
+      }
+    };
+
+    let currentLayout = 0;
+    let blocks = [];
+    let barriers = [];
+    let magnets = [];
+    let apple = null;
+    let particles = [];
+    let trail = [];
+    let shotData = [];
+    let trial = 0;
+    let score = 0;
+    let shotsThisLayout = 0;
+    let blocksHitThisShot = 0;
+    let lastTime = performance.now();
+    let simRunning = true;
+
+    function deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function resetLayout(keepScore = true) {
+      const layout = layouts[currentLayout];
+      blocks = deepCopy(layout.blocks).map((b, index) => ({
+        ...b,
+        id: index,
+        alive: true,
+        hitFlash: 0
+      }));
+      barriers = deepCopy(layout.barriers);
+      magnets = deepCopy(layout.magnets);
+      apple = null;
+      particles = [];
+      trail = [];
+      blocksHitThisShot = 0;
+      shotsThisLayout = 0;
+      if (!keepScore) score = 0;
+      updateMetrics();
+      updateBadges();
+      statusEl.textContent = layout.targetText + " The physics has been tuned so medium to high power shots can reach the target.";
+    }
+
+    function updateControlLabels() {
+      angleValue.textContent = `${angleEl.value}°`;
+      powerValue.textContent = `${powerEl.value}`;
+      airValue.textContent = `${airEl.value}%`;
+      const w = Number(windEl.value);
+      windValue.textContent = w === 0 ? "0" : (w > 0 ? `+${w}` : `${w}`);
+    }
+
+    function updateBadges() {
+      levelBadge.textContent = `Layout ${currentLayout + 1}: ${layouts[currentLayout].name}`;
+      scoreBadge.textContent = `Score: ${score}`;
+      const left = blocks.filter(b => b.alive).length;
+      blocksMetric.textContent = String(left);
+    }
+
+    function updateMetrics(distance = 0, maxHeight = 0, speed = 0) {
+      distanceMetric.textContent = `${distance.toFixed(1)} m`;
+      heightMetric.textContent = `${maxHeight.toFixed(1)} m`;
+      speedMetric.textContent = `${speed.toFixed(1)} m/s`;
+      blocksMetric.textContent = String(blocks.filter(b => b.alive).length);
+    }
+
+    function launchApple() {
+      if (apple && apple.active) {
+        statusEl.textContent = "Wait for the current apple to finish before launching another one.";
+        return;
+      }
+
+      const angleDeg = Number(angleEl.value);
+      const power = Number(powerEl.value);
+      const typeKey = appleTypeEl.value;
+      const type = appleTypes[typeKey];
+      const rad = angleDeg * Math.PI / 180;
+      const speed = power * 6.0 * type.speedMod;
+      const vx = Math.cos(rad) * speed;
+      const vy = -Math.sin(rad) * speed;
+
+      apple = {
+        x: launcher.x,
+        y: launcher.y,
+        vx,
+        vy,
+        typeKey,
+        mass: type.mass,
+        radius: type.radius,
+        restitution: type.restitution,
+        friction: type.friction,
+        colour: type.colour,
+        active: true,
+        stuck: false,
+        birth: performance.now(),
+        maxHeightPx: 0,
+        startX: launcher.x,
+        lastImpactSpeed: 0,
+        maxImpactSpeed: 0,
+        rocketFuel: typeKey === "rocket" ? 0.9 : 0,
+        finalised: false
+      };
+
+      trail = [];
+      blocksHitThisShot = 0;
+      shotsThisLayout += 1;
+      statusEl.textContent = "Apple launched. Watch how angle, launch power and gravity shape the path.";
+    }
+
+    function finaliseShot(reason = "Apple stopped") {
+      if (!apple || apple.finalised) return;
+
+      apple.finalised = true;
+      apple.active = false;
+
+      const angleDeg = Number(angleEl.value);
+      const power = Number(powerEl.value);
+      const gravity = gravityModes[gravityModeEl.value];
+      const type = appleTypes[apple.typeKey];
+      const air = Number(airEl.value);
+      const wind = Number(windEl.value);
+
+      const pxDistance = Math.max(0, apple.x - apple.startX);
+      const distance = pxToM(pxDistance);
+      const maxHeight = pxToM(apple.maxHeightPx);
+      const speed = pxSpeedToMS(apple.maxImpactSpeed || apple.lastImpactSpeed || Math.hypot(apple.vx, apple.vy));
+
+      updateMetrics(distance, maxHeight, speed);
+
+      trial += 1;
+      shotData.push({
+        trial,
+        layout: layouts[currentLayout].name,
+        apple: type.name,
+        angle: angleDeg,
+        powerSetting: power,
+        gravity: gravity.name,
+        airResistance: air,
+        wind,
+        distance: Number(distance.toFixed(2)),
+        maxHeight: Number(maxHeight.toFixed(2)),
+        impactSpeed: Number(speed.toFixed(2)),
+        blocksHit: blocksHitThisShot
+      });
+
+      renderTable();
+
+      const left = blocks.filter(b => b.alive).length;
+      if (left === 0) {
+        const bonus = Math.max(0, 10 - shotsThisLayout) * 10;
+        score += bonus;
+        statusEl.textContent = `Layout cleared. ${reason}. Bonus score: ${bonus}. Try the next layout.`;
+      } else if (blocksHitThisShot > 0) {
+        statusEl.textContent = `${reason}. Blocks hit: ${blocksHitThisShot}. Blocks remaining: ${left}.`;
+      } else {
+        statusEl.textContent = `${reason}. No blocks hit. Try changing one variable and testing again.`;
+      }
+
+      updateBadges();
+    }
+
+    function pxToM(px) {
+      return px / 18;
+    }
+
+    function pxSpeedToMS(pxPerS) {
+      return pxPerS / 34;
+    }
+
+    function mSToPxSpeed(ms) {
+      return ms * 34;
+    }
+
+    function updatePhysics(dt) {
+      particles = particles.filter(p => p.life > 0);
+      for (const p of particles) {
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.vy += 220 * dt;
+        p.life -= dt;
+      }
+
+      for (const b of blocks) {
+        if (b.hitFlash > 0) b.hitFlash -= dt;
+      }
+
+      if (!apple || !apple.active) return;
+
+      const gravity = gravityModes[gravityModeEl.value];
+      const drag = Number(airEl.value) / 100;
+      const wind = Number(windEl.value);
+
+      if (apple.typeKey === "metal") {
+        for (const m of magnets) {
+          const dx = m.x - apple.x;
+          const dy = m.y - apple.y;
+          const d2 = Math.max(1600, dx * dx + dy * dy);
+          const d = Math.sqrt(d2);
+          const force = m.strength / d2;
+          apple.vx += (dx / d) * force * dt * 95;
+          apple.vy += (dy / d) * force * dt * 95;
+        }
+      }
+
+      if (apple.typeKey === "rocket" && apple.rocketFuel > 0) {
+        const speed = Math.hypot(apple.vx, apple.vy) || 1;
+        apple.vx += (apple.vx / speed) * 120 * dt;
+        apple.vy += (apple.vy / speed) * 120 * dt;
+        apple.rocketFuel -= dt;
+        makeParticle(apple.x - apple.vx * 0.02, apple.y - apple.vy * 0.02, "#f97316", 2);
+      }
+
+      apple.vy += gravity.simG * dt;
+      apple.vx += wind * dt * 1.5;
+
+      const speed = Math.hypot(apple.vx, apple.vy);
+      if (speed > 1) {
+        const dragForce = drag * 0.0035 * speed * speed / Math.max(0.8, apple.mass);
+        apple.vx -= (apple.vx / speed) * dragForce * dt;
+        apple.vy -= (apple.vy / speed) * dragForce * dt;
+      }
+
+      apple.x += apple.vx * dt;
+      apple.y += apple.vy * dt;
+
+      apple.maxHeightPx = Math.max(apple.maxHeightPx, launcher.y - apple.y);
+
+      if (trail.length === 0 || distanceBetween(trail[trail.length - 1], apple) > 8) {
+        trail.push({ x: apple.x, y: apple.y });
+        if (trail.length > 90) trail.shift();
+      }
+
+      handleGroundCollision();
+      handleBarrierCollisions();
+      handleBlockCollisions();
+
+      const speedNow = Math.hypot(apple.vx, apple.vy);
+      apple.lastImpactSpeed = speedNow;
+
+      if (apple.x > W + 80 || apple.y > H + 120 || apple.x < -120) {
+        finaliseShot("Apple left the play area");
+      }
+
+      if (!apple.finalised && apple.y + apple.radius >= groundY - 1 && speedNow < 38) {
+        finaliseShot("Apple came to rest");
+      }
+
+      if (!apple.finalised && performance.now() - apple.birth > 9000) {
+        finaliseShot("Time limit reached");
+      }
+    }
+
+
+    function recordImpactSpeed(pxSpeed) {
+      if (!apple) return;
+      apple.maxImpactSpeed = Math.max(apple.maxImpactSpeed || 0, pxSpeed);
+    }
+
+    function handleGroundCollision() {
+      if (!apple || apple.stuck) return;
+      if (apple.y + apple.radius >= groundY) {
+        apple.y = groundY - apple.radius;
+
+        const impactSpeed = Math.hypot(apple.vx, apple.vy);
+        recordImpactSpeed(impactSpeed);
+
+        if (Math.abs(apple.vy) > 70) {
+          makeImpact(apple.x, apple.y + apple.radius, apple.colour, 8);
+        }
+
+        apple.vy = -apple.vy * apple.restitution;
+        apple.vx *= apple.friction;
+
+        if (apple.typeKey === "sticky") {
+          apple.vx *= 0.25;
+          apple.vy *= 0.1;
+        }
+      }
+    }
+
+    function handleBarrierCollisions() {
+      if (!apple || apple.stuck) return;
+      for (const r of barriers) {
+        if (circleRectCollision(apple, r)) {
+          recordImpactSpeed(Math.hypot(apple.vx, apple.vy));
+          resolveCircleRect(apple, r, false);
+          makeImpact(apple.x, apple.y, "#8b5e34", 5);
+        }
+      }
+    }
+
+    function handleBlockCollisions() {
+      if (!apple || apple.stuck) return;
+
+      for (const b of blocks) {
+        if (!b.alive) continue;
+        if (circleRectCollision(apple, b)) {
+          const speed = Math.hypot(apple.vx, apple.vy);
+          recordImpactSpeed(speed);
+          const kinetic = 0.5 * apple.mass * Math.pow(speed / 120, 2);
+          const damage = kinetic > 6 ? 2 : 1;
+
+          b.hp -= damage;
+          b.hitFlash = 0.18;
+          resolveCircleRect(apple, b, true);
+          makeImpact(apple.x, apple.y, "#0f766e", 9);
+
+          if (b.hp <= 0) {
+            b.alive = false;
+            score += 20;
+            blocksHitThisShot += 1;
+            burstBlock(b);
+          } else {
+            score += 5;
+          }
+
+          updateBadges();
+        }
+      }
+    }
+
+    function circleRectCollision(c, r) {
+      const closestX = Math.max(r.x, Math.min(c.x, r.x + r.w));
+      const closestY = Math.max(r.y, Math.min(c.y, r.y + r.h));
+      const dx = c.x - closestX;
+      const dy = c.y - closestY;
+      return dx * dx + dy * dy <= c.radius * c.radius;
+    }
+
+    function resolveCircleRect(c, r, isBlock) {
+      const closestX = Math.max(r.x, Math.min(c.x, r.x + r.w));
+      const closestY = Math.max(r.y, Math.min(c.y, r.y + r.h));
+      let dx = c.x - closestX;
+      let dy = c.y - closestY;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist === 0) {
+        const left = Math.abs(c.x - r.x);
+        const right = Math.abs(c.x - (r.x + r.w));
+        const top = Math.abs(c.y - r.y);
+        const bottom = Math.abs(c.y - (r.y + r.h));
+        const min = Math.min(left, right, top, bottom);
+        if (min === left) { dx = -1; dy = 0; }
+        else if (min === right) { dx = 1; dy = 0; }
+        else if (min === top) { dx = 0; dy = -1; }
+        else { dx = 0; dy = 1; }
+        dist = 1;
+      }
+
+      const nx = dx / dist;
+      const ny = dy / dist;
+      const overlap = c.radius - dist;
+      c.x += nx * (overlap + 0.5);
+      c.y += ny * (overlap + 0.5);
+
+      const dot = c.vx * nx + c.vy * ny;
+      if (dot < 0) {
+        const bounce = c.restitution * (isBlock ? 0.82 : 1);
+        c.vx -= (1 + bounce) * dot * nx;
+        c.vy -= (1 + bounce) * dot * ny;
+        c.vx *= isBlock ? 0.86 : 0.78;
+        c.vy *= isBlock ? 0.86 : 0.78;
+      }
+
+      if (c.typeKey === "sticky" && isBlock) {
+        c.vx *= 0.25;
+        c.vy *= 0.25;
+      }
+    }
+
+    function makeParticle(x, y, colour, count = 1) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 80,
+          vy: (Math.random() - 0.5) * 80,
+          r: 2 + Math.random() * 3,
+          colour,
+          life: 0.4 + Math.random() * 0.4
+        });
+      }
+    }
+
+    function makeImpact(x, y, colour, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 190,
+          vy: -Math.random() * 160,
+          r: 2 + Math.random() * 4,
+          colour,
+          life: 0.45 + Math.random() * 0.5
+        });
+      }
+    }
+
+    function burstBlock(b) {
+      for (let i = 0; i < 16; i++) {
+        particles.push({
+          x: b.x + b.w / 2,
+          y: b.y + b.h / 2,
+          vx: (Math.random() - 0.5) * 260,
+          vy: -80 - Math.random() * 160,
+          r: 3 + Math.random() * 5,
+          colour: i % 2 ? "#0f766e" : "#14b8a6",
+          life: 0.6 + Math.random() * 0.6
+        });
+      }
+    }
+
+    function distanceBetween(a, b) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      drawSky();
+      drawGround();
+      drawLauncher();
+      drawAimLine();
+      drawTrail();
+      drawBarriers();
+      drawMagnets();
+      drawBlocks();
+      drawApple();
+      drawParticles();
+      drawAxisHint();
+    }
+
+    function drawSky() {
+      const g = ctx.createLinearGradient(0, 0, 0, groundY);
+      g.addColorStop(0, "#d7f1ff");
+      g.addColorStop(0.68, "#f7fbff");
+      g.addColorStop(1, "#fff8dc");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, groundY);
+
+      ctx.fillStyle = "#ffffffaa";
+      cloud(250, 95, 44);
+      cloud(520, 70, 34);
+      cloud(910, 105, 40);
+
+      ctx.fillStyle = "#fde68a";
+      ctx.beginPath();
+      ctx.arc(1000, 86, 36, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function cloud(x, y, s) {
+      ctx.beginPath();
+      ctx.arc(x, y, s * 0.55, 0, Math.PI * 2);
+      ctx.arc(x + s * 0.45, y - s * 0.2, s * 0.65, 0, Math.PI * 2);
+      ctx.arc(x + s * 0.95, y, s * 0.5, 0, Math.PI * 2);
+      ctx.rect(x - s * 0.1, y, s * 1.1, s * 0.35);
+      ctx.fill();
+    }
+
+    function drawGround() {
+      const g = ctx.createLinearGradient(0, groundY, 0, H);
+      g.addColorStop(0, "#d6a15f");
+      g.addColorStop(1, "#9a6739");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, groundY, W, H - groundY);
+
+      ctx.fillStyle = "#6b3f21";
+      ctx.fillRect(0, groundY, W, 5);
+
+      ctx.strokeStyle = "#ffffff42";
+      ctx.lineWidth = 2;
+      for (let x = 0; x < W; x += 56) {
+        ctx.beginPath();
+        ctx.moveTo(x, groundY + 25);
+        ctx.lineTo(x + 30, groundY + 40);
+        ctx.stroke();
+      }
+    }
+
+    function drawLauncher() {
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.lineWidth = 14;
+      ctx.strokeStyle = "#8b5e34";
+      ctx.beginPath();
+      ctx.moveTo(launcher.x - 25, groundY + 5);
+      ctx.lineTo(launcher.x - 5, launcher.y - 45);
+      ctx.moveTo(launcher.x + 25, groundY + 5);
+      ctx.lineTo(launcher.x + 5, launcher.y - 45);
+      ctx.stroke();
+
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#3f2c1c";
+      ctx.beginPath();
+      ctx.moveTo(launcher.x - 8, launcher.y - 38);
+      ctx.lineTo(launcher.x + 8, launcher.y - 38);
+      ctx.stroke();
+
+      ctx.fillStyle = "#5b351c";
+      ctx.fillRect(launcher.x - 40, groundY + 4, 80, 15);
+      ctx.restore();
+    }
+
+    function drawAimLine() {
+      if (apple && apple.active) return;
+
+      const angleDeg = Number(angleEl.value);
+      const power = Number(powerEl.value);
+      const type = appleTypes[appleTypeEl.value];
+      const rad = angleDeg * Math.PI / 180;
+      const len = 85 + power * 1.7;
+      const endX = launcher.x + Math.cos(rad) * len;
+      const endY = launcher.y - Math.sin(rad) * len;
+
+      ctx.save();
+      ctx.strokeStyle = "#8b1e3fcc";
+      ctx.lineWidth = 4;
+      ctx.setLineDash([10, 8]);
+      ctx.beginPath();
+      ctx.moveTo(launcher.x, launcher.y);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = type.colour;
+      ctx.beginPath();
+      ctx.arc(launcher.x, launcher.y, type.radius, 0, Math.PI * 2);
+      ctx.fill();
+      drawAppleDetails(launcher.x, launcher.y, type.radius);
+      ctx.restore();
+    }
+
+    function drawTrail() {
+      if (trail.length < 2) return;
+      ctx.save();
+      ctx.strokeStyle = "#8b1e3f66";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 8]);
+      ctx.beginPath();
+      ctx.moveTo(trail[0].x, trail[0].y);
+      for (let i = 1; i < trail.length; i++) {
+        ctx.lineTo(trail[i].x, trail[i].y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawApple() {
+      if (!apple) return;
+      ctx.save();
+      ctx.fillStyle = apple.colour;
+      ctx.beginPath();
+      ctx.arc(apple.x, apple.y, apple.radius, 0, Math.PI * 2);
+      ctx.fill();
+      drawAppleDetails(apple.x, apple.y, apple.radius);
+
+      if (apple.typeKey === "metal") {
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(apple.x, apple.y, apple.radius - 4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      if (apple.typeKey === "rocket") {
+        ctx.fillStyle = "#fb923c";
+        ctx.beginPath();
+        ctx.moveTo(apple.x - apple.radius, apple.y + apple.radius * 0.2);
+        ctx.lineTo(apple.x - apple.radius - 18, apple.y + 5);
+        ctx.lineTo(apple.x - apple.radius, apple.y - apple.radius * 0.2);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawAppleDetails(x, y, r) {
+      ctx.save();
+      ctx.strokeStyle = "#4a2c15";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, y - r + 2);
+      ctx.quadraticCurveTo(x + 4, y - r - 13, x + 14, y - r - 14);
+      ctx.stroke();
+
+      ctx.fillStyle = "#15803d";
+      ctx.beginPath();
+      ctx.ellipse(x + 14, y - r - 9, 9, 5, -0.45, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff88";
+      ctx.beginPath();
+      ctx.arc(x - r * 0.33, y - r * 0.28, r * 0.22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBlocks() {
+      for (const b of blocks) {
+        if (!b.alive) continue;
+
+        ctx.save();
+        ctx.fillStyle = b.hitFlash > 0 ? "#f59e0b" : (b.hp > 1 ? "#0e7490" : "#0f766e");
+        roundRect(ctx, b.x, b.y, b.w, b.h, 8);
+        ctx.fill();
+
+        ctx.strokeStyle = "#064e3b";
+        ctx.lineWidth = 3;
+        roundRect(ctx, b.x, b.y, b.w, b.h, 8);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffffcc";
+        ctx.font = "700 14px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        const label = b.hp > 1 ? "E" : "F";
+        ctx.fillText(label, b.x + b.w / 2, b.y + b.h / 2);
+        ctx.restore();
+      }
+    }
+
+    function drawBarriers() {
+      for (const r of barriers) {
+        ctx.save();
+        ctx.fillStyle = r.colour || "#8b5e34";
+        roundRect(ctx, r.x, r.y, r.w, r.h, 7);
+        ctx.fill();
+        ctx.strokeStyle = "#513018";
+        ctx.lineWidth = 3;
+        roundRect(ctx, r.x, r.y, r.w, r.h, 7);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function drawMagnets() {
+      for (const m of magnets) {
+        ctx.save();
+        ctx.translate(m.x, m.y);
+        ctx.strokeStyle = "#7c3aed";
+        ctx.lineWidth = 14;
+        ctx.beginPath();
+        ctx.arc(0, 0, m.r, Math.PI * 0.15, Math.PI * 1.85);
+        ctx.stroke();
+
+        ctx.fillStyle = "#7c3aed";
+        ctx.fillRect(-m.r - 4, -8, 16, 16);
+        ctx.fillRect(m.r - 12, -8, 16, 16);
+
+        ctx.strokeStyle = "#7c3aed55";
+        ctx.lineWidth = 2;
+        for (let r = 45; r <= 95; r += 25) {
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawParticles() {
+      for (const p of particles) {
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.7));
+        ctx.fillStyle = p.colour;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawAxisHint() {
+      ctx.save();
+      ctx.fillStyle = "#2f2a25aa";
+      ctx.font = "700 13px system-ui";
+      ctx.fillText("Distance →", 205, groundY + 34);
+      ctx.strokeStyle = "#2f2a2577";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(285, groundY + 30);
+      ctx.lineTo(385, groundY + 30);
+      ctx.lineTo(374, groundY + 24);
+      ctx.moveTo(385, groundY + 30);
+      ctx.lineTo(374, groundY + 36);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const rr = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rr, y);
+      ctx.lineTo(x + w - rr, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+      ctx.lineTo(x + w, y + h - rr);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+      ctx.lineTo(x + rr, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+      ctx.lineTo(x, y + rr);
+      ctx.quadraticCurveTo(x, y, x + rr, y);
+      ctx.closePath();
+    }
+
+
+    function updateMissionCard() {
+      const mission = missions[missionSelect.value] || missions.free;
+      missionCard.innerHTML = `<strong>${escapeHtml(mission.title)}</strong><p>${escapeHtml(mission.text)}</p>`;
+    }
+
+    function setControlValue(control, value) {
+      control.value = String(value);
+      control.dispatchEvent(new Event("input"));
+    }
+
+    function applyMission() {
+      const mission = missions[missionSelect.value] || missions.free;
+      updateMissionCard();
+
+      if (!mission.settings) {
+        statusEl.textContent = "Free play selected. Change variables freely, then explain your result using the data table.";
+        return;
+      }
+
+      const s = mission.settings;
+      if (typeof s.layout === "number" && s.layout !== currentLayout) {
+        currentLayout = s.layout;
+        resetLayout(true);
+      }
+
+      setControlValue(angleEl, s.angle);
+      setControlValue(powerEl, s.power);
+      appleTypeEl.value = s.appleType;
+      gravityModeEl.value = s.gravityMode;
+      setControlValue(airEl, s.air);
+      setControlValue(windEl, s.wind);
+      updateControlLabels();
+
+      statusEl.textContent = `${mission.title} applied. ${mission.text}`;
+    }
+
+    function nextMission() {
+      const values = Array.from(missionSelect.options).map(option => option.value);
+      const nextIndex = (values.indexOf(missionSelect.value) + 1) % values.length;
+      missionSelect.value = values[nextIndex];
+      applyMission();
+    }
+
+    function renderTable() {
+      if (!shotData.length) {
+        dataBody.innerHTML = `<tr><td colspan="12">No launch data yet.</td></tr>`;
+        return;
+      }
+
+      dataBody.innerHTML = shotData.map(row => `
+        <tr>
+          <td>${row.trial}</td>
+          <td>${escapeHtml(row.layout)}</td>
+          <td>${escapeHtml(row.apple)}</td>
+          <td>${row.angle}°</td>
+          <td>${row.powerSetting}</td>
+          <td>${escapeHtml(row.gravity)}</td>
+          <td>${row.airResistance}%</td>
+          <td>${row.wind}</td>
+          <td>${row.distance} m</td>
+          <td>${row.maxHeight} m</td>
+          <td>${row.impactSpeed} m/s</td>
+          <td>${row.blocksHit}</td>
+        </tr>
+      `).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getCsvText() {
+      const headers = [
+        "Trial", "Layout", "Apple", "Angle (degrees)", "Power setting", "Gravity",
+        "Air resistance (%)", "Wind", "Modelled distance (m)", "Modelled max height (m)",
+        "Impact speed (m/s)", "Blocks hit"
+      ];
+
+      const rows = shotData.map(r => [
+        r.trial,
+        r.layout,
+        r.apple,
+        r.angle,
+        r.powerSetting,
+        r.gravity,
+        r.airResistance,
+        r.wind,
+        r.distance,
+        r.maxHeight,
+        r.impactSpeed,
+        r.blocksHit
+      ]);
+
+      return [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
+        .join("\n");
+    }
+
+    function downloadCsv() {
+      if (!shotData.length) {
+        statusEl.textContent = "Launch at least one apple before exporting data.";
+        return;
+      }
+
+      const blob = new Blob([getCsvText()], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "newtons-angry-apples-data.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      statusEl.textContent = "CSV exported.";
+    }
+
+    async function copyData() {
+      if (!shotData.length) {
+        statusEl.textContent = "Launch at least one apple before copying data.";
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(getCsvText());
+        statusEl.textContent = "Launch data copied to the clipboard.";
+      } catch (err) {
+        statusEl.textContent = "Clipboard copy was blocked by the browser. Use Export CSV instead.";
+      }
+    }
+
+    function loop(now) {
+      if (!simRunning) return;
+      const dt = Math.min(0.033, (now - lastTime) / 1000);
+      lastTime = now;
+      updatePhysics(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    angleEl.addEventListener("input", updateControlLabels);
+    powerEl.addEventListener("input", updateControlLabels);
+    airEl.addEventListener("input", updateControlLabels);
+    windEl.addEventListener("input", updateControlLabels);
+    appleTypeEl.addEventListener("change", () => {
+      const type = appleTypes[appleTypeEl.value];
+      statusEl.textContent = `${type.name} Apple selected. Predict how mass, bounce or special behaviour will change the result.`;
+    });
+    gravityModeEl.addEventListener("change", () => {
+      const g = gravityModes[gravityModeEl.value];
+      statusEl.textContent = `${g.name} gravity selected. Compare the projectile path to Earth.`;
+    });
+
+    missionSelect.addEventListener("change", updateMissionCard);
+    applyMissionBtn.addEventListener("click", applyMission);
+    nextMissionBtn.addEventListener("click", nextMission);
+
+    launchBtn.addEventListener("click", launchApple);
+
+    resetLevelBtn.addEventListener("click", () => {
+      resetLayout(true);
+      statusEl.textContent = "Level reset. Keep the same settings or change one variable for a fair test.";
+    });
+
+    nextLevelBtn.addEventListener("click", () => {
+      currentLayout = (currentLayout + 1) % layouts.length;
+      resetLayout(true);
+      statusEl.textContent = layouts[currentLayout].targetText;
+    });
+
+    clearDataBtn.addEventListener("click", () => {
+      shotData = [];
+      trial = 0;
+      renderTable();
+      updateMetrics();
+      statusEl.textContent = "Data cleared. Start a new investigation.";
+    });
+
+    exportBtn.addEventListener("click", downloadCsv);
+    copyBtn.addEventListener("click", copyData);
+
+    updateControlLabels();
+    updateMissionCard();
+    resetLayout(false);
+    renderTable();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
