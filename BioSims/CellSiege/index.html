@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cell Siege</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root{
+      --bg:#f5f7fb;--panel:#fff;--ink:#172033;--muted:#5e6a7f;
+      --accent:#0f766e;--accent2:#8b1e3f;--line:#d9e2ef;
+      --shadow:rgba(20,40,70,.14)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(circle at 12% 8%,#fce7f3 0%,transparent 26%),radial-gradient(circle at 88% 0%,#dbeafe 0%,transparent 32%),linear-gradient(#fbfdff,var(--bg));color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+    .page{width:min(1180px,calc(100% - 24px));margin:0 auto;padding:18px 0 42px}
+    .home-link{display:inline-flex;margin:0 0 14px;padding:9px 13px;border-radius:999px;background:#ffffffdd;border:1px solid var(--line);color:var(--accent);text-decoration:none;font-weight:800;box-shadow:0 4px 14px var(--shadow)}
+    h1{margin:0;color:var(--accent);font-size:clamp(2.25rem,5vw,4.8rem);letter-spacing:-.065em;line-height:.92}
+    .subtitle{margin:8px 0 0;color:var(--muted);font-size:clamp(1rem,2vw,1.3rem);max-width:900px}
+    .learning-box{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:#ffffffdf;border:1px solid var(--line);border-radius:18px;padding:14px;margin:16px 0;box-shadow:0 10px 24px var(--shadow)}
+    .learning-box h2{margin:0 0 6px;font-size:1rem;color:var(--accent2)}
+    .learning-box p{margin:0}
+    .app-grid{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:16px;align-items:start}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 24px var(--shadow);overflow:hidden}
+    .panel-header{padding:14px 16px;background:linear-gradient(135deg,#fff,#edf7f5);border-bottom:1px solid var(--line)}
+    .panel-header h2{margin:0;color:var(--accent)}
+    .panel-body{padding:14px 16px 16px}
+    .tiny{color:var(--muted);font-size:.88rem}
+    .control-group{display:grid;gap:8px;padding:10px 0;border-bottom:1px dashed var(--line)}
+    .control-group:last-child{border-bottom:none}
+    label{display:flex;justify-content:space-between;gap:10px;font-weight:800;color:var(--ink)}
+    .value-pill{min-width:68px;text-align:right;color:var(--accent2);font-variant-numeric:tabular-nums}
+    input[type=range]{width:100%;accent-color:var(--accent)}
+    select,button{width:100%;border-radius:12px;border:1px solid var(--line);padding:10px 12px;font:inherit;background:#fbfdff;color:var(--ink)}
+    button{cursor:pointer;font-weight:900;background:var(--accent);color:#fff;border-color:#0b5e58;box-shadow:0 4px 10px var(--shadow)}
+    button.secondary{background:#fbfdff;color:var(--accent);border-color:var(--line)}
+    button.tertiary{background:var(--accent2);border-color:#68162f}
+    .button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .game-panel{padding:10px}
+    .canvas-wrap{position:relative;border-radius:16px;border:1px solid var(--line);overflow:hidden;background:#08111f;box-shadow:inset 0 0 0 2px #ffffff33}
+    canvas{width:100%;display:block;aspect-ratio:16/9;background:#08111f}
+    .overlay-message{position:absolute;top:12px;left:12px;right:12px;pointer-events:none;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .badge{display:inline-flex;align-items:center;min-height:34px;padding:6px 10px;border-radius:999px;background:#ffffffe8;border:1px solid var(--line);color:var(--ink);font-weight:900;box-shadow:0 4px 12px var(--shadow);max-width:min(46%,420px);white-space:normal;overflow-wrap:anywhere;line-height:1.15}
+    .feedback-pop{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:min(90%,460px);text-align:center;padding:8px 12px;border-radius:16px;background:#ffffffe8;border:1px solid var(--line);color:var(--ink);font-weight:900;box-shadow:0 4px 12px var(--shadow);pointer-events:none;white-space:normal;overflow-wrap:anywhere;line-height:1.2;display:none}
+    .game-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 0}
+    .status-line{min-height:48px;border-radius:14px;background:#fbfdff;border:1px solid var(--line);padding:10px 12px;margin-top:10px;color:var(--muted);font-weight:800}
+    .results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+    .metric{background:#fbfdff;border:1px solid var(--line);border-radius:14px;padding:10px;min-height:72px}
+    .metric .label{display:block;font-size:.78rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .metric .value{display:block;margin-top:4px;font-size:1.25rem;font-weight:950;color:var(--accent2);font-variant-numeric:tabular-nums}
+    .model-note{margin:10px 2px 0;padding:9px 11px;border-radius:12px;border:1px dashed var(--line);background:#fbfdff;color:var(--muted);font-weight:800}
+    .mission-card{border:1px solid var(--line);border-radius:14px;background:#fbfdff;padding:10px 12px;margin-top:8px}
+    .mission-card strong{display:block;color:var(--accent2);margin-bottom:4px}
+    .mission-card p{margin:0;color:var(--muted);font-size:.92rem}
+    .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .legend span{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:#fbfdff;border:1px solid var(--line);font-size:.82rem;font-weight:800}
+    .dot{width:12px;height:12px;border-radius:999px;display:inline-block;border:1px solid #00000030}
+    .wide-section{margin-top:16px}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#fbfdff}
+    table{border-collapse:collapse;width:100%;min-width:920px;font-size:.92rem}
+    th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+    th{background:#e6f4f1;color:var(--accent);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+    .challenge-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    .student-questions ol,.teacher-notes ul{margin:10px 0 0;padding-left:1.35rem}
+    .student-questions li,.teacher-notes li{margin-bottom:8px}
+    @media(max-width:920px){.app-grid,.learning-box,.challenge-grid{grid-template-columns:1fr}.results,.game-buttons{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:540px){.page{width:min(100% - 14px,1180px)}.results,.game-buttons,.button-row{grid-template-columns:1fr}.panel-body{padding:12px}}
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Cell Siege</h1>
+      <p class="subtitle">A Space Invaders-style immune defence game where students control a white blood cell, fire immune responses and stop pathogens from overwhelming the body.</p>
+    </header>
+
+    <section class="learning-box">
+      <div>
+        <h2>Learning Intention</h2>
+        <p>Students will understand that different immune responses are suited to different biological threats, including pathogens, toxins and infected cells.</p>
+      </div>
+      <div>
+        <h2>Success Criteria</h2>
+        <p>Students can compare immune-response types, collect modelled wave data and explain how antibodies, phagocytes, killer T cells, barriers and immune memory affect infection control.</p>
+      </div>
+    </section>
+
+    <section class="app-grid">
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>Immune Controls</h2>
+          <p class="tiny">Use the keyboard or on-screen controls. Compare one variable at a time.</p>
+        </div>
+        <div class="panel-body">
+          <div class="control-group">
+            <label for="defenderType">Immune response</label>
+            <select id="defenderType">
+              <option value="antibody">Antibody: specific, accurate shots</option>
+              <option value="macrophage">Macrophage: slower, wider phagocyte burst</option>
+              <option value="killerT">Killer T cell: strong against infected cells</option>
+              <option value="complement">Complement: rapid burst against bacteria</option>
+              <option value="fever">Fever pulse: slows the wave, raises inflammation</option>
+              <option value="memory">Memory B cell: faster response when primed</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="pathogenMode">Invading threat</label>
+            <select id="pathogenMode">
+              <option value="mixed">Mixed infection</option>
+              <option value="bacteria">Bacteria wave</option>
+              <option value="virus">Virus wave</option>
+              <option value="toxin">Toxin wave</option>
+              <option value="infected">Infected cell wave</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="memoryMode">Immune memory</label>
+            <select id="memoryMode">
+              <option value="none">No prior memory</option>
+              <option value="primed">Previous exposure</option>
+              <option value="vaccinated">Vaccine primed</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="difficulty">Infection intensity <span class="value-pill" id="difficultyValue">2</span></label>
+            <input id="difficulty" type="range" min="1" max="5" value="2">
+          </div>
+
+          <div class="control-group">
+            <label for="barrier">Barrier strength <span class="value-pill" id="barrierValue">35%</span></label>
+            <input id="barrier" type="range" min="0" max="100" value="35">
+          </div>
+
+          <div class="control-group">
+            <label for="inflammation">Starting inflammation <span class="value-pill" id="inflammationValue">20%</span></label>
+            <input id="inflammation" type="range" min="0" max="100" value="20">
+          </div>
+
+          <div class="control-group">
+            <label for="missionSelect">Mission Mode</label>
+            <select id="missionSelect">
+              <option value="free">Free play</option>
+              <option value="barrier">Mission 1: Barrier Defence</option>
+              <option value="phagocyte">Mission 2: Phagocyte Patrol</option>
+              <option value="antibody">Mission 3: Antibody Specificity</option>
+              <option value="viral">Mission 4: Viral Takeover</option>
+              <option value="memory">Mission 5: Immune Memory</option>
+            </select>
+            <div class="mission-card" id="missionCard">
+              <strong>Free play</strong>
+              <p>Change any variable, start a wave and use the data to explain what happened.</p>
+            </div>
+            <div class="button-row">
+              <button id="applyMissionBtn" class="tertiary">Apply Mission</button>
+              <button id="nextMissionBtn" class="secondary">Next Mission</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Audio feedback</label>
+            <button id="soundBtn" class="secondary" type="button">Sound: Off</button>
+            <p class="tiny" style="margin:0;">Sound starts muted for classroom use.</p>
+          </div>
+
+          <div class="control-group">
+            <h3 style="margin:0;color:var(--accent2);">Keyboard</h3>
+            <p class="tiny" style="margin:0;"><strong>Move:</strong> ← and → or A and D<br><strong>Fire:</strong> Space<br><strong>Pause:</strong> P</p>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot" style="background:#16a34a;"></i> White blood cell</span>
+            <span><i class="dot" style="background:#ef4444;"></i> Bacteria</span>
+            <span><i class="dot" style="background:#f43f5e;"></i> Virus</span>
+            <span><i class="dot" style="background:#7c3aed;"></i> Infected cell</span>
+            <span><i class="dot" style="background:#f59e0b;"></i> Toxin</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel game-panel">
+        <div class="canvas-wrap">
+          <canvas id="gameCanvas" width="1120" height="630"></canvas>
+          <div class="overlay-message">
+            <span class="badge" id="waveBadge">Wave 1: Mixed infection</span>
+            <span class="badge" id="scoreBadge">Immune score: 0</span>
+          </div>
+          <div class="feedback-pop" id="feedbackPop">Ready</div>
+        </div>
+
+        <div class="game-buttons">
+          <button id="startPauseBtn">Start Wave</button>
+          <button id="fireBtn" class="secondary">Fire Response</button>
+          <button id="resetWaveBtn" class="tertiary">Reset Wave</button>
+          <button id="clearDataBtn" class="secondary">Clear Data</button>
+        </div>
+
+        <div class="status-line" id="status">Move the white blood cell and stop the pathogens before they reach the tissue line.</div>
+
+        <div class="results">
+          <div class="metric"><span class="label">Pathogens left</span><span class="value" id="targetsMetric">0</span></div>
+          <div class="metric"><span class="label">Neutralised</span><span class="value" id="neutralisedMetric">0</span></div>
+          <div class="metric"><span class="label">Body damage</span><span class="value" id="damageMetric">0%</span></div>
+          <div class="metric"><span class="label">Inflammation</span><span class="value" id="inflamMetric">0%</span></div>
+        </div>
+
+        <p class="model-note">Model note: this is a simplified classroom model. It is designed for comparing immune strategies, not for representing the immune system in exact biological detail.</p>
+      </section>
+    </section>
+
+    <section class="panel wide-section">
+      <div class="panel-header">
+        <h2>Wave Data</h2>
+        <p class="tiny">A wave result is recorded when the infection is controlled, the body is overwhelmed, or you reset after playing.</p>
+      </div>
+      <div class="panel-body">
+        <div class="button-row" style="max-width:460px;">
+          <button id="exportBtn" class="tertiary">Export CSV</button>
+          <button id="copyBtn" class="secondary">Copy Data</button>
+        </div>
+        <div class="table-wrap" style="margin-top:12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Trial</th><th>Mission</th><th>Threat</th><th>Immune response</th><th>Memory</th><th>Intensity</th><th>Barrier</th><th>Neutralised</th><th>Shots fired</th><th>Accuracy</th><th>Body damage</th><th>Inflammation</th><th>Outcome</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody"><tr><td colspan="13">No wave data yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid wide-section">
+      <section class="panel student-questions">
+        <div class="panel-header"><h2>Student Challenge</h2></div>
+        <div class="panel-body">
+          <ol>
+            <li>Use Mission 1 to test how barrier strength changes body damage.</li>
+            <li>Use Mission 2 to compare Macrophage and Antibody responses against bacteria.</li>
+            <li>Use Mission 3 to test whether antibodies work better with immune memory.</li>
+            <li>Use Mission 4 to explain why Killer T cells are useful against infected cells.</li>
+            <li>Evaluate the model. What does this game show well, and what does it oversimplify?</li>
+          </ol>
+        </div>
+      </section>
+      <section class="panel teacher-notes">
+        <div class="panel-header"><h2>Teacher Notes</h2></div>
+        <div class="panel-body">
+          <ul>
+            <li>This is a game-based model of immune defence, not a realistic cellular simulation.</li>
+            <li>The key concept is that immune responses have different roles and are more or less suited to different threats.</li>
+            <li>Useful terms: pathogen, antigen, antibody, phagocytosis, white blood cell, immune memory, vaccine, inflammation, infected cell and barrier defence.</li>
+          </ul>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const defenderTypeEl = document.getElementById("defenderType");
+    const pathogenModeEl = document.getElementById("pathogenMode");
+    const memoryModeEl = document.getElementById("memoryMode");
+    const difficultyEl = document.getElementById("difficulty");
+    const barrierEl = document.getElementById("barrier");
+    const inflammationEl = document.getElementById("inflammation");
+    const missionSelect = document.getElementById("missionSelect");
+
+    const difficultyValue = document.getElementById("difficultyValue");
+    const barrierValue = document.getElementById("barrierValue");
+    const inflammationValue = document.getElementById("inflammationValue");
+    const missionCard = document.getElementById("missionCard");
+
+    const applyMissionBtn = document.getElementById("applyMissionBtn");
+    const nextMissionBtn = document.getElementById("nextMissionBtn");
+    const startPauseBtn = document.getElementById("startPauseBtn");
+    const fireBtn = document.getElementById("fireBtn");
+    const resetWaveBtn = document.getElementById("resetWaveBtn");
+    const clearDataBtn = document.getElementById("clearDataBtn");
+    const soundBtn = document.getElementById("soundBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    const statusEl = document.getElementById("status");
+    const feedbackPop = document.getElementById("feedbackPop");
+    const waveBadge = document.getElementById("waveBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const targetsMetric = document.getElementById("targetsMetric");
+    const neutralisedMetric = document.getElementById("neutralisedMetric");
+    const damageMetric = document.getElementById("damageMetric");
+    const inflamMetric = document.getElementById("inflamMetric");
+    const dataBody = document.getElementById("dataBody");
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const tissueLine = 548;
+
+    const defenders = {
+      antibody:{name:"Antibody",colour:"#2563eb",shot:"#60a5fa",cooldown:330,speed:470,r:5,damage:1.1,spread:0,best:["bacteria","virus"],inflammation:.4,desc:"specific, accurate shots"},
+      macrophage:{name:"Macrophage",colour:"#16a34a",shot:"#86efac",cooldown:520,speed:365,r:11,damage:1.4,spread:1,best:["bacteria","toxin"],inflammation:1,desc:"slower, wider phagocyte burst"},
+      killerT:{name:"Killer T cell",colour:"#7c3aed",shot:"#c4b5fd",cooldown:430,speed:430,r:7,damage:1.8,spread:0,best:["infected"],inflammation:.9,desc:"strong against infected cells"},
+      complement:{name:"Complement",colour:"#0891b2",shot:"#67e8f9",cooldown:260,speed:440,r:6,damage:1.2,spread:0,best:["bacteria"],inflammation:1.2,desc:"rapid burst against bacteria"},
+      fever:{name:"Fever pulse",colour:"#dc2626",shot:"#fca5a5",cooldown:900,speed:0,r:0,damage:.55,spread:0,best:["bacteria","virus"],inflammation:5.5,desc:"slows the wave, raises inflammation"},
+      memory:{name:"Memory B cell",colour:"#f59e0b",shot:"#fde68a",cooldown:240,speed:520,r:6,damage:1.35,spread:0,best:["bacteria","virus"],inflammation:.55,desc:"fast response when primed"}
+    };
+
+    const targetInfo = {
+      bacteria:{name:"Bacteria",colour:"#ef4444",hp:1.5,points:20,damage:8},
+      virus:{name:"Virus",colour:"#f43f5e",hp:1.2,points:20,damage:7},
+      toxin:{name:"Toxin",colour:"#f59e0b",hp:1,points:14,damage:6},
+      infected:{name:"Infected cell",colour:"#7c3aed",hp:2.4,points:30,damage:11}
+    };
+
+    const missions = {
+      free:{title:"Free play",text:"Change any variable, start a wave and use the data to explain what happened.",settings:null},
+      barrier:{title:"Mission 1: Barrier Defence",text:"Keep the same immune response and threat. Test barrier strength at 0%, 35%, 70% and 100%.",settings:{defender:"antibody",threat:"mixed",memory:"none",difficulty:2,barrier:0,inflammation:20}},
+      phagocyte:{title:"Mission 2: Phagocyte Patrol",text:"Use Macrophage against bacteria, then compare with Antibody using the same intensity and barrier.",settings:{defender:"macrophage",threat:"bacteria",memory:"none",difficulty:2,barrier:35,inflammation:20}},
+      antibody:{title:"Mission 3: Antibody Specificity",text:"Use Antibody. Compare no prior memory, previous exposure and vaccine primed.",settings:{defender:"antibody",threat:"virus",memory:"none",difficulty:2,barrier:35,inflammation:18}},
+      viral:{title:"Mission 4: Viral Takeover",text:"Use Killer T cells against infected cells. Compare with Antibody and Macrophage responses.",settings:{defender:"killerT",threat:"infected",memory:"none",difficulty:3,barrier:25,inflammation:20}},
+      memory:{title:"Mission 5: Immune Memory",text:"Use Memory B cells or Antibodies. Compare no memory with vaccine primed using the same wave.",settings:{defender:"memory",threat:"mixed",memory:"vaccinated",difficulty:3,barrier:35,inflammation:16}}
+    };
+
+    let keys = {};
+    let player = {x:W/2,y:tissueLine+42,r:26,speed:430,shield:0};
+    let enemies = [];
+    let bullets = [];
+    let drops = [];
+    let particles = [];
+    let stars = [];
+
+    let wave = 1;
+    let score = 0;
+    let neutralised = 0;
+    let shotsFired = 0;
+    let shotsHit = 0;
+    let bodyDamage = 0;
+    let inflammation = 20;
+    let running = false;
+    let waveActive = false;
+    let waveRecorded = false;
+    let enemyDir = 1;
+    let enemyShootTimer = 0;
+    let lastFire = 0;
+    let feverSlow = 0;
+    let trial = 0;
+    let dataRows = [];
+    let lastTime = performance.now();
+
+    let soundEnabled = false;
+    let audioCtx = null;
+    let feedbackTimer = null;
+
+    function initStars(){
+      stars = [];
+      for(let i=0;i<80;i++){
+        stars.push({x:Math.random()*W,y:Math.random()*tissueLine,r:Math.random()*2.2+.5,a:Math.random()*.5+.2});
+      }
+    }
+
+    function initAudio(){
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    function setSoundEnabled(value){
+      soundEnabled = value;
+      soundBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+      soundBtn.classList.toggle("tertiary", soundEnabled);
+      soundBtn.classList.toggle("secondary", !soundEnabled);
+      if(soundEnabled){ initAudio(); playSound("toggle"); }
+    }
+
+    function playTone(freq,dur,type="sine",vol=.05,delay=0){
+      if(!soundEnabled) return;
+      initAudio();
+      const t = audioCtx.currentTime + delay;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq,t);
+      g.gain.setValueAtTime(.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol,t+.01);
+      g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(t);
+      o.stop(t+dur+.03);
+    }
+
+    function playNoise(dur=.12,vol=.04){
+      if(!soundEnabled) return;
+      initAudio();
+      const b = audioCtx.createBuffer(1,audioCtx.sampleRate*dur,audioCtx.sampleRate);
+      const d = b.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/d.length,2);
+      const s = audioCtx.createBufferSource();
+      const g = audioCtx.createGain();
+      g.gain.value = vol;
+      s.buffer = b;
+      s.connect(g);
+      g.connect(audioCtx.destination);
+      s.start();
+    }
+
+    function playSound(k){
+      if(k==="shot"){playTone(660,.08,"square",.035);playTone(990,.05,"triangle",.025,.035);}
+      else if(k==="hit"){playTone(520,.08,"triangle",.04);}
+      else if(k==="neutralise"){playTone(740,.07);playTone(1040,.09,"sine",.04,.055);}
+      else if(k==="damage"){playTone(150,.16,"sawtooth",.06);playNoise(.1,.025);}
+      else if(k==="wave"){playTone(523,.09);playTone(659,.09,"sine",.04,.09);playTone(784,.12,"sine",.04,.18);}
+      else if(k==="overload"){playTone(220,.16,"sawtooth",.05);playTone(165,.18,"sawtooth",.05,.11);}
+      else if(k==="toggle"){playTone(880,.06);}
+      else if(k==="fever"){playTone(310,.15,"triangle",.045);playTone(250,.22,"sine",.035,.08);}
+    }
+
+    function showFeedback(msg,kind="info"){
+      feedbackPop.textContent = msg;
+      feedbackPop.style.display = "block";
+      feedbackPop.style.borderColor = kind==="good" ? "#22c55e" : kind==="bad" ? "#ef4444" : kind==="warn" ? "#f59e0b" : "var(--line)";
+      feedbackPop.style.color = kind==="good" ? "#166534" : kind==="bad" ? "#991b1b" : kind==="warn" ? "#92400e" : "var(--ink)";
+      clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(()=>feedbackPop.style.display="none",1400);
+    }
+
+    function getMemoryBoost(){
+      const m = memoryModeEl.value;
+      const d = defenderTypeEl.value;
+      if(m==="vaccinated"){
+        return (d==="antibody"||d==="memory") ? {fire:.72,damage:1.55,shield:.85} : {fire:.9,damage:1.12,shield:.92};
+      }
+      if(m==="primed"){
+        return (d==="antibody"||d==="memory") ? {fire:.82,damage:1.3,shield:.9} : {fire:.95,damage:1.05,shield:.95};
+      }
+      return {fire:1,damage:1,shield:1};
+    }
+
+    function updateControlLabels(){
+      difficultyValue.textContent = difficultyEl.value;
+      barrierValue.textContent = `${barrierEl.value}%`;
+      inflammationValue.textContent = `${inflammationEl.value}%`;
+    }
+
+    function updateMissionCard(){
+      const m = missions[missionSelect.value] || missions.free;
+      missionCard.innerHTML = `<strong>${escapeHtml(m.title)}</strong><p>${escapeHtml(m.text)}</p>`;
+    }
+
+    function setControlValue(control,value){
+      control.value = String(value);
+      control.dispatchEvent(new Event("input"));
+    }
+
+    function applyMission(){
+      const m = missions[missionSelect.value] || missions.free;
+      updateMissionCard();
+      if(!m.settings){
+        statusEl.textContent = "Free play selected. Change variables freely, then compare your wave data.";
+        return;
+      }
+      const s = m.settings;
+      defenderTypeEl.value = s.defender;
+      pathogenModeEl.value = s.threat;
+      memoryModeEl.value = s.memory;
+      setControlValue(difficultyEl,s.difficulty);
+      setControlValue(barrierEl,s.barrier);
+      setControlValue(inflammationEl,s.inflammation);
+      updateControlLabels();
+      resetWave(false);
+      statusEl.textContent = `${m.title} applied. ${m.text}`;
+    }
+
+    function nextMission(){
+      const values = Array.from(missionSelect.options).map(o=>o.value);
+      missionSelect.value = values[(values.indexOf(missionSelect.value)+1)%values.length];
+      applyMission();
+    }
+
+    function getThreatPattern(threat){
+      if(threat==="mixed") return ["bacteria","virus","toxin","infected","bacteria","virus"];
+      if(threat==="bacteria") return ["bacteria","bacteria","bacteria","toxin"];
+      if(threat==="virus") return ["virus","virus","virus","infected"];
+      if(threat==="toxin") return ["toxin","toxin","bacteria"];
+      if(threat==="infected") return ["infected","virus","infected"];
+      return ["bacteria","virus"];
+    }
+
+    function resetWave(recordIfNeeded=true){
+      if(recordIfNeeded && waveActive && !waveRecorded) recordWave("Reset before outcome");
+
+      player.x = W/2;
+      player.shield = 0;
+      bullets = [];
+      drops = [];
+      particles = [];
+      bodyDamage = 0;
+      inflammation = Number(inflammationEl.value);
+      neutralised = 0;
+      shotsFired = 0;
+      shotsHit = 0;
+      enemyDir = 1;
+      enemyShootTimer = 0;
+      feverSlow = 0;
+      waveRecorded = false;
+      waveActive = true;
+      running = false;
+      startPauseBtn.textContent = "Start Wave";
+      createEnemyWave();
+      updateMetrics();
+      updateBadges();
+      statusEl.textContent = `Wave ${wave} ready. Press Start Wave, then move and fire to defend the tissue line.`;
+      showFeedback(`Wave ${wave} ready`);
+    }
+
+    function createEnemyWave(){
+      enemies = [];
+      const threat = pathogenModeEl.value;
+      const diff = Number(difficultyEl.value);
+      const training = wave===1 && diff<=2;
+      const waveScale = Math.min(3, Math.floor((wave-1)/2));
+      const cols = training ? 5 : Math.min(10, 7 + diff + waveScale);
+      const rows = training ? 2 : Math.min(6, 3 + Math.ceil(diff/2) + Math.floor(wave/3));
+      const sx = training ? 92 : 78;
+      const sy = training ? 68 : 54;
+      const startX = (W - (cols-1)*sx)/2;
+      const startY = training ? 125 : 92;
+      const pattern = getThreatPattern(threat);
+
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          const type = pattern[(r+c)%pattern.length];
+          const info = targetInfo[type];
+          const hpScale = training ? .72 : 1 + (diff-1)*.08 + (wave-1)*.035;
+          enemies.push({
+            x:startX+c*sx,
+            y:startY+r*sy,
+            r:type==="infected" ? 24 : 19,
+            type,
+            hp:info.hp*hpScale,
+            maxHp:info.hp*hpScale,
+            alive:true,
+            wobble:Math.random()*Math.PI*2,
+            flash:0
+          });
+        }
+      }
+    }
+
+    function toggleStartPause(){
+      if(!waveActive || enemies.filter(e=>e.alive).length===0){
+        resetWave(false);
+      }
+
+      running = !running;
+      startPauseBtn.textContent = running ? "Pause Wave" : "Start Wave";
+
+      if(running){
+        playSound("wave");
+        showFeedback("Wave active","good");
+        statusEl.textContent = "Wave active. Use ← and → or A and D to move. Press Space to fire.";
+      }else{
+        showFeedback("Paused");
+        statusEl.textContent = "Wave paused.";
+      }
+    }
+
+    function fireResponse(){
+      if(!waveActive) resetWave(false);
+      if(!running){
+        statusEl.textContent = "Press Start Wave first.";
+        return;
+      }
+
+      const key = defenderTypeEl.value;
+      const def = defenders[key];
+      const now = performance.now();
+      const boost = getMemoryBoost();
+
+      if(now-lastFire < def.cooldown*boost.fire) return;
+      lastFire = now;
+
+      if(key==="fever"){
+        activateFeverPulse();
+        return;
+      }
+
+      const count = def.spread ? 3 : 1;
+      const offsets = count===3 ? [-15,0,15] : [0];
+
+      for(let i=0;i<count;i++){
+        const angle = count===3 ? (i-1)*.12 : 0;
+        bullets.push({
+          x:player.x+offsets[i],
+          y:player.y-30,
+          vx:Math.sin(angle)*def.speed,
+          vy:-Math.cos(angle)*def.speed,
+          r:def.r,
+          key,
+          damage:def.damage*boost.damage,
+          colour:def.shot,
+          life:1.9
+        });
+      }
+
+      shotsFired += 1;
+      playSound("shot");
+      makeParticle(player.x,player.y-26,def.shot,4);
+      updateMetrics();
+    }
+
+    function activateFeverPulse(){
+      const def = defenders.fever;
+      feverSlow = 4.5;
+      inflammation = Math.min(100,inflammation+def.inflammation);
+      shotsFired += 1;
+
+      for(const enemy of enemies){
+        if(!enemy.alive) continue;
+        const effect = def.best.includes(enemy.type) ? 1 : .55;
+        enemy.hp -= def.damage*effect;
+        enemy.flash = .3;
+        if(enemy.hp<=0) neutraliseEnemy(enemy,def,true);
+      }
+
+      for(let i=0;i<40;i++) makeParticle(Math.random()*W,90+Math.random()*(tissueLine-150),def.shot,1);
+
+      playSound("fever");
+      showFeedback("Fever pulse: slowed wave, inflammation rose","warn");
+      statusEl.textContent = "Fever pulse activated. Pathogens slowed, but inflammation increased.";
+      updateMetrics();
+    }
+
+    function updateGame(dt){
+      updateParticles(dt);
+      updateFlashes(dt);
+
+      if(!running || !waveActive) return;
+
+      if(keys.ArrowLeft || keys.KeyA) player.x -= player.speed*dt;
+      if(keys.ArrowRight || keys.KeyD) player.x += player.speed*dt;
+      player.x = Math.max(52,Math.min(W-52,player.x));
+
+      if(keys.Space) fireResponse();
+
+      updateBullets(dt);
+      updateEnemies(dt);
+      updateDrops(dt);
+      checkOutcomes();
+    }
+
+    function updateFlashes(dt){
+      if(player.shield>0) player.shield -= dt;
+      for(const e of enemies){
+        if(e.flash>0) e.flash -= dt;
+        e.wobble += dt*2;
+      }
+    }
+
+    function updateBullets(dt){
+      for(const b of bullets){
+        b.x += b.vx*dt;
+        b.y += b.vy*dt;
+        b.life -= dt;
+      }
+
+      bullets = bullets.filter(b=>b.life>0 && b.y>-50 && b.x>-50 && b.x<W+50);
+
+      for(const b of bullets){
+        if(b.hit) continue;
+        for(const e of enemies){
+          if(!e.alive) continue;
+          if(distance(b.x,b.y,e.x,e.y)<b.r+e.r){
+            b.hit = true;
+            applyBulletDamage(b,e);
+            break;
+          }
+        }
+      }
+
+      bullets = bullets.filter(b=>!b.hit);
+    }
+
+    function applyBulletDamage(b,e){
+      const def = defenders[b.key];
+      let effect = def.best.includes(e.type) ? 1.65 : .7;
+
+      if(b.key==="killerT" && e.type!=="infected") effect = .35;
+      if(b.key==="antibody" && e.type==="infected") effect = .55;
+      if(b.key==="complement" && e.type==="virus") effect = .55;
+      if(b.key==="memory" && (e.type==="bacteria" || e.type==="virus")) effect *= 1.25;
+
+      e.hp -= b.damage*effect;
+      e.flash = .2;
+      makeParticle(e.x,e.y,b.colour,7);
+
+      if(effect>=1.4) showFeedback("Effective match","good");
+      else if(effect<=.55) showFeedback("Weak response","warn");
+      else showFeedback("Partial effect");
+
+      playSound("hit");
+
+      if(e.hp<=0){
+        shotsHit += 1;
+        neutraliseEnemy(e,def,false);
+      }
+    }
+
+    function neutraliseEnemy(e,def,fromPulse){
+      if(!e.alive) return;
+
+      e.alive = false;
+      neutralised += 1;
+      score += targetInfo[e.type].points;
+      inflammation = Math.min(100,inflammation+def.inflammation*(fromPulse?.35:1));
+
+      playSound("neutralise");
+      showFeedback("Pathogen neutralised","good");
+      burstEnemy(e);
+      updateMetrics();
+      updateBadges();
+    }
+
+    function updateEnemies(dt){
+      const alive = enemies.filter(e=>e.alive);
+      if(!alive.length) return;
+
+      const diff = Number(difficultyEl.value);
+      const barrier = Number(barrierEl.value)/100;
+      const slow = feverSlow>0 ? .45 : 1;
+      const training = wave===1 && diff<=2;
+      const trainingScale = training ? .62 : 1;
+      const waveSpeed = 1 + (wave-1)*.055;
+
+      if(feverSlow>0) feverSlow -= dt;
+
+      const speedX = (28+diff*14)*slow*trainingScale*waveSpeed*(1-barrier*.18);
+      const speedY = (5+diff*2.2)*slow*trainingScale*waveSpeed*(1-barrier*.28);
+
+      let hitEdge = false;
+
+      for(const e of alive){
+        e.x += enemyDir*speedX*dt;
+        e.y += speedY*dt;
+        if(e.x<45 || e.x>W-45) hitEdge = true;
+      }
+
+      if(hitEdge){
+        enemyDir *= -1;
+        for(const e of alive) e.y += 18 + diff*3;
+      }
+
+      enemyShootTimer -= dt;
+      if(enemyShootTimer<=0){
+        enemyShootTimer = Math.max(.45,1.7-diff*.18-wave*.03);
+        fireEnemyDrop();
+      }
+    }
+
+    function fireEnemyDrop(){
+      const alive = enemies.filter(e=>e.alive);
+      if(!alive.length) return;
+
+      const e = alive[Math.floor(Math.random()*alive.length)];
+      const info = targetInfo[e.type];
+
+      drops.push({
+        x:e.x,
+        y:e.y+e.r,
+        vy:135+Number(difficultyEl.value)*26+wave*4,
+        r:6,
+        colour:info.colour,
+        type:e.type
+      });
+    }
+
+    function updateDrops(dt){
+      for(const d of drops) d.y += d.vy*dt;
+
+      for(const d of drops){
+        if(d.hit) continue;
+
+        if(distance(d.x,d.y,player.x,player.y)<d.r+player.r){
+          d.hit = true;
+          takeDamage(targetInfo[d.type].damage*.55,"Pathogen signal hit the white blood cell.");
+          makeParticle(player.x,player.y,d.colour,10);
+        }
+
+        if(d.y>tissueLine){
+          d.hit = true;
+          takeDamage(targetInfo[d.type].damage*.32,"Pathogen signal reached the tissue.");
+          makeParticle(d.x,tissueLine,d.colour,8);
+        }
+      }
+
+      drops = drops.filter(d=>!d.hit && d.y<H+30);
+    }
+
+    function takeDamage(amount,msg){
+      const barrier = Number(barrierEl.value)/100;
+      const boost = getMemoryBoost();
+      const reduced = amount*(1-barrier*.55)*boost.shield;
+
+      bodyDamage = Math.min(100,bodyDamage+reduced);
+      player.shield = .25;
+
+      playSound("damage");
+      showFeedback("Tissue damage","bad");
+      statusEl.textContent = msg;
+      updateMetrics();
+    }
+
+    function checkOutcomes(){
+      const alive = enemies.filter(e=>e.alive);
+
+      if(!alive.length){
+        recordWave("Infection controlled");
+        running = false;
+        waveActive = false;
+        wave += 1;
+        startPauseBtn.textContent = "Start Wave";
+        playSound("wave");
+        showFeedback("Infection controlled","good");
+        statusEl.textContent = `Infection controlled. Press Start Wave to begin Wave ${wave}.`;
+        updateBadges();
+        return;
+      }
+
+      const breachers = alive.filter(e=>e.y+e.r>=tissueLine);
+      for(const e of breachers){
+        e.alive = false;
+        takeDamage(targetInfo[e.type].damage*1.2,"Pathogens breached the tissue line.");
+        makeParticle(e.x,tissueLine,targetInfo[e.type].colour,12);
+      }
+
+      if(bodyDamage>=100){
+        recordWave("Body overwhelmed");
+        running = false;
+        waveActive = false;
+        startPauseBtn.textContent = "Start Wave";
+        playSound("overload");
+        showFeedback("Body overwhelmed","bad");
+        statusEl.textContent = "The body was overwhelmed. Try stronger barriers, immune memory or a different response.";
+      }
+
+      if(inflammation>=100){
+        recordWave("Inflammation overload");
+        running = false;
+        waveActive = false;
+        startPauseBtn.textContent = "Start Wave";
+        playSound("overload");
+        showFeedback("Inflammation overload","bad");
+        statusEl.textContent = "Inflammation overload. The response was powerful but caused too much damage.";
+      }
+    }
+
+    function recordWave(outcome){
+      if(waveRecorded) return;
+
+      waveRecorded = true;
+      trial += 1;
+
+      const mission = missions[missionSelect.value] || missions.free;
+      const accuracy = shotsFired ? Math.round(shotsHit/shotsFired*100) : 0;
+
+      dataRows.push({
+        trial,
+        mission:mission.title,
+        threat:pathogenModeEl.options[pathogenModeEl.selectedIndex].text,
+        defender:defenders[defenderTypeEl.value].name,
+        memory:memoryModeEl.options[memoryModeEl.selectedIndex].text,
+        difficulty:Number(difficultyEl.value),
+        barrier:Number(barrierEl.value),
+        neutralised,
+        shotsFired,
+        accuracy,
+        bodyDamage:Math.round(bodyDamage),
+        inflammation:Math.round(inflammation),
+        outcome
+      });
+
+      renderTable();
+    }
+
+    function updateMetrics(){
+      targetsMetric.textContent = String(enemies.filter(e=>e.alive).length);
+      neutralisedMetric.textContent = String(neutralised);
+      damageMetric.textContent = `${Math.round(bodyDamage)}%`;
+      inflamMetric.textContent = `${Math.round(inflammation)}%`;
+    }
+
+    function updateBadges(){
+      waveBadge.textContent = `Wave ${wave}: ${pathogenModeEl.options[pathogenModeEl.selectedIndex].text}`;
+      scoreBadge.textContent = `Immune score: ${score}`;
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      drawBackground();
+      drawTissueLine();
+      drawEnemies();
+      drawBullets();
+      drawDrops();
+      drawPlayer();
+      drawParticles();
+      drawHudBars();
+      if(!running) drawPauseText();
+    }
+
+    function drawBackground(){
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,"#08111f");
+      g.addColorStop(.55,"#11263f");
+      g.addColorStop(1,"#1f2937");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,W,H);
+
+      for(const s of stars){
+        ctx.globalAlpha = s.a;
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1;
+    }
+
+    function drawTissueLine(){
+      ctx.fillStyle = "#fda4af";
+      ctx.fillRect(0,tissueLine,W,H-tissueLine);
+      ctx.fillStyle = "#fb7185";
+      ctx.fillRect(0,tissueLine,W,7);
+
+      const barrier = Number(barrierEl.value)/100;
+      if(barrier>0){
+        ctx.globalAlpha = .18+barrier*.55;
+        ctx.fillStyle = "#93c5fd";
+        ctx.fillRect(0,tissueLine-24,W,12);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawPlayer(){
+      if(player.shield>0){
+        ctx.strokeStyle = "#93c5fd";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(player.x,player.y,player.r+12,0,Math.PI*2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = defenders[defenderTypeEl.value].colour;
+      ctx.beginPath();
+      ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ecfeff";
+      ctx.beginPath();
+      ctx.arc(player.x-8,player.y-7,7,0,Math.PI*2);
+      ctx.arc(player.x+10,player.y+5,9,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 13px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("WBC",player.x,player.y+4);
+    }
+
+    function drawEnemies(){
+      for(const e of enemies){
+        if(!e.alive) continue;
+
+        const x = e.x + Math.sin(e.wobble)*2;
+        const y = e.y + Math.cos(e.wobble*.8)*2;
+
+        if(e.flash>0) ctx.globalAlpha = .65;
+
+        if(e.type==="bacteria") drawBacteria(x,y,e.r,targetInfo.bacteria.colour);
+        if(e.type==="virus") drawVirus(x,y,e.r,targetInfo.virus.colour);
+        if(e.type==="toxin") drawToxin(x,y,e.r,targetInfo.toxin.colour);
+        if(e.type==="infected") drawInfectedCell(x,y,e.r,targetInfo.infected.colour);
+
+        ctx.globalAlpha = 1;
+        drawHealthBar(x,y+e.r+9,e);
+      }
+    }
+
+    function drawHealthBar(x,y,e){
+      const w = 34;
+      const pct = Math.max(0,e.hp/e.maxHp);
+
+      ctx.fillStyle = "#0f172a99";
+      roundRect(ctx,x-w/2,y,w,5,3);
+      ctx.fill();
+
+      ctx.fillStyle = pct>.55 ? "#22c55e" : pct>.25 ? "#f59e0b" : "#ef4444";
+      roundRect(ctx,x-w/2,y,w*pct,5,3);
+      ctx.fill();
+    }
+
+    function drawBullets(){
+      for(const b of bullets){
+        ctx.fillStyle = b.colour;
+        ctx.shadowColor = b.colour;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    function drawDrops(){
+      for(const d of drops){
+        ctx.fillStyle = d.colour;
+        ctx.globalAlpha = .88;
+        ctx.beginPath();
+        ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawParticles(){
+      for(const p of particles){
+        ctx.globalAlpha = Math.max(0,Math.min(1,p.life*1.6));
+        ctx.fillStyle = p.colour;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawHudBars(){
+      drawBar(26,590,190,14,bodyDamage/100,"Body damage","#ef4444");
+      drawBar(245,590,190,14,inflammation/100,"Inflammation","#f59e0b");
+      if(feverSlow>0) drawBar(464,590,190,14,feverSlow/4.5,"Fever slow","#fca5a5");
+    }
+
+    function drawBar(x,y,w,h,pct,label,colour){
+      ctx.fillStyle = "#ffffffdd";
+      ctx.font = "800 12px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(label,x,y-6);
+
+      ctx.fillStyle = "#0f172acc";
+      roundRect(ctx,x,y,w,h,h/2);
+      ctx.fill();
+
+      ctx.fillStyle = colour;
+      roundRect(ctx,x,y,w*Math.max(0,Math.min(1,pct)),h,h/2);
+      ctx.fill();
+    }
+
+    function drawPauseText(){
+      const boxW = 560;
+      const boxH = 168;
+      const boxX = W/2-boxW/2;
+      const boxY = 228;
+
+      ctx.fillStyle = "#ffffffee";
+      roundRect(ctx,boxX,boxY,boxW,boxH,22);
+      ctx.fill();
+
+      ctx.strokeStyle = "#0f766e";
+      ctx.lineWidth = 3;
+      roundRect(ctx,boxX,boxY,boxW,boxH,22);
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f766e";
+      ctx.font = "950 34px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("CELL SIEGE",W/2,boxY+49);
+
+      ctx.fillStyle = "#172033";
+      ctx.font = "800 16px system-ui";
+      ctx.fillText("Move with ← → or A/D",W/2,boxY+84);
+      ctx.fillText("Fire with Space",W/2,boxY+108);
+
+      ctx.fillStyle = "#5e6a7f";
+      ctx.font = "700 14px system-ui";
+      ctx.fillText("Stop pathogens reaching the tissue line.",W/2,boxY+136);
+      ctx.fillText("Match the immune response to the threat.",W/2,boxY+156);
+    }
+
+    function drawBacteria(x,y,r,c){
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.rotate(Math.sin(x+y)*.4);
+      ctx.fillStyle = c;
+      roundRect(ctx,-r*1.15,-r*.55,r*2.3,r*1.1,r*.55);
+      ctx.fill();
+      ctx.strokeStyle = "#fecaca";
+      ctx.lineWidth = 2;
+      for(let i=-1;i<=1;i++){
+        ctx.beginPath();
+        ctx.arc(i*r*.45,0,r*.13,0,Math.PI*2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawVirus(x,y,r,c){
+      ctx.save();
+      ctx.strokeStyle = c;
+      ctx.lineWidth = 4;
+      for(let i=0;i<10;i++){
+        const a = i*Math.PI*2/10;
+        ctx.beginPath();
+        ctx.moveTo(x+Math.cos(a)*r*.76,y+Math.sin(a)*r*.76);
+        ctx.lineTo(x+Math.cos(a)*r*1.22,y+Math.sin(a)*r*1.22);
+        ctx.stroke();
+
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(x+Math.cos(a)*r*1.34,y+Math.sin(a)*r*1.34,r*.12,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.arc(x,y,r*.82,0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawToxin(x,y,r,c){
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.moveTo(x,y-r*1.1);
+      ctx.bezierCurveTo(x+r,y-r*.1,x+r*.55,y+r,x,y+r*1.05);
+      ctx.bezierCurveTo(x-r*.55,y+r,x-r,y-r*.1,x,y-r*1.1);
+      ctx.fill();
+      ctx.strokeStyle = "#fde68a";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function drawInfectedCell(x,y,r,c){
+      drawSoftCell(x,y,r*1.2,"#c4b5fd");
+
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.arc(x,y,r*.62,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#ffffffbb";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x-r*.4,y-r*.4);
+      ctx.lineTo(x+r*.4,y+r*.4);
+      ctx.moveTo(x+r*.4,y-r*.4);
+      ctx.lineTo(x-r*.4,y+r*.4);
+      ctx.stroke();
+    }
+
+    function drawSoftCell(x,y,r,c){
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffffaa";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function updateParticles(dt){
+      particles = particles.filter(p=>p.life>0);
+      for(const p of particles){
+        p.x += p.vx*dt;
+        p.y += p.vy*dt;
+        p.vy += 60*dt;
+        p.life -= dt;
+      }
+    }
+
+    function makeParticle(x,y,c,count){
+      for(let i=0;i<count;i++){
+        particles.push({
+          x,
+          y,
+          vx:(Math.random()-.5)*180,
+          vy:(Math.random()-.5)*180,
+          r:2+Math.random()*4,
+          colour:c,
+          life:.45+Math.random()*.55
+        });
+      }
+    }
+
+    function burstEnemy(e){
+      for(let i=0;i<18;i++){
+        particles.push({
+          x:e.x,
+          y:e.y,
+          vx:(Math.random()-.5)*280,
+          vy:(Math.random()-.5)*220,
+          r:3+Math.random()*5,
+          colour:targetInfo[e.type].colour,
+          life:.6+Math.random()*.7
+        });
+      }
+    }
+
+    function distance(x1,y1,x2,y2){
+      const dx = x1-x2;
+      const dy = y1-y2;
+      return Math.sqrt(dx*dx+dy*dy);
+    }
+
+    function roundRect(ctx,x,y,w,h,r){
+      const rr = Math.min(r,w/2,h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+rr,y);
+      ctx.lineTo(x+w-rr,y);
+      ctx.quadraticCurveTo(x+w,y,x+w,y+rr);
+      ctx.lineTo(x+w,y+h-rr);
+      ctx.quadraticCurveTo(x+w,y+h,x+w-rr,y+h);
+      ctx.lineTo(x+rr,y+h);
+      ctx.quadraticCurveTo(x,y+h,x,y+h-rr);
+      ctx.lineTo(x,y+rr);
+      ctx.quadraticCurveTo(x,y,x+rr,y);
+      ctx.closePath();
+    }
+
+    function renderTable(){
+      if(!dataRows.length){
+        dataBody.innerHTML = `<tr><td colspan="13">No wave data yet.</td></tr>`;
+        return;
+      }
+
+      dataBody.innerHTML = dataRows.map(r=>`
+        <tr>
+          <td>${r.trial}</td>
+          <td>${escapeHtml(r.mission)}</td>
+          <td>${escapeHtml(r.threat)}</td>
+          <td>${escapeHtml(r.defender)}</td>
+          <td>${escapeHtml(r.memory)}</td>
+          <td>${r.difficulty}</td>
+          <td>${r.barrier}%</td>
+          <td>${r.neutralised}</td>
+          <td>${r.shotsFired}</td>
+          <td>${r.accuracy}%</td>
+          <td>${r.bodyDamage}%</td>
+          <td>${r.inflammation}%</td>
+          <td>${escapeHtml(r.outcome)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function escapeHtml(v){
+      return String(v)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function getCsvText(){
+      const headers = ["Trial","Mission","Threat","Immune response","Memory","Intensity","Barrier (%)","Neutralised","Shots fired","Accuracy (%)","Body damage (%)","Inflammation (%)","Outcome"];
+      const rows = dataRows.map(r=>[r.trial,r.mission,r.threat,r.defender,r.memory,r.difficulty,r.barrier,r.neutralised,r.shotsFired,r.accuracy,r.bodyDamage,r.inflammation,r.outcome]);
+      return [headers,...rows].map(row=>row.map(c=>`"${String(c).replaceAll('"','""')}"`).join(",")).join("\n");
+    }
+
+    function exportCsv(){
+      if(!dataRows.length){
+        statusEl.textContent = "Play at least one wave before exporting data.";
+        return;
+      }
+
+      const blob = new Blob([getCsvText()],{type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cell-siege-wave-data.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      statusEl.textContent = "CSV exported.";
+    }
+
+    async function copyData(){
+      if(!dataRows.length){
+        statusEl.textContent = "Play at least one wave before copying data.";
+        return;
+      }
+
+      try{
+        await navigator.clipboard.writeText(getCsvText());
+        statusEl.textContent = "Wave data copied to the clipboard.";
+      }catch(e){
+        statusEl.textContent = "Clipboard copy was blocked. Use Export CSV instead.";
+      }
+    }
+
+    function loop(now){
+      const dt = Math.min(.033,(now-lastTime)/1000);
+      lastTime = now;
+      updateGame(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener("keydown",e=>{
+      if(["ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
+      keys[e.code] = true;
+      if(e.code==="KeyP") toggleStartPause();
+    });
+
+    window.addEventListener("keyup",e=>{
+      keys[e.code] = false;
+    });
+
+    difficultyEl.addEventListener("input",updateControlLabels);
+    barrierEl.addEventListener("input",updateControlLabels);
+    inflammationEl.addEventListener("input",()=>{
+      updateControlLabels();
+      if(!running){
+        inflammation = Number(inflammationEl.value);
+        updateMetrics();
+      }
+    });
+
+    defenderTypeEl.addEventListener("change",()=>{
+      const d = defenders[defenderTypeEl.value];
+      statusEl.textContent = `${d.name} selected: ${d.desc}.`;
+    });
+
+    pathogenModeEl.addEventListener("change",()=>{
+      resetWave(false);
+      statusEl.textContent = `${pathogenModeEl.options[pathogenModeEl.selectedIndex].text} selected. Wave rebuilt.`;
+    });
+
+    memoryModeEl.addEventListener("change",()=>{
+      statusEl.textContent = `${memoryModeEl.options[memoryModeEl.selectedIndex].text} selected. Compare wave outcomes using the same settings.`;
+    });
+
+    missionSelect.addEventListener("change",updateMissionCard);
+    applyMissionBtn.addEventListener("click",applyMission);
+    nextMissionBtn.addEventListener("click",nextMission);
+    startPauseBtn.addEventListener("click",toggleStartPause);
+    fireBtn.addEventListener("click",fireResponse);
+    resetWaveBtn.addEventListener("click",()=>resetWave(true));
+    clearDataBtn.addEventListener("click",()=>{
+      dataRows = [];
+      trial = 0;
+      renderTable();
+      statusEl.textContent = "Wave data cleared. Start a new investigation.";
+    });
+    soundBtn.addEventListener("click",()=>setSoundEnabled(!soundEnabled));
+    exportBtn.addEventListener("click",exportCsv);
+    copyBtn.addEventListener("click",copyData);
+
+    initStars();
+    updateControlLabels();
+    updateMissionCard();
+    setSoundEnabled(false);
+    resetWave(false);
+    renderTable();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
