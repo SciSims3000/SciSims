@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priestley’s Air Experiments Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --border: #d7dee8;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --warm: #f59e0b;
+      --danger: #dc2626;
+      --good: #16a34a;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-red: #fff1f2;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(22, 163, 74, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #172554, #1d4ed8 55%, #38bdf8);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -80px;
+      top: -90px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .safety-warning {
+      margin: 18px 0;
+      background: var(--soft-red);
+      border: 1px solid #fecdd3;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: #9f1239;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(#eef6ff, #ffffff 65%, #f1f5f9);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .sequence-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .sequence-step {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      background: #f8fafc;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .sequence-step.active {
+      background: var(--soft-blue);
+      color: var(--accent-dark);
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+
+    .sequence-step.done {
+      background: var(--soft-green);
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .controls-panel {
+      margin-top: 18px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 85px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 54px;
+      text-align: right;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      box-shadow: none;
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-blue);
+      color: var(--accent-dark);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .interpretation {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .interpretation h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .interpretation p {
+      margin: 0;
+    }
+
+    .modern {
+      background: var(--soft-green);
+      border-color: #bbf7d0;
+    }
+
+    .historical {
+      background: var(--soft-yellow);
+      border-color: #fde68a;
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 170px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #334155;
+      background: #f8fafc;
+    }
+
+    .scroll-table {
+      max-height: 210px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .cer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .challenge-grid,
+      .cer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip,
+      .sequence-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip,
+      .sequence-bar {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Priestley’s Air Experiments Simulator</h1>
+      <p class="subtitle">
+        Explore how Joseph Priestley used candles, animals, plants and heated mercuric oxide to investigate different “airs”.
+        Compare his historical interpretation with the modern oxygen explanation.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that Priestley’s experiments provided evidence that air contains substances involved in burning and breathing, even though his explanation was limited by the scientific ideas of his time.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can describe Priestley’s observations, compare historical and modern explanations, and use simulation evidence to explain why scientific models change over time.
+        </p>
+      </div>
+    </section>
+
+    <div class="safety-warning">
+      Simulation only: do not use mercury compounds, sealed animals or enclosed flames as classroom practicals.
+    </div>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>Experiment model</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Animated Priestley air experiment"></canvas>
+        </div>
+
+        <div class="sequence-bar" id="sequenceBar">
+          <div class="sequence-step" id="seq1">1. Change air</div>
+          <div class="sequence-step" id="seq2">2. Add plant</div>
+          <div class="sequence-step" id="seq3">3. Leave in conditions</div>
+          <div class="sequence-step" id="seq4">4. Test air</div>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label" id="metric1Label">Oxygen model</span>
+            <span class="value" id="metric1Value">21.0%</span>
+          </div>
+          <div class="metric">
+            <span class="label" id="metric2Label">Carbon dioxide model</span>
+            <span class="value" id="metric2Value">0.04%</span>
+          </div>
+          <div class="metric">
+            <span class="label">Candle</span>
+            <span class="value" id="candleMetric">Ready</span>
+          </div>
+          <div class="metric">
+            <span class="label">Living thing</span>
+            <span class="value" id="mouseMetric">Not added</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modeBadge">Compare model</span>
+          <h2 style="margin-top: 8px;">Evidence and explanation</h2>
+        </div>
+
+        <div class="interpretation historical" id="historicalBox">
+          <h3>Priestley-style interpretation</h3>
+          <p id="historicalText">
+            Set up an experiment and run the simulation to see how Priestley may have interpreted the air as being changed, damaged or restored.
+          </p>
+        </div>
+
+        <div class="interpretation modern" id="modernBox">
+          <h3>Modern interpretation</h3>
+          <p id="modernText">
+            Set up an experiment and run the simulation to connect the observations to oxygen, carbon dioxide, combustion and respiration.
+          </p>
+        </div>
+
+        <div class="graph-wrap" id="graphWrap">
+          <canvas id="graphCanvas" width="430" height="180" aria-label="Gas level graph"></canvas>
+        </div>
+
+        <div class="scroll-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th id="tableO2Head">O₂</th>
+                <th id="tableCO2Head">CO₂</th>
+                <th>Observation</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody"></tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel controls-panel">
+      <h2>Experiment controls</h2>
+
+      <div class="controls-grid">
+        <div>
+          <label for="experimentSelect">Experiment setup</label>
+          <select id="experimentSelect">
+            <option value="restorationLight">Damaged air, plant in light, candle test</option>
+            <option value="restorationDark">Damaged air, plant in darkness, candle test</option>
+            <option value="candle">Candle in sealed jar</option>
+            <option value="mouse">Mouse observation in sealed jar</option>
+            <option value="plantMouse">Plant and mouse in light</option>
+            <option value="mercuricOxide">Heating red mercuric oxide</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="modeSelect">Explanation mode</label>
+          <select id="modeSelect">
+            <option value="compare">Compare historical and modern</option>
+            <option value="historical">Priestley-style only</option>
+            <option value="modern">Modern only</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="lightSlider">Light level</label>
+          <div class="range-row">
+            <input id="lightSlider" type="range" min="0" max="100" value="80">
+            <span class="range-value" id="lightValue">80%</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="timeSlider">Plant or trial length</label>
+          <div class="range-row">
+            <input id="timeSlider" type="range" min="5" max="50" value="22">
+            <span class="range-value" id="timeValue">22 steps</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button id="runBtn">Run experiment</button>
+        <button id="stepBtn" class="secondary">Step once</button>
+        <button id="testCandleBtn" class="warning">Test candle now</button>
+        <button id="resetBtn" class="secondary">Reset</button>
+        <button id="exportBtn" class="secondary">Export CSV</button>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Run the plant-in-light sequence. Describe what happens before and after the plant is added.</li>
+          <li>Run the plant-in-darkness sequence. Compare the candle test with the light trial.</li>
+          <li>Switch to Priestley-style mode. Explain the result without using the words oxygen or carbon dioxide.</li>
+          <li>Switch to modern mode. Explain the same result using oxygen, carbon dioxide, combustion and respiration.</li>
+          <li>Use evidence from the data table to explain why scientific models can change over time.</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">Claim, Evidence, Reasoning</h2>
+        <div class="cer-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="What do you claim about Priestley’s evidence?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence</label>
+            <textarea id="evidenceBox" placeholder="What observations or data support your claim?"></textarea>
+          </div>
+          <div>
+            <label for="reasoningBox">Reasoning</label>
+            <textarea id="reasoningBox" placeholder="How does the evidence connect to the science?"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>This is a simplified classroom model. The gas percentages are not exact historical measurements.</li>
+          <li>The mouse is represented symbolically. Do not recreate sealed-animal experiments.</li>
+          <li>Mercuric oxide is hazardous and should not be used as a student practical.</li>
+          <li>A safer practical link could use aquatic plants, hydrogen carbonate indicator, limewater, oxygen sensors or carbon dioxide sensors.</li>
+          <li>Historical focus: Priestley gathered important evidence, but his phlogiston-based explanation was later replaced by oxygen-based chemistry.</li>
+          <li>Simulation assessment: students should identify what the model helps explain, its limitations, and how it differs from a real investigation.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 2 SciSim model. Values are simplified for classroom investigation and discussion.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const experimentSelect = document.getElementById("experimentSelect");
+    const modeSelect = document.getElementById("modeSelect");
+    const lightSlider = document.getElementById("lightSlider");
+    const timeSlider = document.getElementById("timeSlider");
+    const lightValue = document.getElementById("lightValue");
+    const timeValue = document.getElementById("timeValue");
+
+    const metric1Label = document.getElementById("metric1Label");
+    const metric1Value = document.getElementById("metric1Value");
+    const metric2Label = document.getElementById("metric2Label");
+    const metric2Value = document.getElementById("metric2Value");
+    const candleMetric = document.getElementById("candleMetric");
+    const mouseMetric = document.getElementById("mouseMetric");
+
+    const historicalText = document.getElementById("historicalText");
+    const modernText = document.getElementById("modernText");
+    const historicalBox = document.getElementById("historicalBox");
+    const modernBox = document.getElementById("modernBox");
+    const modeBadge = document.getElementById("modeBadge");
+    const dataBody = document.getElementById("dataBody");
+    const graphWrap = document.getElementById("graphWrap");
+    const tableO2Head = document.getElementById("tableO2Head");
+    const tableCO2Head = document.getElementById("tableCO2Head");
+
+    const runBtn = document.getElementById("runBtn");
+    const stepBtn = document.getElementById("stepBtn");
+    const testCandleBtn = document.getElementById("testCandleBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    const sequenceBar = document.getElementById("sequenceBar");
+    const seq1 = document.getElementById("seq1");
+    const seq2 = document.getElementById("seq2");
+    const seq3 = document.getElementById("seq3");
+    const seq4 = document.getElementById("seq4");
+
+    let state = {};
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function isRestorationExperiment() {
+      return experimentSelect.value === "restorationLight" || experimentSelect.value === "restorationDark";
+    }
+
+    function experimentLabel(value) {
+      const labels = {
+        restorationLight: "Damaged air, plant in light, candle test",
+        restorationDark: "Damaged air, plant in darkness, candle test",
+        candle: "Candle in sealed jar",
+        mouse: "Mouse observation in sealed jar",
+        plantMouse: "Plant and mouse in light",
+        mercuricOxide: "Heating red mercuric oxide"
+      };
+      return labels[value] || value;
+    }
+
+    function resetState() {
+      state = {
+        step: 0,
+        oxygen: 21.0,
+        co2: 0.04,
+        candle: "Ready",
+        mouse: "Not added",
+        observation: "Fresh ordinary air before the test begins.",
+        running: false,
+        flameSize: 0.8,
+        plantHealth: 1,
+        heatedGlow: 0,
+        candleTested: false,
+        phase: isRestorationExperiment() ? "damage" : "single",
+        restorationSteps: 0,
+        airState: "Fresh",
+        data: []
+      };
+
+      if (experimentSelect.value === "mouse" || experimentSelect.value === "plantMouse") {
+        state.candle = "Not used";
+        state.flameSize = 0;
+        state.mouse = "Active";
+      }
+
+      if (experimentSelect.value === "mercuricOxide") {
+        state.candle = "Ready for test";
+        state.flameSize = 0.65;
+      }
+
+      addData(state.observation);
+      updateAll();
+    }
+
+    function airQualityText() {
+      if (state.oxygen > 22.0) return "Restored strongly";
+      if (state.oxygen >= 19.5 && state.co2 < 0.5) return "Fresh";
+      if (state.oxygen >= 16.0) return "Changed";
+      return "Damaged";
+    }
+
+    function addData(observation) {
+      state.airState = airQualityText();
+
+      state.data.push({
+        step: state.step,
+        oxygen: state.oxygen.toFixed(1),
+        co2: state.co2.toFixed(2),
+        airState: state.airState,
+        observation
+      });
+
+      if (state.data.length > 90) {
+        state.data.shift();
+      }
+    }
+
+    function plantProduction() {
+      const experiment = experimentSelect.value;
+      const light = Number(lightSlider.value) / 100;
+
+      if (experiment === "restorationDark") {
+        return -0.035;
+      }
+
+      return 0.17 * light;
+    }
+
+    function plantCO2Effect() {
+      const experiment = experimentSelect.value;
+      const light = Number(lightSlider.value) / 100;
+
+      if (experiment === "restorationDark") {
+        return 0.035;
+      }
+
+      return -0.055 * light;
+    }
+
+    function simulationStep() {
+      const experiment = experimentSelect.value;
+      const targetPlantSteps = Number(timeSlider.value);
+
+      state.step += 1;
+      state.heatedGlow *= 0.88;
+
+      if (experiment === "candle") {
+        runCandleStep();
+      }
+
+      if (experiment === "mouse") {
+        runMouseStep();
+      }
+
+      if (experiment === "plantMouse") {
+        runPlantMouseStep();
+      }
+
+      if (experiment === "mercuricOxide") {
+        runMercuricOxideStep();
+      }
+
+      if (experiment === "restorationLight" || experiment === "restorationDark") {
+        runRestorationStep(targetPlantSteps);
+      }
+
+      state.oxygen = clamp(state.oxygen, 0, 35);
+      state.co2 = clamp(state.co2, 0.02, 8);
+
+      addData(state.observation);
+      updateAll();
+    }
+
+    function runCandleStep() {
+      state.mouse = "Not added";
+
+      if (state.oxygen > 15.4) {
+        state.oxygen -= 0.36;
+        state.co2 += 0.06;
+        state.candle = "Burning";
+        state.flameSize = clamp((state.oxygen - 14) / 8, 0.15, 1.25);
+        state.observation = "The candle continues to burn, but the flame gradually weakens.";
+      } else {
+        state.candle = "Out";
+        state.flameSize = 0;
+        state.observation = "The candle goes out when the air can no longer support the flame.";
+      }
+    }
+
+    function runMouseStep() {
+      state.candle = "Not used";
+      state.flameSize = 0;
+      state.oxygen -= 0.18;
+      state.co2 += 0.065;
+
+      if (state.oxygen > 17.3) {
+        state.mouse = "Active";
+        state.observation = "The mouse symbol remains active while the air is still suitable for breathing.";
+      } else if (state.oxygen > 15.4) {
+        state.mouse = "Stressed";
+        state.observation = "The mouse symbol shows stress as the air becomes less suitable.";
+      } else {
+        state.mouse = "Unsafe";
+        state.observation = "The trial is stopped because the sealed air has become unsafe.";
+      }
+    }
+
+    function runPlantMouseStep() {
+      const light = Number(lightSlider.value) / 100;
+      const oxygenFromPlant = 0.16 * light;
+      const oxygenUsedByMouse = 0.18;
+      const co2FromMouse = 0.07;
+      const co2UsedByPlant = 0.055 * light;
+
+      state.oxygen += oxygenFromPlant - oxygenUsedByMouse;
+      state.co2 += co2FromMouse - co2UsedByPlant;
+      state.candle = "Not used";
+      state.flameSize = 0;
+      state.plantHealth = clamp(0.75 + light * 0.45, 0.75, 1.2);
+
+      if (state.oxygen > 18.2) {
+        state.mouse = "Active";
+        state.observation = "The plant and mouse are both affecting the air. Stronger light helps the air remain suitable for longer.";
+      } else if (state.oxygen > 15.6) {
+        state.mouse = "Stressed";
+        state.observation = "The mouse symbol shows stress because oxygen use is greater than the plant can replace under these conditions.";
+      } else {
+        state.mouse = "Unsafe";
+        state.observation = "The trial is stopped because the sealed air has become unsafe.";
+      }
+    }
+
+    function runMercuricOxideStep() {
+      state.mouse = "Not added";
+      state.oxygen += 0.48;
+      state.co2 = Math.max(0.02, state.co2 - 0.01);
+      state.candle = "Strong flame";
+      state.flameSize = 1.25;
+      state.heatedGlow = 1;
+      state.observation = "Heating the red solid produces a gas in which the candle burns strongly.";
+    }
+
+    function runRestorationStep(targetPlantSteps) {
+      const experiment = experimentSelect.value;
+      const lightTrial = experiment === "restorationLight";
+
+      state.mouse = "Not added";
+
+      if (state.phase === "damage") {
+        state.oxygen -= 0.62;
+        state.co2 += 0.09;
+        state.candle = "Burning";
+        state.flameSize = clamp((state.oxygen - 14) / 8, 0.15, 1.05);
+        state.observation = "Step 1: a candle is used to change the air inside the sealed jar.";
+
+        if (state.oxygen <= 15.6) {
+          state.candle = "Out";
+          state.flameSize = 0;
+          state.phase = "addPlant";
+          state.observation = "Step 1 complete: the candle has gone out and the air has been changed.";
+        }
+
+        return;
+      }
+
+      if (state.phase === "addPlant") {
+        state.phase = "plant";
+        state.candle = "Removed";
+        state.flameSize = 0;
+        state.plantHealth = lightTrial ? 1.1 : 0.75;
+        state.observation = "Step 2: a plant is added to the jar to test whether the air can be restored.";
+        return;
+      }
+
+      if (state.phase === "plant") {
+        state.restorationSteps += 1;
+        state.oxygen += plantProduction();
+        state.co2 += plantCO2Effect();
+        state.candle = "Waiting";
+        state.flameSize = 0;
+        state.plantHealth = lightTrial ? 1.15 : 0.75;
+
+        if (lightTrial) {
+          state.observation = "Step 3: the plant is left in light. The air gradually becomes better at supporting a later candle test.";
+        } else {
+          state.observation = "Step 3: the plant is left in darkness. The air is not restored in the same way as the light trial.";
+        }
+
+        if (state.restorationSteps >= targetPlantSteps) {
+          state.phase = "readyTest";
+          state.observation = "Step 3 complete: the air is ready to be tested with a candle.";
+        }
+
+        return;
+      }
+
+      if (state.phase === "readyTest") {
+        testCandleNow();
+      }
+    }
+
+    function candleResultText() {
+      if (state.oxygen > 21.8) return "Bright flame";
+      if (state.oxygen > 16.0) return "Burning";
+      return "Out";
+    }
+
+    function flameFromOxygen() {
+      if (state.oxygen > 21.8) return 1.15;
+      if (state.oxygen > 16.0) return clamp((state.oxygen - 15) / 7, 0.2, 1);
+      return 0;
+    }
+
+    function canTestCandle() {
+      const experiment = experimentSelect.value;
+
+      if (experiment === "mouse" || experiment === "plantMouse") {
+        return false;
+      }
+
+      if (isRestorationExperiment()) {
+        return state.phase === "readyTest" || state.phase === "complete" || state.phase === "plant";
+      }
+
+      return true;
+    }
+
+    function testCandleNow() {
+      if (!canTestCandle()) return;
+
+      state.candleTested = true;
+      state.candle = candleResultText();
+      state.flameSize = flameFromOxygen();
+
+      if (state.candle === "Out") {
+        state.observation = "Step 4: the candle test fails. The air does not support a flame.";
+      } else if (state.candle === "Bright flame") {
+        state.observation = "Step 4: the candle test is strong. The air supports burning very well.";
+      } else {
+        state.observation = "Step 4: the candle test works. The air still supports burning.";
+      }
+
+      if (isRestorationExperiment()) {
+        state.phase = "complete";
+      }
+
+      addData(state.observation);
+      updateAll();
+    }
+
+    function updateAll() {
+      updateMetrics();
+      updateInterpretation();
+      updateTable();
+      updateButtons();
+      updateSequenceBar();
+      drawSimulation();
+      drawGraph();
+    }
+
+    function updateMetrics() {
+      const mode = modeSelect.value;
+      const airState = airQualityText();
+
+      if (mode === "historical") {
+        metric1Label.textContent = "Air quality";
+        metric1Value.textContent = airState;
+        metric2Label.textContent = "Historical idea";
+        metric2Value.textContent = airState === "Restored strongly" || airState === "Fresh" ? "Fit air" : "Changed air";
+        graphWrap.style.display = "none";
+        tableO2Head.textContent = "Air quality";
+        tableCO2Head.textContent = "Historical idea";
+      } else {
+        metric1Label.textContent = "Oxygen model";
+        metric1Value.textContent = `${state.oxygen.toFixed(1)}%`;
+        metric2Label.textContent = "Carbon dioxide model";
+        metric2Value.textContent = `${state.co2.toFixed(2)}%`;
+        graphWrap.style.display = "block";
+        tableO2Head.textContent = "O₂";
+        tableCO2Head.textContent = "CO₂";
+      }
+
+      candleMetric.textContent = state.candle;
+      mouseMetric.textContent = state.mouse;
+      lightValue.textContent = `${lightSlider.value}%`;
+      timeValue.textContent = `${timeSlider.value} steps`;
+    }
+
+    function updateInterpretation() {
+      const experiment = experimentSelect.value;
+      const mode = modeSelect.value;
+      const airState = airQualityText();
+
+      historicalBox.style.display = mode === "modern" ? "none" : "block";
+      modernBox.style.display = mode === "historical" ? "none" : "block";
+
+      modeBadge.textContent =
+        mode === "modern" ? "Modern model" :
+        mode === "historical" ? "Priestley-style model" :
+        "Compare model";
+
+      let historical = "";
+      let modern = "";
+
+      if (experiment === "candle") {
+        historical = airState === "Damaged"
+          ? "The air has been changed by the burning candle and is no longer fit to support flame."
+          : "The candle is testing whether the air remains suitable for burning.";
+        modern = airState === "Damaged"
+          ? "Combustion has used oxygen from the sealed jar. When the oxygen level falls too low, the flame goes out."
+          : "The candle is using oxygen and producing carbon dioxide as it burns.";
+      }
+
+      if (experiment === "mouse") {
+        historical = airState === "Damaged"
+          ? "The air has become unsuitable for life, so the trial must stop."
+          : "The animal is being used as evidence that the air can still support life.";
+        modern = airState === "Damaged"
+          ? "Respiration has reduced the oxygen level and increased the carbon dioxide level. This sealed condition is unsafe."
+          : "Animals use oxygen during respiration and release carbon dioxide.";
+      }
+
+      if (experiment === "plantMouse") {
+        historical = "The plant appears to refresh the air, allowing it to support life for longer under favourable conditions.";
+        modern = "The plant and mouse affect the air at the same time. The mouse uses oxygen and releases carbon dioxide, while the plant in light can release oxygen and use carbon dioxide.";
+      }
+
+      if (experiment === "restorationLight") {
+        historical = state.phase === "complete"
+          ? "The plant appears to have restored the changed air so that it can support flame again."
+          : "The trial tests whether a plant left in light can restore air that has been changed by a candle.";
+        modern = state.phase === "complete"
+          ? "In light, the plant model increases oxygen and lowers carbon dioxide, allowing the candle to burn again if enough oxygen is restored."
+          : "The sequence models combustion first, then a light-exposed plant affecting oxygen and carbon dioxide levels.";
+      }
+
+      if (experiment === "restorationDark") {
+        historical = state.phase === "complete"
+          ? "The plant left in darkness does not restore the air in the same way."
+          : "The trial tests whether light conditions affect the plant’s ability to restore changed air.";
+        modern = state.phase === "complete"
+          ? "Without light, the model does not increase oxygen. The candle test is weaker or fails."
+          : "The sequence separates the candle’s effect on air from the plant’s effect under dark conditions.";
+      }
+
+      if (experiment === "mercuricOxide") {
+        historical = "Heating the red solid produces a special kind of air in which a candle burns unusually well. Priestley called it dephlogisticated air.";
+        modern = "Heating red mercuric oxide releases oxygen gas. A higher oxygen level allows the candle to burn more strongly.";
+      }
+
+      historicalText.textContent = historical;
+      modernText.textContent = modern;
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+      const historicalOnly = modeSelect.value === "historical";
+
+      state.data.slice().reverse().forEach(row => {
+        const tr = document.createElement("tr");
+
+        if (historicalOnly) {
+          const idea = row.airState === "Restored strongly" || row.airState === "Fresh" ? "Fit air" : "Changed air";
+          tr.innerHTML = `
+            <td>${row.step}</td>
+            <td>${row.airState}</td>
+            <td>${idea}</td>
+            <td>${row.observation}</td>
+          `;
+        } else {
+          tr.innerHTML = `
+            <td>${row.step}</td>
+            <td>${row.oxygen}%</td>
+            <td>${row.co2}%</td>
+            <td>${row.observation}</td>
+          `;
+        }
+
+        dataBody.appendChild(tr);
+      });
+    }
+
+    function updateButtons() {
+      const testAllowed = canTestCandle();
+      testCandleBtn.disabled = !testAllowed;
+
+      if (testAllowed) {
+        testCandleBtn.textContent = "Test candle now";
+      } else {
+        testCandleBtn.textContent = "Candle test unavailable";
+      }
+    }
+
+    function updateSequenceBar() {
+      if (!isRestorationExperiment()) {
+        sequenceBar.style.display = "none";
+        return;
+      }
+
+      sequenceBar.style.display = "grid";
+
+      const steps = [seq1, seq2, seq3, seq4];
+      steps.forEach(step => {
+        step.classList.remove("active", "done");
+      });
+
+      if (state.phase === "damage") {
+        seq1.classList.add("active");
+      }
+
+      if (state.phase === "addPlant") {
+        seq1.classList.add("done");
+        seq2.classList.add("active");
+      }
+
+      if (state.phase === "plant") {
+        seq1.classList.add("done");
+        seq2.classList.add("done");
+        seq3.classList.add("active");
+      }
+
+      if (state.phase === "readyTest") {
+        seq1.classList.add("done");
+        seq2.classList.add("done");
+        seq3.classList.add("done");
+        seq4.classList.add("active");
+      }
+
+      if (state.phase === "complete") {
+        steps.forEach(step => step.classList.add("done"));
+      }
+    }
+
+    function drawSimulation() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      const experiment = experimentSelect.value;
+      const light = Number(lightSlider.value) / 100;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, h);
+      skyGradient.addColorStop(0, "#dbeafe");
+      skyGradient.addColorStop(0.6, "#ffffff");
+      skyGradient.addColorStop(1, "#e2e8f0");
+      ctx.fillStyle = skyGradient;
+      ctx.fillRect(0, 0, w, h);
+
+      drawBench(0, 420, w, 80);
+
+      if (experiment === "mercuricOxide") {
+        drawMercuricApparatus();
+      } else {
+        if (experiment === "restorationLight" || experiment === "plantMouse") {
+          drawSun(110, 85, 36, light);
+        }
+
+        if (experiment === "restorationDark") {
+          drawDarknessOverlay();
+        }
+
+        drawJar(285, 70, 330, 360);
+
+        if (experiment === "candle") {
+          drawCandle(450, 335, state.flameSize, state.candle);
+        }
+
+        if (experiment === "mouse" || experiment === "plantMouse") {
+          drawMouse(455, 355, state.mouse);
+        }
+
+        if (experiment === "plantMouse") {
+          drawPlant(365, 350, state.plantHealth, light, false);
+        }
+
+        if (experiment === "restorationLight" || experiment === "restorationDark") {
+          if (state.phase === "damage") {
+            drawCandle(450, 335, state.flameSize, state.candle);
+          }
+
+          if (state.phase !== "damage") {
+            drawPlant(365, 350, state.plantHealth, light, experiment === "restorationDark");
+          }
+
+          if (state.phase === "complete" || state.phase === "readyTest") {
+            drawCandle(505, 335, state.flameSize, state.candle);
+          }
+        }
+
+        drawGasOverlay(285, 70, 330, 360);
+      }
+
+      drawLabels(experiment);
+    }
+
+    function drawSun(x, y, r, light) {
+      ctx.save();
+      ctx.globalAlpha = 0.25 + light * 0.55;
+      ctx.fillStyle = "#fde68a";
+      ctx.beginPath();
+      ctx.arc(x, y, r + 24, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalAlpha = 0.6 + light * 0.4;
+      ctx.fillStyle = "#facc15";
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 4;
+
+      for (let i = 0; i < 12; i++) {
+        const a = (Math.PI * 2 * i) / 12;
+        ctx.beginPath();
+        ctx.moveTo(x + Math.cos(a) * (r + 8), y + Math.sin(a) * (r + 8));
+        ctx.lineTo(x + Math.cos(a) * (r + 24), y + Math.sin(a) * (r + 24));
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawDarknessOverlay() {
+      ctx.save();
+      ctx.fillStyle = "rgba(15, 23, 42, 0.18)";
+      ctx.fillRect(0, 0, simCanvas.width, simCanvas.height);
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "800 18px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Dark condition", 32, 52);
+      ctx.restore();
+    }
+
+    function drawBench(x, y, w, h) {
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = "#94a3b8";
+      ctx.fillRect(x, y, w, 10);
+    }
+
+    function drawJar(x, y, w, h) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(30, 64, 175, 0.55)";
+      ctx.lineWidth = 5;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.38)";
+
+      roundRect(ctx, x, y, w, h, 55);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x + 62, y + 35);
+      ctx.quadraticCurveTo(x + 28, y + 160, x + 60, y + h - 45);
+      ctx.stroke();
+
+      ctx.fillStyle = "#475569";
+      ctx.fillRect(x + 95, y + h - 8, w - 190, 14);
+      ctx.restore();
+    }
+
+    function drawGasOverlay(x, y, w, h) {
+      const oxygenNorm = clamp((state.oxygen - 14) / 12, 0, 1);
+      const co2Norm = clamp(state.co2 / 5, 0, 1);
+
+      ctx.save();
+      ctx.globalAlpha = 0.08 + oxygenNorm * 0.11;
+      ctx.fillStyle = "#38bdf8";
+      roundRect(ctx, x + 8, y + 8, w - 16, h - 16, 48);
+      ctx.fill();
+
+      ctx.globalAlpha = co2Norm * 0.18;
+      ctx.fillStyle = "#64748b";
+      roundRect(ctx, x + 8, y + 8, w - 16, h - 16, 48);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCandle(x, y, flameSize, status) {
+      ctx.save();
+
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(x - 26, y - 95, 52, 95);
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x - 26, y - 95, 52, 95);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(x - 2, y - 105, 4, 14);
+
+      if (flameSize > 0 && status !== "Waiting" && status !== "Ready" && status !== "Removed" && status !== "Not used") {
+        const flicker = 0.92 + Math.sin(Date.now() / 120) * 0.08;
+        const fs = flameSize * flicker;
+
+        ctx.fillStyle = "rgba(245, 158, 11, 0.28)";
+        ctx.beginPath();
+        ctx.ellipse(x, y - 120, 42 * fs, 58 * fs, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#f97316";
+        ctx.beginPath();
+        ctx.moveTo(x, y - 168 * fs);
+        ctx.quadraticCurveTo(x - 30 * fs, y - 128 * fs, x, y - 104 * fs);
+        ctx.quadraticCurveTo(x + 30 * fs, y - 128 * fs, x, y - 168 * fs);
+        ctx.fill();
+
+        ctx.fillStyle = "#fde68a";
+        ctx.beginPath();
+        ctx.moveTo(x, y - 150 * fs);
+        ctx.quadraticCurveTo(x - 15 * fs, y - 124 * fs, x, y - 108 * fs);
+        ctx.quadraticCurveTo(x + 15 * fs, y - 124 * fs, x, y - 150 * fs);
+        ctx.fill();
+      }
+
+      if (status === "Out") {
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x - 18, y - 132);
+        ctx.quadraticCurveTo(x - 48, y - 145, x - 28, y - 160);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#475569";
+      ctx.fillRect(x - 42, y, 84, 10);
+      ctx.restore();
+    }
+
+    function drawMouse(x, y, status) {
+      ctx.save();
+
+      let body = "#94a3b8";
+      if (status === "Stressed") body = "#f59e0b";
+      if (status === "Unsafe") body = "#ef4444";
+
+      ctx.fillStyle = body;
+      ctx.beginPath();
+      ctx.ellipse(x, y - 30, 52, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(x + 45, y - 38, 25, 21, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.beginPath();
+      ctx.arc(x + 54, y - 60, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.beginPath();
+      ctx.arc(x + 56, y - 42, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#64748b";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(x - 45, y - 26);
+      ctx.quadraticCurveTo(x - 85, y - 18, x - 105, y - 45);
+      ctx.stroke();
+
+      if (status === "Unsafe") {
+        ctx.fillStyle = "#7f1d1d";
+        ctx.font = "700 18px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("trial stopped", x, y + 25);
+      }
+
+      ctx.restore();
+    }
+
+    function drawPlant(x, y, health, light, dark) {
+      ctx.save();
+
+      ctx.fillStyle = "#92400e";
+      ctx.fillRect(x - 30, y - 18, 60, 28);
+      ctx.fillStyle = "#78350f";
+      ctx.fillRect(x - 36, y - 6, 72, 12);
+
+      ctx.strokeStyle = dark ? "#166534" : "#15803d";
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(x, y - 18);
+      ctx.lineTo(x, y - 125 * health);
+      ctx.stroke();
+
+      const leafColour = dark ? "#65a30d" : "#22c55e";
+      ctx.fillStyle = leafColour;
+
+      for (let i = 0; i < 7; i++) {
+        const side = i % 2 === 0 ? -1 : 1;
+        const ly = y - 45 - i * 13 * health;
+        const lx = x + side * 12;
+
+        ctx.beginPath();
+        ctx.ellipse(lx + side * 18, ly, 29 * health, 13 * health, side * -0.45, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (!dark && light > 0.35) {
+        ctx.fillStyle = "rgba(34, 197, 94, 0.13)";
+        ctx.beginPath();
+        ctx.arc(x, y - 95, 90 * light, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawMercuricApparatus() {
+      const x = 450;
+      const y = 335;
+
+      ctx.save();
+
+      drawSun(118, 82, 34, 1);
+
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.55)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(150, 100);
+      ctx.lineTo(345, 255);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+      ctx.strokeStyle = "#64748b";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(335, 248, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(370, 268);
+      ctx.lineTo(433, 315);
+      ctx.stroke();
+
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(x - 145, y + 30, 290, 8);
+
+      ctx.strokeStyle = "#475569";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(x - 105, y + 36);
+      ctx.lineTo(x - 140, y + 95);
+      ctx.moveTo(x + 105, y + 36);
+      ctx.lineTo(x + 140, y + 95);
+      ctx.stroke();
+
+      ctx.fillStyle = "#7f1d1d";
+      ctx.beginPath();
+      ctx.ellipse(x - 75, y - 2, 50, 20, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#dc2626";
+      ctx.beginPath();
+      ctx.ellipse(x - 75, y - 8, 34, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (state.heatedGlow > 0.05) {
+        ctx.globalAlpha = 0.25 + state.heatedGlow * 0.35;
+        ctx.fillStyle = "#fb923c";
+        ctx.beginPath();
+        ctx.ellipse(x - 75, y - 8, 82, 48, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.strokeStyle = "#64748b";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(x - 28, y - 10);
+      ctx.quadraticCurveTo(x + 40, y - 68, x + 128, y - 42);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.strokeStyle = "rgba(30, 64, 175, 0.65)";
+      ctx.lineWidth = 4;
+      roundRect(ctx, x + 105, y - 125, 130, 160, 25);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(56, 189, 248, 0.12)";
+      roundRect(ctx, x + 112, y - 118, 116, 146, 20);
+      ctx.fill();
+
+      drawCandle(x + 170, y + 22, state.flameSize, state.candle);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "800 16px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("red solid", x - 75, y + 50);
+      ctx.fillText("collected gas", x + 170, y - 140);
+
+      ctx.restore();
+    }
+
+    function drawLabels(experiment) {
+      ctx.save();
+      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
+      ctx.font = "800 20px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(experimentLabel(experiment), simCanvas.width / 2, 38);
+
+      ctx.font = "700 15px system-ui";
+      ctx.fillStyle = "#334155";
+      const text = state.observation.length > 105 ? state.observation.slice(0, 102) + "..." : state.observation;
+      ctx.fillText(text, simCanvas.width / 2, 470);
+      ctx.restore();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      gtx.strokeStyle = "#e2e8f0";
+      gtx.lineWidth = 1;
+
+      for (let i = 0; i <= 4; i++) {
+        const y = 24 + i * 32;
+        gtx.beginPath();
+        gtx.moveTo(42, y);
+        gtx.lineTo(w - 12, y);
+        gtx.stroke();
+      }
+
+      gtx.fillStyle = "#475569";
+      gtx.font = "700 12px system-ui";
+      gtx.fillText("Gas model", 12, 16);
+      gtx.fillText("O₂", 12, 50);
+      gtx.fillText("CO₂", 12, 82);
+
+      const data = state.data;
+      if (data.length < 2) return;
+
+      const plotX = (i) => 42 + (i / Math.max(1, data.length - 1)) * (w - 60);
+      const plotO2Y = (v) => 150 - clamp((v - 10) / 20, 0, 1) * 120;
+      const plotCO2Y = (v) => 150 - clamp(v / 8, 0, 1) * 120;
+
+      gtx.strokeStyle = "#2563eb";
+      gtx.lineWidth = 3;
+      gtx.beginPath();
+
+      data.forEach((d, i) => {
+        const x = plotX(i);
+        const y = plotO2Y(Number(d.oxygen));
+
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      });
+
+      gtx.stroke();
+
+      gtx.strokeStyle = "#64748b";
+      gtx.lineWidth = 3;
+      gtx.beginPath();
+
+      data.forEach((d, i) => {
+        const x = plotX(i);
+        const y = plotCO2Y(Number(d.co2));
+
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      });
+
+      gtx.stroke();
+
+      gtx.fillStyle = "#2563eb";
+      gtx.fillRect(w - 88, 16, 12, 12);
+      gtx.fillStyle = "#334155";
+      gtx.fillText("O₂", w - 70, 27);
+
+      gtx.fillStyle = "#64748b";
+      gtx.fillRect(w - 45, 16, 12, 12);
+      gtx.fillStyle = "#334155";
+      gtx.fillText("CO₂", w - 28, 27);
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    async function runExperiment() {
+      if (state.running) return;
+
+      state.running = true;
+      const target = Number(timeSlider.value);
+      let safetyCounter = 0;
+
+      while (state.running && safetyCounter < 130) {
+        safetyCounter += 1;
+        simulationStep();
+        await new Promise(resolve => setTimeout(resolve, 160));
+
+        if (isRestorationExperiment()) {
+          if (state.phase === "readyTest") {
+            testCandleNow();
+            break;
+          }
+
+          if (state.phase === "complete") {
+            break;
+          }
+        } else {
+          if (state.step >= target) {
+            break;
+          }
+
+          if (state.mouse === "Unsafe" || state.candle === "Out") {
+            break;
+          }
+        }
+      }
+
+      state.running = false;
+    }
+
+    function exportCSV() {
+      const headers = [
+        "experiment",
+        "step",
+        "oxygen_percent",
+        "carbon_dioxide_percent",
+        "historical_air_quality",
+        "observation"
+      ];
+
+      const rows = state.data.map(row => [
+        `"${experimentLabel(experimentSelect.value).replaceAll('"', '""')}"`,
+        row.step,
+        row.oxygen,
+        row.co2,
+        `"${row.airState.replaceAll('"', '""')}"`,
+        `"${row.observation.replaceAll('"', '""')}"`
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "priestley_air_experiment_data.csv";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    runBtn.addEventListener("click", runExperiment);
+
+    stepBtn.addEventListener("click", () => {
+      state.running = false;
+      simulationStep();
+    });
+
+    testCandleBtn.addEventListener("click", testCandleNow);
+    resetBtn.addEventListener("click", resetState);
+    exportBtn.addEventListener("click", exportCSV);
+
+    experimentSelect.addEventListener("change", resetState);
+    modeSelect.addEventListener("change", updateAll);
+
+    lightSlider.addEventListener("input", () => {
+      lightValue.textContent = `${lightSlider.value}%`;
+      updateAll();
+    });
+
+    timeSlider.addEventListener("input", () => {
+      timeValue.textContent = `${timeSlider.value} steps`;
+    });
+
+    function animationLoop() {
+      drawSimulation();
+      requestAnimationFrame(animationLoop);
+    }
+
+    resetState();
+    animationLoop();
+  </script>
+</body>
+</html>
