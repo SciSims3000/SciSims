@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<!-- SciSims Van Helmont Willow Tree Simulator: compact no-preload dashboard version. Animation and evidence stay side by side; controls sit horizontally underneath. Future years are generated only after Step/Run. v6 keeps the compact layout and smooth growth while removing photosynthesis-specific overlays from the historical Van Helmont view. -->
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Van Helmont Willow Tree Experiment Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --soft-blue:#e0ecff;
+      --soft-green:#dcfce7;
+      --soft-yellow:#fef9c3;
+      --soft-orange:#ffedd5;
+      --soft-purple:#ede9fe;
+      --danger:#b91c1c;
+      --shadow:0 10px 24px rgba(15,23,42,0.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eff6ff 0%,var(--bg) 38%,#f8fafc 100%);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .page{
+      max-width:1400px;
+      margin:0 auto;
+      padding:14px 18px 24px;
+    }
+
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 13px;
+      border-radius:999px;
+      background:var(--panel);
+      color:var(--button);
+      text-decoration:none;
+      font-weight:750;
+      border:1px solid var(--line);
+      box-shadow:0 6px 16px rgba(15,23,42,0.06);
+      white-space:nowrap;
+    }
+
+    .compact-note{
+      margin:0;
+      color:var(--muted);
+      font-size:0.92rem;
+      text-align:right;
+    }
+
+    header{
+      background:linear-gradient(135deg,#172554,#2563eb 62%,#16a34a);
+      color:white;
+      border-radius:24px;
+      padding:22px 24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+      margin-bottom:12px;
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      inset:auto -80px -120px auto;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.16);
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.35fr) minmax(330px,0.65fr);
+      gap:16px;
+      align-items:center;
+      position:relative;
+      z-index:1;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.85rem,3.2vw,3rem);
+      letter-spacing:-0.04em;
+      line-height:1.05;
+    }
+
+    .subtitle{
+      max-width:860px;
+      margin:0;
+      font-size:1.02rem;
+      color:#dbeafe;
+    }
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .tag{
+      background:rgba(255,255,255,0.16);
+      border:1px solid rgba(255,255,255,0.24);
+      color:white;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:0.86rem;
+      font-weight:650;
+    }
+
+    .learning-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .learning-card{
+      background:rgba(255,255,255,0.14);
+      border:1px solid rgba(255,255,255,0.24);
+      border-radius:16px;
+      padding:13px 14px;
+    }
+
+    .learning-card h2{
+      margin:0 0 5px;
+      font-size:0.78rem;
+      color:#bfdbfe;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+    }
+
+    .learning-card p{
+      margin:0;
+      color:#f8fafc;
+      font-size:0.93rem;
+    }
+
+    .dashboard{
+      display:grid;
+      grid-template-columns:minmax(560px,1fr) minmax(290px,340px);
+      gap:14px;
+      align-items:start;
+      margin-bottom:14px;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:15px;
+      box-shadow:var(--shadow);
+    }
+
+    .panel h2,
+    .panel h3{
+      margin-top:0;
+      letter-spacing:-0.02em;
+    }
+
+    .panel h2{font-size:1.22rem;}
+    .panel h3{font-size:1.05rem;}
+
+    .controls{
+      position:static;
+      max-height:none;
+      overflow:visible;
+      display:grid;
+      grid-template-columns:minmax(210px,0.9fr) minmax(240px,1fr) minmax(340px,1.45fr) minmax(280px,1.15fr);
+      gap:12px;
+      align-items:start;
+    }
+
+    .control-intro,
+    .controls details{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:15px;
+      padding:12px;
+      min-width:0;
+    }
+
+    .control-intro h2{margin:0 0 4px;}
+
+    details{
+      margin:0;
+    }
+
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      color:#1e40af;
+      list-style:none;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    summary::-webkit-details-marker{display:none;}
+    summary::after{content:"+"; font-size:1.1rem; color:#64748b;}
+    details[open] summary{margin-bottom:8px;}
+    details[open] summary::after{content:"−";}
+
+    label{
+      display:block;
+      font-weight:750;
+      margin:9px 0 5px;
+      font-size:0.92rem;
+    }
+
+    .hint{
+      display:block;
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:4px;
+      font-weight:500;
+    }
+
+    input[type="range"]{width:100%;}
+
+    input[type="number"], select{
+      width:100%;
+      padding:9px 10px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      background:white;
+      font:inherit;
+    }
+
+    .range-line{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    .value-pill{
+      min-width:74px;
+      text-align:center;
+      background:#eff6ff;
+      color:#1d4ed8;
+      border:1px solid #bfdbfe;
+      border-radius:999px;
+      padding:4px 8px;
+      font-weight:850;
+      font-size:0.84rem;
+    }
+
+    .button-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+      margin-top:12px;
+    }
+
+    button{
+      border:0;
+      border-radius:13px;
+      padding:10px 11px;
+      background:var(--button);
+      color:white;
+      font-weight:850;
+      cursor:pointer;
+      font:inherit;
+      box-shadow:0 6px 14px rgba(37,99,235,0.22);
+    }
+
+    button:hover{background:var(--button-hover);}
+
+    button.secondary{
+      background:#e2e8f0;
+      color:#0f172a;
+      box-shadow:none;
+    }
+
+    button.secondary:hover{background:#cbd5e1;}
+
+    button.warning{
+      background:#f97316;
+      box-shadow:0 6px 14px rgba(249,115,22,0.18);
+    }
+
+    .sim-panel{padding:12px;}
+
+    .mini-title{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:9px;
+    }
+
+    .mini-title h2,
+    .mini-title h3{margin:0;}
+
+    .canvas-wrap{
+      padding:10px;
+      background:linear-gradient(180deg,#dbeafe,#ecfccb 65%,#fef3c7);
+      border-radius:18px;
+      border:1px solid var(--line);
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:14px;
+      background:#f8fafc;
+      border:1px solid rgba(15,23,42,0.08);
+    }
+
+    .evidence-panel{
+      position:static;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .stat{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      min-width:0;
+    }
+
+    .stat .label{
+      display:block;
+      color:var(--muted);
+      font-size:0.72rem;
+      font-weight:750;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    .stat .number{
+      display:block;
+      margin-top:3px;
+      font-size:1.05rem;
+      font-weight:950;
+      letter-spacing:-0.03em;
+      overflow-wrap:anywhere;
+    }
+
+    .interpretation{
+      margin-top:11px;
+      padding:12px;
+      border-radius:15px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      font-size:0.92rem;
+    }
+
+    .interpretation strong{color:#1e40af;}
+
+    .warning-note{
+      margin-top:10px;
+      padding:11px;
+      border-radius:14px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      font-size:0.88rem;
+    }
+
+    .tab-shell{
+      margin-top:14px;
+    }
+
+    .tab-buttons{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:8px;
+      background:#e2e8f0;
+      border-radius:18px;
+      border:1px solid var(--line);
+      margin-bottom:10px;
+    }
+
+    .tab-button{
+      background:transparent;
+      color:#334155;
+      border:1px solid transparent;
+      box-shadow:none;
+      padding:8px 12px;
+      font-size:0.92rem;
+    }
+
+    .tab-button:hover{background:#f8fafc;color:#0f172a;}
+
+    .tab-button.active{
+      background:white;
+      color:#1d4ed8;
+      border-color:#bfdbfe;
+      box-shadow:0 4px 12px rgba(15,23,42,0.08);
+    }
+
+    .tab-pane[hidden]{display:none;}
+
+    .graph-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      font-size:0.84rem;
+      color:var(--muted);
+    }
+
+    .legend span::before{
+      content:"";
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      margin-right:5px;
+      background:currentColor;
+    }
+
+    .legend .tree{color:#16a34a;}
+    .legend .soil{color:#92400e;}
+    .legend .water{color:#0284c7;}
+    .legend .air{color:#7c3aed;}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.92rem;
+    }
+
+    th,td{
+      text-align:right;
+      border-bottom:1px solid var(--line);
+      padding:9px 8px;
+      vertical-align:top;
+    }
+
+    th:first-child,td:first-child{text-align:left;}
+
+    th{
+      background:#f1f5f9;
+      color:#334155;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+
+    .table-wrap{
+      max-height:300px;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
+
+    .callout-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
+    .callout{
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+
+    .callout h3{
+      margin:0 0 7px;
+      font-size:1rem;
+    }
+
+    .callout p{margin:0;color:#475569;font-size:0.92rem;}
+
+    .model-note{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+      color:#475569;
+      font-size:0.9rem;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:0.92fr 1.08fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .student-list ol,
+    .student-list ul{
+      margin:0;
+      padding-left:22px;
+    }
+
+    .student-list li{margin:0 0 7px;}
+
+    .cer-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .cer-box{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+    }
+
+    .cer-box h3{
+      margin:0 0 7px;
+      font-size:0.98rem;
+      color:#1e40af;
+    }
+
+    textarea{
+      width:100%;
+      min-height:96px;
+      resize:vertical;
+      padding:10px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      font:inherit;
+      background:white;
+    }
+
+    .source-list{
+      color:#475569;
+      font-size:0.94rem;
+    }
+
+    .source-list a{color:#1d4ed8;}
+
+    @media (max-width:1220px){
+      .controls{grid-template-columns:repeat(2,minmax(260px,1fr));}
+      .graph-grid,.two-col{grid-template-columns:1fr;}
+      .callout-grid{grid-template-columns:repeat(2,1fr);}
+    }
+
+    @media (max-width:980px){
+      .dashboard{grid-template-columns:1fr;}
+      .status-grid{grid-template-columns:repeat(3,1fr);}
+    }
+
+    @media (max-width:900px){
+      .hero-grid,.learning-box{grid-template-columns:1fr;}
+      .controls{grid-template-columns:1fr;}
+      .compact-note{display:none;}
+      .status-grid{grid-template-columns:repeat(2,1fr);}
+      .graph-grid{grid-template-columns:1fr;}
+      .cer-grid{grid-template-columns:1fr;}
+    }
+
+    @media (max-width:640px){
+      .page{padding:12px;}
+      header{padding:18px;}
+      .top-bar{align-items:flex-start;}
+      .callout-grid,.status-grid{grid-template-columns:1fr;}
+      .button-row{grid-template-columns:1fr;}
+      th,td{font-size:0.82rem;padding:7px 6px;}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="top-bar">
+      <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+      <p class="compact-note">Compact dashboard layout: animation and current evidence stay side by side, with controls arranged horizontally underneath.</p>
+    </div>
+
+    <header>
+      <div class="hero-grid">
+        <div>
+          <h1>Van Helmont Willow Tree Experiment Simulator</h1>
+          <p class="subtitle">Grow a willow tree in a pot model, compare the change in tree mass and soil mass, then decide whether the evidence supports Van Helmont’s conclusion.</p>
+          <div class="tag-row">
+            <span class="tag">Plant growth</span>
+            <span class="tag">Historical investigation</span>
+            <span class="tag">Mass balance</span>
+            <span class="tag">Validity and limitations</span>
+          </div>
+        </div>
+        <section class="learning-box" aria-label="Learning intention and success criteria">
+          <div class="learning-card">
+            <h2>Learning Intention</h2>
+            <p>Students will understand that historical experiments can provide useful evidence while still having limitations.</p>
+          </div>
+          <div class="learning-card">
+            <h2>Success Criteria</h2>
+            <p>Students can compare plant, soil, water and air-based inputs to evaluate Van Helmont’s experiment.</p>
+          </div>
+        </section>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <section class="panel sim-panel">
+        <div class="mini-title">
+          <h2>Willow growth model</h2>
+          <span class="hint" id="timeLabel">Year 0 of 5</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="760" height="520" aria-label="Animated model of a willow tree growing in a pot"></canvas>
+        </div>
+      </section>
+
+      <aside class="panel evidence-panel" aria-label="Current evidence">
+        <h2>Current evidence</h2>
+        <div class="status-grid">
+          <div class="stat">
+            <span class="label">Tree mass</span>
+            <span class="number" id="treeMassOut">2.27 kg</span>
+          </div>
+          <div class="stat">
+            <span class="label">Dry soil</span>
+            <span class="number" id="soilMassOut">90.70 kg</span>
+          </div>
+          <div class="stat">
+            <span class="label">Tree gain</span>
+            <span class="number" id="gainOut">0.00 kg</span>
+          </div>
+          <div class="stat">
+            <span class="label">Soil lost</span>
+            <span class="number" id="soilLossOut">0.000 kg</span>
+          </div>
+          <div class="stat">
+            <span class="label">Water added</span>
+            <span class="number" id="waterUsedOut">0 L</span>
+          </div>
+          <div class="stat">
+            <span class="label" id="co2LabelOut">CO₂ fixed</span>
+            <span class="number" id="co2FixedOut">0.00 kg</span>
+          </div>
+        </div>
+
+        <div class="interpretation" id="interpretationBox">
+          <strong>Van Helmont interpretation:</strong> The tree became much heavier, but the dry soil mass barely changed. Since water was the main thing added, Van Helmont concluded that the new plant material came from water.
+        </div>
+        <div class="warning-note" id="warningBox">
+          This is a conceptual model, not a real plant-growth predictor.
+        </div>
+      </aside>
+    </section>
+
+      <aside class="panel controls" aria-label="Simulation controls">
+        <div class="control-intro">
+          <h2>Controls</h2>
+          <p class="hint">Use historical mode first, then change one variable at a time.</p>
+
+          <label for="preset">Preset</label>
+          <select id="preset">
+            <option value="historical">Historical Van Helmont-style setup</option>
+            <option value="modern">Modern photosynthesis model</option>
+            <option value="dry">Limited water scenario</option>
+            <option value="shade">Low sunlight scenario</option>
+            <option value="custom">Custom investigation</option>
+          </select>
+        </div>
+
+        <details open>
+          <summary>Setup</summary>
+          <label for="treeStart">Starting tree mass (kg)</label>
+          <input type="number" id="treeStart" min="0.1" max="20" step="0.01" value="2.27">
+
+          <label for="soilStart">Starting dry soil mass (kg)</label>
+          <input type="number" id="soilStart" min="1" max="200" step="0.1" value="90.7">
+
+          <label for="years">Experiment length (years)</label>
+          <div class="range-line">
+            <input type="range" id="years" min="1" max="10" step="1" value="5">
+            <span class="value-pill" id="yearsOut">5 yr</span>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Growth factors</summary>
+          <label for="water">Water added per year (L)</label>
+          <div class="range-line">
+            <input type="range" id="water" min="50" max="900" step="10" value="420">
+            <span class="value-pill" id="waterOut">420 L</span>
+          </div>
+
+          <label for="sunlight">Sunlight level (%)</label>
+          <div class="range-line">
+            <input type="range" id="sunlight" min="10" max="120" step="5" value="100">
+            <span class="value-pill" id="sunlightOut">100%</span>
+          </div>
+
+          <label for="co2">Carbon dioxide available (%)</label>
+          <div class="range-line">
+            <input type="range" id="co2" min="20" max="140" step="5" value="100">
+            <span class="value-pill" id="co2Out">100%</span>
+          </div>
+
+          <label for="minerals">Mineral availability (%)</label>
+          <div class="range-line">
+            <input type="range" id="minerals" min="10" max="140" step="5" value="100">
+            <span class="value-pill" id="mineralsOut">100%</span>
+          </div>
+
+          <label for="potSetup">Pot and air setup</label>
+          <select id="potSetup">
+            <option value="covered">Covered soil, leaves open to air</option>
+            <option value="open">Open pot, possible outside debris</option>
+            <option value="sealed">Fully sealed system, limited CO₂</option>
+          </select>
+          <span class="hint">The historical setup limited added dirt while still allowing air and water through.</span>
+        </details>
+
+        <details open>
+          <summary>Run and view</summary>
+          <label for="viewMode">Explanation layer</label>
+          <select id="viewMode">
+            <option value="modern">Modern interpretation</option>
+            <option value="helmont">Van Helmont interpretation</option>
+            <option value="critical">Critical view</option>
+          </select>
+
+          <div class="button-row">
+            <button id="runBtn">Run</button>
+            <button class="secondary" id="pauseBtn">Pause</button>
+            <button class="secondary" id="stepBtn">Step year</button>
+            <button class="warning" id="resetBtn">Reset</button>
+          </div>
+          <button id="csvBtn" class="secondary" style="width:100%;margin-top:9px;">Download visible CSV</button>
+        </details>
+      </aside>
+
+    <section class="tab-shell panel" aria-label="Data and classroom activities">
+      <div class="tab-buttons" role="tablist" aria-label="Choose what to view">
+        <button class="tab-button active" data-tab="graphsPane" type="button">Graphs</button>
+        <button class="tab-button" data-tab="tablePane" type="button">Table</button>
+        <button class="tab-button" data-tab="ideasPane" type="button">Core ideas</button>
+        <button class="tab-button" data-tab="challengePane" type="button">Student challenge</button>
+        <button class="tab-button" data-tab="evaluatePane" type="button">Evaluate sim</button>
+        <button class="tab-button" data-tab="teacherPane" type="button">Teacher notes</button>
+      </div>
+
+      <div class="tab-pane" id="graphsPane">
+        <div class="graph-grid">
+          <div class="panel">
+            <div class="mini-title">
+              <h3>Mass over time</h3>
+              <div class="legend"><span class="tree">Tree</span><span class="soil">Soil</span></div>
+            </div>
+            <canvas id="massGraph" width="620" height="340" aria-label="Graph of tree mass and soil mass over time"></canvas>
+          </div>
+
+          <div class="panel">
+            <div class="mini-title">
+              <h3 id="sourceGraphTitle">Model estimate: sources of new plant material</h3>
+              <div class="legend" id="sourceLegend"><span class="air">Air CO₂</span><span class="water">Water</span><span class="soil">Minerals</span></div>
+            </div>
+            <canvas id="sourceGraph" width="620" height="340" aria-label="Bar graph showing estimated sources of new plant material"></canvas>
+            <p class="model-note" id="sourceGraphNote">This bar graph is a simplified atom-source model. Real fresh plant mass includes water, sugars, cellulose, minerals and other compounds.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tablePane" hidden>
+        <div class="mini-title">
+          <h2>Results table</h2>
+          <span class="hint">Future rows stay hidden until the simulation reaches that year.</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead id="resultsHead"></thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="ideasPane" hidden>
+        <section class="callout-grid" aria-label="Core ideas">
+          <div class="callout">
+            <h3>What Van Helmont measured</h3>
+            <p>He compared the mass of the willow and the dry soil before and after the growing period.</p>
+          </div>
+          <div class="callout">
+            <h3>What he concluded</h3>
+            <p>Because the soil mass changed very little, he argued that the new plant material came from water.</p>
+          </div>
+          <div class="callout">
+            <h3>What was missing</h3>
+            <p>Carbon dioxide entering from the air, oxygen leaving, leaf fall and stored water were not properly measured.</p>
+          </div>
+          <div class="callout">
+            <h3>Fresh mass and dry biomass</h3>
+            <p>The measured tree mass includes water. Dry biomass is built mostly from atoms from carbon dioxide and water.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="tab-pane" id="challengePane" hidden>
+        <div class="two-col">
+          <div class="student-list">
+            <h2>Student challenge</h2>
+            <ol>
+              <li>Run the historical setup. Record the change in tree mass and soil mass.</li>
+              <li>Explain why Van Helmont’s conclusion seemed reasonable using only the evidence he measured.</li>
+              <li>Change sunlight, water and carbon dioxide one at a time. Which variable has the biggest effect in this model?</li>
+              <li>Write a stronger conclusion that uses modern knowledge of photosynthesis.</li>
+              <li>Design one improvement to the original experiment that would help measure the role of air.</li>
+            </ol>
+          </div>
+          <div class="cer-grid" aria-label="Claim evidence reasoning writing support">
+            <div class="cer-box">
+              <h3>Claim</h3>
+              <textarea placeholder="State what the evidence shows about where most new plant material comes from."></textarea>
+            </div>
+            <div class="cer-box">
+              <h3>Evidence</h3>
+              <textarea placeholder="Use tree mass, soil mass and one changed variable from the sim."></textarea>
+            </div>
+            <div class="cer-box">
+              <h3>Reasoning</h3>
+              <textarea placeholder="Connect the evidence to photosynthesis, carbon dioxide, water and limitations."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="evaluatePane" hidden>
+        <div class="student-list">
+          <h2>Evaluate the simulation</h2>
+          <ul>
+            <li>What did this simulation help you understand about plant growth?</li>
+            <li>What is one strength of the model?</li>
+            <li>What is one limitation of the model?</li>
+            <li>How is this model different from a real plant-growth investigation?</li>
+            <li>Overall, how useful is the simulation for judging Van Helmont’s conclusion? Give a reason.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="teacherPane" hidden>
+        <h2>Teacher notes</h2>
+        <p>This sim is useful for teaching controlled variables, mass balance, validity, historical science and the development of photosynthesis ideas. It deliberately separates Van Helmont’s measured evidence from the modern interpretation, so students can practise evaluating a conclusion rather than simply labelling it wrong.</p>
+        <p class="source-list"><strong>Historical reference points:</strong> Van Helmont’s commonly reported setup used a willow of about 2.3 kg planted in about 91 kg of dried soil for five years. The tree gained about 74.5 kg while the redried soil lost only about 57 g. Source: <a href="https://bio.libretexts.org/Bookshelves/Introductory_and_General_Biology/Biology_%28Kimball%29/04%3A_Cell_Metabolism/4.09%3A_Photosynthesis_-_Dicovering_the_Secrets" target="_blank" rel="noopener">Biology LibreTexts, Photosynthesis: Discovering the Secrets</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const controls = {
+      preset: document.getElementById('preset'),
+      treeStart: document.getElementById('treeStart'),
+      soilStart: document.getElementById('soilStart'),
+      years: document.getElementById('years'),
+      water: document.getElementById('water'),
+      sunlight: document.getElementById('sunlight'),
+      co2: document.getElementById('co2'),
+      minerals: document.getElementById('minerals'),
+      potSetup: document.getElementById('potSetup'),
+      viewMode: document.getElementById('viewMode')
+    };
+
+    const out = {
+      years: document.getElementById('yearsOut'),
+      water: document.getElementById('waterOut'),
+      sunlight: document.getElementById('sunlightOut'),
+      co2: document.getElementById('co2Out'),
+      minerals: document.getElementById('mineralsOut'),
+      time: document.getElementById('timeLabel'),
+      treeMass: document.getElementById('treeMassOut'),
+      soilMass: document.getElementById('soilMassOut'),
+      gain: document.getElementById('gainOut'),
+      soilLoss: document.getElementById('soilLossOut'),
+      waterUsed: document.getElementById('waterUsedOut'),
+      co2Fixed: document.getElementById('co2FixedOut'),
+      co2Label: document.getElementById('co2LabelOut'),
+      sourceTitle: document.getElementById('sourceGraphTitle'),
+      sourceLegend: document.getElementById('sourceLegend'),
+      sourceNote: document.getElementById('sourceGraphNote'),
+      tableHead: document.getElementById('resultsHead'),
+      interpretation: document.getElementById('interpretationBox'),
+      warning: document.getElementById('warningBox'),
+      table: document.getElementById('resultsBody')
+    };
+
+    const simCanvas = document.getElementById('simCanvas');
+    const simCtx = simCanvas.getContext('2d');
+    const massCanvas = document.getElementById('massGraph');
+    const massCtx = massCanvas.getContext('2d');
+    const sourceCanvas = document.getElementById('sourceGraph');
+    const sourceCtx = sourceCanvas.getContext('2d');
+
+    const presets = {
+      historical: {treeStart:2.27, soilStart:90.7, years:5, water:420, sunlight:100, co2:100, minerals:100, potSetup:'covered', viewMode:'helmont'},
+      modern: {treeStart:2.27, soilStart:90.7, years:5, water:520, sunlight:110, co2:110, minerals:110, potSetup:'covered', viewMode:'modern'},
+      dry: {treeStart:2.27, soilStart:90.7, years:5, water:110, sunlight:100, co2:100, minerals:100, potSetup:'covered', viewMode:'critical'},
+      shade: {treeStart:2.27, soilStart:90.7, years:5, water:420, sunlight:35, co2:100, minerals:100, potSetup:'covered', viewMode:'critical'},
+      custom: null
+    };
+
+    let data = [];
+    let currentYear = 0;
+    let targetYear = 5;
+    let timer = null;
+    let animationFrame = null;
+    let visualRow = null;
+
+    function clamp(value, min, max){
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function lerp(a,b,t){
+      return a + (b - a) * t;
+    }
+
+    function smoothstep(t){
+      const x = clamp(t,0,1);
+      return x * x * (3 - 2 * x);
+    }
+
+    function interpolateRows(start,end,t){
+      const eased = smoothstep(t);
+      const row = {};
+      Object.keys(end).forEach(key => {
+        if(typeof end[key] === 'number' && typeof start[key] === 'number'){
+          row[key] = lerp(start[key], end[key], eased);
+        }else{
+          row[key] = end[key];
+        }
+      });
+      return row;
+    }
+
+    function cancelGrowthAnimation(){
+      if(animationFrame){
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+      visualRow = null;
+    }
+
+    function fmt(value, digits=2){
+      return Number(value).toFixed(digits);
+    }
+
+    function readSettings(){
+      return {
+        treeStart: parseFloat(controls.treeStart.value) || 2.27,
+        soilStart: parseFloat(controls.soilStart.value) || 90.7,
+        years: parseInt(controls.years.value,10) || 5,
+        water: parseFloat(controls.water.value) || 420,
+        sunlight: parseFloat(controls.sunlight.value) / 100,
+        co2: parseFloat(controls.co2.value) / 100,
+        minerals: parseFloat(controls.minerals.value) / 100,
+        potSetup: controls.potSetup.value,
+        viewMode: controls.viewMode.value
+      };
+    }
+
+    function updateControlLabels(){
+      out.years.textContent = `${controls.years.value} yr`;
+      out.water.textContent = `${controls.water.value} L`;
+      out.sunlight.textContent = `${controls.sunlight.value}%`;
+      out.co2.textContent = `${controls.co2.value}%`;
+      out.minerals.textContent = `${controls.minerals.value}%`;
+    }
+
+    function applyPreset(name){
+      if(name === 'custom') return;
+      const p = presets[name];
+      controls.treeStart.value = p.treeStart;
+      controls.soilStart.value = p.soilStart;
+      controls.years.value = p.years;
+      controls.water.value = p.water;
+      controls.sunlight.value = p.sunlight;
+      controls.co2.value = p.co2;
+      controls.minerals.value = p.minerals;
+      controls.potSetup.value = p.potSetup;
+      controls.viewMode.value = p.viewMode;
+      resetSimulation();
+    }
+
+    function makeInitialRow(s){
+      return {
+        year:0,
+        treeMass:s.treeStart,
+        soilMass:s.soilStart,
+        gain:0,
+        soilLoss:0,
+        waterAdded:0,
+        co2Fixed:0,
+        airContribution:0,
+        waterContribution:0,
+        mineralContribution:0,
+        growthThisYear:0
+      };
+    }
+
+    function isHistoricalDefault(s){
+      return Math.abs(s.treeStart - 2.27) < 0.02
+        && Math.abs(s.soilStart - 90.7) < 0.2
+        && s.years === 5
+        && Math.abs(s.water - 420) < 1
+        && Math.abs(s.sunlight - 1) < 0.01
+        && Math.abs(s.co2 - 1) < 0.01
+        && Math.abs(s.minerals - 1) < 0.01
+        && s.potSetup === 'covered';
+    }
+
+    function historicalGrowthForYear(year, totalYears){
+      // Calculates the next annual gain only when that year is reached.
+      // The curve is scaled to the commonly reported total gain of about 74.5 kg after five years.
+      const exponent = 1.34;
+      const previousFraction = Math.pow((year - 1) / totalYears, exponent);
+      const nextFraction = Math.pow(year / totalYears, exponent);
+      return 74.5 * (nextFraction - previousFraction);
+    }
+
+    function buildNextRow(previous, year, s){
+      const ageFactor = 1 + (year - 1) * 0.22;
+      const waterFactor = clamp(s.water / 420, 0.12, 1.55);
+      const sunFactor = clamp(s.sunlight, 0.1, 1.25);
+      let co2Factor = clamp(s.co2, 0.2, 1.4);
+
+      if(s.potSetup === 'sealed'){
+        co2Factor = clamp(co2Factor * Math.max(0.08, 1 - year * 0.19), 0.08, 1.4);
+      }else if(s.potSetup === 'open'){
+        co2Factor = clamp(co2Factor * 1.03, 0.2, 1.4);
+      }
+
+      const mineralFactor = clamp(s.minerals, 0.1, 1.35);
+      const limitingFactor = Math.min(waterFactor, sunFactor, co2Factor, mineralFactor);
+      const balanceFactor = 0.45 + 0.55 * limitingFactor;
+      const growthPotential = (6.2 + 3.6 * year) * ageFactor;
+      let growth = growthPotential * balanceFactor;
+
+      const defaultLike = isHistoricalDefault(s);
+      if(defaultLike){
+        growth = historicalGrowthForYear(year, s.years);
+      }
+
+      let mineralUsed = growth * (0.00075 + 0.00015 * (s.minerals / 1.4));
+      if(defaultLike){
+        mineralUsed = 0.057 / s.years;
+      }
+      if(s.potSetup === 'open'){
+        mineralUsed = Math.max(0, mineralUsed - 0.0015);
+      }
+
+      const waterBuiltIntoBiomass = growth * 0.18;
+      const airBuiltIntoBiomass = Math.max(0, growth - waterBuiltIntoBiomass - mineralUsed);
+      const co2Fixed = airBuiltIntoBiomass * 3.67;
+      const treeMass = previous.treeMass + growth;
+      const soilMass = Math.max(0, previous.soilMass - mineralUsed);
+
+      return {
+        year,
+        treeMass,
+        soilMass,
+        gain:treeMass - s.treeStart,
+        soilLoss:s.soilStart - soilMass,
+        waterAdded:previous.waterAdded + s.water,
+        co2Fixed:previous.co2Fixed + co2Fixed,
+        airContribution:previous.airContribution + airBuiltIntoBiomass,
+        waterContribution:previous.waterContribution + waterBuiltIntoBiomass,
+        mineralContribution:previous.mineralContribution + mineralUsed,
+        growthThisYear:growth
+      };
+    }
+
+    function resetSimulation(){
+      stopTimer();
+      cancelGrowthAnimation();
+      updateControlLabels();
+      const s = readSettings();
+      targetYear = s.years;
+      currentYear = 0;
+      data = [makeInitialRow(s)];
+      renderAll();
+    }
+
+    function stepSimulation(){
+      if(currentYear < targetYear){
+        const s = readSettings();
+        const nextYear = currentYear + 1;
+        const previous = data[data.length - 1];
+        const nextRow = buildNextRow(previous, nextYear, s);
+        data.push(nextRow);
+        currentYear = nextYear;
+        renderTable();
+        renderMassGraph();
+        renderSourceGraph();
+        animateGrowth(previous, nextRow, 760);
+      }else{
+        stopTimer();
+      }
+    }
+
+    function animateGrowth(startRow,endRow,duration=760){
+      cancelGrowthAnimation();
+      const startTime = performance.now();
+      function frame(now){
+        const t = clamp((now - startTime) / duration, 0, 1);
+        visualRow = interpolateRows(startRow, endRow, t);
+        renderOutputs(visualRow);
+        renderSim(visualRow);
+        if(t < 1){
+          animationFrame = requestAnimationFrame(frame);
+        }else{
+          animationFrame = null;
+          visualRow = null;
+          renderAll();
+        }
+      }
+      animationFrame = requestAnimationFrame(frame);
+    }
+
+    function runSimulation(){
+      if(currentYear >= targetYear){
+        resetSimulation();
+      }
+      stopTimer();
+      stepSimulation();
+      timer = setInterval(stepSimulation, 930);
+    }
+
+    function stopTimer(){
+      if(timer){
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function currentRow(){
+      return visualRow || data[Math.min(currentYear, data.length - 1)] || data[0];
+    }
+
+    function renderAll(){
+      renderOutputs();
+      renderSim();
+      renderMassGraph();
+      renderSourceGraph();
+      renderTable();
+    }
+
+    function renderOutputs(rowOverride){
+      const row = rowOverride || currentRow();
+      const s = readSettings();
+      const displayYear = Number.isInteger(row.year) ? row.year : fmt(row.year,1);
+      out.time.textContent = `Year ${displayYear} of ${s.years}`;
+      out.treeMass.textContent = `${fmt(row.treeMass,2)} kg`;
+      out.soilMass.textContent = `${fmt(row.soilMass,2)} kg`;
+      out.gain.textContent = `${fmt(row.gain,2)} kg`;
+      out.soilLoss.textContent = `${fmt(row.soilLoss,3)} kg`;
+      out.waterUsed.textContent = `${Math.round(row.waterAdded)} L`;
+      
+      if(s.viewMode === 'helmont'){
+        out.co2Label.textContent = 'Air input';
+        out.co2Fixed.textContent = 'not measured';
+        out.interpretation.innerHTML = '<strong>Van Helmont interpretation:</strong> The tree became much heavier, but the dry soil mass barely changed. Since water was the main thing added, Van Helmont concluded that the new plant material came from water.';
+      }else if(s.viewMode === 'critical'){
+        out.co2Label.textContent = 'CO₂ input';
+        out.co2Fixed.textContent = `${fmt(row.co2Fixed,2)} kg`;
+        out.interpretation.innerHTML = '<strong>Critical view:</strong> The experiment measured soil and plant mass, but did not measure carbon dioxide entering from the air, gases leaving the plant, fallen leaves, or changes in stored water.';
+      }else{
+        out.co2Label.textContent = 'CO₂ fixed';
+        out.co2Fixed.textContent = `${fmt(row.co2Fixed,2)} kg`;
+        out.interpretation.innerHTML = '<strong>Modern interpretation:</strong> The tree gains mass because photosynthesis uses carbon dioxide from the air and water to build sugars, which can be turned into plant material. Minerals from the soil are essential, but they are only a small part of the total mass.';
+      }
+
+      const lowLimit = parseFloat(controls.water.value) < 150 || parseFloat(controls.sunlight.value) < 40 || parseFloat(controls.co2.value) < 45 || controls.potSetup.value === 'sealed';
+      out.warning.textContent = lowLimit
+        ? 'The model is showing limited growth because at least one key input is low or the system is sealed. This is a chance to discuss limiting factors and experimental validity.'
+        : 'This is a conceptual model, not a real plant-growth predictor. It is designed to test reasoning about evidence, variables and limitations.';
+    }
+
+    function drawRoundedRect(ctx,x,y,w,h,r){
+      const radius = Math.min(r,w/2,h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+radius,y);
+      ctx.arcTo(x+w,y,x+w,y+h,radius);
+      ctx.arcTo(x+w,y+h,x,y+h,radius);
+      ctx.arcTo(x,y+h,x,y,radius);
+      ctx.arcTo(x,y,x+w,y,radius);
+      ctx.closePath();
+    }
+
+    function renderSim(rowOverride){
+      const ctx = simCtx;
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      const row = rowOverride || currentRow();
+      const progress = targetYear === 0 ? 0 : clamp(row.year / targetYear,0,1);
+      const s = readSettings();
+      const helmontLayer = s.viewMode === 'helmont';
+      ctx.clearRect(0,0,w,h);
+
+      const sky = ctx.createLinearGradient(0,0,0,h);
+      sky.addColorStop(0,'#dbeafe');
+      sky.addColorStop(0.55,'#ecfccb');
+      sky.addColorStop(1,'#fef3c7');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0,0,w,h);
+
+      // Sun and light rays are hidden in the Van Helmont interpretation layer.
+      // He could observe daylight, but the light-based mechanism of plant growth was not known to him.
+      if(!helmontLayer){
+        const sunX = 105, sunY = 88;
+        ctx.save();
+        ctx.globalAlpha = clamp(parseFloat(controls.sunlight.value)/120,0.15,1);
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath();
+        ctx.arc(sunX,sunY,44,0,Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(250,204,21,0.55)';
+        ctx.lineWidth = 4;
+        for(let i=0;i<12;i++){
+          const angle = i*Math.PI/6;
+          ctx.beginPath();
+          ctx.moveTo(sunX+Math.cos(angle)*56,sunY+Math.sin(angle)*56);
+          ctx.lineTo(sunX+Math.cos(angle)*88,sunY+Math.sin(angle)*88);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // CO₂ molecules are hidden in the Van Helmont interpretation layer because gases in air were not part of his explanation.
+      if(!helmontLayer){
+        const co2Opacity = clamp(parseFloat(controls.co2.value)/140,0.15,0.95);
+        ctx.save();
+        ctx.globalAlpha = co2Opacity;
+        for(let i=0;i<12;i++){
+          const x = 500 + Math.sin(i*1.7 + row.year)*98 + (i%3)*8;
+          const y = 58 + (i*31)%170;
+          ctx.fillStyle = '#7c3aed';
+          ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#a78bfa';
+          ctx.beginPath(); ctx.arc(x-11,y,4,0,Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x+11,y,4,0,Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Ground
+      ctx.fillStyle = '#bbf7d0';
+      ctx.fillRect(0,410,w,110);
+      ctx.fillStyle = '#86efac';
+      for(let x=0; x<w; x+=20){
+        ctx.fillRect(x,410 + Math.sin(x*0.04)*7,22,4);
+      }
+
+      // Pot
+      const potX = 260, potY = 330, potW = 250, potH = 130;
+      ctx.fillStyle = '#b45309';
+      ctx.beginPath();
+      ctx.moveTo(potX,potY);
+      ctx.lineTo(potX+potW,potY);
+      ctx.lineTo(potX+potW-35,potY+potH);
+      ctx.lineTo(potX+35,potY+potH);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#92400e';
+      drawRoundedRect(ctx,potX-12,potY-17,potW+24,34,13);
+      ctx.fill();
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(potX+18,potY-3,potW-36,30);
+
+      if(s.potSetup === 'covered' || s.potSetup === 'sealed'){
+        ctx.save();
+        ctx.globalAlpha = s.potSetup === 'sealed' ? 0.72 : 0.48;
+        ctx.fillStyle = s.potSetup === 'sealed' ? '#94a3b8' : '#cbd5e1';
+        drawRoundedRect(ctx,potX+10,potY-21,potW-20,18,9);
+        ctx.fill();
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        if(s.potSetup === 'covered'){
+          ctx.fillStyle = '#64748b';
+          for(let hx=potX+35; hx<potX+potW-35; hx+=28){
+            ctx.beginPath();
+            ctx.arc(hx,potY-12,3,0,Math.PI*2);
+            ctx.fill();
+          }
+        }
+        ctx.restore();
+      }
+
+      // Soil texture
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(potX+18,potY-3,potW-36,30);
+      ctx.clip();
+      for(let i=0;i<80;i++){
+        ctx.fillStyle = i%2 ? '#451a03' : '#a16207';
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.arc(potX+25+(i*29)%205,potY+(i*13)%25,1.6+(i%3),0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Tree dimensions. The visual size is tied to the experiment timeline, not the latest stored row.
+      // This avoids the tree jumping from sapling to mature tree after the first generated year.
+      const growthRatio = Math.pow(progress,0.82);
+      const sway = Math.sin(row.year * 1.2) * 3 * growthRatio;
+      const trunkHeight = 72 + 198 * growthRatio;
+      const trunkWidth = 11 + 24 * growthRatio;
+      const baseX = potX + potW/2;
+      const baseY = potY - 2;
+      const topY = baseY - trunkHeight;
+
+      // Roots
+      ctx.strokeStyle = '#854d0e';
+      ctx.lineWidth = 3;
+      for(let i=-3;i<=3;i++){
+        ctx.beginPath();
+        ctx.moveTo(baseX,baseY+4);
+        ctx.quadraticCurveTo(baseX+i*20,baseY+30,baseX+i*31,baseY+54+Math.abs(i)*3);
+        ctx.stroke();
+      }
+
+      // Trunk
+      ctx.strokeStyle = '#854d0e';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = trunkWidth;
+      ctx.beginPath();
+      ctx.moveTo(baseX,baseY);
+      ctx.quadraticCurveTo(baseX-14*growthRatio+sway,baseY-trunkHeight*0.52,baseX+8*growthRatio+sway,topY);
+      ctx.stroke();
+      ctx.strokeStyle = '#a16207';
+      ctx.lineWidth = Math.max(4,trunkWidth*0.3);
+      ctx.beginPath();
+      ctx.moveTo(baseX-5,baseY-8);
+      ctx.quadraticCurveTo(baseX-16*growthRatio+sway,baseY-trunkHeight*0.55,baseX+2+sway,topY+8);
+      ctx.stroke();
+
+      // Branches and leaves
+      const branches = [
+        {a:-0.95,l:82,p:0.35},{a:0.88,l:92,p:0.42},{a:-0.68,l:105,p:0.58},{a:0.64,l:112,p:0.65},{a:-0.45,l:88,p:0.78},{a:0.42,l:78,p:0.84}
+      ];
+      branches.forEach((b,idx)=>{
+        const branchMaturity = clamp((growthRatio - idx*0.075) / 0.72, 0, 1);
+        if(branchMaturity <= 0.02) return;
+        const by = baseY - trunkHeight*b.p;
+        const bx = baseX + Math.sin(b.p*4)*10*growthRatio + sway*(0.4+b.p*0.4);
+        const length = b.l * (0.18 + 0.82*branchMaturity);
+        const endX = bx + Math.cos(b.a)*length;
+        const endY = by + Math.sin(b.a)*length;
+        ctx.save();
+        ctx.globalAlpha = 0.55 + 0.45*branchMaturity;
+        ctx.strokeStyle = '#854d0e';
+        ctx.lineWidth = Math.max(2.5, trunkWidth*0.18*branchMaturity);
+        ctx.beginPath();
+        ctx.moveTo(bx,by);
+        ctx.quadraticCurveTo((bx+endX)/2,by-18*branchMaturity,endX,endY);
+        ctx.stroke();
+
+        const leafCount = Math.floor(2 + 15*branchMaturity);
+        for(let i=0;i<leafCount;i++){
+          const t = i / Math.max(1,leafCount-1);
+          const lx = bx + (endX-bx)*t + Math.sin(i*2.1+idx+row.year)*16*branchMaturity;
+          const ly = by + (endY-by)*t + Math.cos(i*1.8+row.year)*10*branchMaturity;
+          ctx.fillStyle = i%2 ? '#22c55e' : '#16a34a';
+          ctx.beginPath();
+          ctx.ellipse(lx,ly,5+9*branchMaturity,3+6*branchMaturity,b.a+0.8,0,Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+
+      // Water drops
+      const waterLevel = parseFloat(controls.water.value);
+      const dropCount = Math.round(clamp(waterLevel/70,1,13));
+      ctx.save();
+      ctx.globalAlpha = 0.72;
+      ctx.fillStyle = '#0284c7';
+      for(let i=0;i<dropCount;i++){
+        const x = 74 + i*24;
+        const y = 238 + Math.sin(i+row.year)*18;
+        ctx.beginPath();
+        ctx.moveTo(x,y-11);
+        ctx.quadraticCurveTo(x+10,y+2,x,y+15);
+        ctx.quadraticCurveTo(x-10,y+2,x,y-11);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Mass balance labels
+      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      drawRoundedRect(ctx,28,330,186,76,16);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 16px system-ui';
+      ctx.fillText('Water added',45,356);
+      ctx.font = '900 22px system-ui';
+      ctx.fillText(`${Math.round(row.waterAdded)} L`,45,384);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      drawRoundedRect(ctx,544,314,184,92,16);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 16px system-ui';
+      ctx.fillText('Measured masses',562,341);
+      ctx.font = '800 18px system-ui';
+      ctx.fillStyle = '#15803d';
+      ctx.fillText(`Tree: ${fmt(row.treeMass,1)} kg`,562,369);
+      ctx.fillStyle = '#92400e';
+      ctx.fillText(`Soil: ${fmt(row.soilMass,1)} kg`,562,394);
+
+      // Flow arrows. In the Van Helmont interpretation layer, only the measured water addition is shown.
+      drawArrow(ctx,184,248,278,302,'#0284c7','water');
+      if(!helmontLayer){
+        drawArrow(ctx,548,150,460,214,'#7c3aed','CO₂');
+        drawArrow(ctx,151,137,311,192,'#eab308','light');
+      }
+    }
+
+    function drawArrow(ctx,x1,y1,x2,y2,colour,label){
+      const head = 10;
+      const angle = Math.atan2(y2-y1,x2-x1);
+      ctx.save();
+      ctx.strokeStyle = colour;
+      ctx.fillStyle = colour;
+      ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.75;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2 - head*Math.cos(angle - Math.PI/6), y2 - head*Math.sin(angle - Math.PI/6));
+      ctx.lineTo(x2 - head*Math.cos(angle + Math.PI/6), y2 - head*Math.sin(angle + Math.PI/6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.font = '800 15px system-ui';
+      ctx.fillText(label,(x1+x2)/2 + 8,(y1+y2)/2 - 8);
+      ctx.restore();
+    }
+
+    function renderMassGraph(){
+      const ctx = massCtx;
+      const w = massCanvas.width;
+      const h = massCanvas.height;
+      ctx.clearRect(0,0,w,h);
+      drawGraphFrame(ctx,w,h,'Mass (kg)');
+      if(!data.length) return;
+
+      const pad = {l:56,r:24,t:24,b:48};
+      const plotW = w - pad.l - pad.r;
+      const plotH = h - pad.t - pad.b;
+      const s = readSettings();
+      const maxYear = targetYear || s.years || 1;
+      const visibleMax = Math.max(...data.map(d => Math.max(d.treeMass, d.soilMass)));
+      const estimatedUpperMass = Math.max(s.soilStart, s.treeStart + 80 * Math.max(1, maxYear / 5));
+      const maxMass = Math.max(visibleMax, estimatedUpperMass) * 1.08;
+      const minMass = 0;
+
+      function x(year){ return pad.l + (year/maxYear) * plotW; }
+      function y(mass){ return pad.t + plotH - ((mass-minMass)/(maxMass-minMass)) * plotH; }
+
+      const visibleData = data.filter(d => d.year <= currentYear);
+      drawLine(ctx,visibleData.map(d => [x(d.year),y(d.treeMass)]),'#16a34a',4);
+      drawLine(ctx,visibleData.map(d => [x(d.year),y(d.soilMass)]),'#92400e',4);
+
+      visibleData.forEach(d=>{
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#16a34a';
+        ctx.beginPath(); ctx.arc(x(d.year),y(d.treeMass),5,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#92400e';
+        ctx.beginPath(); ctx.arc(x(d.year),y(d.soilMass),5,0,Math.PI*2); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      drawAxisLabels(ctx,w,h,maxYear);
+    }
+
+    function renderSourceGraph(){
+      const ctx = sourceCtx;
+      const w = sourceCanvas.width;
+      const h = sourceCanvas.height;
+      const row = currentRow();
+      const s = readSettings();
+      const helmontLayer = s.viewMode === 'helmont';
+      ctx.clearRect(0,0,w,h);
+
+      if(helmontLayer){
+        out.sourceTitle.textContent = 'Historical evidence: measured changes';
+        out.sourceLegend.style.display = 'none';
+        out.sourceNote.textContent = 'Van Helmont could compare the tree, soil and added water, but he did not have a photosynthesis or carbon dioxide explanation available.';
+        drawGraphFrame(ctx,w,h,'Measured or added amount');
+        const values = [
+          {label:'Tree gain',value:row.gain,colour:'#16a34a',unit:'kg'},
+          {label:'Soil lost',value:row.soilLoss,colour:'#92400e',unit:'kg'},
+          {label:'Water added',value:row.waterAdded,colour:'#0284c7',unit:'L'}
+        ];
+        const maxValue = Math.max(1,...values.map(v=>v.value))*1.15;
+        const pad = {l:64,r:30,t:30,b:60};
+        const plotH = h - pad.t - pad.b;
+        const barW = 95;
+        const gap = 58;
+        const startX = pad.l + 55;
+        values.forEach((item,i)=>{
+          const barH = (item.value/maxValue)*plotH;
+          const x = startX + i*(barW+gap);
+          const y = pad.t + plotH - barH;
+          ctx.fillStyle = item.colour;
+          drawRoundedRect(ctx,x,y,barW,barH,12);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.font = '800 15px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText(item.label,x+barW/2,h-32);
+          ctx.fillStyle = '#334155';
+          ctx.font = '700 14px system-ui';
+          const displayValue = item.unit === 'L' ? `${Math.round(item.value)} L` : `${fmt(item.value,2)} kg`;
+          ctx.fillText(displayValue,x+barW/2,Math.max(22,y-8));
+          ctx.textAlign = 'left';
+        });
+        return;
+      }
+
+      out.sourceTitle.textContent = 'Model estimate: sources of new plant material';
+      out.sourceLegend.style.display = '';
+      out.sourceNote.textContent = 'This bar graph is a simplified atom-source model. Real fresh plant mass includes water, sugars, cellulose, minerals and other compounds.';
+      drawGraphFrame(ctx,w,h,'Estimated source mass (kg)');
+      const values = [
+        {label:'Air CO₂',value:row.airContribution,colour:'#7c3aed'},
+        {label:'Water',value:row.waterContribution,colour:'#0284c7'},
+        {label:'Minerals',value:row.mineralContribution,colour:'#92400e'}
+      ];
+      const maxValue = Math.max(1,...values.map(v=>v.value))*1.15;
+      const pad = {l:64,r:30,t:30,b:60};
+      const plotH = h - pad.t - pad.b;
+      const barW = 95;
+      const gap = 58;
+      const startX = pad.l + 55;
+
+      values.forEach((item,i)=>{
+        const barH = (item.value/maxValue)*plotH;
+        const x = startX + i*(barW+gap);
+        const y = pad.t + plotH - barH;
+        ctx.fillStyle = item.colour;
+        drawRoundedRect(ctx,x,y,barW,barH,12);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '800 15px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.label,x+barW/2,h-32);
+        ctx.fillStyle = '#334155';
+        ctx.font = '700 14px system-ui';
+        ctx.fillText(`${fmt(item.value,2)} kg`,x+barW/2,Math.max(22,y-8));
+        ctx.textAlign = 'left';
+      });
+    }
+
+    function drawGraphFrame(ctx,w,h,yLabel){
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,w,h);
+      const pad = {l:56,r:24,t:24,b:48};
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      for(let i=0;i<=5;i++){
+        const y = pad.t + ((h-pad.t-pad.b)/5)*i;
+        ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+      }
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,h-pad.b); ctx.lineTo(w-pad.r,h-pad.b); ctx.stroke();
+      ctx.fillStyle = '#475569';
+      ctx.font = '700 13px system-ui';
+      ctx.save();
+      ctx.translate(18,h/2+46);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText(yLabel,0,0);
+      ctx.restore();
+    }
+
+    function drawAxisLabels(ctx,w,h,maxYear){
+      ctx.fillStyle = '#475569';
+      ctx.font = '700 13px system-ui';
+      ctx.fillText('Years',w/2-18,h-12);
+      ctx.fillText('0',50,h-28);
+      ctx.fillText(String(maxYear),w-34,h-28);
+    }
+
+    function drawLine(ctx,points,colour,width){
+      if(points.length < 2) return;
+      ctx.save();
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      points.forEach((p,i)=>{
+        if(i === 0) ctx.moveTo(p[0],p[1]);
+        else ctx.lineTo(p[0],p[1]);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function renderTable(){
+      const visibleRows = data.filter(d => d.year <= currentYear);
+      const s = readSettings();
+      const helmontLayer = s.viewMode === 'helmont';
+      out.tableHead.innerHTML = `
+        <tr>
+          <th>Year</th>
+          <th>Tree mass (kg)</th>
+          <th>Dry soil mass (kg)</th>
+          <th>Tree gain (kg)</th>
+          <th>Soil loss (kg)</th>
+          <th>Water added (L)</th>
+          ${helmontLayer ? '' : '<th>Modelled CO₂ fixed (kg)</th>'}
+        </tr>
+      `;
+      out.table.innerHTML = visibleRows.map(d => `
+        <tr${d.year === currentYear ? ' style="background:#eff6ff;font-weight:800;"' : ''}>
+          <td>${d.year}</td>
+          <td>${fmt(d.treeMass,2)}</td>
+          <td>${fmt(d.soilMass,2)}</td>
+          <td>${fmt(d.gain,2)}</td>
+          <td>${fmt(d.soilLoss,3)}</td>
+          <td>${Math.round(d.waterAdded)}</td>
+          ${helmontLayer ? '' : `<td>${fmt(d.co2Fixed,2)}</td>`}
+        </tr>
+      `).join('');
+    }
+
+    function downloadCSV(){
+      const s = readSettings();
+      const helmontLayer = s.viewMode === 'helmont';
+      const visibleRows = data.filter(d => d.year <= currentYear);
+      const lines = helmontLayer
+        ? [
+            ['Year','Tree mass (kg)','Dry soil mass (kg)','Tree gain (kg)','Soil loss (kg)','Water added (L)'],
+            ...visibleRows.map(d => [d.year,fmt(d.treeMass,3),fmt(d.soilMass,3),fmt(d.gain,3),fmt(d.soilLoss,4),Math.round(d.waterAdded)])
+          ]
+        : [
+            ['Year','Tree mass (kg)','Dry soil mass (kg)','Tree gain (kg)','Soil loss (kg)','Water added (L)','Modelled CO2 fixed (kg)','Model estimate from air CO2 (kg)','Model estimate from water (kg)','Model estimate from soil minerals (kg)'],
+            ...visibleRows.map(d => [d.year,fmt(d.treeMass,3),fmt(d.soilMass,3),fmt(d.gain,3),fmt(d.soilLoss,4),Math.round(d.waterAdded),fmt(d.co2Fixed,3),fmt(d.airContribution,3),fmt(d.waterContribution,3),fmt(d.mineralContribution,4)])
+          ];
+      const csv = lines.map(row => row.map(cell => `"${String(cell).replaceAll('"','""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `van_helmont_willow_tree_visible_to_year_${currentYear}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    controls.preset.addEventListener('change', e => applyPreset(e.target.value));
+
+    Object.values(controls).forEach(control => {
+      if(control !== controls.preset && control !== controls.viewMode){
+        control.addEventListener('input', () => {
+          controls.preset.value = 'custom';
+          resetSimulation();
+        });
+        control.addEventListener('change', () => {
+          controls.preset.value = 'custom';
+          resetSimulation();
+        });
+      }
+    });
+
+    controls.viewMode.addEventListener('change', () => {
+      controls.preset.value = 'custom';
+      renderAll();
+    });
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.hidden = true);
+        button.classList.add('active');
+        const target = document.getElementById(button.dataset.tab);
+        if(target) target.hidden = false;
+        renderAll();
+      });
+    });
+
+    document.getElementById('runBtn').addEventListener('click', runSimulation);
+    document.getElementById('pauseBtn').addEventListener('click', stopTimer);
+    document.getElementById('stepBtn').addEventListener('click', () => { stopTimer(); stepSimulation(); });
+    document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+    document.getElementById('csvBtn').addEventListener('click', downloadCSV);
+
+    window.addEventListener('resize', renderAll);
+    applyPreset('historical');
+  </script>
+</body>
+</html>
