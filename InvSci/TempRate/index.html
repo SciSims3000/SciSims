@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temperature and Reaction Rate Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #182230;
+      --muted: #64748b;
+      --border: #d6dee9;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --warm: #f59e0b;
+      --hot: #ef4444;
+      --cool: #38bdf8;
+      --good: #16a34a;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-red: #fff1f2;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(239, 68, 68, 0.13), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #dc2626 58%, #f97316);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -75px;
+      top: -85px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(#eef6ff, #ffffff 62%, #e2e8f0);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .controls-panel {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 82px;
+      text-align: right;
+      font-weight: 900;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.92rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-blue);
+      color: var(--accent-dark);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .relationship-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .relationship-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .relationship-card p {
+      margin: 0;
+    }
+
+    .context-question {
+      margin-top: 10px !important;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .guidance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .guidance-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .guidance-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .guidance-card p {
+      margin: 0;
+    }
+
+    .guidance-card ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    .warning-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 700;
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 190px;
+    }
+
+    .table-wrap {
+      max-height: 250px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    textarea {
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .explanation-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .explanation-grid,
+      .challenge-grid,
+      .small-grid,
+      .guidance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Temperature and Reaction Rate Simulator</h1>
+      <p class="subtitle">
+        Investigate how temperature affects particle movement, successful collisions and reaction rate using a virtual chemical reaction.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that increasing temperature usually increases reaction rate because particles move faster and have more successful collisions.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can manipulate temperature, collect reaction rate data, interpret a graph, and explain the trend using collision theory and model limitations.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>Virtual reaction vessel</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Animated temperature and reaction rate simulation"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label">Temperature</span>
+            <span class="value" id="tempMetric">25 °C</span>
+          </div>
+          <div class="metric">
+            <span class="label">Successful collisions</span>
+            <span class="value" id="collisionMetric">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Product formed</span>
+            <span class="value" id="productMetric">0%</span>
+          </div>
+          <div class="metric">
+            <span class="label">Average rate</span>
+            <span class="value" id="rateMetric">0.00 %/s</span>
+          </div>
+        </div>
+
+        <section class="controls-panel">
+          <h2>Controls</h2>
+
+          <div class="controls-grid">
+            <div>
+              <label for="modeSelect">Investigation mode</label>
+              <select id="modeSelect">
+                <option value="temperature">Temperature investigation (main)</option>
+                <option value="concentration">Extension: concentration comparison</option>
+                <option value="catalyst">Extension: activation energy and catalyst</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="tempSlider">Temperature</label>
+              <div class="range-row">
+                <input id="tempSlider" type="range" min="5" max="85" step="1" value="25">
+                <span class="range-value" id="tempValue">25 °C</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="concentrationSlider">Reactant concentration</label>
+              <div class="range-row">
+                <input id="concentrationSlider" type="range" min="0.4" max="2.0" step="0.1" value="1.0">
+                <span class="range-value" id="concentrationValue">1.0×</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="activationSlider">Activation energy</label>
+              <div class="range-row">
+                <input id="activationSlider" type="range" min="35" max="85" step="1" value="60">
+                <span class="range-value" id="activationValue">60</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls-grid" style="margin-top: 10px;">
+            <div>
+              <label for="timeSlider">Trial length</label>
+              <div class="range-row">
+                <input id="timeSlider" type="range" min="10" max="60" step="5" value="30">
+                <span class="range-value" id="timeValue">30 s</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="precisionSlider">Sensor uncertainty</label>
+              <div class="range-row">
+                <input id="precisionSlider" type="range" min="0" max="10" step="0.5" value="2">
+                <span class="range-value" id="precisionValue">±2%</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="contextSelect">Reaction context</label>
+              <select id="contextSelect">
+                <option value="acid">Acid and metal</option>
+                <option value="enzyme">Enzyme reaction</option>
+                <option value="food">Food spoilage</option>
+                <option value="glowstick">Glow stick</option>
+                <option value="industrial">Industrial reactor</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="viewSelect">Graph view</label>
+              <select id="viewSelect">
+                <option value="progress">Reaction progress</option>
+                <option value="rate">Rate by temperature</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="runBtn">Run trial</button>
+            <button id="recordBtn" class="warning">Record current result</button>
+            <button id="autoBtn">Auto temperature series</button>
+            <button id="resetBtn" class="secondary">Reset data</button>
+            <button id="exportBtn" class="secondary">Export CSV</button>
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modeBadge">Temperature investigation</span>
+          <h2 style="margin-top: 8px;">Graph and data</h2>
+        </div>
+
+
+        <div class="graph-wrap">
+          <canvas id="graphCanvas" width="430" height="210" aria-label="Reaction rate graph"></canvas>
+        </div>
+
+        <div class="warning-card" id="accuracyText">
+          Sensor precision is set to ±2%. Recorded product values include simulated measurement uncertainty.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Trial</th>
+                <th>Temp °C</th>
+                <th>Conc.</th>
+                <th>Act. E</th>
+                <th>Product %</th>
+                <th>Rate %/s</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr>
+                <td colspan="6">Run or record a trial to collect data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="explanation-grid">
+      <div class="panel">
+        <h2>Evidence and model</h2>
+        
+
+        <div class="relationship-card">
+          <h3>Current relationship</h3>
+          <p id="relationshipText">
+            Increasing temperature increases particle speed, so particles collide more often and a larger fraction of collisions have enough energy to react.
+          </p>
+          <p class="context-question" id="contextQuestion">
+            Acid and metal question: Why does warming the acid usually make gas form faster?
+          </p>
+        </div>
+
+        <div class="guidance-grid">
+          <div class="guidance-card">
+            <h3>Investigation steps</h3>
+            <ol id="stepsList">
+              <li>Keep concentration and activation energy constant.</li>
+              <li>Change temperature.</li>
+              <li>Run and record each trial.</li>
+              <li>Compare average reaction rates.</li>
+            </ol>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Controlled variables</h3>
+            <p id="controlledText">
+              Temperature investigation: keep concentration and activation energy constant so temperature is the independent variable.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model explanation</h3>
+            <p id="modelText">
+              The simulation uses a simplified collision model. Higher temperature makes particles move faster and increases the chance that a collision is successful.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model limitation</h3>
+            <p id="limitationText">
+              This sim shows the pattern predicted by collision theory, but it does not calculate exact rates for a specific real chemical reaction.
+            </p>
+          </div>
+        </div>
+
+        <div class="warning-card" id="accuracyText">
+          Sensor precision is set to ±2%. Recorded product values include simulated measurement uncertainty.
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Use temperature investigation mode. Run at least five trials from cold to hot conditions.</li>
+          <li>Identify the trend between temperature and average reaction rate.</li>
+          <li>Explain the trend using particle speed, collision frequency and successful collisions.</li>
+          <li>Change the activation energy or catalyst setting and describe how this changes the rate.</li>
+          <li>Evaluate the simulation: what does it show well, what does it simplify, and how is it different from a real reaction experiment?</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">CER response</h2>
+        <div class="small-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="What relationship did your evidence support?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use numbers, graph patterns and collision theory to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>This simulation supports reaction rate, collision theory, temperature effects, data collection, graphing and model evaluation.</li>
+          <li>The rate model is simplified and should not be treated as exact Arrhenius modelling.</li>
+          <li>The catalyst extension clearly separates the activation energy setting from the effective activation energy used by the model.</li>
+          <li>Safe practical links include magnesium and dilute acid, sodium thiosulfate and acid, enzyme reactions, or glow sticks in hot and cold water.</li>
+          <li>Students should assess the simulation by identifying strengths, limitations, differences from real investigations, possible sources of error, and an overall usefulness judgement.</li>
+          <li>Source base: OpenStax Chemistry 2e, Royal Society of Chemistry reaction rates resources, and Chemistry LibreTexts collision theory resources.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 3 SciSim model. Reaction particles and rates are simplified for classroom investigation.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const modeSelect = document.getElementById("modeSelect");
+    const tempSlider = document.getElementById("tempSlider");
+    const concentrationSlider = document.getElementById("concentrationSlider");
+    const activationSlider = document.getElementById("activationSlider");
+    const timeSlider = document.getElementById("timeSlider");
+    const precisionSlider = document.getElementById("precisionSlider");
+    const contextSelect = document.getElementById("contextSelect");
+    const viewSelect = document.getElementById("viewSelect");
+
+    const tempValue = document.getElementById("tempValue");
+    const concentrationValue = document.getElementById("concentrationValue");
+    const activationValue = document.getElementById("activationValue");
+    const timeValue = document.getElementById("timeValue");
+    const precisionValue = document.getElementById("precisionValue");
+
+    const tempMetric = document.getElementById("tempMetric");
+    const collisionMetric = document.getElementById("collisionMetric");
+    const productMetric = document.getElementById("productMetric");
+    const rateMetric = document.getElementById("rateMetric");
+
+    const modeBadge = document.getElementById("modeBadge");
+    const relationshipText = document.getElementById("relationshipText");
+    const contextQuestion = document.getElementById("contextQuestion");
+    const stepsList = document.getElementById("stepsList");
+    const controlledText = document.getElementById("controlledText");
+    const modelText = document.getElementById("modelText");
+    const limitationText = document.getElementById("limitationText");
+    const accuracyText = document.getElementById("accuracyText");
+    const dataBody = document.getElementById("dataBody");
+
+    const runBtn = document.getElementById("runBtn");
+    const recordBtn = document.getElementById("recordBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    let particles = [];
+    let trials = [];
+    let progressSeries = [];
+
+    let reaction = {
+      running: false,
+      elapsed: 0,
+      product: 0,
+      successfulCollisions: 0,
+      averageRate: 0,
+      lastRecorded: null
+    };
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function rounded(value, digits = 1) {
+      return Number(value).toFixed(digits);
+    }
+
+    function tempC() {
+      return Number(tempSlider.value);
+    }
+
+    function tempK() {
+      return tempC() + 273.15;
+    }
+
+    function concentration() {
+      return Number(concentrationSlider.value);
+    }
+
+    function activationSetting() {
+      return Number(activationSlider.value);
+    }
+
+    function activationEnergy() {
+      const base = activationSetting();
+      if (modeSelect.value === "catalyst") {
+        return Math.max(20, base - 20);
+      }
+      return base;
+    }
+
+    function collisionRateFactorFor(t, conc, act) {
+      const tempFactor = Math.pow(2, (t - 25) / 10);
+      const concentrationFactor = Math.pow(conc, 1.25);
+      const activationPenalty = Math.exp(-(act - 45) / 35);
+
+      return clamp(0.85 * tempFactor * concentrationFactor * activationPenalty, 0.02, 18);
+    }
+
+    function collisionRateFactor() {
+      return collisionRateFactorFor(tempC(), concentration(), activationEnergy());
+    }
+
+    function expectedFinalProductFor(t, conc, act, duration) {
+      const factor = collisionRateFactorFor(t, conc, act);
+      return clamp(100 * (1 - Math.exp(-factor * duration / 70)), 0, 100);
+    }
+
+    function expectedFinalProduct(duration) {
+      return expectedFinalProductFor(tempC(), concentration(), activationEnergy(), duration);
+    }
+
+    function measured(value) {
+      const uncertainty = Number(precisionSlider.value) / 100;
+      return value * (1 + rand(-uncertainty, uncertainty));
+    }
+
+    function initialiseParticles() {
+      const count = Math.round(45 * concentration());
+      while (particles.length < count) {
+        particles.push({
+          x: rand(255, 645),
+          y: rand(155, 350),
+          vx: rand(-1.2, 1.2),
+          vy: rand(-1.2, 1.2),
+          r: rand(3.2, 5.2),
+          type: Math.random() > 0.5 ? "A" : "B",
+          flash: 0
+        });
+      }
+      if (particles.length > count) {
+        particles = particles.slice(0, count);
+      }
+    }
+
+    function updateReadouts() {
+      tempValue.textContent = `${rounded(tempC(), 0)} °C`;
+      concentrationValue.textContent = `${rounded(concentration(), 1)}×`;
+      if (modeSelect.value === "catalyst") {
+        activationValue.textContent = `${rounded(activationSetting(), 0)} → ${rounded(activationEnergy(), 0)}`;
+      } else {
+        activationValue.textContent = `${rounded(activationEnergy(), 0)}`;
+      }
+
+      timeValue.textContent = `${timeSlider.value} s`;
+      precisionValue.textContent = `±${rounded(Number(precisionSlider.value), 1)}%`;
+
+      if (modeSelect.value === "temperature") {
+        autoBtn.textContent = "Auto temperature series";
+      }
+
+      if (modeSelect.value === "concentration") {
+        autoBtn.textContent = "Auto concentration series";
+      }
+
+      if (modeSelect.value === "catalyst") {
+        autoBtn.textContent = "Auto activation energy series";
+      }
+
+      tempMetric.textContent = `${rounded(tempC(), 0)} °C`;
+      collisionMetric.textContent = `${reaction.successfulCollisions}`;
+      productMetric.textContent = `${rounded(reaction.product, 1)}%`;
+      rateMetric.textContent = `${rounded(reaction.averageRate, 2)} %/s`;
+
+      accuracyText.textContent = `Sensor precision is set to ±${rounded(Number(precisionSlider.value), 1)}%. Recorded product values include simulated measurement uncertainty.`;
+    }
+
+    function updateModeGuidance() {
+      const mode = modeSelect.value;
+      const context = contextSelect.value;
+
+      if (mode === "temperature") {
+        modeBadge.textContent = "Main investigation: temperature";
+        relationshipText.textContent = "Increasing temperature increases particle speed, so particles collide more often and a larger fraction of collisions have enough energy to react.";
+        stepsList.innerHTML = `
+          <li>Keep concentration and activation energy constant.</li>
+          <li>Change temperature.</li>
+          <li>Run and record each trial.</li>
+          <li>Compare average reaction rates.</li>
+        `;
+        controlledText.textContent = "Temperature investigation: keep concentration and activation energy constant so temperature is the independent variable and reaction rate is the dependent variable.";
+        modelText.textContent = "Higher temperature makes particles move faster. This increases collision frequency and increases the chance that collisions have enough energy to become successful.";
+        limitationText.textContent = "This sim shows the pattern predicted by collision theory, but it does not calculate exact rates for a specific real chemical reaction.";
+      }
+
+      if (mode === "concentration") {
+        modeBadge.textContent = "Extension: concentration";
+        relationshipText.textContent = "Increasing concentration usually increases reaction rate because there are more reactant particles in the same space, increasing collision frequency.";
+        stepsList.innerHTML = `
+          <li>Keep temperature and activation energy constant.</li>
+          <li>Change concentration.</li>
+          <li>Run and record each trial.</li>
+          <li>Compare collision counts and rates.</li>
+        `;
+        controlledText.textContent = "Concentration comparison: keep temperature and activation energy constant so concentration is the independent variable.";
+        modelText.textContent = "The simulation increases the number of reactant particles when concentration rises. More particles in the same space means more collisions per second.";
+        limitationText.textContent = "This extension shows the effect of concentration in a simplified way. Real reactions may also depend on surface area, mixing, solvent and reaction mechanism.";
+      }
+
+      if (mode === "catalyst") {
+        modeBadge.textContent = "Extension: catalyst";
+        relationshipText.textContent = "A catalyst increases reaction rate by providing an alternative pathway with lower activation energy. It does not need to increase temperature.";
+        stepsList.innerHTML = `
+          <li>Keep temperature and concentration constant.</li>
+          <li>Change the activation energy setting.</li>
+          <li>Run and record each trial.</li>
+          <li>Explain why lower effective activation energy increases successful collisions.</li>
+        `;
+        controlledText.textContent = "Catalyst investigation: keep temperature and concentration constant so the effect of activation energy can be compared fairly.";
+        modelText.textContent = `Activation energy setting: ${rounded(activationSetting(), 0)}. Effective activation energy with catalyst: ${rounded(activationEnergy(), 0)}. Lower activation energy means more collisions are successful.`;
+        limitationText.textContent = "This catalyst model only lowers the activation energy threshold. Real catalysts may involve surface binding, enzyme active sites or multi-step reaction pathways.";
+      }
+
+      let question = "Acid and metal question: Why does warming the acid usually make gas form faster?";
+      if (context === "enzyme") question = "Enzyme question: Why can enzymes work faster when warmed, but stop working properly if overheated?";
+      if (context === "food") question = "Food spoilage question: Why does food usually spoil more slowly in the fridge?";
+      if (context === "glowstick") question = "Glow stick question: Why does a glow stick glow brighter in warm water but last longer in cold water?";
+      if (context === "industrial") question = "Industrial reactor question: Why do chemical plants carefully control reaction temperature?";
+      contextQuestion.textContent = question;
+    }
+
+    function updateControlsAvailability() {
+      if (modeSelect.value === "temperature") {
+        concentrationSlider.disabled = false;
+        activationSlider.disabled = false;
+      }
+
+      if (modeSelect.value === "concentration") {
+        concentrationSlider.disabled = false;
+        activationSlider.disabled = false;
+      }
+
+      if (modeSelect.value === "catalyst") {
+        concentrationSlider.disabled = false;
+        activationSlider.disabled = false;
+      }
+    }
+
+    function resetCurrentTrial() {
+      reaction.running = false;
+      reaction.elapsed = 0;
+      reaction.product = 0;
+      reaction.successfulCollisions = 0;
+      reaction.averageRate = 0;
+      reaction.lastRecorded = null;
+      progressSeries = [{ time: 0, product: 0 }];
+      initialiseParticles();
+      updateAll();
+    }
+
+    async function runTrial() {
+      if (reaction.running) return;
+
+      resetCurrentTrial();
+      reaction.running = true;
+
+      const duration = Number(timeSlider.value);
+      const factor = collisionRateFactor();
+      const totalSteps = duration * 10;
+
+      for (let i = 1; i <= totalSteps; i++) {
+        if (!reaction.running) break;
+
+        reaction.elapsed = i / 10;
+        reaction.product = clamp(100 * (1 - Math.exp(-factor * reaction.elapsed / 70)), 0, 100);
+        reaction.successfulCollisions = Math.round(reaction.product * factor * 0.55 + reaction.elapsed * factor * 0.6);
+        reaction.averageRate = reaction.elapsed > 0 ? reaction.product / reaction.elapsed : 0;
+
+        if (i % 5 === 0 || i === totalSteps) {
+          progressSeries.push({
+            time: reaction.elapsed,
+            product: reaction.product
+          });
+        }
+
+        updateAll();
+        await new Promise(resolve => setTimeout(resolve, 55));
+      }
+
+      reaction.running = false;
+      recordCurrentResult("Trial completed");
+    }
+
+    function recordCurrentResult(comment = "Student recorded trial") {
+      const duration = Math.max(reaction.elapsed, Number(timeSlider.value));
+      let product = reaction.product;
+
+      if (product <= 0) {
+        product = expectedFinalProduct(duration);
+      }
+
+      const measuredProduct = clamp(measured(product), 0, 100);
+      const measuredRate = measuredProduct / duration;
+
+      const trial = {
+        trial: trials.length + 1,
+        mode: modeSelect.value,
+        temp: tempC(),
+        tempK: tempK(),
+        concentration: concentration(),
+        activation: activationEnergy(),
+        product: measuredProduct,
+        rate: measuredRate,
+        collisions: reaction.successfulCollisions,
+        duration,
+        comment
+      };
+
+      trials.push(trial);
+      reaction.lastRecorded = trial;
+
+      updateTable();
+      drawGraph();
+    }
+
+    function runAutoSeries() {
+      trials = [];
+
+      if (modeSelect.value === "temperature") {
+        const temps = [5, 15, 25, 35, 45, 55, 65];
+        temps.forEach(t => {
+          tempSlider.value = t;
+          const duration = Number(timeSlider.value);
+          const product = expectedFinalProduct(duration);
+          reaction.product = product;
+          reaction.elapsed = duration;
+          reaction.averageRate = product / duration;
+          reaction.successfulCollisions = Math.round(product * collisionRateFactor() * 0.7);
+          recordCurrentResult("Auto temperature series");
+        });
+      }
+
+      if (modeSelect.value === "concentration") {
+        const concentrations = [0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.0];
+        concentrations.forEach(c => {
+          concentrationSlider.value = c;
+          const duration = Number(timeSlider.value);
+          const product = expectedFinalProduct(duration);
+          reaction.product = product;
+          reaction.elapsed = duration;
+          reaction.averageRate = product / duration;
+          reaction.successfulCollisions = Math.round(product * collisionRateFactor() * 0.7);
+          recordCurrentResult("Auto concentration series");
+        });
+      }
+
+      if (modeSelect.value === "catalyst") {
+        const energies = [80, 70, 60, 50, 40, 35];
+        energies.forEach(e => {
+          activationSlider.value = e;
+          const duration = Number(timeSlider.value);
+          const product = expectedFinalProduct(duration);
+          reaction.product = product;
+          reaction.elapsed = duration;
+          reaction.averageRate = product / duration;
+          reaction.successfulCollisions = Math.round(product * collisionRateFactor() * 0.7);
+          recordCurrentResult("Auto activation energy series");
+        });
+      }
+
+      updateAll();
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+
+      if (trials.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="6">Run or record a trial to collect data.</td>`;
+        dataBody.appendChild(row);
+        return;
+      }
+
+      trials.slice().reverse().forEach(trial => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${trial.trial}</td>
+          <td>${rounded(trial.temp, 0)}</td>
+          <td>${rounded(trial.concentration, 1)}×</td>
+          <td>${rounded(trial.activation, 0)}</td>
+          <td>${rounded(trial.product, 1)}</td>
+          <td>${rounded(trial.rate, 2)}</td>
+        `;
+        dataBody.appendChild(row);
+      });
+    }
+
+    function updateAll() {
+      initialiseParticles();
+      updateControlsAvailability();
+      updateReadouts();
+      updateModeGuidance();
+      drawGraph();
+    }
+
+    function exportCSV() {
+      const headers = ["trial", "mode", "temperature_C", "temperature_K", "concentration_multiplier", "activation_energy_model", "product_percent", "average_rate_percent_per_second", "successful_collisions", "duration_seconds", "comment"];
+      const rows = trials.map(trial => [
+        trial.trial,
+        trial.mode,
+        rounded(trial.temp, 2),
+        rounded(trial.tempK, 2),
+        rounded(trial.concentration, 2),
+        rounded(trial.activation, 2),
+        rounded(trial.product, 2),
+        rounded(trial.rate, 3),
+        trial.collisions,
+        rounded(trial.duration, 1),
+        `"${trial.comment.replaceAll('"', '""')}"`
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "temperature_reaction_rate_data.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function vesselGeometry() {
+      return { x: 205, y: 125, w: 475, h: 275 };
+    }
+
+    function drawSimulation() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#dbeafe");
+      bg.addColorStop(0.64, "#ffffff");
+      bg.addColorStop(1, "#e2e8f0");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      drawContextIcon();
+      drawBurnerOrCooler();
+      drawVessel();
+      drawParticles();
+      drawThermometer();
+      drawCollisionCounter();
+      drawLabels();
+    }
+
+    function drawContextIcon() {
+      const context = contextSelect.value;
+
+      ctx.save();
+      ctx.fillStyle = "#475569";
+      ctx.font = "800 16px system-ui";
+      ctx.textAlign = "left";
+
+      let label = "Reaction context: acid and metal";
+      if (context === "enzyme") label = "Reaction context: enzyme reaction";
+      if (context === "food") label = "Reaction context: food spoilage";
+      if (context === "glowstick") label = "Reaction context: glow stick";
+      if (context === "industrial") label = "Reaction context: industrial reactor";
+
+      ctx.fillText(label, 32, 82);
+
+      if (context === "acid") {
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(52, 120, 58, 18);
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(80, 160, 32, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#64748b";
+        ctx.fillRect(54, 198, 55, 12);
+      }
+
+      if (context === "enzyme") {
+        ctx.strokeStyle = "#16a34a";
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(80, 160, 42, 0.3, Math.PI * 1.65);
+        ctx.stroke();
+        ctx.fillStyle = "#f59e0b";
+        ctx.beginPath();
+        ctx.arc(95, 150, 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (context === "food") {
+        ctx.fillStyle = "#f97316";
+        ctx.beginPath();
+        ctx.arc(80, 160, 40, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#16a34a";
+        ctx.beginPath();
+        ctx.ellipse(100, 124, 18, 8, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (context === "glowstick") {
+        ctx.save();
+        ctx.translate(80, 160);
+        ctx.rotate(-0.4);
+        ctx.fillStyle = "rgba(34, 197, 94, 0.35)";
+        roundRect(ctx, -12, -58, 24, 116, 12);
+        ctx.fill();
+        ctx.strokeStyle = "#16a34a";
+        ctx.lineWidth = 4;
+        roundRect(ctx, -12, -58, 24, 116, 12);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (context === "industrial") {
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(50, 130, 58, 82);
+        ctx.fillStyle = "#64748b";
+        ctx.fillRect(60, 108, 38, 24);
+        ctx.fillStyle = "#f97316";
+        ctx.fillRect(58, 190, 42, 16);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBurnerOrCooler() {
+      const g = vesselGeometry();
+      const t = tempC();
+      const heatNorm = clamp((t - 5) / 80, 0, 1);
+
+      ctx.save();
+
+      ctx.fillStyle = "#475569";
+      ctx.fillRect(g.x + 125, g.y + g.h + 14, 225, 12);
+
+      if (t < 15) {
+        ctx.fillStyle = "rgba(56, 189, 248, 0.25)";
+        ctx.fillRect(g.x + 140, g.y + g.h + 28, 190, 24);
+        ctx.fillStyle = "#0284c7";
+        ctx.font = "800 14px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("cool water bath", g.x + g.w / 2, g.y + g.h + 46);
+      } else {
+        const flameH = 18 + heatNorm * 42;
+        ctx.fillStyle = "rgba(245, 158, 11, 0.25)";
+        ctx.beginPath();
+        ctx.ellipse(g.x + g.w / 2, g.y + g.h + 48, 86, 32, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#f97316";
+        ctx.beginPath();
+        ctx.moveTo(g.x + g.w / 2, g.y + g.h + 48 - flameH);
+        ctx.quadraticCurveTo(g.x + g.w / 2 - 35, g.y + g.h + 32, g.x + g.w / 2, g.y + g.h + 55);
+        ctx.quadraticCurveTo(g.x + g.w / 2 + 35, g.y + g.h + 32, g.x + g.w / 2, g.y + g.h + 48 - flameH);
+        ctx.fill();
+
+        ctx.fillStyle = "#fde68a";
+        ctx.beginPath();
+        ctx.moveTo(g.x + g.w / 2, g.y + g.h + 48 - flameH * 0.65);
+        ctx.quadraticCurveTo(g.x + g.w / 2 - 16, g.y + g.h + 39, g.x + g.w / 2, g.y + g.h + 56);
+        ctx.quadraticCurveTo(g.x + g.w / 2 + 16, g.y + g.h + 39, g.x + g.w / 2, g.y + g.h + 48 - flameH * 0.65);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawVessel() {
+      const g = vesselGeometry();
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 4;
+      roundRect(ctx, g.x, g.y, g.w, g.h, 24);
+      ctx.fill();
+      ctx.stroke();
+
+      const heatNorm = clamp((tempC() - 5) / 80, 0, 1);
+      const liquid = ctx.createLinearGradient(0, g.y + g.h * 0.35, 0, g.y + g.h);
+      liquid.addColorStop(0, heatNorm > 0.55 ? "rgba(249, 115, 22, 0.12)" : "rgba(56, 189, 248, 0.12)");
+      liquid.addColorStop(1, heatNorm > 0.55 ? "rgba(239, 68, 68, 0.20)" : "rgba(56, 189, 248, 0.22)");
+      ctx.fillStyle = liquid;
+      roundRect(ctx, g.x + 7, g.y + 7, g.w - 14, g.h - 14, 20);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(g.x + 48, g.y + 34);
+      ctx.quadraticCurveTo(g.x + 26, g.y + 150, g.x + 52, g.y + g.h - 35);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      initialiseParticles();
+
+      const g = vesselGeometry();
+      const tNorm = clamp((tempC() + 5) / 95, 0.25, 1.4);
+      const speed = 0.45 + tNorm * 1.65;
+
+      ctx.save();
+
+      particles.forEach(p => {
+        p.x += p.vx * speed;
+        p.y += p.vy * speed;
+
+        if (p.x < g.x + 16 || p.x > g.x + g.w - 16) p.vx *= -1;
+        if (p.y < g.y + 16 || p.y > g.y + g.h - 16) p.vy *= -1;
+
+        p.x = clamp(p.x, g.x + 16, g.x + g.w - 16);
+        p.y = clamp(p.y, g.y + 16, g.y + g.h - 16);
+
+        p.flash *= 0.9;
+
+        if (Math.random() < collisionRateFactor() / 950) {
+          p.flash = 1;
+        }
+
+        ctx.fillStyle = p.type === "A" ? "#2563eb" : "#f97316";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + p.flash * 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.flash > 0.2) {
+          ctx.strokeStyle = "rgba(22, 163, 74, 0.75)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r + 8, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      });
+
+      ctx.restore();
+    }
+
+    function drawThermometer() {
+      const x = 725;
+      const y = 166;
+      const h = 160;
+      const tempNorm = clamp((tempC() - 5) / 80, 0, 1);
+
+      ctx.save();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 4;
+      roundRect(ctx, x, y, 34, h, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = tempNorm > 0.55 ? "#ef4444" : "#38bdf8";
+      const fillH = 16 + tempNorm * (h - 26);
+      roundRect(ctx, x + 8, y + h - fillH - 6, 18, fillH, 8);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(x + 17, y + h + 22, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#334155";
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "800 14px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Temperature", x + 17, y + h + 62);
+      ctx.fillText(`${rounded(tempC(), 0)} °C`, x + 17, y + h + 80);
+
+      ctx.restore();
+    }
+
+    function drawCollisionCounter() {
+      ctx.save();
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2;
+      roundRect(ctx, 706, 84, 138, 58, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#334155";
+      ctx.font = "800 13px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Successful", 775, 105);
+      ctx.fillText("collisions", 775, 121);
+      ctx.fillStyle = "#16a34a";
+      ctx.font = "900 18px system-ui";
+      ctx.fillText(`${reaction.successfulCollisions}`, 775, 139);
+      ctx.restore();
+    }
+
+    function drawLabels() {
+      ctx.save();
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.86)";
+      ctx.font = "900 20px system-ui";
+      ctx.textAlign = "center";
+
+      let title = "Temperature and reaction rate";
+      if (modeSelect.value === "concentration") title = "Concentration and collision frequency";
+      if (modeSelect.value === "catalyst") title = "Activation energy and successful collisions";
+
+      ctx.fillText(title, simCanvas.width / 2, 34);
+
+      ctx.font = "800 15px system-ui";
+      ctx.fillStyle = "#334155";
+      ctx.fillText(`Temp = ${rounded(tempC(), 0)} °C, concentration = ${rounded(concentration(), 1)}×, activation energy = ${rounded(activationEnergy(), 0)}`, simCanvas.width / 2, 476);
+
+      ctx.restore();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      const margin = { left: 48, right: 14, top: 22, bottom: 40 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      gtx.strokeStyle = "#cbd5e1";
+      gtx.lineWidth = 1;
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top);
+      gtx.lineTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top + plotH);
+      gtx.stroke();
+
+      if (viewSelect.value === "progress") {
+        drawProgressGraph(margin, plotW, plotH, w, h);
+      } else {
+        drawRateGraph(margin, plotW, plotH, w, h);
+      }
+    }
+
+    function drawProgressGraph(margin, plotW, plotH, w, h) {
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Reaction progress", 10, 14);
+      gtx.fillText("Product", 6, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Time", margin.left + plotW / 2, h - 8);
+
+      const duration = Number(timeSlider.value);
+      const data = progressSeries.length > 1 ? progressSeries : [
+        { time: 0, product: 0 },
+        { time: duration, product: expectedFinalProduct(duration) }
+      ];
+
+      function xScale(t) {
+        return margin.left + (t / duration) * plotW;
+      }
+
+      function yScale(p) {
+        return margin.top + plotH - (p / 100) * plotH;
+      }
+
+      gtx.strokeStyle = "#2563eb";
+      gtx.lineWidth = 3;
+      gtx.beginPath();
+
+      data.forEach((point, i) => {
+        const x = xScale(point.time);
+        const y = yScale(point.product);
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      });
+
+      gtx.stroke();
+      drawGraphBadge("product over time", margin.left + plotW - 118, margin.top + 16);
+    }
+
+    function drawRateGraph(margin, plotW, plotH, w, h) {
+      const mode = modeSelect.value;
+      const duration = Number(timeSlider.value);
+
+      let title = "Rate by temperature";
+      let yLabel = "Rate";
+      let xLabel = "Temperature °C";
+      let xMin = 0;
+      let xMax = 90;
+      let badge = "rate increases with temperature";
+      let xValue = (trial) => trial.temp;
+      let predictedRate = (x) => expectedFinalProductFor(x, concentration(), activationEnergy(), duration) / duration;
+
+      if (mode === "concentration") {
+        title = "Rate by concentration";
+        xLabel = "Concentration";
+        xMin = 0.4;
+        xMax = 2.0;
+        badge = "more particles means more collisions";
+        xValue = (trial) => trial.concentration;
+        predictedRate = (x) => expectedFinalProductFor(tempC(), x, activationEnergy(), duration) / duration;
+      }
+
+      if (mode === "catalyst") {
+        title = "Rate by activation energy";
+        xLabel = "Effective activation energy";
+        xMin = 15;
+        xMax = 85;
+        badge = "lower activation energy increases rate";
+        xValue = (trial) => trial.activation;
+        predictedRate = (x) => expectedFinalProductFor(tempC(), concentration(), x, duration) / duration;
+      }
+
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText(title, 10, 14);
+      gtx.fillText(yLabel, 14, 36);
+      gtx.textAlign = "center";
+      gtx.fillText(xLabel, margin.left + plotW / 2, h - 8);
+
+      function xScale(value) {
+        return margin.left + ((value - xMin) / (xMax - xMin)) * plotW;
+      }
+
+      function yScale(rate) {
+        return margin.top + plotH - (rate / 3.6) * plotH;
+      }
+
+      gtx.strokeStyle = "#94a3b8";
+      gtx.lineWidth = 2;
+      gtx.setLineDash([5, 5]);
+      gtx.beginPath();
+
+      for (let i = 0; i <= 90; i++) {
+        const xVal = xMin + (i / 90) * (xMax - xMin);
+        const rate = predictedRate(xVal);
+        const x = xScale(xVal);
+        const y = yScale(clamp(rate, 0, 3.6));
+
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      }
+
+      gtx.stroke();
+      gtx.setLineDash([]);
+
+      trials
+        .filter(trial => trial.mode === mode)
+        .forEach(trial => {
+          const x = xScale(xValue(trial));
+          const y = yScale(clamp(trial.rate, 0, 3.6));
+          gtx.fillStyle = "#2563eb";
+          gtx.beginPath();
+          gtx.arc(x, y, 4, 0, Math.PI * 2);
+          gtx.fill();
+        });
+
+      let currentX = tempC();
+      if (mode === "concentration") currentX = concentration();
+      if (mode === "catalyst") currentX = activationEnergy();
+
+      gtx.fillStyle = "#f59e0b";
+      gtx.beginPath();
+      gtx.arc(
+        xScale(currentX),
+        yScale(clamp(expectedFinalProduct(duration) / duration, 0, 3.6)),
+        5,
+        0,
+        Math.PI * 2
+      );
+      gtx.fill();
+
+      drawGraphBadge(badge, margin.left + plotW - Math.min(190, badge.length * 7), margin.top + 16);
+    }
+
+    function drawGraphBadge(text, x, y) {
+      gtx.save();
+      gtx.fillStyle = "#eaf2ff";
+      gtx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      gtx.lineWidth = 1;
+      const width = Math.max(112, text.length * 6.8 + 18);
+      roundRect(gtx, x, y, width, 24, 10);
+      gtx.fill();
+      gtx.stroke();
+      gtx.fillStyle = "#1d4ed8";
+      gtx.font = "800 11px system-ui";
+      gtx.textAlign = "center";
+      gtx.fillText(text, x + width / 2, y + 16);
+      gtx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    function animationLoop() {
+      drawSimulation();
+      requestAnimationFrame(animationLoop);
+    }
+
+    modeSelect.addEventListener("change", () => {
+      resetCurrentTrial();
+      updateAll();
+    });
+
+    [tempSlider, concentrationSlider, activationSlider, timeSlider, precisionSlider].forEach(control => {
+      control.addEventListener("input", () => {
+        resetCurrentTrial();
+        updateAll();
+      });
+    });
+
+    contextSelect.addEventListener("change", updateAll);
+    viewSelect.addEventListener("change", drawGraph);
+
+    runBtn.addEventListener("click", runTrial);
+    recordBtn.addEventListener("click", () => recordCurrentResult("Student recorded trial"));
+    autoBtn.addEventListener("click", runAutoSeries);
+    resetBtn.addEventListener("click", () => {
+      trials = [];
+      resetCurrentTrial();
+      updateTable();
+    });
+    exportBtn.addEventListener("click", exportCSV);
+
+    resetCurrentTrial();
+    animationLoop();
+  </script>
+</body>
+</html>
