@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earth History Evidence Builder</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #182230;
+      --muted: #64748b;
+      --border: #d6dee9;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --earth: #16a34a;
+      --ocean: #0ea5e9;
+      --warm: #f59e0b;
+      --hot: #ef4444;
+      --purple: #7c3aed;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-purple: #f5f3ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 34%),
+        radial-gradient(circle at top right, rgba(22, 163, 74, 0.14), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #064e3b, #1d4ed8 55%, #38bdf8);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -75px;
+      top: -85px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 960px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(#dbeafe, #eff6ff 52%, #dbeafe);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .controls-panel {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .control-wide {
+      grid-column: span 1;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 82px;
+      text-align: right;
+      font-weight: 900;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.92rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-green);
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .confidence-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 12px;
+    }
+
+    .confidence-bar {
+      width: 100%;
+      height: 20px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .confidence-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #16a34a);
+      transition: width 0.25s ease;
+    }
+
+    .confidence-text {
+      margin-top: 8px;
+      font-weight: 850;
+      color: #334155;
+    }
+
+    .confidence-note {
+      margin-top: 8px;
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .impact-highlight {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 760;
+    }
+
+    .impact-highlight strong {
+      color: #7c2d12;
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 210px;
+    }
+
+    .table-wrap {
+      max-height: 250px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .explanation-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .relationship-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .relationship-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .relationship-card p {
+      margin: 0;
+    }
+
+    .context-question {
+      margin-top: 10px !important;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .guidance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .guidance-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .guidance-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .guidance-card p {
+      margin: 0;
+    }
+
+    .guidance-card ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    .warning-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 700;
+    }
+
+    .compact-note {
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 750;
+      font-size: 0.92rem;
+      width: 100%;
+    }
+
+    .compact-note strong {
+      color: var(--accent-dark);
+    }
+
+    textarea {
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .explanation-grid,
+      .challenge-grid,
+      .small-grid,
+      .guidance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Earth History Evidence Builder</h1>
+      <p class="subtitle">
+        Build a scientific model of Earth’s geological history by adding evidence from technologies such as seafloor mapping, magnetic surveys, radiometric dating, GPS, computer reconstruction and seismic tomography.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that new technologies can increase the amount, quality and precision of evidence used to support scientific theories, laws and models.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can identify evidence gained from different technologies, link evidence to Earth history models, and assess how technologies changed confidence in scientific explanations.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>Earth history model</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Computerised Earth geological history evidence model"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label">Model focus</span>
+            <span class="value" id="focusMetric">Plate tectonics</span>
+          </div>
+          <div class="metric">
+            <span class="label">Technologies added</span>
+            <span class="value" id="techMetric">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Evidence quality</span>
+            <span class="value" id="qualityMetric">Low</span>
+          </div>
+          <div class="metric">
+            <span class="label">Model confidence</span>
+            <span class="value" id="confidenceMetric">10%</span>
+          </div>
+        </div>
+
+        <section class="controls-panel">
+          <h2>Controls</h2>
+
+          <div class="controls-grid">
+            <div>
+              <label for="focusSelect">Scientific model focus</label>
+              <select id="focusSelect">
+                <option value="plate">Plate tectonics</option>
+                <option value="drift">Continental drift</option>
+                <option value="seafloor">Seafloor spreading</option>
+                <option value="supercontinent">Supercontinent cycle</option>
+                <option value="climate">Geological climate history</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="technologySelect">Technology to add</label>
+              <select id="technologySelect">
+                <option value="surface">Surface geology and coastlines</option>
+                <option value="fossils">Fossil distribution</option>
+                <option value="seafloor">Seafloor mapping</option>
+                <option value="magnetic">Magnetic striping surveys</option>
+                <option value="dating">Radiometric dating</option>
+                <option value="gps">GPS plate motion</option>
+                <option value="reconstruction">Computer plate reconstruction</option>
+                <option value="tomography">Seismic tomography</option>
+                <option value="palaeoclimate">Palaeoclimate datasets</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="timeSlider">Geological time</label>
+              <div class="range-row">
+                <input id="timeSlider" type="range" min="0" max="250" step="5" value="0">
+                <span class="range-value" id="timeValue">0 Ma</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="lensSelect">Assessment lens</label>
+              <select id="lensSelect">
+                <option value="evidence">Amount of evidence</option>
+                <option value="quality">Quality of evidence</option>
+                <option value="precision">Precision of measurement</option>
+                <option value="prediction">Ability to test predictions</option>
+                <option value="limits">Awareness of limitations</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls-grid" style="margin-top: 10px;">
+            <div>
+              <label for="mapViewSelect">Map view</label>
+              <select id="mapViewSelect">
+                <option value="layers">Evidence layer map</option>
+                <option value="reconstruction">Computerised reconstruction view</option>
+                <option value="limits">Model limitations view</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="layerModeSelect">Show layers</label>
+              <select id="layerModeSelect">
+                <option value="all">All active evidence</option>
+                <option value="selected">Selected technology only</option>
+                <option value="best">Best evidence for model</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="addBtn">Add technology evidence</button>
+            <button id="autoBtn" class="warning">Auto build evidence</button>
+            <button id="resetBtn" class="secondary">Reset model</button>
+            <button id="exportBtn" class="secondary">Export CSV</button>
+          </div>
+
+          <div class="compact-note" id="mapViewNote" style="margin-top: 12px;">
+            <strong>Evidence layer map:</strong> add one technology at a time. After each addition, explain what new evidence it provides.
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modelBadge">Plate tectonics model</span>
+          <h2 style="margin-top: 8px;">Evidence, confidence and data</h2>
+        </div>
+
+        <div class="confidence-wrap">
+          <div class="confidence-bar" aria-label="Model confidence meter">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <div class="confidence-text" id="confidenceText">
+            Model confidence is low. Add technologies to accumulate evidence.
+          </div>
+          <div class="confidence-note">
+            Confidence score is a simplified classroom model, not a statistical confidence value.
+          </div>
+        </div>
+
+        <div class="graph-wrap">
+          <canvas id="graphCanvas" width="430" height="210" aria-label="Evidence accumulation graph"></canvas>
+        </div>
+
+        <div class="impact-highlight" id="impactText">
+          <strong>Technology impact:</strong> add a technology to see what new evidence it provides and how it changes the selected model.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Technology</th>
+                <th>Evidence gained</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr>
+                <td colspan="4">No evidence technologies added yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="explanation-grid">
+      <div class="panel">
+        <h2>Evidence and model</h2>
+
+        <div class="relationship-card">
+          <h3>Current model relationship</h3>
+          <p id="relationshipText">
+            Technologies help scientists observe, measure and test Earth history models. As different evidence sources accumulate, confidence in a model can increase or the model may be refined.
+          </p>
+          <p class="context-question" id="guidingQuestion">
+            Assessment question: Which technology had the greatest impact on the model, and why?
+          </p>
+        </div>
+
+        <div class="guidance-grid">
+          <div class="guidance-card">
+            <h3>Best evidence for this model</h3>
+            <p id="bestEvidenceText">
+              Plate tectonics is strongest when seafloor mapping, magnetic striping, radiometric dating, GPS and tomography support the same explanation.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Computerised reconstruction view</h3>
+            <p id="computerModelText">
+              Computer models are most powerful when they combine many evidence layers into one testable reconstruction of Earth history.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Investigation steps</h3>
+            <ol id="stepsList">
+              <li>Select a scientific model focus.</li>
+              <li>Add one technology at a time.</li>
+              <li>Observe how the map, confidence meter and evidence table change.</li>
+              <li>Assess which technology made the evidence stronger.</li>
+            </ol>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model explanation</h3>
+            <p id="modelText">
+              A computerised Earth history model becomes more useful when it combines multiple evidence sources, such as fossils, seafloor patterns, rock ages and present-day plate motion.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Controlled thinking</h3>
+            <p id="controlledText">
+              To assess impact clearly, change one technology layer at a time and describe what new evidence that technology contributes.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model limitation</h3>
+            <p id="limitationText">
+              This simulation shows broad patterns. Real Earth history models use complex datasets, uncertainty estimates and specialist reconstruction software.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Add surface geology and fossil evidence. Explain why this supports continental drift but may not be enough on its own.</li>
+          <li>Add seafloor mapping, magnetic striping and radiometric dating. Explain how these technologies strengthened seafloor spreading and plate tectonic models.</li>
+          <li>Add GPS and computer reconstruction. Explain how modern technology allows scientists to test and refine Earth history models.</li>
+          <li>Choose one assessment lens, including awareness of limitations if appropriate, and identify which technology had the greatest impact.</li>
+          <li>Evaluate the simulation: what does it help explain, what does it simplify, and how is it different from a real computerised geological model?</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">CER response</h2>
+        <div class="small-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="Which technology had the greatest impact on evidence accumulation?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use model confidence, evidence quality and specific examples to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Suggested primary module: Investigating Science Module 6, Technologies. Strong cross-module link to Module 4, Theories and Laws.</li>
+          <li>The focus is assessment of technological impact, not memorising plate tectonics content.</li>
+          <li>The confidence score is a teaching model. It is not a real statistical confidence calculation.</li>
+          <li>Useful examples include magnetic striping, ocean-floor age data, GPS vectors, GPlates-style reconstructions, palaeoclimate proxies and seismic tomography.</li>
+          <li>Students should assess the simulation itself by identifying strengths, limitations, differences from real modelling, sources of uncertainty and an overall usefulness judgement.</li>
+          <li>Source base: USGS plate tectonics resources, GPlates documentation, NASA palaeoclimate evidence resources, NOAA proxy data resources and EarthScope seismic tomography resources.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 6 SciSim model. Evidence scores and confidence levels are simplified for classroom investigation.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const focusSelect = document.getElementById("focusSelect");
+    const technologySelect = document.getElementById("technologySelect");
+    const timeSlider = document.getElementById("timeSlider");
+    const lensSelect = document.getElementById("lensSelect");
+    const mapViewSelect = document.getElementById("mapViewSelect");
+    const layerModeSelect = document.getElementById("layerModeSelect");
+
+    const timeValue = document.getElementById("timeValue");
+    const focusMetric = document.getElementById("focusMetric");
+    const techMetric = document.getElementById("techMetric");
+    const qualityMetric = document.getElementById("qualityMetric");
+    const confidenceMetric = document.getElementById("confidenceMetric");
+    const confidenceFill = document.getElementById("confidenceFill");
+    const confidenceText = document.getElementById("confidenceText");
+    const modelBadge = document.getElementById("modelBadge");
+    const impactText = document.getElementById("impactText");
+    const dataBody = document.getElementById("dataBody");
+
+    const relationshipText = document.getElementById("relationshipText");
+    const guidingQuestion = document.getElementById("guidingQuestion");
+    const bestEvidenceText = document.getElementById("bestEvidenceText");
+    const computerModelText = document.getElementById("computerModelText");
+    const modelText = document.getElementById("modelText");
+    const controlledText = document.getElementById("controlledText");
+    const limitationText = document.getElementById("limitationText");
+    const mapViewNote = document.getElementById("mapViewNote");
+
+    const addBtn = document.getElementById("addBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    const technologies = {
+      surface: {
+        title: "Surface geology and coastlines",
+        short: "Surface geology",
+        evidence: "Matching coastlines, mountain belts and rock layers",
+        impact: "Provides early pattern evidence for continental fit and shared geological history.",
+        evidenceScore: 10,
+        qualityScore: 8,
+        precisionScore: 3,
+        predictionScore: 3,
+        limitScore: 2,
+        models: { drift: 20, plate: 10, seafloor: 3, supercontinent: 12, climate: 2 }
+      },
+      fossils: {
+        title: "Fossil distribution",
+        short: "Fossils",
+        evidence: "Similar fossils found on continents now separated by oceans",
+        impact: "Strengthens continental drift by showing biological patterns that match past connections.",
+        evidenceScore: 12,
+        qualityScore: 10,
+        precisionScore: 4,
+        predictionScore: 5,
+        limitScore: 3,
+        models: { drift: 22, plate: 10, seafloor: 2, supercontinent: 14, climate: 5 }
+      },
+      seafloor: {
+        title: "Seafloor mapping",
+        short: "Seafloor mapping",
+        evidence: "Mid-ocean ridges, trenches and ocean-floor structure",
+        impact: "Reveals hidden ocean-floor features that support seafloor spreading and plate boundaries.",
+        evidenceScore: 16,
+        qualityScore: 15,
+        precisionScore: 10,
+        predictionScore: 10,
+        limitScore: 5,
+        models: { drift: 8, plate: 18, seafloor: 24, supercontinent: 10, climate: 2 }
+      },
+      magnetic: {
+        title: "Magnetic striping surveys",
+        short: "Magnetic stripes",
+        evidence: "Symmetrical magnetic stripes on both sides of mid-ocean ridges",
+        impact: "Strong evidence that new crust forms at ridges and records reversals in Earth’s magnetic field.",
+        evidenceScore: 18,
+        qualityScore: 20,
+        precisionScore: 12,
+        predictionScore: 16,
+        limitScore: 6,
+        models: { drift: 8, plate: 22, seafloor: 28, supercontinent: 8, climate: 1 }
+      },
+      dating: {
+        title: "Radiometric dating",
+        short: "Radiometric dating",
+        evidence: "Numerical ages of rocks and ocean crust",
+        impact: "Adds quantitative time evidence, allowing rates and sequences of geological change to be calculated.",
+        evidenceScore: 18,
+        qualityScore: 18,
+        precisionScore: 22,
+        predictionScore: 15,
+        limitScore: 6,
+        models: { drift: 9, plate: 22, seafloor: 22, supercontinent: 18, climate: 8 }
+      },
+      gps: {
+        title: "GPS plate motion",
+        short: "GPS",
+        evidence: "Direct measurement of present-day plate movement",
+        impact: "Connects ancient geological patterns with current movement data and allows predictions to be tested.",
+        evidenceScore: 15,
+        qualityScore: 18,
+        precisionScore: 22,
+        predictionScore: 24,
+        limitScore: 7,
+        models: { drift: 10, plate: 25, seafloor: 14, supercontinent: 10, climate: 1 }
+      },
+      reconstruction: {
+        title: "Computer plate reconstruction",
+        short: "Computer model",
+        evidence: "Digital reconstruction of past plate positions through geological time",
+        impact: "Combines many datasets into a testable model of Earth’s geological history.",
+        evidenceScore: 14,
+        qualityScore: 18,
+        precisionScore: 16,
+        predictionScore: 22,
+        limitScore: 12,
+        models: { drift: 16, plate: 24, seafloor: 16, supercontinent: 28, climate: 10 }
+      },
+      tomography: {
+        title: "Seismic tomography",
+        short: "Tomography",
+        evidence: "3D images of internal Earth structures such as subducting slabs",
+        impact: "Adds hidden internal evidence for plate motion and subduction processes.",
+        evidenceScore: 14,
+        qualityScore: 16,
+        precisionScore: 14,
+        predictionScore: 14,
+        limitScore: 12,
+        models: { drift: 3, plate: 20, seafloor: 9, supercontinent: 12, climate: 2 }
+      },
+      palaeoclimate: {
+        title: "Palaeoclimate datasets",
+        short: "Palaeoclimate",
+        evidence: "Ice cores, ocean sediments, tree rings, corals and other proxy data",
+        impact: "Allows past environments and climate changes to be reconstructed and tested against geological models.",
+        evidenceScore: 16,
+        qualityScore: 14,
+        precisionScore: 12,
+        predictionScore: 18,
+        limitScore: 10,
+        models: { drift: 2, plate: 6, seafloor: 2, supercontinent: 10, climate: 30 }
+      }
+    };
+
+    const focusLabels = {
+      plate: "Plate tectonics",
+      drift: "Continental drift",
+      seafloor: "Seafloor spreading",
+      supercontinent: "Supercontinent cycle",
+      climate: "Geological climate history"
+    };
+
+    let addedTech = [];
+    let history = [];
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function rounded(value, digits = 0) {
+      return Number(value).toFixed(digits);
+    }
+
+    function currentTime() {
+      return Number(timeSlider.value);
+    }
+
+    function confidenceScore() {
+      const focus = focusSelect.value;
+      let score = 10;
+      addedTech.forEach(key => {
+        score += technologies[key].models[focus] || 0;
+      });
+      return clamp(score, 0, 95);
+    }
+
+    function lensScore() {
+      const lens = lensSelect.value;
+      let score = 0;
+
+      addedTech.forEach(key => {
+        const tech = technologies[key];
+        if (lens === "evidence") score += tech.evidenceScore;
+        if (lens === "quality") score += tech.qualityScore;
+        if (lens === "precision") score += tech.precisionScore;
+        if (lens === "prediction") score += tech.predictionScore;
+        if (lens === "limits") score += tech.limitScore;
+      });
+
+      return clamp(score, 0, 100);
+    }
+
+    function qualityLabel(score) {
+      if (score >= 80) return "Very high";
+      if (score >= 60) return "High";
+      if (score >= 38) return "Moderate";
+      if (score >= 18) return "Developing";
+      return "Low";
+    }
+
+    function addTechnology(key = technologySelect.value) {
+      if (!addedTech.includes(key)) {
+        addedTech.push(key);
+        const tech = technologies[key];
+
+        history.push({
+          step: history.length + 1,
+          key,
+          technology: tech.title,
+          evidence: tech.evidence,
+          impact: tech.impact,
+          focus: focusLabels[focusSelect.value],
+          confidence: confidenceScore(),
+          lens: lensSelect.options[lensSelect.selectedIndex].text,
+          lensScore: lensScore()
+        });
+      }
+
+      updateAll();
+    }
+
+    async function autoBuildEvidence() {
+      const sequence = ["surface", "fossils", "seafloor", "magnetic", "dating", "gps", "reconstruction", "tomography", "palaeoclimate"];
+
+      for (const key of sequence) {
+        if (!addedTech.includes(key)) {
+          addTechnology(key);
+          await new Promise(resolve => setTimeout(resolve, 280));
+        }
+      }
+    }
+
+    function resetModel() {
+      addedTech = [];
+      history = [];
+      updateAll();
+    }
+
+    function updateReadouts() {
+      const confidence = confidenceScore();
+      const lScore = lensScore();
+
+      timeValue.textContent = `${currentTime()} Ma`;
+      focusMetric.textContent = focusLabels[focusSelect.value];
+      techMetric.textContent = `${addedTech.length}`;
+      qualityMetric.textContent = qualityLabel(lScore);
+      confidenceMetric.textContent = `${rounded(confidence, 0)}%`;
+
+      confidenceFill.style.width = `${confidence}%`;
+
+      let message = "Model confidence is low. Add technologies to accumulate evidence.";
+      if (confidence >= 30) message = "Model confidence is developing as evidence sources begin to support each other.";
+      if (confidence >= 60) message = "Model confidence is high because multiple technologies provide consistent evidence.";
+      if (confidence >= 85) message = "Model confidence is very high in this teaching model because evidence is diverse, precise and testable. It is capped below 100% because scientific models can still be refined.";
+      confidenceText.textContent = message;
+
+      modelBadge.textContent = `${focusLabels[focusSelect.value]} model`;
+    }
+
+    function updateTextPanels() {
+      const focus = focusSelect.value;
+      const lens = lensSelect.value;
+      const latest = addedTech.length > 0 ? technologies[addedTech[addedTech.length - 1]] : null;
+
+      if (latest) {
+        const selectedTech = technologies[technologySelect.value];
+        impactText.innerHTML = `<strong>Latest impact:</strong> ${latest.title} added evidence about ${latest.evidence.toLowerCase()}. ${latest.impact}<br><br><strong>Selected technology:</strong> ${selectedTech.title} would provide evidence about ${selectedTech.evidence.toLowerCase()}.`;
+      } else {
+        impactText.innerHTML = "<strong>Technology impact:</strong> add a technology to see what new evidence it provides and how it changes the selected model.";
+      }
+
+      if (focus === "plate") {
+        relationshipText.textContent = "Plate tectonic models became stronger as technologies connected surface patterns, ocean-floor evidence, rock ages, GPS movement and internal Earth imaging.";
+        bestEvidenceText.textContent = "Best evidence: seafloor mapping, magnetic striping, radiometric dating, GPS plate motion and seismic tomography.";
+        modelText.textContent = "The model is strongest when independent technologies produce consistent evidence for moving plates, spreading ridges, subduction zones and current plate motion.";
+      }
+
+      if (focus === "drift") {
+        relationshipText.textContent = "Continental drift was first supported by patterns such as coastlines, fossils and rock matches, but later technologies helped explain the mechanism of movement.";
+        bestEvidenceText.textContent = "Best evidence: matching coastlines, fossil distribution, rock belts and later computer reconstructions that test continent positions.";
+        modelText.textContent = "Surface evidence can suggest continents were once connected, but seafloor and plate-motion evidence helps explain how and why continents move.";
+      }
+
+      if (focus === "seafloor") {
+        relationshipText.textContent = "Seafloor spreading models were strengthened by technologies that mapped ocean ridges, detected magnetic striping and dated ocean crust.";
+        bestEvidenceText.textContent = "Best evidence: seafloor mapping, symmetrical magnetic stripes and radiometric dating showing ocean crust ages.";
+        modelText.textContent = "The strongest evidence for seafloor spreading comes from ocean-floor patterns that are symmetrical around mid-ocean ridges and supported by rock ages.";
+      }
+
+      if (focus === "supercontinent") {
+        relationshipText.textContent = "Supercontinent models depend on computerised reconstructions that combine fossils, rock belts, palaeomagnetism, seafloor data and geological time.";
+        bestEvidenceText.textContent = "Best evidence: computer plate reconstruction supported by fossils, rock belts, seafloor age data and palaeomagnetic evidence.";
+        modelText.textContent = "Computer reconstructions help scientists test whether past continent positions fit multiple evidence sources at the same time.";
+      }
+
+      if (focus === "climate") {
+        relationshipText.textContent = "Geological climate history models use proxy datasets, dating and computer modelling to reconstruct past environments that cannot be directly observed.";
+        bestEvidenceText.textContent = "Best evidence: palaeoclimate proxy datasets, dating methods and computer models that compare multiple past-environment indicators.";
+        modelText.textContent = "Past climate models are strengthened when independent proxies, such as ice cores, sediments, corals and tree rings, produce consistent patterns.";
+      }
+
+      if (lens === "evidence") {
+        guidingQuestion.textContent = "Assessment question: Which technology added the largest amount of new evidence?";
+        controlledText.textContent = "Focus on how much new evidence each technology made available, such as new maps, samples, measurements or datasets.";
+      }
+
+      if (lens === "quality") {
+        guidingQuestion.textContent = "Assessment question: Which technology improved the quality of evidence the most?";
+        controlledText.textContent = "Focus on whether the evidence is direct, consistent, repeatable, and able to support or challenge a model.";
+      }
+
+      if (lens === "precision") {
+        guidingQuestion.textContent = "Assessment question: Which technology made the evidence more precise or quantitative?";
+        controlledText.textContent = "Focus on whether the technology produced numerical measurements, dates, rates, locations or uncertainty estimates.";
+      }
+
+      if (lens === "prediction") {
+        guidingQuestion.textContent = "Assessment question: Which technology made it easier to test predictions from the model?";
+        controlledText.textContent = "Focus on whether the technology allowed scientists to compare predictions against new observations or measurements.";
+      }
+
+      if (lens === "limits") {
+        guidingQuestion.textContent = "Assessment question: Which technology improves awareness of the model’s limitations?";
+        controlledText.textContent = "Focus on uncertainty, missing data, simplifications and cases where evidence may be interpreted in more than one way. A higher score means the technology helps identify limitations more clearly.";
+      }
+
+      if (hasTech("reconstruction")) {
+        computerModelText.textContent = "Computerised reconstruction is active: the model now combines evidence layers into a testable reconstruction rather than showing isolated observations.";
+      } else {
+        computerModelText.textContent = "Computerised reconstruction is not yet active. Add the computer plate reconstruction technology to show how multiple evidence layers can be combined into one model.";
+      }
+
+      const layerModeText = layerModeSelect.value === "all"
+        ? "showing all active evidence"
+        : layerModeSelect.value === "selected"
+          ? "showing the selected technology only"
+          : "showing the strongest evidence for this model";
+
+      if (mapViewSelect.value === "layers") {
+        mapViewNote.innerHTML = `<strong>Evidence layer map:</strong> add one technology at a time. After each addition, explain what new evidence it provides. Currently ${layerModeText}.`;
+      }
+
+      if (mapViewSelect.value === "reconstruction") {
+        mapViewNote.innerHTML = `<strong>Computerised reconstruction view:</strong> the map emphasises how evidence layers are combined into a single Earth history model. Currently ${layerModeText}.`;
+      }
+
+      if (mapViewSelect.value === "limits") {
+        mapViewNote.innerHTML = `<strong>Model limitations view:</strong> the map highlights that reconstructions are simplified and depend on incomplete evidence. Currently ${layerModeText}.`;
+      }
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+
+      if (history.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="4">No evidence technologies added yet.</td>`;
+        dataBody.appendChild(row);
+        return;
+      }
+
+      history.slice().reverse().forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.step}</td>
+          <td>${item.technology}</td>
+          <td>${item.evidence}</td>
+          <td>${item.impact}</td>
+        `;
+        dataBody.appendChild(row);
+      });
+    }
+
+    function updateAll() {
+      updateReadouts();
+      updateTextPanels();
+      updateTable();
+      drawEarthModel();
+      drawGraph();
+    }
+
+    function exportCSV() {
+      const headers = ["step", "technology", "evidence_gained", "impact", "model_focus", "confidence_percent", "assessment_lens", "lens_score"];
+      const rows = history.map(item => [
+        item.step,
+        `"${item.technology.replaceAll('"', '""')}"`,
+        `"${item.evidence.replaceAll('"', '""')}"`,
+        `"${item.impact.replaceAll('"', '""')}"`,
+        `"${item.focus.replaceAll('"', '""')}"`,
+        item.confidence,
+        `"${item.lens.replaceAll('"', '""')}"`,
+        item.lensScore
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "earth_history_evidence_builder.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function bestEvidenceKeysForFocus() {
+      const focus = focusSelect.value;
+
+      if (focus === "plate") return ["seafloor", "magnetic", "dating", "gps", "tomography"];
+      if (focus === "drift") return ["surface", "fossils", "reconstruction"];
+      if (focus === "seafloor") return ["seafloor", "magnetic", "dating"];
+      if (focus === "supercontinent") return ["fossils", "dating", "reconstruction"];
+      if (focus === "climate") return ["palaeoclimate", "dating", "reconstruction"];
+
+      return Object.keys(technologies);
+    }
+
+    function shouldShowLayer(key) {
+      if (!addedTech.includes(key)) return false;
+
+      if (layerModeSelect.value === "selected") {
+        return technologySelect.value === key;
+      }
+
+      if (layerModeSelect.value === "best") {
+        return bestEvidenceKeysForFocus().includes(key);
+      }
+
+      return true;
+    }
+
+    function hasActiveLayer(key) {
+      return shouldShowLayer(key);
+    }
+
+    function hasTech(key) {
+      return addedTech.includes(key);
+    }
+
+    function drawEarthModel() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const oceanGradient = ctx.createLinearGradient(0, 0, 0, h);
+      oceanGradient.addColorStop(0, "#bfdbfe");
+      oceanGradient.addColorStop(0.55, "#0ea5e9");
+      oceanGradient.addColorStop(1, "#075985");
+      ctx.fillStyle = oceanGradient;
+      ctx.fillRect(0, 0, w, h);
+
+      drawGrid();
+      drawTimeLabel();
+
+      const continents = continentPositions();
+
+      drawOceanEvidence();
+
+      continents.forEach(continent => {
+        drawContinent(continent);
+      });
+
+      if (hasActiveLayer("surface")) drawRockBelts(continents);
+      if (hasActiveLayer("fossils")) drawFossils(continents);
+      if (hasActiveLayer("gps")) drawGPSVectors(continents);
+      if (hasActiveLayer("reconstruction")) drawReconstructionGhosts();
+      if (hasActiveLayer("tomography")) drawTomographyInset();
+      if (hasActiveLayer("palaeoclimate")) drawClimateProxies();
+
+      if (mapViewSelect.value === "reconstruction") drawComputerisedViewOverlay();
+      if (mapViewSelect.value === "limits") drawLimitationsOverlay();
+
+      drawLegend();
+      drawTeachingModelNote();
+    }
+
+    function drawTeachingModelNote() {
+      ctx.save();
+
+      ctx.fillStyle = "rgba(255, 251, 235, 0.92)";
+      ctx.strokeStyle = "#fde68a";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 612, 430, 230, 48, 13);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#78350f";
+      ctx.font = "800 10.5px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Simplified teaching model", 727, 450);
+      ctx.fillText("not an exact reconstruction", 727, 466);
+
+      ctx.restore();
+    }
+
+    function drawComputerisedViewOverlay() {
+      ctx.save();
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.92)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 7]);
+
+      ctx.beginPath();
+      ctx.ellipse(450, 255, 250, 172, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(30, 64, 175, 0.86)";
+      roundRect(ctx, 282, 384, 336, 54, 14);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 14px system-ui";
+      ctx.textAlign = "center";
+
+      if (hasTech("reconstruction")) {
+        ctx.fillText("Computerised reconstruction active", 450, 407);
+        ctx.font = "800 12px system-ui";
+        ctx.fillText("combining evidence layers into one testable model", 450, 424);
+      } else {
+        ctx.fillText("Add computer plate reconstruction", 450, 407);
+        ctx.font = "800 12px system-ui";
+        ctx.fillText("to combine layers into a model", 450, 424);
+      }
+
+      ctx.restore();
+    }
+
+    function drawLimitationsOverlay() {
+      ctx.save();
+      ctx.fillStyle = "rgba(127, 29, 29, 0.72)";
+      roundRect(ctx, 40, 354, 270, 82, 16);
+      ctx.fill();
+
+      ctx.fillStyle = "#fff7ed";
+      ctx.font = "900 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Model limitations to consider", 58, 378);
+      ctx.font = "800 12px system-ui";
+      ctx.fillText("• simplified shapes and positions", 58, 399);
+      ctx.fillText("• incomplete evidence in real datasets", 58, 417);
+      ctx.fillText("• confidence score is not statistical", 58, 435);
+      ctx.restore();
+    }
+
+    function drawGrid() {
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.11)";
+      ctx.lineWidth = 1;
+
+      for (let x = 80; x < simCanvas.width; x += 80) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, simCanvas.height);
+        ctx.stroke();
+      }
+
+      for (let y = 80; y < simCanvas.height; y += 80) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(simCanvas.width, y);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawTimeLabel() {
+      ctx.save();
+
+      const time = currentTime();
+      const title = time === 0 ? "Present-day evidence map" : `Simplified reconstruction: ${time} million years ago`;
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
+      ctx.font = "900 20px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(title, simCanvas.width / 2, 34);
+
+      ctx.font = "800 12px system-ui";
+      ctx.fillStyle = "rgba(15, 23, 42, 0.72)";
+      ctx.fillText("Add technology layers to build evidence for the selected model", simCanvas.width / 2, 55);
+
+      ctx.restore();
+    }
+
+    function continentPositions() {
+      const t = currentTime() / 250;
+      const centreX = 450;
+      const centreY = 250;
+
+      const present = [
+        { name: "South America", x: 300, y: 285, sx: 0.95, sy: 1.2, rot: -0.1, colour: "#16a34a" },
+        { name: "Africa", x: 468, y: 255, sx: 1.05, sy: 1.25, rot: 0.05, colour: "#65a30d" },
+        { name: "North America", x: 268, y: 185, sx: 1.25, sy: 0.85, rot: -0.15, colour: "#22c55e" },
+        { name: "Eurasia", x: 560, y: 172, sx: 1.45, sy: 0.8, rot: 0.02, colour: "#84cc16" },
+        { name: "Australia", x: 670, y: 330, sx: 0.72, sy: 0.52, rot: 0.12, colour: "#4ade80" },
+        { name: "Antarctica", x: 440, y: 402, sx: 1.45, sy: 0.32, rot: 0, colour: "#bbf7d0" }
+      ];
+
+      const pangaeaOffsets = [
+        { x: -70, y: 25, rot: 0.22 },
+        { x: 5, y: 25, rot: -0.08 },
+        { x: -95, y: -55, rot: 0.15 },
+        { x: 70, y: -55, rot: -0.05 },
+        { x: 100, y: 75, rot: -0.25 },
+        { x: -5, y: 105, rot: 0.05 }
+      ];
+
+      return present.map((c, i) => {
+        const target = pangaeaOffsets[i];
+        return {
+          ...c,
+          x: c.x * (1 - t) + (centreX + target.x) * t,
+          y: c.y * (1 - t) + (centreY + target.y) * t,
+          rot: c.rot * (1 - t) + target.rot * t,
+          merged: t
+        };
+      });
+    }
+
+    function drawContinent(c) {
+      ctx.save();
+      ctx.translate(c.x, c.y);
+      ctx.rotate(c.rot);
+      ctx.scale(c.sx, c.sy);
+
+      ctx.fillStyle = c.colour;
+      ctx.strokeStyle = "rgba(20, 83, 45, 0.82)";
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      ctx.moveTo(-48, -30);
+      ctx.bezierCurveTo(-28, -56, 22, -55, 48, -24);
+      ctx.bezierCurveTo(66, -2, 52, 34, 18, 48);
+      ctx.bezierCurveTo(-18, 62, -56, 36, -58, 4);
+      ctx.bezierCurveTo(-60, -12, -56, -22, -48, -30);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
+      ctx.beginPath();
+      ctx.ellipse(-12, -17, 23, 10, 0.25, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.save();
+
+      let labelY = c.y + 54 * c.sy;
+      if (c.name === "North America") labelY = c.y + 50;
+      if (c.name === "Eurasia") labelY = c.y + 52;
+      if (c.name === "Africa") labelY = c.y + 63;
+      if (c.name === "Australia") labelY = c.y + 43;
+      if (c.name === "Antarctica") labelY = c.y + 34;
+
+      const labelWidth = Math.max(58, c.name.length * 6.2 + 14);
+      const labelX = c.x - labelWidth / 2;
+
+      ctx.fillStyle = "rgba(255,255,255,0.62)";
+      ctx.strokeStyle = "rgba(203, 213, 225, 0.65)";
+      ctx.lineWidth = 1;
+      roundRect(ctx, labelX, labelY - 13, labelWidth, 18, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.86)";
+      ctx.font = "800 10px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(c.name, c.x, labelY);
+
+      ctx.restore();
+    }
+
+    function drawRockBelts(continents) {
+      ctx.save();
+      ctx.strokeStyle = "#7c2d12";
+      ctx.lineWidth = 5;
+      ctx.setLineDash([10, 6]);
+
+      continents.slice(0, 4).forEach((c, i) => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 35 + i * 3, -0.8, 0.8);
+        ctx.stroke();
+      });
+
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    function drawFossils(continents) {
+      ctx.save();
+
+      const fossilSets = [
+        { colour: "#f97316", label: "F", points: [continents[0], continents[1]] },
+        { colour: "#7c3aed", label: "L", points: [continents[2], continents[3]] },
+        { colour: "#dc2626", label: "M", points: [continents[0], continents[4]] }
+      ];
+
+      fossilSets.forEach(set => {
+        set.points.forEach((c, i) => {
+          ctx.fillStyle = set.colour;
+          ctx.beginPath();
+          ctx.arc(c.x + (i === 0 ? -20 : 18), c.y - 10, 10, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "900 11px system-ui";
+          ctx.textAlign = "center";
+          ctx.fillText(set.label, c.x + (i === 0 ? -20 : 18), c.y - 6);
+        });
+      });
+
+      ctx.restore();
+    }
+
+    function drawOceanEvidence() {
+      if (hasActiveLayer("seafloor")) {
+        ctx.save();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 4;
+        ctx.setLineDash([14, 10]);
+
+        ctx.beginPath();
+        ctx.moveTo(450, 95);
+        ctx.bezierCurveTo(420, 160, 480, 240, 445, 330);
+        ctx.bezierCurveTo(430, 365, 460, 398, 450, 455);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "800 11px system-ui";
+        ctx.textAlign = "center";
+        if (layerModeSelect.value !== "all" || technologySelect.value === "seafloor") ctx.fillText("mapped mid-ocean ridge", 548, 134);
+        ctx.restore();
+      }
+
+      if (hasActiveLayer("magnetic")) {
+        ctx.save();
+        const colours = ["rgba(239, 68, 68, 0.45)", "rgba(59, 130, 246, 0.45)"];
+
+        for (let i = 0; i < 10; i++) {
+          ctx.strokeStyle = colours[i % 2];
+          ctx.lineWidth = layerModeSelect.value === "all" ? 4 : 6;
+          ctx.beginPath();
+          ctx.moveTo(450 - i * 16, 105);
+          ctx.bezierCurveTo(420 - i * 12, 180, 480 - i * 12, 260, 450 - i * 12, 420);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(450 + i * 16, 105);
+          ctx.bezierCurveTo(420 + i * 12, 180, 480 + i * 12, 260, 450 + i * 12, 420);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 11px system-ui";
+        ctx.textAlign = "center";
+        if (layerModeSelect.value !== "all" || technologySelect.value === "magnetic") ctx.fillText("symmetrical magnetic stripes", 604, 382);
+        ctx.restore();
+      }
+
+      if (hasActiveLayer("dating")) {
+        ctx.save();
+
+        for (let i = 0; i < 6; i++) {
+          ctx.fillStyle = `rgba(245, 158, 11, ${0.22 + i * 0.08})`;
+          ctx.beginPath();
+          ctx.ellipse(450, 250, 40 + i * 42, 28 + i * 24, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(120, 53, 15, 0.28)";
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#78350f";
+        ctx.font = "900 11px system-ui";
+        ctx.textAlign = "center";
+        if (layerModeSelect.value !== "all" || technologySelect.value === "dating") ctx.fillText("rock ages increase away from ridge", 236, 384);
+        ctx.restore();
+      }
+    }
+
+    function drawGPSVectors(continents) {
+      ctx.save();
+      ctx.strokeStyle = "#111827";
+      ctx.fillStyle = "#111827";
+      ctx.lineWidth = 3;
+
+      continents.forEach((c, i) => {
+        const angle = (i / continents.length) * Math.PI * 2 + 0.5;
+        const length = 22;
+        const x1 = c.x;
+        const y1 = c.y - 48;
+        const x2 = x1 + Math.cos(angle) * length;
+        const y2 = y1 + Math.sin(angle) * length;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - Math.cos(angle - 0.6) * 9, y2 - Math.sin(angle - 0.6) * 9);
+        ctx.lineTo(x2 - Math.cos(angle + 0.6) * 9, y2 - Math.sin(angle + 0.6) * 9);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 11px system-ui";
+      ctx.textAlign = "left";
+      if (layerModeSelect.value !== "all" || technologySelect.value === "gps") ctx.fillText("GPS vectors show present-day plate motion", 36, 442);
+      ctx.restore();
+    }
+
+    function drawReconstructionGhosts() {
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.82)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 8]);
+
+      ctx.beginPath();
+      ctx.ellipse(450, 258, 180, 135, -0.08, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.font = "900 11px system-ui";
+      ctx.textAlign = "center";
+      if (layerModeSelect.value !== "all" || technologySelect.value === "reconstruction") ctx.fillText("computer reconstruction constraint", 450, 86);
+      ctx.restore();
+    }
+
+    function drawTomographyInset() {
+      ctx.save();
+      const x = 664;
+      const y = 345;
+      const w = 198;
+      const h = 102;
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+      roundRect(ctx, x, y, w, h, 14);
+      ctx.fill();
+
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + 12, y + 28);
+      ctx.lineTo(x + w - 12, y + 28);
+      ctx.stroke();
+
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.moveTo(x + 38, y + 28);
+      ctx.quadraticCurveTo(x + 92, y + 54, x + 118, y + 92);
+      ctx.lineTo(x + 78, y + 92);
+      ctx.quadraticCurveTo(x + 52, y + 62, x + 20, y + 28);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "800 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("seismic tomography", x + w / 2, y + 18);
+      ctx.fillText("hidden slab model", x + w / 2, y + 82);
+      ctx.restore();
+    }
+
+    function drawClimateProxies() {
+      ctx.save();
+
+      const proxies = [
+        { x: 112, y: 136, colour: "#e0f2fe", label: "ice core" },
+        { x: 770, y: 138, colour: "#fef3c7", label: "sediment" },
+        { x: 128, y: 355, colour: "#bbf7d0", label: "pollen" },
+        { x: 774, y: 292, colour: "#fed7aa", label: "coral" }
+      ];
+
+      proxies.forEach(p => {
+        ctx.fillStyle = p.colour;
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 11px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(p.label, p.x, p.y + 34);
+      });
+
+      ctx.restore();
+    }
+
+    function drawLegend() {
+      ctx.save();
+
+      const hasLayers = addedTech.length > 0;
+      const boxH = hasLayers ? 96 : 72;
+
+      ctx.fillStyle = "rgba(255,255,255,0.86)";
+      ctx.strokeStyle = "rgba(203, 213, 225, 0.85)";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 24, 74, 212, boxH, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 12px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`Evidence layers: ${addedTech.length} total`, 38, 96);
+
+      let modeLabel = "showing all active";
+      if (layerModeSelect.value === "selected") modeLabel = "showing selected layer";
+      if (layerModeSelect.value === "best") modeLabel = "showing best evidence";
+
+      ctx.font = "800 10px system-ui";
+      ctx.fillStyle = "#1e3a8a";
+      ctx.fillText(modeLabel, 38, 114);
+
+      if (!hasLayers) {
+        ctx.fillStyle = "#475569";
+        ctx.font = "800 10.5px system-ui";
+        ctx.fillText("Add a technology", 38, 135);
+        ctx.fillText("to begin.", 38, 150);
+      } else {
+        const active = addedTech.map(key => technologies[key].short).slice(-3);
+        ctx.fillStyle = "#334155";
+        ctx.font = "800 10.5px system-ui";
+        ctx.fillText("Latest:", 38, 136);
+        active.forEach((label, i) => {
+          ctx.fillText(`${i + 1}. ${label}`, 82, 136 + i * 13);
+        });
+      }
+
+      ctx.restore();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      const margin = { left: 48, right: 14, top: 22, bottom: 40 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      gtx.strokeStyle = "#cbd5e1";
+      gtx.lineWidth = 1;
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top);
+      gtx.lineTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top + plotH);
+      gtx.stroke();
+
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Evidence accumulation", 10, 14);
+      gtx.fillText("%", 20, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Technology step", margin.left + plotW / 2, h - 8);
+
+      const points = history.length > 0 ? history : [{ step: 0, confidence: 10, lensScore: 0 }];
+      const useLens = lensSelect.value !== "evidence";
+      const key = useLens ? "lensScore" : "confidence";
+
+      gtx.strokeStyle = "#2563eb";
+      gtx.lineWidth = 3;
+      gtx.beginPath();
+
+      points.forEach((point, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, points.length + 1)) * plotW;
+        const value = clamp(point[key] || 0, 0, 100);
+        const y = margin.top + plotH - (value / 100) * plotH;
+
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      });
+
+      gtx.stroke();
+
+      points.forEach((point, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, points.length + 1)) * plotW;
+        const value = clamp(point[key] || 0, 0, 100);
+        const y = margin.top + plotH - (value / 100) * plotH;
+
+        gtx.fillStyle = "#f59e0b";
+        gtx.beginPath();
+        gtx.arc(x, y, 4.5, 0, Math.PI * 2);
+        gtx.fill();
+      });
+
+      const label = useLens ? lensSelect.options[lensSelect.selectedIndex].text : "Model confidence";
+      drawGraphBadge(label, margin.left + plotW - 130, margin.top + 16);
+    }
+
+    function drawGraphBadge(text, x, y) {
+      gtx.save();
+      gtx.fillStyle = "#eaf2ff";
+      gtx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      gtx.lineWidth = 1;
+
+      const width = Math.max(112, text.length * 6.8 + 18);
+      const height = 24;
+      const padding = 8;
+      let drawX = x;
+      let drawY = y;
+
+      if (drawX + width > graphCanvas.width - padding) drawX = graphCanvas.width - width - padding;
+      if (drawX < padding) drawX = padding;
+      if (drawY + height > graphCanvas.height - padding) drawY = graphCanvas.height - height - padding;
+      if (drawY < padding) drawY = padding;
+
+      roundRect(gtx, drawX, drawY, width, height, 10);
+      gtx.fill();
+      gtx.stroke();
+
+      gtx.fillStyle = "#1d4ed8";
+      gtx.font = "800 11px system-ui";
+      gtx.textAlign = "center";
+      gtx.fillText(text, drawX + width / 2, drawY + 16);
+      gtx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    [focusSelect, timeSlider, lensSelect, mapViewSelect, layerModeSelect, technologySelect].forEach(control => {
+      control.addEventListener("input", updateAll);
+      control.addEventListener("change", updateAll);
+    });
+
+    addBtn.addEventListener("click", () => addTechnology());
+    autoBtn.addEventListener("click", autoBuildEvidence);
+    resetBtn.addEventListener("click", resetModel);
+    exportBtn.addEventListener("click", exportCSV);
+
+    updateAll();
+  </script>
+</body>
+</html>
