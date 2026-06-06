@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Large Hadron Collider Model Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #182230;
+      --muted: #64748b;
+      --border: #d6dee9;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --purple: #7c3aed;
+      --cyan: #06b6d4;
+      --warm: #f59e0b;
+      --hot: #ef4444;
+      --good: #16a34a;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-purple: #f5f3ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #312e81 55%, #06b6d4);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -75px;
+      top: -85px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 930px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: radial-gradient(circle at center, #111827, #020617);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .controls-panel {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 82px;
+      text-align: right;
+      font-weight: 900;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.92rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-purple);
+      color: var(--purple);
+      border: 1px solid rgba(124, 58, 237, 0.18);
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 210px;
+    }
+
+    .event-display {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: #020617;
+    }
+
+    #eventCanvas {
+      height: 190px;
+    }
+
+    .table-wrap {
+      max-height: 230px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .explanation-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .relationship-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .relationship-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .relationship-card p {
+      margin: 0;
+    }
+
+    .context-question {
+      margin-top: 10px !important;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .guidance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .guidance-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .guidance-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .guidance-card p {
+      margin: 0;
+    }
+
+    .guidance-card ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    .warning-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 700;
+    }
+
+    .compact-note {
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 750;
+      font-size: 0.92rem;
+    }
+
+    .compact-note strong {
+      color: var(--accent-dark);
+    }
+
+    .inline-note {
+      margin-top: 10px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      background: var(--soft-blue);
+      color: #1e3a8a;
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    textarea {
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .explanation-grid,
+      .challenge-grid,
+      .small-grid,
+      .guidance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Large Hadron Collider Model Simulator</h1>
+      <p class="subtitle">
+        Model how counter-rotating beams are steered by magnets, collide inside detectors, and produce particle tracks that can be filtered by a trigger system.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that the Large Hadron Collider uses high-energy beams, magnetic fields and large detectors to test models of matter and energy.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can adjust a simplified LHC model, collect collision data, interpret event displays, and evaluate strengths and limitations of the simulation.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>Accelerator model</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Animated Large Hadron Collider model"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label">Beam energy</span>
+            <span class="value" id="energyMetric">6.8 TeV</span>
+          </div>
+          <div class="metric">
+            <span class="label">Magnetic field</span>
+            <span class="value" id="fieldMetric">8.0 T</span>
+          </div>
+          <div class="metric">
+            <span class="label">Collisions</span>
+            <span class="value" id="collisionMetric">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Triggered events</span>
+            <span class="value" id="triggerMetric">0</span>
+          </div>
+        </div>
+
+        <section class="controls-panel">
+          <h2>Controls</h2>
+
+          <div class="controls-grid">
+            <div>
+              <label for="modeSelect">Investigation mode</label>
+              <select id="modeSelect">
+                <option value="beams">Beam and collision model</option>
+                <option value="magnets">Magnetic steering model</option>
+                <option value="detectors">Detector and trigger model</option>
+                <option value="heavyIon">Extension: heavy ion event model</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="energySlider">Beam energy per beam</label>
+              <div class="range-row">
+                <input id="energySlider" type="range" min="1" max="7" step="0.1" value="6.8">
+                <span class="range-value" id="energyValue">6.8 TeV</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="fieldSlider">Magnetic field</label>
+              <div class="range-row">
+                <input id="fieldSlider" type="range" min="2" max="9" step="0.1" value="8.0">
+                <span class="range-value" id="fieldValue">8.0 T</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="intensitySlider">Beam intensity</label>
+              <div class="range-row">
+                <input id="intensitySlider" type="range" min="20" max="100" step="5" value="70">
+                <span class="range-value" id="intensityValue">70%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls-grid" style="margin-top: 10px;">
+            <div>
+              <label for="detectorSelect">Detector focus</label>
+              <select id="detectorSelect">
+                <option value="atlas">ATLAS-style general detector</option>
+                <option value="cms">CMS-style compact detector</option>
+                <option value="alice">ALICE-style heavy ion detector</option>
+                <option value="lhcb">LHCb-style forward detector</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="triggerSlider">Trigger selectivity</label>
+              <div class="range-row">
+                <input id="triggerSlider" type="range" min="10" max="90" step="5" value="55">
+                <span class="range-value" id="triggerValue">55%</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="runtimeSlider">Run length</label>
+              <div class="range-row">
+                <input id="runtimeSlider" type="range" min="10" max="60" step="5" value="25">
+                <span class="range-value" id="runtimeValue">25 s</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="graphSelect">Graph view</label>
+              <select id="graphSelect">
+                <option value="energy">Event energy</option>
+                <option value="trigger">Trigger selection</option>
+                <option value="multiplicity">Track multiplicity</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="inline-note" id="steeringNote">
+            Higher-energy beams need stronger magnetic fields to keep them moving around the circular path.
+          </div>
+
+          <div class="button-row">
+            <button id="runBtn">Run beam simulation</button>
+            <button id="singleBtn" class="warning">Generate collision</button>
+            <button id="resetBtn" class="secondary">Reset data</button>
+            <button id="exportBtn" class="secondary">Export CSV</button>
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modeBadge">Beam model</span>
+          <h2 style="margin-top: 8px;">Event display, graph and data</h2>
+        </div>
+
+        <div class="event-display">
+          <canvas id="eventCanvas" width="430" height="210" aria-label="Particle collision event display"></canvas>
+        </div>
+
+        <div class="compact-note" id="eventDisplayNote">
+          <strong>Symbolic event display:</strong> this is not real LHC event reconstruction.
+        </div>
+
+        <div class="compact-note" id="detectorText">
+          <strong>ATLAS-style:</strong> broad, general-purpose collision detector.
+        </div>
+
+        <div class="graph-wrap">
+          <canvas id="graphCanvas" width="430" height="210" aria-label="LHC model graph"></canvas>
+        </div>
+
+        <div class="compact-note" id="graphQuestion">
+          <strong>Graph question:</strong> Do higher beam settings tend to produce higher event-energy values?
+        </div>
+
+        <div class="warning-card" id="dataNote">
+          This is a simplified model. The values show patterns for learning, not real LHC detector data.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Energy TeV</th>
+                <th>Tracks</th>
+                <th>Type</th>
+                <th>Triggered?</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr>
+                <td colspan="5">Run the model or generate a collision to collect event data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="explanation-grid">
+      <div class="panel">
+        <h2>Evidence and model</h2>
+
+        <div class="relationship-card">
+          <h3>Current model relationship</h3>
+          <p id="relationshipText">
+            Two high-energy beams move in opposite directions. Magnetic fields steer the beams around the ring, and collisions occur where the beams cross inside detectors.
+          </p>
+          <p class="context-question" id="contextQuestion">
+            Model question: Why are detectors needed if the particles produced in a collision are too small to see directly?
+          </p>
+        </div>
+
+        <div class="guidance-grid">
+          <div class="guidance-card">
+            <h3>Guided activity sequence</h3>
+            <ol id="activityList">
+              <li>Activity 1: change only beam energy.</li>
+              <li>Activity 2: change only magnetic field.</li>
+              <li>Activity 3: change only trigger selectivity.</li>
+            </ol>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Investigation steps</h3>
+            <ol id="stepsList">
+              <li>Set beam energy and intensity.</li>
+              <li>Adjust magnetic field strength.</li>
+              <li>Generate collision events.</li>
+              <li>Compare detected tracks and trigger selection.</li>
+            </ol>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model explanation</h3>
+            <p id="modelText">
+              The sim represents beams, magnets, collisions and detectors as simplified visual models. Higher energy events can create more energetic tracks, but not every event is recorded by the trigger.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Controlled variables</h3>
+            <p id="controlledText">
+              For a fair comparison, change one factor at a time, such as beam energy, field strength or trigger selectivity.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model limitation</h3>
+            <p id="limitationText">
+              This is not a real particle physics simulation. It shows broad ideas about modelling, detection, selection and uncertainty.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Activity 1: change only beam energy. Compare event energy and number of tracks.</li>
+          <li>Activity 2: change only magnetic field. Explain what happens if the magnetic field is too weak for the selected beam energy.</li>
+          <li>Activity 3: change only trigger selectivity. Explain why a detector system cannot record every possible event.</li>
+          <li>Change detector focus and describe how the event display changes.</li>
+          <li>Evaluate the simulation by identifying what it helps explain, what it simplifies, and how it differs from the real LHC.</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">CER response</h2>
+        <div class="small-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="What did your model evidence show about the LHC?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use event data, graph patterns and model reasoning to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Suggested primary module: Investigating Science Module 4 or Module 6, depending on whether the focus is scientific modelling or technology.</li>
+          <li>This model supports scientific models, particle physics, data selection, detector technology, uncertainty and limitations of simulations.</li>
+          <li>The event display is symbolic. It does not use real event reconstruction or Standard Model calculations.</li>
+          <li>Useful teaching angle: the LHC does not “see” particles directly. It records detector signals and uses models to reconstruct events.</li>
+          <li>Students should assess the simulation itself by discussing strengths, limitations, differences from real experiments, possible sources of error, and overall usefulness.</li>
+          <li>Source base: CERN Large Hadron Collider and CERN experiment resources.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 3 SciSim model. Event tracks, detector signals and trigger decisions are simplified for classroom investigation.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const eventCanvas = document.getElementById("eventCanvas");
+    const etx = eventCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const modeSelect = document.getElementById("modeSelect");
+    const energySlider = document.getElementById("energySlider");
+    const fieldSlider = document.getElementById("fieldSlider");
+    const intensitySlider = document.getElementById("intensitySlider");
+    const detectorSelect = document.getElementById("detectorSelect");
+    const triggerSlider = document.getElementById("triggerSlider");
+    const runtimeSlider = document.getElementById("runtimeSlider");
+    const graphSelect = document.getElementById("graphSelect");
+
+    const energyValue = document.getElementById("energyValue");
+    const fieldValue = document.getElementById("fieldValue");
+    const intensityValue = document.getElementById("intensityValue");
+    const triggerValue = document.getElementById("triggerValue");
+    const runtimeValue = document.getElementById("runtimeValue");
+
+    const energyMetric = document.getElementById("energyMetric");
+    const fieldMetric = document.getElementById("fieldMetric");
+    const collisionMetric = document.getElementById("collisionMetric");
+    const triggerMetric = document.getElementById("triggerMetric");
+
+    const modeBadge = document.getElementById("modeBadge");
+    const relationshipText = document.getElementById("relationshipText");
+    const contextQuestion = document.getElementById("contextQuestion");
+    const eventDisplayNote = document.getElementById("eventDisplayNote");
+    const detectorText = document.getElementById("detectorText");
+    const graphQuestion = document.getElementById("graphQuestion");
+    const steeringNote = document.getElementById("steeringNote");
+    const activityList = document.getElementById("activityList");
+    const stepsList = document.getElementById("stepsList");
+    const modelText = document.getElementById("modelText");
+    const controlledText = document.getElementById("controlledText");
+    const limitationText = document.getElementById("limitationText");
+    const dataNote = document.getElementById("dataNote");
+    const dataBody = document.getElementById("dataBody");
+
+    const runBtn = document.getElementById("runBtn");
+    const singleBtn = document.getElementById("singleBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    let beamPhase = 0;
+    let running = false;
+    let events = [];
+    let lastEvent = null;
+    let sparkParticles = [];
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function rounded(value, digits = 1) {
+      return Number(value).toFixed(digits);
+    }
+
+    function energy() {
+      return Number(energySlider.value);
+    }
+
+    function field() {
+      return Number(fieldSlider.value);
+    }
+
+    function intensity() {
+      return Number(intensitySlider.value);
+    }
+
+    function triggerSelectivity() {
+      return Number(triggerSlider.value);
+    }
+
+    function steeringQuality() {
+      const idealField = 1.1 + energy();
+      const difference = Math.abs(field() - idealField);
+      return clamp(1 - difference / 5.5, 0, 1);
+    }
+
+    function eventRateFactor() {
+      const base = intensity() / 100;
+      const steer = steeringQuality();
+      const modeBoost = modeSelect.value === "heavyIon" ? 0.65 : 1;
+      return clamp(base * steer * modeBoost, 0.02, 1);
+    }
+
+    function triggerChance(type, trackCount, eventEnergy) {
+      const selectivity = triggerSelectivity() / 100;
+      let chance = 0.18 + (eventEnergy / 14) * 0.35 + (trackCount / 80) * 0.25;
+
+      if (type === "jet event") chance += 0.18;
+      if (type === "rare high-energy event") chance += 0.35;
+      if (type === "heavy ion spray") chance += 0.22;
+      if (type === "minimum-bias event") chance -= 0.15;
+
+      chance = chance * selectivity;
+      return clamp(chance, 0.03, 0.98);
+    }
+
+    function chooseEventType(eventEnergy, trackCount) {
+      if (modeSelect.value === "heavyIon" || detectorSelect.value === "alice") {
+        return "heavy ion spray";
+      }
+
+      const rareChance = clamp((eventEnergy - 7) / 40, 0.01, 0.16);
+      const roll = Math.random();
+
+      if (roll < rareChance) return "rare high-energy event";
+      if (trackCount > 34 || roll < 0.42) return "jet event";
+      return "minimum-bias event";
+    }
+
+    function generateCollision(comment = "Generated collision") {
+      const rate = eventRateFactor();
+      const centreOfMass = energy() * 2;
+      const detector = detectorSelect.value;
+
+      let baseTracks = 6 + intensity() * 0.24 + energy() * 2.2;
+      if (modeSelect.value === "heavyIon" || detector === "alice") baseTracks *= 1.75;
+      if (detector === "lhcb") baseTracks *= 0.72;
+
+      const trackCount = Math.round(clamp(baseTracks * rand(0.55, 1.45) * rate + rand(2, 7), 3, 95));
+      const eventEnergy = clamp(centreOfMass * rand(0.18, 0.95), 0.4, 14.0);
+      const type = chooseEventType(eventEnergy, trackCount);
+      const triggered = Math.random() < triggerChance(type, trackCount, eventEnergy);
+
+      const event = {
+        id: events.length + 1,
+        beamEnergy: energy(),
+        centreOfMass,
+        magneticField: field(),
+        steering: steeringQuality(),
+        intensity: intensity(),
+        detector,
+        type,
+        eventEnergy,
+        trackCount,
+        triggered,
+        comment
+      };
+
+      events.push(event);
+      lastEvent = event;
+      makeSparkParticles(event);
+      updateAll();
+    }
+
+    function makeSparkParticles(event) {
+      sparkParticles = [];
+      const count = Math.min(event.trackCount, 75);
+
+      for (let i = 0; i < count; i++) {
+        const angle = rand(0, Math.PI * 2);
+        const speed = rand(1.8, 5.8) * (0.7 + event.eventEnergy / 14);
+        sparkParticles.push({
+          angle,
+          length: rand(30, 135) * (0.7 + event.eventEnergy / 14),
+          curve: rand(-0.38, 0.38),
+          width: rand(1.5, 4),
+          alpha: rand(0.55, 1),
+          colour: i % 3 === 0 ? "#22d3ee" : i % 3 === 1 ? "#f97316" : "#a78bfa",
+          speed
+        });
+      }
+    }
+
+    async function runSimulation() {
+      if (running) return;
+      running = true;
+
+      const totalSteps = Number(runtimeSlider.value) * 4;
+
+      for (let i = 0; i < totalSteps; i++) {
+        if (!running) break;
+
+        if (Math.random() < eventRateFactor() * 0.36) {
+          generateCollision("Run simulation collision");
+        } else {
+          updateAll();
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+
+      running = false;
+    }
+
+    function updateReadouts() {
+      energyValue.textContent = `${rounded(energy(), 1)} TeV`;
+      fieldValue.textContent = `${rounded(field(), 1)} T`;
+      intensityValue.textContent = `${rounded(intensity(), 0)}%`;
+      triggerValue.textContent = `${rounded(triggerSelectivity(), 0)}%`;
+      runtimeValue.textContent = `${runtimeSlider.value} s`;
+
+      energyMetric.textContent = `${rounded(energy(), 1)} TeV`;
+      fieldMetric.textContent = `${rounded(field(), 1)} T`;
+      collisionMetric.textContent = `${events.length}`;
+      triggerMetric.textContent = `${events.filter(e => e.triggered).length}`;
+    }
+
+    function updateGuidance() {
+      const mode = modeSelect.value;
+      const steer = steeringQuality();
+      const detector = detectorSelect.value;
+      const graph = graphSelect.value;
+
+      steeringNote.textContent = `Higher-energy beams need stronger magnetic fields to keep them moving around the circular path. Current steering quality: ${rounded(steer * 100, 0)}%.`;
+
+      eventDisplayNote.innerHTML = `<strong>Symbolic event display:</strong> this is not real LHC event reconstruction. It shows simplified particle tracks so students can connect collisions, detectors and data.`;
+
+      if (detector === "atlas") {
+        detectorText.innerHTML = `<strong>ATLAS-style:</strong> broad, general-purpose collision detector designed to study many types of collision products.`;
+      }
+
+      if (detector === "cms") {
+        detectorText.innerHTML = `<strong>CMS-style:</strong> compact general-purpose detector using a strong magnetic field to help measure particle tracks.`;
+      }
+
+      if (detector === "alice") {
+        detectorText.innerHTML = `<strong>ALICE-style:</strong> detector focus suited to heavy ion collision studies, represented here by events with many tracks.`;
+      }
+
+      if (detector === "lhcb") {
+        detectorText.innerHTML = `<strong>LHCb-style:</strong> detector focus on particles travelling forward from the collision point.`;
+      }
+
+      if (graph === "energy") {
+        graphQuestion.innerHTML = `<strong>Graph question:</strong> Do higher beam settings tend to produce higher event-energy values?`;
+      }
+
+      if (graph === "trigger") {
+        graphQuestion.innerHTML = `<strong>Graph question:</strong> How many events were recorded compared with rejected, and how does trigger selectivity affect the dataset?`;
+      }
+
+      if (graph === "multiplicity") {
+        graphQuestion.innerHTML = `<strong>Graph question:</strong> Which event types tend to produce more tracks, and why might track number matter to a detector?`;
+      }
+
+      if (mode === "beams") {
+        modeBadge.textContent = "Beam model";
+        relationshipText.textContent = "Two high-energy beams move in opposite directions. Collisions occur where the beams cross inside detector regions.";
+        activityList.innerHTML = `
+          <li>Activity 1: change only beam energy.</li>
+          <li>Keep field, intensity and trigger settings constant.</li>
+          <li>Generate events and compare event energy and track number.</li>
+        `;
+        stepsList.innerHTML = `
+          <li>Set beam energy and beam intensity.</li>
+          <li>Keep magnetic steering close to stable.</li>
+          <li>Generate collision events.</li>
+          <li>Compare event energy and track number.</li>
+        `;
+        modelText.textContent = "Higher beam energy increases the possible collision energy. Higher beam intensity increases the chance of simulated collisions.";
+        controlledText.textContent = "For a fair test of beam energy, keep intensity, magnetic field and trigger selectivity constant.";
+        limitationText.textContent = "The sim does not calculate real quantum interactions. It represents broad relationships between beam energy, collision events and detector tracks.";
+      }
+
+      if (mode === "magnets") {
+        modeBadge.textContent = "Magnetic steering";
+        relationshipText.textContent = "Charged particles need magnetic fields to bend their path around the ring. If the field is poorly matched to the beam energy, stable collisions become less likely.";
+        activityList.innerHTML = `
+          <li>Activity 2: change only magnetic field.</li>
+          <li>Keep beam energy, intensity and trigger settings constant.</li>
+          <li>Look for the field value that gives the best steering quality.</li>
+        `;
+        stepsList.innerHTML = `
+          <li>Choose a beam energy.</li>
+          <li>Change magnetic field strength.</li>
+          <li>Watch steering quality and event rate.</li>
+          <li>Explain why magnets are essential for a circular accelerator.</li>
+        `;
+        modelText.textContent = `Current steering quality is ${rounded(steer * 100, 0)}%. The model treats the ideal field as increasing with beam energy.`;
+        controlledText.textContent = "For a fair test of magnetic steering, keep beam energy, intensity and trigger selectivity constant.";
+        limitationText.textContent = "The real LHC uses many specialised superconducting magnets. This sim reduces steering to one simplified field control.";
+      }
+
+      if (mode === "detectors") {
+        modeBadge.textContent = "Detector trigger";
+        relationshipText.textContent = "A detector records signals from particles produced in collisions. A trigger system selects which events are worth recording for later analysis.";
+        activityList.innerHTML = `
+          <li>Activity 3: change only trigger selectivity.</li>
+          <li>Keep beam energy, field and intensity constant.</li>
+          <li>Compare the number of recorded and rejected events.</li>
+        `;
+        stepsList.innerHTML = `
+          <li>Generate several collision events.</li>
+          <li>Change trigger selectivity.</li>
+          <li>Compare recorded and rejected events.</li>
+          <li>Explain why selection rules affect the final dataset.</li>
+        `;
+        modelText.textContent = "The trigger model favours higher-energy or high-track events. This shows how data selection can shape the evidence scientists analyse.";
+        controlledText.textContent = "For a fair test of trigger selectivity, keep beam settings and detector focus constant.";
+        limitationText.textContent = "Real triggers use layered electronics and algorithms. This sim uses a simple probability rule.";
+      }
+
+      if (mode === "heavyIon") {
+        modeBadge.textContent = "Extension: heavy ion";
+        relationshipText.textContent = "Heavy ion collisions are used to study dense, high-energy matter. The sim represents these events as high-track sprays.";
+        activityList.innerHTML = `
+          <li>Extension: compare proton-style and heavy ion-style events.</li>
+          <li>Keep beam energy, field and trigger settings constant.</li>
+          <li>Compare track multiplicity and event display complexity.</li>
+        `;
+        stepsList.innerHTML = `
+          <li>Select the ALICE-style detector if desired.</li>
+          <li>Run or generate heavy ion events.</li>
+          <li>Compare track multiplicity with proton-style events.</li>
+          <li>Discuss what this simplified model leaves out.</li>
+        `;
+        modelText.textContent = "Heavy ion mode increases track multiplicity and lowers the event rate. It is a symbolic model of dense collision events.";
+        controlledText.textContent = "For a fair comparison, compare heavy ion mode with the same beam energy, field strength and trigger setting.";
+        limitationText.textContent = "The sim does not model quark-gluon plasma, fluid behaviour or nuclear collision geometry.";
+      }
+
+      let question = "Model question: Why are detectors needed if the particles produced in a collision are too small to see directly?";
+      if (detector === "atlas") question = "ATLAS-style question: Why would a general-purpose detector need many different layers?";
+      if (detector === "cms") question = "CMS-style question: Why might a compact detector still need a very strong magnetic field?";
+      if (detector === "alice") question = "ALICE-style question: Why might heavy ion events produce many more tracks than simpler proton events?";
+      if (detector === "lhcb") question = "LHCb-style question: Why might some experiments focus strongly on particles travelling forward from the collision?";
+      contextQuestion.textContent = question;
+
+      if (steer < 0.45) {
+        dataNote.textContent = "Model warning: magnetic steering is poor, so the collision rate is reduced. This is a simplified steering model.";
+      } else {
+        dataNote.textContent = "This is a simplified model. The values show patterns for learning, not real LHC detector data.";
+      }
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+
+      if (events.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="5">Run the model or generate a collision to collect event data.</td>`;
+        dataBody.appendChild(row);
+        return;
+      }
+
+      events.slice().reverse().forEach(event => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${event.id}</td>
+          <td>${rounded(event.eventEnergy, 2)}</td>
+          <td>${event.trackCount}</td>
+          <td>${event.type}</td>
+          <td>${event.triggered ? "Yes" : "No"}</td>
+        `;
+        dataBody.appendChild(row);
+      });
+    }
+
+    function updateAll() {
+      updateReadouts();
+      updateGuidance();
+      updateTable();
+      drawEventDisplay();
+      drawGraph();
+    }
+
+    function resetData() {
+      events = [];
+      lastEvent = null;
+      sparkParticles = [];
+      updateAll();
+    }
+
+    function exportCSV() {
+      const headers = ["event", "beam_energy_TeV", "centre_of_mass_TeV", "magnetic_field_T", "steering_quality", "beam_intensity_percent", "detector", "event_energy_TeV", "track_count", "event_type", "triggered", "comment"];
+      const rows = events.map(event => [
+        event.id,
+        rounded(event.beamEnergy, 2),
+        rounded(event.centreOfMass, 2),
+        rounded(event.magneticField, 2),
+        rounded(event.steering, 3),
+        rounded(event.intensity, 1),
+        event.detector,
+        rounded(event.eventEnergy, 3),
+        event.trackCount,
+        `"${event.type}"`,
+        event.triggered ? "yes" : "no",
+        `"${event.comment.replaceAll('"', '""')}"`
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "lhc_model_events.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function drawSimulation() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const bg = ctx.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, 460);
+      bg.addColorStop(0, "#111827");
+      bg.addColorStop(1, "#020617");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      drawTunnel();
+      drawMagnets();
+      drawBeams();
+      drawDetector();
+      drawBeamQuality();
+      drawLabels();
+    }
+
+    function drawTunnel() {
+      const cx = 450;
+      const cy = 245;
+
+      ctx.save();
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
+      ctx.lineWidth = 42;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 285, 150, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.18)";
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 285, 150, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(167, 139, 250, 0.18)";
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 245, 120, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawMagnets() {
+      const cx = 450;
+      const cy = 245;
+      const quality = steeringQuality();
+
+      ctx.save();
+
+      for (let i = 0; i < 16; i++) {
+        const a = (Math.PI * 2 * i) / 16;
+        const x = cx + Math.cos(a) * 285;
+        const y = cy + Math.sin(a) * 150;
+        const rot = a + Math.PI / 2;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.fillStyle = quality > 0.55 ? "#2563eb" : "#dc2626";
+        ctx.fillRect(-10, -18, 20, 36);
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fillRect(-5, -14, 10, 28);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function drawBeams() {
+      const cx = 450;
+      const cy = 245;
+      const steer = steeringQuality();
+      const count = 9;
+      const speed = 0.012 + energy() * 0.002;
+
+      beamPhase += speed;
+
+      ctx.save();
+
+      for (let i = 0; i < count; i++) {
+        const phaseA = beamPhase + (i / count) * Math.PI * 2;
+        const phaseB = -beamPhase + (i / count) * Math.PI * 2;
+
+        drawBeamDot(cx, cy, 285, 150, phaseA, "#22d3ee", steer);
+        drawBeamDot(cx, cy, 245, 120, phaseB, "#f97316", steer);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBeamDot(cx, cy, rx, ry, angle, colour, steer) {
+      const wobble = (1 - steer) * Math.sin(angle * 5 + beamPhase * 9) * 20;
+      const x = cx + Math.cos(angle) * (rx + wobble);
+      const y = cy + Math.sin(angle) * (ry + wobble * 0.45);
+
+      ctx.fillStyle = colour;
+      ctx.beginPath();
+      ctx.arc(x, y, 5 + energy() * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = colour + "55";
+      ctx.beginPath();
+      ctx.arc(x, y, 13, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawDetector() {
+      const cx = 450;
+      const cy = 245;
+      const detector = detectorSelect.value;
+
+      ctx.save();
+
+      let colour = "#a78bfa";
+      let label = "ATLAS-style detector";
+
+      if (detector === "cms") {
+        colour = "#22d3ee";
+        label = "CMS-style detector";
+      }
+
+      if (detector === "alice") {
+        colour = "#f97316";
+        label = "ALICE-style detector";
+      }
+
+      if (detector === "lhcb") {
+        colour = "#84cc16";
+        label = "LHCb-style detector";
+      }
+
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 58, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = colour + "88";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 82, 0, Math.PI * 2);
+      ctx.stroke();
+
+      if (detector === "lhcb") {
+        ctx.fillStyle = colour + "55";
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 45);
+        ctx.lineTo(cx + 170, cy - 92);
+        ctx.lineTo(cx + 170, cy + 92);
+        ctx.lineTo(cx, cy + 45);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 15px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(label, cx, cy + 124);
+
+      if (lastEvent) {
+        ctx.fillStyle = lastEvent.triggered ? "#22c55e" : "#f97316";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 12 + Math.sin(Date.now() / 80) * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawBeamQuality() {
+      ctx.save();
+
+      const q = steeringQuality();
+      const x = 62;
+      const y = 382;
+      const w = 210;
+      const h = 18;
+
+      ctx.fillStyle = "rgba(255,255,255,0.10)";
+      roundRect(ctx, x, y, w, h, 9);
+      ctx.fill();
+
+      ctx.fillStyle = q > 0.55 ? "#22c55e" : "#ef4444";
+      roundRect(ctx, x, y, w * q, h, 9);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`Steering quality: ${rounded(q * 100, 0)}%`, x, y - 10);
+
+      ctx.restore();
+    }
+
+    function drawLabels() {
+      ctx.save();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 20px system-ui";
+      ctx.textAlign = "center";
+
+      let title = "Counter-rotating beam model";
+      if (modeSelect.value === "magnets") title = "Magnetic steering model";
+      if (modeSelect.value === "detectors") title = "Detector and trigger model";
+      if (modeSelect.value === "heavyIon") title = "Heavy ion extension model";
+
+      ctx.fillText(title, simCanvas.width / 2, 34);
+
+      ctx.font = "800 15px system-ui";
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillText(`Beam energy = ${rounded(energy(), 1)} TeV per beam, field = ${rounded(field(), 1)} T, intensity = ${rounded(intensity(), 0)}%`, simCanvas.width / 2, 476);
+
+      ctx.restore();
+    }
+
+    function drawEventDisplay() {
+      const w = eventCanvas.width;
+      const h = eventCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      etx.clearRect(0, 0, w, h);
+
+      const bg = etx.createRadialGradient(cx, cy, 10, cx, cy, 240);
+      bg.addColorStop(0, "#1e1b4b");
+      bg.addColorStop(1, "#020617");
+      etx.fillStyle = bg;
+      etx.fillRect(0, 0, w, h);
+
+      etx.save();
+
+      etx.strokeStyle = "rgba(255,255,255,0.2)";
+      etx.lineWidth = 2;
+      for (let r = 28; r <= 88; r += 30) {
+        etx.beginPath();
+        etx.arc(cx, cy, r, 0, Math.PI * 2);
+        etx.stroke();
+      }
+
+      etx.strokeStyle = "rgba(255,255,255,0.12)";
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        etx.beginPath();
+        etx.moveTo(cx, cy);
+        etx.lineTo(cx + Math.cos(a) * 165, cy + Math.sin(a) * 165);
+        etx.stroke();
+      }
+
+      if (!lastEvent) {
+        etx.fillStyle = "#cbd5e1";
+        etx.font = "800 15px system-ui";
+        etx.textAlign = "center";
+        etx.fillText("Generate a collision to see a detector event display", cx, cy);
+        etx.restore();
+        return;
+      }
+
+      sparkParticles.forEach((p, index) => {
+        let startAngle = p.angle;
+        if (lastEvent.detector === "lhcb") {
+          startAngle = rand(-0.55, 0.55);
+        }
+
+        const endX = cx + Math.cos(startAngle + p.curve) * p.length;
+        const endY = cy + Math.sin(startAngle + p.curve) * p.length;
+
+        etx.strokeStyle = p.colour;
+        etx.globalAlpha = p.alpha;
+        etx.lineWidth = p.width;
+        etx.beginPath();
+        etx.moveTo(cx, cy);
+        etx.quadraticCurveTo(
+          cx + Math.cos(startAngle) * p.length * 0.45,
+          cy + Math.sin(startAngle) * p.length * 0.45,
+          endX,
+          endY
+        );
+        etx.stroke();
+
+        if (index % 9 === 0) {
+          etx.fillStyle = p.colour;
+          etx.beginPath();
+          etx.arc(endX, endY, 3.5, 0, Math.PI * 2);
+          etx.fill();
+        }
+      });
+
+      etx.globalAlpha = 1;
+      etx.fillStyle = lastEvent.triggered ? "#22c55e" : "#f97316";
+      etx.beginPath();
+      etx.arc(cx, cy, 8, 0, Math.PI * 2);
+      etx.fill();
+
+      etx.fillStyle = "#e2e8f0";
+      etx.font = "800 12px system-ui";
+      etx.textAlign = "left";
+      etx.fillText(`Event ${lastEvent.id}: ${lastEvent.type}`, 12, 20);
+      etx.fillText(`Tracks: ${lastEvent.trackCount}, energy: ${rounded(lastEvent.eventEnergy, 2)} TeV`, 12, 38);
+      etx.fillText(`Trigger: ${lastEvent.triggered ? "recorded" : "rejected"}`, 12, 56);
+
+      etx.restore();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      const margin = { left: 48, right: 14, top: 22, bottom: 40 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      gtx.strokeStyle = "#cbd5e1";
+      gtx.lineWidth = 1;
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top);
+      gtx.lineTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top + plotH);
+      gtx.stroke();
+
+      if (graphSelect.value === "energy") {
+        drawEnergyGraph(margin, plotW, plotH, w, h);
+      }
+
+      if (graphSelect.value === "trigger") {
+        drawTriggerGraph(margin, plotW, plotH, w, h);
+      }
+
+      if (graphSelect.value === "multiplicity") {
+        drawMultiplicityGraph(margin, plotW, plotH, w, h);
+      }
+    }
+
+    function drawEnergyGraph(margin, plotW, plotH, w, h) {
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Event energy by event", 10, 14);
+      gtx.fillText("TeV", 12, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Event number", margin.left + plotW / 2, h - 8);
+
+      const relevant = events.slice(-30);
+      const maxEnergy = 14;
+
+      relevant.forEach((event, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, relevant.length + 1)) * plotW;
+        const y = margin.top + plotH - (event.eventEnergy / maxEnergy) * plotH;
+
+        gtx.fillStyle = event.triggered ? "#2563eb" : "#f59e0b";
+        gtx.beginPath();
+        gtx.arc(x, y, 4, 0, Math.PI * 2);
+        gtx.fill();
+      });
+
+      drawGraphBadge("higher beam energy can produce higher event energy", margin.left + plotW - 260, margin.top + 16);
+    }
+
+    function drawTriggerGraph(margin, plotW, plotH, w, h) {
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Trigger selection", 10, 14);
+      gtx.fillText("Count", 8, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Rejected / Recorded", margin.left + plotW / 2, h - 8);
+
+      const recorded = events.filter(e => e.triggered).length;
+      const rejected = events.length - recorded;
+      const maxCount = Math.max(1, recorded, rejected);
+
+      const bars = [
+        { label: "Rejected", value: rejected, colour: "#f59e0b" },
+        { label: "Recorded", value: recorded, colour: "#2563eb" }
+      ];
+
+      bars.forEach((bar, i) => {
+        const x = margin.left + 80 + i * 130;
+        const barH = (bar.value / maxCount) * (plotH - 10);
+        const y = margin.top + plotH - barH;
+
+        gtx.fillStyle = bar.colour;
+        gtx.fillRect(x, y, 70, barH);
+
+        gtx.fillStyle = "#334155";
+        gtx.font = "800 12px system-ui";
+        gtx.textAlign = "center";
+        gtx.fillText(bar.value, x + 35, y - 6);
+        gtx.fillText(bar.label, x + 35, margin.top + plotH + 18);
+      });
+
+      drawGraphBadge("trigger systems select events", margin.left + plotW - 160, margin.top + 16);
+    }
+
+    function drawMultiplicityGraph(margin, plotW, plotH, w, h) {
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Track multiplicity", 10, 14);
+      gtx.fillText("Tracks", 8, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Event number", margin.left + plotW / 2, h - 8);
+
+      const relevant = events.slice(-30);
+      const maxTracks = Math.max(20, ...relevant.map(e => e.trackCount), 80);
+
+      relevant.forEach((event, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, relevant.length + 1)) * plotW;
+        const barH = (event.trackCount / maxTracks) * plotH;
+        const y = margin.top + plotH - barH;
+
+        gtx.fillStyle = event.type === "heavy ion spray" ? "#f97316" : event.triggered ? "#2563eb" : "#94a3b8";
+        gtx.fillRect(x - 4, y, 8, barH);
+      });
+
+      drawGraphBadge("track number varies by event", margin.left + plotW - 170, margin.top + 16);
+    }
+
+    function drawGraphBadge(text, x, y) {
+      gtx.save();
+      gtx.fillStyle = "#eaf2ff";
+      gtx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      gtx.lineWidth = 1;
+
+      const width = Math.max(112, text.length * 6.8 + 18);
+      const height = 24;
+      const padding = 8;
+
+      let drawX = x;
+      let drawY = y;
+
+      if (drawX + width > graphCanvas.width - padding) {
+        drawX = graphCanvas.width - width - padding;
+      }
+      if (drawX < padding) {
+        drawX = padding;
+      }
+      if (drawY + height > graphCanvas.height - padding) {
+        drawY = graphCanvas.height - height - padding;
+      }
+      if (drawY < padding) {
+        drawY = padding;
+      }
+
+      roundRect(gtx, drawX, drawY, width, height, 10);
+      gtx.fill();
+      gtx.stroke();
+
+      gtx.fillStyle = "#1d4ed8";
+      gtx.font = "800 11px system-ui";
+      gtx.textAlign = "center";
+      gtx.fillText(text, drawX + width / 2, drawY + 16);
+      gtx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    function animationLoop() {
+      drawSimulation();
+      requestAnimationFrame(animationLoop);
+    }
+
+    [modeSelect, energySlider, fieldSlider, intensitySlider, detectorSelect, triggerSlider, runtimeSlider, graphSelect].forEach(control => {
+      control.addEventListener("input", updateAll);
+      control.addEventListener("change", updateAll);
+    });
+
+    runBtn.addEventListener("click", runSimulation);
+    singleBtn.addEventListener("click", () => generateCollision("Single generated collision"));
+    resetBtn.addEventListener("click", resetData);
+    exportBtn.addEventListener("click", exportCSV);
+
+    updateAll();
+    animationLoop();
+  </script>
+</body>
+</html>
