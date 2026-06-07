@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNA X-ray Diffraction Evidence Builder</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #182230;
+      --muted: #64748b;
+      --border: #d6dee9;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --purple: #7c3aed;
+      --cyan: #06b6d4;
+      --warm: #f59e0b;
+      --good: #16a34a;
+      --hot: #dc2626;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-purple: #f5f3ff;
+      --soft-red: #fff1f2;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.13), transparent 35%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e1b4b, #1d4ed8 55%, #06b6d4);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -75px;
+      top: -85px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 960px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(#eef6ff, #ffffff 62%, #dbeafe);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .controls-panel {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 82px;
+      text-align: right;
+      font-weight: 900;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.92rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    .compact-note {
+      border-radius: 14px;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 750;
+      font-size: 0.91rem;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .compact-note strong {
+      color: var(--accent-dark);
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-purple);
+      color: var(--purple);
+      border: 1px solid rgba(124, 58, 237, 0.18);
+    }
+
+    .diffraction-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: #020617;
+    }
+
+    #diffractionCanvas {
+      height: 210px;
+    }
+
+    .confidence-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 12px;
+    }
+
+    .confidence-bar {
+      width: 100%;
+      height: 20px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .confidence-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #16a34a);
+      transition: width 0.25s ease;
+    }
+
+    .confidence-text {
+      margin-top: 8px;
+      font-weight: 850;
+      color: #334155;
+    }
+
+    .confidence-note {
+      margin-top: 8px;
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 190px;
+    }
+
+    .impact-highlight {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 760;
+    }
+
+    .impact-highlight strong {
+      color: #7c2d12;
+    }
+
+    .table-wrap {
+      max-height: 180px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .explanation-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .relationship-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .relationship-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .relationship-card p {
+      margin: 0;
+    }
+
+    .context-question {
+      margin-top: 10px !important;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--soft-blue);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .guidance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .guidance-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .guidance-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .guidance-card p {
+      margin: 0;
+    }
+
+    .guidance-card ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    .warning-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fecdd3;
+      background: var(--soft-red);
+      color: #9f1239;
+      font-weight: 760;
+    }
+
+    textarea {
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .explanation-grid,
+      .challenge-grid,
+      .small-grid,
+      .guidance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>DNA X-ray Diffraction Evidence Builder</h1>
+      <p class="subtitle">
+        Test possible DNA structure models against evidence from chemical composition, Chargaff’s ratios, X-ray diffraction, Photograph 51-style patterns and model building.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that X-ray diffraction provided indirect evidence that helped scientists develop and test models of DNA’s structure.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can compare DNA structure models, use evidence to assess model fit, and explain how technology contributed to the double helix model.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>X-ray diffraction model</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Animated DNA X-ray diffraction model"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label">Model tested</span>
+            <span class="value" id="modelMetric">Double helix</span>
+          </div>
+          <div class="metric">
+            <span class="label">Evidence added</span>
+            <span class="value" id="evidenceMetric">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Model fit</span>
+            <span class="value" id="fitMetric">Untested</span>
+          </div>
+          <div class="metric">
+            <span class="label">Support level</span>
+            <span class="value" id="confidenceMetric">10%</span>
+          </div>
+        </div>
+
+        <section class="controls-panel">
+          <h2>Controls</h2>
+
+          <div class="controls-grid">
+            <div>
+              <label for="modelSelect">DNA structure model to test</label>
+              <select id="modelSelect">
+                <option value="double">Double helix</option>
+                <option value="single">Single helix</option>
+                <option value="triple">Triple helix</option>
+                <option value="ladder">Flat ladder model</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="evidenceSelect">Evidence to add</label>
+              <select id="evidenceSelect">
+                <option value="composition">Chemical composition of DNA</option>
+                <option value="chargaff">Chargaff’s base ratios</option>
+                <option value="xray">X-ray diffraction pattern</option>
+                <option value="photo51">Photograph 51-style B-DNA evidence</option>
+                <option value="width">Molecular width evidence</option>
+                <option value="model">Physical model building</option>
+                <option value="publication">Peer review and publication</option>
+                <option value="ethics">Extension: ethical use and acknowledgement of evidence</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="lensSelect">Assessment lens</label>
+              <select id="lensSelect">
+                <option value="evidence">Amount of evidence</option>
+                <option value="quality">Quality of evidence</option>
+                <option value="precision">Precision of measurement</option>
+                <option value="prediction">Ability to test model predictions</option>
+                <option value="ethics">Ethical use of evidence</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls-grid" style="margin-top: 10px;">
+            <div>
+              <label for="hydrationSelect">DNA sample form</label>
+              <select id="hydrationSelect">
+                <option value="bform">B-form DNA, wetter fibre</option>
+                <option value="aform">A-form DNA, drier fibre</option>
+                <option value="mixed">Mixed or poorly prepared sample</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="exposureSlider">X-ray exposure</label>
+              <div class="range-row">
+                <input id="exposureSlider" type="range" min="10" max="70" step="5" value="45">
+                <span class="range-value" id="exposureValue">45 h</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="noiseSlider">Pattern uncertainty</label>
+              <div class="range-row">
+                <input id="noiseSlider" type="range" min="0" max="40" step="5" value="15">
+                <span class="range-value" id="noiseValue">15%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="addBtn">Add evidence</button>
+            <button id="autoBtn" class="warning">Auto build evidence</button>
+            <button id="resetBtn" class="secondary">Reset evidence</button>
+            <button id="exportBtn" class="secondary">Export CSV</button>
+          </div>
+
+          <div class="compact-note" id="controlNote">
+            <strong>Model test:</strong> add one evidence source at a time. After each addition, decide whether it supports, weakens or refines the selected structure model.
+          </div>
+
+          <div class="compact-note" id="sequenceNote">
+            <strong>Suggested sequence:</strong> 1. Composition  2. Chargaff’s ratios  3. X-ray diffraction  4. Photograph 51-style evidence  5. Width evidence  6. Model building
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modelBadge">Double helix model</span>
+          <h2 style="margin-top: 8px;">Diffraction, confidence and data</h2>
+        </div>
+
+        <div class="diffraction-wrap">
+          <canvas id="diffractionCanvas" width="430" height="210" aria-label="Simplified DNA X-ray diffraction pattern"></canvas>
+        </div>
+
+        <div class="compact-note" id="diffractionNote">
+          <strong>Pattern evidence:</strong> the diffraction pattern is evidence that must be interpreted with a model. It is not a direct photograph of DNA’s structure.
+        </div>
+
+        <div class="compact-note" id="logicNote">
+          <strong>Reasoning chain:</strong> Pattern → Interpretation → Model
+        </div>
+
+        <div class="confidence-wrap">
+          <div class="confidence-bar" aria-label="Model confidence meter">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <div class="confidence-text" id="confidenceText">
+            Add evidence to test how well the model fits the data.
+          </div>
+          <div class="confidence-note" id="fitNote">
+            Model fit score is a simplified classroom judgement, not a real crystallographic calculation.
+          </div>
+        </div>
+
+        <div class="graph-wrap">
+          <canvas id="graphCanvas" width="430" height="190" aria-label="DNA evidence accumulation graph"></canvas>
+        </div>
+
+        <div class="impact-highlight" id="impactText">
+          <strong>Evidence impact:</strong> add an evidence source to see how it changes model fit and scientific confidence.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Evidence</th>
+                <th>What it shows</th>
+                <th>Impact on model</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr>
+                <td colspan="4">No evidence added yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="explanation-grid">
+      <div class="panel">
+        <h2>Evidence and model</h2>
+
+        <div class="relationship-card">
+          <h3>Current model relationship</h3>
+          <p id="relationshipText">
+            X-ray diffraction does not show DNA directly. It creates a pattern that can be used to test which molecular structure best explains the evidence.
+          </p>
+          <p class="context-question" id="guidingQuestion">
+            Assessment question: Which evidence source had the greatest impact on the double helix model, and why?
+          </p>
+        </div>
+
+        <div class="guidance-grid">
+          <div class="guidance-card">
+            <h3>Best evidence for this model</h3>
+            <p id="bestEvidenceText">
+              The double helix model is strongest when X-ray diffraction, base ratios, molecular width and model building all fit together.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model feedback</h3>
+            <p id="modelFeedbackText">
+              Add evidence to see whether the selected model is supported, weakened or refined.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Technology impact</h3>
+            <p id="technologyText">
+              X-ray diffraction allowed scientists to collect indirect structural evidence from molecules too small to see with light microscopes.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Investigation steps</h3>
+            <ol id="stepsList">
+              <li>Select a DNA structure model.</li>
+              <li>Add one evidence source at a time.</li>
+              <li>Compare the diffraction pattern and model fit.</li>
+              <li>Assess which evidence most strengthened the model.</li>
+            </ol>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Model limitation</h3>
+            <p id="limitationText">
+              This is a simplified teaching model. It shows how evidence constrains models, but it does not calculate real crystallographic data.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Test the single helix, triple helix, flat ladder and double helix models.</li>
+          <li>Add X-ray diffraction evidence and explain why the X-shaped pattern supports a helical structure.</li>
+          <li>Add Chargaff’s base ratios and explain why base pairing supports the double helix model.</li>
+          <li>Use an assessment lens to decide which technology or evidence source had the greatest impact.</li>
+          <li>Evaluate the simulation: what does it help explain, what does it simplify, and how is it different from real X-ray crystallography?</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">CER response</h2>
+        <div class="small-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="Which evidence had the greatest impact on the DNA structure model?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use diffraction pattern, model fit, confidence and evidence examples to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Suggested primary module: Investigating Science Module 6, Technologies. Strong cross-module link to Module 4, Theories and Laws.</li>
+          <li>The focus is how X-ray diffraction technology contributed evidence for a scientific model, not the detailed mathematics of crystallography.</li>
+          <li>The diffraction image is symbolic and does not reproduce Photograph 51 or real X-ray crystallographic calculations.</li>
+          <li>Useful discussion points include Rosalind Franklin and Raymond Gosling’s X-ray diffraction work, Chargaff’s base ratios, model building, data interpretation and ethical acknowledgement of evidence.</li>
+          <li>Students should assess the simulation itself by discussing strengths, limitations, differences from real investigations, possible sources of error and overall usefulness.</li>
+          <li>Source base: King’s College London Photograph 51 resources, Nature 1953 DNA structure papers and Nobel Prize 1962 resources.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 3 SciSim model. Diffraction patterns, confidence scores and model fit values are simplified for classroom investigation.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const diffractionCanvas = document.getElementById("diffractionCanvas");
+    const dtx = diffractionCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const modelSelect = document.getElementById("modelSelect");
+    const evidenceSelect = document.getElementById("evidenceSelect");
+    const lensSelect = document.getElementById("lensSelect");
+    const hydrationSelect = document.getElementById("hydrationSelect");
+    const exposureSlider = document.getElementById("exposureSlider");
+    const noiseSlider = document.getElementById("noiseSlider");
+
+    const exposureValue = document.getElementById("exposureValue");
+    const noiseValue = document.getElementById("noiseValue");
+
+    const modelMetric = document.getElementById("modelMetric");
+    const evidenceMetric = document.getElementById("evidenceMetric");
+    const fitMetric = document.getElementById("fitMetric");
+    const confidenceMetric = document.getElementById("confidenceMetric");
+    const confidenceFill = document.getElementById("confidenceFill");
+    const confidenceText = document.getElementById("confidenceText");
+    const diffractionNote = document.getElementById("diffractionNote");
+    const logicNote = document.getElementById("logicNote");
+    const fitNote = document.getElementById("fitNote");
+    const modelBadge = document.getElementById("modelBadge");
+    const impactText = document.getElementById("impactText");
+    const dataBody = document.getElementById("dataBody");
+
+    const relationshipText = document.getElementById("relationshipText");
+    const guidingQuestion = document.getElementById("guidingQuestion");
+    const bestEvidenceText = document.getElementById("bestEvidenceText");
+    const modelFeedbackText = document.getElementById("modelFeedbackText");
+    const technologyText = document.getElementById("technologyText");
+    const limitationText = document.getElementById("limitationText");
+    const controlNote = document.getElementById("controlNote");
+    const sequenceNote = document.getElementById("sequenceNote");
+
+    const addBtn = document.getElementById("addBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    const modelLabels = {
+      double: "Double helix",
+      single: "Single helix",
+      triple: "Triple helix",
+      ladder: "Flat ladder"
+    };
+
+    const evidence = {
+      composition: {
+        title: "Chemical composition of DNA",
+        short: "Composition",
+        shows: "DNA contains sugar, phosphate and nitrogenous bases.",
+        impact: "Shows what parts any structural model must include.",
+        amount: 10,
+        quality: 8,
+        precision: 5,
+        prediction: 4,
+        ethics: 2,
+        models: { double: 8, single: 6, triple: 6, ladder: 6 }
+      },
+      chargaff: {
+        title: "Chargaff’s base ratios",
+        short: "Base ratios",
+        shows: "A is found in similar amounts to T, and C is found in similar amounts to G.",
+        impact: "Supports complementary base pairing, which strongly favours the double helix model.",
+        amount: 12,
+        quality: 16,
+        precision: 15,
+        prediction: 16,
+        ethics: 3,
+        models: { double: 22, single: 3, triple: 1, ladder: 10 }
+      },
+      xray: {
+        title: "X-ray diffraction pattern",
+        short: "X-ray pattern",
+        shows: "The diffraction pattern can reveal repeating structure and helical features.",
+        impact: "Provides indirect structural evidence from a molecule too small to observe directly.",
+        amount: 16,
+        quality: 18,
+        precision: 18,
+        prediction: 20,
+        ethics: 4,
+        models: { double: 22, single: 12, triple: 6, ladder: 1 }
+      },
+      photo51: {
+        title: "Photograph 51-style B-DNA evidence",
+        short: "Photo 51-style",
+        shows: "A strong X-shaped pattern suggests a helical structure with regular spacing.",
+        impact: "Strongly constrains the model and supports a helical structure for B-form DNA.",
+        amount: 18,
+        quality: 24,
+        precision: 22,
+        prediction: 20,
+        ethics: 10,
+        models: { double: 28, single: 12, triple: 3, ladder: 0 }
+      },
+      width: {
+        title: "Molecular width evidence",
+        short: "Width",
+        shows: "The model must fit the observed width and spacing of the DNA molecule.",
+        impact: "Helps reject models with bases placed incorrectly or with unrealistic geometry.",
+        amount: 10,
+        quality: 14,
+        precision: 18,
+        prediction: 14,
+        ethics: 2,
+        models: { double: 16, single: 4, triple: 1, ladder: 5 }
+      },
+      model: {
+        title: "Physical model building",
+        short: "Model building",
+        shows: "A physical model can be tested against chemical and diffraction constraints.",
+        impact: "Combines evidence sources and tests whether the structure is chemically and spatially plausible.",
+        amount: 12,
+        quality: 15,
+        precision: 12,
+        prediction: 22,
+        ethics: 5,
+        models: { double: 20, single: 4, triple: 0, ladder: 4 }
+      },
+      publication: {
+        title: "Peer review and publication",
+        short: "Publication",
+        shows: "Scientific claims are strengthened when evidence and models are shared, checked and debated.",
+        impact: "Moves the model from private interpretation to public scientific scrutiny.",
+        amount: 8,
+        quality: 12,
+        precision: 4,
+        prediction: 10,
+        ethics: 8,
+        models: { double: 10, single: 2, triple: 2, ladder: 2 }
+      },
+      ethics: {
+        title: "Ethical use and acknowledgement of evidence",
+        short: "Ethics",
+        shows: "Evidence can have scientific impact while still raising questions about recognition, permission and acknowledgement.",
+        impact: "Encourages assessment of how evidence was used, credited and communicated.",
+        amount: 4,
+        quality: 6,
+        precision: 2,
+        prediction: 2,
+        ethics: 28,
+        models: { double: 5, single: 0, triple: 0, ladder: 0 }
+      }
+    };
+
+    let addedEvidence = [];
+    let history = [];
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function rounded(value, digits = 0) {
+      return Number(value).toFixed(digits);
+    }
+
+    function hasEvidence(key) {
+      return addedEvidence.includes(key);
+    }
+
+    function evidenceCount() {
+      return addedEvidence.length;
+    }
+
+    function exposureHours() {
+      return Number(exposureSlider.value);
+    }
+
+    function noiseValuePercent() {
+      return Number(noiseSlider.value);
+    }
+
+    function hydrationQuality() {
+      if (hydrationSelect.value === "bform") return 1.0;
+      if (hydrationSelect.value === "aform") return 0.75;
+      return 0.45;
+    }
+
+    function patternClarity() {
+      const exposure = exposureHours();
+      const noise = noiseValuePercent();
+      const exposureFactor = clamp(exposure / 55, 0.2, 1.15);
+      const noisePenalty = 1 - noise / 80;
+      return clamp(exposureFactor * noisePenalty * hydrationQuality(), 0.12, 1);
+    }
+
+    function lensScore() {
+      const lens = lensSelect.value;
+      let score = 0;
+
+      addedEvidence.forEach(key => {
+        score += evidence[key][lens] || 0;
+      });
+
+      return clamp(score, 0, 95);
+    }
+
+    function modelFitScore() {
+      const model = modelSelect.value;
+      let score = 10;
+
+      addedEvidence.forEach(key => {
+        score += evidence[key].models[model] || 0;
+      });
+
+      if (hasEvidence("photo51") && model === "ladder") score -= 12;
+      if (hasEvidence("chargaff") && model === "triple") score -= 8;
+      if (hasEvidence("width") && model === "triple") score -= 6;
+      if (hasEvidence("model") && model === "double") score += 8;
+
+      return clamp(score, 0, 95);
+    }
+
+    function fitLabel(score) {
+      if (score >= 80) return "Very strong";
+      if (score >= 60) return "Strong";
+      if (score >= 38) return "Partial";
+      if (score >= 20) return "Weak";
+      return "Very weak";
+    }
+
+    function addEvidence(key = evidenceSelect.value) {
+      if (!addedEvidence.includes(key)) {
+        addedEvidence.push(key);
+
+        const item = evidence[key];
+        const step = {
+          step: history.length + 1,
+          key,
+          evidence: item.title,
+          shows: item.shows,
+          impact: item.impact,
+          model: modelLabels[modelSelect.value],
+          modelFit: modelFitScore(),
+          lens: lensSelect.options[lensSelect.selectedIndex].text,
+          lensScore: lensScore()
+        };
+
+        history.push(step);
+      }
+
+      updateAll();
+    }
+
+    async function autoBuildEvidence() {
+      const sequence = ["composition", "chargaff", "xray", "photo51", "width", "model", "publication", "ethics"];
+
+      for (const key of sequence) {
+        if (!addedEvidence.includes(key)) {
+          addEvidence(key);
+          await new Promise(resolve => setTimeout(resolve, 260));
+        }
+      }
+    }
+
+    function resetEvidence() {
+      addedEvidence = [];
+      history = [];
+      updateAll();
+    }
+
+    function updateReadouts() {
+      const fit = modelFitScore();
+
+      exposureValue.textContent = `${exposureHours()} h`;
+      noiseValue.textContent = `${noiseValuePercent()}%`;
+
+      modelMetric.textContent = modelLabels[modelSelect.value];
+      evidenceMetric.textContent = `${evidenceCount()}`;
+      fitMetric.textContent = fitLabel(fit);
+      confidenceMetric.textContent = `${rounded(fit, 0)}%`;
+
+      confidenceFill.style.width = `${fit}%`;
+
+      modelBadge.textContent = `${modelLabels[modelSelect.value]} model`;
+
+      let confidenceMessage = "Add evidence to test how well the model fits the data.";
+      if (fit >= 25) confidenceMessage = "The model has some support, but more evidence is needed.";
+      if (fit >= 45) confidenceMessage = "The model has partial support from the evidence added so far.";
+      if (fit >= 65) confidenceMessage = "The model is strongly supported by multiple evidence sources.";
+      if (fit >= 85) confidenceMessage = "The model is very strongly supported in this teaching model. Confidence is capped below 100% because models can still be refined.";
+      confidenceText.textContent = confidenceMessage.replace("confidence", "support level");
+    }
+
+    function updateTextPanels() {
+      const model = modelSelect.value;
+      const latestKey = addedEvidence.length > 0 ? addedEvidence[addedEvidence.length - 1] : null;
+      const latest = latestKey ? evidence[latestKey] : null;
+      const selected = evidence[evidenceSelect.value];
+
+      if (latest) {
+        const latestPrefix = latestKey === "ethics"
+          ? "<strong>Ethical impact:</strong>"
+          : "<strong>Latest evidence impact:</strong>";
+
+        const latestFraming = latestKey === "ethics"
+          ? `${latest.title} affects how evidence is used, credited and communicated. It does not directly change the physical structure of DNA.`
+          : `${latest.title} shows that ${latest.shows.toLowerCase()} ${latest.impact}`;
+
+        const selectedFraming = evidenceSelect.value === "ethics"
+          ? `${selected.title} would help assess recognition, permission and acknowledgement of evidence.`
+          : `${selected.title} would show that ${selected.shows.toLowerCase()}`;
+
+        impactText.innerHTML = `${latestPrefix} ${latestFraming}<br><br><strong>Selected evidence:</strong> ${selectedFraming}`;
+      } else {
+        const selectedFraming = evidenceSelect.value === "ethics"
+          ? `${selected.title} would help assess recognition, permission and acknowledgement of evidence.`
+          : `${selected.title} would show that ${selected.shows.toLowerCase()}`;
+
+        impactText.innerHTML = `<strong>Evidence impact:</strong> add an evidence source to see how it changes model fit and scientific confidence.<br><br><strong>Selected evidence:</strong> ${selectedFraming}`;
+      }
+
+      if (model === "double") {
+        relationshipText.textContent = "The double helix model becomes stronger when X-ray diffraction, base pairing, molecular width and physical model building all point to the same structure.";
+        bestEvidenceText.textContent = "Best evidence: Photograph 51-style diffraction, Chargaff’s base ratios, width evidence and model building.";
+        modelFeedbackText.textContent = hasEvidence("photo51") || hasEvidence("chargaff")
+          ? "Double helix model: supported because the X-shaped diffraction evidence suggests a helix, while base ratios support complementary pairing between strands."
+          : "Double helix model: promising, but it needs diffraction, base-ratio and width evidence before it can be judged strongly.";
+      }
+
+      if (model === "single") {
+        relationshipText.textContent = "A single helix can explain some helical evidence, but it struggles to explain complementary base pairing and the final double-stranded structure.";
+        bestEvidenceText.textContent = "Best evidence: general X-ray diffraction can suggest a helix, but base-pair evidence weakens this model.";
+        modelFeedbackText.textContent = hasEvidence("chargaff")
+          ? "Single helix model: weakened because Chargaff’s ratios are better explained by complementary base pairing between two strands."
+          : "Single helix model: can fit some helical evidence, but it has not yet explained base pairing or molecule width.";
+      }
+
+      if (model === "triple") {
+        relationshipText.textContent = "A triple helix model can be tested against molecular width, base placement and chemical constraints. Several evidence sources weaken this model.";
+        bestEvidenceText.textContent = "Best evidence test: molecular width and base-pairing constraints reveal problems with the triple helix model.";
+        modelFeedbackText.textContent = hasEvidence("width") || hasEvidence("chargaff")
+          ? "Triple helix model: weakened because molecular width and base-pairing evidence do not fit this structure well."
+          : "Triple helix model: test it with width and base-pairing evidence to see whether the geometry is plausible.";
+      }
+
+      if (model === "ladder") {
+        relationshipText.textContent = "A flat ladder model can include base pairs, but it does not fit the helical diffraction evidence well.";
+        bestEvidenceText.textContent = "Best evidence test: X-ray diffraction and Photograph 51-style evidence challenge the flat ladder model.";
+        modelFeedbackText.textContent = hasEvidence("photo51") || hasEvidence("xray")
+          ? "Flat ladder model: weakened because the X-shaped diffraction pattern suggests a helical structure rather than a flat ladder."
+          : "Flat ladder model: can show base pairs, but it needs to be tested against diffraction evidence.";
+      }
+
+      if (lensSelect.value === "evidence") {
+        guidingQuestion.textContent = "Assessment question: Which evidence source added the most new information about DNA’s structure?";
+      }
+
+      if (lensSelect.value === "quality") {
+        guidingQuestion.textContent = "Assessment question: Which evidence source was most reliable or convincing for testing the model?";
+      }
+
+      if (lensSelect.value === "precision") {
+        guidingQuestion.textContent = "Assessment question: Which technology made the evidence more precise or quantitative?";
+      }
+
+      if (lensSelect.value === "prediction") {
+        guidingQuestion.textContent = "Assessment question: Which evidence source best allowed scientists to test whether a model made sense?";
+      }
+
+      if (lensSelect.value === "ethics") {
+        guidingQuestion.textContent = "Assessment question: How should scientists use, share and acknowledge important evidence, and why does this matter for scientific practice?";
+      }
+
+      if (hasEvidence("photo51")) {
+        diffractionNote.innerHTML = "<strong>Photograph 51-style evidence:</strong> the highlighted X-shaped pattern suggests a helical structure. This evidence constrains which models are plausible.";
+      } else if (hasEvidence("xray")) {
+        diffractionNote.innerHTML = "<strong>X-ray diffraction evidence:</strong> the pattern is indirect evidence. Scientists must interpret the pattern using a structural model.";
+      } else {
+        diffractionNote.innerHTML = "<strong>Pattern evidence:</strong> the diffraction pattern is evidence that must be interpreted with a model. It is not a direct photograph of DNA’s structure.";
+      }
+
+      if (hasEvidence("xray") || hasEvidence("photo51")) {
+        technologyText.textContent = "X-ray diffraction is active in the model. It provides indirect evidence by turning the arrangement of atoms in DNA fibres into a pattern that can constrain possible structures.";
+      } else {
+        technologyText.textContent = "X-ray diffraction is not yet active. Add X-ray evidence to show how technology can reveal structural information that cannot be seen directly.";
+      }
+
+      if (hydrationSelect.value === "bform") {
+        limitationText.textContent = "Sample preparation affects diffraction evidence. In this sim, a wetter B-form sample gives the clearest X-shaped pattern, but the display is still symbolic.";
+      }
+
+      if (hydrationSelect.value === "aform") {
+        limitationText.textContent = "Sample preparation affects diffraction evidence. A drier A-form sample produces a different pattern here, showing why sample conditions matter.";
+      }
+
+      if (hydrationSelect.value === "mixed") {
+        limitationText.textContent = "Sample preparation affects diffraction evidence. A mixed or poorly prepared sample adds uncertainty and makes interpretation harder.";
+      }
+
+      controlNote.innerHTML = `<strong>Model test:</strong> add one evidence source at a time. Sample preparation affects pattern clarity. Current clarity is ${rounded(patternClarity() * 100, 0)}%, based on sample form, exposure and uncertainty.`;
+      logicNote.innerHTML = "<strong>Reasoning chain:</strong> Pattern → Interpretation → Model";
+      sequenceNote.innerHTML = "<strong>Suggested sequence:</strong> 1. Composition  2. Chargaff’s ratios  3. X-ray diffraction  4. Photograph 51-style evidence  5. Width evidence  6. Model building";
+
+      fitNote.textContent = "Support level is a simplified classroom judgement, not a real crystallographic calculation.";
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+
+      if (history.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="4">No evidence added yet.</td>`;
+        dataBody.appendChild(row);
+        return;
+      }
+
+      history.slice().reverse().forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.step}</td>
+          <td>${item.evidence}</td>
+          <td>${item.shows}</td>
+          <td>${item.impact}</td>
+        `;
+        dataBody.appendChild(row);
+      });
+    }
+
+    function updateAll() {
+      updateReadouts();
+      updateTextPanels();
+      updateTable();
+      drawSimulation();
+      drawDiffraction();
+      drawGraph();
+    }
+
+    function exportCSV() {
+      const headers = ["step", "evidence", "what_it_shows", "impact", "tested_model", "model_fit_percent", "assessment_lens", "lens_score"];
+      const rows = history.map(item => [
+        item.step,
+        `"${item.evidence.replaceAll('"', '""')}"`,
+        `"${item.shows.replaceAll('"', '""')}"`,
+        `"${item.impact.replaceAll('"', '""')}"`,
+        `"${item.model.replaceAll('"', '""')}"`,
+        item.modelFit,
+        `"${item.lens.replaceAll('"', '""')}"`,
+        item.lensScore
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "dna_xray_evidence_builder.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function drawSimulation() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#dbeafe");
+      bg.addColorStop(0.58, "#ffffff");
+      bg.addColorStop(1, "#e0f2fe");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      drawApparatus();
+      drawDnaModel();
+      drawEvidenceLabels();
+    }
+
+    function drawApparatus() {
+      const y = 250;
+
+      ctx.save();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 20px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Simplified X-ray diffraction model", simCanvas.width / 2, 36);
+
+      ctx.font = "800 12px system-ui";
+      ctx.fillStyle = "rgba(15,23,42,0.70)";
+      ctx.fillText("X-rays scatter from DNA fibres and create a pattern used to test structure models", simCanvas.width / 2, 56);
+
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(50, y - 42, 76, 84);
+      ctx.fillStyle = "#64748b";
+      ctx.fillRect(66, y - 28, 44, 56);
+
+      ctx.fillStyle = "#e0f2fe";
+      ctx.beginPath();
+      ctx.arc(126, y, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      const clarity = patternClarity();
+      ctx.strokeStyle = `rgba(37, 99, 235, ${0.38 + clarity * 0.35})`;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(126, y);
+      ctx.lineTo(314, y);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(37, 99, 235, 0.18)";
+      ctx.lineWidth = 18;
+      ctx.beginPath();
+      ctx.moveTo(126, y);
+      ctx.lineTo(314, y);
+      ctx.stroke();
+
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(720, y - 132, 126, 264);
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(732, y - 120, 102, 240);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "800 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("detector film", 783, y + 150);
+
+      ctx.strokeStyle = `rgba(124, 58, 237, ${0.22 + clarity * 0.35})`;
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([9, 7]);
+      ctx.beginPath();
+      ctx.moveTo(388, y - 70);
+      ctx.lineTo(732, y - 100);
+      ctx.moveTo(388, y + 70);
+      ctx.lineTo(732, y + 100);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.restore();
+    }
+
+    function drawDnaModel() {
+      const model = modelSelect.value;
+      const x = 390;
+      const y = 250;
+
+      ctx.save();
+
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 2;
+      roundRect(ctx, 300, 96, 190, 308, 20);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 15px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(modelLabels[model], x, 122);
+
+      if (model === "double") drawDoubleHelix(x, y, 1);
+      if (model === "single") drawSingleHelix(x, y);
+      if (model === "triple") drawTripleHelix(x, y);
+      if (model === "ladder") drawFlatLadder(x, y);
+
+      ctx.fillStyle = "#334155";
+      ctx.font = "800 12px system-ui";
+      ctx.fillText("DNA fibre model", x, 382);
+
+      ctx.restore();
+    }
+
+    function drawDoubleHelix(x, y, scale) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      const height = 210;
+      const amp = 34 * scale;
+
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#2563eb";
+      ctx.beginPath();
+      for (let i = 0; i <= height; i += 4) {
+        const yy = -height / 2 + i;
+        const xx = Math.sin(i / 18) * amp;
+        if (i === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f97316";
+      ctx.beginPath();
+      for (let i = 0; i <= height; i += 4) {
+        const yy = -height / 2 + i;
+        const xx = Math.sin(i / 18 + Math.PI) * amp;
+        if (i === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.45)";
+      ctx.lineWidth = 2;
+      for (let i = 14; i < height; i += 18) {
+        const yy = -height / 2 + i;
+        const x1 = Math.sin(i / 18) * amp;
+        const x2 = Math.sin(i / 18 + Math.PI) * amp;
+        ctx.beginPath();
+        ctx.moveTo(x1, yy);
+        ctx.lineTo(x2, yy);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawSingleHelix(x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      for (let i = 0; i <= 210; i += 4) {
+        const yy = -105 + i;
+        const xx = Math.sin(i / 16) * 38;
+        if (i === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.36)";
+      ctx.lineWidth = 2;
+      for (let i = 20; i < 200; i += 20) {
+        const yy = -105 + i;
+        const xx = Math.sin(i / 16) * 38;
+        ctx.beginPath();
+        ctx.moveTo(xx, yy);
+        ctx.lineTo(xx + 28, yy - 8);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawTripleHelix(x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      const colours = ["#2563eb", "#f97316", "#7c3aed"];
+      for (let strand = 0; strand < 3; strand++) {
+        ctx.strokeStyle = colours[strand];
+        ctx.lineWidth = 3.6;
+        ctx.beginPath();
+        for (let i = 0; i <= 210; i += 4) {
+          const yy = -105 + i;
+          const xx = Math.sin(i / 18 + strand * (Math.PI * 2 / 3)) * 38;
+          if (i === 0) ctx.moveTo(xx, yy);
+          else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawFlatLadder(x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-36, -105);
+      ctx.lineTo(-36, 105);
+      ctx.moveTo(36, -105);
+      ctx.lineTo(36, 105);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f97316";
+      ctx.lineWidth = 3;
+      for (let i = -90; i <= 90; i += 18) {
+        ctx.beginPath();
+        ctx.moveTo(-36, i);
+        ctx.lineTo(36, i);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawEvidenceLabels() {
+      ctx.save();
+
+      const labels = [];
+      if (hasEvidence("composition")) labels.push("composition");
+      if (hasEvidence("chargaff")) labels.push("base ratios");
+      if (hasEvidence("xray")) labels.push("X-ray diffraction");
+      if (hasEvidence("photo51")) labels.push("Photo 51-style pattern");
+      if (hasEvidence("width")) labels.push("molecular width");
+      if (hasEvidence("model")) labels.push("model building");
+
+      ctx.fillStyle = "rgba(255,255,255,0.86)";
+      ctx.strokeStyle = "rgba(203, 213, 225, 0.85)";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 34, 84, 214, labels.length > 0 ? 92 : 58, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 12px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`Evidence sources: ${addedEvidence.length}`, 50, 106);
+
+      ctx.fillStyle = "#1e3a8a";
+      ctx.font = "800 10.5px system-ui";
+
+      if (labels.length === 0) {
+        ctx.fillText("Add evidence to begin.", 50, 128);
+      } else {
+        labels.slice(-4).forEach((label, i) => {
+          ctx.fillText(`${i + 1}. ${label}`, 50, 128 + i * 14);
+        });
+      }
+
+      ctx.fillStyle = "rgba(255, 251, 235, 0.92)";
+      ctx.strokeStyle = "#fde68a";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 602, 430, 246, 48, 13);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#78350f";
+      ctx.font = "800 10.5px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Simplified diffraction model", 725, 450);
+      ctx.fillText("not real crystallography", 725, 466);
+
+      ctx.restore();
+    }
+
+    function drawDiffraction() {
+      const w = diffractionCanvas.width;
+      const h = diffractionCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      dtx.clearRect(0, 0, w, h);
+
+      const bg = dtx.createRadialGradient(cx, cy, 10, cx, cy, 260);
+      bg.addColorStop(0, "#111827");
+      bg.addColorStop(1, "#020617");
+      dtx.fillStyle = bg;
+      dtx.fillRect(0, 0, w, h);
+
+      const model = modelSelect.value;
+      const clarity = patternClarity();
+      const noise = noiseValuePercent() / 100;
+
+      drawDiffractionNoise(noise);
+
+      dtx.save();
+      dtx.translate(cx, cy);
+      dtx.globalAlpha = 0.25 + clarity * 0.75;
+
+      if (model === "double") drawXPattern(clarity);
+      if (model === "single") drawSingleHelixPattern(clarity);
+      if (model === "triple") drawTriplePattern(clarity);
+      if (model === "ladder") drawLadderPattern(clarity);
+
+      dtx.restore();
+
+      if (hasEvidence("photo51")) {
+        drawPhoto51Highlight();
+      }
+
+      dtx.save();
+      dtx.fillStyle = "#e2e8f0";
+      dtx.font = "800 12px system-ui";
+      dtx.textAlign = "left";
+      dtx.fillText("Simplified diffraction pattern", 12, 20);
+      dtx.fillText(`${modelLabels[model]} | clarity ${rounded(clarity * 100, 0)}%`, 12, 38);
+
+      if (hasEvidence("photo51")) {
+        dtx.fillStyle = "#fde68a";
+        dtx.fillText("Photograph 51-style evidence: strong X-shaped helical clue", 12, h - 18);
+      } else if (hasEvidence("xray")) {
+        dtx.fillStyle = "#bfdbfe";
+        dtx.fillText("X-shaped pattern suggests helical structure", 12, h - 18);
+      } else {
+        dtx.fillStyle = "#cbd5e1";
+        dtx.fillText("Add X-ray evidence to interpret the pattern", 12, h - 18);
+      }
+
+      dtx.restore();
+    }
+
+    function drawPhoto51Highlight() {
+      dtx.save();
+      dtx.strokeStyle = "rgba(250, 204, 21, 0.95)";
+      dtx.lineWidth = 3;
+      dtx.setLineDash([8, 6]);
+      dtx.strokeRect(18, 52, diffractionCanvas.width - 36, diffractionCanvas.height - 88);
+      dtx.setLineDash([]);
+
+      dtx.fillStyle = "rgba(250, 204, 21, 0.18)";
+      dtx.fillRect(18, 52, diffractionCanvas.width - 36, diffractionCanvas.height - 88);
+
+      dtx.fillStyle = "#fde68a";
+      dtx.font = "900 12px system-ui";
+      dtx.textAlign = "right";
+      dtx.fillText("Photo 51-style evidence active", diffractionCanvas.width - 18, 48);
+      dtx.restore();
+    }
+
+    function drawDiffractionNoise(noise) {
+      const dots = Math.round(60 + noise * 170);
+      for (let i = 0; i < dots; i++) {
+        dtx.fillStyle = `rgba(226,232,240,${0.03 + Math.random() * noise * 0.12})`;
+        dtx.beginPath();
+        dtx.arc(Math.random() * diffractionCanvas.width, Math.random() * diffractionCanvas.height, Math.random() * 1.4 + 0.5, 0, Math.PI * 2);
+        dtx.fill();
+      }
+    }
+
+    function drawXPattern(clarity) {
+      dtx.strokeStyle = "#60a5fa";
+      dtx.lineWidth = 4.5;
+      dtx.shadowColor = "#60a5fa";
+      dtx.shadowBlur = 12 * clarity;
+
+      for (let offset = -34; offset <= 34; offset += 17) {
+        dtx.beginPath();
+        dtx.moveTo(-125, -78 + offset * 0.2);
+        dtx.lineTo(125, 78 + offset * 0.2);
+        dtx.stroke();
+
+        dtx.beginPath();
+        dtx.moveTo(-125, 78 + offset * 0.2);
+        dtx.lineTo(125, -78 + offset * 0.2);
+        dtx.stroke();
+      }
+
+      dtx.shadowBlur = 0;
+      dtx.strokeStyle = "rgba(226,232,240,0.58)";
+      dtx.lineWidth = 2;
+      for (let r = 24; r <= 84; r += 30) {
+        dtx.beginPath();
+        dtx.arc(0, 0, r, 0, Math.PI * 2);
+        dtx.stroke();
+      }
+
+      dtx.fillStyle = "#f8fafc";
+      dtx.beginPath();
+      dtx.arc(0, 0, 6, 0, Math.PI * 2);
+      dtx.fill();
+    }
+
+    function drawSingleHelixPattern(clarity) {
+      dtx.strokeStyle = "#60a5fa";
+      dtx.lineWidth = 3.5;
+      dtx.shadowColor = "#60a5fa";
+      dtx.shadowBlur = 9 * clarity;
+
+      dtx.beginPath();
+      dtx.moveTo(-120, -78);
+      dtx.lineTo(120, 78);
+      dtx.stroke();
+
+      dtx.beginPath();
+      dtx.moveTo(-80, 86);
+      dtx.lineTo(80, -86);
+      dtx.stroke();
+
+      dtx.shadowBlur = 0;
+      dtx.fillStyle = "#f8fafc";
+      dtx.beginPath();
+      dtx.arc(0, 0, 5, 0, Math.PI * 2);
+      dtx.fill();
+    }
+
+    function drawTriplePattern(clarity) {
+      dtx.strokeStyle = "#a78bfa";
+      dtx.lineWidth = 3.5;
+      dtx.shadowColor = "#a78bfa";
+      dtx.shadowBlur = 10 * clarity;
+
+      for (let a = 0; a < 3; a++) {
+        dtx.save();
+        dtx.rotate((Math.PI * 2 * a) / 3);
+        dtx.beginPath();
+        dtx.moveTo(-115, -45);
+        dtx.lineTo(115, 45);
+        dtx.stroke();
+        dtx.restore();
+      }
+
+      dtx.shadowBlur = 0;
+      dtx.fillStyle = "#f8fafc";
+      dtx.beginPath();
+      dtx.arc(0, 0, 5, 0, Math.PI * 2);
+      dtx.fill();
+    }
+
+    function drawLadderPattern(clarity) {
+      dtx.strokeStyle = "#fb923c";
+      dtx.lineWidth = 3.2;
+      dtx.shadowColor = "#fb923c";
+      dtx.shadowBlur = 8 * clarity;
+
+      for (let y = -70; y <= 70; y += 22) {
+        dtx.beginPath();
+        dtx.moveTo(-135, y);
+        dtx.lineTo(135, y);
+        dtx.stroke();
+      }
+
+      dtx.shadowBlur = 0;
+      dtx.fillStyle = "#f8fafc";
+      dtx.beginPath();
+      dtx.arc(0, 0, 5, 0, Math.PI * 2);
+      dtx.fill();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      const margin = { left: 48, right: 14, top: 22, bottom: 38 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      gtx.strokeStyle = "#cbd5e1";
+      gtx.lineWidth = 1;
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top);
+      gtx.lineTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top + plotH);
+      gtx.stroke();
+
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText("Evidence accumulation", 10, 14);
+      gtx.fillText("%", 20, 36);
+      gtx.textAlign = "center";
+      gtx.fillText("Evidence step", margin.left + plotW / 2, h - 8);
+
+      const points = history.length > 0 ? history : [{ step: 0, modelFit: modelFitScore(), lensScore: 0 }];
+      const useLens = lensSelect.value !== "evidence";
+      const key = useLens ? "lensScore" : "modelFit";
+
+      gtx.strokeStyle = "#2563eb";
+      gtx.lineWidth = 3;
+      gtx.beginPath();
+
+      points.forEach((point, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, points.length + 1)) * plotW;
+        const value = clamp(point[key] || 0, 0, 95);
+        const y = margin.top + plotH - (value / 100) * plotH;
+
+        if (i === 0) gtx.moveTo(x, y);
+        else gtx.lineTo(x, y);
+      });
+
+      gtx.stroke();
+
+      points.forEach((point, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, points.length + 1)) * plotW;
+        const value = clamp(point[key] || 0, 0, 95);
+        const y = margin.top + plotH - (value / 100) * plotH;
+
+        gtx.fillStyle = "#f59e0b";
+        gtx.beginPath();
+        gtx.arc(x, y, 4.5, 0, Math.PI * 2);
+        gtx.fill();
+      });
+
+      const label = useLens ? lensSelect.options[lensSelect.selectedIndex].text : "Model fit";
+      drawGraphBadge(label, margin.left + plotW - 128, margin.top + 16);
+    }
+
+    function drawGraphBadge(text, x, y) {
+      gtx.save();
+      gtx.fillStyle = "#eaf2ff";
+      gtx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      gtx.lineWidth = 1;
+
+      const width = Math.max(112, text.length * 6.8 + 18);
+      const height = 24;
+      const padding = 8;
+      let drawX = x;
+      let drawY = y;
+
+      if (drawX + width > graphCanvas.width - padding) drawX = graphCanvas.width - width - padding;
+      if (drawX < padding) drawX = padding;
+      if (drawY + height > graphCanvas.height - padding) drawY = graphCanvas.height - height - padding;
+      if (drawY < padding) drawY = padding;
+
+      roundRect(gtx, drawX, drawY, width, height, 10);
+      gtx.fill();
+      gtx.stroke();
+
+      gtx.fillStyle = "#1d4ed8";
+      gtx.font = "800 11px system-ui";
+      gtx.textAlign = "center";
+      gtx.fillText(text, drawX + width / 2, drawY + 16);
+      gtx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    [modelSelect, evidenceSelect, lensSelect, hydrationSelect, exposureSlider, noiseSlider].forEach(control => {
+      control.addEventListener("input", updateAll);
+      control.addEventListener("change", updateAll);
+    });
+
+    addBtn.addEventListener("click", () => addEvidence());
+    autoBtn.addEventListener("click", autoBuildEvidence);
+    resetBtn.addEventListener("click", resetEvidence);
+    exportBtn.addEventListener("click", exportCSV);
+
+    updateAll();
+  </script>
+</body>
+</html>
