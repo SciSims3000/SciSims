@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reflection and Refraction Law Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #182230;
+      --muted: #64748b;
+      --border: #d6dee9;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --cyan: #06b6d4;
+      --warm: #f59e0b;
+      --good: #16a34a;
+      --hot: #dc2626;
+      --purple: #7c3aed;
+      --soft-blue: #eaf2ff;
+      --soft-green: #ecfdf5;
+      --soft-yellow: #fffbeb;
+      --soft-purple: #f5f3ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 35%),
+        radial-gradient(circle at top right, rgba(6, 182, 212, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      margin-bottom: 18px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #06b6d4);
+      color: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -75px;
+      top: -85px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 960px;
+      font-size: 1.08rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .lesson-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-card p {
+      margin: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(340px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .stage-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-wrap {
+      background: linear-gradient(#eef6ff, #ffffff 56%, #e0f2fe);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 430px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .metric .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .value {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .controls-panel {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 0.92rem;
+    }
+
+    select,
+    input[type="range"],
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .range-value {
+      min-width: 82px;
+      text-align: right;
+      font-weight: 900;
+      color: var(--accent-dark);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+      font-size: 0.92rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e2e8f0;
+      box-shadow: none;
+    }
+
+    button.secondary:hover {
+      background: #cbd5e1;
+    }
+
+    button.warning {
+      background: var(--warm);
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    button.warning:hover {
+      background: #d97706;
+    }
+
+    .compact-note {
+      border-radius: 14px;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 750;
+      font-size: 0.91rem;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .compact-note strong {
+      color: var(--accent-dark);
+    }
+
+    .evidence-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--soft-blue);
+      color: #1d4ed8;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .law-card {
+      border: 1px solid #bbf7d0;
+      border-radius: 16px;
+      background: var(--soft-green);
+      padding: 14px;
+    }
+
+    .law-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .law-card p {
+      margin: 0;
+    }
+
+    .calculation-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      overflow-wrap: anywhere;
+    }
+
+    .result-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fde68a;
+      background: var(--soft-yellow);
+      color: #78350f;
+      font-weight: 760;
+    }
+
+    .graph-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: white;
+    }
+
+    #graphCanvas {
+      height: 210px;
+    }
+
+    .table-wrap {
+      max-height: 220px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .explanation-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .guidance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .guidance-card {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .guidance-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .guidance-card p {
+      margin: 0;
+    }
+
+    .guidance-card ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    textarea {
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .challenge-grid h2 {
+      margin-top: 0;
+    }
+
+    .challenge-grid ol,
+    .challenge-grid ul {
+      margin-bottom: 0;
+      padding-left: 1.2rem;
+    }
+
+    .teacher-notes {
+      background: #f8fafc;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .lesson-box,
+      .main-grid,
+      .explanation-grid,
+      .challenge-grid,
+      .small-grid,
+      .guidance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+      }
+
+      header {
+        padding: 22px;
+      }
+
+      .controls-grid,
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+
+      .canvas-wrap {
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Reflection and Refraction Law Simulator</h1>
+      <p class="subtitle">
+        Investigate the law of reflection, Snell’s law and total internal reflection by changing angles, materials and measurement uncertainty.
+      </p>
+    </header>
+
+    <section class="lesson-box" aria-label="Learning intention and success criteria">
+      <div class="lesson-card">
+        <h2>Learning Intention</h2>
+        <p>
+          Students will understand that the path of a light ray can be predicted using the law of reflection and the law of refraction.
+        </p>
+      </div>
+      <div class="lesson-card">
+        <h2>Success Criteria</h2>
+        <p>
+          Students can measure angles, compare incident, reflected and refracted rays, apply Snell’s law, and identify when total internal reflection occurs.
+        </p>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel stage-panel">
+        <h2>Ray diagram</h2>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Reflection and refraction ray diagram"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="metric">
+            <span class="label">Incident angle</span>
+            <span class="value" id="incidentMetric">40°</span>
+          </div>
+          <div class="metric">
+            <span class="label">Reflected angle</span>
+            <span class="value" id="reflectedMetric">40°</span>
+          </div>
+          <div class="metric">
+            <span class="label">Refracted angle</span>
+            <span class="value" id="refractedMetric">25.4°</span>
+          </div>
+          <div class="metric">
+            <span class="label">Law result</span>
+            <span class="value" id="resultMetric">Supported</span>
+          </div>
+        </div>
+
+        <section class="controls-panel">
+          <h2>Controls</h2>
+
+          <div class="controls-grid">
+            <div>
+              <label for="modeSelect">Investigation mode</label>
+              <select id="modeSelect">
+                <option value="reflection">Reflection</option>
+                <option value="refraction">Refraction</option>
+                <option value="tir">Total internal reflection</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="materialOneSelect">Material 1</label>
+              <select id="materialOneSelect">
+                <option value="air">Air</option>
+                <option value="water">Water</option>
+                <option value="acrylic">Acrylic</option>
+                <option value="glass">Glass</option>
+                <option value="diamond">Diamond</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="materialTwoSelect">Material 2</label>
+              <select id="materialTwoSelect">
+                <option value="mirror">Mirror</option>
+                <option value="air">Air</option>
+                <option value="water">Water</option>
+                <option value="acrylic">Acrylic</option>
+                <option value="glass" selected>Glass</option>
+                <option value="diamond">Diamond</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls-grid" style="margin-top: 10px;">
+            <div>
+              <label for="angleSlider">Angle of incidence</label>
+              <div class="range-row">
+                <input id="angleSlider" type="range" min="0" max="89" step="1" value="40">
+                <span class="range-value" id="angleValue">40°</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="uncertaintySlider">Measurement uncertainty</label>
+              <div class="range-row">
+                <input id="uncertaintySlider" type="range" min="0" max="3" step="0.1" value="0.5">
+                <span class="range-value" id="uncertaintyValue">±0.5°</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="graphSelect">Graph view</label>
+              <select id="graphSelect">
+                <option value="reflection">Incidence vs reflection</option>
+                <option value="snell">sin θ₁ vs sin θ₂</option>
+                <option value="angles">Incident vs refracted angle</option>
+                <option value="critical">Critical angle comparison</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="recordBtn">Record trial</button>
+            <button id="autoBtn" class="warning">Auto angle series</button>
+            <button id="resetBtn" class="secondary">Reset data</button>
+            <button id="exportBtn" class="secondary">Export CSV</button>
+          </div>
+
+          <div class="compact-note" id="controlNote">
+            <strong>Law investigation:</strong> change one variable at a time, then record a trial to compare the measured angles with the predicted law.
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel evidence-panel">
+        <div>
+          <span class="badge" id="modeBadge">Reflection law</span>
+          <h2 style="margin-top: 8px;">Law calculation and data</h2>
+        </div>
+
+        <div class="law-card">
+          <h3 id="lawTitle">Law of reflection</h3>
+          <p id="lawStatement">Angle of incidence = angle of reflection.</p>
+        </div>
+
+        <div class="calculation-card" id="calculationText">
+          θᵢ = 40.0°<br>
+          θᵣ = 40.0°<br>
+          Difference = 0.0°
+        </div>
+
+        <div class="result-card" id="resultText">
+          Law of reflection supported within measurement uncertainty.
+        </div>
+
+        <div class="graph-wrap">
+          <canvas id="graphCanvas" width="430" height="210" aria-label="Light law graph"></canvas>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Trial</th>
+                <th>Mode</th>
+                <th>Materials</th>
+                <th>θᵢ</th>
+                <th>θᵣ / θ₂</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr>
+                <td colspan="6">Record a trial or run an auto angle series to collect data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="explanation-grid">
+      <div class="panel">
+        <h2>Law focus</h2>
+
+        <div class="guidance-grid">
+          <div class="guidance-card">
+            <h3>Reasoning chain</h3>
+            <p>
+              Measure angles → Compare the relationship → Apply the law.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Reflection</h3>
+            <p>
+              The incident ray and reflected ray are measured from the normal. In reflection, these angles are equal.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Refraction</h3>
+            <p>
+              A ray bends when it crosses into a material with a different refractive index. Snell’s law predicts the refracted angle.
+            </p>
+          </div>
+
+          <div class="guidance-card">
+            <h3>Total internal reflection</h3>
+            <p>
+              When light travels from a higher refractive index to a lower refractive index, angles above the critical angle produce total internal reflection.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge-grid">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ol>
+          <li>Use reflection mode. Record trials at 10°, 30°, 50° and 70°. Describe the relationship between incident and reflected angles.</li>
+          <li>Use refraction mode from air into glass. Describe whether the ray bends towards or away from the normal.</li>
+          <li>Compare air to water, air to glass and air to diamond. Explain how refractive index affects bending.</li>
+          <li>Use total internal reflection mode. Increase the incident angle above the critical angle for glass to air, then compare it with water to air.</li>
+          <li>Evaluate the simulation: what does it help explain, what does it simplify, and how is it different from a real ray box practical?</li>
+        </ol>
+
+        <h2 style="margin-top: 18px;">CER response</h2>
+        <div class="small-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="What law or relationship did your data support?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use angle measurements, calculations and graph patterns to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel teacher-notes">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Suggested primary module: Investigating Science Module 6, Technologies, if used as a ray-box or optical measurement technology activity. Also suitable for Physics or Stage 4/5 light content.</li>
+          <li>This sim is law-focused rather than evidence-history focused.</li>
+          <li>Reflection uses θᵢ = θᵣ. Refraction uses n₁ sin θ₁ = n₂ sin θ₂.</li>
+          <li>Total internal reflection occurs only when light travels from a higher refractive index into a lower refractive index and the incident angle exceeds the critical angle.</li>
+          <li>The simulation is simplified. It does not model ray thickness, partial reflection/refraction, polarisation, wavelength dispersion or real measurement error.</li>
+          <li>Students should assess the simulation itself by discussing strengths, limitations, differences from a real practical, possible sources of error and overall usefulness.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Draft 4 SciSim model. Angle values and uncertainty are simplified for classroom investigation.
+    </footer>
+  </div>
+
+  <script>
+    const simCanvas = document.getElementById("simCanvas");
+    const ctx = simCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gtx = graphCanvas.getContext("2d");
+
+    const modeSelect = document.getElementById("modeSelect");
+    const materialOneSelect = document.getElementById("materialOneSelect");
+    const materialTwoSelect = document.getElementById("materialTwoSelect");
+    const angleSlider = document.getElementById("angleSlider");
+    const uncertaintySlider = document.getElementById("uncertaintySlider");
+    const graphSelect = document.getElementById("graphSelect");
+
+    const angleValue = document.getElementById("angleValue");
+    const uncertaintyValue = document.getElementById("uncertaintyValue");
+    const incidentMetric = document.getElementById("incidentMetric");
+    const reflectedMetric = document.getElementById("reflectedMetric");
+    const refractedMetric = document.getElementById("refractedMetric");
+    const resultMetric = document.getElementById("resultMetric");
+
+    const modeBadge = document.getElementById("modeBadge");
+    const lawTitle = document.getElementById("lawTitle");
+    const lawStatement = document.getElementById("lawStatement");
+    const calculationText = document.getElementById("calculationText");
+    const resultText = document.getElementById("resultText");
+    const dataBody = document.getElementById("dataBody");
+    const controlNote = document.getElementById("controlNote");
+
+    const recordBtn = document.getElementById("recordBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const exportBtn = document.getElementById("exportBtn");
+
+    const materials = {
+      air: { name: "Air", n: 1.00, colour: "rgba(224, 242, 254, 0.72)" },
+      water: { name: "Water", n: 1.33, colour: "rgba(14, 165, 233, 0.26)" },
+      acrylic: { name: "Acrylic", n: 1.49, colour: "rgba(34, 211, 238, 0.24)" },
+      glass: { name: "Glass", n: 1.50, colour: "rgba(59, 130, 246, 0.22)" },
+      diamond: { name: "Diamond", n: 2.42, colour: "rgba(124, 58, 237, 0.22)" },
+      mirror: { name: "Mirror", n: null, colour: "rgba(148, 163, 184, 0.32)" }
+    };
+
+    let trials = [];
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function radToDeg(rad) {
+      return rad * 180 / Math.PI;
+    }
+
+    function rounded(value, digits = 1) {
+      if (value === null || Number.isNaN(value)) return "N/A";
+      return Number(value).toFixed(digits);
+    }
+
+    function mode() {
+      return modeSelect.value;
+    }
+
+    function theta1() {
+      return Number(angleSlider.value);
+    }
+
+    function uncertainty() {
+      return Number(uncertaintySlider.value);
+    }
+
+    function materialOne() {
+      return materials[materialOneSelect.value];
+    }
+
+    function materialTwo() {
+      return materials[materialTwoSelect.value];
+    }
+
+    function reflectedAngle() {
+      return theta1();
+    }
+
+    function refractionData() {
+      const m = mode();
+      const n1 = materialOne().n;
+      const n2 = materialTwo().n;
+
+      if (m === "reflection" || materialTwoSelect.value === "mirror") {
+        return { tir: false, theta2: null, critical: null, ratio: null };
+      }
+
+      const s1 = Math.sin(degToRad(theta1()));
+      const ratio = (n1 / n2) * s1;
+      let critical = null;
+
+      if (n1 > n2) {
+        critical = radToDeg(Math.asin(n2 / n1));
+      }
+
+      if (ratio > 1) {
+        return { tir: true, theta2: null, critical, ratio };
+      }
+
+      const theta2 = radToDeg(Math.asin(ratio));
+      return { tir: false, theta2, critical, ratio };
+    }
+
+    function noisy(value) {
+      if (value === null) return null;
+      const u = uncertainty();
+      if (u === 0) return value;
+      const pseudo = Math.sin(value * 12.9898 + trials.length * 78.233) * 43758.5453;
+      const frac = pseudo - Math.floor(pseudo);
+      return value + (frac * 2 - 1) * u;
+    }
+
+    function currentLawResult() {
+      const m = mode();
+      const data = refractionData();
+      const u = uncertainty();
+
+      if (m === "reflection") {
+        const diff = Math.abs(noisy(theta1()) - noisy(reflectedAngle()));
+        return diff <= Math.max(0.1, u * 2) ? "Supported" : "Check data";
+      }
+
+      if (mode() === "tir") {
+        return data.tir ? "TIR" : "Below critical";
+      }
+
+      if (data.tir) {
+        return "TIR";
+      }
+
+      const lhs = materialOne().n * Math.sin(degToRad(theta1()));
+      const rhs = materialTwo().n * Math.sin(degToRad(data.theta2));
+      return Math.abs(lhs - rhs) <= 0.01 ? "Supported" : "Check data";
+    }
+
+    function currentCriticalAngle() {
+      const n1 = materialOne().n;
+      const n2 = materialTwo().n;
+
+      if (!n1 || !n2 || n1 <= n2) {
+        return null;
+      }
+
+      return radToDeg(Math.asin(n2 / n1));
+    }
+
+    function validateMaterialSelections(setTirDefault = false) {
+      if (mode() === "reflection") {
+        materialTwoSelect.value = "mirror";
+        return;
+      }
+
+      if (mode() === "refraction" && materialTwoSelect.value === "mirror") {
+        materialTwoSelect.value = "glass";
+      }
+
+      if (mode() === "tir") {
+        if (materialTwoSelect.value === "mirror") {
+          materialTwoSelect.value = "air";
+        }
+
+        if (materialOne().n <= materialTwo().n) {
+          materialOneSelect.value = "glass";
+          materialTwoSelect.value = "air";
+        }
+
+        if (setTirDefault) {
+          const critical = currentCriticalAngle();
+          if (critical !== null && theta1() <= critical) {
+            angleSlider.value = Math.min(89, Math.ceil(critical + 5));
+          }
+        }
+      }
+    }
+
+    function updateModeDefaults() {
+      if (mode() === "reflection") {
+        graphSelect.value = "reflection";
+      }
+
+      if (mode() === "refraction") {
+        graphSelect.value = "snell";
+      }
+
+      if (mode() === "tir") {
+        graphSelect.value = "critical";
+      }
+
+      validateMaterialSelections(mode() === "tir");
+    }
+
+    function updateReadouts() {
+      const data = refractionData();
+      const result = currentLawResult();
+
+      angleValue.textContent = `${theta1()}°`;
+      uncertaintyValue.textContent = `±${rounded(uncertainty(), 1)}°`;
+
+      incidentMetric.textContent = `${rounded(noisy(theta1()), 1)}°`;
+      if (mode() === "reflection") {
+        reflectedMetric.textContent = `${rounded(noisy(reflectedAngle()), 1)}°`;
+      } else if (mode() === "tir" && data.tir) {
+        reflectedMetric.textContent = `${rounded(noisy(reflectedAngle()), 1)}°`;
+      } else if (mode() === "tir") {
+        reflectedMetric.textContent = "partial";
+      } else {
+        reflectedMetric.textContent = "N/A";
+      }
+
+      refractedMetric.textContent = data.tir ? "None" : data.theta2 === null ? "N/A" : `${rounded(noisy(data.theta2), 1)}°`;
+      resultMetric.textContent = result;
+
+      modeBadge.textContent = mode() === "reflection" ? "Reflection law" : mode() === "refraction" ? "Snell’s law" : "Total internal reflection";
+    }
+
+    function updateLawPanel() {
+      const data = refractionData();
+      const m1 = materialOne();
+      const m2 = materialTwo();
+
+      if (mode() === "reflection") {
+        lawTitle.textContent = "Law of reflection";
+        lawStatement.textContent = "The angle of incidence equals the angle of reflection.";
+        calculationText.innerHTML = `θᵢ = ${rounded(noisy(theta1()), 1)}°<br>θᵣ = ${rounded(noisy(reflectedAngle()), 1)}°<br>Difference = ${rounded(Math.abs(noisy(theta1()) - noisy(reflectedAngle())), 1)}°`;
+        resultText.textContent = "Law of reflection supported within measurement uncertainty.";
+        controlNote.innerHTML = "<strong>Reflection:</strong> angle measurements are taken from the normal, not from the mirror surface.";
+        return;
+      }
+
+      if (data.tir) {
+        lawTitle.textContent = "Total internal reflection";
+        lawStatement.textContent = "When θᵢ is greater than the critical angle, the refracted ray disappears and the light reflects internally.";
+        calculationText.innerHTML = `n₁ = ${m1.n.toFixed(2)} (${m1.name})<br>n₂ = ${m2.n.toFixed(2)} (${m2.name})<br>Critical angle = ${rounded(data.critical, 1)}°<br>θᵢ = ${rounded(theta1(), 1)}°`;
+        resultText.textContent = `Total internal reflection occurs because θᵢ is above the critical angle. There is no refracted ray.`;
+        controlNote.innerHTML = "<strong>Total internal reflection:</strong> this only occurs from a higher refractive index material into a lower refractive index material.";
+        return;
+      }
+
+      const lhs = m1.n * Math.sin(degToRad(theta1()));
+      const rhs = m2.n * Math.sin(degToRad(data.theta2));
+
+      lawTitle.textContent = mode() === "tir" ? "Below the critical angle" : "Snell’s law";
+      lawStatement.textContent = mode() === "tir" ? "When θᵢ is below the critical angle, refraction still occurs." : "n₁ sin θ₁ = n₂ sin θ₂";
+      calculationText.innerHTML = `n₁ sin θ₁ = ${m1.n.toFixed(2)} × sin(${rounded(theta1(), 1)}°) = ${lhs.toFixed(3)}<br>n₂ sin θ₂ = ${m2.n.toFixed(2)} × sin(${rounded(data.theta2, 1)}°) = ${rhs.toFixed(3)}<br>θ₂ = ${rounded(noisy(data.theta2), 1)}°`;
+      resultText.textContent = mode() === "tir"
+        ? "Below the critical angle: refraction occurs. Increase θᵢ above the critical angle to produce total internal reflection."
+        : lhs.toFixed(3) === rhs.toFixed(3) ? "Snell’s law supported." : "Snell’s law supported within rounding.";
+      controlNote.innerHTML = m2.n > m1.n
+        ? "<strong>Refraction:</strong> light bends towards the normal when it enters a higher refractive index material."
+        : "<strong>Refraction:</strong> light bends away from the normal when it enters a lower refractive index material.";
+    }
+
+    function updateTable() {
+      dataBody.innerHTML = "";
+
+      if (trials.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="6">Record a trial or run an auto angle series to collect data.</td>`;
+        dataBody.appendChild(row);
+        return;
+      }
+
+      trials.slice().reverse().forEach(trial => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${trial.id}</td>
+          <td>${trial.mode}</td>
+          <td>${trial.materials}</td>
+          <td>${trial.incident}</td>
+          <td>${trial.second}</td>
+          <td>${trial.result}</td>
+        `;
+        dataBody.appendChild(row);
+      });
+    }
+
+    function updateAll() {
+      validateMaterialSelections(false);
+      updateReadouts();
+      updateLawPanel();
+      updateTable();
+      drawSimulation();
+      drawGraph();
+    }
+
+    function recordTrial() {
+      const data = refractionData();
+      const m = mode();
+      const result = currentLawResult();
+
+      let second = "";
+      if (m === "reflection") second = `θᵣ ${rounded(noisy(reflectedAngle()), 1)}°`;
+      else if (data.tir) second = "No refracted ray";
+      else second = `θ₂ ${rounded(noisy(data.theta2), 1)}°`;
+
+      trials.push({
+        id: trials.length + 1,
+        mode: m === "reflection" ? "Reflection" : m === "refraction" ? "Refraction" : "TIR",
+        materials: `${materialOne().name} → ${materialTwo().name}`,
+        incident: `${rounded(noisy(theta1()), 1)}°`,
+        reflected: `${rounded(noisy(reflectedAngle()), 1)}°`,
+        refracted: data.tir || data.theta2 === null ? "" : `${rounded(noisy(data.theta2), 1)}°`,
+        second,
+        result
+      });
+
+      updateAll();
+    }
+
+    async function autoSeries() {
+      const original = Number(angleSlider.value);
+      const values = mode() === "tir" ? [10, 20, 30, 40, 45, 50, 60, 70] : [10, 20, 30, 40, 50, 60, 70];
+
+      for (const value of values) {
+        angleSlider.value = value;
+        updateAll();
+        recordTrial();
+        await new Promise(resolve => setTimeout(resolve, 140));
+      }
+
+      angleSlider.value = original;
+      updateAll();
+    }
+
+    function resetData() {
+      trials = [];
+      updateAll();
+    }
+
+    function exportCSV() {
+      const headers = ["trial", "mode", "materials", "incident_angle_deg", "reflected_angle_deg", "refracted_angle_deg", "result"];
+      const rows = trials.map(trial => [
+        trial.id,
+        `"${trial.mode}"`,
+        `"${trial.materials}"`,
+        `"${trial.incident.replace("°", "")}"`,
+        `"${trial.reflected.replace("°", "")}"`,
+        `"${trial.refracted.replace("°", "")}"`,
+        `"${trial.result}"`
+      ]);
+
+      const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "reflection_refraction_law_data.csv";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function drawSimulation() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      const cx = 450;
+      const cy = 250;
+
+      ctx.clearRect(0, 0, w, h);
+
+      drawMediums(cx, cy);
+      drawProtractor(cx, cy);
+      drawInterface(cx, cy);
+      drawRays(cx, cy);
+      drawAngleLabels(cx, cy);
+      drawLegend();
+    }
+
+    function drawMediums(cx, cy) {
+      const m1 = materialOne();
+      const m2 = materialTwo();
+
+      ctx.fillStyle = m1.colour;
+      ctx.fillRect(0, 0, simCanvas.width, cy);
+
+      ctx.fillStyle = mode() === "reflection" ? "rgba(148, 163, 184, 0.14)" : m2.colour;
+      ctx.fillRect(0, cy, simCanvas.width, simCanvas.height - cy);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 20px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Ray law model", simCanvas.width / 2, 34);
+
+      ctx.font = "800 12px system-ui";
+      ctx.fillStyle = "rgba(15, 23, 42, 0.72)";
+      ctx.fillText(`${m1.name}${m1.n ? ` n=${m1.n.toFixed(2)}` : ""}`, 120, 84);
+
+      if (mode() === "reflection") {
+        ctx.fillText("Mirror boundary", 120, cy + 46);
+      } else {
+        ctx.fillText(`${m2.name} n=${m2.n.toFixed(2)}`, 120, cy + 46);
+      }
+    }
+
+    function drawInterface(cx, cy) {
+      if (mode() === "reflection") {
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(90, cy);
+        ctx.lineTo(810, cy);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(15, 23, 42, 0.35)";
+        ctx.lineWidth = 1.5;
+        for (let x = 100; x < 810; x += 18) {
+          ctx.beginPath();
+          ctx.moveTo(x, cy + 12);
+          ctx.lineTo(x + 12, cy);
+          ctx.stroke();
+        }
+      } else {
+        ctx.strokeStyle = "#334155";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(90, cy);
+        ctx.lineTo(810, cy);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.55)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(cx, 86);
+      ctx.lineTo(cx, 416);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("normal", cx + 34, 106);
+    }
+
+    function drawProtractor(cx, cy) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+      ctx.lineWidth = 2;
+
+      for (let r = 55; r <= 155; r += 25) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, Math.PI, Math.PI * 2);
+        ctx.stroke();
+
+        if (mode() !== "reflection") {
+          ctx.save();
+          ctx.strokeStyle = "rgba(15, 23, 42, 0.10)";
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      for (let deg = -80; deg <= 80; deg += 10) {
+        const a = degToRad(deg - 90);
+        const inner = deg % 30 === 0 ? 132 : 143;
+        const outer = 158;
+
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
+        ctx.lineTo(cx + Math.cos(a) * outer, cy + Math.sin(a) * outer);
+        ctx.stroke();
+
+        if (mode() !== "reflection") {
+          const lowerA = degToRad(90 - deg);
+          ctx.save();
+          ctx.strokeStyle = "rgba(15, 23, 42, 0.10)";
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(lowerA) * inner, cy + Math.sin(lowerA) * inner);
+          ctx.lineTo(cx + Math.cos(lowerA) * outer, cy + Math.sin(lowerA) * outer);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawRays(cx, cy) {
+      const theta = theta1();
+      const data = refractionData();
+      const length = 260;
+
+      const incidentStart = {
+        x: cx - Math.sin(degToRad(theta)) * length,
+        y: cy - Math.cos(degToRad(theta)) * length
+      };
+
+      drawRay(incidentStart.x, incidentStart.y, cx, cy, "#f59e0b", "incident");
+
+      if (mode() === "reflection" || data.tir) {
+        const reflectEnd = {
+          x: cx + Math.sin(degToRad(theta)) * length,
+          y: cy - Math.cos(degToRad(theta)) * length
+        };
+        drawRay(cx, cy, reflectEnd.x, reflectEnd.y, "#2563eb", data.tir ? "TIR reflected" : "reflected");
+      }
+
+      if (mode() !== "reflection" && !data.tir && data.theta2 !== null) {
+        const theta2 = data.theta2;
+        const refractEnd = {
+          x: cx + Math.sin(degToRad(theta2)) * length,
+          y: cy + Math.cos(degToRad(theta2)) * length
+        };
+        drawRay(cx, cy, refractEnd.x, refractEnd.y, "#16a34a", "refracted");
+      }
+
+      if (mode() === "tir" && data.tir) {
+        ctx.fillStyle = "rgba(220, 38, 38, 0.92)";
+        ctx.font = "900 14px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("Total internal reflection", cx + 160, cy - 92);
+        ctx.fillText("No refracted ray", cx + 154, cy + 92);
+      }
+
+      if (mode() === "tir" && !data.tir) {
+        ctx.fillStyle = "rgba(124, 45, 18, 0.92)";
+        ctx.font = "900 13px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("Below critical angle: refraction still occurs", cx + 190, cy + 92);
+      }
+
+      ctx.fillStyle = "#111827";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawRay(x1, y1, x2, y2, colour, label) {
+      ctx.save();
+
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const arrowX = x2 - Math.cos(angle) * 26;
+      const arrowY = y2 - Math.sin(angle) * 26;
+
+      ctx.fillStyle = colour;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(arrowX - Math.cos(angle - Math.PI / 2) * 8, arrowY - Math.sin(angle - Math.PI / 2) * 8);
+      ctx.lineTo(arrowX - Math.cos(angle + Math.PI / 2) * 8, arrowY - Math.sin(angle + Math.PI / 2) * 8);
+      ctx.closePath();
+      ctx.fill();
+
+      let lx = x1 * 0.45 + x2 * 0.55;
+      let ly = y1 * 0.45 + y2 * 0.55 - 10;
+      let displayLabel = label;
+
+      if (label === "TIR reflected") {
+        lx -= 58;
+        ly += 18;
+      }
+
+      if (label === "refracted") {
+        ly += 14;
+      }
+
+      if (lx > 565 && ly < 190) {
+        lx = 560;
+      }
+
+      const textWidth = ctx.measureText(displayLabel).width + 14;
+
+      ctx.fillStyle = "rgba(255,255,255,0.72)";
+      ctx.strokeStyle = "rgba(203,213,225,0.65)";
+      ctx.lineWidth = 1;
+      roundRect(ctx, lx - textWidth / 2, ly - 15, textWidth, 20, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 11px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(displayLabel, lx, ly);
+
+      ctx.restore();
+    }
+
+    function drawAngleLabels(cx, cy) {
+      const theta = theta1();
+      const data = refractionData();
+
+      drawAngleArc(cx, cy, -90, -90 - theta, 68, "#f59e0b", `θᵢ ${theta}°`);
+
+      if (mode() === "reflection" || data.tir) {
+        drawAngleArc(cx, cy, -90, -90 + theta, 92, "#2563eb", `θᵣ ${theta}°`);
+      }
+
+      if (mode() !== "reflection" && !data.tir && data.theta2 !== null) {
+        drawAngleArc(cx, cy, 90, 90 - data.theta2, 68, "#16a34a", `θ₂ ${rounded(data.theta2, 1)}°`);
+      }
+
+      if (data.critical && mode() === "tir") {
+        ctx.fillStyle = "#7c2d12";
+        ctx.font = "900 13px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(`critical angle ≈ ${rounded(data.critical, 1)}°`, cx + 178, cy + 54);
+      }
+    }
+
+    function drawAngleArc(cx, cy, startDeg, endDeg, radius, colour, label) {
+      const start = degToRad(startDeg);
+      const end = degToRad(endDeg);
+
+      ctx.save();
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, Math.min(start, end), Math.max(start, end));
+      ctx.stroke();
+
+      const mid = (start + end) / 2;
+      ctx.fillStyle = colour;
+      ctx.font = "900 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(label, cx + Math.cos(mid) * (radius + 24), cy + Math.sin(mid) * (radius + 24));
+      ctx.restore();
+    }
+
+    function drawLegend() {
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+      ctx.strokeStyle = "rgba(203, 213, 225, 0.9)";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 635, 72, 220, 112, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 12px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Law reminder", 652, 94);
+
+      ctx.font = "800 10.5px system-ui";
+      ctx.fillText("• Angles from normal", 652, 114);
+      ctx.fillText("• Reflection: θᵢ = θᵣ", 652, 132);
+      ctx.fillText("• Refraction: n₁ sin θ₁ = n₂ sin θ₂", 652, 150);
+      ctx.fillText("• TIR: θᵢ > critical angle", 652, 168);
+
+      ctx.fillStyle = "rgba(255, 251, 235, 0.92)";
+      ctx.strokeStyle = "#fde68a";
+      roundRect(ctx, 622, 430, 236, 48, 13);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#78350f";
+      ctx.font = "800 10.5px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Simplified ray model", 740, 450);
+      ctx.fillText("not a full optics simulation", 740, 466);
+
+      ctx.restore();
+    }
+
+    function drawGraph() {
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+
+      gtx.clearRect(0, 0, w, h);
+      gtx.fillStyle = "#ffffff";
+      gtx.fillRect(0, 0, w, h);
+
+      const margin = { left: 48, right: 14, top: 22, bottom: 40 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      gtx.strokeStyle = "#cbd5e1";
+      gtx.lineWidth = 1;
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top);
+      gtx.lineTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top + plotH);
+      gtx.stroke();
+
+      if (graphSelect.value === "reflection") drawReflectionGraph(margin, plotW, plotH, w, h);
+      if (graphSelect.value === "snell") drawSnellGraph(margin, plotW, plotH, w, h);
+      if (graphSelect.value === "angles") drawAngleGraph(margin, plotW, plotH, w, h);
+      if (graphSelect.value === "critical") drawCriticalGraph(margin, plotW, plotH, w, h);
+    }
+
+    function drawReflectionGraph(margin, plotW, plotH, w, h) {
+      graphLabels("Incidence vs reflection", "θᵣ", "θᵢ", margin, plotW, h);
+
+      gtx.strokeStyle = "#94a3b8";
+      gtx.setLineDash([6, 6]);
+      gtx.beginPath();
+      gtx.moveTo(margin.left, margin.top + plotH);
+      gtx.lineTo(margin.left + plotW, margin.top);
+      gtx.stroke();
+      gtx.setLineDash([]);
+
+      trials.filter(t => t.mode === "Reflection").forEach(t => {
+        const xVal = parseFloat(t.incident);
+        const yVal = parseFloat(t.reflected);
+        const x = margin.left + (xVal / 90) * plotW;
+        const y = margin.top + plotH - (yVal / 90) * plotH;
+        point(x, y, "#2563eb");
+      });
+
+      drawGraphBadge("θᵢ = θᵣ", margin.left + plotW - 84, margin.top + 16);
+    }
+
+    function drawSnellGraph(margin, plotW, plotH, w, h) {
+      graphLabels("sin θ₁ vs sin θ₂", "sin θ₂", "sin θ₁", margin, plotW, h);
+
+      trials.filter(t => t.mode === "Refraction").forEach(t => {
+        const xVal = Math.sin(degToRad(parseFloat(t.incident)));
+        const yVal = Math.sin(degToRad(parseFloat(t.refracted)));
+        const x = margin.left + xVal * plotW;
+        const y = margin.top + plotH - yVal * plotH;
+        point(x, y, "#16a34a");
+      });
+
+      drawGraphBadge("Snell pattern", margin.left + plotW - 116, margin.top + 16);
+    }
+
+    function drawAngleGraph(margin, plotW, plotH, w, h) {
+      graphLabels("Incident vs refracted angle", "θ₂", "θᵢ", margin, plotW, h);
+
+      trials.filter(t => t.mode === "Refraction").forEach(t => {
+        const xVal = parseFloat(t.incident);
+        const yVal = parseFloat(t.refracted);
+        const x = margin.left + (xVal / 90) * plotW;
+        const y = margin.top + plotH - (yVal / 90) * plotH;
+        point(x, y, "#16a34a");
+      });
+
+      drawGraphBadge("bending changes with n", margin.left + plotW - 166, margin.top + 16);
+    }
+
+    function drawCriticalGraph(margin, plotW, plotH, w, h) {
+      graphLabels("Critical angle comparison", "θᵢ", "trial", margin, plotW, h);
+
+      const data = refractionData();
+
+      if (data.critical) {
+        const y = margin.top + plotH - (data.critical / 90) * plotH;
+
+        gtx.fillStyle = "rgba(22, 163, 74, 0.08)";
+        gtx.fillRect(margin.left, y, plotW, margin.top + plotH - y);
+
+        gtx.fillStyle = "rgba(220, 38, 38, 0.08)";
+        gtx.fillRect(margin.left, margin.top, plotW, y - margin.top);
+
+        gtx.strokeStyle = "#dc2626";
+        gtx.setLineDash([6, 6]);
+        gtx.beginPath();
+        gtx.moveTo(margin.left, y);
+        gtx.lineTo(margin.left + plotW, y);
+        gtx.stroke();
+        gtx.setLineDash([]);
+
+        gtx.fillStyle = "#166534";
+        gtx.font = "800 11px system-ui";
+        gtx.textAlign = "left";
+        gtx.fillText("below critical: refraction", margin.left + 8, margin.top + plotH - 10);
+
+        gtx.fillStyle = "#991b1b";
+        gtx.fillText("above critical: TIR", margin.left + 8, margin.top + 18);
+      }
+
+      const tirTrials = trials.filter(t => t.mode === "TIR");
+
+      tirTrials.forEach((t, i) => {
+        const x = margin.left + ((i + 1) / Math.max(2, tirTrials.length + 1)) * plotW;
+        const yVal = parseFloat(t.incident);
+        const y = margin.top + plotH - (yVal / 90) * plotH;
+        point(x, y, t.result === "TIR" ? "#dc2626" : "#16a34a");
+      });
+
+      drawGraphBadge("θᵢ compared with critical angle", margin.left + plotW - 220, margin.top + 16);
+    }
+
+    function graphLabels(title, yLabel, xLabel, margin, plotW, h) {
+      gtx.fillStyle = "#334155";
+      gtx.font = "800 12px system-ui";
+      gtx.textAlign = "left";
+      gtx.fillText(title, 10, 14);
+      gtx.fillText(yLabel, 12, 36);
+      gtx.textAlign = "center";
+      gtx.fillText(xLabel, margin.left + plotW / 2, h - 8);
+    }
+
+    function point(x, y, colour) {
+      gtx.fillStyle = colour;
+      gtx.beginPath();
+      gtx.arc(x, y, 4.5, 0, Math.PI * 2);
+      gtx.fill();
+    }
+
+    function drawGraphBadge(text, x, y) {
+      gtx.save();
+      gtx.fillStyle = "#eaf2ff";
+      gtx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      gtx.lineWidth = 1;
+
+      const width = Math.max(112, text.length * 6.8 + 18);
+      const height = 24;
+      const padding = 8;
+      let drawX = x;
+      let drawY = y;
+
+      if (drawX + width > graphCanvas.width - padding) drawX = graphCanvas.width - width - padding;
+      if (drawX < padding) drawX = padding;
+      if (drawY + height > graphCanvas.height - padding) drawY = graphCanvas.height - height - padding;
+      if (drawY < padding) drawY = padding;
+
+      roundRect(gtx, drawX, drawY, width, height, 10);
+      gtx.fill();
+      gtx.stroke();
+
+      gtx.fillStyle = "#1d4ed8";
+      gtx.font = "800 11px system-ui";
+      gtx.textAlign = "center";
+      gtx.fillText(text, drawX + width / 2, drawY + 16);
+      gtx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    modeSelect.addEventListener("change", () => {
+      updateModeDefaults();
+      updateAll();
+    });
+
+    [materialOneSelect, materialTwoSelect, angleSlider, uncertaintySlider, graphSelect].forEach(control => {
+      control.addEventListener("input", updateAll);
+      control.addEventListener("change", updateAll);
+    });
+
+    recordBtn.addEventListener("click", recordTrial);
+    autoBtn.addEventListener("click", autoSeries);
+    resetBtn.addEventListener("click", resetData);
+    exportBtn.addEventListener("click", exportCSV);
+
+    updateModeDefaults();
+    updateAll();
+  </script>
+</body>
+</html>
