@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speed vs Distance Investigation Simulator</title>
+<link rel="icon" href="../../favicon.png" />
+<style>
+  :root{
+    --page:#f3f6fb;
+    --card:#ffffff;
+    --ink:#102033;
+    --muted:#5d6e87;
+    --line:#dce4f0;
+    --blue:#2563eb;
+    --blue2:#1f4aa6;
+    --pink:#ef4444;
+    --softBlue:#eff6ff;
+    --chip:rgba(255,255,255,.18);
+    --shadow:0 18px 45px rgba(15,23,42,.10);
+    --shadow2:0 10px 24px rgba(15,23,42,.08);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behaviour:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(37,99,235,.08), transparent 34%),
+      linear-gradient(180deg,#f8fbff 0%,var(--page) 100%);
+    color:var(--ink);
+  }
+  .page{
+    width:min(1860px,100%);
+    margin:0 auto;
+    padding:32px clamp(18px,2vw,36px) 42px;
+  }
+  .backLink{
+    display:inline-flex;
+    align-items:center;
+    gap:.45rem;
+    margin:0 0 22px;
+    padding:15px 24px;
+    border-radius:999px;
+    background:var(--card);
+    border:1px solid var(--line);
+    color:#1557f0;
+    font-weight:800;
+    text-decoration:none;
+    box-shadow:var(--shadow2);
+    font-size:clamp(.98rem,1.25vw,1.35rem);
+  }
+  .hero{
+    border-radius:36px;
+    padding:clamp(34px,4vw,66px) clamp(32px,4vw,58px);
+    color:#fff;
+    background:linear-gradient(110deg,#254aa2 0%,#2563eb 47%,#ef4444 100%);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:auto -80px -160px auto;
+    width:420px;
+    height:420px;
+    border-radius:999px;
+    background:rgba(255,255,255,.14);
+    filter:blur(4px);
+  }
+  .hero h1{
+    margin:0;
+    font-size:clamp(3rem,5.3vw,6rem);
+    line-height:.98;
+    letter-spacing:-.06em;
+    font-weight:900;
+    max-width:1300px;
+  }
+  .hero p{
+    margin:22px 0 0;
+    max-width:1280px;
+    font-size:clamp(1.1rem,1.55vw,1.9rem);
+    line-height:1.35;
+    color:rgba(255,255,255,.94);
+  }
+  .chips{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px;position:relative;z-index:1}
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,.32);
+    background:var(--chip);
+    color:#fff;
+    border-radius:999px;
+    padding:10px 18px;
+    font-weight:850;
+    font-size:clamp(.88rem,1vw,1.15rem);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  main{display:grid;gap:26px;margin-top:28px}
+  .introGrid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .workGrid{display:grid;grid-template-columns:minmax(640px,1.25fr) minmax(420px,.9fr);gap:26px;align-items:start}
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .panel,.infoCard{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow2);
+    overflow:hidden;
+  }
+  .infoCard{padding:clamp(22px,2vw,32px)}
+  .infoCard h2,.panel h2{
+    margin:0 0 14px;
+    font-size:clamp(1.35rem,1.75vw,2.05rem);
+    line-height:1.15;
+    letter-spacing:-.03em;
+    color:#102033;
+  }
+  .infoCard p{margin:0;color:var(--muted);font-size:clamp(1rem,1.25vw,1.38rem);line-height:1.48}
+  .panel h2{
+    padding:24px 28px 0;
+    margin-bottom:0;
+  }
+  .controls{padding:24px 28px 28px;display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:14px;align-items:start}
+  .controlRow{display:grid;gap:8px;background:#fbfdff;border:1px solid #dbe5f2;border-radius:18px;padding:14px 15px;align-content:start}
+  label{font-size:1rem;color:#102033;font-weight:850;display:flex;justify-content:space-between;gap:12px;line-height:1.3}
+  .valueTag{color:#64748b;font-weight:850}
+  input[type="range"]{width:100%;accent-color:var(--blue)}
+  select,input[type="number"]{
+    width:100%;
+    background:#fbfdff;
+    color:var(--ink);
+    border:1px solid #cbd7e8;
+    border-radius:14px;
+    padding:12px 13px;
+    font-size:1rem;
+    box-shadow:inset 0 1px 1px rgba(15,23,42,.04);
+  }
+  select:focus,input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#93b4f8}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:2px;grid-column:1 / -1}
+  button{
+    border:none;
+    border-radius:16px;
+    padding:13px 14px;
+    color:#fff;
+    background:var(--blue);
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 10px 18px rgba(37,99,235,.22);
+    font-size:1rem;
+  }
+  button.secondary{background:#e9eef7;color:#102033;box-shadow:none;border:1px solid #d4deed}
+  button.danger{background:#fee2e2;color:#8a1c1c;box-shadow:none;border:1px solid #fecaca}
+  button:disabled{opacity:.58;cursor:not-allowed}
+  .hint{font-size:.92rem;color:var(--muted);line-height:1.42;margin:0}
+  .modeNote{
+    border:1px solid #bfdbfe;
+    background:#eff6ff;
+    border-radius:16px;
+    padding:13px 14px;
+    color:#28466f;
+    font-size:.95rem;
+    line-height:1.45;
+  }
+  .canvasWrap{padding:22px 22px 12px;position:relative}
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    background:#f8fbff;
+    border-radius:20px;
+    border:1px solid #d6e0ee;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  #sim{max-width:920px;margin:0 auto;}
+  .liveNote{
+    position:absolute;
+    left:44px;
+    top:44px;
+    background:rgba(255,255,255,.92);
+    border:1px solid #d6e0ee;
+    border-radius:999px;
+    padding:8px 13px;
+    color:#1e3a8a;
+    font-weight:850;
+    font-size:.92rem;
+    box-shadow:0 8px 18px rgba(15,23,42,.08);
+  }
+  .statusBar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 26px 16px}
+  .metric,.qbox,.miniCard,.designCard{
+    background:#fbfdff;
+    border:1px solid #dbe5f2;
+    border-radius:18px;
+    padding:14px 15px;
+  }
+  .metric small{display:block;color:#60728c;font-size:.85rem;margin-bottom:5px;font-weight:750}
+  .metric strong{font-size:clamp(1.05rem,1.25vw,1.35rem);color:#102033}
+  .quality{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 26px 26px}
+  .qbox{font-size:.96rem;color:var(--muted);line-height:1.42;min-height:82px}
+  .qbox b{color:#102033}
+  .tableWrap{padding:18px 20px 10px;overflow:auto;max-height:680px}
+  table{width:100%;border-collapse:collapse;font-size:.94rem;min-width:760px}
+  th,td{padding:10px 10px;text-align:right;border-bottom:1px solid #e3eaf5;color:#334155}
+  th{color:#1e3a8a;background:#eef5ff;position:sticky;top:0;z-index:1;font-weight:900}
+  td:first-child,th:first-child{text-align:center}
+  td:nth-child(2),th:nth-child(2){text-align:left}
+  .meanBox{display:grid;grid-template-columns:1fr;gap:12px;padding:0 20px 14px}
+  .miniCard{color:var(--muted);font-size:.96rem;line-height:1.42}
+  .miniCard b{color:#102033}
+  .analysisBox{padding:0 20px 20px;color:var(--muted);font-size:1rem;line-height:1.48}
+  .analysisBox b{color:#102033}
+  .graphWrap{padding:22px 26px 14px}
+  #graph{background:#f8fbff}
+  .designGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:24px 26px 16px}
+  .designCard{min-height:126px}
+  .designCard h3{font-size:1.04rem;margin:0 0 8px;color:#102033}
+  .designCard p{margin:0;color:var(--muted);font-size:.96rem;line-height:1.44}
+  .pill{
+    display:inline-block;
+    border:1px solid #bfd0e7;
+    border-radius:999px;
+    padding:6px 11px;
+    margin:3px 5px 3px 0;
+    background:#f4f8ff;
+    font-size:.88rem;
+    color:#1e3a8a;
+    font-weight:800;
+  }
+
+  .controlRow.wide{grid-column:span 2}
+  .controlRow.full{grid-column:1 / -1}
+  .controlRow .two{grid-template-columns:1fr 1fr}
+  .setupPanel .panelInner{display:grid;gap:0}
+
+  .setupPanel .statusBar{padding-top:4px;}
+  .resultsPanel .panel h2{}
+  footer{padding:10px 0 4px;color:#73849b;font-size:.88rem;text-align:center}
+  @media(max-width:1200px){.workGrid,.bottom,.introGrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.statusBar{grid-template-columns:repeat(2,1fr)}.quality,.designGrid,.meanBox{grid-template-columns:1fr}#sim{max-width:100%;}}
+  @media(max-width:700px){.page{padding:22px 12px 32px}.hero{border-radius:28px}.two,.buttons,.statusBar,.controls{grid-template-columns:1fr}.controlRow.wide,.controlRow.full{grid-column:auto}.liveNote{position:static;margin:0 0 10px;display:inline-flex}.canvasWrap{padding:16px}.panel h2{padding:20px 20px 0}.controls,.statusBar,.quality,.tableWrap,.graphWrap,.designGrid,.analysisBox,.meanBox{padding-left:18px;padding-right:18px}}
+
+
+  /* Ultra-compact classroom layout patch */
+  .page{width:min(1720px,100%);padding:16px clamp(12px,1.2vw,22px) 28px;}
+  .backLink{margin-bottom:14px;padding:10px 18px;font-size:1rem;box-shadow:0 8px 18px rgba(15,23,42,.07)}
+  .hero{padding:22px 30px;border-radius:28px;}
+  .hero h1{font-size:clamp(2.4rem,3.7vw,4.4rem);}
+  .hero p{font-size:clamp(.98rem,1.12vw,1.28rem);margin-top:12px;max-width:1180px;}
+  .chips{margin-top:16px;gap:10px}.chip{padding:7px 12px;font-size:.9rem}
+  main{gap:16px;margin-top:16px}
+  .introGrid{gap:16px}.infoCard{padding:16px 20px;border-radius:18px}.infoCard h2{font-size:1.25rem;margin-bottom:8px}.infoCard p{font-size:.98rem;line-height:1.38}
+  .workGrid{grid-template-columns:minmax(520px,.95fr) minmax(390px,.72fr);gap:16px;align-items:start;}
+  .bottom{gap:16px}.panel{border-radius:18px}.panel h2{padding:14px 18px 0;font-size:1.35rem;margin-bottom:0}
+  .canvasWrap{padding:12px 14px 8px}
+  #sim{max-width:620px;margin:0 auto;}
+  .liveNote{left:24px;top:22px;font-size:.76rem;padding:5px 10px}
+  .statusBar{grid-template-columns:repeat(4,1fr);gap:8px;padding:0 14px 8px}
+  .metric{padding:8px 9px;min-height:58px;border-radius:14px}.metric small{font-size:.72rem;margin-bottom:3px}.metric strong{font-size:.98rem}
+  .quality{gap:8px;padding:0 14px 12px}.qbox{padding:8px 9px;min-height:58px;font-size:.78rem;line-height:1.28;border-radius:14px}
+  .resultsPanel .tableWrap{padding:10px 12px 6px;max-height:320px;overflow:auto;}
+  .resultsPanel table{min-width:0;width:100%;table-layout:fixed;font-size:.76rem;}
+  .resultsPanel th,.resultsPanel td{padding:6px 5px;white-space:normal;line-height:1.18;}
+  .resultsPanel th:first-child,.resultsPanel td:first-child{width:13%}
+  .resultsPanel th:nth-child(2),.resultsPanel td:nth-child(2),.resultsPanel th:nth-child(3),.resultsPanel td:nth-child(3){width:17%}
+  .resultsPanel th:nth-child(4),.resultsPanel td:nth-child(4){width:15%}
+  .resultsPanel th:nth-child(5),.resultsPanel td:nth-child(5){width:20%}
+  .resultsPanel th:nth-child(6),.resultsPanel td:nth-child(6){width:18%}
+  .emptyRow td{text-align:center!important;color:#64748b;padding:18px 12px!important;background:#fbfdff;}
+  .meanBox{padding:0 12px 8px;gap:8px}.miniCard{font-size:.78rem;line-height:1.3;padding:8px 10px;border-radius:14px}.analysisBox{padding:0 12px 12px;font-size:.82rem;line-height:1.34}
+  .controls{padding:14px 18px 18px;grid-template-columns:1.15fr 1fr 1fr 1fr;gap:10px}.controlRow{padding:9px 10px;border-radius:14px}.controlRow.wide{grid-column:span 2}label{font-size:.84rem}select,input[type="number"]{padding:8px 9px;font-size:.84rem;border-radius:11px}.modeNote,.hint{font-size:.76rem;line-height:1.28}button{padding:10px 12px;font-size:.86rem;border-radius:12px}
+  .graphWrap{padding:12px 14px 8px}.designGrid{grid-template-columns:repeat(2,1fr);gap:8px;padding:14px 14px 8px}.designCard{min-height:92px;padding:9px 10px;border-radius:14px}.designCard h3{font-size:.9rem;margin-bottom:5px}.designCard p{font-size:.78rem;line-height:1.28}.pill{font-size:.76rem;padding:5px 9px;margin:2px 4px 2px 0}
+  @media(max-width:1050px){.workGrid,.bottom,.introGrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.controlRow.wide{grid-column:span 2}#sim{max-width:100%;}}
+  @media(max-width:700px){.controls,.statusBar,.quality{grid-template-columns:1fr}.controlRow.wide{grid-column:auto}.page{padding:14px 10px 24px}.hero{border-radius:22px}.liveNote{position:static;margin:0 0 8px;display:inline-flex}}
+
+
+  /* v8: compressed right-side control/results layout */
+  .page{width:min(1780px,100%);padding:14px clamp(10px,1vw,18px) 24px;}
+  .backLink{margin-bottom:10px;padding:8px 15px;font-size:.95rem;}
+  .hero{padding:18px 26px;border-radius:24px;}
+  .hero h1{font-size:clamp(2.2rem,3.4vw,4rem);}
+  .hero p{font-size:clamp(.92rem,1vw,1.12rem);margin-top:8px;}
+  .chips{margin-top:12px;gap:8px}.chip{padding:6px 10px;font-size:.82rem;}
+  main{gap:12px;margin-top:12px;}
+  .introGrid{gap:12px}.infoCard{padding:12px 16px;border-radius:16px}.infoCard h2{font-size:1.12rem;margin-bottom:5px}.infoCard p{font-size:.88rem;line-height:1.3;}
+  .topWorkspace{grid-template-columns:minmax(480px,.92fr) minmax(500px,.78fr);gap:12px;align-items:start;}
+  .sideStack{display:grid;gap:12px;align-items:start;}
+  .panel{border-radius:16px;}.panel h2{padding:11px 14px 0;font-size:1.18rem;}
+  .canvasWrap{padding:9px 11px 6px;}
+  #sim{max-width:520px;margin:0 auto;}
+  .liveNote{left:18px;top:16px;font-size:.68rem;padding:4px 8px;}
+  .statusBar{grid-template-columns:repeat(4,1fr);gap:6px;padding:0 11px 6px;}
+  .metric{padding:6px 7px;min-height:46px;border-radius:11px;}.metric small{font-size:.64rem;margin-bottom:2px;}.metric strong{font-size:.86rem;}
+  .quality{grid-template-columns:repeat(3,1fr);gap:6px;padding:0 11px 9px;}.qbox{padding:6px 7px;min-height:44px;font-size:.68rem;line-height:1.18;border-radius:11px;}
+  .controlsPanel h2,.resultsPanel h2{padding:10px 12px 0;font-size:1.08rem;}
+  .controls{padding:10px 12px 12px;grid-template-columns:1fr 1fr;gap:7px;}
+  .controlRow{padding:7px 8px;border-radius:11px;gap:5px;}.controlRow.wide{grid-column:1 / -1;}label{font-size:.74rem;line-height:1.15;}select,input[type="number"]{padding:6px 7px;font-size:.74rem;border-radius:9px;}input[type="range"]{height:20px;}.valueTag{font-size:.74rem;}
+  .modeNote{font-size:.67rem;line-height:1.2;padding:7px 8px;border-radius:10px;}.hint{display:none;}.buttons{grid-column:1 / -1;gap:7px;}button{padding:8px 9px;font-size:.76rem;border-radius:10px;}
+  .resultsPanel .tableWrap{padding:8px 10px 5px;max-height:210px;overflow:auto;}
+  .resultsPanel table{min-width:0;width:100%;table-layout:fixed;font-size:.68rem;}
+  .resultsPanel th,.resultsPanel td{padding:5px 4px;line-height:1.12;white-space:normal;}
+  .resultsPanel th:first-child,.resultsPanel td:first-child{width:11%;}.resultsPanel th:nth-child(2),.resultsPanel td:nth-child(2){width:17%;}.resultsPanel th:nth-child(3),.resultsPanel td:nth-child(3){width:19%;}.resultsPanel th:nth-child(4),.resultsPanel td:nth-child(4){width:14%;}.resultsPanel th:nth-child(5),.resultsPanel td:nth-child(5){width:20%;}.resultsPanel th:nth-child(6),.resultsPanel td:nth-child(6){width:19%;}
+  .emptyRow td{padding:12px 8px!important;font-size:.78rem;}
+  .meanBox{padding:0 10px 6px;gap:6px;}.miniCard{font-size:.68rem;line-height:1.2;padding:6px 8px;border-radius:11px;}.analysisBox{padding:0 10px 10px;font-size:.72rem;line-height:1.25;}
+  .bottom{grid-template-columns:.8fr 1fr;gap:12px;}.graphWrap{padding:10px 12px 6px;}.designGrid{grid-template-columns:repeat(2,1fr);gap:7px;padding:10px 12px 6px;}.designCard{min-height:78px;padding:7px 8px;border-radius:11px;}.designCard h3{font-size:.8rem;margin-bottom:4px;}.designCard p{font-size:.68rem;line-height:1.22;}.pill{font-size:.66rem;padding:4px 7px;margin:2px 3px 2px 0;}
+  @media(max-width:1180px){.topWorkspace,.bottom,.introGrid{grid-template-columns:1fr}.sideStack{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr;}#sim{max-width:100%;}}
+  @media(max-width:700px){.controls,.statusBar,.quality{grid-template-columns:1fr}.page{padding:12px 8px 22px}.hero{border-radius:20px}.controlRow.wide{grid-column:auto}.liveNote{position:static;margin:0 0 6px;display:inline-flex}.bottom{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="backLink" href="../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Speed vs Distance Investigation</h1>
+    <p id="subtitle">Design a practical investigation using available technologies to measure the independent variable <b>speed</b> and the dependent variable <b>distance travelled in a fixed time</b>.</p>
+    <div class="chips" aria-label="Topic tags">
+      <span class="chip">Investigating Science</span>
+      <span class="chip">Technologies</span>
+      <span class="chip">Quantitative data</span>
+      <span class="chip">Speed graphs</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="introGrid" aria-label="Learning intention and success criteria">
+      <div class="infoCard">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how a practical investigation can use technology to measure both speed and distance travelled, producing quantitative data that can be graphed and evaluated.</p>
+      </div>
+      <div class="infoCard">
+        <h2>Success Criteria</h2>
+        <p>Students can identify the independent and dependent variables, choose suitable measuring technologies, collect repeated quantitative data, calculate means and use a graph to describe the relationship.</p>
+      </div>
+    </section>
+
+    <section class="workGrid topWorkspace">
+      <div class="panel setupPanel">
+        <h2>Virtual practical setup</h2>
+        <div class="canvasWrap">
+          <div class="liveNote" id="liveNote">Ready to launch</div>
+          <canvas id="sim" width="1280" height="720" aria-label="A trolley rolls along a track while technologies measure speed and distance travelled."></canvas>
+        </div>
+        <div class="statusBar">
+          <div class="metric"><small>Target speed</small><strong id="targetRead">2.0 m/s</strong></div>
+          <div class="metric"><small>Measured speed</small><strong id="speedRead">—</strong></div>
+          <div class="metric"><small id="distanceMetricLabel">Measured distance</small><strong id="distRead">—</strong></div>
+          <div class="metric"><small>Predicted distance</small><strong id="modelRead">—</strong></div>
+        </div>
+        <div class="quality">
+          <div class="qbox" id="ivBox"><b>Independent variable:</b> trolley speed, measured as it passes the start gate.</div>
+          <div class="qbox" id="dvBox"><b>Dependent variable:</b> distance travelled during the fixed time interval.</div>
+          <div class="qbox" id="cvBox"><b>Controlled variables:</b> trolley, track, time interval, start line, sensor positions and release direction.</div>
+        </div>
+      </div>
+
+      <div class="sideStack">
+        <div class="panel controlsPanel">
+          <h2>Controls</h2>
+          <div class="controls">
+            <div class="controlRow wide">
+              <label for="mode">Investigation mode</label>
+              <select id="mode">
+                <option value="fixed" selected>Core: speed vs distance in fixed time</option>
+                <option value="stopping">Extension: speed vs stopping distance</option>
+              </select>
+              <p class="modeNote" id="modeNote">Core mode tests the exact outcome: when the time interval is controlled, distance travelled should increase in direct proportion to speed.</p>
+            </div>
+            <div class="controlRow">
+              <label for="speed">Speed <span class="valueTag" id="speedVal">2.0 m/s</span></label>
+              <input id="speed" type="range" min="0.5" max="5" value="2" step="0.1">
+            </div>
+            <div class="controlRow" id="timeControl">
+              <label for="fixedTime">Fixed time <span class="valueTag" id="timeVal">3.0 s</span></label>
+              <input id="fixedTime" type="range" min="1" max="6" value="3" step="0.5">
+            </div>
+            <div class="controlRow" id="surfaceControl">
+              <label for="friction">Surface / braking</label>
+              <select id="friction">
+                <option value="2.8">High-friction felt mat</option>
+                <option value="1.8" selected>Standard classroom track</option>
+                <option value="1.05">Low-friction smooth track</option>
+              </select>
+            </div>
+            <div class="controlRow">
+              <label for="trials">Trials per speed</label>
+              <input id="trials" type="number" min="1" max="5" value="3">
+            </div>
+            <div class="controlRow">
+              <label for="autoRange">Auto speed set</label>
+              <select id="autoRange">
+                <option value="classroom" selected>0.8–4.4 m/s, seven speeds</option>
+                <option value="junior">0.6–3.0 m/s, five speeds</option>
+                <option value="wide">0.5–5.0 m/s, ten speeds</option>
+              </select>
+            </div>
+            <div class="controlRow">
+              <label for="techSpeed">Speed technology</label>
+              <select id="techSpeed">
+                <option value="photogate" selected>Photogate ±0.02 m/s</option>
+                <option value="video">Video analysis ±0.06 m/s</option>
+                <option value="stopwatch">Stopwatch over 1 m ±0.15 m/s</option>
+              </select>
+            </div>
+            <div class="controlRow">
+              <label for="techDist">Distance technology</label>
+              <select id="techDist">
+                <option value="motion" selected>Motion sensor ±0.02 m</option>
+                <option value="video">Video analysis ±0.04 m</option>
+                <option value="tape">Tape measure ±0.01 m</option>
+              </select>
+            </div>
+            <div class="buttons">
+              <button id="runBtn">Run trial</button>
+              <button id="autoBtn" class="secondary">Auto set</button>
+              <button id="clearBtn" class="danger">Clear data</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel resultsPanel">
+          <h2>Results table</h2>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trial</th>
+                  <th>Target<br>(m/s)</th>
+                  <th>Measured<br>(m/s)</th>
+                  <th id="timeHead">Time<br>(s)</th>
+                  <th>Distance<br>(m)</th>
+                  <th id="modelHead">Model</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <div class="meanBox">
+            <div class="miniCard" id="meanText"><b>Means:</b> no repeated data yet.</div>
+            <div class="miniCard" id="techText"><b>Technology note:</b> compare tools to see how uncertainty changes scatter.</div>
+          </div>
+          <div class="analysisBox" id="summary">No data yet. Run repeated trials at several speeds, then compare the trend with the expected model.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom">
+      <div class="panel">
+        <h2 id="graphTitle">Graph: measured speed vs distance travelled</h2>
+        <div class="graphWrap"><canvas id="graph" width="900" height="520" aria-label="Graph of measured speed versus measured distance."></canvas></div>
+        <div class="analysisBox" id="graphText">Core model: distance travelled = speed × time. Doubling speed should double the distance when the time interval is kept constant.</div>
+      </div>
+
+      <div class="panel">
+        <h2>Practical investigation design prompts</h2>
+        <div class="designGrid">
+          <div class="designCard"><h3>Aim</h3><p id="aimText">Investigate how changing the speed of a trolley affects the distance it travels during a fixed time interval.</p></div>
+          <div class="designCard"><h3>Hypothesis</h3><p id="hypothesisText">As speed increases, distance travelled will increase. If the time interval is kept constant, distance should be directly proportional to speed.</p></div>
+          <div class="designCard"><h3>Method outline</h3><p id="methodText">Use a launcher or ramp to give different speeds. Measure speed at the start with a photogate or video analysis, then measure distance after the same time interval using a motion sensor, video analysis or tape measure.</p></div>
+          <div class="designCard"><h3>Reliability</h3><p>Repeat each speed setting at least three times and calculate a mean. Identify outliers caused by poor release, sensor error or track obstruction.</p></div>
+          <div class="designCard"><h3>Validity</h3><p id="validityText">Only change trolley speed. Keep the trolley, surface, time interval, start line, sensor positions and release direction constant.</p></div>
+          <div class="designCard"><h3>Risk management</h3><p>Use a low-speed trolley, keep the track clear, stop the trolley before the table edge, secure cables and avoid standing in the path of motion.</p></div>
+        </div>
+        <div class="analysisBox" id="pills">
+          <span class="pill">IV: speed</span><span class="pill">DV: distance travelled</span><span class="pill">Quantitative data</span><span class="pill">Available technologies</span><span class="pill">Repeated trials</span><span class="pill">Mean values</span><span class="pill">Graphing relationship</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Practical investigation design prompts</h2>
+      <div class="designGrid">
+        <div class="designCard"><h3>Aim</h3><p id="aimText">Investigate how changing the speed of a trolley affects the distance it travels during a fixed time interval.</p></div>
+        <div class="designCard"><h3>Hypothesis</h3><p id="hypothesisText">As speed increases, distance travelled will increase. If the time interval is kept constant, distance should be directly proportional to speed.</p></div>
+        <div class="designCard"><h3>Method outline</h3><p id="methodText">Use a launcher or ramp to give different speeds. Measure speed at the start with a photogate or video analysis, then measure distance after the same time interval using a motion sensor, video analysis or tape measure.</p></div>
+        <div class="designCard"><h3>Reliability</h3><p>Repeat each speed setting at least three times and calculate a mean. Identify outliers caused by poor release, sensor error or track obstruction.</p></div>
+        <div class="designCard"><h3>Validity</h3><p id="validityText">Only change trolley speed. Keep the trolley, surface, time interval, start line, sensor positions and release direction constant.</p></div>
+        <div class="designCard"><h3>Risk management</h3><p>Use a low-speed trolley, keep the track clear, stop the trolley before the table edge, secure cables and avoid standing in the path of motion.</p></div>
+      </div>
+      <div class="analysisBox" id="pills">
+        <span class="pill">IV: speed</span><span class="pill">DV: distance travelled</span><span class="pill">Quantitative data</span><span class="pill">Available technologies</span><span class="pill">Repeated trials</span><span class="pill">Mean values</span><span class="pill">Graphing relationship</span>
+      </div>
+    </section>
+  </main>
+  <footer>Single-file classroom sim. No external libraries required.</footer>
+</div>
+<script>
+
+(() => {
+  const canvas = document.getElementById('sim');
+  const ctx = canvas.getContext('2d');
+  const graph = document.getElementById('graph');
+  const gtx = graph.getContext('2d');
+
+  const modeSel = document.getElementById('mode');
+  const speedSlider = document.getElementById('speed');
+  const speedVal = document.getElementById('speedVal');
+  const fixedTime = document.getElementById('fixedTime');
+  const timeVal = document.getElementById('timeVal');
+  const timeControl = document.getElementById('timeControl');
+  const surfaceControl = document.getElementById('surfaceControl');
+  const frictionSel = document.getElementById('friction');
+  const techSpeed = document.getElementById('techSpeed');
+  const techDist = document.getElementById('techDist');
+  const trialsInput = document.getElementById('trials');
+  const autoRange = document.getElementById('autoRange');
+  const runBtn = document.getElementById('runBtn');
+  const autoBtn = document.getElementById('autoBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  const tbody = document.getElementById('tbody');
+  const targetRead = document.getElementById('targetRead');
+  const speedRead = document.getElementById('speedRead');
+  const distRead = document.getElementById('distRead');
+  const modelRead = document.getElementById('modelRead');
+  const liveNote = document.getElementById('liveNote');
+  const summary = document.getElementById('summary');
+  const graphText = document.getElementById('graphText');
+  const graphTitle = document.getElementById('graphTitle');
+  const meanText = document.getElementById('meanText');
+  const techText = document.getElementById('techText');
+  const subtitle = document.getElementById('subtitle');
+  const modeNote = document.getElementById('modeNote');
+  const ivBox = document.getElementById('ivBox');
+  const dvBox = document.getElementById('dvBox');
+  const cvBox = document.getElementById('cvBox');
+  const distanceMetricLabel = document.getElementById('distanceMetricLabel');
+  const timeHead = document.getElementById('timeHead');
+  const modelHead = document.getElementById('modelHead');
+  const aimText = document.getElementById('aimText');
+  const hypothesisText = document.getElementById('hypothesisText');
+  const methodText = document.getElementById('methodText');
+  const validityText = document.getElementById('validityText');
+  const pills = document.getElementById('pills');
+
+  const data = [];
+  let trialCount = 0;
+  let anim = null;
+  let queue = [];
+
+  const techUnc = {
+    speed:{photogate:0.02, video:0.06, stopwatch:0.15},
+    dist:{motion:0.02, video:0.04, tape:0.01}
+  };
+  const techLabels = {
+    photogate:'Photogate', video:'Video analysis', stopwatch:'Stopwatch', motion:'Motion sensor', tape:'Tape measure'
+  };
+  const modeLabels = {fixed:'Fixed-time distance', stopping:'Stopping distance'};
+
+  function randn(){
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random();
+    while(v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+  function fmt(x, dp=2){return Number.isFinite(x) ? x.toFixed(dp) : '—';}
+  function readMode(){return modeSel.value;}
+  function readTarget(){return Number(speedSlider.value);}
+  function readTime(){return Number(fixedTime.value);}
+  function readDecel(){return Number(frictionSel.value);}
+  function currentPrediction(speed=readTarget()){
+    return readMode() === 'fixed' ? speed * readTime() : (speed * speed) / (2 * readDecel());
+  }
+
+  function roundRect(c,x,y,w,h,r,fill,stroke){
+    if(w<2*r) r=w/2; if(h<2*r) r=h/2;
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+    if(fill) c.fill();
+    if(stroke) c.stroke();
+  }
+
+  function drawTrack(state={d:0,v:0,maxD:6,mode:readMode(),running:false,stopped:false}){
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const sky = ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#f8fbff');
+    sky.addColorStop(1,'#eef5ff');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = 'rgba(148,163,184,.18)';
+    ctx.lineWidth = 1;
+    for(let gx=0; gx<=W; gx+=64){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for(let gy=0; gy<=H; gy+=64){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+    // bench and floor
+    ctx.fillStyle = '#dbe5f2';
+    ctx.fillRect(70,500,1140,46);
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(70,492,1140,10);
+    ctx.fillStyle = '#e9eef7';
+    ctx.fillRect(0,546,W,174);
+
+    const left = 120, right = 1160, y = 470;
+    const visibleM = Math.max(6, Math.ceil((state.maxD || 6) + 1));
+    const pxPerM = (right-left)/visibleM;
+
+    // ruler ticks
+    ctx.strokeStyle = 'rgba(100,116,139,.35)';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '18px system-ui';
+    ctx.textAlign = 'center';
+    for(let m=0;m<=visibleM;m++){
+      const x = left + m*pxPerM;
+      ctx.beginPath(); ctx.moveTo(x,500); ctx.lineTo(x,525); ctx.stroke();
+      ctx.fillText(m+' m', x, 552);
+    }
+
+    // speed gate
+    const gateX = left;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(gateX,250); ctx.lineTo(gateX,492); ctx.stroke();
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(gateX-32,244,64,16);
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 20px system-ui';
+    ctx.fillText('speed gate', gateX+72, 260);
+    ctx.strokeStyle = 'rgba(56,189,248,.45)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10,8]);
+    ctx.beginPath(); ctx.moveTo(gateX,275); ctx.lineTo(gateX,492); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // distance technology
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(right-30,420,48,56);
+    ctx.fillStyle = '#92400e';
+    ctx.font = 'bold 18px system-ui';
+    ctx.fillText(readMode()==='fixed' ? 'distance sensor' : 'stop-distance sensor', right-118, 404);
+    ctx.strokeStyle = 'rgba(245,158,11,.2)';
+    for(let i=0;i<3;i++){
+      ctx.beginPath(); ctx.arc(right-6,448,70+i*45, Math.PI*.82, Math.PI*1.18); ctx.stroke();
+    }
+
+    // marker for predicted distance
+    const markerX = clamp(left + state.maxD * pxPerM, left, right);
+    ctx.strokeStyle = readMode()==='fixed' ? 'rgba(34,197,94,.8)' : 'rgba(251,113,133,.85)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8,8]);
+    ctx.beginPath(); ctx.moveTo(markerX,300); ctx.lineTo(markerX,500); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = readMode()==='fixed' ? '#bbf7d0' : '#fecdd3';
+    ctx.font = 'bold 18px system-ui';
+    ctx.fillText(readMode()==='fixed' ? 'end of timed interval' : 'stop point', markerX, 288);
+
+    // distance line
+    const carX = clamp(left + (state.d || 0)*pxPerM, left, right);
+    if(state.d>0){
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(left,584); ctx.lineTo(carX,584); ctx.stroke();
+      ctx.fillStyle = '#92400e';
+      ctx.font = 'bold 20px system-ui';
+      ctx.fillText(fmt(state.d,2)+' m', (left+carX)/2, 616);
+    }
+
+    // trolley
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
+    ctx.beginPath(); ctx.ellipse(carX+38,y+34,88,14,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#93c5fd';
+    roundRect(ctx, carX-45, y-38, 130, 48, 12, true, false);
+    ctx.fillStyle = '#dbeafe';
+    roundRect(ctx, carX-18, y-72, 74, 38, 10, true, false);
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath(); ctx.arc(carX-20,y+16,18,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(carX+58,y+16,18,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath(); ctx.arc(carX-20,y+16,8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(carX+58,y+16,8,0,Math.PI*2); ctx.fill();
+
+    // speed arrow
+    if((state.v || 0) > 0.05){
+      const arrowLen = Math.min(260, 55 + state.v*45);
+      const ay = y-110;
+      ctx.strokeStyle = '#22c55e';
+      ctx.fillStyle = '#22c55e';
+      ctx.lineWidth = 8;
+      ctx.beginPath(); ctx.moveTo(carX-20, ay); ctx.lineTo(carX-20+arrowLen, ay); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(carX-20+arrowLen,ay); ctx.lineTo(carX-38+arrowLen,ay-13); ctx.lineTo(carX-38+arrowLen,ay+13); ctx.closePath(); ctx.fill();
+      ctx.font = 'bold 22px system-ui';
+      ctx.fillText('v = '+fmt(state.v,2)+' m/s', carX+arrowLen/2, ay-18);
+    }
+
+    // information cards
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,.90)';
+    roundRect(ctx, 78, 72, 455, 148, 16, true, false);
+    ctx.strokeStyle = 'rgba(148,163,184,.45)'; ctx.lineWidth = 1; roundRect(ctx, 78, 72, 455, 148, 16, false, true);
+    ctx.fillStyle = '#102033';
+    ctx.font = 'bold 24px system-ui';
+    ctx.fillText('Student design focus', 104, 112);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '19px system-ui';
+    ctx.fillText('Change one variable: speed', 104, 145);
+    ctx.fillText(readMode()==='fixed' ? 'Measure: distance after fixed time' : 'Measure: stopping distance', 104, 174);
+    ctx.fillText(readMode()==='fixed' ? 'Control: time interval = '+readTime().toFixed(1)+' s' : 'Control: surface / braking level', 104, 203);
+
+    ctx.fillStyle = 'rgba(255,255,255,.90)';
+    roundRect(ctx, 760, 74, 430, 148, 16, true, false);
+    ctx.strokeStyle = 'rgba(148,163,184,.45)'; ctx.lineWidth = 1; roundRect(ctx, 760, 74, 430, 148, 16, false, true);
+    ctx.fillStyle = '#102033';
+    ctx.font = 'bold 24px system-ui';
+    ctx.fillText('Technology check', 786, 114);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '19px system-ui';
+    ctx.fillText('Speed: '+techLabels[techSpeed.value], 786, 148);
+    ctx.fillText('Distance: '+techLabels[techDist.value], 786, 178);
+    ctx.fillText(readMode()==='fixed' ? 'Model: d = vt' : 'Model: d ∝ v²', 786, 208);
+
+    if(state.stopped){
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(34,197,94,.16)';
+      roundRect(ctx, 440, 320, 400, 70, 18, true, false);
+      ctx.fillStyle = '#166534';
+      ctx.font = 'bold 30px system-ui';
+      ctx.fillText('Trial recorded', 640, 365);
+    }
+  }
+
+  function makeTrial(speedOverride=null){
+    const mode = readMode();
+    const target = speedOverride === null ? readTarget() : speedOverride;
+    const time = readTime();
+    const decel = readDecel();
+    const trueSpeed = clamp(target + randn()*0.035, 0.1, 5.5);
+    const trueDistance = mode === 'fixed' ? trueSpeed * time : (trueSpeed*trueSpeed)/(2*decel);
+    const measuredSpeed = clamp(trueSpeed + randn()*techUnc.speed[techSpeed.value], 0, 8);
+    const measuredDistance = clamp(trueDistance + randn()*techUnc.dist[techDist.value], 0, 40);
+    return {mode,target,time,decel,trueSpeed,trueDistance,measuredSpeed,measuredDistance,speedTech:techSpeed.value,distTech:techDist.value};
+  }
+
+  function getRepeats(){return clamp(parseInt(trialsInput.value || '1',10),1,5);}
+
+  function runTrial(){
+    if(anim) return;
+    queue = Array.from({length:getRepeats()}, () => makeTrial());
+    nextQueuedTrial();
+  }
+
+  function nextQueuedTrial(){
+    if(queue.length === 0){
+      runBtn.disabled = false;
+      autoBtn.disabled = false;
+      updateSlider();
+      return;
+    }
+    animateTrial(queue.shift());
+  }
+
+  function animateTrial(t){
+    runBtn.disabled = true;
+    autoBtn.disabled = true;
+    const mode = t.mode;
+    const duration = mode === 'fixed' ? Math.max(1100, Math.min(3600, t.time*760)) : Math.max(1150, Math.min(3600, (t.trueSpeed/t.decel)*930));
+    const start = performance.now();
+    liveNote.textContent = mode === 'fixed' ? 'Trolley moving — timed distance being measured' : 'Trolley moving — stopping distance being measured';
+    speedRead.textContent = 'measuring…';
+    distRead.textContent = 'measuring…';
+    const maxD = Math.max(t.trueDistance, t.measuredDistance, currentPrediction(t.target));
+    function frame(now){
+      const p = clamp((now-start)/duration,0,1);
+      let d, v;
+      if(mode === 'fixed'){
+        d = t.trueDistance * p;
+        v = t.trueSpeed;
+      }else{
+        d = t.trueDistance * (2*p - p*p);
+        v = t.trueSpeed * (1-p);
+      }
+      drawTrack({d, v, maxD, mode, running:p<1, stopped:p>=1});
+      if(p < 1){
+        anim = requestAnimationFrame(frame);
+      }else{
+        anim = null;
+        recordTrial(t);
+        liveNote.textContent = 'Trial added to table';
+        speedRead.textContent = fmt(t.measuredSpeed,2)+' m/s';
+        distRead.textContent = fmt(t.measuredDistance,2)+' m';
+        setTimeout(nextQueuedTrial, 330);
+      }
+    }
+    anim = requestAnimationFrame(frame);
+  }
+
+  function recordTrial(t){
+    trialCount++;
+    data.push({...t, n:trialCount});
+    renderTable();
+    drawGraph();
+    updateSummary();
+  }
+
+  function renderTable(){
+    if(data.length === 0){
+      tbody.innerHTML = `<tr class="emptyRow"><td colspan="6">No trials yet — use <b>Run trial</b> or <b>Auto set</b> to collect data.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map(d => {
+      const modelValue = d.mode === 'fixed' ? 'd = vt' : 'v²';
+      return `<tr>
+        <td>${d.n}</td>
+        <td>${fmt(d.target,1)}</td>
+        <td>${fmt(d.measuredSpeed,2)}</td>
+        <td>${d.mode === 'fixed' ? fmt(d.time,1) : fmt(d.decel,1)}</td>
+        <td>${fmt(d.measuredDistance,2)}</td>
+        <td>${modelValue}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function regression(points){
+    const n = points.length;
+    if(n < 2) return null;
+    let sx=0, sy=0, sxx=0, sxy=0, syy=0;
+    for(const p of points){ sx+=p.x; sy+=p.y; sxx+=p.x*p.x; sxy+=p.x*p.y; syy+=p.y*p.y; }
+    const denom = n*sxx - sx*sx;
+    if(Math.abs(denom) < 1e-9) return null;
+    const m = (n*sxy - sx*sy)/denom;
+    const b = (sy - m*sx)/n;
+    const rDen = Math.sqrt((n*sxx-sx*sx)*(n*syy-sy*sy));
+    const r = rDen ? (n*sxy-sx*sy)/rDen : 0;
+    return {m,b,r};
+  }
+
+  function groupedMeans(){
+    const groups = new Map();
+    const mode = readMode();
+    for(const d of data.filter(x => x.mode === mode)){
+      const key = d.target.toFixed(1);
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(d.measuredDistance);
+    }
+    return [...groups.entries()].map(([speed, vals]) => ({speed:Number(speed), n:vals.length, mean:vals.reduce((a,b)=>a+b,0)/vals.length}));
+  }
+
+  function drawGraph(){
+    const mode = readMode();
+    const active = data.filter(d => d.mode === mode);
+    const W = graph.width, H = graph.height;
+    gtx.clearRect(0,0,W,H);
+    gtx.fillStyle = '#f8fbff';
+    gtx.fillRect(0,0,W,H);
+    const L=78, R=W-34, T=34, B=H-72;
+    const maxX = Math.max(5, ...active.map(d=>d.measuredSpeed))*1.08;
+    const maxModelY = mode === 'fixed' ? maxX * readTime() : (maxX*maxX)/(2*readDecel());
+    const maxY = Math.max(5, maxModelY, ...active.map(d=>d.measuredDistance))*1.12;
+
+    gtx.strokeStyle = 'rgba(100,116,139,.22)';
+    gtx.lineWidth = 1;
+    gtx.fillStyle = '#475569';
+    gtx.font = '15px system-ui';
+    gtx.textAlign = 'right';
+    for(let i=0;i<=5;i++){
+      const y = B - (B-T)*i/5;
+      const val = maxY*i/5;
+      gtx.beginPath(); gtx.moveTo(L,y); gtx.lineTo(R,y); gtx.stroke();
+      gtx.fillText(val.toFixed(1), L-10, y+5);
+    }
+    gtx.textAlign = 'center';
+    for(let i=0;i<=5;i++){
+      const x = L + (R-L)*i/5;
+      const val = maxX*i/5;
+      gtx.beginPath(); gtx.moveTo(x,T); gtx.lineTo(x,B); gtx.stroke();
+      gtx.fillText(val.toFixed(1), x, B+26);
+    }
+    gtx.strokeStyle = '#475569';
+    gtx.lineWidth = 2;
+    gtx.beginPath(); gtx.moveTo(L,T); gtx.lineTo(L,B); gtx.lineTo(R,B); gtx.stroke();
+    gtx.fillStyle = '#102033';
+    gtx.font = 'bold 18px system-ui';
+    gtx.fillText('Measured speed (m/s)', (L+R)/2, H-22);
+    gtx.save();
+    gtx.translate(24,(T+B)/2); gtx.rotate(-Math.PI/2);
+    gtx.fillText(mode === 'fixed' ? 'Distance travelled (m)' : 'Stopping distance (m)', 0,0);
+    gtx.restore();
+
+    // ideal model line/curve
+    gtx.strokeStyle = mode === 'fixed' ? 'rgba(34,197,94,.85)' : 'rgba(245,158,11,.85)';
+    gtx.lineWidth = 3;
+    gtx.beginPath();
+    for(let i=0;i<=180;i++){
+      const vx = maxX*i/180;
+      const dy = mode === 'fixed' ? vx * readTime() : vx*vx/(2*readDecel());
+      const x = L + (vx/maxX)*(R-L);
+      const y = B - (dy/maxY)*(B-T);
+      if(i===0) gtx.moveTo(x,y); else gtx.lineTo(x,y);
+    }
+    gtx.stroke();
+
+    for(const d of active){
+      const x = L + (d.measuredSpeed/maxX)*(R-L);
+      const y = B - (d.measuredDistance/maxY)*(B-T);
+      gtx.fillStyle = '#38bdf8';
+      gtx.beginPath(); gtx.arc(x,y,7,0,Math.PI*2); gtx.fill();
+      gtx.fillStyle = '#1e3a8a';
+      gtx.font = '12px system-ui';
+      gtx.fillText(d.n, x, y-12);
+    }
+    gtx.textAlign = 'left';
+    gtx.fillStyle = mode === 'fixed' ? '#bbf7d0' : '#fde68a';
+    gtx.font = '15px system-ui';
+    gtx.fillText(mode === 'fixed' ? 'green: ideal d = vt model' : 'orange: ideal stopping-distance model', L+8, T+22);
+  }
+
+  function updateSummary(){
+    const mode = readMode();
+    const active = data.filter(d => d.mode === mode);
+    if(active.length < 2){
+      summary.textContent = 'Collect more data at different speeds before making a conclusion.';
+      graphText.textContent = mode === 'fixed' ? 'Core model: distance travelled = speed × time. Doubling speed should double the distance when the time interval is kept constant.' : 'Extension model: stopping distance = speed² ÷ (2 × deceleration). Doubling speed gives more than double the stopping distance.';
+    }else{
+      const ptsV = active.map(d=>({x:d.measuredSpeed,y:d.measuredDistance}));
+      const ptsV2 = active.map(d=>({x:d.measuredSpeed*d.measuredSpeed,y:d.measuredDistance}));
+      const rv = regression(ptsV);
+      const rv2 = regression(ptsV2);
+      const expected = mode === 'fixed' ? 'speed' : 'speed²';
+      const better = rv2 && rv && Math.abs(rv2.r) > Math.abs(rv.r) ? 'speed²' : 'speed';
+      summary.innerHTML = `Data collected in current mode: <b>${active.length}</b> trials. Correlation using speed: <b>r = ${rv ? rv.r.toFixed(3) : '—'}</b>. Correlation using speed²: <b>r = ${rv2 ? rv2.r.toFixed(3) : '—'}</b>. The expected model for this mode is <b>${expected}</b>; the current data fit slightly better against <b>${better}</b>.`;
+      graphText.innerHTML = mode === 'fixed'
+        ? `Conclusion scaffold: As speed increased, distance travelled increased. Because the time interval was controlled, the expected relationship is <b>directly proportional</b>. Discuss whether measurement uncertainty explains any scatter around the ideal line.`
+        : `Conclusion scaffold: As initial speed increased, stopping distance increased. Because braking deceleration was controlled, the expected relationship is closer to <b>speed²</b>. Discuss uncertainty before judging data quality.`;
+    }
+
+    const means = groupedMeans();
+    if(means.length === 0){
+      meanText.innerHTML = '<b>Means:</b> no repeated data yet.';
+    }else{
+      const useful = means.filter(m => m.n > 1).sort((a,b)=>a.speed-b.speed);
+      if(useful.length === 0){
+        meanText.innerHTML = '<b>Means:</b> add repeated trials at the same speed to calculate means.';
+      }else{
+        meanText.innerHTML = '<b>Means by target speed:</b> ' + useful.map(m => `${m.speed.toFixed(1)} m/s → ${m.mean.toFixed(2)} m (n=${m.n})`).join('; ');
+      }
+    }
+    techText.innerHTML = `<b>Technology note:</b> speed measured with ${techLabels[techSpeed.value]}; distance measured with ${techLabels[techDist.value]}. More scatter means lower precision, not necessarily an invalid investigation.`;
+  }
+
+  function autoSpeeds(){
+    if(autoRange.value === 'junior') return [0.6,1.2,1.8,2.4,3.0];
+    if(autoRange.value === 'wide') return [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0];
+    return [0.8,1.4,2.0,2.6,3.2,3.8,4.4];
+  }
+
+  function autoSet(){
+    if(anim) return;
+    const repeats = getRepeats();
+    queue = [];
+    for(const v of autoSpeeds()){
+      for(let i=0;i<repeats;i++) queue.push(makeTrial(v));
+    }
+    if(queue.length){
+      speedSlider.value = String(queue[0].target);
+      updateSlider(false);
+      nextQueuedTrial();
+    }
+  }
+
+  function clearData(showNote=true){
+    data.length = 0;
+    trialCount = 0;
+    renderTable();
+    speedRead.textContent = '—';
+    distRead.textContent = '—';
+    summary.textContent = 'No data yet. Run repeated trials at several speeds, then compare the trend with the expected model.';
+    meanText.innerHTML = '<b>Means:</b> no repeated data yet.';
+    liveNote.textContent = showNote ? 'Data cleared — ready to launch' : 'Ready to launch';
+    updateSummary();
+    updateSlider(false);
+    drawGraph();
+  }
+
+  function clearIfDataBecauseSettingsChanged(){
+    if(anim) return;
+    if(data.length > 0){
+      clearData(false);
+      liveNote.textContent = 'Investigation setting changed — previous data cleared';
+    }
+  }
+
+  function updateModeText(){
+    const mode = readMode();
+    const fixed = mode === 'fixed';
+    subtitle.innerHTML = fixed
+      ? 'Design a practical investigation using available technologies to measure the independent variable <b>speed</b> and the dependent variable <b>distance travelled in a fixed time</b>. The sim adds realistic measurement uncertainty, repeated trials, means and a graph so students can evaluate data quality.'
+      : 'Extension mode: investigate how changing <b>initial speed</b> affects <b>stopping distance</b> when braking conditions are controlled. This keeps the same investigation-design structure but produces a squared relationship.';
+    modeNote.textContent = fixed
+      ? 'Core mode tests the exact outcome: when the time interval is controlled, distance travelled should increase in direct proportion to speed.'
+      : 'Extension mode is useful for road-safety and friction discussions: changing speed changes kinetic energy, so stopping distance rises more steeply.';
+    timeControl.style.display = fixed ? 'grid' : 'none';
+    surfaceControl.style.display = fixed ? 'none' : 'grid';
+    distanceMetricLabel.textContent = fixed ? 'Measured distance' : 'Measured stopping distance';
+    graphTitle.textContent = fixed ? 'Graph: measured speed vs distance travelled' : 'Graph: measured speed vs stopping distance';
+    timeHead.innerHTML = fixed ? 'Time<br>(s)' : 'Decel.<br>(m/s²)';
+    modelHead.textContent = fixed ? 'Model' : 'Model';
+    ivBox.innerHTML = fixed ? '<b>Independent variable:</b> trolley speed, measured as it passes the start gate.' : '<b>Independent variable:</b> initial trolley speed, measured as it passes the start gate.';
+    dvBox.innerHTML = fixed ? '<b>Dependent variable:</b> distance travelled during the fixed time interval.' : '<b>Dependent variable:</b> distance travelled before the trolley stops.';
+    cvBox.innerHTML = fixed ? '<b>Controlled variables:</b> trolley, track, time interval, start line, sensor positions and release direction.' : '<b>Controlled variables:</b> trolley, surface/braking level, mass, start line, sensor positions and release method.';
+    aimText.textContent = fixed ? 'Investigate how changing the speed of a trolley affects the distance it travels during a fixed time interval.' : 'Investigate how changing the initial speed of a trolley affects its stopping distance on the same surface.';
+    hypothesisText.textContent = fixed ? 'As speed increases, distance travelled will increase. If the time interval is kept constant, distance should be directly proportional to speed.' : 'As initial speed increases, stopping distance will increase. If braking force is approximately constant, the increase should be closer to a squared relationship.';
+    methodText.textContent = fixed ? 'Use a launcher or ramp to give different speeds. Measure speed at the start with a photogate or video analysis, then measure distance after the same time interval using a motion sensor, video analysis or tape measure.' : 'Use a launcher or ramp to give different initial speeds. Measure speed at the start with a photogate or video analysis, then measure the distance travelled before stopping using a motion sensor, video analysis or tape measure.';
+    validityText.textContent = fixed ? 'Only change trolley speed. Keep the trolley, surface, time interval, start line, sensor positions and release direction constant.' : 'Only change initial speed. Keep the trolley, surface, mass, start line, sensor positions and release direction constant.';
+    pills.innerHTML = fixed
+      ? '<span class="pill">IV: speed</span><span class="pill">DV: distance travelled</span><span class="pill">Control: time</span><span class="pill">Quantitative data</span><span class="pill">Available technologies</span><span class="pill">Repeated trials</span><span class="pill">Mean values</span><span class="pill">Linear relationship</span>'
+      : '<span class="pill">IV: initial speed</span><span class="pill">DV: stopping distance</span><span class="pill">Control: surface</span><span class="pill">Quantitative data</span><span class="pill">Available technologies</span><span class="pill">Repeated trials</span><span class="pill">Mean values</span><span class="pill">Squared relationship</span>';
+  }
+
+  function updateSlider(redraw=true){
+    const s = readTarget();
+    speedVal.textContent = s.toFixed(1)+' m/s';
+    targetRead.textContent = s.toFixed(1)+' m/s';
+    timeVal.textContent = readTime().toFixed(1)+' s';
+    const pred = currentPrediction(s);
+    modelRead.textContent = '≈ '+pred.toFixed(2)+' m';
+    updateModeText();
+    if(redraw) drawTrack({d:0,v:0,maxD:Math.max(pred,1),mode:readMode()});
+    drawGraph();
+    updateSummary();
+  }
+
+  modeSel.addEventListener('change', () => { clearIfDataBecauseSettingsChanged(); updateSlider(); });
+  speedSlider.addEventListener('input', () => updateSlider());
+  fixedTime.addEventListener('input', () => { clearIfDataBecauseSettingsChanged(); updateSlider(); });
+  frictionSel.addEventListener('change', () => { clearIfDataBecauseSettingsChanged(); updateSlider(); });
+  techSpeed.addEventListener('change', () => { updateSlider(); });
+  techDist.addEventListener('change', () => { updateSlider(); });
+  trialsInput.addEventListener('change', () => { trialsInput.value = String(getRepeats()); });
+  runBtn.addEventListener('click', runTrial);
+  autoBtn.addEventListener('click', autoSet);
+  clearBtn.addEventListener('click', () => clearData(true));
+
+  updateModeText();
+  renderTable();
+  updateSlider();
+  drawGraph();
+})();
+
+</script>
+</body>
+</html>
