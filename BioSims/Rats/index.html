@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lick Your Rats | SciSims</title>
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <style>
+    :root{
+      --page:#f3f6fb;
+      --card:#ffffff;
+      --ink:#102033;
+      --muted:#5d6e87;
+      --line:#dce4f0;
+      --blue:#2563eb;
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --shadow2:0 10px 24px rgba(15,23,42,.08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(37,99,235,.08), transparent 34%),
+        linear-gradient(180deg,#f8fbff 0%,var(--page) 100%);
+      color:var(--ink);
+    }
+
+    .page{
+      width:min(1500px,100%);
+      margin:0 auto;
+      padding:32px clamp(18px,2vw,36px) 42px;
+    }
+
+    .backLink{
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      margin:0 0 22px;
+      padding:15px 24px;
+      border-radius:999px;
+      background:var(--card);
+      border:1px solid var(--line);
+      color:#1557f0;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:var(--shadow2);
+      font-size:clamp(.98rem,1.25vw,1.25rem);
+    }
+
+    .hero{
+      border-radius:36px;
+      padding:clamp(30px,3vw,48px) clamp(30px,4vw,54px);
+      color:#fff;
+      background:linear-gradient(110deg,#254aa2 0%,#2563eb 50%,#16a34a 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+      margin-bottom:26px;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2.8rem,5vw,5.5rem);
+      line-height:.98;
+      letter-spacing:-.06em;
+      font-weight:900;
+    }
+
+    .hero p{
+      margin:18px 0 0;
+      max-width:1120px;
+      font-size:clamp(1.05rem,1.35vw,1.55rem);
+      line-height:1.35;
+      color:rgba(255,255,255,.94);
+    }
+
+    .chips{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .chip{
+      border:1px solid rgba(255,255,255,.32);
+      background:rgba(255,255,255,.18);
+      color:#fff;
+      border-radius:999px;
+      padding:9px 16px;
+      font-weight:850;
+      font-size:.95rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      margin-bottom:22px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow2);
+      padding:24px 28px;
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:clamp(1.25rem,1.55vw,1.7rem);
+      letter-spacing:-.03em;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:1.05rem;
+    }
+
+    .playerPanel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:22px;
+      overflow:hidden;
+    }
+
+    .playerHeader{
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .playerHeader h2{
+      margin:0;
+      font-size:clamp(1.35rem,1.8vw,2rem);
+      letter-spacing:-.03em;
+    }
+
+    .note{
+      color:var(--muted);
+      font-size:.98rem;
+      line-height:1.4;
+      max-width:760px;
+    }
+
+    #flashContainer{
+      width:100%;
+      aspect-ratio:16/9;
+      background:#111827;
+      border-radius:20px;
+      overflow:hidden;
+      border:1px solid #cbd7e8;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    ruffle-player{
+      width:100%;
+      height:100%;
+    }
+
+    .footerNote{
+      margin-top:14px;
+      color:#6b7b92;
+      font-size:.92rem;
+      line-height:1.4;
+    }
+
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr}
+      .page{padding:22px 12px 32px}
+      .hero{border-radius:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a class="backLink" href="../../index.html">← Back to main SciSims page</a>
+
+    <header class="hero">
+      <h1>Lick Your Rats</h1>
+      <p>Explore how maternal licking and grooming in rats can affect gene expression, brain development and stress responses through epigenetic changes.</p>
+      <div class="chips">
+        <span class="chip">Biology</span>
+        <span class="chip">Genetics</span>
+        <span class="chip">Epigenetics</span>
+        <span class="chip">Gene expression</span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand that environmental factors can influence gene expression without changing the DNA sequence itself.</p>
+      </div>
+      <div class="card">
+        <h2>Success Criteria</h2>
+        <p>Students can explain how maternal care in rats is linked to epigenetic changes, stress responses and differences in adult behaviour.</p>
+      </div>
+    </section>
+
+    <section class="playerPanel">
+      <div class="playerHeader">
+        <h2>Interactive simulation</h2>
+        <div class="note">
+          This archived Flash interactive is loaded using Ruffle. It may take a moment to start.
+        </div>
+      </div>
+
+      <div id="flashContainer"></div>
+
+      <div class="footerNote">
+        Source interactive: Learn.Genetics, University of Utah. This page embeds the locally stored SWF file for classroom use.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      autoplay: "on",
+      unmuteOverlay: "hidden",
+      backgroundColor: "#111827",
+      letterbox: "on",
+      scale: "showAll",
+      forceScale: true,
+      forceAlign: true,
+      salign: "",
+      allowFullscreen: true,
+      quality: "high"
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+
+      const container = document.getElementById("flashContainer");
+      container.appendChild(player);
+
+      player.style.width = "100%";
+      player.style.height = "100%";
+
+      player.load("Licking Rats.swf");
+    });
+  </script>
+</body>
+</html>
