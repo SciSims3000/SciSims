@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Medical Imaging Comparison Simulator</title>
+<link rel="icon" href="../../favicon.png" />
+<style>
+  :root{
+    --page:#f3f6fb;--card:#fff;--ink:#102033;--muted:#5d6e87;--line:#dce4f0;
+    --blue:#2563eb;--blue2:#1f4aa6;--pink:#ef4444;--soft:#eff6ff;--good:#16a34a;--warn:#f59e0b;--bad:#dc2626;
+    --shadow:0 14px 34px rgba(15,23,42,.09);--shadow2:0 8px 18px rgba(15,23,42,.07);--radius:20px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 0%,rgba(37,99,235,.08),transparent 34%),linear-gradient(180deg,#f8fbff 0%,var(--page) 100%);color:var(--ink)}
+  .page{width:min(1840px,100%);margin:0 auto;padding:18px clamp(12px,1.4vw,26px) 30px}
+  .backLink{display:inline-flex;align-items:center;gap:.45rem;margin:0 0 14px;padding:10px 18px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:#1557f0;font-weight:850;text-decoration:none;box-shadow:var(--shadow2);font-size:clamp(.9rem,1vw,1.12rem)}
+  .hero{border-radius:28px;padding:clamp(22px,2.3vw,40px) clamp(24px,3vw,42px);color:#fff;background:linear-gradient(110deg,#254aa2 0%,#2563eb 48%,#ef4444 100%);box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-100px;bottom:-170px;width:430px;height:430px;border-radius:999px;background:rgba(255,255,255,.14);filter:blur(4px)}
+  .hero h1{margin:0;font-size:clamp(2.35rem,4.25vw,4.9rem);line-height:.98;letter-spacing:-.06em;font-weight:950;max-width:1350px}
+  .hero p{margin:12px 0 0;max-width:1300px;font-size:clamp(.98rem,1.18vw,1.35rem);line-height:1.3;color:rgba(255,255,255,.94)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1}.chip{border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:7px 13px;font-weight:850;font-size:clamp(.8rem,.86vw,.98rem)}
+  main{display:grid;gap:12px;margin-top:14px}.introGrid{display:grid;grid-template-columns:1fr;gap:10px}.learningStrip{display:grid;grid-template-columns:1fr 1fr;gap:10px}.topGrid{display:grid;grid-template-columns:minmax(560px,.95fr) minmax(500px,.85fr);gap:12px;align-items:start}.lowerGrid{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}.rightStack{display:grid;gap:10px}
+  .panel,.infoCard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow2);overflow:hidden}.infoCard{padding:12px 16px}.infoCard h2,.panel h2{margin:0 0 6px;font-size:clamp(1.05rem,1.2vw,1.45rem);line-height:1.1;letter-spacing:-.03em}.infoCard p{margin:0;color:var(--muted);font-size:clamp(.84rem,.92vw,1rem);line-height:1.3}.panel h2{padding:13px 16px 0;margin-bottom:0}.panelBody{padding:10px 14px 12px}.subHead{padding:6px 14px 0;font-size:1rem;font-weight:950;color:#102033;letter-spacing:-.02em}
+  .stage{padding:8px 10px 6px;position:relative}canvas{width:100%;height:auto;display:block;background:#f8fbff;border-radius:16px;border:1px solid #d6e0ee;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}#scanCanvas{max-width:610px;margin:0 auto}.statusBadge{position:absolute;left:20px;top:17px;background:rgba(255,255,255,.93);border:1px solid #d6e0ee;border-radius:999px;padding:5px 9px;color:#1e3a8a;font-weight:850;font-size:.76rem;box-shadow:0 6px 14px rgba(15,23,42,.07)}
+  .metricGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px 8px}.metric,.smallCard,.choiceCard,.scenarioCard{background:#fbfdff;border:1px solid #dbe5f2;border-radius:13px;padding:7px 8px}.metric small{display:block;color:#60728c;font-size:.68rem;margin-bottom:2px;font-weight:800}.metric strong{font-size:.9rem}.scenarioCard{margin:0 10px 10px;color:var(--muted);font-size:.8rem;line-height:1.25}.scenarioCard b{color:#102033}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.controlRow{display:grid;gap:5px;background:#fbfdff;border:1px solid #dbe5f2;border-radius:13px;padding:7px 8px}.controlRow.full{grid-column:1 / -1}label{font-size:.82rem;color:#102033;font-weight:850;display:flex;justify-content:space-between;gap:10px;line-height:1.18}select,input[type="range"]{width:100%}select{background:#fff;color:var(--ink);border:1px solid #cbd7e8;border-radius:10px;padding:6px 8px;font-size:.82rem}.hint{font-size:.72rem;color:var(--muted);line-height:1.22;margin:0}.buttonRow{display:grid;grid-template-columns:1fr 1fr;gap:7px}button{border:none;border-radius:11px;padding:7px 9px;color:#fff;background:var(--blue);font-weight:900;cursor:pointer;box-shadow:0 8px 15px rgba(37,99,235,.18);font-size:.82rem}button.secondary{background:#e9eef7;color:#102033;box-shadow:none;border:1px solid #d4deed}.feedback{padding:8px;border-radius:13px;border:1px solid #dbe5f2;background:#fbfdff;line-height:1.25;color:var(--muted);font-size:.8rem}.feedback h3{margin:0 0 3px;color:#102033;font-size:.9rem}.feedback b{color:#102033}.score{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:5px 9px;margin-bottom:6px;font-weight:900;background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe}.score.good{background:#ecfdf5;color:#166534;border-color:#bbf7d0}.score.warn{background:#fffbeb;color:#92400e;border-color:#fde68a}.score.bad{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+  .bars{display:grid;gap:5px}.factorHeading{font-size:.76rem;font-weight:950;color:#102033;margin:3px 0 0}.barRow{display:grid;grid-template-columns:90px 1fr 68px;gap:6px;align-items:center;font-size:.74rem;color:#334155}.barTrack{height:8px;background:#e8eef8;border-radius:999px;overflow:hidden}.barFill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#2563eb,#60a5fa)}.barFill.warnFill{background:linear-gradient(90deg,#f59e0b,#fbbf24)}.barFill.badFill{background:linear-gradient(90deg,#ef4444,#f87171)}.barLabel{font-weight:900;color:#334155;text-align:right}.decisionNote{margin:0 0 6px;color:var(--muted);font-size:.72rem;line-height:1.22}.checklist{grid-column:1 / -1;background:#eff6ff;border:1px solid #bfdbfe;border-radius:13px;padding:7px 8px;color:#28466f;font-size:.74rem;line-height:1.22}.checklist b{color:#102033}.checklist span{display:inline-block;margin-right:8px}
+  .choiceGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:8px 10px 6px}.choiceCard{cursor:pointer;transition:.15s transform,.15s border-color;min-height:78px}.choiceCard:hover{transform:translateY(-2px);border-color:#93b4f8}.choiceCard.active{outline:2px solid rgba(37,99,235,.20);border-color:#2563eb}.choiceCard h3{margin:0 0 4px;font-size:.9rem}.choiceCard p{margin:0;color:var(--muted);font-size:.68rem;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tagRow{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}.miniTag{font-size:.6rem;font-weight:850;border:1px solid #dbe5f2;background:#f4f8ff;color:#1e3a8a;border-radius:999px;padding:2px 5px}
+  table{width:100%;border-collapse:collapse;font-size:.78rem}th,td{padding:5px 6px;text-align:left;border-bottom:1px solid #e3eaf5;vertical-align:top}th{color:#1e3a8a;background:#eef5ff;font-weight:900}td{color:#334155}.rankTable td:nth-child(n+2),.rankTable th:nth-child(n+2){text-align:center}.compactTable td,.compactTable th{font-size:.72rem;padding:4px 5px}.ethicalList{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.smallCard h3{font-size:.94rem;margin:0 0 5px}.smallCard p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.3}.pill{display:inline-block;border:1px solid #bfd0e7;border-radius:999px;padding:4px 8px;margin:2px 3px 2px 0;background:#f4f8ff;font-size:.76rem;color:#1e3a8a;font-weight:800}.rankHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px 0}.rankHeader h2{padding:0;margin:0}.rankToggle{box-shadow:none;background:#e9eef7;color:#102033;border:1px solid #d4deed}.hidden{display:none !important}footer{padding:4px 0;color:#73849b;font-size:.8rem;text-align:center}
+  @media(max-width:1050px){.topGrid,.lowerGrid,.introGrid,.learningStrip{grid-template-columns:1fr}.choiceGrid{grid-template-columns:repeat(2,1fr)}.ethicalList{grid-template-columns:1fr}.metricGrid{grid-template-columns:repeat(2,1fr)}#scanCanvas{max-width:100%}.controls{grid-template-columns:1fr 1fr}}
+  @media(max-width:700px){.page{padding:16px 10px 26px}.hero{border-radius:24px}.choiceGrid,.metricGrid,.buttonRow,.controls{grid-template-columns:1fr}.barRow{grid-template-columns:86px 1fr 56px}.panel h2{padding:13px 13px 0}.panelBody,.choiceGrid{padding-left:12px;padding-right:12px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="backLink" href="../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>Medical Imaging Comparison</h1>
+    <p>Choose the best imaging technology for different medical scenarios by comparing image detail, cost, risk, radiation exposure, accessibility and ethical considerations.</p>
+    <div class="chips"><span class="chip">Investigating Science</span><span class="chip">Medical technologies</span><span class="chip">Risk–benefit decisions</span><span class="chip">X-ray · CT · MRI · Ultrasound</span></div>
+  </header>
+  <main>
+    <section class="introGrid">
+      <div class="infoCard learningStrip">
+        <div><h2>Learning Intention</h2><p>Students will understand that medical imaging technologies are selected by matching the clinical question to the strengths, limitations and risks of each technology.</p></div>
+        <div><h2>Success Criteria</h2><p>Students can compare X-ray, CT, MRI and ultrasound, justify an imaging choice for a scenario and identify ethical issues such as radiation exposure, consent, access and unnecessary testing.</p></div>
+      </div>
+    </section>
+
+    <section class="topGrid">
+      <div class="panel imagingPanel">
+        <h2>Technology cards</h2>
+        <div class="choiceGrid" id="choiceGrid"></div>
+        <div class="subHead">Virtual imaging suite</div>
+        <div class="stage"><div class="statusBadge" id="statusBadge">Select a scenario</div><canvas id="scanCanvas" width="1100" height="560" aria-label="Stylised medical imaging comparison preview"></canvas></div>
+        <div class="metricGrid">
+          <div class="metric"><small>Chosen technology</small><strong id="chosenMetric">X-ray</strong></div>
+          <div class="metric"><small>Radiation exposure</small><strong id="radiationMetric">Low ionising</strong></div>
+          <div class="metric"><small>Chosen detail</small><strong id="detailMetric">Bone</strong></div>
+          <div class="metric"><small>Access / speed</small><strong id="accessMetric">High / fast</strong></div>
+        </div>
+        <div class="scenarioCard" id="scenarioText"><b>Scenario:</b> Select a patient scenario and choose the imaging method you would recommend first.</div>
+      </div>
+
+      <div class="rightStack">
+        <div class="panel">
+          <h2>Controls</h2>
+          <div class="panelBody controls">
+            <div class="controlRow full"><label for="scenario">Medical scenario</label><select id="scenario"></select><p class="hint" id="scenarioHint">Choose a scenario, then select an imaging technology.</p></div>
+            <div class="controlRow"><label for="modality">Imaging technology</label><select id="modality"><option>X-ray</option><option>CT</option><option>MRI</option><option>Ultrasound</option></select></div>
+            <div class="buttonRow"><button id="checkBtn">Check choice</button><button id="nextBtn" class="secondary">Next scenario</button></div>
+            <div class="checklist"><b>Decision checklist:</b> <span>1. What needs to be seen?</span><span>2. Urgent?</span><span>3. Is radiation justified?</span><span>4. Access, cost and consent?</span></div>
+            <div class="feedback full" id="feedback"><h3>Decision feedback</h3><p>Use the controls to select a scenario and imaging technology. The feedback will compare the likely benefits, risks and limitations.</p></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Decision factors</h2>
+          <div class="panelBody"><p class="decisionNote"><b>Strengths:</b> longer bar = better. <b>Concerns:</b> longer bar = more caution.</p><div class="bars" id="bars"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Ethical and practical considerations</h2>
+      <div class="panelBody">
+        <div class="ethicalList">
+          <div class="smallCard"><h3>Risk–benefit</h3><p>Use the lowest-risk technology that can answer the clinical question. Ionising radiation may be justified in emergencies, but should not be used unnecessarily.</p></div>
+          <div class="smallCard"><h3>Access and equity</h3><p>MRI and CT may not be available quickly in all locations. A lower-detail but available test may be the safest first step in some settings.</p></div>
+          <div class="smallCard"><h3>Consent and privacy</h3><p>Patients should understand why the scan is needed, major risks, alternatives and how sensitive medical images and results are stored.</p></div>
+        </div>
+        <div style="margin-top:8px"><span class="pill">radiation exposure</span><span class="pill">cost</span><span class="pill">urgency</span><span class="pill">image detail</span><span class="pill">pregnancy</span><span class="pill">accessibility</span><span class="pill">informed consent</span></div>
+      </div>
+    </section>
+
+    <section class="panel rankPanel">
+      <div class="rankHeader"><h2>Scenario ranking table</h2><button id="toggleRank" class="rankToggle" type="button" aria-expanded="false" aria-controls="rankContent">Show table</button></div>
+      <div class="panelBody hidden" id="rankContent">
+        <table class="rankTable compactTable"><thead><tr><th>Scenario</th><th>X-ray</th><th>CT</th><th>MRI</th><th>Ultrasound</th></tr></thead><tbody id="rankBody"></tbody></table>
+      </div>
+    </section>
+  </main>
+  <footer>Educational simulation only. Real imaging choices must be made by qualified health professionals.</footer>
+</div>
+<script>
+(() => {
+  const modalities = {
+    'X-ray': {
+      short:'Fast, low-cost first-line imaging for bones and chest structures.',
+      radiation:'Low ionising', detail:'Bone/chest', access:'High / fast', cost:'Low', risk:'Low radiation',
+      scores:{bone:5, soft:2, speed:5, cost:1, radiation:2, access:5, ethics:4},
+      tags:['bone','fast','low cost','ionising'], colour:'#2563eb'
+    },
+    'CT': {
+      short:'Rapid cross-sectional imaging for trauma, bleeding and complex internal structures.',
+      radiation:'Higher ionising', detail:'Internal structures', access:'Moderate / fast', cost:'Medium-high', risk:'Higher radiation; contrast issues',
+      scores:{bone:5, soft:4, speed:5, cost:3, radiation:5, access:4, ethics:3},
+      tags:['trauma','bleeding','fast','higher radiation'], colour:'#ef4444'
+    },
+    'MRI': {
+      short:'Excellent soft-tissue detail without ionising radiation, but slower and less accessible.',
+      radiation:'None ionising', detail:'Soft tissue/brain', access:'Lower / slower', cost:'High', risk:'Metal implant and claustrophobia concerns',
+      scores:{bone:3, soft:5, speed:2, cost:5, radiation:0, access:2, ethics:4},
+      tags:['soft tissue','brain','no ionising','expensive'], colour:'#7c3aed'
+    },
+    'Ultrasound': {
+      short:'Real-time sound-wave imaging, useful for pregnancy, fluid, soft tissues and some abdominal conditions.',
+      radiation:'None ionising', detail:'Fluid/soft tissue', access:'High / fast', cost:'Low-medium', risk:'Operator dependent; poor through bone/air',
+      scores:{bone:1, soft:4, speed:4, cost:2, radiation:0, access:4, ethics:5},
+      tags:['pregnancy','real-time','no ionising','operator dependent'], colour:'#16a34a'
+    }
+  };
+  const scenarios = [
+    {title:'Suspected broken wrist after a fall', best:'X-ray', accept:['CT'], need:'bone detail, quick result, low cost', explain:'X-ray is usually the first choice because it shows bone fractures quickly with relatively low radiation and low cost. CT may be useful if the fracture is complex.'},
+    {title:'Pregnant patient having a routine fetal check', best:'Ultrasound', accept:['MRI'], need:'fetal imaging with no ionising radiation', explain:'Ultrasound is the usual first choice because it uses non-ionising sound waves, works in real time and is highly suited to pregnancy checks. MRI may be used for selected questions.'},
+    {title:'Knee twist with suspected ligament tear', best:'MRI', accept:['Ultrasound','X-ray'], need:'soft-tissue detail', explain:'MRI is best for ligaments, cartilage and other soft tissues. X-ray may be used first if a fracture also needs to be excluded.'},
+    {title:'Severe head injury with possible internal bleeding', best:'CT', accept:['MRI'], need:'fast emergency detection of bleeding', explain:'CT is usually preferred in an acute emergency because it is fast and can detect bleeding and serious trauma quickly. The radiation risk is usually justified by urgency.'},
+    {title:'Sudden upper abdominal pain, suspected gallstones', best:'Ultrasound', accept:['CT'], need:'abdominal organs without radiation', explain:'Ultrasound is commonly used first for gallbladder and biliary problems because it is quick, accessible and has no ionising radiation.'},
+    {title:'Persistent headaches, possible brain tumour, not an emergency', best:'MRI', accept:['CT'], need:'high soft-tissue brain detail', explain:'MRI provides excellent brain and soft-tissue detail without ionising radiation. CT may be used when MRI is unavailable or urgent.'},
+    {title:'Major car crash with possible internal injuries', best:'CT', accept:['X-ray','Ultrasound'], need:'rapid whole-body trauma assessment', explain:'CT is often chosen in major trauma because speed and cross-sectional internal detail are critical. Ultrasound or X-ray can help in rapid initial assessment.'},
+    {title:'Cough, fever and suspected pneumonia', best:'X-ray', accept:['CT'], need:'quick chest overview', explain:'Chest X-ray is commonly used first because it is fast, accessible and provides useful lung information with relatively low radiation. CT may be used for complex cases.'},
+    {title:'Child with suspected appendicitis', best:'Ultrasound', accept:['CT','MRI'], need:'reduce radiation where possible', explain:'Ultrasound is often a first-line option in children because it avoids ionising radiation. CT or MRI may be used when ultrasound is inconclusive.'},
+    {title:'Shoulder pain with possible tendon injury', best:'MRI', accept:['Ultrasound','X-ray'], need:'soft tissue and tendon detail', explain:'MRI is strong for detailed tendon and soft-tissue assessment. Ultrasound can also be useful for some tendon questions and is cheaper and faster.'}
+  ];
+  const scenarioSel = document.getElementById('scenario');
+  const modalitySel = document.getElementById('modality');
+  const checkBtn = document.getElementById('checkBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const feedback = document.getElementById('feedback');
+  const statusBadge = document.getElementById('statusBadge');
+  const scenarioText = document.getElementById('scenarioText');
+  const scenarioHint = document.getElementById('scenarioHint');
+  const chosenMetric = document.getElementById('chosenMetric');
+  const radiationMetric = document.getElementById('radiationMetric');
+  const detailMetric = document.getElementById('detailMetric');
+  const accessMetric = document.getElementById('accessMetric');
+  const bars = document.getElementById('bars');
+  const choiceGrid = document.getElementById('choiceGrid');
+  const rankBody = document.getElementById('rankBody');
+  const toggleRank = document.getElementById('toggleRank');
+  const rankContent = document.getElementById('rankContent');
+  const canvas = document.getElementById('scanCanvas');
+  const ctx = canvas.getContext('2d');
+  let current = 0;
+
+  scenarios.forEach((s,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=s.title;scenarioSel.appendChild(opt);});
+
+  function scoreChoice(s, choice){
+    if(choice === s.best) return {level:'good', label:'Strong choice', score:3};
+    if(s.accept.includes(choice)) return {level:'warn', label:'Possible, but not usually first choice', score:2};
+    return {level:'bad', label:'Weak choice for this scenario', score:1};
+  }
+  function scenarioScore(s, modality){
+    const sc = scoreChoice(s, modality).score;
+    return sc === 3 ? 'Best' : sc === 2 ? 'Possible' : 'Poor';
+  }
+  function setScenario(i){current = Number(i); scenarioSel.value = String(current); updateAll(false);}
+  function updateAll(checked=false){
+    const s = scenarios[current]; const m = modalitySel.value; const info = modalities[m];
+    chosenMetric.textContent = m; radiationMetric.textContent = info.radiation; detailMetric.textContent = info.detail; accessMetric.textContent = info.access;
+    statusBadge.textContent = checked ? 'Decision checked' : 'Compare the options';
+    scenarioText.innerHTML = `<b>Scenario:</b> ${s.title}<br><b>Clinical question:</b> ${s.need}.`;
+    scenarioHint.textContent = `Best target: match the scan to ${s.need}.`;
+    drawScan(m, s);
+    drawBars(info);
+    updateCards(m);
+    if(checked) showFeedback(); else feedback.innerHTML = `<h3>Decision feedback</h3><p>Chosen technology: <b>${m}</b>. Use the checklist, then click <b>Check choice</b> to compare your choice with the likely first-line option.</p>`;
+  }
+  function showFeedback(){
+    const s = scenarios[current]; const m = modalitySel.value; const result = scoreChoice(s,m); const info = modalities[m];
+    const alternatives = Object.keys(modalities).map(name => `${name}: ${scenarioScore(s,name)}`).join(' · ');
+    feedback.innerHTML = `<span class="score ${result.level}">${result.label}</span><h3>${m} for: ${s.title}</h3><p><b>Best first choice:</b> ${s.best}. <b>Your choice:</b> ${m}.</p><p>${s.explain}</p><p><b>${m} profile:</b> ${info.short} Cost: ${info.cost}. Risk: ${info.risk}.</p><p><b>Why not the others?</b> ${alternatives}.</p>`;
+  }
+  function strengthLabel(val){
+    return val >= 5 ? 'Excellent' : val >= 4 ? 'High' : val >= 3 ? 'Moderate' : val >= 2 ? 'Limited' : 'Low';
+  }
+  function concernLabel(val, type){
+    if(type === 'radiation' && val === 0) return 'None';
+    return val >= 5 ? 'High' : val >= 4 ? 'Medium-high' : val >= 3 ? 'Medium' : val >= 2 ? 'Low' : 'Very low';
+  }
+  function barRow(name, val, tone, label){
+    const width = Math.max(4, val * 20);
+    return `<div class="barRow"><span>${name}</span><div class="barTrack"><div class="barFill ${tone==='bad'?'badFill':tone==='warn'?'warnFill':''}" style="width:${width}%"></div></div><span class="barLabel">${label}</span></div>`;
+  }
+  function drawBars(info){
+    const s = info.scores;
+    bars.innerHTML = `
+      <div class="factorHeading">Strengths</div>
+      ${barRow('Bone detail', s.bone, 'normal', strengthLabel(s.bone))}
+      ${barRow('Soft tissue', s.soft, 'normal', strengthLabel(s.soft))}
+      ${barRow('Speed', s.speed, 'normal', strengthLabel(s.speed))}
+      ${barRow('Access', s.access, 'normal', strengthLabel(s.access))}
+      <div class="factorHeading">Concerns</div>
+      ${barRow('Cost burden', s.cost, 'warn', concernLabel(s.cost, 'cost'))}
+      ${barRow('Radiation', s.radiation, s.radiation>=4?'bad':'warn', concernLabel(s.radiation, 'radiation'))}
+    `;
+  }
+  function updateCards(active){
+    [...choiceGrid.children].forEach(card=>card.classList.toggle('active', card.dataset.name === active));
+  }
+  function makeCards(){
+    choiceGrid.innerHTML = Object.entries(modalities).map(([name,info])=>`<div class="choiceCard" data-name="${name}"><h3>${name}</h3><p>${info.short}</p><div class="tagRow">${info.tags.map(t=>`<span class="miniTag">${t}</span>`).join('')}</div></div>`).join('');
+    choiceGrid.querySelectorAll('.choiceCard').forEach(card=>card.addEventListener('click',()=>{modalitySel.value=card.dataset.name;updateAll(false);}));
+  }
+  function makeRankTable(){
+    rankBody.innerHTML = scenarios.map((s,i)=>`<tr><td>${i+1}. ${s.title}</td>${Object.keys(modalities).map(m=>`<td>${scenarioScore(s,m)}</td>`).join('')}</tr>`).join('');
+  }
+  function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+  function drawScan(modality, scenario){
+    const W=canvas.width,H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#f8fbff');
+    bg.addColorStop(1,'#edf4ff');
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle='rgba(148,163,184,.18)';
+    ctx.lineWidth=1;
+    for(let x=0;x<W;x+=58){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=58){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    // Preview card
+    ctx.fillStyle='rgba(255,255,255,.92)';
+    ctx.strokeStyle='#d6e0ee';
+    ctx.lineWidth=2;
+    roundRect(ctx,70,70,455,350,26);ctx.fill();ctx.stroke();
+
+    // Decision card: slightly taller, with safer text spacing
+    roundRect(ctx,575,58,455,414,26);ctx.fill();ctx.stroke();
+
+    ctx.fillStyle='#102033';
+    ctx.font='900 30px Inter, sans-serif';
+    ctx.fillText(modality,105,118);
+    ctx.font='800 20px Inter, sans-serif';
+    ctx.fillStyle='#5d6e87';
+    ctx.fillText('Stylised scan preview',105,148);
+
+    ctx.font='900 26px Inter, sans-serif';
+    ctx.fillStyle='#102033';
+    ctx.fillText('Decision factors',610,104);
+
+    const info=modalities[modality];
+    const fit=scoreChoice(scenario, modality);
+    const fitText=fit.level==='good'?'Strong match':fit.level==='warn'?'Possible match':'Weak match';
+    const fitColour=fit.level==='good'?'#166534':fit.level==='warn'?'#92400e':'#991b1b';
+
+    function drawWrapped(text, x, y, maxWidth, lineHeight, font, colour){
+      ctx.font = font;
+      ctx.fillStyle = colour;
+      const words = String(text).split(' ');
+      let line = '';
+      for(let i=0;i<words.length;i++){
+        const test = line + words[i] + ' ';
+        if(ctx.measureText(test).width > maxWidth && i > 0){
+          ctx.fillText(line.trim(), x, y);
+          line = words[i] + ' ';
+          y += lineHeight;
+        }else{
+          line = test;
+        }
+      }
+      ctx.fillText(line.trim(), x, y);
+      return y + lineHeight;
+    }
+
+    let py = drawWrapped(`Scenario: ${scenario.title}`,610,133,365,21,'800 17px Inter, sans-serif','#5d6e87') + 12;
+
+    const rows = [
+      {label:'Clinical need', text:scenario.need, colour:'#334155'},
+      {label:'Selected', text:`${modality} — ${fitText}`, colour:fitColour},
+      {label:'Chosen detail', text:info.detail, colour:'#334155'},
+      {label:'Radiation', text:info.radiation, colour:info.scores.radiation>3?'#dc2626':'#334155'},
+      {label:'Main limitation', text:info.risk, colour:'#334155'}
+    ];
+
+    rows.forEach((row)=>{
+      ctx.fillStyle = row.colour;
+      ctx.beginPath();
+      ctx.arc(615, py - 6, 3.2, 0, Math.PI*2);
+      ctx.fill();
+      py = drawWrapped(`${row.label}: ${row.text}`,626,py,360,21,'800 16px Inter, sans-serif',row.colour) + 7;
+    });
+
+    drawModalityGraphic(modality);
+    ctx.fillStyle='#dbe5f2';
+    ctx.fillRect(0,472,W,88);
+    ctx.fillStyle='#64748b';
+    ctx.font='800 18px Inter, sans-serif';
+    ctx.fillText('Goal: choose the technology that answers the clinical question with the least unnecessary risk.',75,526);
+  }
+  function wrapText(text,x,y,maxWidth,lineHeight){const words=text.split(' ');let line='';for(let n=0;n<words.length;n++){const test=line+words[n]+' ';if(ctx.measureText(test).width>maxWidth&&n>0){ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight}else line=test}ctx.fillText(line,x,y)}
+  function wrapTextReturnY(text,x,y,maxWidth,lineHeight){const words=text.split(' ');let line='';for(let n=0;n<words.length;n++){const test=line+words[n]+' ';if(ctx.measureText(test).width>maxWidth&&n>0){ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight}else line=test}ctx.fillText(line,x,y);return y;}
+  function drawModalityGraphic(m){
+    ctx.save();ctx.translate(105,185);
+    if(m==='X-ray'){
+      ctx.strokeStyle='#1e3a8a';ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(95,40);ctx.lineTo(95,190);ctx.moveTo(55,85);ctx.lineTo(135,85);ctx.moveTo(52,190);ctx.lineTo(138,190);ctx.stroke();
+      ctx.lineWidth=9;ctx.strokeStyle='#93c5fd';for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(62+i*13,105);ctx.lineTo(62+i*13,174);ctx.stroke()}ctx.fillStyle='#dbeafe';ctx.beginPath();ctx.arc(95,22,22,0,Math.PI*2);ctx.fill();
+    } else if(m==='CT'){
+      ctx.fillStyle='#e2e8f0';ctx.beginPath();ctx.ellipse(140,120,118,118,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f8fbff';ctx.beginPath();ctx.ellipse(140,120,69,69,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ef4444';ctx.lineWidth=8;ctx.beginPath();ctx.arc(140,120,95,-.7,2.1);ctx.stroke();ctx.fillStyle='#fca5a5';ctx.fillRect(102,108,78,24);
+    } else if(m==='MRI'){
+      ctx.fillStyle='#ede9fe';roundRect(ctx,30,48,230,170,38);ctx.fill();ctx.fillStyle='#fff';roundRect(ctx,82,88,126,92,45);ctx.fill();ctx.strokeStyle='#7c3aed';ctx.lineWidth=4;ctx.beginPath();ctx.arc(145,133,42,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(112,133);ctx.bezierCurveTo(122,96,166,96,178,133);ctx.bezierCurveTo(166,168,122,168,112,133);ctx.stroke();
+    } else {
+      ctx.fillStyle='#dcfce7';roundRect(ctx,35,45,240,185,24);ctx.fill();ctx.fillStyle='#102033';roundRect(ctx,55,66,200,135,16);ctx.fill();ctx.strokeStyle='#86efac';ctx.lineWidth=3;for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(155,150,20+i*15,Math.PI*1.05,Math.PI*1.95);ctx.stroke()}ctx.fillStyle='#bbf7d0';ctx.beginPath();ctx.ellipse(145,145,38,26,.4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#16a34a';ctx.beginPath();ctx.arc(158,140,6,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+  scenarioSel.addEventListener('change',()=>setScenario(scenarioSel.value));
+  modalitySel.addEventListener('change',()=>updateAll(false));
+  checkBtn.addEventListener('click',()=>updateAll(true));
+  nextBtn.addEventListener('click',()=>setScenario((current+1)%scenarios.length));
+  toggleRank.addEventListener('click', () => {
+    const nowHidden = rankContent.classList.toggle('hidden');
+    toggleRank.textContent = nowHidden ? 'Show table' : 'Hide table';
+    toggleRank.setAttribute('aria-expanded', String(!nowHidden));
+  });
+  toggleRank.setAttribute('aria-controls', 'rankContent');
+  toggleRank.setAttribute('aria-expanded', 'false');
+  makeCards(); makeRankTable(); setScenario(0);
+})();
+</script>
+</body>
+</html>
