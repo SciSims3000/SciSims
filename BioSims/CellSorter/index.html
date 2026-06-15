@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build-a-Cell Sorter</title>
+  <style>
+    :root{
+      --bg:#eef5fb;
+      --panel:#ffffff;
+      --ink:#132033;
+      --muted:#5b6b7d;
+      --line:#d8e2ee;
+      --accent:#2563eb;
+      --accent-2:#0f766e;
+      --good:#15803d;
+      --warn:#b45309;
+      --bad:#b91c1c;
+      --soft-blue:#e8f0ff;
+      --soft-green:#e9f7ef;
+      --soft-yellow:#fff7df;
+      --soft-red:#fff1f2;
+      --shadow:0 12px 30px rgba(15, 23, 42, .12);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(37,99,235,.12), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(20,184,166,.14), transparent 26%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color:var(--ink);
+      min-height:100vh;
+      padding:18px;
+    }
+
+    .app{
+      max-width:1600px;
+      margin:0 auto;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:14px;
+    }
+
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+      padding:14px 22px;
+      border-radius:999px;
+      background:rgba(255,255,255,.94);
+      color:#2563eb;
+      font-weight:950;
+      font-size:1.05rem;
+      text-decoration:none;
+      border:1px solid rgba(203,213,225,.9);
+      box-shadow:0 8px 22px rgba(15,23,42,.08);
+    }
+
+    .back-link:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 26px rgba(15,23,42,.12);
+    }
+
+    .layout-note{
+      margin:0;
+      color:#52637a;
+      font-size:1rem;
+      text-align:center;
+      flex:1 1 auto;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(320px, 560px);
+      align-items:stretch;
+      gap:22px;
+      padding:34px 36px;
+      background:linear-gradient(124deg, #182a63 0%, #245fe4 55%, #27ae60 100%);
+      color:#fff;
+      box-shadow:0 16px 36px rgba(15, 23, 42, .18);
+      border-radius:28px;
+      margin-bottom:18px;
+      min-height:300px;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-96px;
+      bottom:-136px;
+      width:360px;
+      height:360px;
+      border-radius:50%;
+      background:rgba(255,255,255,.18);
+      pointer-events:none;
+    }
+
+    .hero-content,
+    .hero-cards{
+      position:relative;
+      z-index:1;
+    }
+
+    .hero-content{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-height:230px;
+    }
+
+    h1{
+      margin:0;
+      max-width:920px;
+      font-size:clamp(2.35rem, 4.4vw, 4.15rem);
+      line-height:.98;
+      letter-spacing:-.055em;
+      font-weight:950;
+    }
+
+    .subtitle{
+      margin:1.2rem 0 0;
+      color:rgba(255,255,255,.86);
+      max-width:930px;
+      line-height:1.45;
+      font-size:clamp(1.02rem, 1.35vw, 1.28rem);
+      font-weight:650;
+    }
+
+    .hero-cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      align-content:center;
+    }
+
+    .hero-card{
+      min-height:170px;
+      padding:22px 22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.24);
+      background:rgba(255,255,255,.17);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter:blur(7px);
+    }
+
+    .hero-card h2{
+      margin:0 0 12px;
+      color:rgba(255,255,255,.76);
+      font-size:.92rem;
+      text-transform:uppercase;
+      letter-spacing:.07em;
+      font-weight:950;
+    }
+
+    .hero-card p{
+      margin:0;
+      color:rgba(255,255,255,.94);
+      font-size:1.03rem;
+      line-height:1.46;
+      font-weight:650;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) 360px;
+      gap:14px;
+      align-items:stretch;
+    }
+
+    .panel{
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:13px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(248,250,252,.92), rgba(255,255,255,.92));
+    }
+
+    .panel-title{
+      margin:0;
+      font-size:1.05rem;
+      font-weight:900;
+      letter-spacing:-.01em;
+    }
+
+    .mini-help{
+      color:var(--muted);
+      font-size:.88rem;
+      margin:0;
+    }
+
+    .sorter{
+      padding:14px;
+      min-height:520px;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(260px, 1fr));
+      gap:13px;
+    }
+
+    .cell-drop{
+      position:relative;
+      min-height:245px;
+      border:2px dashed #c6d3e1;
+      border-radius:20px;
+      background:linear-gradient(180deg, #fbfdff 0%, #f6f9fc 100%);
+      padding:12px;
+      overflow:hidden;
+      transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
+      cursor:pointer;
+    }
+
+    .cell-drop:focus{
+      outline:3px solid rgba(37,99,235,.28);
+      outline-offset:2px;
+    }
+
+    .cell-drop.drag-over,
+    .cell-drop.selected-target{
+      transform:translateY(-2px);
+      border-color:var(--accent);
+      box-shadow:0 12px 24px rgba(37, 99, 235, .16);
+      background:#f8fbff;
+    }
+
+    .cell-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      position:relative;
+      z-index:2;
+    }
+
+    .cell-top h3{
+      margin:0;
+      font-size:1.02rem;
+    }
+
+    .cell-type{
+      font-size:.73rem;
+      font-weight:900;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      color:#334155;
+      background:#e2e8f0;
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    .cell-art{
+      position:absolute;
+      inset:48px 28px 62px 28px;
+      opacity:.36;
+      pointer-events:none;
+    }
+
+    .plant .cell-art{
+      border:8px solid #26734d;
+      background:rgba(34,197,94,.22);
+      border-radius:22px;
+      box-shadow:inset 0 0 0 6px rgba(22,163,74,.15);
+    }
+
+    .animal .cell-art{
+      background:rgba(96,165,250,.24);
+      border:5px solid rgba(37,99,235,.85);
+      border-radius:45% 55% 52% 48% / 56% 44% 58% 42%;
+    }
+
+    .fungi .cell-art{
+      background:rgba(251,191,36,.25);
+      border:7px solid rgba(146,64,14,.85);
+      border-radius:38% 62% 45% 55% / 55% 45% 55% 45%;
+      box-shadow:inset 0 0 0 5px rgba(245,158,11,.15);
+    }
+
+    .bacteria .cell-art{
+      left:42px;
+      right:42px;
+      top:70px;
+      bottom:78px;
+      background:rgba(20,184,166,.23);
+      border:6px solid rgba(15,118,110,.88);
+      border-radius:999px;
+    }
+
+    .nucleus-dot,
+    .dna-loop{
+      position:absolute;
+      z-index:1;
+      pointer-events:none;
+      opacity:.38;
+    }
+
+    .nucleus-dot{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:rgba(124,58,237,.35);
+      border:4px solid rgba(109,40,217,.75);
+      left:50%;
+      top:46%;
+      transform:translate(-50%,-50%);
+    }
+
+    .dna-loop{
+      left:50%;
+      top:50%;
+      width:70px;
+      height:34px;
+      transform:translate(-50%, -50%) rotate(-12deg);
+      border:4px solid rgba(15,118,110,.8);
+      border-radius:50%;
+    }
+
+    .chip-zone{
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:12px;
+      min-height:54px;
+      display:flex;
+      flex-wrap:wrap;
+      align-content:flex-end;
+      gap:6px;
+      z-index:4;
+    }
+
+    .chip{
+      appearance:none;
+      border:none;
+      padding:6px 8px;
+      border-radius:999px;
+      background:#e2e8f0;
+      color:#172033;
+      font-size:.77rem;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 2px 0 rgba(15,23,42,.06);
+      transition:transform .12s ease, background .12s ease;
+    }
+
+    .chip:hover{ transform:translateY(-1px); }
+    .chip.correct{ background:#dcfce7; color:#166534; }
+    .chip.incorrect{ background:#fee2e2; color:#991b1b; }
+    .chip.missing-hint{ background:#fef3c7; color:#92400e; }
+
+    .bank-panel{
+      margin-top:14px;
+    }
+
+    .structure-bank{
+      padding:14px;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(180px, 1fr));
+      gap:10px;
+    }
+
+    .structure-card{
+      border:1px solid #cbd5e1;
+      background:#fff;
+      border-radius:14px;
+      padding:10px 11px;
+      min-height:74px;
+      box-shadow:0 4px 10px rgba(15,23,42,.06);
+      cursor:grab;
+      user-select:none;
+      transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease, background .14s ease;
+    }
+
+    .structure-card:active{ cursor:grabbing; }
+    .structure-card:hover,
+    .structure-card.selected{
+      transform:translateY(-2px);
+      border-color:var(--accent);
+      box-shadow:0 10px 20px rgba(37,99,235,.15);
+      background:#f8fbff;
+    }
+
+    .structure-name{
+      font-weight:900;
+      margin:0 0 4px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .structure-tip{
+      margin:0;
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1.25;
+    }
+
+    .icon{
+      display:inline-grid;
+      place-items:center;
+      width:24px;
+      height:24px;
+      border-radius:8px;
+      background:#eff6ff;
+      font-size:15px;
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+
+    .evidence-body{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .feedback-card{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+
+    .feedback-card h3{
+      margin:0 0 7px;
+      font-size:.96rem;
+    }
+
+    .feedback-card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.4;
+      font-size:.92rem;
+    }
+
+    .feedback-card.good{background:var(--soft-green); border-color:#bbf7d0;}
+    .feedback-card.bad{background:var(--soft-red); border-color:#fecdd3;}
+    .feedback-card.warn{background:var(--soft-yellow); border-color:#fde68a;}
+    .feedback-card.info{background:var(--soft-blue); border-color:#c7d7fe;}
+
+    .score-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .score-box{
+      padding:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      text-align:center;
+    }
+
+    .score-value{
+      display:block;
+      font-size:1.45rem;
+      font-weight:950;
+      letter-spacing:-.04em;
+    }
+
+    .score-label{
+      color:var(--muted);
+      font-size:.78rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .rules{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.42;
+      font-size:.9rem;
+    }
+
+    .rules li{ margin:.26rem 0; }
+
+    .controls{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:13px 14px;
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    button{
+      font:inherit;
+    }
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:9px 12px;
+      font-weight:900;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+      box-shadow:0 3px 8px rgba(15,23,42,.12);
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+    .btn.primary{ background:var(--accent); color:white; }
+    .btn.secondary{ background:#e2e8f0; color:#0f172a; }
+    .btn.success{ background:var(--accent-2); color:white; }
+    .btn.warning{ background:#f59e0b; color:#111827; }
+    .btn.danger{ background:#ef4444; color:white; }
+
+    .toggle-wrap{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px 14px;
+      color:var(--muted);
+      font-size:.9rem;
+      font-weight:750;
+    }
+
+    .toggle-wrap label{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      cursor:pointer;
+    }
+
+    input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      accent-color:var(--accent);
+    }
+
+    .footer-note{
+      margin:12px 2px 0;
+      color:var(--muted);
+      font-size:.8rem;
+      line-height:1.35;
+    }
+
+    .hidden{display:none !important;}
+
+    @media (max-width:1040px){
+      .topbar{ align-items:flex-start; }
+      .layout-note{ text-align:right; }
+      .hero{ grid-template-columns:1fr; min-height:auto; }
+      .hero-content{ min-height:auto; }
+      .hero-cards{ grid-template-columns:1fr 1fr; }
+      .layout{ grid-template-columns:1fr; }
+      .side{ min-height:auto; }
+      .sorter{ min-height:auto; }
+      .structure-bank{ grid-template-columns:repeat(2, minmax(160px, 1fr)); }
+    }
+
+    @media (max-width:680px){
+      body{padding:10px;}
+      .topbar{ flex-direction:column; align-items:stretch; }
+      .layout-note{ text-align:left; }
+      .back-link{ justify-content:center; }
+      .hero{ padding:24px 20px; border-radius:22px; }
+      .hero-cards{ grid-template-columns:1fr; }
+      h1{ font-size:clamp(2rem, 10vw, 3rem); }
+      .sorter{ grid-template-columns:1fr; }
+      .cell-drop{ min-height:230px; }
+      .structure-bank{ grid-template-columns:1fr; }
+      .controls{ align-items:stretch; }
+      .button-row{ width:100%; }
+      .btn{ flex:1 1 145px; }
+    }
+
+    .mode-switch{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      margin-top:18px;
+    }
+
+    .mode-btn{
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.16);
+      color:#fff;
+      border-radius:999px;
+      padding:9px 14px;
+      font-weight:950;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+    }
+
+    .mode-btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.22);
+    }
+
+    .mode-btn.active{
+      background:rgba(255,255,255,.30);
+      border-color:rgba(255,255,255,.48);
+      color:#fff;
+      box-shadow:0 8px 18px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.16);
+    }
+
+    .mode-note{
+      margin:12px 0 0;
+      color:rgba(255,255,255,.78);
+      font-size:.92rem;
+      line-height:1.35;
+      max-width:920px;
+    }
+
+
+  </style></head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back-link" href="../../index.html">← Back to main SciSims page</a>
+      <p class="layout-note">Compact dashboard layout: sorting board and current evidence stay side by side, with controls arranged horizontally underneath.</p>
+    </div>
+
+    <section class="hero" aria-labelledby="mainTitle">
+      <div class="hero-content">
+        <h1 id="mainTitle">Build-a-Cell Sorter</h1>
+        <p class="subtitle" id="subtitle">Sort cell structures into the cell types where they belong, then use evidence to compare and classify different cells.</p>
+        <div class="mode-switch" role="group" aria-label="Choose sorting mode">
+          <button class="mode-btn active" id="easyModeBtn" data-mode="easy" type="button">Easy: Plant vs Animal</button>
+          <button class="mode-btn" id="standardModeBtn" data-mode="standard" type="button">Standard: Four Cell Types</button>
+        </div>
+        <p class="mode-note" id="modeDescription">Easy Mode compares plant and animal cells only. It focuses on shared eukaryotic structures and the plant-only features that help distinguish plant cells.</p>
+      </div>
+
+      <div class="hero-cards" aria-label="Learning intention and success criteria">
+        <article class="hero-card">
+          <h2>Learning intention</h2>
+          <p>Students will understand that cell structures can be compared to classify different cell types.</p>
+        </article>
+        <article class="hero-card">
+          <h2>Success criteria</h2>
+          <p>Students can sort cell structures into the correct cells and justify their choices using evidence.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div>
+        <section class="panel" aria-label="Cell sorting area">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Cell sorting board</h2>
+              <p class="mini-help" id="boardHelp">Click a structure, then click a cell. You can also drag structures into cells.</p>
+            </div>
+            <p class="mini-help"><strong>Target:</strong> <span id="targetText">13 correct placements</span></p>
+          </div>
+
+          <div class="sorter" id="sorter">
+            <div class="cell-drop plant" data-cell="plant" tabindex="0" role="button" aria-label="Plant cell drop zone">
+              <div class="cell-top"><h3>Plant cell</h3><span class="cell-type">Eukaryote</span></div>
+              <div class="cell-art"></div><div class="nucleus-dot"></div>
+              <div class="chip-zone" aria-live="polite"></div>
+            </div>
+
+            <div class="cell-drop animal" data-cell="animal" tabindex="0" role="button" aria-label="Animal cell drop zone">
+              <div class="cell-top"><h3>Animal cell</h3><span class="cell-type">Eukaryote</span></div>
+              <div class="cell-art"></div><div class="nucleus-dot"></div>
+              <div class="chip-zone" aria-live="polite"></div>
+            </div>
+
+            <div class="cell-drop fungi" data-cell="fungi" tabindex="0" role="button" aria-label="Fungal cell drop zone">
+              <div class="cell-top"><h3>Fungal cell</h3><span class="cell-type">Eukaryote</span></div>
+              <div class="cell-art"></div><div class="nucleus-dot"></div>
+              <div class="chip-zone" aria-live="polite"></div>
+            </div>
+
+            <div class="cell-drop bacteria" data-cell="bacteria" tabindex="0" role="button" aria-label="Bacterial cell drop zone">
+              <div class="cell-top"><h3>Bacterial cell</h3><span class="cell-type">Prokaryote</span></div>
+              <div class="cell-art"></div><div class="dna-loop"></div>
+              <div class="chip-zone" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel bank-panel" aria-label="Structure bank">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Structure bank</h2>
+              <p class="mini-help" id="bankHelp">These cards can be reused. A structure may belong in more than one cell type.</p>
+            </div>
+            <span class="mode-pill" id="modePill">Easy Mode</span>
+          </div>
+          <div class="structure-bank" id="structureBank"></div>
+        </section>
+      </div>
+
+      <aside class="panel side" aria-label="Evidence and feedback">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Evidence panel</h2>
+            <p class="mini-help">Use observations to justify classification.</p>
+          </div>
+        </div>
+
+        <div class="evidence-body">
+          <div class="score-grid">
+            <div class="score-box"><span class="score-value" id="correctCount">0</span><span class="score-label">correct</span></div>
+            <div class="score-box"><span class="score-value" id="missingCount">13</span><span class="score-label">missing</span></div>
+            <div class="score-box"><span class="score-value" id="wrongCount">0</span><span class="score-label">incorrect</span></div>
+            <div class="score-box"><span class="score-value" id="percentCount">0%</span><span class="score-label">score</span></div>
+          </div>
+
+          <div class="feedback-card info" id="selectedInfo">
+            <h3>Start sorting</h3>
+            <p>Select a structure from the bank. Then place it into each cell type where it belongs.</p>
+          </div>
+
+          <div class="feedback-card" id="feedbackBox">
+            <h3>Feedback</h3>
+            <p>Your checks and placement feedback will appear here. Click a chip in a cell to remove it.</p>
+          </div>
+
+          <div class="feedback-card" id="clueBox">
+            <h3>Classification clues</h3>
+            <ul class="rules" id="clueList"></ul>
+          </div>
+
+          <div class="feedback-card warn" id="misconceptionBox">
+            <h3>Watch the common trap</h3>
+            <p id="trapText">Plant cells have a cell wall, chloroplasts and a large permanent vacuole. Animal cells do not.</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="controls" aria-label="Simulation controls">
+      <div class="button-row">
+        <button class="btn primary" id="checkBtn">Check cells</button>
+        <button class="btn secondary" id="clearBtn">Reset sorter</button>
+        <button class="btn success" id="revealBtn">Reveal answer</button>
+        <button class="btn warning" id="challengeBtn">Challenge mode</button>
+      </div>
+      <div class="toggle-wrap">
+        <label><input type="checkbox" id="learnMode" checked> Instant feedback</label>
+        <label><input type="checkbox" id="hideClues"> Hide evidence clues</label>
+      </div>
+    </section>
+
+    <p class="footer-note" id="teacherNote">Teacher note: Easy Mode uses a simplified school-level comparison of plant and animal cells. It focuses on commonly taught visible features rather than every structure found in every cell.</p>
+  </main>
+
+  <script>
+    const structures = [
+      {
+        id: 'membrane',
+        name: 'Cell membrane',
+        icon: '◌',
+        tip: 'A thin boundary that controls movement in and out.',
+        cells: ['plant', 'animal', 'fungi', 'bacteria'],
+        evidence: 'All cells have a cell membrane. It controls what enters and leaves the cell.'
+      },
+      {
+        id: 'cytoplasm',
+        name: 'Cytoplasm',
+        icon: '≈',
+        tip: 'Jelly-like material where many reactions occur.',
+        cells: ['plant', 'animal', 'fungi', 'bacteria'],
+        evidence: 'All cells have cytoplasm. It is the fluid-like material inside the cell.'
+      },
+      {
+        id: 'ribosomes',
+        name: 'Ribosomes',
+        icon: '•',
+        tip: 'Tiny structures involved in protein production.',
+        cells: ['plant', 'animal', 'fungi', 'bacteria'],
+        evidence: 'All cells use ribosomes to make proteins, including bacteria.'
+      },
+      {
+        id: 'nucleus',
+        name: 'Nucleus',
+        icon: '●',
+        tip: 'Contains genetic information in eukaryotic cells.',
+        cells: ['plant', 'animal', 'fungi'],
+        evidence: 'A nucleus is found in eukaryotic cells such as plant, animal and fungal cells. Bacteria do not have a nucleus.'
+      },
+      {
+        id: 'mitochondria',
+        name: 'Mitochondria',
+        icon: 'ϟ',
+        tip: 'Release usable energy through cellular respiration.',
+        cells: ['plant', 'animal', 'fungi'],
+        evidence: 'Mitochondria are organelles found in eukaryotic cells. Bacteria do not have mitochondria.'
+      },
+      {
+        id: 'cellWall',
+        name: 'Cell wall',
+        icon: '▣',
+        tip: 'A stronger outer layer that helps support the cell.',
+        cells: ['plant', 'fungi', 'bacteria'],
+        evidence: 'Plant, fungal and bacterial cells have cell walls. Animal cells do not. Plant walls are mainly cellulose, fungal walls are mainly chitin, and bacterial walls are commonly made from peptidoglycan.'
+      },
+      {
+        id: 'chloroplasts',
+        name: 'Chloroplasts',
+        icon: '☘',
+        tip: 'Capture light energy for photosynthesis.',
+        cells: ['plant'],
+        evidence: 'Chloroplasts are a key plant cell structure used in photosynthesis. Animals and fungi do not have chloroplasts. Some bacteria can photosynthesise, but bacteria do not have chloroplasts.'
+      },
+      {
+        id: 'vacuole',
+        name: 'Large permanent vacuole',
+        icon: '⬡',
+        tip: 'Large storage space common in plant cells.',
+        cells: ['plant'],
+        evidence: 'A large permanent vacuole is a typical plant cell feature. This card is specific to plant cells.'
+      },
+      {
+        id: 'circularDNA',
+        name: 'Circular DNA',
+        icon: '∞',
+        tip: 'Genetic material not enclosed inside a nucleus.',
+        cells: ['bacteria'],
+        evidence: 'Bacterial DNA is not enclosed in a nucleus. It is often represented as circular DNA in school diagrams.'
+      }
+    ];
+
+    const cellNames = {
+      plant: 'Plant cell',
+      animal: 'Animal cell',
+      fungi: 'Fungal cell',
+      bacteria: 'Bacterial cell'
+    };
+
+    const modes = {
+      easy: {
+        label: 'Easy Mode',
+        title: 'Easy: Plant vs Animal',
+        cells: ['plant', 'animal'],
+        structures: ['membrane', 'cytoplasm', 'ribosomes', 'nucleus', 'mitochondria', 'cellWall', 'chloroplasts', 'vacuole'],
+        description: 'Easy Mode compares plant and animal cells only. It focuses on shared eukaryotic structures and the plant-only features that help distinguish plant cells.',
+        bankHelp: 'These cards can be reused. Most shared eukaryotic structures belong in both cells, while some plant structures belong only in the plant cell.',
+        start: 'Select a structure from the bank. Then place it into the plant cell, the animal cell, or both.',
+        reveal: 'This shows the accepted school-level model for comparing plant and animal cells.',
+        complete: 'Complete plant vs animal model. Both cells share a nucleus, cytoplasm, membrane, ribosomes and mitochondria. Plant cells are distinguished by a cell wall, chloroplasts and a large permanent vacuole.',
+        challenge: 'Instant feedback is off. Build the plant and animal cells first, then use Check cells.',
+        teacher: 'Teacher note: Easy Mode uses a simplified school-level comparison of plant and animal cells. It focuses on commonly taught visible features rather than every structure found in every cell.',
+        trap: 'Plant cells have a cell wall, chloroplasts and a large permanent vacuole. Animal cells do not.',
+        clues: [
+          'Plant and animal cells are both eukaryotic, so they have a nucleus and mitochondria.',
+          'Both plant and animal cells have cytoplasm, a cell membrane and ribosomes.',
+          'Plant cells have a cell wall, chloroplasts and a large permanent vacuole.',
+          'Animal cells do not have a cell wall, chloroplasts or a large permanent vacuole.',
+          'Shared structures help show similarities; plant-only structures help distinguish plant cells from animal cells.'
+        ]
+      },
+      standard: {
+        label: 'Standard Mode',
+        title: 'Standard: Four Cell Types',
+        cells: ['plant', 'animal', 'fungi', 'bacteria'],
+        structures: ['membrane', 'cytoplasm', 'ribosomes', 'nucleus', 'mitochondria', 'cellWall', 'chloroplasts', 'vacuole', 'circularDNA'],
+        description: 'Standard Mode compares plant, animal, fungal and bacterial cells. It adds prokaryotes and fungi, so students must use several pieces of evidence together.',
+        bankHelp: 'These cards can be reused. A structure may belong in more than one cell type.',
+        start: 'Select a structure from the bank. Then place it into each cell type where it belongs.',
+        reveal: 'This shows the accepted school-level model for comparing plant, animal, fungal and bacterial cells.',
+        complete: 'Complete model. The strongest evidence is that bacteria lack a nucleus and mitochondria, while plants are identified by chloroplasts and a large permanent vacuole.',
+        challenge: 'Instant feedback is off. Build all four cells first, then use Check cells.',
+        teacher: 'Teacher note: this sorter uses a simplified school-level model for comparing common cell structures. Bacteria may also have structures such as capsules, pili or flagella, but these are not included because they are not present in all bacteria.',
+        trap: 'Do not put chloroplasts into fungal cells. Fungi have cell walls, but they do not photosynthesise like plants.',
+        clues: [
+          'All living cells have cytoplasm, a cell membrane and ribosomes.',
+          'Plant, animal and fungal cells are eukaryotic, so they have a nucleus and mitochondria.',
+          'Bacterial cells are prokaryotic, so they do not have a nucleus or mitochondria.',
+          'Plant cells have chloroplasts and a large permanent vacuole.',
+          'Plants, fungi and bacteria have cell walls, but the wall is made from different materials: cellulose in plants, chitin in fungi and peptidoglycan in many bacteria.'
+        ]
+      }
+    };
+
+    const placements = {
+      plant: new Set(),
+      animal: new Set(),
+      fungi: new Set(),
+      bacteria: new Set()
+    };
+
+    const bank = document.getElementById('structureBank');
+    const selectedInfo = document.getElementById('selectedInfo');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const correctCount = document.getElementById('correctCount');
+    const missingCount = document.getElementById('missingCount');
+    const wrongCount = document.getElementById('wrongCount');
+    const percentCount = document.getElementById('percentCount');
+    const learnMode = document.getElementById('learnMode');
+    const hideClues = document.getElementById('hideClues');
+    const targetText = document.getElementById('targetText');
+    const modeDescription = document.getElementById('modeDescription');
+    const bankHelp = document.getElementById('bankHelp');
+    const modePill = document.getElementById('modePill');
+    const clueList = document.getElementById('clueList');
+    const trapText = document.getElementById('trapText');
+    const teacherNote = document.getElementById('teacherNote');
+
+    let selectedStructureId = null;
+    let checked = false;
+    let challengeMode = false;
+    let currentMode = 'easy';
+
+    function getMode(){
+      return modes[currentMode];
+    }
+
+    function activeStructures(){
+      const mode = getMode();
+      return structures.filter(structure => mode.structures.includes(structure.id));
+    }
+
+    function activeCells(){
+      return getMode().cells;
+    }
+
+    function correctCellsFor(structure){
+      const cells = activeCells();
+      return structure.cells.filter(cell => cells.includes(cell));
+    }
+
+    function totalCorrectPlacements(){
+      return activeStructures().reduce((sum, structure) => sum + correctCellsFor(structure).length, 0);
+    }
+
+    function getStructure(id){
+      return structures.find(structure => structure.id === id);
+    }
+
+    function createStructureCards(){
+      bank.innerHTML = '';
+      activeStructures().forEach(structure => {
+        const card = document.createElement('div');
+        card.className = 'structure-card';
+        card.draggable = true;
+        card.dataset.id = structure.id;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `${structure.name}: ${structure.tip}`);
+        card.innerHTML = `<p class="structure-name"><span class="icon">${structure.icon}</span>${structure.name}</p><p class="structure-tip">${structure.tip}</p>`;
+        card.addEventListener('click', () => selectStructure(structure.id));
+        card.addEventListener('keydown', event => {
+          if(event.key === 'Enter' || event.key === ' '){
+            event.preventDefault();
+            selectStructure(structure.id);
+          }
+        });
+        card.addEventListener('dragstart', event => {
+          event.dataTransfer.setData('text/plain', structure.id);
+          selectStructure(structure.id);
+        });
+        bank.appendChild(card);
+      });
+    }
+
+    function selectStructure(id){
+      if(!getMode().structures.includes(id)) return;
+      selectedStructureId = id;
+      document.querySelectorAll('.structure-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.id === id);
+      });
+      const structure = getStructure(id);
+      const correctNames = correctCellsFor(structure).map(cell => cellNames[cell].toLowerCase()).join(', ');
+      selectedInfo.className = 'feedback-card info';
+      selectedInfo.innerHTML = `<h3>${structure.name}</h3><p>${structure.evidence}</p><p><strong>Mode clue:</strong> In this mode, this structure belongs in: ${correctNames}.</p>`;
+    }
+
+    function addPlacement(cell, structureId){
+      if(!activeCells().includes(cell)) return;
+      if(!structureId) {
+        feedbackBox.className = 'feedback-card warn';
+        feedbackBox.innerHTML = '<h3>Select a structure first</h3><p>Choose a structure from the bank, then click the cell where it belongs.</p>';
+        return;
+      }
+      if(!getMode().structures.includes(structureId)){
+        feedbackBox.className = 'feedback-card warn';
+        feedbackBox.innerHTML = '<h3>Not used in this mode</h3><p>Switch to Standard Mode to use that structure.</p>';
+        return;
+      }
+
+      const structure = getStructure(structureId);
+      if(placements[cell].has(structureId)){
+        feedbackBox.className = 'feedback-card warn';
+        feedbackBox.innerHTML = `<h3>Already placed</h3><p>${structure.name} is already in the ${cellNames[cell].toLowerCase()}.</p>`;
+        return;
+      }
+
+      placements[cell].add(structureId);
+      checked = false;
+      renderChips();
+
+      const correct = correctCellsFor(structure).includes(cell);
+      if(learnMode.checked && !challengeMode){
+        feedbackBox.className = correct ? 'feedback-card good' : 'feedback-card bad';
+        feedbackBox.innerHTML = correct
+          ? `<h3>Good evidence match</h3><p>${structure.name} belongs in the ${cellNames[cell].toLowerCase()}. ${structure.evidence}</p>`
+          : `<h3>Check the evidence</h3><p>${structure.name} does not belong in the ${cellNames[cell].toLowerCase()}. ${structure.evidence}</p>`;
+      } else {
+        feedbackBox.className = 'feedback-card info';
+        feedbackBox.innerHTML = `<h3>Placed</h3><p>${structure.name} was added to the ${cellNames[cell].toLowerCase()}. Use Check cells when you are ready.</p>`;
+      }
+
+      updateScore(false);
+    }
+
+    function removePlacement(cell, structureId){
+      placements[cell].delete(structureId);
+      checked = false;
+      renderChips();
+      updateScore(false);
+      const structure = getStructure(structureId);
+      feedbackBox.className = 'feedback-card info';
+      feedbackBox.innerHTML = `<h3>Removed</h3><p>${structure.name} was removed from the ${cellNames[cell].toLowerCase()}.</p>`;
+    }
+
+    function renderChips(){
+      document.querySelectorAll('.cell-drop').forEach(drop => {
+        const cell = drop.dataset.cell;
+        const zone = drop.querySelector('.chip-zone');
+        zone.innerHTML = '';
+        if(!activeCells().includes(cell)) return;
+        [...placements[cell]].forEach(structureId => {
+          if(!getMode().structures.includes(structureId)) return;
+          const structure = getStructure(structureId);
+          const chip = document.createElement('button');
+          chip.className = 'chip';
+          if(checked || (learnMode.checked && !challengeMode)){
+            chip.classList.add(correctCellsFor(structure).includes(cell) ? 'correct' : 'incorrect');
+          }
+          chip.textContent = structure.name;
+          chip.title = 'Click to remove';
+          chip.addEventListener('click', event => {
+            event.stopPropagation();
+            removePlacement(cell, structureId);
+          });
+          zone.appendChild(chip);
+        });
+      });
+    }
+
+    function setupDropZones(){
+      document.querySelectorAll('.cell-drop').forEach(drop => {
+        const cell = drop.dataset.cell;
+        drop.addEventListener('click', () => addPlacement(cell, selectedStructureId));
+        drop.addEventListener('keydown', event => {
+          if(event.key === 'Enter' || event.key === ' '){
+            event.preventDefault();
+            addPlacement(cell, selectedStructureId);
+          }
+        });
+        drop.addEventListener('dragover', event => {
+          if(!activeCells().includes(cell)) return;
+          event.preventDefault();
+          drop.classList.add('drag-over');
+        });
+        drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+        drop.addEventListener('drop', event => {
+          event.preventDefault();
+          drop.classList.remove('drag-over');
+          const id = event.dataTransfer.getData('text/plain');
+          addPlacement(cell, id);
+        });
+      });
+    }
+
+    function getStats(){
+      let correct = 0;
+      let incorrect = 0;
+      const missing = [];
+      const cells = activeCells();
+      const modeStructureIds = getMode().structures;
+
+      cells.forEach(cell => {
+        placements[cell].forEach(structureId => {
+          if(!modeStructureIds.includes(structureId)) return;
+          const structure = getStructure(structureId);
+          if(correctCellsFor(structure).includes(cell)) correct++;
+          else incorrect++;
+        });
+      });
+
+      activeStructures().forEach(structure => {
+        correctCellsFor(structure).forEach(cell => {
+          if(!placements[cell].has(structure.id)){
+            missing.push({cell, structure});
+          }
+        });
+      });
+
+      return {correct, incorrect, missing};
+    }
+
+    function updateScore(showFinal){
+      const stats = getStats();
+      const target = totalCorrectPlacements();
+      const adjusted = Math.max(0, stats.correct - stats.incorrect);
+      const percent = target > 0 ? Math.round((adjusted / target) * 100) : 0;
+      correctCount.textContent = stats.correct;
+      missingCount.textContent = stats.missing.length;
+      wrongCount.textContent = stats.incorrect;
+      percentCount.textContent = `${percent}%`;
+      targetText.textContent = `${target} correct placements`;
+
+      if(showFinal){
+        if(stats.correct === target && stats.incorrect === 0){
+          feedbackBox.className = 'feedback-card good';
+          feedbackBox.innerHTML = `<h3>Complete model</h3><p>${getMode().complete}</p>`;
+        } else {
+          const firstMissing = stats.missing[0];
+          const missingText = firstMissing ? `${firstMissing.structure.name} is still missing from the ${cellNames[firstMissing.cell].toLowerCase()}.` : 'There are no missing structures.';
+          feedbackBox.className = stats.incorrect > 0 ? 'feedback-card bad' : 'feedback-card warn';
+          feedbackBox.innerHTML = `<h3>Model needs revision</h3><p>${missingText} Incorrect placements: ${stats.incorrect}. Click incorrect chips to remove them, then use the evidence panel to fix the model.</p>`;
+        }
+      }
+    }
+
+    function checkCells(){
+      checked = true;
+      renderChips();
+      updateScore(true);
+    }
+
+    function clearPlacements(){
+      Object.keys(placements).forEach(cell => placements[cell].clear());
+    }
+
+    function clearSorter(){
+      clearPlacements();
+      checked = false;
+      selectedStructureId = null;
+      challengeMode = false;
+      document.querySelectorAll('.structure-card').forEach(card => card.classList.remove('selected'));
+      renderChips();
+      updateScore(false);
+      selectedInfo.className = 'feedback-card info';
+      selectedInfo.innerHTML = `<h3>Start sorting</h3><p>${getMode().start}</p>`;
+      feedbackBox.className = 'feedback-card';
+      feedbackBox.innerHTML = '<h3>Feedback</h3><p>Your checks and placement feedback will appear here. Click a chip in a cell to remove it.</p>';
+      document.getElementById('challengeBtn').textContent = 'Challenge mode';
+      learnMode.checked = true;
+    }
+
+    function revealAnswer(){
+      clearPlacements();
+      activeStructures().forEach(structure => {
+        correctCellsFor(structure).forEach(cell => placements[cell].add(structure.id));
+      });
+      checked = true;
+      renderChips();
+      updateScore(true);
+      feedbackBox.className = 'feedback-card good';
+      feedbackBox.innerHTML = `<h3>Answer revealed</h3><p>${getMode().reveal}</p>`;
+    }
+
+    function toggleChallenge(){
+      challengeMode = !challengeMode;
+      learnMode.checked = !challengeMode;
+      document.getElementById('challengeBtn').textContent = challengeMode ? 'Learning mode' : 'Challenge mode';
+      selectedInfo.className = challengeMode ? 'feedback-card warn' : 'feedback-card info';
+      selectedInfo.innerHTML = challengeMode
+        ? `<h3>Challenge mode</h3><p>${getMode().challenge}</p>`
+        : '<h3>Learning mode</h3><p>Instant feedback is on. The sorter will tell you whether each placement matches the evidence.</p>';
+      renderChips();
+      updateScore(false);
+    }
+
+    function setMode(modeKey){
+      currentMode = modeKey;
+      document.querySelectorAll('.mode-btn').forEach(button => {
+        button.classList.toggle('active', button.dataset.mode === modeKey);
+      });
+      document.querySelectorAll('.cell-drop').forEach(drop => {
+        const isActive = activeCells().includes(drop.dataset.cell);
+        drop.classList.toggle('hidden', !isActive);
+        drop.setAttribute('aria-hidden', String(!isActive));
+        drop.tabIndex = isActive ? 0 : -1;
+      });
+      const mode = getMode();
+      modeDescription.textContent = mode.description;
+      bankHelp.textContent = mode.bankHelp;
+      modePill.textContent = mode.label;
+      clueList.innerHTML = mode.clues.map(clue => `<li>${clue}</li>`).join('');
+      trapText.textContent = mode.trap;
+      teacherNote.textContent = mode.teacher;
+      createStructureCards();
+      clearSorter();
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', checkCells);
+    document.getElementById('clearBtn').addEventListener('click', clearSorter);
+    document.getElementById('revealBtn').addEventListener('click', revealAnswer);
+    document.getElementById('challengeBtn').addEventListener('click', toggleChallenge);
+    document.getElementById('easyModeBtn').addEventListener('click', () => setMode('easy'));
+    document.getElementById('standardModeBtn').addEventListener('click', () => setMode('standard'));
+    learnMode.addEventListener('change', () => {
+      if(learnMode.checked) challengeMode = false;
+      document.getElementById('challengeBtn').textContent = challengeMode ? 'Learning mode' : 'Challenge mode';
+      renderChips();
+    });
+    hideClues.addEventListener('change', () => {
+      document.getElementById('clueBox').classList.toggle('hidden', hideClues.checked);
+      document.getElementById('misconceptionBox').classList.toggle('hidden', hideClues.checked);
+    });
+
+    setupDropZones();
+    setMode('easy');
+  </script>
+</body>
+</html>
