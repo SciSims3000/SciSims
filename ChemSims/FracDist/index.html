@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fractional Distillation Simulator</title>
+  <style>
+    :root {
+      --ink: #102033;
+      --muted: #5d6b7a;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --line: #d8e1ec;
+      --accent: #2474a6;
+      --accent-2: #ffb347;
+      --good: #20865a;
+      --warn: #a65b00;
+      --soft: #eaf4fb;
+      --shadow: 0 14px 35px rgba(30, 52, 74, 0.12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, #dceef8 0, #f7f9fc 34%, var(--bg) 100%);
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 22px 24px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #12334c, #1e6b95);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.7rem, 3vw, 2.65rem);
+      line-height: 1.05;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 790px;
+      color: #dcecf6;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .badge {
+      justify-self: end;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.12);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.95fr);
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .sidebar-stack {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .evidence-panel {
+      margin-top: 18px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card h2, .card h3 {
+      margin: 0;
+    }
+
+    .card-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(234,244,251,0.8);
+    }
+
+    .card-head small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .sim-window {
+      position: relative;
+      width: 100%;
+      height: clamp(420px, 48vw, 555px);
+      min-height: 420px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.1)),
+        linear-gradient(120deg, #eef8ff, #fdf7ed);
+      overflow: hidden;
+    }
+
+    .bench {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      bottom: 7%;
+      height: 4%;
+      background: #8d6945;
+      border-radius: 12px;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.12);
+    }
+
+    .furnace {
+      position: absolute;
+      left: 10%;
+      bottom: 10%;
+      width: 21%;
+      height: 20%;
+      border-radius: 18px 18px 8px 8px;
+      background: linear-gradient(180deg, #37485d, #1f2935);
+      border: 4px solid #263545;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      text-align: center;
+      padding: 12px;
+      z-index: 4;
+    }
+
+    .flame {
+      position: absolute;
+      bottom: 15%;
+      left: 17%;
+      width: 7.5%;
+      height: 13%;
+      border-radius: 55% 55% 45% 45%;
+      background: radial-gradient(circle at 50% 70%, #fff3a8 0 18%, #ffb347 19% 48%, #e56025 49% 75%, rgba(229,96,37,0) 76%);
+      opacity: 0.25;
+      transform-origin: 50% 100%;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 5;
+    }
+
+    .flame.hot {
+      opacity: 0.95;
+      animation: flicker 0.42s infinite alternate ease-in-out;
+    }
+
+    @keyframes flicker {
+      from { transform: scaleY(0.92) scaleX(1.05); }
+      to { transform: scaleY(1.07) scaleX(0.94); }
+    }
+
+    .flask {
+      position: absolute;
+      left: 12%;
+      bottom: 27%;
+      width: 17%;
+      height: 20%;
+      border: 5px solid #49677f;
+      border-radius: 50% 50% 45% 45%;
+      background: rgba(255,255,255,0.62);
+      z-index: 6;
+      overflow: hidden;
+    }
+
+    .oil {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 56%;
+      background: linear-gradient(180deg, #4d3422, #1d120b);
+      transition: height 0.2s ease;
+    }
+
+    .oil::after {
+      content: "Crude oil";
+      position: absolute;
+      inset: 8px 4px auto;
+      color: #ffe0b2;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .residue-pool {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 14%;
+      background: linear-gradient(180deg, #3c2a1d, #15100b);
+      border-top: 2px solid rgba(255, 224, 178, 0.28);
+      color: #ffe0b2;
+      font-size: 0.68rem;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      opacity: 0.9;
+      transition: height 0.25s ease;
+    }
+
+    .residue-note {
+      position: absolute;
+      left: 28%;
+      bottom: 31%;
+      max-width: 145px;
+      padding: 7px 9px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--line);
+      color: #3f2d20;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.15;
+      z-index: 8;
+      box-shadow: 0 5px 12px rgba(16,32,51,0.08);
+    }
+
+    .neck {
+      position: absolute;
+      left: 18.5%;
+      bottom: 45%;
+      width: 5%;
+      height: 10%;
+      border: 5px solid #49677f;
+      border-bottom: none;
+      background: rgba(255,255,255,0.62);
+      z-index: 5;
+    }
+
+    .feed-pipe {
+      position: absolute;
+      left: 21.8%;
+      bottom: 52%;
+      width: 25%;
+      height: 4.5%;
+      border: 5px solid #49677f;
+      border-left: none;
+      border-bottom: none;
+      border-radius: 0 18px 0 0;
+      z-index: 4;
+    }
+
+    .column-wrap {
+      position: absolute;
+      left: 44%;
+      bottom: 12%;
+      width: 18%;
+      height: 78%;
+      z-index: 6;
+    }
+
+    .column {
+      position: absolute;
+      inset: 0;
+      border: 6px solid #49677f;
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(71,154,203,0.12), rgba(255,156,82,0.20)),
+        linear-gradient(180deg, #e7f5ff 0%, #fff9ed 45%, #ffe2c5 100%);
+      overflow: hidden;
+      box-shadow: inset 0 0 18px rgba(16,32,51,0.12);
+    }
+
+    .column-temp-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(53,142,185,0.26), rgba(250,179,71,0.38), rgba(224,86,37,0.42));
+      opacity: 0.58;
+      pointer-events: none;
+    }
+
+    .tray {
+      position: absolute;
+      left: 13%;
+      right: 13%;
+      height: 2px;
+      background: rgba(73,103,127,0.58);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.55);
+    }
+
+    .tray::after {
+      content: "";
+      position: absolute;
+      left: 9%;
+      top: -3px;
+      width: 10px;
+      height: 6px;
+      border-radius: 8px;
+      background: rgba(73,103,127,0.35);
+      box-shadow: 26px 0 0 rgba(73,103,127,0.35), 52px 0 0 rgba(73,103,127,0.35), 78px 0 0 rgba(73,103,127,0.35);
+    }
+
+    .temp-label {
+      position: absolute;
+      left: 2%;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(73,103,127,0.25);
+      z-index: 8;
+    }
+
+    .temp-label.top { top: 3%; color: #196089; }
+    .temp-label.bottom { bottom: 3%; color: #a94b00; }
+
+    .outlet-layer, .particle-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .outlet {
+      position: absolute;
+      left: 62%;
+      height: 2.8%;
+      min-height: 12px;
+      width: 28%;
+      transform: translateY(-50%);
+      z-index: 4;
+    }
+
+    .pipe {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 45%;
+      height: 4px;
+      border-radius: 999px;
+      background: #49677f;
+    }
+
+    .tap {
+      position: absolute;
+      left: 39%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid #49677f;
+      background: white;
+    }
+
+    .product-label {
+      position: absolute;
+      left: 48%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 155px;
+      border-radius: 12px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.75rem;
+      line-height: 1.12;
+      box-shadow: 0 5px 12px rgba(16,32,51,0.08);
+    }
+
+    .product-label strong {
+      display: block;
+      font-size: 0.83rem;
+    }
+
+    .product-label.muted {
+      opacity: 0.42;
+    }
+
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--pcolour);
+      opacity: 0.88;
+      box-shadow: 0 0 10px var(--pcolour);
+      z-index: 12;
+    }
+
+    .drop {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50% 50% 50% 8%;
+      transform: rotate(45deg);
+      background: var(--pcolour);
+      opacity: 0.82;
+      z-index: 12;
+    }
+
+    .pause-banner {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(16,32,51,0.84);
+      color: white;
+      font-weight: 800;
+      font-size: 0.9rem;
+      z-index: 30;
+    }
+
+    .hidden { display: none !important; }
+
+    .thermometer {
+      position: absolute;
+      left: 66.5%;
+      bottom: 12%;
+      width: 4.6%;
+      height: 66%;
+      border-radius: 999px;
+      border: 3px solid #49677f;
+      background: #f7fbff;
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .thermo-fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0;
+      background: linear-gradient(180deg, #ffbd6b, #e56025);
+      transition: height 0.2s ease;
+    }
+
+    .thermo-text {
+      display: none !important;
+    }
+
+    .evidence-body {
+      padding: 16px 18px 18px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.25rem;
+      margin-bottom: 2px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .active-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .active-chip {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 7px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px 10px;
+      background: #ffffff;
+      font-size: 0.84rem;
+      min-width: 0;
+    }
+
+    .active-chip span:nth-child(2) {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--chip-colour);
+    }
+
+    .active-chip small {
+      grid-column: 2;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.72rem;
+      line-height: 1;
+      margin-top: -2px;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 36px;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e7edf4;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--bar-colour);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .claim-box, .feedback-box {
+      border: 1px solid #cfe1ef;
+      background: #f0f8fd;
+      border-radius: 16px;
+      padding: 12px;
+      line-height: 1.35;
+      color: #183149;
+      margin-top: 12px;
+    }
+
+    .feedback-box.good { border-color: #b8dfcf; background: #effaf5; }
+    .feedback-box.warn { border-color: #f4d1a1; background: #fff7ea; }
+
+    .controls {
+      padding: 0;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .controls-grid > :first-child,
+    .controls-grid > #resetBtn {
+      grid-column: 1 / -1;
+    }
+
+    .controls-grid button {
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 7px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select, button {
+      font: inherit;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: white;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .range-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 8px 16px rgba(36,116,166,0.22);
+      white-space: nowrap;
+    }
+
+    button.secondary {
+      background: #596879;
+      box-shadow: none;
+    }
+
+    button.ghost {
+      color: var(--ink);
+      background: #edf4fa;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .toggles label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .info-card {
+      padding: 16px 18px;
+    }
+
+    .info-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .info-card p, .info-card li {
+      color: #324355;
+      line-height: 1.45;
+      font-size: 0.95rem;
+    }
+
+    .info-card ul, .info-card ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 8px;
+    }
+
+    .mini-table th, .mini-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 7px 5px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .badge { justify-self: start; }
+      .top-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .sim-window { height: 450px; min-height: 410px; }
+      .product-label { width: 130px; }
+      .active-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .app { padding: 12px; }
+      .controls-grid { grid-template-columns: 1fr; }
+      .controls-grid > #runBtn,
+      .controls-grid > #stepBtn,
+      .controls-grid > #resetBtn,
+      .controls-grid > :first-child {
+        grid-column: auto;
+      }
+      .sim-window { height: 380px; min-height: 360px; }
+      .product-label { font-size: 0.67rem; width: 112px; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .active-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Fractional Distillation Simulator</h1>
+        <p>Heat crude oil, watch vaporised fractions rise through a cooler fractionating column, and compare them with the heavy residue that stays near the bottom.</p>
+      </div>
+      <div class="badge">ChemSims · Separation techniques</div>
+    </header>
+
+    <section class="top-grid">
+      <article class="card">
+        <div class="card-head">
+          <h2>Model window</h2>
+          <small id="modelStatus">Paused on load</small>
+        </div>
+        <div class="sim-window" id="simWindow" aria-label="Fractional distillation model">
+          <div class="pause-banner" id="pauseBanner">Animation paused</div>
+          <div class="bench"></div>
+          <div class="flame" id="flame"></div>
+          <div class="furnace"><span>Furnace<br><span id="furnaceReadout">80 °C</span></span></div>
+          <div class="flask"><div class="oil" id="oil"></div><div class="residue-pool" id="residuePool">Heavy residue</div></div>
+          <div class="residue-note" id="residueNote">Bitumen/residue does not rise as vapour in this model.</div>
+          <div class="neck"></div>
+          <div class="feed-pipe"></div>
+
+          <div class="column-wrap">
+            <div class="column" id="column">
+              <div class="column-temp-overlay"></div>
+              <div class="tray" style="top: 12%"></div>
+              <div class="tray" style="top: 24%"></div>
+              <div class="tray" style="top: 36%"></div>
+              <div class="tray" style="top: 48%"></div>
+              <div class="tray" style="top: 60%"></div>
+              <div class="tray" style="top: 72%"></div>
+              <div class="tray" style="top: 84%"></div>
+              <div class="temp-label top">Cool top</div>
+              <div class="temp-label bottom">Hot bottom</div>
+            </div>
+          </div>
+
+          <div class="thermometer"><div class="thermo-fill" id="thermoFill"></div></div>
+          <div class="thermo-text" id="thermoText" aria-hidden="true">Bottom: 80 °C</div>
+          <div class="outlet-layer" id="outletLayer"></div>
+          <div class="particle-layer" id="particleLayer"></div>
+        </div>
+      </article>
+
+      <aside class="sidebar-stack">
+        <section class="card controls">
+          <div class="card-head">
+            <h2>Controls</h2>
+            <small>Adjust and test</small>
+          </div>
+          <div class="evidence-body">
+            <div class="controls-grid">
+              <div>
+                <label for="heatSlider">Furnace temperature: <span id="heatValue">80 °C</span></label>
+                <input id="heatSlider" type="range" min="40" max="430" value="80" step="10" />
+                <div class="range-meta"><span>cool</span><span>fractionating range</span><span>very hot</span></div>
+              </div>
+
+              <button id="runBtn">Run model</button>
+              <button class="ghost" id="stepBtn">Step 10 s</button>
+              <button class="secondary" id="resetBtn">Reset</button>
+
+              <div>
+                <label for="challengeSelect">Choose fraction</label>
+                <select id="challengeSelect"></select>
+              </div>
+
+              <div>
+                <label for="outletPredict">Predict outlet</label>
+                <select id="outletPredict">
+                  <option value="very high">very high</option>
+                  <option value="high">high</option>
+                  <option value="middle">middle</option>
+                  <option value="low">low</option>
+                  <option value="bottom/residue">bottom/residue</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="toggles">
+              <label><input type="checkbox" id="showLabels" checked /> Show fraction labels</label>
+              <label><input type="checkbox" id="easyMode" /> Easy mode: group similar fractions</label>
+              <button class="ghost" id="checkBtn" type="button">Check prediction</button>
+            </div>
+            <div class="feedback-box hidden" id="feedbackBox"></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <aside class="card evidence-panel">
+      <div class="card-head">
+        <h2>Evidence panel</h2>
+        <small>Live readout</small>
+      </div>
+      <div class="evidence-body">
+        <div class="stat-grid">
+          <div class="stat"><strong id="bottomTemp">80 °C</strong><span>Bottom of column</span></div>
+          <div class="stat"><strong id="topTemp">30 °C</strong><span>Top of column</span></div>
+        </div>
+
+        <h3>Collection / residue amounts</h3>
+        <div class="bar-list" id="barList"></div>
+
+        <h3 style="margin-top: 16px;">Fractions currently collecting</h3>
+        <div class="active-list" id="activeList"></div>
+
+        <div class="claim-box" id="claimBox">Increase the furnace temperature, then press <strong>Run model</strong> to collect vaporised fractions. Heavy residue stays near the bottom.</div>
+      </div>
+    </aside>
+
+    <section class="info-grid">
+      <article class="card info-card">
+        <h3>How to use the model</h3>
+        <ol>
+          <li>Choose a furnace temperature.</li>
+          <li>Press <strong>Run model</strong> and observe where vapours condense.</li>
+          <li>Use <strong>Step 10 s</strong> to collect data without leaving the animation running.</li>
+          <li>Explain why the light fractions collect higher in the column.</li>
+        </ol>
+      </article>
+
+      <article class="card info-card">
+        <h3>Science idea</h3>
+        <p>Crude oil is a mixture of hydrocarbons. Fractions with lower boiling point ranges vaporise and then condense higher in the cooler part of the column. Higher-boiling fractions condense lower down. The heaviest residue remains near the bottom rather than travelling up the column as vapour.</p>
+      </article>
+
+      <article class="card info-card">
+        <h3>Model limits</h3>
+        <p>This is a classroom model. Boiling point ranges are approximate, collection rates are simplified, and the top of the column is held at 30 °C. Real refineries use controlled flow rates, pressure, trays, side streams and further processing such as cracking.</p>
+      </article>
+    </section>
+
+    <section class="card info-card" style="margin-top:18px;">
+      <h3>Fraction data used in this model</h3>
+      <table class="mini-table" id="fractionTable">
+        <thead><tr><th>Fraction</th><th>Approx. boiling range</th><th>Common use</th><th>Model outlet</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    const fractions = [
+      { id: 'gas', name: 'Refinery gases', range: '<40 °C', low: 20, high: 40, y: 8, use: 'LPG, bottled gas', colour: '#60a5fa', easy: 'Light fuels' },
+      { id: 'petrol', name: 'Petrol', range: '40–200 °C', low: 40, high: 200, y: 20, use: 'car fuel', colour: '#34d399', easy: 'Light fuels' },
+      { id: 'naphtha', name: 'Naphtha', range: '70–180 °C', low: 70, high: 180, y: 32, use: 'chemical feedstock', colour: '#a78bfa', easy: 'Light fuels' },
+      { id: 'kerosene', name: 'Kerosene', range: '150–250 °C', low: 150, high: 250, y: 45, use: 'jet fuel, heating', colour: '#facc15', easy: 'Middle fuels' },
+      { id: 'diesel', name: 'Diesel oil', range: '250–350 °C', low: 250, high: 350, y: 60, use: 'diesel fuel', colour: '#fb923c', easy: 'Middle fuels' },
+      { id: 'lubricating', name: 'Lubricating oil', range: '300–370 °C', low: 300, high: 370, y: 74, use: 'lubricants, waxes', colour: '#f97316', easy: 'Heavy fractions' },
+      { id: 'fuel', name: 'Fuel oil', range: '350–430 °C', low: 350, high: 430, y: 86, use: 'ships, industry', colour: '#ef4444', easy: 'Heavy fractions' },
+      { id: 'bitumen', name: 'Bitumen/residue', range: '>430 °C', low: 430, high: 500, y: 96, use: 'roads, roofing', colour: '#3f2d20', easy: 'Bottom residue', residual: true }
+    ];
+
+    const state = {
+      running: false,
+      heat: 80,
+      particles: [],
+      collected: Object.fromEntries(fractions.map(f => [f.id, 0])),
+      lastTime: 0,
+      spawnClock: 0,
+      stepUntil: 0
+    };
+
+    const els = {
+      heatSlider: document.getElementById('heatSlider'),
+      heatValue: document.getElementById('heatValue'),
+      runBtn: document.getElementById('runBtn'),
+      stepBtn: document.getElementById('stepBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      checkBtn: document.getElementById('checkBtn'),
+      showLabels: document.getElementById('showLabels'),
+      easyMode: document.getElementById('easyMode'),
+      challengeSelect: document.getElementById('challengeSelect'),
+      outletPredict: document.getElementById('outletPredict'),
+      feedbackBox: document.getElementById('feedbackBox'),
+      outletLayer: document.getElementById('outletLayer'),
+      particleLayer: document.getElementById('particleLayer'),
+      activeList: document.getElementById('activeList'),
+      barList: document.getElementById('barList'),
+      bottomTemp: document.getElementById('bottomTemp'),
+      topTemp: document.getElementById('topTemp'),
+      claimBox: document.getElementById('claimBox'),
+      furnaceReadout: document.getElementById('furnaceReadout'),
+      thermoText: document.getElementById('thermoText'),
+      thermoFill: document.getElementById('thermoFill'),
+      flame: document.getElementById('flame'),
+      oil: document.getElementById('oil'),
+      residuePool: document.getElementById('residuePool'),
+      residueNote: document.getElementById('residueNote'),
+      pauseBanner: document.getElementById('pauseBanner'),
+      modelStatus: document.getElementById('modelStatus'),
+      tableBody: document.querySelector('#fractionTable tbody')
+    };
+
+    function activeFractions() {
+      return fractions.filter(f => !f.residual && state.heat >= f.low);
+    }
+
+    function collectionStrength(fraction) {
+      if (fraction.residual || state.heat < fraction.low) return 0;
+      const span = Math.max(1, fraction.high - fraction.low);
+      return Math.min(1, Math.max(0.18, (state.heat - fraction.low) / span));
+    }
+
+    function makeOutlets() {
+      els.outletLayer.innerHTML = '';
+      fractions.forEach(f => {
+        const outlet = document.createElement('div');
+        outlet.className = 'outlet';
+        outlet.style.top = `${f.y}%`;
+        outlet.dataset.id = f.id;
+        outlet.innerHTML = `
+          <div class="pipe"></div>
+          <div class="tap" style="background:${f.colour}"></div>
+          <div class="product-label" style="border-left:5px solid ${f.colour}">
+            <strong>${f.name}</strong>
+            <span>${f.range} · ${f.use}</span>
+          </div>
+        `;
+        els.outletLayer.appendChild(outlet);
+      });
+    }
+
+    function populateChallenge() {
+      els.challengeSelect.innerHTML = '';
+      fractions.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        els.challengeSelect.appendChild(opt);
+      });
+    }
+
+    function populateTable() {
+      els.tableBody.innerHTML = fractions.map(f => `
+        <tr>
+          <td><strong>${f.name}</strong></td>
+          <td>${f.range}</td>
+          <td>${f.use}</td>
+          <td>${outletText(f)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function outletText(f) {
+      if (f.residual) return 'bottom/residue';
+      if (f.y <= 15) return 'very high';
+      if (f.y <= 38) return 'high';
+      if (f.y <= 65) return 'middle';
+      if (f.y <= 88) return 'low';
+      return 'bottom/residue';
+    }
+
+    function updateStatic() {
+      els.heatValue.textContent = `${state.heat} °C`;
+      els.furnaceReadout.textContent = `${state.heat} °C`;
+      els.bottomTemp.textContent = `${state.heat} °C`;
+      els.topTemp.textContent = '30 °C';
+      els.thermoText.textContent = `Bottom: ${state.heat} °C`;
+      els.thermoFill.style.height = `${Math.min(100, Math.max(0, (state.heat - 40) / 390 * 100))}%`;
+      els.flame.classList.toggle('hot', state.heat >= 120 && state.running);
+      const vapourTotal = totalVapourCollected();
+      els.oil.style.height = `${Math.max(28, 56 - vapourTotal * 0.12)}%`;
+      els.residuePool.style.height = `${Math.min(42, 13 + vapourTotal * 0.05)}%`;
+      els.residueNote.classList.toggle('hidden', !els.showLabels.checked);
+      els.pauseBanner.classList.toggle('hidden', state.running);
+      els.modelStatus.textContent = state.running ? 'Running' : 'Paused';
+      els.runBtn.textContent = state.running ? 'Pause model' : 'Run model';
+
+      document.querySelectorAll('.product-label').forEach(label => {
+        const outlet = label.closest('.outlet');
+        const f = fractions.find(item => item.id === outlet.dataset.id);
+        const groupedName = f ? f.easy : '';
+        if (els.easyMode.checked && f) {
+          label.innerHTML = `<strong>${groupedName}</strong><span>${outletText(f)} outlet</span>`;
+        } else if (f) {
+          label.innerHTML = `<strong>${f.name}</strong><span>${f.range} · ${f.use}</span>`;
+        }
+        label.classList.toggle('hidden', !els.showLabels.checked);
+        label.classList.toggle('muted', f && state.heat < f.low);
+      });
+
+      renderEvidence();
+    }
+
+    function totalCollected() {
+      return Object.values(state.collected).reduce((sum, value) => sum + value, 0);
+    }
+
+    function totalVapourCollected() {
+      return fractions.filter(f => !f.residual).reduce((sum, f) => sum + state.collected[f.id], 0);
+    }
+
+    function renderEvidence() {
+      const active = activeFractions();
+      if (active.length === 0) {
+        els.activeList.innerHTML = `
+          <div class="active-chip"><span class="dot" style="--chip-colour:#cbd5e1"></span><span>No vapour fractions are boiling strongly yet.</span><small>too cool</small></div>
+          <div class="active-chip"><span class="dot" style="--chip-colour:#3f2d20"></span><span>Bitumen/residue stays near the bottom.</span><small>residue</small></div>
+        `;
+      } else {
+        els.activeList.innerHTML = active.map(f => `
+          <div class="active-chip">
+            <span class="dot" style="--chip-colour:${f.colour}"></span>
+            <span>${f.name}</span>
+            <small>${outletText(f)}</small>
+          </div>
+        `).join('') + `
+          <div class="active-chip"><span class="dot" style="--chip-colour:#3f2d20"></span><span>Bitumen/residue remains at the bottom.</span><small>not vapour</small></div>
+        `;
+      }
+
+      const max = Math.max(8, ...Object.values(state.collected));
+      els.barList.innerHTML = fractions.map(f => {
+        const value = state.collected[f.id];
+        const width = Math.min(100, value / max * 100);
+        return `
+          <div class="bar-row">
+            <span>${f.name.split('/')[0]}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${width}%; --bar-colour:${f.colour}"></div></div>
+            <strong>${Math.round(value)}</strong>
+          </div>
+        `;
+      }).join('');
+
+      const notYet = fractions.filter(f => !f.residual && state.heat < f.low);
+      if (active.length === 0) {
+        els.claimBox.innerHTML = 'The furnace is not hot enough to boil the listed vapour fractions strongly. Heavy residue is already present and remains near the bottom instead of rising up the column.';
+      } else {
+        const topNames = active.slice(0, 3).map(f => f.name).join(', ');
+        const rest = notYet.length ? ` Heavier vaporisable fractions such as ${notYet[0].name} have not reached their boiling range yet.` : ' Most vaporisable fractions can now enter the column, while bitumen/residue remains near the bottom.';
+        els.claimBox.innerHTML = `At <strong>${state.heat} °C</strong>, the model shows <strong>${topNames}${active.length > 3 ? '...' : ''}</strong> collecting. Lower-boiling fractions condense higher because the top of the column is cooler.${rest}`;
+      }
+    }
+
+    function spawnParticle() {
+      const possible = activeFractions().filter(f => Math.random() < collectionStrength(f));
+      if (possible.length === 0) return;
+      const f = possible[Math.floor(Math.random() * possible.length)];
+      state.particles.push({
+        id: Math.random().toString(36).slice(2),
+        fractionId: f.id,
+        x: 24 + Math.random() * 2,
+        y: 58 + Math.random() * 3,
+        targetX: 51 + Math.random() * 2,
+        targetY: f.y,
+        phase: 'feed',
+        speed: 18 + Math.random() * 18,
+        colour: f.colour
+      });
+    }
+
+    function updateParticles(dt) {
+      state.spawnClock += dt;
+      const spawnInterval = Math.max(0.08, 0.33 - state.heat / 1800);
+      while (state.spawnClock > spawnInterval && state.particles.length < 80) {
+        spawnParticle();
+        state.spawnClock -= spawnInterval;
+      }
+
+      state.particles.forEach(p => {
+        if (p.phase === 'feed') {
+          p.x += dt * 22;
+          p.y -= dt * 7;
+          if (p.x >= 45) p.phase = 'rise';
+        } else if (p.phase === 'rise') {
+          p.x += (p.targetX - p.x) * dt * 3;
+          p.y -= dt * p.speed;
+          if (p.y <= p.targetY) {
+            p.y = p.targetY;
+            p.phase = 'outlet';
+          }
+        } else if (p.phase === 'outlet') {
+          p.x += dt * 38;
+          p.y += Math.sin(Date.now() / 110 + p.x) * 0.03;
+          if (p.x > 78) {
+            state.collected[p.fractionId] += 1 + collectionStrength(fractions.find(f => f.id === p.fractionId));
+            p.done = true;
+          }
+        }
+      });
+      state.particles = state.particles.filter(p => !p.done);
+    }
+
+    function updateResidue(dt) {
+      // The heavy residue is not animated as vapour. It becomes more obvious as lighter fractions are removed.
+      const vapourProgress = totalVapourCollected();
+      state.collected.bitumen = Math.min(100, Math.max(state.collected.bitumen, 5 + vapourProgress * 0.12));
+    }
+
+    function renderParticles() {
+      els.particleLayer.innerHTML = state.particles.map(p => {
+        const cls = p.phase === 'outlet' ? 'drop' : 'particle';
+        return `<span class="${cls}" style="left:${p.x}%; top:${p.y}%; --pcolour:${p.colour}"></span>`;
+      }).join('');
+    }
+
+    function loop(timestamp) {
+      const dt = Math.min(0.05, (timestamp - state.lastTime) / 1000 || 0);
+      state.lastTime = timestamp;
+
+      if (state.running) {
+        updateParticles(dt);
+        updateResidue(dt);
+        if (state.stepUntil && timestamp > state.stepUntil) {
+          state.running = false;
+          state.stepUntil = 0;
+        }
+      }
+
+      renderParticles();
+      updateStatic();
+      requestAnimationFrame(loop);
+    }
+
+    function reset() {
+      state.running = false;
+      state.heat = 80;
+      state.particles = [];
+      state.collected = Object.fromEntries(fractions.map(f => [f.id, f.residual ? 5 : 0]));
+      state.stepUntil = 0;
+      els.heatSlider.value = state.heat;
+      els.feedbackBox.className = 'feedback-box hidden';
+      els.feedbackBox.textContent = '';
+      updateStatic();
+    }
+
+    function checkPrediction() {
+      const f = fractions.find(item => item.id === els.challengeSelect.value);
+      const predicted = els.outletPredict.value;
+      const correct = outletText(f);
+      const isCorrect = predicted === correct;
+      els.feedbackBox.classList.remove('hidden', 'good', 'warn');
+      els.feedbackBox.classList.add(isCorrect ? 'good' : 'warn');
+
+      if (f.residual) {
+        els.feedbackBox.innerHTML = `${isCorrect ? 'Correct.' : 'Not quite.'} <strong>${f.name}</strong> belongs at <strong>${correct}</strong>. It is shown as a heavy residue because it does not rise through the column as a vapour in this model.`;
+        return;
+      }
+
+      const active = state.heat >= f.low;
+      if (isCorrect && active) {
+        els.feedbackBox.innerHTML = `Correct. <strong>${f.name}</strong> collects at a <strong>${correct}</strong> outlet. Its boiling range is ${f.range}, so at ${state.heat} °C it can vaporise and then condense where the column has cooled enough.`;
+      } else if (isCorrect && !active) {
+        els.feedbackBox.innerHTML = `Correct outlet, but it is not collecting yet. <strong>${f.name}</strong> belongs at a <strong>${correct}</strong> outlet, but the furnace is only ${state.heat} °C and its approximate boiling range is ${f.range}.`;
+      } else {
+        els.feedbackBox.innerHTML = `Not quite. <strong>${f.name}</strong> belongs at a <strong>${correct}</strong> outlet, not <strong>${predicted}</strong>. Its boiling range is ${f.range}, so it condenses at the part of the column with a matching temperature.`;
+      }
+    }
+
+    els.heatSlider.addEventListener('input', () => {
+      state.heat = Number(els.heatSlider.value);
+      updateStatic();
+    });
+
+    els.runBtn.addEventListener('click', () => {
+      state.running = !state.running;
+      state.stepUntil = 0;
+      updateStatic();
+    });
+
+    els.stepBtn.addEventListener('click', () => {
+      state.running = true;
+      state.stepUntil = performance.now() + 10000;
+      updateStatic();
+    });
+
+    els.resetBtn.addEventListener('click', reset);
+    els.checkBtn.addEventListener('click', checkPrediction);
+    els.showLabels.addEventListener('change', updateStatic);
+    els.easyMode.addEventListener('change', updateStatic);
+
+    makeOutlets();
+    populateChallenge();
+    populateTable();
+    reset();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
