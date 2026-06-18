@@ -35,6 +35,27 @@
       padding: 22px;
     }
 
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 6px 0 22px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 1rem;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.10);
+    }
+
+    .back-link:hover {
+      background: #cfe2ff;
+      transform: translateY(-1px);
+    }
+
     header {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -757,6 +778,7 @@
 </head>
 <body>
   <div class="app">
+    <a class="back-link" href="../../index.html">← Back to main SciSims page</a>
     <header>
       <div>
         <h1>Fractional Distillation Simulator</h1>
