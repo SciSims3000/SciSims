@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemical Bonds: Build & Test Lab</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --line:#d9e1ee;
+      --blue:#2f6fed;
+      --blue2:#eaf1ff;
+      --green:#168a5b;
+      --green2:#e8f7f0;
+      --orange:#c5651a;
+      --orange2:#fff2e7;
+      --red:#b83232;
+      --red2:#fff0f0;
+      --purple:#6d4bd4;
+      --purple2:#f0ecff;
+      --shadow:0 12px 28px rgba(28,43,70,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+    a{color:var(--blue)}
+    .top-nav{max-width:1200px;margin:0 auto;padding:14px 18px 0}
+    .back-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--panel);border:1px solid var(--line);padding:9px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(28,43,70,.06);font-weight:700;color:var(--ink)}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    header.hero{background:linear-gradient(135deg,#172033 0%,#233d72 55%,#2f6fed 100%);color:white;border-radius:26px;padding:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    header.hero::after{content:"";position:absolute;inset:auto -90px -130px auto;width:360px;height:360px;background:radial-gradient(circle,rgba(255,255,255,.24),rgba(255,255,255,0) 65%);border-radius:50%}
+    h1{font-size:clamp(2rem,4vw,3.3rem);line-height:1.05;margin:0 0 10px;letter-spacing:-.04em}
+    .subtitle{max-width:850px;margin:0;color:#e8eefc;font-size:1.05rem}
+    .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);padding:8px 10px;border-radius:999px;font-size:.9rem;font-weight:700}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+    .support-grid{margin-top:18px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .panel h2,.panel h3{margin:0 0 10px;letter-spacing:-.02em}
+    .panel h2{font-size:1.45rem}.panel h3{font-size:1.1rem}
+    .muted{color:var(--muted)}
+    .small{font-size:.9rem}.tiny{font-size:.78rem}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+    .tab-btn{border:1px solid var(--line);background:white;color:var(--ink);padding:10px 13px;border-radius:999px;font-weight:800;cursor:pointer;transition:.18s transform,.18s background,.18s border}
+    .tab-btn:hover{transform:translateY(-1px)}
+    .tab-btn.active{background:var(--blue);border-color:var(--blue);color:white}
+    .tab{display:none}.tab.active{display:block}
+    .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+    label{font-weight:800;font-size:.9rem;display:block;margin-bottom:6px}
+    select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:white;padding:10px 11px;font:inherit;color:var(--ink)}
+    button{font:inherit}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{border:0;border-radius:12px;background:var(--blue);color:white;font-weight:800;padding:10px 13px;cursor:pointer;box-shadow:0 8px 18px rgba(47,111,237,.22)}
+    .btn.secondary{background:#edf2f8;color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+    .btn.good{background:var(--green)}.btn.warn{background:var(--orange)}.btn.danger{background:var(--red)}
+    .canvas-card{background:#f8fbff;border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px}
+    canvas{width:100%;height:auto;display:block;background:linear-gradient(#ffffff,#f3f7ff);border-radius:14px;border:1px solid #dbe5f5}
+    .info-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+    .fact{border:1px solid var(--line);border-radius:14px;padding:11px;background:#fff}
+    .fact strong{display:block;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+    .bond-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 9px;font-weight:900;font-size:.85rem;border:1px solid var(--line)}
+    .bond-ionic{background:var(--blue2);color:#174aa8;border-color:#bbceff}.bond-covalent{background:var(--green2);color:#0d6d45;border-color:#bfe9d4}.bond-metallic{background:var(--orange2);color:#9c4b10;border-color:#ffd0a5}.bond-network{background:var(--purple2);color:#5632bd;border-color:#d8ccff}
+    .activity-grid{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}
+    .sample-list{display:grid;gap:10px}
+    .sample-card{border:1px solid var(--line);border-radius:16px;padding:13px;background:white;cursor:pointer;transition:.18s transform,.18s border,.18s background;position:relative}
+    .sample-card:hover{transform:translateY(-1px)}
+    .sample-card.active{border-color:var(--blue);background:var(--blue2)}
+    .sample-card .tag{font-size:.78rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .test-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+    .test-btn{border:1px solid var(--line);border-radius:13px;background:#fff;padding:10px;cursor:pointer;font-weight:800;text-align:left;min-height:58px}
+    .test-btn:hover{background:#f6f9ff;border-color:#b9ccf8}
+    .result-box{min-height:92px;border-radius:15px;border:1px dashed #b8c5d8;background:#fbfdff;padding:12px;margin-top:12px}
+    .evidence-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem;overflow:hidden;border-radius:14px;border:1px solid var(--line)}
+    .evidence-table th,.evidence-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}
+    .evidence-table th{background:#f1f5fb;color:#35445c;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+    .evidence-table tr:last-child td{border-bottom:0}
+    .feedback{border-radius:14px;padding:12px;margin-top:12px;border:1px solid var(--line);background:#f8fbff}
+    .feedback.correct{background:var(--green2);border-color:#bfe9d4}.feedback.incorrect{background:var(--red2);border-color:#ffc9c9}
+    .challenge-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:white;margin-bottom:12px}
+    .challenge-card.done{background:#fbfffd;border-color:#c4ead8}
+    .score-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+    .metric .num{font-size:1.7rem;font-weight:950;letter-spacing:-.04em}.metric .label{color:var(--muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+    .teacher-note{background:#fffaf1;border:1px solid #ffdba9;border-radius:16px;padding:14px;margin-top:12px}
+    .footer-sources{border-top:1px solid var(--line);margin-top:24px;padding-top:16px;color:var(--muted)}
+    .hide{display:none!important}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;background:#eef3f9;border:1px solid #d8e0ec;border-radius:6px;padding:1px 5px}
+    @media (max-width:980px){.grid,.activity-grid{grid-template-columns:1fr}.info-strip,.score-card{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:620px){.controls,.test-buttons,.info-strip,.score-card{grid-template-columns:1fr}header.hero{padding:20px}.wrap{padding:12px}}
+  </style>
+</head>
+<body>
+  <div class="top-nav"><a class="back-link" href="/SciSims/">← Back to SciSims</a></div>
+  <main class="wrap">
+    <header class="hero">
+      <h1>Chemical Bonds: Build &amp; Test Lab</h1>
+      <p class="subtitle">Explore how atoms bond, then test unknown materials and use evidence to decide whether the bonding is ionic, covalent molecular, covalent network or metallic.</p>
+      <div class="pill-row" aria-label="Learning focus">
+        <span class="pill">Build particle models</span>
+        <span class="pill">Run property tests</span>
+        <span class="pill">Use evidence</span>
+        <span class="pill">Check your reasoning</span>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Activity tabs">
+      <button class="tab-btn active" data-tab="build">1. Build a bond</button>
+      <button class="tab-btn" data-tab="test">2. Test unknowns</button>
+      <button class="tab-btn" data-tab="challenge">3. Challenge mode</button>
+      <button class="tab-btn" data-tab="teacher">Teacher notes</button>
+    </nav>
+
+    <section id="tab-build" class="tab active">
+      <div class="panel">
+        <h2>Build a bond</h2>
+        <p class="muted">Choose a substance or pair of atoms. The model shows a simplified bonding pattern and links it to common properties.</p>
+        <div class="controls">
+          <div>
+            <label for="bondPreset">Example</label>
+            <select id="bondPreset"></select>
+          </div>
+          <div>
+            <label for="modelSpeed">Animation speed</label>
+            <select id="modelSpeed">
+              <option value="0.4">Slow</option>
+              <option value="0.9" selected>Normal</option>
+              <option value="1.7">Fast</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="animateBtn">Play animation</button>
+          <button class="btn secondary" id="pauseBtn">Pause animation</button>
+          <button class="btn secondary" id="resetModelBtn">Reset model</button>
+        </div>
+        <p id="animationStatus" class="small muted">Animation is paused by default. Press <strong>Play animation</strong> to start the particle motion.</p>
+        <div class="canvas-card"><canvas id="bondCanvas" width="980" height="430" aria-label="Chemical bonding model canvas"></canvas></div>
+        <div class="info-strip">
+          <div class="fact"><strong>Bonding model</strong><span id="bondTypeFact"></span></div>
+          <div class="fact"><strong>Electron behaviour</strong><span id="electronFact"></span></div>
+          <div class="fact"><strong>Structure</strong><span id="structureFact"></span></div>
+          <div class="fact"><strong>Typical property</strong><span id="propertyFact"></span></div>
+        </div>
+
+    <section class="grid support-grid" aria-label="Activity support">
+      <div class="panel">
+        <h2>How to use this activity</h2>
+        <p class="muted">Students should look for the pattern between structure, bonding and observable properties. The goal is not just to name the bond type; it is to justify the answer using test results.</p>
+        <ol>
+          <li>Use <strong>Build a bond</strong> to compare particle models.</li>
+          <li>Use <strong>Test unknowns</strong> to collect evidence from material properties.</li>
+          <li>Use <strong>Challenge mode</strong> to apply the patterns to new cases.</li>
+        </ol>
+      </div>
+      <aside class="panel">
+        <h2>Self-tests</h2>
+        <p class="small muted">The page checks that the answer keys, challenge cards and CSV export are working.</p>
+        <div id="selfTestStatus" class="feedback">Running checks…</div>
+        <div class="score-card" style="margin-top:12px">
+          <div class="metric"><div id="scorePredictions" class="num">0</div><div class="label">Correct predictions</div></div>
+          <div class="metric"><div id="scoreChallenges" class="num">0</div><div class="label">Challenges</div></div>
+          <div class="metric"><div id="scoreTests" class="num">0</div><div class="label">Tests run</div></div>
+        </div>
+      </aside>
+    </section>
+
+
+      </div>
+    </section>
+
+    <section id="tab-test" class="tab">
+      <div class="panel">
+        <h2>Test unknown materials</h2>
+        <p class="muted">Select an unknown, run tests and use the pattern of evidence to predict its bonding and structure model.</p>
+        <div class="activity-grid">
+          <aside>
+            <h3>Unknown samples</h3>
+            <div id="sampleList" class="sample-list"></div>
+          </aside>
+          <div>
+            <h3 id="selectedSampleTitle">Sample A</h3>
+            <p id="selectedSampleDesc" class="muted"></p>
+            <div class="test-buttons" id="testButtons"></div>
+            <div id="testResult" class="result-box muted">Run a test to collect evidence.</div>
+            <table class="evidence-table" aria-label="Evidence table">
+              <thead><tr><th>Test</th><th>Evidence collected</th></tr></thead>
+              <tbody id="evidenceBody"></tbody>
+            </table>
+            <div class="controls">
+              <div>
+                <label for="bondPrediction">Prediction</label>
+                <select id="bondPrediction">
+                  <option value="">Choose a bond type…</option>
+                  <option value="ionic">Ionic</option>
+                  <option value="covalent molecular">Covalent molecular</option>
+                  <option value="covalent network">Covalent network</option>
+                  <option value="metallic">Metallic</option>
+                </select>
+              </div>
+              <div>
+                <label for="studentReason">Reason</label>
+                <input id="studentReason" placeholder="Use evidence from at least two tests" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn good" id="checkPredictionBtn">Check prediction</button>
+              <button class="btn secondary" id="clearEvidenceBtn">Clear this evidence</button>
+              <button class="btn secondary" id="exportCsvBtn">Export CSV</button>
+            </div>
+            <div id="predictionFeedback" class="feedback hide"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-challenge" class="tab">
+      <div class="panel">
+        <h2>Challenge mode</h2>
+        <p class="muted">Read each profile. Select the most likely bond type and check your reasoning.</p>
+        <div id="challengeList"></div>
+        <div class="btn-row">
+          <button class="btn secondary" id="resetChallengesBtn">Reset challenges</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-teacher" class="tab">
+      <div class="panel">
+        <h2>Teacher notes</h2>
+        <div class="teacher-note">
+          <strong>Suggested use:</strong> 15–25 minutes. Students can work in pairs, collect evidence for each unknown, then write a short claim-evidence-reasoning paragraph: <em>The material is likely _____ because _____.</em>
+        </div>
+        <h3 style="margin-top:16px">Learning intention</h3>
+        <p>Students investigate how the arrangement of particles and electrons in ionic, covalent and metallic bonding helps explain the properties of materials.</p>
+        <h3>Success criteria</h3>
+        <ul>
+          <li>I can describe electron transfer, electron sharing and delocalised electrons.</li>
+          <li>I can connect bonding and structure to properties such as conductivity, melting point, solubility and brittleness.</li>
+          <li>I can justify a bond type using evidence from more than one test.</li>
+        </ul>
+        <h3>Built-in simplifications</h3>
+        <p class="muted">This is a Stage 5-style model. Real materials can be more complex. Graphite, alloys, polar molecules and intermediate bonding are deliberately avoided in the main unknowns so that students can first learn the core patterns.</p>
+        <div class="btn-row">
+          <button class="btn warn" id="revealAnswersBtn">Reveal answers</button>
+          <button class="btn danger" id="resetAllBtn">Reset all progress</button>
+        </div>
+        <div id="answerKey" class="feedback hide"></div>
+      </div>
+    </section>
+
+    <section class="footer-sources small">
+      <strong>Source basis:</strong> NSW Science 7–10 Syllabus organisation and Working scientifically emphasis; Royal Society of Chemistry structure and bonding resources; LibreTexts introductory chemical bonding explanations. The activity uses simplified school-level bonding models for classroom learning.
+    </section>
+  </main>
+
+<script>
+(() => {
+  'use strict';
+
+  const BOND_LABELS = {
+    'ionic': 'Ionic',
+    'covalent molecular': 'Covalent molecular',
+    'covalent network': 'Covalent network',
+    'metallic': 'Metallic'
+  };
+
+  const bondExamples = [
+    {
+      id:'nacl', name:'Sodium chloride, NaCl', type:'ionic', badge:'bond-ionic', atoms:'Na + Cl',
+      electron:'Electron transfer from sodium to chlorine',
+      structure:'Positive and negative ions in a repeating lattice',
+      property:'Brittle crystal; conducts when dissolved or molten',
+      explanation:'Sodium forms Na⁺ and chlorine forms Cl⁻. Oppositely charged ions attract in a giant lattice.'
+    },
+    {
+      id:'mgo', name:'Magnesium oxide, MgO', type:'ionic', badge:'bond-ionic', atoms:'Mg + O',
+      electron:'Two electrons are transferred from magnesium to oxygen',
+      structure:'Giant ionic lattice', property:'Very high melting point; brittle solid',
+      explanation:'Magnesium forms Mg²⁺ and oxygen forms O²⁻. Strong electrostatic attraction holds the lattice together.'
+    },
+    {
+      id:'h2', name:'Hydrogen, H₂', type:'covalent molecular', badge:'bond-covalent', atoms:'H + H',
+      electron:'One pair of electrons is shared', structure:'Small molecule', property:'Low melting/boiling point; poor conductor',
+      explanation:'Two hydrogen atoms share a pair of electrons. The molecule is neutral and does not contain mobile charges.'
+    },
+    {
+      id:'co2', name:'Carbon dioxide, CO₂', type:'covalent molecular', badge:'bond-covalent', atoms:'O + C + O',
+      electron:'Electrons are shared between non-metal atoms', structure:'Small polar molecules', property:'Poor conductor when pure; low melting point compared with lattices',
+      explanation:'Oxygen shares electrons with hydrogen atoms. The bonds inside each molecule are covalent.'
+    },
+    {
+      id:'sio2', name:'Silicon dioxide, SiO₂', type:'covalent network', badge:'bond-network', atoms:'Si + O',
+      electron:'Electrons are shared across a giant network', structure:'Covalent network lattice', property:'Very high melting point; hard; does not conduct',
+      explanation:'Many atoms are connected by covalent bonds in a large network rather than forming separate small molecules.'
+    },
+    {
+      id:'cu', name:'Copper, Cu', type:'metallic', badge:'bond-metallic', atoms:'Cu atoms',
+      electron:'Outer electrons are delocalised', structure:'Metal ions in a sea of mobile electrons', property:'Conducts electricity as a solid; malleable',
+      explanation:'Metal atoms form a lattice of positive ions surrounded by mobile delocalised electrons.'
+    }
+  ];
+
+  const samples = [
+    {
+      id:'A', publicName:'Sample A', desc:'White crystalline solid.', answer:'ionic', substance:'sodium chloride',
+      tests:{
+        solidConductivity:'Does not conduct electricity as a solid. The ions are locked in place.',
+        dissolvedConductivity:'Conducts electricity when dissolved in water. Ions can move through the solution.',
+        meltingPoint:'High melting point. A large amount of energy is needed to separate the ions.',
+        solubility:'Dissolves in water.',
+        mechanical:'Brittle. The crystal shatters when layers shift and like charges line up.'
+      },
+      reason:'It is ionic because it does not conduct as a solid but does conduct when dissolved, showing mobile ions in solution.'
+    },
+    {
+      id:'B', publicName:'Sample B', desc:'Shiny orange-brown solid.', answer:'metallic', substance:'copper',
+      tests:{
+        solidConductivity:'Conducts electricity strongly as a solid. Mobile electrons move through the lattice.',
+        dissolvedConductivity:'Does not dissolve in water, so there is no solution to test.',
+        meltingPoint:'High melting point compared with most molecular substances.',
+        solubility:'Insoluble in water.',
+        mechanical:'Malleable. It bends or flattens rather than shattering.'
+      },
+      reason:'It is metallic because it conducts as a solid and is malleable, consistent with delocalised electrons and layers that can slide.'
+    },
+    {
+      id:'C', publicName:'Sample C', desc:'Waxy white solid.', answer:'covalent molecular', substance:'paraffin wax',
+      tests:{
+        solidConductivity:'Does not conduct electricity as a solid. There are no mobile charged particles.',
+        dissolvedConductivity:'Does not dissolve in water and does not produce conducting ions.',
+        meltingPoint:'Low melting point. It softens and melts easily in a warm water bath.',
+        solubility:'Insoluble in water.',
+        mechanical:'Soft and crumbly rather than hard or malleable.'
+      },
+      reason:'It is covalent molecular because it has a low melting point and does not conduct electricity.'
+    },
+    {
+      id:'D', publicName:'Sample D', desc:'Hard, clear or pale grains.', answer:'covalent network', substance:'silicon dioxide / sand',
+      tests:{
+        solidConductivity:'Does not conduct electricity as a solid. Electrons are not free to move.',
+        dissolvedConductivity:'Does not dissolve in water, so it does not form a conducting solution.',
+        meltingPoint:'Very high melting point. Many covalent bonds must be broken.',
+        solubility:'Insoluble in water.',
+        mechanical:'Hard and brittle.'
+      },
+      reason:'It is covalent network because it is hard, insoluble, non-conducting and has a very high melting point.'
+    }
+  ];
+
+  const tests = [
+    ['solidConductivity','Solid conductivity','Does the solid conduct electricity?'],
+    ['dissolvedConductivity','Solution conductivity','Does a water solution conduct electricity?'],
+    ['meltingPoint','Heating test','What does the melting point suggest?'],
+    ['solubility','Water test','Does it dissolve in water?'],
+    ['mechanical','Mechanical test','Is it brittle, soft or malleable?']
+  ];
+
+  const challenges = [
+    {id:'c1', prompt:'A material conducts electricity as a solid, is shiny and can be bent into shape.', answer:'metallic', hint:'Mobile electrons and sliding layers are typical of metals.'},
+    {id:'c2', prompt:'A brittle crystal does not conduct as a solid, but its solution conducts electricity.', answer:'ionic', hint:'The key evidence is mobile ions after dissolving.'},
+    {id:'c3', prompt:'A substance made from non-metal atoms has a low melting point and does not conduct electricity.', answer:'covalent molecular', hint:'Small molecules often have weak forces between molecules.'},
+    {id:'c4', prompt:'A hard solid has a very high melting point, is insoluble in water and does not conduct electricity.', answer:'covalent network', hint:'A giant network of covalent bonds explains the high melting point.'},
+    {id:'c5', prompt:'Atoms in a lattice are positive centres surrounded by delocalised electrons.', answer:'metallic', hint:'Delocalised electrons are the key feature of metallic bonding.'},
+    {id:'c6', prompt:'Electrons are shared between atoms in separate small molecules.', answer:'covalent molecular', hint:'Sharing electrons between non-metals forms covalent bonds.'}
+  ];
+
+  const state = {
+    activeTab:'build',
+    selectedExample:'nacl',
+    animationRunning:false,
+    t:0,
+    selectedSample:'A',
+    evidence:{},
+    predictions:{},
+    challengeAnswers:{},
+    testsRun:0,
+    correctPredictions:0,
+    correctChallenges:0
+  };
+
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  function badgeFor(type){
+    const cls = type === 'ionic' ? 'bond-ionic' : type === 'metallic' ? 'bond-metallic' : type === 'covalent network' ? 'bond-network' : 'bond-covalent';
+    return `<span class="bond-badge ${cls}">${BOND_LABELS[type]}</span>`;
+  }
+
+  function initTabs(){
+    $$('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.activeTab = btn.dataset.tab;
+        if(state.activeTab !== 'build') state.animationRunning = false;
+        $$('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        $$('.tab').forEach(tab => tab.classList.toggle('active', tab.id === 'tab-' + state.activeTab));
+        updateAnimationStatus();
+      });
+    });
+  }
+
+  function updateAnimationStatus(){
+    const status = $('#animationStatus');
+    if(!status) return;
+    status.innerHTML = state.animationRunning
+      ? 'Animation is playing. Press <strong>Pause animation</strong> before moving to another section.'
+      : 'Animation is paused. Press <strong>Play animation</strong> to start the particle motion.';
+  }
+
+  function initBuild(){
+    const select = $('#bondPreset');
+    select.innerHTML = bondExamples.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+    select.addEventListener('change', () => {
+      state.selectedExample = select.value;
+      state.animationRunning = false;
+      state.t = 0;
+      updateBondFacts();
+      updateAnimationStatus();
+      drawBondModel();
+    });
+    $('#animateBtn').addEventListener('click', () => { state.animationRunning = true; updateAnimationStatus(); });
+    $('#pauseBtn').addEventListener('click', () => { state.animationRunning = false; updateAnimationStatus(); });
+    $('#resetModelBtn').addEventListener('click', () => { state.animationRunning = false; state.t = 0; updateAnimationStatus(); drawBondModel(); });
+    updateBondFacts();
+    updateAnimationStatus();
+  }
+
+  function currentExample(){ return bondExamples.find(e => e.id === state.selectedExample) || bondExamples[0]; }
+
+  function updateBondFacts(){
+    const e = currentExample();
+    $('#bondTypeFact').innerHTML = badgeFor(e.type);
+    $('#electronFact').textContent = e.electron;
+    $('#structureFact').textContent = e.structure;
+    $('#propertyFact').textContent = e.property;
+  }
+
+  function drawBondModel(){
+    const canvas = $('#bondCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    drawBackground(ctx,w,h);
+    const ex = currentExample();
+    if(ex.type === 'ionic') drawIonic(ctx,w,h,ex);
+    else if(ex.type === 'metallic') drawMetallic(ctx,w,h,ex);
+    else if(ex.type === 'covalent network') drawNetwork(ctx,w,h,ex);
+    else drawCovalent(ctx,w,h,ex);
+    drawCaption(ctx,w,h,ex);
+  }
+
+  function drawBackground(ctx,w,h){
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx,20,20,w-40,h-40,24,true,false);
+    ctx.strokeStyle = '#dbe5f5'; ctx.lineWidth = 2;
+    roundRect(ctx,20,20,w-40,h-40,24,false,true);
+    ctx.fillStyle = '#edf4ff';
+    for(let i=0;i<24;i++){
+      const x = 45 + (i*83)%900;
+      const y = 55 + ((i*53)%305);
+      ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  function drawAtom(ctx,x,y,r,label,fill,stroke='#26384f'){
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle = fill; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = stroke; ctx.stroke();
+    ctx.fillStyle = '#172033'; ctx.font = '900 28px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,x,y);
+  }
+
+  function drawElectron(ctx,x,y,label='e⁻'){
+    ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.fillStyle = '#ffd166'; ctx.fill(); ctx.strokeStyle = '#9a6800'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle = '#172033'; ctx.font = '800 11px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,x,y+1);
+  }
+
+  function drawIonic(ctx,w,h,ex){
+    const t = state.t;
+    const left = {x:230,y:190}, right={x:535,y:190};
+    const shift = Math.min(1, t/90);
+    drawAtom(ctx,left.x,left.y,58,ex.id==='mgo'?'Mg':'Na','#bcd4ff');
+    drawAtom(ctx,right.x,right.y,62,ex.id==='mgo'?'O':'Cl','#c9f5df');
+    ctx.strokeStyle = '#8ba6d6'; ctx.setLineDash([7,7]); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(left.x,left.y,90,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(right.x,right.y,94,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    const eCount = ex.id === 'mgo' ? 2 : 1;
+    for(let i=0;i<eCount;i++){
+      const sx = left.x + 82*Math.cos(-0.4+i*.75);
+      const sy = left.y + 82*Math.sin(-0.4+i*.75);
+      const exx = right.x - 75 + i*8;
+      const exy = right.y - 48 + i*58;
+      drawElectron(ctx, sx + (exx-sx)*shift, sy + (exy-sy)*shift);
+    }
+    ctx.fillStyle = '#2f6fed'; ctx.font='900 32px system-ui, sans-serif'; ctx.textAlign='center';
+    if(shift > .75){ ctx.fillText(ex.id==='mgo'?'Mg²⁺':'Na⁺', left.x, left.y+95); ctx.fillText(ex.id==='mgo'?'O²⁻':'Cl⁻', right.x, right.y+100); }
+    drawArrow(ctx,330,190,430,190,'electron transfer');
+    drawMiniLattice(ctx,760,190, ex.id === 'mgo' ? ['Mg²⁺','O²⁻'] : ['Na⁺','Cl⁻']);
+  }
+
+  function drawCovalent(ctx,w,h,ex){
+    const t = state.t;
+    const cx = 385, cy = 195;
+    let labels = ex.id === 'h2o' ? ['H','O','H'] : ex.id === 'h2' ? ['H','H'] : ['C','O','O'];
+    if(labels.length === 2){
+      drawAtom(ctx,cx-85,cy,58,labels[0],'#c9f5df'); drawAtom(ctx,cx+85,cy,58,labels[1],'#c9f5df');
+      ctx.strokeStyle='#5abf8d';ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cx-30,cy);ctx.lineTo(cx+30,cy);ctx.stroke();
+      drawElectron(ctx,cx-13,cy-16); drawElectron(ctx,cx+13,cy+16);
+    } else if(ex.id === 'h2o'){
+      drawAtom(ctx,cx,cy,65,'O','#c9f5df'); drawAtom(ctx,cx-135,cy+50,45,'H','#dff3ff'); drawAtom(ctx,cx+135,cy+50,45,'H','#dff3ff');
+      ctx.strokeStyle='#5abf8d';ctx.lineWidth=10;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(cx-55,cy+22);ctx.lineTo(cx-100,cy+40);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+55,cy+22);ctx.lineTo(cx+100,cy+40);ctx.stroke();
+      drawElectron(ctx,cx-72+Math.sin(t/16)*3,cy+18); drawElectron(ctx,cx+72+Math.cos(t/16)*3,cy+18);
+    } else {
+      drawAtom(ctx,cx,cy,62,'C','#c9f5df'); drawAtom(ctx,cx-145,cy,54,'O','#dff3ff'); drawAtom(ctx,cx+145,cy,54,'O','#dff3ff');
+      ctx.strokeStyle='#5abf8d';ctx.lineWidth=8;ctx.lineCap='round';
+      [-1,1].forEach(side=>{ctx.beginPath();ctx.moveTo(cx+side*55,cy-12);ctx.lineTo(cx+side*105,cy-12);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+side*55,cy+12);ctx.lineTo(cx+side*105,cy+12);ctx.stroke();});
+      drawElectron(ctx,cx-82,cy-26); drawElectron(ctx,cx-82,cy+26); drawElectron(ctx,cx+82,cy-26); drawElectron(ctx,cx+82,cy+26);
+    }
+    drawMoleculeCluster(ctx,745,190);
+  }
+
+  function drawMetallic(ctx,w,h,ex){
+    ctx.fillStyle = '#fff4e6'; roundRect(ctx,86,70,600,245,20,true,false);
+    ctx.strokeStyle='#ffd0a5'; ctx.lineWidth=2; roundRect(ctx,86,70,600,245,20,false,true);
+    for(let row=0;row<3;row++){
+      for(let col=0;col<6;col++){
+        const x=150+col*95+(row%2)*45, y=130+row*72;
+        drawAtom(ctx,x,y,31,'M⁺','#ffd6a5','#9c4b10');
+      }
+    }
+    const speed = parseFloat($('#modelSpeed').value || '1');
+    for(let i=0;i<28;i++){
+      const x = 115 + ((i*53 + state.t*2.4*speed) % 540);
+      const y = 96 + ((i*41 + Math.sin((state.t+i)/18)*32) % 180);
+      drawElectron(ctx,x,y,'e');
+    }
+    ctx.fillStyle='#9c4b10';ctx.font='900 21px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('delocalised electron sea',390,345);
+    drawPropertyIcons(ctx,810,190);
+  }
+
+  function drawNetwork(ctx,w,h,ex){
+    const points=[];
+    for(let row=0;row<4;row++){
+      for(let col=0;col<5;col++){
+        points.push({x:190+col*100+(row%2)*50,y:90+row*75,label:(row+col)%2?'O':'Si'});
+      }
+    }
+    ctx.strokeStyle='#6d4bd4';ctx.lineWidth=4;
+    for(const a of points){
+      for(const b of points){
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d>85 && d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+      }
+    }
+    for(const p of points){drawAtom(ctx,p.x,p.y,p.label==='Si'?31:26,p.label,p.label==='Si'?'#d8ccff':'#e9e3ff','#5632bd');}
+    ctx.fillStyle='#5632bd';ctx.font='900 21px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('giant covalent network',430,355);
+    drawHardnessIcons(ctx,810,190);
+  }
+
+  function drawMiniLattice(ctx,x,y,labels){
+    ctx.fillStyle='#f7faff';roundRect(ctx,x-105,y-120,210,240,18,true,false);ctx.strokeStyle='#cddaf0';ctx.lineWidth=2;roundRect(ctx,x-105,y-120,210,240,18,false,true);
+    for(let r=0;r<4;r++) for(let c=0;c<3;c++){
+      const posx=x-60+c*60,posy=y-75+r*50, idx=(r+c)%2;
+      drawAtom(ctx,posx,posy,22,labels[idx],idx?'#c9f5df':'#bcd4ff');
+    }
+    ctx.fillStyle='#5d6b82';ctx.font='800 15px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('ionic lattice',x,y+100);
+  }
+
+  function drawMoleculeCluster(ctx,x,y){
+    ctx.fillStyle='#f6fff9';roundRect(ctx,x-110,y-120,220,240,18,true,false);ctx.strokeStyle='#c9ead8';ctx.lineWidth=2;roundRect(ctx,x-110,y-120,220,240,18,false,true);
+    for(let i=0;i<7;i++){
+      const ox=x-65+(i%3)*62+Math.sin(state.t/25+i)*5; const oy=y-65+Math.floor(i/3)*55+Math.cos(state.t/22+i)*4;
+      drawAtom(ctx,ox,oy,16,'','#c9f5df','#0d6d45'); drawAtom(ctx,ox+24,oy+7,13,'','#dff3ff','#0d6d45');
+      ctx.strokeStyle='#5abf8d';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ox+13,oy+4);ctx.lineTo(ox+20,oy+6);ctx.stroke();
+    }
+    ctx.fillStyle='#5d6b82';ctx.font='800 15px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('small molecules',x,y+100);
+  }
+
+  function drawPropertyIcons(ctx,x,y){
+    ctx.fillStyle='#fff8ef';roundRect(ctx,x-105,y-120,210,240,18,true,false);ctx.strokeStyle='#ffd0a5';ctx.lineWidth=2;roundRect(ctx,x-105,y-120,210,240,18,false,true);
+    ctx.strokeStyle='#9c4b10';ctx.lineWidth=9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-65,y-40);ctx.lineTo(x+65,y-40);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x-65,y+5);ctx.quadraticCurveTo(x,y+50,x+65,y+5);ctx.stroke();
+    drawElectron(ctx,x-35,y-82,'e');drawElectron(ctx,x+10,y-82,'e');drawElectron(ctx,x+52,y-82,'e');
+    ctx.fillStyle='#5d6b82';ctx.font='800 15px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('conducts + bends',x,y+100);
+  }
+
+  function drawHardnessIcons(ctx,x,y){
+    ctx.fillStyle='#fbf9ff';roundRect(ctx,x-105,y-120,210,240,18,true,false);ctx.strokeStyle='#d8ccff';ctx.lineWidth=2;roundRect(ctx,x-105,y-120,210,240,18,false,true);
+    ctx.fillStyle='#d8ccff';ctx.strokeStyle='#5632bd';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(x-55,y+45);ctx.lineTo(x-20,y-65);ctx.lineTo(x+55,y+45);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.strokeStyle='#5632bd';ctx.beginPath();ctx.moveTo(x-20,y-65);ctx.lineTo(x+10,y+45);ctx.stroke();ctx.beginPath();ctx.moveTo(x-55,y+45);ctx.lineTo(x+10,y+45);ctx.stroke();
+    ctx.fillStyle='#5d6b82';ctx.font='800 15px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText('hard + high mp',x,y+100);
+  }
+
+  function drawCaption(ctx,w,h,ex){
+    ctx.fillStyle='#172033';ctx.font='950 26px system-ui, sans-serif';ctx.textAlign='left';ctx.fillText(ex.name,42,52);
+    ctx.font='700 17px system-ui, sans-serif';ctx.fillStyle='#5d6b82';wrapText(ctx,ex.explanation,42,h-63,w-84,22);
+  }
+
+  function drawArrow(ctx,x1,y1,x2,y2,label){
+    ctx.strokeStyle='#2f6fed';ctx.fillStyle='#2f6fed';ctx.lineWidth=4;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    const angle=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-14*Math.cos(angle-.45),y2-14*Math.sin(angle-.45));ctx.lineTo(x2-14*Math.cos(angle+.45),y2-14*Math.sin(angle+.45));ctx.closePath();ctx.fill();
+    ctx.font='800 15px system-ui, sans-serif';ctx.textAlign='center';ctx.fillText(label,(x1+x2)/2,y1-18);
+  }
+
+  function roundRect(ctx,x,y,w,h,r,fill,stroke){
+    ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();
+  }
+
+  function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+    const words=text.split(' ');let line='';
+    for(let n=0;n<words.length;n++){
+      const test=line+words[n]+' ';
+      if(ctx.measureText(test).width>maxWidth && n>0){ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight;} else line=test;
+    }
+    ctx.fillText(line,x,y);
+  }
+
+  function animate(){
+    if(state.animationRunning){ state.t += parseFloat($('#modelSpeed')?.value || '1'); drawBondModel(); }
+    requestAnimationFrame(animate);
+  }
+
+  function initSamples(){
+    renderSampleList();
+    renderTestButtons();
+    renderSelectedSample();
+    $('#checkPredictionBtn').addEventListener('click', checkPrediction);
+    $('#clearEvidenceBtn').addEventListener('click', () => { state.evidence[state.selectedSample] = {}; renderEvidence(); $('#testResult').textContent = 'Evidence cleared for this sample.'; updateScores(); });
+    $('#exportCsvBtn').addEventListener('click', exportCsv);
+  }
+
+  function renderSampleList(){
+    const list = $('#sampleList');
+    list.innerHTML = samples.map(s => `<div class="sample-card ${s.id===state.selectedSample?'active':''}" data-sample="${s.id}"><div class="tag">${s.publicName}</div><strong>${s.desc}</strong><div class="small muted">Click to investigate</div></div>`).join('');
+    $$('.sample-card').forEach(card => card.addEventListener('click', () => { state.selectedSample = card.dataset.sample; renderSampleList(); renderSelectedSample(); }));
+  }
+
+  function selectedSample(){ return samples.find(s => s.id === state.selectedSample) || samples[0]; }
+
+  function renderSelectedSample(){
+    const s = selectedSample();
+    $('#selectedSampleTitle').textContent = s.publicName;
+    $('#selectedSampleDesc').textContent = s.desc + ' Run multiple tests before making a prediction.';
+    $('#bondPrediction').value = state.predictions[s.id]?.prediction || '';
+    $('#studentReason').value = state.predictions[s.id]?.reason || '';
+    $('#predictionFeedback').classList.add('hide');
+    renderEvidence();
+  }
+
+  function renderTestButtons(){
+    $('#testButtons').innerHTML = tests.map(([key,label,desc]) => `<button class="test-btn" data-test="${key}"><span>${label}</span><br><span class="small muted">${desc}</span></button>`).join('');
+    $$('.test-btn').forEach(btn => btn.addEventListener('click', () => runTest(btn.dataset.test)));
+  }
+
+  function runTest(testKey){
+    const s = selectedSample();
+    state.evidence[s.id] ||= {};
+    state.evidence[s.id][testKey] = s.tests[testKey];
+    state.testsRun++;
+    const label = tests.find(t => t[0] === testKey)?.[1] || testKey;
+    $('#testResult').innerHTML = `<strong>${label}:</strong> ${s.tests[testKey]}`;
+    renderEvidence(); updateScores();
+  }
+
+  function renderEvidence(){
+    const s = selectedSample();
+    const ev = state.evidence[s.id] || {};
+    const rows = Object.keys(ev).map(key => {
+      const label = tests.find(t => t[0] === key)?.[1] || key;
+      return `<tr><td><strong>${label}</strong></td><td>${ev[key]}</td></tr>`;
+    });
+    $('#evidenceBody').innerHTML = rows.length ? rows.join('') : '<tr><td colspan="2" class="muted">No evidence collected yet.</td></tr>';
+  }
+
+  function checkPrediction(){
+    const s = selectedSample();
+    const prediction = $('#bondPrediction').value;
+    const reason = $('#studentReason').value.trim();
+    const evCount = Object.keys(state.evidence[s.id] || {}).length;
+    const fb = $('#predictionFeedback');
+    fb.classList.remove('hide','correct','incorrect');
+    if(!prediction){ fb.classList.add('incorrect'); fb.innerHTML = '<strong>Choose a prediction first.</strong>'; return; }
+    if(evCount < 2){ fb.classList.add('incorrect'); fb.innerHTML = '<strong>Collect more evidence.</strong> Run at least two tests before checking.'; return; }
+    state.predictions[s.id] = {prediction, reason, correct: prediction === s.answer};
+    if(prediction === s.answer){
+      fb.classList.add('correct');
+      fb.innerHTML = `<strong>Correct.</strong> ${s.reason}${reason ? '<br><span class="small"><strong>Your reason:</strong> '+escapeHtml(reason)+'</span>' : ''}`;
+    } else {
+      fb.classList.add('incorrect');
+      fb.innerHTML = `<strong>Not quite.</strong> Your evidence points more strongly to ${badgeFor(s.answer)}. ${s.reason}`;
+    }
+    updateScores();
+  }
+
+  function initChallenges(){
+    renderChallenges();
+    $('#resetChallengesBtn').addEventListener('click', () => { state.challengeAnswers = {}; renderChallenges(); updateScores(); });
+  }
+
+  function renderChallenges(){
+    const list = $('#challengeList');
+    list.innerHTML = challenges.map((c,idx) => {
+      const saved = state.challengeAnswers[c.id];
+      return `<div class="challenge-card ${saved?.correct?'done':''}" data-challenge="${c.id}">
+        <h3>Challenge ${idx+1}</h3>
+        <p>${c.prompt}</p>
+        <div class="controls">
+          <div><label for="${c.id}-select">Bonding model</label><select id="${c.id}-select">
+            <option value="">Choose…</option>
+            <option value="ionic" ${saved?.answer==='ionic'?'selected':''}>Ionic</option>
+            <option value="covalent molecular" ${saved?.answer==='covalent molecular'?'selected':''}>Covalent molecular</option>
+            <option value="covalent network" ${saved?.answer==='covalent network'?'selected':''}>Covalent network</option>
+            <option value="metallic" ${saved?.answer==='metallic'?'selected':''}>Metallic</option>
+          </select></div>
+          <div style="display:flex;align-items:end"><button class="btn secondary challenge-check" data-challenge="${c.id}">Check</button></div>
+        </div>
+        <div id="${c.id}-feedback" class="feedback ${saved?'':'hide'} ${saved?.correct?'correct':'incorrect'}">${saved ? (saved.correct ? '<strong>Correct.</strong> '+c.hint : '<strong>Try again.</strong> Hint: '+c.hint) : ''}</div>
+      </div>`;
+    }).join('');
+    $$('.challenge-check').forEach(btn => btn.addEventListener('click', () => checkChallenge(btn.dataset.challenge)));
+  }
+
+  function checkChallenge(id){
+    const c = challenges.find(ch => ch.id === id);
+    const ans = $('#' + id + '-select').value;
+    const fb = $('#' + id + '-feedback');
+    fb.classList.remove('hide','correct','incorrect');
+    if(!ans){ fb.classList.add('incorrect'); fb.innerHTML = '<strong>Choose an answer first.</strong>'; return; }
+    const correct = ans === c.answer;
+    state.challengeAnswers[id] = {answer:ans, correct};
+    fb.classList.add(correct ? 'correct':'incorrect');
+    fb.innerHTML = correct ? `<strong>Correct.</strong> ${c.hint}` : `<strong>Try again.</strong> Hint: ${c.hint}`;
+    renderChallenges(); updateScores();
+  }
+
+  function updateScores(){
+    state.correctPredictions = Object.values(state.predictions).filter(p => p.correct).length;
+    state.correctChallenges = Object.values(state.challengeAnswers).filter(a => a.correct).length;
+    $('#scorePredictions').textContent = state.correctPredictions;
+    $('#scoreChallenges').textContent = state.correctChallenges;
+    $('#scoreTests').textContent = state.testsRun;
+  }
+
+  function exportCsv(){
+    const header = ['Sample','Test','Evidence','Student prediction','Student reason','Correct bond type'];
+    const rows = [header];
+    samples.forEach(s => {
+      const ev = state.evidence[s.id] || {};
+      const pred = state.predictions[s.id] || {};
+      if(Object.keys(ev).length === 0){ rows.push([s.publicName,'','','','','']); }
+      Object.keys(ev).forEach(key => {
+        const label = tests.find(t => t[0] === key)?.[1] || key;
+        rows.push([s.publicName,label,ev[key],pred.prediction || '',pred.reason || '',s.answer]);
+      });
+    });
+    const csv = rows.map(r => r.map(cell => '"' + String(cell).replaceAll('"','""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'chemical-bonds-evidence.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function initTeacher(){
+    $('#revealAnswersBtn').addEventListener('click', () => {
+      const key = $('#answerKey'); key.classList.toggle('hide');
+      key.innerHTML = '<strong>Answer key:</strong><br>' + samples.map(s => `${s.publicName}: ${badgeFor(s.answer)} <span class="muted">(${s.substance})</span>`).join('<br>') + '<hr>' + challenges.map((c,i) => `Challenge ${i+1}: ${badgeFor(c.answer)}`).join('<br>');
+    });
+    $('#resetAllBtn').addEventListener('click', () => {
+      state.evidence = {}; state.predictions = {}; state.challengeAnswers = {}; state.testsRun = 0;
+      renderSelectedSample(); renderChallenges(); updateScores(); $('#testResult').textContent='Run a test to collect evidence.'; $('#predictionFeedback').classList.add('hide');
+    });
+  }
+
+  function runSelfTests(){
+    const validTypes = Object.keys(BOND_LABELS);
+    const sampleAnswersOk = samples.every(s => validTypes.includes(s.answer) && Object.keys(s.tests).length >= 5);
+    const challengeAnswersOk = challenges.every(c => validTypes.includes(c.answer) && c.prompt.length > 20);
+    const exportOk = typeof Blob !== 'undefined' && tests.length === 5;
+    const passed = [sampleAnswersOk, challengeAnswersOk, exportOk].filter(Boolean).length;
+    const box = $('#selfTestStatus');
+    box.classList.remove('correct','incorrect'); box.classList.add(passed === 3 ? 'correct':'incorrect');
+    box.innerHTML = `<strong>${passed}/3 checks passed.</strong><br><span class="small">Samples: ${sampleAnswersOk?'OK':'Check'} · Challenges: ${challengeAnswersOk?'OK':'Check'} · Export: ${exportOk?'OK':'Check'}</span>`;
+  }
+
+  function escapeHtml(str){
+    return str.replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[ch]));
+  }
+
+  function boot(){
+    initTabs(); initBuild(); initSamples(); initChallenges(); initTeacher(); runSelfTests(); updateScores(); drawBondModel(); animate();
+  }
+
+  document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+</body>
+</html>
