@@ -9,13 +9,14 @@
       --bg:#f6f8fb;
       --panel:#ffffff;
       --ink:#132033;
-      --muted:#5c6a7a;
+      --muted:#5d6a7a;
       --line:#d8e1ee;
       --accent:#2563eb;
       --accent2:#0f766e;
-      --warn:#b45309;
-      --bad:#b91c1c;
+      --navy:#17356e;
       --good:#047857;
+      --bad:#b91c1c;
+      --warn:#b45309;
       --soft:#eaf1ff;
       --soft2:#ecfdf5;
       --shadow:0 14px 40px rgba(15,23,42,.08);
@@ -25,7 +26,7 @@
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #eef6ff 0, #f6f8fb 36%, #f7f7fb 100%);
+      background: radial-gradient(circle at top left, #eef6ff 0, #f6f8fb 38%, #f7f7fb 100%);
       color:var(--ink);
     }
     .wrap{max-width:1220px;margin:0 auto;padding:20px}
@@ -33,7 +34,7 @@
     .back{color:#0b5ed7;text-decoration:none;font-weight:750;display:inline-flex;gap:8px;align-items:center}
     .status-pill{font-size:.88rem;color:#203047;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;box-shadow:0 6px 18px rgba(15,23,42,.06)}
     header.hero{
-      background:linear-gradient(135deg,#0f172a,#17356e 55%,#0f766e);
+      background:linear-gradient(135deg,#0f172a,#17356e 56%,#0f766e);
       color:#fff;
       border-radius:28px;
       padding:26px;
@@ -41,162 +42,86 @@
       overflow:hidden;
       position:relative;
     }
-    header.hero:after{
+    header.hero::after{
       content:"";
       position:absolute;
-      inset:auto -70px -110px auto;
-      width:300px;height:300px;
-      border-radius:50%;
-      background:rgba(255,255,255,.09);
+      width:360px;height:360px;right:-160px;top:-150px;
+      background:rgba(255,255,255,.10);border-radius:50%;
     }
-    h1{font-size:clamp(2rem,4vw,3.3rem);margin:.1rem 0 .4rem;letter-spacing:-.04em}
-    .hero p{max-width:860px;line-height:1.55;margin:.2rem 0 0;color:#dbeafe;font-size:1.04rem}
-    .hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:end;position:relative;z-index:1}
-    .hero-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:14px}
-    .hero-card strong{display:block;color:#fff;margin-bottom:4px}
-    .hero-card span{color:#dbeafe;font-size:.95rem;line-height:1.4}
-    .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
-    .tab{
-      border:1px solid var(--line);
-      background:#fff;
-      color:#243247;
-      border-radius:999px;
-      padding:10px 15px;
-      font-weight:800;
-      cursor:pointer;
-      box-shadow:0 6px 18px rgba(15,23,42,.05);
-    }
-    .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+    .hero-grid{display:grid;grid-template-columns:1.6fr .9fr;gap:18px;align-items:stretch;position:relative;z-index:1}
+    h1{font-size:clamp(2rem,4vw,3.4rem);line-height:1.02;margin:0 0 10px;font-weight:900;letter-spacing:-.04em}
+    h2{margin:0 0 8px;font-size:1.35rem}
+    h3{margin:0 0 8px;font-size:1.05rem}
+    p{line-height:1.55}
+    .hero p{max-width:760px;margin:0;color:#dce8ff;font-size:1.08rem}
+    .hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:22px;padding:18px;display:grid;gap:10px;align-content:center;backdrop-filter: blur(8px)}
+    .hero-card strong{font-size:1.1rem}
+    .hero-card span{color:#ecf4ff;line-height:1.5}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+    .tab{border:1px solid var(--line);background:#fff;color:#243247;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    .tab[aria-selected="true"]{background:#17356e;color:#fff;border-color:#17356e}
     .panel{display:none}
     .panel.active{display:block}
-    .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:18px;align-items:start}
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .card .inner{padding:18px}
-    h2{font-size:1.45rem;margin:0 0 8px;letter-spacing:-.02em}
-    h3{font-size:1.05rem;margin:0 0 8px}
-    .sub{color:var(--muted);line-height:1.45;margin:.2rem 0 0}
-    .model-head{display:flex;justify-content:space-between;gap:14px;align-items:center;border-bottom:1px solid var(--line);padding:14px 18px;background:#fbfdff}
-    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .check-control{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      min-height:42px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-      color:#243247;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .check-control input{min-height:auto;width:auto;margin:0;accent-color:var(--accent)}
-    select,input,button,textarea{
-      font:inherit;
-    }
-    select,input,textarea{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      background:#fff;
-      color:var(--ink);
-      min-height:42px;
-    }
-    input[type="number"]{width:84px}
-    button{
-      border:1px solid transparent;
-      border-radius:12px;
-      padding:10px 13px;
-      font-weight:850;
-      cursor:pointer;
-      background:var(--accent);
-      color:#fff;
-      min-height:42px;
-    }
-    button.secondary{background:#fff;color:#1e2a3a;border-color:var(--line)}
-    button.good{background:var(--good)}
-    button.warn{background:var(--warn)}
-    button.ghost{background:#eef4ff;color:#17356e;border-color:#d6e4ff}
-    button:focus,select:focus,input:focus,textarea:focus{outline:3px solid rgba(37,99,235,.25);outline-offset:2px}
-    canvas{display:block;width:100%;height:auto;background:linear-gradient(#ffffff,#f8fbff);border-bottom:1px solid var(--line)}
-    .formula-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-    .fact{
-      background:var(--soft);
-      border:1px solid #d4e3ff;
-      border-radius:16px;
-      padding:13px;
-      min-height:96px;
-    }
-    .fact strong{display:block;color:#183461;font-size:.88rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
-    .formula{font-size:1.65rem;font-weight:900;letter-spacing:.01em}
-    .condensed{font-size:1.15rem;font-weight:900;word-break:break-word}
-    .note{border-left:5px solid var(--accent2);background:#f0fdfa;padding:12px 14px;border-radius:14px;color:#18352f;line-height:1.45}
-    .small{font-size:.91rem;color:var(--muted);line-height:1.45}
-    .pattern-list{display:grid;gap:10px;margin:12px 0 0;padding:0;list-style:none}
-    .pattern-list li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;line-height:1.4}
-    .pattern-list b{color:#17356e}
+    .grid{display:grid;grid-template-columns:1fr;gap:18px}
+    .card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .card.pad{padding:18px}
+    .inner{padding:18px}
+    .model-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:18px;border-bottom:1px solid var(--line)}
+    .model-head p{margin:0;color:var(--muted)}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;min-width:330px}
+    .small{font-size:.9rem;color:var(--muted)}
+    select,input,textarea{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:10px 11px;outline:none}
+    select:focus,input:focus,textarea:focus{border-color:#82aaff;box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+    button{font:inherit;border:0;border-radius:13px;padding:10px 13px;font-weight:850;cursor:pointer;background:#17356e;color:#fff;box-shadow:0 8px 18px rgba(23,53,110,.16)}
+    button.secondary{background:#eef4ff;color:#17356e;border:1px solid #bfd4ff;box-shadow:none}
+    button.ghost{background:#ecfdf5;color:#0f766e;border:1px solid #b8ead7;box-shadow:none}
+    button.warn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;box-shadow:none}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .toggle-wrap{display:inline-flex;align-items:center;gap:8px;border:1px solid #bfd4ff;background:#f8fbff;border-radius:999px;padding:8px 10px;font-weight:800;color:#17356e}
+    .toggle-wrap input{width:18px;height:18px;accent-color:#2563eb}
+    canvas{display:block;width:100%;height:auto;background:#fff}
+    .formula-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .fact{background:#f8fbff;border:1px solid var(--line);border-radius:16px;padding:13px;min-height:78px}
+    .fact strong{display:block;color:#44546a;font-size:.9rem;margin-bottom:6px}
+    .formula,.condensed{font-weight:900;font-size:1.32rem;color:#132033;word-break:break-word}
+    .note{margin-top:12px;background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:16px;padding:13px;line-height:1.5}
     .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:16px;border:1px solid var(--line);background:#fff}
-    th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:10px;text-align:left;vertical-align:middle}
-    th:last-child,td:last-child{border-right:0}
+    .info-list{margin:10px 0 0;padding-left:20px;color:#314053;line-height:1.55}
+    .example-box{border:1px dashed #9bb7e5;background:#f8fbff;border-radius:16px;padding:14px;margin-top:10px;line-height:1.55}
+    .quick-test{display:grid;gap:12px}
+    .quick-q{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fbfdff}
+    .quick-q p{margin:0 0 10px;font-weight:800}
+    .quick-options{display:flex;gap:8px;flex-wrap:wrap}
+    .quick-options button{background:#fff;color:#17356e;border:1px solid #bfd4ff;box-shadow:none}
+    .feedback{display:inline-block;border-radius:999px;padding:5px 9px;font-weight:900;font-size:.86rem}
+    .feedback.ok{background:#dcfce7;color:#166534}
+    .feedback.no{background:#fee2e2;color:#991b1b}
+    .feedback.maybe{background:#eaf1ff;color:#17356e}
+    .table-actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+    table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+    th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:middle}
+    th{background:#f1f5fb;color:#243247;font-weight:900}
     tr:last-child td{border-bottom:0}
-    th{background:#f2f6fc;font-size:.92rem;color:#253246}
-    td.name{font-weight:850;white-space:nowrap}
-    td input{width:100%;min-width:90px;padding:8px 9px;border-radius:10px;min-height:38px}
-    .feedback{font-weight:900;font-size:.9rem;min-width:80px}
-    .ok{color:var(--good)}
-    .no{color:var(--bad)}
-    .maybe{color:var(--warn)}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-    .mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .tile{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background:#fff;
-      cursor:pointer;
-      transition:.16s transform ease,.16s box-shadow ease,.16s border-color ease;
-      min-height:112px;
-    }
-    .tile:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.08);border-color:#bcd0f4}
-    .tile.selected{background:#eef4ff;border-color:#7aa7ff}
-    .tile strong{display:block;font-size:1rem;margin-bottom:6px}
-    .tile span{display:block;color:var(--muted);font-size:.9rem;line-height:1.35}
-    .quiz-card{display:grid;gap:12px}
-    .question{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
-    .answers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-    .answer{background:#fff;color:#1e2a3a;border-color:var(--line);text-align:left;font-weight:750}
-    .answer.correct{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
-    .answer.incorrect{background:#fef2f2;border-color:#fecaca;color:#991b1b}
-    .scorebox{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:12px}
-    .copybox{width:100%;min-height:150px;resize:vertical;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-size:.9rem}
-    .source-list{margin:8px 0 0;padding-left:18px;color:var(--muted);line-height:1.45}
+    td.name{font-weight:850}
+    td input{width:100%}
+    .summary{margin-top:10px;color:#314053;line-height:1.5}
+    .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card-stack{display:grid;gap:10px}
+    .mini-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px;cursor:pointer;font-weight:850;box-shadow:0 8px 18px rgba(15,23,42,.04)}
+    .mini-card.selected{outline:3px solid rgba(37,99,235,.22);border-color:#2563eb}
+    .mini-card.matched{background:#ecfdf5;border-color:#86efac;color:#14532d}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    textarea{width:100%;min-height:240px;resize:vertical;line-height:1.4}
+    .source-list{font-size:.94rem;color:#314053;line-height:1.6;margin:8px 0 0;padding-left:20px}
     .source-list a{color:#0b5ed7}
-    footer{margin:22px 0;color:var(--muted);font-size:.9rem}
-    .mobile-note{display:none}
+    footer{margin:24px 0 10px;text-align:center;color:#627086;font-size:.9rem}
     @media (max-width:900px){
-      .hero-grid,.grid,.support-grid{grid-template-columns:1fr}
-      .formula-strip,.mini-grid{grid-template-columns:1fr 1fr}
-      .answers{grid-template-columns:1fr}
-      .model-head{align-items:flex-start;flex-direction:column}
-    }
-    @media (max-width:560px){
-      .formula-strip,.mini-grid{grid-template-columns:1fr}
-      th,td{padding:8px}
-      .wrap{padding:12px}
-      .mobile-note{display:block}
-    }
-    @media print{
-      body{background:#fff}
-      .topbar,.tabs,.toolbar,button,.back,.status-pill{display:none!important}
-      .panel{display:block!important;break-inside:avoid}
-      .card{box-shadow:none;border-color:#999}
+      .hero-grid,.support-grid,.cards-grid,.split{grid-template-columns:1fr}
+      .model-head{display:grid}
+      .controls{justify-content:flex-start;min-width:0}
+      .formula-strip{grid-template-columns:1fr}
+      .wrap{padding:14px}
+      .tab{width:100%;justify-content:center}
     }
   </style>
 </head>
@@ -204,18 +129,18 @@
   <div class="wrap">
     <div class="topbar">
       <a class="back" href="../../">← Back to SciSims</a>
-      <div class="status-pill" id="saveStatus">Ready — no animation running</div>
+      <div class="status-pill" id="saveStatus">Ready — build the chain step by step</div>
     </div>
 
     <header class="hero">
       <div class="hero-grid">
         <div>
           <h1>Alkane Formula Builder</h1>
-          <p>Use the pattern in straight-chain alkanes to complete the table for methane to octane. Build the carbon chain, predict the molecular formula, then write the condensed structural formula.</p>
+          <p>Build straight-chain alkanes from methane to octane, identify the number of carbon atoms, predict the molecular formula and write the condensed structural formula.</p>
         </div>
         <div class="hero-card">
           <strong>Learning focus</strong>
-          <span>Alkanes are saturated hydrocarbons. Each straight-chain alkane follows the molecular formula pattern <b>C<sub>n</sub>H<sub>2n+2</sub></b>.</span>
+          <span>Alkanes are saturated hydrocarbons. Straight-chain alkanes follow the molecular formula pattern <b>C<sub>n</sub>H<sub>2n+2</sub></b>.</span>
         </div>
       </div>
     </header>
@@ -224,7 +149,7 @@
       <button class="tab" type="button" data-tab="build" aria-selected="true">1. Build the pattern</button>
       <button class="tab" type="button" data-tab="table" aria-selected="false">2. Fill the table</button>
       <button class="tab" type="button" data-tab="cards" aria-selected="false">3. Match cards</button>
-      <button class="tab" type="button" data-tab="teacher" aria-selected="false">4. Teacher notes</button>
+      <button class="tab" type="button" data-tab="teacher" aria-selected="false">Teacher notes</button>
     </nav>
 
     <section id="build" class="panel active">
@@ -233,17 +158,17 @@
           <div class="model-head">
             <div>
               <h2>Build a straight-chain alkane</h2>
-              <p class="sub">Change the number of carbon atoms. Toggle hydrogens on to see separate H atoms, or off for a cleaner condensed-formula model.</p>
+              <p class="sub">Use the button to build the chain one carbon at a time, or choose an alkane from the dropdown. Toggle hydrogens on to see why the end carbons have more hydrogen atoms.</p>
             </div>
             <div class="controls">
               <label for="alkaneSelect" class="small"><b>Alkane</b></label>
               <select id="alkaneSelect" aria-label="Choose an alkane"></select>
-              <label class="check-control" for="hydrogenToggle"><input id="hydrogenToggle" type="checkbox"> Show hydrogens</label>
-              <button id="playBtn" type="button" class="ghost">Play animation</button>
+              <button id="buildNext" type="button" class="ghost">Build next carbon</button>
               <button id="resetModel" type="button" class="secondary">Reset model</button>
+              <label class="toggle-wrap" for="hydrogenToggle"><input id="hydrogenToggle" type="checkbox" /> Show hydrogens</label>
             </div>
           </div>
-          <canvas id="modelCanvas" width="1000" height="450" aria-label="Alkane carbon chain model"></canvas>
+          <canvas id="modelCanvas" width="1100" height="520" aria-label="Alkane carbon chain model"></canvas>
           <div class="inner">
             <div class="formula-strip">
               <div class="fact">
@@ -259,176 +184,148 @@
                 <div class="condensed" id="condensedFormula">CH<sub>4</sub></div>
               </div>
             </div>
-            <p class="note" id="patternNote">Methane has one carbon atom. There are no middle CH<sub>2</sub> groups, so the condensed structural formula is just CH<sub>4</sub>.</p>
+            <div class="note" id="patternNote">Methane has one carbon atom. There are no middle CH<sub>2</sub> groups, so the condensed structural formula is just <b>CH<sub>4</sub></b>.</div>
           </div>
         </div>
 
-        <aside class="card">
-          <div class="inner">
-            <h2>Pattern helper</h2>
-            <p class="sub">Use these rules to fill the worksheet table without memorising every row.</p>
-            <ul class="pattern-list">
-              <li><b>Name ending:</b> all of these hydrocarbons end in <b>-ane</b> because they are alkanes.</li>
-              <li><b>Carbon count:</b> meth-, eth-, prop-, but-, pent-, hex-, hept-, oct- mean 1 to 8 carbon atoms.</li>
-              <li><b>Molecular formula:</b> for an alkane, use <b>C<sub>n</sub>H<sub>2n+2</sub></b>.</li>
-              <li><b>Condensed formula:</b> ends are usually <b>CH<sub>3</sub></b>; middle carbon groups are <b>CH<sub>2</sub></b>.</li>
-              <li><b>Hydrogen toggle:</b> switch hydrogens on to count H atoms separately, then switch them off for a cleaner condensed structural formula view.</li>
-            </ul>
-          </div>
-        </aside>
-      </div>
-
-      <div class="support-grid">
-        <div class="card">
-          <div class="inner">
+        <div class="support-grid">
+          <div class="card pad">
             <h2>How to use this activity</h2>
-            <ol class="small">
-              <li>Select an alkane and observe the number of carbon atoms.</li>
-              <li>Use <b>C<sub>n</sub>H<sub>2n+2</sub></b> to predict the molecular formula.</li>
-              <li>Use the end and middle groups to write the condensed structural formula.</li>
-              <li>Move to <b>Fill the table</b> and check your worksheet answers.</li>
-            </ol>
+            <ul class="info-list">
+              <li>Start at methane, then press <b>Build next carbon</b> to add one carbon at a time.</li>
+              <li>Use <b>Show hydrogens</b> when you need to check why the formula changes.</li>
+              <li>Look for the pattern: each new carbon adds <b>CH<sub>2</sub></b> to the chain.</li>
+              <li>Complete the worksheet table using the name, carbon count, molecular formula and condensed structural formula.</li>
+            </ul>
+            <div class="example-box"><b>Example:</b> Butane has 4 carbon atoms. Its molecular formula is C<sub>4</sub>H<sub>10</sub>. Its condensed structural formula is CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>CH<sub>3</sub>.</div>
           </div>
-        </div>
-        <div class="card">
-          <div class="inner">
-            <h2>Quick example</h2>
-            <p class="small"><b>Butane</b> has four carbon atoms. Using <b>C<sub>n</sub>H<sub>2n+2</sub></b>, its molecular formula is <b>C<sub>4</sub>H<sub>10</sub></b>. The two end groups are <b>CH<sub>3</sub></b>, and the two middle groups are <b>CH<sub>2</sub></b>, so the condensed structural formula is <b>CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>CH<sub>3</sub></b>.</p>
-          </div>
-        </div>
-      </div>
 
-      <div class="card" style="margin-top:18px">
-        <div class="inner">
-          <div class="scorebox">
-            <div>
-              <h2>Self-test</h2>
-              <p class="sub">Answer the questions below the model to test whether you can use the alkane pattern before moving to the table.</p>
+          <div class="card pad quick-test">
+            <h2>Quick self-test</h2>
+            <div class="quick-q" data-answer="C5H12">
+              <p>What is the molecular formula for pentane?</p>
+              <div class="quick-options">
+                <button type="button" data-choice="C5H10">C<sub>5</sub>H<sub>10</sub></button>
+                <button type="button" data-choice="C5H12">C<sub>5</sub>H<sub>12</sub></button>
+                <button type="button" data-choice="C6H14">C<sub>6</sub>H<sub>14</sub></button>
+                <button type="button" data-choice="CH3CH3">CH<sub>3</sub>CH<sub>3</sub></button>
+              </div>
+              <span class="feedback maybe">Not checked</span>
             </div>
-            <div><b id="quizScore">Score: 0 / 0</b></div>
+            <div class="quick-q" data-answer="CH3CH2CH3">
+              <p>Which condensed structural formula matches propane?</p>
+              <div class="quick-options">
+                <button type="button" data-choice="CH3CH2CH3">CH<sub>3</sub>CH<sub>2</sub>CH<sub>3</sub></button>
+                <button type="button" data-choice="CH3CH3">CH<sub>3</sub>CH<sub>3</sub></button>
+                <button type="button" data-choice="CH4">CH<sub>4</sub></button>
+                <button type="button" data-choice="CH3CH2CH2CH3">CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>CH<sub>3</sub></button>
+              </div>
+              <span class="feedback maybe">Not checked</span>
+            </div>
+            <div class="quick-q" data-answer="Two end carbons have three hydrogens each">
+              <p>Why do straight-chain alkanes have two extra hydrogens compared with C<sub>n</sub>H<sub>2n</sub>?</p>
+              <div class="quick-options">
+                <button type="button" data-choice="Each carbon has one hydrogen">Each carbon has one hydrogen</button>
+                <button type="button" data-choice="Two end carbons have three hydrogens each">Two end carbons have three hydrogens each</button>
+                <button type="button" data-choice="Alkanes contain oxygen">Alkanes contain oxygen</button>
+                <button type="button" data-choice="Middle carbons have four hydrogens">Middle carbons have four hydrogens</button>
+              </div>
+              <span class="feedback maybe">Not checked</span>
+            </div>
           </div>
-          <div class="toolbar">
-            <button id="makeQuiz" type="button">Generate new questions</button>
-            <button id="resetQuiz" type="button" class="secondary">Reset score</button>
-          </div>
-          <div id="quizArea" class="quiz-card"></div>
         </div>
       </div>
     </section>
 
     <section id="table" class="panel">
-      <div class="card">
-        <div class="inner">
-          <h2>Fill the alkane table</h2>
-          <p class="sub">Type your answers, then check them. Subscripts are optional: <b>C4H10</b> and <b>C₄H₁₀</b> are both accepted. For methane, <b>CH4</b> is the usual formula, but <b>C1H4</b> is accepted as a useful pattern step. Condensed formulas can be written in full or using brackets, such as <b>CH3CH2CH2CH3</b> or <b>CH3(CH2)2CH3</b>.</p>
-          <div class="toolbar">
-            <button id="checkTable" type="button" class="good">Check table</button>
-            <button id="revealTable" type="button" class="warn">Reveal answers</button>
-            <button id="resetTable" type="button" class="secondary">Reset table</button>
-            <button id="exportCsv" type="button" class="ghost">Export CSV</button>
-          </div>
-          <div class="mobile-note small">On a small screen, scroll sideways if needed.</div>
-          <div style="overflow-x:auto">
-            <table id="alkaneTable" aria-label="Alkane formula table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Number of carbon atoms</th>
-                  <th>Molecular formula</th>
-                  <th>Condensed structural formula</th>
-                  <th>Check</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <p id="tableSummary" class="note" style="margin-top:12px">Complete the table, then press <b>Check table</b>.</p>
+      <div class="card pad">
+        <h2>Fill the alkane table</h2>
+        <p class="small">Type your answers, then check them. The checker accepts normal numbers and subscript numbers. For methane, <b>CH<sub>4</sub></b> is the normal formula, but <b>C<sub>1</sub>H<sub>4</sub></b> is accepted as a pattern-step answer.</p>
+        <div class="table-actions">
+          <button id="checkTable" type="button">Check table</button>
+          <button id="revealTable" type="button" class="secondary">Reveal answers</button>
+          <button id="resetTable" type="button" class="warn">Clear table</button>
+          <button id="exportCsv" type="button" class="ghost">Export CSV</button>
         </div>
+        <table id="alkaneTable" aria-label="Alkane formula table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Number of carbon atoms</th>
+              <th>Molecular formula</th>
+              <th>Condensed structural formula</th>
+              <th>Check</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="summary" id="tableSummary">Complete the table from methane to octane.</div>
       </div>
     </section>
 
     <section id="cards" class="panel">
-      <div class="grid">
-        <div class="card">
-          <div class="inner">
-            <h2>Match the name to its formulas</h2>
-            <p class="sub">Select a name card, then choose the matching formula card. This is useful before cutting out worksheet cards.</p>
-            <div class="toolbar">
-              <button id="newRound" type="button">New round</button>
-              <button id="checkMatch" type="button" class="good">Check match</button>
-              <button id="clearMatch" type="button" class="secondary">Clear choices</button>
-            </div>
+      <div class="card pad">
+        <h2>Match cards</h2>
+        <p class="small">Select an alkane name, then select the matching formula card. This gives extra practice before students fill the table independently.</p>
+        <div class="table-actions">
+          <button id="newRound" type="button">New round</button>
+          <button id="checkMatch" type="button" class="secondary">Check matches</button>
+          <button id="clearMatch" type="button" class="warn">Clear selection</button>
+        </div>
+        <div class="cards-grid">
+          <div>
             <h3>Name cards</h3>
-            <div id="nameCards" class="mini-grid"></div>
-            <h3 style="margin-top:16px">Formula cards</h3>
-            <div id="formulaCards" class="mini-grid"></div>
+            <div id="nameCards" class="card-stack"></div>
+          </div>
+          <div>
+            <h3>Formula cards</h3>
+            <div id="formulaCards" class="card-stack"></div>
           </div>
         </div>
-        <aside class="card">
-          <div class="inner">
-            <h2>Match feedback</h2>
-            <p id="matchFeedback" class="note">Choose one name card and one formula card.</p>
-            <p class="small">A complete formula card shows the carbon count, molecular formula and condensed structural formula for one alkane.</p>
-          </div>
-        </aside>
+        <div class="summary" id="matchFeedback">Make four matches.</div>
       </div>
     </section>
 
     <section id="teacher" class="panel">
-      <div class="grid">
-        <div class="card">
-          <div class="inner">
-            <h2>Teacher notes</h2>
-            <ul class="pattern-list">
-              <li><b>Purpose:</b> support students to complete an alkane formula table using patterns rather than copying answers.</li>
-              <li><b>Key idea:</b> straight-chain alkanes are saturated hydrocarbons with only single covalent bonds and the molecular formula pattern C<sub>n</sub>H<sub>2n+2</sub>.</li>
-              <li><b>Common error:</b> students often write C<sub>n</sub>H<sub>2n</sub> instead of C<sub>n</sub>H<sub>2n+2</sub>. Ask them to check the two extra hydrogens on the end carbons.</li>
-              <li><b>Common error:</b> students may confuse molecular formula with condensed structural formula. The molecular formula gives atom totals; the condensed structural formula gives the order of carbon groups.</li>
-              <li><b>Scope note:</b> this activity focuses on straight-chain alkanes from methane to octane. Branched isomers are not included.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="card">
-          <div class="inner">
-            <h2>Copyable answer table</h2>
-            <textarea id="answerText" class="copybox" readonly></textarea>
-            <div class="toolbar">
-              <button id="copyAnswers" type="button" class="ghost">Copy answers</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:18px">
-        <div class="inner">
-          <h2>Sources</h2>
-          <p class="small">These sources support the naming, formula and bonding ideas used in this school-level activity.</p>
-          <ul class="source-list">
-            <li><a href="https://edu.rsc.org/resources/hydrocarbons-organic-chemistry-worksheets-14-16/4012551.article" target="_blank" rel="noopener">Royal Society of Chemistry Education — hydrocarbons and alkanes resources</a></li>
-            <li><a href="https://iupac.org/what-we-do/books/bluebook/" target="_blank" rel="noopener">IUPAC Blue Book — organic chemistry nomenclature</a></li>
-            <li><a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry" target="_blank" rel="noopener">Chemistry LibreTexts — organic chemistry and alkanes</a></li>
-            <li><a href="https://curriculum.nsw.edu.au/learning-areas/science/science-7-10-2023/overview" target="_blank" rel="noopener">NSW Science 7–10 Syllabus overview</a></li>
+      <div class="split">
+        <div class="card pad">
+          <h2>Teacher notes</h2>
+          <ul class="info-list">
+            <li><b>Core idea:</b> alkanes are saturated hydrocarbons made from carbon and hydrogen only.</li>
+            <li><b>Formula pattern:</b> straight-chain alkanes follow C<sub>n</sub>H<sub>2n+2</sub>.</li>
+            <li><b>Condensed structure:</b> end carbons are CH<sub>3</sub>; middle carbons are CH<sub>2</sub>.</li>
+            <li><b>Common error:</b> students often write C<sub>n</sub>H<sub>2n</sub> instead of C<sub>n</sub>H<sub>2n+2</sub>. Ask them to toggle hydrogens and count the atoms.</li>
+            <li><b>Limit of the model:</b> the diagrams represent straight-chain alkanes only. Branched isomers are not shown.</li>
           </ul>
+          <h3>Sources</h3>
+          <ul class="source-list">
+            <li><a href="https://iupac.qmul.ac.uk/BlueBook/" target="_blank" rel="noreferrer">IUPAC Blue Book</a> — organic nomenclature conventions.</li>
+            <li><a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_%28OpenStax%29/03%3A_Organic_Compounds-_Alkanes_and_Their_Stereochemistry/3.01%3A_Functional_Groups" target="_blank" rel="noreferrer">Chemistry LibreTexts</a> — alkanes and organic structures.</li>
+            <li><a href="https://edu.rsc.org/resources/hydrocarbons-organic-chemistry-worksheets-14-16/4012551.article" target="_blank" rel="noreferrer">Royal Society of Chemistry Education</a> — hydrocarbons and alkanes teaching resources.</li>
+            <li><a href="https://curriculum.nsw.edu.au/learning-areas/science/science-7-10-2023/overview" target="_blank" rel="noreferrer">NSW Science 7–10 Syllabus</a> — Working scientifically and chemical world learning context.</li>
+          </ul>
+        </div>
+        <div class="card pad">
+          <h2>Copyable answer table</h2>
+          <textarea id="answerText" readonly></textarea>
+          <div class="table-actions"><button id="copyAnswers" type="button" class="ghost">Copy answers</button></div>
         </div>
       </div>
     </section>
 
-    <footer>
-      Alkane Formula Builder · Designed for classroom use · Animations are paused by default.
-    </footer>
+    <footer>Alkane Formula Builder · Designed for classroom use · Build the alkane chain step by step.</footer>
   </div>
 
   <script>
-    'use strict';
-
     const ALKANES = [
-      {name:'Methane', prefix:'meth-', c:1, h:4, molecular:'CH4', condensed:['CH4'], full:'CH4'},
-      {name:'Ethane', prefix:'eth-', c:2, h:6, molecular:'C2H6', condensed:['CH3CH3'], full:'CH3CH3'},
-      {name:'Propane', prefix:'prop-', c:3, h:8, molecular:'C3H8', condensed:['CH3CH2CH3','CH3(CH2)1CH3'], full:'CH3CH2CH3'},
-      {name:'Butane', prefix:'but-', c:4, h:10, molecular:'C4H10', condensed:['CH3CH2CH2CH3','CH3(CH2)2CH3'], full:'CH3CH2CH2CH3'},
-      {name:'Pentane', prefix:'pent-', c:5, h:12, molecular:'C5H12', condensed:['CH3CH2CH2CH2CH3','CH3(CH2)3CH3'], full:'CH3CH2CH2CH2CH3'},
-      {name:'Hexane', prefix:'hex-', c:6, h:14, molecular:'C6H14', condensed:['CH3CH2CH2CH2CH2CH3','CH3(CH2)4CH3'], full:'CH3CH2CH2CH2CH2CH3'},
-      {name:'Heptane', prefix:'hept-', c:7, h:16, molecular:'C7H16', condensed:['CH3CH2CH2CH2CH2CH2CH3','CH3(CH2)5CH3'], full:'CH3CH2CH2CH2CH2CH2CH3'},
-      {name:'Octane', prefix:'oct-', c:8, h:18, molecular:'C8H18', condensed:['CH3CH2CH2CH2CH2CH2CH2CH3','CH3(CH2)6CH3'], full:'CH3CH2CH2CH2CH2CH2CH2CH3'}
+      {name:'Methane', c:1, molecular:'CH4', full:'CH4', condensed:['CH4','C1H4']},
+      {name:'Ethane', c:2, molecular:'C2H6', full:'CH3CH3', condensed:['CH3CH3','CH3-CH3']},
+      {name:'Propane', c:3, molecular:'C3H8', full:'CH3CH2CH3', condensed:['CH3CH2CH3','CH3-CH2-CH3']},
+      {name:'Butane', c:4, molecular:'C4H10', full:'CH3CH2CH2CH3', condensed:['CH3CH2CH2CH3','CH3(CH2)2CH3','CH3-CH2-CH2-CH3']},
+      {name:'Pentane', c:5, molecular:'C5H12', full:'CH3CH2CH2CH2CH3', condensed:['CH3CH2CH2CH2CH3','CH3(CH2)3CH3','CH3-CH2-CH2-CH2-CH3']},
+      {name:'Hexane', c:6, molecular:'C6H14', full:'CH3CH2CH2CH2CH2CH3', condensed:['CH3CH2CH2CH2CH2CH3','CH3(CH2)4CH3','CH3-CH2-CH2-CH2-CH2-CH3']},
+      {name:'Heptane', c:7, molecular:'C7H16', full:'CH3CH2CH2CH2CH2CH2CH3', condensed:['CH3CH2CH2CH2CH2CH2CH3','CH3(CH2)5CH3','CH3-CH2-CH2-CH2-CH2-CH2-CH3']},
+      {name:'Octane', c:8, molecular:'C8H18', full:'CH3CH2CH2CH2CH2CH2CH2CH3', condensed:['CH3CH2CH2CH2CH2CH2CH2CH3','CH3(CH2)6CH3','CH3-CH2-CH2-CH2-CH2-CH2-CH2-CH3']}
     ];
 
     const els = {
@@ -436,9 +333,9 @@
       panels: Array.from(document.querySelectorAll('.panel')),
       saveStatus: document.getElementById('saveStatus'),
       alkaneSelect: document.getElementById('alkaneSelect'),
-      hydrogenToggle: document.getElementById('hydrogenToggle'),
-      playBtn: document.getElementById('playBtn'),
+      buildNext: document.getElementById('buildNext'),
       resetModel: document.getElementById('resetModel'),
+      hydrogenToggle: document.getElementById('hydrogenToggle'),
       canvas: document.getElementById('modelCanvas'),
       carbonCount: document.getElementById('carbonCount'),
       molecularFormula: document.getElementById('molecularFormula'),
@@ -456,29 +353,20 @@
       checkMatch: document.getElementById('checkMatch'),
       clearMatch: document.getElementById('clearMatch'),
       matchFeedback: document.getElementById('matchFeedback'),
-      makeQuiz: document.getElementById('makeQuiz'),
-      resetQuiz: document.getElementById('resetQuiz'),
-      quizArea: document.getElementById('quizArea'),
-      quizScore: document.getElementById('quizScore'),
       answerText: document.getElementById('answerText'),
       copyAnswers: document.getElementById('copyAnswers')
     };
 
     const ctx = els.canvas.getContext('2d');
     let selectedIndex = 0;
-    let showHydrogens = false;
-    let playing = false;
-    let frame = 0;
-    let raf = null;
-    let quizCorrect = 0;
-    let quizAnswered = 0;
     let selectedName = null;
     let selectedFormula = null;
 
-    function subscriptFormula(text){
-      return text.replace(/(\d+)/g, '<sub>$1</sub>');
+    function subscriptFormula(text){ return text.replace(/(\d+)/g, '<sub>$1</sub>'); }
+    function toUnicodeFormula(text){
+      const map = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+      return text.replace(/\d/g, d => map[d]);
     }
-
     function stripToPlain(text){
       const subs = {'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
       return String(text || '')
@@ -487,41 +375,9 @@
         .replace(/[–—−]/g,'-')
         .toUpperCase();
     }
-
-    function normaliseFormula(text){
-      return stripToPlain(text).replace(/[^A-Z0-9()]/g,'');
-    }
-
+    function normaliseFormula(text){ return stripToPlain(text).replace(/[^A-Z0-9()]/g,''); }
     function getAlkane(){ return ALKANES[selectedIndex]; }
-
     function updateStatus(msg){ els.saveStatus.textContent = msg; }
-
-    function pauseAnimation(){
-      playing = false;
-      els.playBtn.textContent = 'Play animation';
-      updateStatus('Ready — animation paused');
-      if(raf){ cancelAnimationFrame(raf); raf = null; }
-      drawModel();
-    }
-
-    function playAnimation(){
-      playing = true;
-      els.playBtn.textContent = 'Pause animation';
-      updateStatus('Animation playing');
-      if(!raf) animate();
-    }
-
-    function toggleAnimation(){
-      if(playing){ pauseAnimation(); }
-      else { playAnimation(); }
-    }
-
-    function animate(){
-      frame += 1;
-      drawModel();
-      if(playing){ raf = requestAnimationFrame(animate); }
-      else { raf = null; }
-    }
 
     function drawRoundRect(ctx,x,y,w,h,r){
       ctx.beginPath();
@@ -537,8 +393,59 @@
       ctx.closePath();
     }
 
+    function makeNodes(a){
+      const w = els.canvas.width;
+      const n = a.c;
+      if(n === 1){ return [{x:w/2, y:245, label:'CH₄', hCount:4, end:true}]; }
+      const gap = n <= 2 ? 220 : n <= 4 ? 165 : n <= 6 ? 135 : 116;
+      const startX = (w - gap*(n-1))/2;
+      const nodes = [];
+      for(let i=0;i<n;i++){
+        const y = 245 + (i%2===0 ? -18 : 18);
+        const end = i===0 || i===n-1;
+        const label = end ? 'CH₃' : 'CH₂';
+        nodes.push({x:startX + i*gap, y, label, hCount:end ? 3 : 2, end});
+      }
+      return nodes;
+    }
+
+    function drawHydrogen(ctx, x, y){
+      ctx.strokeStyle = '#75a1ff';
+      ctx.fillStyle = '#f3f7ff';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(x,y,19,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#17356e';
+      ctx.font = 'bold 17px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('H', x, y);
+      ctx.textAlign = 'start';
+      ctx.textBaseline = 'alphabetic';
+    }
+
+    function drawHydrogensForNode(node, index, total){
+      const positions = [];
+      if(total === 1){
+        positions.push({x:node.x, y:node.y-80}, {x:node.x+78, y:node.y}, {x:node.x, y:node.y+80}, {x:node.x-78, y:node.y});
+      } else {
+        if(node.end){
+          const leftEnd = index === 0;
+          positions.push({x:node.x, y:node.y-76}, {x:node.x, y:node.y+76}, {x:node.x + (leftEnd ? -76 : 76), y:node.y});
+        } else {
+          positions.push({x:node.x, y:node.y-72}, {x:node.x, y:node.y+72});
+        }
+      }
+      positions.forEach(pos => {
+        ctx.strokeStyle = '#93a3bb';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(node.x,node.y); ctx.lineTo(pos.x,pos.y); ctx.stroke();
+        drawHydrogen(ctx, pos.x, pos.y);
+      });
+    }
+
     function drawModel(){
       const a = getAlkane();
+      const showHydrogens = els.hydrogenToggle.checked;
       const w = els.canvas.width;
       const h = els.canvas.height;
       ctx.clearRect(0,0,w,h);
@@ -551,133 +458,59 @@
 
       ctx.strokeStyle = '#dbe6f5';
       ctx.lineWidth = 2;
-      for(let x=50; x<w; x+=50){
-        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
-      }
-      for(let y=40; y<h; y+=40){
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
-      }
+      for(let x=55; x<w; x+=55){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for(let y=45; y<h; y+=45){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
 
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 26px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.textAlign = 'start';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillText(`${a.name}: ${a.c} carbon atom${a.c===1?'':'s'}`, 42, 48);
+      ctx.font = 'bold 27px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(`${a.name}: ${a.c} carbon atom${a.c===1?'':'s'}`, 48, 52);
       ctx.font = '18px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillStyle = '#526071';
-      const modelHint = showHydrogens
-        ? 'Hydrogens are shown separately, so each carbon circle is labelled C only.'
-        : 'Hydrogens are hidden. Carbon circles use condensed groups such as CH₃ and CH₂.';
-      ctx.fillText(`Straight-chain alkane model. ${modelHint}`, 42, 78);
+      const explainer = showHydrogens
+        ? 'Hydrogens are shown separately. Carbon circles show C only.'
+        : 'Hydrogens are hidden. Carbon circles show condensed groups such as CH₃ and CH₂.';
+      ctx.fillText(`Straight-chain alkane model. ${explainer}`, 48, 84);
 
-      const n = a.c;
-      const centreY = 212;
-      const carbonRadius = showHydrogens ? 42 : 48;
-      let nodes = [];
-      if(n === 1){
-        nodes = [{x:w/2, y:centreY, groupLabel:'CH₄', atomLabel:'C', end:true}];
-      } else {
-        const maxGap = n <= 2 ? 240 : n <= 4 ? 160 : 118;
-        const gap = Math.min(maxGap, (w-220)/(n-1));
-        const startX = (w - gap*(n-1))/2;
-        for(let i=0;i<n;i++){
-          const y = centreY + (i%2===0 ? -22 : 22);
-          const groupLabel = (i===0 || i===n-1) ? 'CH₃' : 'CH₂';
-          nodes.push({x:startX + i*gap, y, groupLabel, atomLabel:'C', end:(i===0 || i===n-1)});
-        }
-      }
+      const nodes = makeNodes(a);
 
-      // Carbon-carbon bonds
       ctx.lineCap = 'round';
       for(let i=0;i<nodes.length-1;i++){
         const A = nodes[i], B = nodes[i+1];
         ctx.strokeStyle = '#243247';
-        ctx.lineWidth = showHydrogens ? 7 : 9;
+        ctx.lineWidth = 9;
         ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
         ctx.strokeStyle = '#7aa7ff';
         ctx.lineWidth = 3;
         ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
       }
 
-      if(playing && nodes.length > 1){
-        const t = (frame % 180) / 180;
-        const totalSegments = nodes.length - 1;
-        const pos = t * totalSegments;
-        const seg = Math.min(totalSegments-1, Math.floor(pos));
-        const local = pos - seg;
-        const A = nodes[seg], B = nodes[seg+1];
-        const x = A.x + (B.x-A.x)*local;
-        const y = A.y + (B.y-A.y)*local;
-        ctx.fillStyle = 'rgba(15,118,110,.18)';
-        ctx.beginPath(); ctx.arc(x,y,42,0,Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#0f766e';
-        ctx.beginPath(); ctx.arc(x,y,11,0,Math.PI*2); ctx.fill();
-      }
-
-      function hydrogenAngles(index){
-        if(nodes.length === 1) return [0, Math.PI/2, Math.PI, Math.PI*1.5];
-        if(index === 0) return [Math.PI, -Math.PI/2, Math.PI/2];
-        if(index === nodes.length - 1) return [0, -Math.PI/2, Math.PI/2];
-        return [-Math.PI/2, Math.PI/2];
-      }
-
-      if(showHydrogens){
-        nodes.forEach((node, i)=>{
-          const angles = hydrogenAngles(i);
-          angles.forEach(angle => {
-            const hx = node.x + Math.cos(angle) * 70;
-            const hy = node.y + Math.sin(angle) * 70;
-            ctx.strokeStyle = '#9fb4d2';
-            ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(node.x,node.y); ctx.lineTo(hx,hy); ctx.stroke();
-            ctx.fillStyle = '#eef4ff';
-            ctx.beginPath(); ctx.arc(hx,hy,17,0,Math.PI*2); ctx.fill();
-            ctx.strokeStyle = '#7aa7ff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.fillStyle = '#17356e';
-            ctx.font = 'bold 15px system-ui, -apple-system, Segoe UI, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('H', hx, hy+1);
-          });
-        });
-      }
+      if(showHydrogens){ nodes.forEach((node, i) => drawHydrogensForNode(node, i, nodes.length)); }
 
       nodes.forEach((node)=>{
         ctx.fillStyle = node.end ? '#17356e' : '#0f766e';
-        ctx.beginPath(); ctx.arc(node.x,node.y,carbonRadius,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(node.x,node.y,48,0,Math.PI*2); ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 4;
         ctx.stroke();
         ctx.fillStyle = '#fff';
-        ctx.font = showHydrogens
-          ? 'bold 25px system-ui, -apple-system, Segoe UI, sans-serif'
-          : 'bold 23px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.font = 'bold 24px system-ui, -apple-system, Segoe UI, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(showHydrogens ? node.atomLabel : node.groupLabel, node.x, node.y+1);
+        ctx.fillText(showHydrogens ? 'C' : node.label, node.x, node.y+1);
         ctx.textAlign = 'start';
         ctx.textBaseline = 'alphabetic';
       });
 
-      // formula card on canvas
-      drawRoundRect(ctx, 42, 350, w-84, 72, 18);
-      ctx.fillStyle = 'rgba(255,255,255,.94)';
+      drawRoundRect(ctx, 54, 408, w-108, 82, 18);
+      ctx.fillStyle = 'rgba(255,255,255,.93)';
       ctx.fill();
       ctx.strokeStyle = '#d8e1ee';
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.fillStyle = '#132033';
-      ctx.font = 'bold 21px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(`Molecular formula: ${toUnicodeFormula(a.molecular)}`, 64, 380);
-      ctx.font = 'bold 20px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(`Condensed structural formula: ${toUnicodeFormula(a.full)}`, 64, 408);
-    }
-
-    function toUnicodeFormula(text){
-      const map = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
-      return text.replace(/\d/g, d => map[d]);
+      ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(`Molecular formula: ${toUnicodeFormula(a.molecular)}`, 78, 442);
+      ctx.fillText(`Condensed structural formula: ${toUnicodeFormula(a.full)}`, 78, 474);
     }
 
     function updateModelInfo(){
@@ -693,7 +526,27 @@
         const middle = a.c - 2;
         els.patternNote.innerHTML = `${a.name} has two end groups, <b>CH<sub>3</sub></b> and <b>CH<sub>3</sub></b>, plus ${middle} middle <b>CH<sub>2</sub></b> group${middle===1?'':'s'}.`;
       }
+      els.buildNext.disabled = selectedIndex >= ALKANES.length - 1;
       drawModel();
+    }
+
+    function buildNextCarbon(){
+      if(selectedIndex < ALKANES.length - 1){
+        selectedIndex += 1;
+        els.alkaneSelect.value = String(selectedIndex);
+        updateModelInfo();
+        const a = getAlkane();
+        updateStatus(`Built ${a.name} — ${a.c} carbon atom${a.c===1?'':'s'}`);
+      } else {
+        updateStatus('Full straight-chain alkane model built to octane');
+      }
+    }
+
+    function resetModelStep(){
+      selectedIndex = 0;
+      els.alkaneSelect.value = '0';
+      updateModelInfo();
+      updateStatus('Model reset to methane');
     }
 
     function populateSelect(){
@@ -716,7 +569,7 @@
           <td><input data-field="c" inputmode="numeric" aria-label="${a.name} number of carbon atoms"></td>
           <td><input data-field="molecular" aria-label="${a.name} molecular formula"></td>
           <td><input data-field="condensed" aria-label="${a.name} condensed structural formula"></td>
-          <td class="feedback maybe">Not checked</td>
+          <td><span class="feedback maybe">Not checked</span></td>
         `;
         els.tableBody.appendChild(tr);
       });
@@ -736,13 +589,10 @@
       }
 
       const cOK = String(cInput.value).trim() === String(a.c);
-      const molNorm = normaliseFormula(molInput.value);
-      const acceptedMol = [a.molecular, a.molecular.replace('C1','C')];
+      const acceptedMol = [a.molecular];
       if(a.c === 1) acceptedMol.push('C1H4');
-      const acceptedMolNorm = acceptedMol.map(normaliseFormula);
-      const molOK = acceptedMolNorm.includes(molNorm);
-      const conNorm = normaliseFormula(conInput.value);
-      const conOK = a.condensed.map(normaliseFormula).includes(conNorm);
+      const molOK = acceptedMol.map(normaliseFormula).includes(normaliseFormula(molInput.value));
+      const conOK = a.condensed.map(normaliseFormula).includes(normaliseFormula(conInput.value));
 
       [cInput, molInput, conInput].forEach(inp => inp.style.borderColor = '#d8e1ee');
       if(cInput.value.trim() && !cOK) cInput.style.borderColor = '#ef4444';
@@ -763,49 +613,114 @@
       let correct = 0;
       rows.forEach(tr => { if(checkRow(tr, reveal)) correct += 1; });
       els.tableSummary.innerHTML = reveal
-        ? `Answers revealed. Use the pattern to explain why each row follows C<sub>n</sub>H<sub>2n+2</sub>.`
+        ? `Answers revealed. Use the model to explain why each row follows C<sub>n</sub>H<sub>2n+2</sub>.`
         : `You have <b>${correct}</b> correct row${correct===1?'':'s'} out of <b>${rows.length}</b>.`;
+      updateStatus(reveal ? 'Answers revealed' : `Checked table — ${correct}/${rows.length} correct`);
     }
 
     function resetTable(){
-      Array.from(els.tableBody.querySelectorAll('input')).forEach(inp => {
-        inp.value = '';
-        inp.style.borderColor = '#d8e1ee';
-      });
-      Array.from(els.tableBody.querySelectorAll('.feedback')).forEach(fb => {
-        fb.textContent = 'Not checked';
-        fb.className = 'feedback maybe';
-      });
-      els.tableSummary.innerHTML = `Complete the table, then press <b>Check table</b>.`;
-    }
-
-    function answerRows(){
-      return ALKANES.map(a => ({
-        Name:a.name,
-        'Number of carbon atoms':a.c,
-        'Molecular formula':a.molecular,
-        'Condensed structural formula':a.full
-      }));
-    }
-
-    function csvEscape(value){
-      const s = String(value);
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+      Array.from(els.tableBody.querySelectorAll('input')).forEach(inp => { inp.value=''; inp.style.borderColor = '#d8e1ee'; });
+      Array.from(els.tableBody.querySelectorAll('.feedback')).forEach(fb => { fb.textContent='Not checked'; fb.className='feedback maybe'; });
+      els.tableSummary.textContent = 'Complete the table from methane to octane.';
+      updateStatus('Table cleared');
     }
 
     function exportCsv(){
-      const rows = answerRows();
-      const headers = Object.keys(rows[0]);
-      const csv = [headers.join(','), ...rows.map(row => headers.map(h => csvEscape(row[h])).join(','))].join('\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const header = ['Name','Number of carbon atoms','Molecular formula','Condensed structural formula'];
+      const rows = [header];
+      Array.from(els.tableBody.querySelectorAll('tr')).forEach(tr => {
+        const name = tr.querySelector('.name').textContent;
+        const vals = Array.from(tr.querySelectorAll('input')).map(input => input.value);
+        rows.push([name, ...vals]);
+      });
+      const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'alkane_formula_table.csv';
-      document.body.appendChild(a);
+      a.download = 'alkane_formula_builder_results.csv';
       a.click();
-      a.remove();
       URL.revokeObjectURL(url);
+      updateStatus('CSV exported');
+    }
+
+    function shuffle(arr){
+      const copy = [...arr];
+      for(let i=copy.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function makeCards(){
+      selectedName = null;
+      selectedFormula = null;
+      const picks = shuffle(ALKANES).slice(0,4).sort((a,b)=>a.c-b.c);
+      const formulas = shuffle(picks);
+      els.nameCards.innerHTML = '';
+      els.formulaCards.innerHTML = '';
+      picks.forEach(a => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'mini-card';
+        card.dataset.name = a.name;
+        card.textContent = `${a.name} — ${a.c} carbon atom${a.c===1?'':'s'}`;
+        card.addEventListener('click', () => selectNameCard(card));
+        els.nameCards.appendChild(card);
+      });
+      formulas.forEach(a => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'mini-card';
+        card.dataset.name = a.name;
+        card.innerHTML = `${subscriptFormula(a.molecular)}<br><span class="small">${subscriptFormula(a.full)}</span>`;
+        card.addEventListener('click', () => selectFormulaCard(card));
+        els.formulaCards.appendChild(card);
+      });
+      els.matchFeedback.textContent = 'Make four matches.';
+      updateStatus('New card round loaded');
+    }
+
+    function selectNameCard(card){
+      if(card.classList.contains('matched')) return;
+      Array.from(els.nameCards.children).forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedName = card;
+      attemptPair();
+    }
+    function selectFormulaCard(card){
+      if(card.classList.contains('matched')) return;
+      Array.from(els.formulaCards.children).forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedFormula = card;
+      attemptPair();
+    }
+    function attemptPair(){
+      if(!selectedName || !selectedFormula) return;
+      if(selectedName.dataset.name === selectedFormula.dataset.name){
+        selectedName.classList.add('matched');
+        selectedFormula.classList.add('matched');
+        selectedName.classList.remove('selected');
+        selectedFormula.classList.remove('selected');
+        els.matchFeedback.textContent = `Correct match: ${selectedName.dataset.name}.`;
+      } else {
+        els.matchFeedback.textContent = 'Not a match. Try again.';
+      }
+      selectedName = null;
+      selectedFormula = null;
+      const matched = els.nameCards.querySelectorAll('.matched').length;
+      if(matched === 4) updateStatus('Card round completed');
+    }
+    function checkMatch(){
+      const matched = els.nameCards.querySelectorAll('.matched').length;
+      els.matchFeedback.textContent = `You have ${matched} correct match${matched===1?'':'es'} out of 4.`;
+    }
+    function clearMatch(){
+      selectedName = null;
+      selectedFormula = null;
+      Array.from(document.querySelectorAll('.mini-card')).forEach(card => card.classList.remove('selected'));
+      els.matchFeedback.textContent = 'Selection cleared.';
     }
 
     function buildAnswerText(){
@@ -814,157 +729,23 @@
       els.answerText.value = lines.join('\n');
     }
 
-    function shuffle(arr){
-      const copy = arr.slice();
-      for(let i=copy.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [copy[i],copy[j]] = [copy[j],copy[i]];
-      }
-      return copy;
-    }
-
-    function makeCards(){
-      selectedName = null;
-      selectedFormula = null;
-      els.nameCards.innerHTML = '';
-      els.formulaCards.innerHTML = '';
-      els.matchFeedback.textContent = 'Choose one name card and one formula card.';
-      els.matchFeedback.className = 'note';
-
-      const choices = shuffle(ALKANES).slice(0,4);
-      choices.forEach(a => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'tile';
-        card.dataset.key = a.name;
-        card.innerHTML = `<strong>${a.name}</strong><span>${a.prefix} means ${a.c} carbon atom${a.c===1?'':'s'}</span>`;
-        card.addEventListener('click', () => {
-          Array.from(els.nameCards.children).forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selectedName = a.name;
-        });
-        els.nameCards.appendChild(card);
-      });
-
-      shuffle(choices).forEach(a => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'tile';
-        card.dataset.key = a.name;
-        card.innerHTML = `<strong>${a.c} C · ${toUnicodeFormula(a.molecular)}</strong><span>${toUnicodeFormula(a.full)}</span>`;
-        card.addEventListener('click', () => {
-          Array.from(els.formulaCards.children).forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selectedFormula = a.name;
-        });
-        els.formulaCards.appendChild(card);
-      });
-    }
-
-    function checkMatch(){
-      if(!selectedName || !selectedFormula){
-        els.matchFeedback.textContent = 'Choose one name card and one formula card first.';
-        els.matchFeedback.className = 'note';
-        return;
-      }
-      if(selectedName === selectedFormula){
-        els.matchFeedback.innerHTML = `<b>Correct.</b> ${selectedName} matches that carbon count and formula card.`;
-        els.matchFeedback.className = 'note ok';
-      } else {
-        els.matchFeedback.innerHTML = `<b>Not yet.</b> ${selectedName} does not match that formula card. Check the carbon count first.`;
-        els.matchFeedback.className = 'note no';
-      }
-    }
-
-    function clearMatch(){
-      selectedName = null;
-      selectedFormula = null;
-      Array.from(els.nameCards.children).forEach(c => c.classList.remove('selected'));
-      Array.from(els.formulaCards.children).forEach(c => c.classList.remove('selected'));
-      els.matchFeedback.textContent = 'Choose one name card and one formula card.';
-      els.matchFeedback.className = 'note';
-    }
-
-    function makeQuiz(){
-      quizCorrect = 0;
-      quizAnswered = 0;
-      els.quizArea.innerHTML = '';
-      const qs = [];
-      const pool = shuffle(ALKANES).slice(0,5);
-      pool.forEach((a, idx)=>{
-        if(idx % 3 === 0){
-          qs.push({
-            prompt:`What is the molecular formula of ${a.name}?`,
-            correct:a.molecular,
-            options:makeOptions(a, 'molecular')
-          });
-        } else if(idx % 3 === 1){
-          qs.push({
-            prompt:`How many carbon atoms are in ${a.name}?`,
-            correct:String(a.c),
-            options:makeOptions(a, 'c').map(String)
-          });
-        } else {
-          qs.push({
-            prompt:`Which condensed structural formula matches ${a.name}?`,
-            correct:a.full,
-            options:makeOptions(a, 'full')
-          });
-        }
-      });
-
-      qs.forEach((q, i)=>{
-        const div = document.createElement('div');
-        div.className = 'question';
-        const title = document.createElement('h3');
-        title.textContent = `${i+1}. ${q.prompt}`;
-        div.appendChild(title);
-        const answers = document.createElement('div');
-        answers.className = 'answers';
-        shuffle(q.options).forEach(opt => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'answer secondary';
-          btn.innerHTML = subscriptFormula(String(opt));
-          btn.addEventListener('click', () => {
-            if(div.dataset.answered) return;
-            div.dataset.answered = 'true';
-            quizAnswered += 1;
-            if(normaliseFormula(opt) === normaliseFormula(q.correct) || String(opt) === String(q.correct)){
-              quizCorrect += 1;
-              btn.classList.add('correct');
-            } else {
-              btn.classList.add('incorrect');
-              Array.from(answers.children).forEach(child => {
-                if(normaliseFormula(child.textContent) === normaliseFormula(q.correct) || child.textContent === String(q.correct)) child.classList.add('correct');
-              });
-            }
-            updateQuizScore();
-          });
-          answers.appendChild(btn);
-        });
-        div.appendChild(answers);
-        els.quizArea.appendChild(div);
-      });
-      updateQuizScore();
-    }
-
-    function makeOptions(a, field){
-      const opts = new Set([String(a[field])]);
-      shuffle(ALKANES).forEach(other => {
-        if(opts.size < 4) opts.add(String(other[field]));
-      });
-      return Array.from(opts);
-    }
-
-    function updateQuizScore(){
-      els.quizScore.textContent = `Score: ${quizCorrect} / ${quizAnswered}`;
-    }
-
     function switchTab(tabId){
       els.tabs.forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.tab === tabId)));
       els.panels.forEach(panel => panel.classList.toggle('active', panel.id === tabId));
-      if(tabId !== 'build') pauseAnimation();
+      updateStatus(`Opened ${document.querySelector(`[data-tab="${tabId}"]`).textContent}`);
+    }
+
+    function initQuickTest(){
+      document.querySelectorAll('.quick-q').forEach(q => {
+        const fb = q.querySelector('.feedback');
+        q.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const ok = btn.dataset.choice === q.dataset.answer;
+            fb.textContent = ok ? 'Correct' : 'Try again';
+            fb.className = 'feedback ' + (ok ? 'ok' : 'no');
+          });
+        });
+      });
     }
 
     function init(){
@@ -972,23 +753,21 @@
       buildTable();
       buildAnswerText();
       makeCards();
-      makeQuiz();
+      initQuickTest();
       updateModelInfo();
-      pauseAnimation();
 
       els.tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
       els.alkaneSelect.addEventListener('change', () => {
         selectedIndex = Number(els.alkaneSelect.value);
-        frame = 0;
-        pauseAnimation();
         updateModelInfo();
+        updateStatus(`Showing ${getAlkane().name}`);
       });
       els.hydrogenToggle.addEventListener('change', () => {
-        showHydrogens = els.hydrogenToggle.checked;
         drawModel();
+        updateStatus(els.hydrogenToggle.checked ? 'Hydrogens shown separately' : 'Hydrogens hidden — condensed groups shown');
       });
-      els.playBtn.addEventListener('click', toggleAnimation);
-      els.resetModel.addEventListener('click', () => { frame = 0; pauseAnimation(); });
+      els.buildNext.addEventListener('click', buildNextCarbon);
+      els.resetModel.addEventListener('click', resetModelStep);
       els.checkTable.addEventListener('click', () => checkTable(false));
       els.revealTable.addEventListener('click', () => checkTable(true));
       els.resetTable.addEventListener('click', resetTable);
@@ -996,21 +775,19 @@
       els.newRound.addEventListener('click', makeCards);
       els.checkMatch.addEventListener('click', checkMatch);
       els.clearMatch.addEventListener('click', clearMatch);
-      els.makeQuiz.addEventListener('click', makeQuiz);
-      els.resetQuiz.addEventListener('click', () => { quizCorrect = 0; quizAnswered = 0; makeQuiz(); });
       els.copyAnswers.addEventListener('click', async () => {
         els.answerText.select();
         try{
           await navigator.clipboard.writeText(els.answerText.value);
-          els.copyAnswers.textContent = 'Copied';
-          setTimeout(()=> els.copyAnswers.textContent = 'Copy answers', 1200);
+          updateStatus('Answer table copied');
         } catch(err){
-          document.execCommand('copy');
+          updateStatus('Copy failed — use Cmd/Ctrl+C');
         }
       });
+      window.addEventListener('resize', drawModel);
     }
 
-    window.addEventListener('DOMContentLoaded', init);
+    init();
   </script>
 </body>
 </html>
