@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organic Pattern Builder</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --panel:#ffffff;
+      --ink:#132033;
+      --muted:#5d6a7a;
+      --line:#d8e1ee;
+      --accent:#2563eb;
+      --accent2:#0f766e;
+      --navy:#17356e;
+      --good:#047857;
+      --bad:#b91c1c;
+      --warn:#b45309;
+      --soft:#eaf1ff;
+      --soft2:#ecfdf5;
+      --shadow:0 14px 40px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #eef6ff 0, #f6f8fb 38%, #f7f7fb 100%);
+      color:var(--ink);
+    }
+    .wrap{max-width:1260px;margin:0 auto;padding:20px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+    .back{color:#0b5ed7;text-decoration:none;font-weight:750;display:inline-flex;gap:8px;align-items:center}
+    .status-pill{font-size:.88rem;color:#203047;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;box-shadow:0 6px 18px rgba(15,23,42,.06)}
+    header.hero{
+      background:linear-gradient(135deg,#0f172a,#17356e 56%,#0f766e);
+      color:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    header.hero::after{
+      content:"";
+      position:absolute;
+      width:360px;height:360px;right:-160px;top:-150px;
+      background:rgba(255,255,255,.10);border-radius:50%;
+    }
+    .hero-grid{display:grid;grid-template-columns:1.55fr .9fr;gap:18px;align-items:stretch;position:relative;z-index:1}
+    h1{font-size:clamp(2rem,4vw,3.45rem);line-height:1.02;margin:0 0 10px;font-weight:900;letter-spacing:-.04em}
+    h2{margin:0 0 8px;font-size:1.35rem}
+    h3{margin:0 0 8px;font-size:1.05rem}
+    p{line-height:1.55}
+    .hero p{max-width:780px;margin:0;color:#dce8ff;font-size:1.08rem}
+    .hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:22px;padding:18px;display:grid;gap:10px;align-content:center;backdrop-filter: blur(8px)}
+    .hero-card strong{font-size:1.1rem}
+    .hero-card span{color:#ecf4ff;line-height:1.5}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+    .tab{border:1px solid var(--line);background:#fff;color:#243247;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    .tab[aria-selected="true"]{background:#17356e;color:#fff;border-color:#17356e}
+    .panel{display:none}
+    .panel.active{display:block}
+    .card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .card.pad{padding:18px}
+    .model-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+    .model-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:18px;border-bottom:1px solid var(--line)}
+    .model-head p{margin:0;color:var(--muted)}
+    .inner{padding:18px}
+    .controls-card{position:sticky;top:14px}
+    .controls{display:grid;gap:12px}
+    .control-group{border:1px solid var(--line);background:#fbfdff;border-radius:16px;padding:12px;display:grid;gap:8px}
+    label{font-weight:850;color:#243247}
+    label .hint{font-weight:650;color:var(--muted);font-size:.86rem}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .small{font-size:.9rem;color:var(--muted)}
+    select,input,textarea{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:10px 11px;outline:none;width:100%}
+    select:focus,input:focus,textarea:focus{border-color:#82aaff;box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+    button{font:inherit;border:0;border-radius:13px;padding:10px 13px;font-weight:850;cursor:pointer;background:#17356e;color:#fff;box-shadow:0 8px 18px rgba(23,53,110,.16)}
+    button.secondary{background:#eef4ff;color:#17356e;border:1px solid #bfd4ff;box-shadow:none}
+    button.ghost{background:#ecfdf5;color:#0f766e;border:1px solid #b8ead7;box-shadow:none}
+    button.warn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;box-shadow:none}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .toggle-wrap{display:inline-flex;align-items:center;gap:8px;border:1px solid #bfd4ff;background:#f8fbff;border-radius:999px;padding:8px 10px;font-weight:800;color:#17356e;width:max-content}
+    .toggle-wrap input{width:18px;height:18px;accent-color:#2563eb}
+    canvas{display:block;width:100%;height:auto;background:#fff}
+    .output-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .fact{background:#f8fbff;border:1px solid var(--line);border-radius:16px;padding:13px;min-height:84px}
+    .fact strong{display:block;color:#44546a;font-size:.88rem;margin-bottom:6px}
+    .formula,.condensed{font-weight:900;font-size:1.22rem;color:#132033;word-break:break-word}
+    .wide{grid-column:span 2}
+    .note{margin-top:12px;background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:16px;padding:13px;line-height:1.5}
+    .success-note{background:#ecfdf5;border:1px solid #b8ead7;color:#14532d}
+    .bad-note{background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d}
+    .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .info-list{margin:10px 0 0;padding-left:20px;color:#314053;line-height:1.55}
+    .example-box{border:1px dashed #9bb7e5;background:#f8fbff;border-radius:16px;padding:14px;margin-top:10px;line-height:1.55}
+    .breakdown-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:10px}
+    .breakdown-table th,.breakdown-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}
+    .breakdown-table th{background:#f1f5fb;color:#243247;font-weight:900}
+    .breakdown-table tr:last-child td{border-bottom:0}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    textarea{width:100%;min-height:280px;resize:vertical;line-height:1.4}
+    .source-list{font-size:.94rem;color:#314053;line-height:1.6;margin:8px 0 0;padding-left:20px}
+    .source-list a{color:#0b5ed7}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{border-radius:999px;padding:6px 9px;font-weight:850;font-size:.84rem;background:#eef4ff;color:#17356e;border:1px solid #bfd4ff}
+    footer{margin:24px 0 10px;text-align:center;color:#627086;font-size:.9rem}
+    .hidden{display:none !important}
+    @media (max-width:1040px){
+      .model-grid,.support-grid,.split{grid-template-columns:1fr}
+      .controls-card{position:static}
+      .output-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:760px){
+      .hero-grid,.row{grid-template-columns:1fr}
+      .output-grid{grid-template-columns:1fr}
+      .wide{grid-column:span 1}
+      .wrap{padding:14px}
+      .tab{width:100%;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="../../">← Back to SciSims</a>
+      <div class="status-pill" id="saveStatus">Ready — choose a structure type</div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1>Organic Pattern Builder</h1>
+          <p>Build straight-chain organic molecules up to ten carbons, compare single, double and triple bonds, and identify common functional groups used in senior Chemistry.</p>
+        </div>
+        <div class="hero-card">
+          <strong>Learning focus</strong>
+          <span>Organic formulae and names are built from a parent carbon chain, bond type, locants and functional groups. The same molecular formula can represent different structural isomers.</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Activity sections">
+      <button class="tab" type="button" data-tab="build" aria-selected="true">1. Build the pattern</button>
+      <button class="tab" type="button" data-tab="teacher" aria-selected="false">Teacher notes</button>
+    </nav>
+
+    <section id="build" class="panel active">
+      <div class="model-grid">
+        <div class="card">
+          <div class="model-head">
+            <div>
+              <h2>Build and compare organic structures</h2>
+              <p>Adjust the chain length, bond type and functional group. The model will only allow positions that make chemical sense for this simplified straight-chain builder.</p>
+            </div>
+          </div>
+          <canvas id="modelCanvas" width="1120" height="560" aria-label="Organic structure model"></canvas>
+          <div class="inner">
+            <div class="output-grid">
+              <div class="fact">
+                <strong>IUPAC-style name</strong>
+                <div class="formula" id="compoundName">methane</div>
+              </div>
+              <div class="fact">
+                <strong>Molecular formula</strong>
+                <div class="formula" id="molecularFormula">CH<sub>4</sub></div>
+              </div>
+              <div class="fact wide">
+                <strong>Condensed structural formula</strong>
+                <div class="condensed" id="condensedFormula">CH<sub>4</sub></div>
+              </div>
+              <div class="fact">
+                <strong>Parent chain</strong>
+                <div class="formula" id="parentInfo">1 carbon</div>
+              </div>
+              <div class="fact">
+                <strong>Bonding pattern</strong>
+                <div class="formula" id="bondingInfo">saturated</div>
+              </div>
+              <div class="fact">
+                <strong>Functional group</strong>
+                <div class="formula" id="groupInfo">none</div>
+              </div>
+              <div class="fact">
+                <strong>Pattern formula</strong>
+                <div class="formula" id="patternFormula">C<sub>n</sub>H<sub>2n+2</sub></div>
+              </div>
+            </div>
+            <div class="note" id="patternNote">Methane is the first straight-chain alkane. Alkanes have only single C–C bonds and follow C<sub>n</sub>H<sub>2n+2</sub>.</div>
+            <div class="note success-note" id="isomerNote">No positional isomer is possible for this setting.</div>
+          </div>
+        </div>
+
+        <div class="card pad controls-card">
+          <h2>Controls</h2>
+          <div class="controls">
+            <div class="control-group">
+              <label for="familySelect">Structure type</label>
+              <select id="familySelect">
+                <option value="alkane">Alkane — single bonds only</option>
+                <option value="alkene">Alkene — one C=C double bond</option>
+                <option value="alkyne">Alkyne — one C≡C triple bond</option>
+                <option value="haloalkane">Haloalkane — halogen group</option>
+                <option value="alcohol">Alcohol — hydroxyl group</option>
+                <option value="aldehyde">Aldehyde — terminal carbonyl</option>
+                <option value="ketone">Ketone — internal carbonyl</option>
+                <option value="carboxylic">Carboxylic acid — carboxyl group</option>
+                <option value="amine">Amine — amino group</option>
+                <option value="amide">Amide — terminal amide group</option>
+                <option value="ester">Ester — alkyl alkanoate</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="carbonSelect">Main chain length <span class="hint">1–10 carbons</span></label>
+              <select id="carbonSelect"></select>
+            </div>
+
+            <div class="control-group" id="bondPosGroup">
+              <label for="bondPosSelect">Position of multiple bond</label>
+              <select id="bondPosSelect"></select>
+            </div>
+
+            <div class="control-group" id="fgPosGroup">
+              <label for="fgPosSelect">Position of functional group</label>
+              <select id="fgPosSelect"></select>
+            </div>
+
+            <div class="control-group" id="haloGroup">
+              <label for="haloSelect">Halogen</label>
+              <select id="haloSelect">
+                <option value="F">fluoro / F</option>
+                <option value="Cl" selected>chloro / Cl</option>
+                <option value="Br">bromo / Br</option>
+                <option value="I">iodo / I</option>
+              </select>
+            </div>
+
+            <div class="control-group" id="esterGroup">
+              <label for="alkoxySelect">Ester alkyl group <span class="hint">attached after –COO–</span></label>
+              <select id="alkoxySelect"></select>
+            </div>
+
+            <div class="control-group">
+              <label class="toggle-wrap" for="hydrogenToggle"><input id="hydrogenToggle" type="checkbox" /> Show hydrogens on carbon chain</label>
+              <button id="resetModel" type="button" class="secondary">Reset to methane</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="support-grid">
+        <div class="card pad" id="breakdownCard">
+          <h2>Name breakdown</h2>
+          <table class="breakdown-table" aria-label="Name breakdown table">
+            <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+            <tbody id="breakdownBody"></tbody>
+          </table>
+          <div class="chip-row" id="chipRow"></div>
+        </div>
+
+        <div class="card pad">
+          <h2>How to use this activity</h2>
+          <ul class="info-list">
+            <li>Start with the main carbon chain and identify the parent prefix: meth, eth, prop, but, pent, hex, hept, oct, non or dec.</li>
+            <li>Change the bond type to compare saturated and unsaturated hydrocarbons.</li>
+            <li>Move the multiple bond or functional group to compare positional isomers.</li>
+            <li>Use the name breakdown to connect locants, prefixes and suffixes to the displayed structure.</li>
+            <li>Ask students to explain why some options disappear when the molecule would be invalid or chemically misleading at this level.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="teacher" class="panel">
+      <div class="split">
+        <div class="card pad">
+          <h2>Teacher notes</h2>
+          <ul class="info-list">
+            <li><b>Purpose:</b> this is a pattern-recognition model, not a full organic nomenclature engine. It helps students connect parent chain length, bond saturation, functional groups, locants, formulae and condensed structural formulae.</li>
+            <li><b>Target course:</b> upper high school and NSW Chemistry Module 7 Organic Chemistry. It is most useful before students attempt more complex structural formulae, isomerism and reaction pathways.</li>
+            <li><b>Core sequence:</b> begin with alkanes to revise C<sub>n</sub>H<sub>2n+2</sub>, then compare alkenes and alkynes to show how multiple bonds reduce the hydrogen count.</li>
+            <li><b>Functional groups:</b> introduce haloalkanes, alcohols, aldehydes, ketones, carboxylic acids, amines, amides and esters as patterns that alter both the name and formula.</li>
+            <li><b>Isomer focus:</b> use but-1-ene/but-2-ene, propan-1-ol/propan-2-ol and 1-chloropropane/2-chloropropane to show that compounds can share a molecular formula but have different structures.</li>
+            <li><b>Common error:</b> students often treat a displayed condensed formula as a molecular formula. Require them to count atoms from the structural formula before writing the molecular formula.</li>
+            <li><b>Common error:</b> students often number from the wrong end of the chain. The model uses simplified locants, but teachers should still reinforce the lowest-number rule.</li>
+            <li><b>Limitation:</b> this version uses straight chains only. It does not model branching, rings, aromatic compounds, stereoisomerism, E/Z isomerism, chirality or multiple functional groups on the same molecule.</li>
+          </ul>
+
+          <h3>Suggested lesson flow</h3>
+          <ol class="info-list">
+            <li>Students build methane to decane and state the alkane general formula.</li>
+            <li>Students switch to alkenes and alkynes and explain the change in hydrogen count.</li>
+            <li>Students move the bond or group position and identify possible positional isomers.</li>
+            <li>Students compare one hydrocarbon, one alcohol, one carbonyl compound and one carboxylic acid.</li>
+            <li>Students write a short explanation: “How does the structure determine the name and molecular formula?”</li>
+          </ol>
+
+          <h3>Sources</h3>
+          <ul class="source-list">
+            <li><a href="https://iupac.qmul.ac.uk/BlueBook/" target="_blank" rel="noreferrer">IUPAC Blue Book</a> — organic nomenclature conventions.</li>
+            <li><a href="https://iupac.qmul.ac.uk/BriefGuide/organic.html" target="_blank" rel="noreferrer">IUPAC Brief Guide to the Nomenclature of Organic Chemistry</a> — parent chains, suffixes, prefixes and locants.</li>
+            <li><a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/chemistry-stage-6-2017" target="_blank" rel="noreferrer">NESA Chemistry Stage 6 Syllabus</a> — Module 7 Organic Chemistry context.</li>
+            <li><a href="https://edu.rsc.org/resources/hydrocarbons-organic-chemistry-worksheets-14-16/4012551.article" target="_blank" rel="noreferrer">Royal Society of Chemistry Education</a> — hydrocarbons and organic chemistry teaching resources.</li>
+            <li><a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry" target="_blank" rel="noreferrer">Chemistry LibreTexts Organic Chemistry</a> — functional groups and structural formulae.</li>
+          </ul>
+        </div>
+
+        <div class="card pad">
+          <h2>Copyable examples</h2>
+          <textarea id="answerText" readonly></textarea>
+          <div class="chip-row"><button id="copyAnswers" type="button" class="ghost">Copy examples</button></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>Organic Pattern Builder · Designed for classroom use · Straight-chain model for senior Chemistry.</footer>
+  </div>
+
+  <script>
+    const ROOTS = {
+      1:{prefix:'meth', alkane:'methane', alkyl:'methyl'},
+      2:{prefix:'eth', alkane:'ethane', alkyl:'ethyl'},
+      3:{prefix:'prop', alkane:'propane', alkyl:'propyl'},
+      4:{prefix:'but', alkane:'butane', alkyl:'butyl'},
+      5:{prefix:'pent', alkane:'pentane', alkyl:'pentyl'},
+      6:{prefix:'hex', alkane:'hexane', alkyl:'hexyl'},
+      7:{prefix:'hept', alkane:'heptane', alkyl:'heptyl'},
+      8:{prefix:'oct', alkane:'octane', alkyl:'octyl'},
+      9:{prefix:'non', alkane:'nonane', alkyl:'nonyl'},
+      10:{prefix:'dec', alkane:'decane', alkyl:'decyl'}
+    };
+
+    const FAMILY = {
+      alkane:{label:'Alkane', group:'none', pattern:'CₙH₂ₙ₊₂'},
+      alkene:{label:'Alkene', group:'C=C', pattern:'CₙH₂ₙ'},
+      alkyne:{label:'Alkyne', group:'C≡C', pattern:'CₙH₂ₙ₋₂'},
+      haloalkane:{label:'Haloalkane', group:'halogen', pattern:'CₙH₂ₙ₊₁X'},
+      alcohol:{label:'Alcohol', group:'–OH', pattern:'CₙH₂ₙ₊₂O'},
+      aldehyde:{label:'Aldehyde', group:'–CHO', pattern:'CₙH₂ₙO'},
+      ketone:{label:'Ketone', group:'C=O', pattern:'CₙH₂ₙO'},
+      carboxylic:{label:'Carboxylic acid', group:'–COOH', pattern:'CₙH₂ₙO₂'},
+      amine:{label:'Amine', group:'–NH₂', pattern:'CₙH₂ₙ₊₃N'},
+      amide:{label:'Amide', group:'–CONH₂', pattern:'CₙH₂ₙ₊₁NO'},
+      ester:{label:'Ester', group:'–COO–', pattern:'CₘH₂ₘO₂'}
+    };
+
+    const HALO_NAMES = {F:'fluoro', Cl:'chloro', Br:'bromo', I:'iodo'};
+
+    const els = {
+      tabs: Array.from(document.querySelectorAll('.tab')),
+      panels: Array.from(document.querySelectorAll('.panel')),
+      saveStatus: document.getElementById('saveStatus'),
+      familySelect: document.getElementById('familySelect'),
+      carbonSelect: document.getElementById('carbonSelect'),
+      bondPosGroup: document.getElementById('bondPosGroup'),
+      bondPosSelect: document.getElementById('bondPosSelect'),
+      fgPosGroup: document.getElementById('fgPosGroup'),
+      fgPosSelect: document.getElementById('fgPosSelect'),
+      haloGroup: document.getElementById('haloGroup'),
+      haloSelect: document.getElementById('haloSelect'),
+      esterGroup: document.getElementById('esterGroup'),
+      alkoxySelect: document.getElementById('alkoxySelect'),
+      hydrogenToggle: document.getElementById('hydrogenToggle'),
+      resetModel: document.getElementById('resetModel'),
+      canvas: document.getElementById('modelCanvas'),
+      compoundName: document.getElementById('compoundName'),
+      molecularFormula: document.getElementById('molecularFormula'),
+      condensedFormula: document.getElementById('condensedFormula'),
+      parentInfo: document.getElementById('parentInfo'),
+      bondingInfo: document.getElementById('bondingInfo'),
+      groupInfo: document.getElementById('groupInfo'),
+      patternFormula: document.getElementById('patternFormula'),
+      patternNote: document.getElementById('patternNote'),
+      isomerNote: document.getElementById('isomerNote'),
+      breakdownCard: document.getElementById('breakdownCard'),
+      breakdownBody: document.getElementById('breakdownBody'),
+      chipRow: document.getElementById('chipRow'),
+      answerText: document.getElementById('answerText'),
+      copyAnswers: document.getElementById('copyAnswers')
+    };
+
+    const ctx = els.canvas.getContext('2d');
+
+    function subscriptFormula(text){ return String(text).replace(/(\d+)/g, '<sub>$1</sub>'); }
+    function subscriptPlain(text){
+      const map = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+      return String(text).replace(/\d/g, d => map[d]);
+    }
+    function updateStatus(msg){ els.saveStatus.textContent = msg; }
+    function chainText(n){ return `${n} carbon${n===1?'':'s'}`; }
+    function formulaString(counts){
+      const order = ['C','H','N','O','F','Cl','Br','I'];
+      return order.filter(k => counts[k]).map(k => `${k}${counts[k]===1?'':counts[k]}`).join('');
+    }
+    function maxLocant(n){ return Math.ceil(n / 2); }
+    function lowestEquivalent(pos,n){ return Math.min(pos, n + 1 - pos); }
+    function root(n){ return ROOTS[n].prefix; }
+    function alkylGroup(n){
+      if(n === 1) return 'CH3';
+      return 'CH3' + 'CH2'.repeat(n-1);
+    }
+    function acylFront(n){
+      if(n === 1) return 'HCOO';
+      if(n === 2) return 'CH3COO';
+      return 'CH3' + 'CH2'.repeat(n-2) + 'COO';
+    }
+    function endingText(group, n){
+      if(n === 1) return 'carbon atom';
+      return 'carbon atoms';
+    }
+
+    function populateBaseControls(){
+      els.carbonSelect.innerHTML = '';
+      for(let i=1;i<=10;i++){
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = `${i} — ${ROOTS[i].alkane.replace('ane','')} chain`;
+        els.carbonSelect.appendChild(opt);
+      }
+      els.alkoxySelect.innerHTML = '';
+      for(let i=1;i<=5;i++){
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = `${ROOTS[i].alkyl} (${i} C)`;
+        els.alkoxySelect.appendChild(opt);
+      }
+    }
+
+    function validCarbonMinimum(family){
+      if(family === 'alkene' || family === 'alkyne') return 2;
+      if(family === 'ketone') return 3;
+      return 1;
+    }
+
+    function enforceValidCarbon(){
+      const family = els.familySelect.value;
+      const min = validCarbonMinimum(family);
+      if(Number(els.carbonSelect.value) < min) els.carbonSelect.value = String(min);
+      Array.from(els.carbonSelect.options).forEach(opt => {
+        opt.disabled = Number(opt.value) < min;
+      });
+    }
+
+    function updatePositionControls(){
+      const family = els.familySelect.value;
+      enforceValidCarbon();
+      const n = Number(els.carbonSelect.value);
+
+      const usesBond = family === 'alkene' || family === 'alkyne';
+      els.bondPosGroup.classList.toggle('hidden', !usesBond);
+      if(usesBond){
+        const previous = Number(els.bondPosSelect.value) || 1;
+        const max = Math.floor(n / 2);
+        els.bondPosSelect.innerHTML = '';
+        for(let i=1;i<=max;i++){
+          const opt = document.createElement('option');
+          opt.value = String(i);
+          opt.textContent = `Between carbon ${i} and carbon ${i+1}`;
+          els.bondPosSelect.appendChild(opt);
+        }
+        els.bondPosSelect.value = String(Math.min(previous, max));
+      }
+
+      const usesFgPos = ['haloalkane','alcohol','ketone','amine'].includes(family);
+      els.fgPosGroup.classList.toggle('hidden', !usesFgPos);
+      if(usesFgPos){
+        const previous = Number(els.fgPosSelect.value) || 1;
+        let min = 1;
+        let max = maxLocant(n);
+        if(family === 'ketone'){
+          min = 2;
+          max = Math.floor((n+1)/2);
+        }
+        els.fgPosSelect.innerHTML = '';
+        for(let i=min;i<=max;i++){
+          const opt = document.createElement('option');
+          opt.value = String(i);
+          opt.textContent = `Carbon ${i}`;
+          els.fgPosSelect.appendChild(opt);
+        }
+        const safe = Math.max(min, Math.min(previous, max));
+        els.fgPosSelect.value = String(safe);
+      }
+
+      els.haloGroup.classList.toggle('hidden', family !== 'haloalkane');
+      els.esterGroup.classList.toggle('hidden', family !== 'ester');
+    }
+
+    function baseBondOrders(n, family, bondPos){
+      const orders = Array(n-1).fill(1);
+      if(family === 'alkene') orders[bondPos-1] = 2;
+      if(family === 'alkyne') orders[bondPos-1] = 3;
+      return orders;
+    }
+
+    function carbonHydrogens(i, n, orders, family, fgPos){
+      let valenceUsed = 0;
+      if(i > 1) valenceUsed += orders[i-2];
+      if(i < n) valenceUsed += orders[i-1];
+
+      if(family === 'haloalkane' && i === fgPos) valenceUsed += 1;
+      if(family === 'alcohol' && i === fgPos) valenceUsed += 1;
+      if(family === 'amine' && i === fgPos) valenceUsed += 1;
+      if(family === 'ketone' && i === fgPos) valenceUsed += 2;
+      if((family === 'aldehyde' || family === 'carboxylic' || family === 'amide') && i === 1) valenceUsed += 2;
+
+      return Math.max(0, 4 - valenceUsed);
+    }
+
+    function carbonLabel(h){
+      if(h <= 0) return 'C';
+      if(h === 1) return 'CH';
+      return `CH${h}`;
+    }
+
+    function buildCondensed(n, family, bondPos, fgPos, halo, alkoxy){
+      if(family === 'ester') return acylFront(n) + alkylGroup(alkoxy);
+      if(family === 'carboxylic'){
+        if(n === 1) return 'HCOOH';
+        return 'CH3' + 'CH2'.repeat(n-2) + 'COOH';
+      }
+      if(family === 'aldehyde'){
+        if(n === 1) return 'HCHO';
+        return 'CH3' + 'CH2'.repeat(n-2) + 'CHO';
+      }
+      if(family === 'amide'){
+        if(n === 1) return 'HCONH2';
+        return 'CH3' + 'CH2'.repeat(n-2) + 'CONH2';
+      }
+
+      const orders = baseBondOrders(n, family, bondPos);
+      const parts = [];
+      for(let i=1;i<=n;i++){
+        let h = carbonHydrogens(i,n,orders,family,fgPos);
+        let label = carbonLabel(h);
+        if(family === 'haloalkane' && i === fgPos) label += halo;
+        if(family === 'alcohol' && i === fgPos) label += 'OH';
+        if(family === 'amine' && i === fgPos) label += 'NH2';
+        if(family === 'ketone' && i === fgPos) label += 'O';
+        parts.push(label);
+      }
+
+      let out = parts[0];
+      for(let i=1;i<n;i++){
+        const order = orders[i-1];
+        out += order === 1 ? '' : order === 2 ? '=' : '≡';
+        out += parts[i];
+      }
+      return out;
+    }
+
+    function molecularCounts(n, family, bondPos, fgPos, halo, alkoxy){
+      if(family === 'ester'){
+        const totalC = n + alkoxy;
+        return {C:totalC, H:2*totalC, O:2};
+      }
+      if(family === 'alkane') return {C:n, H:2*n+2};
+      if(family === 'alkene') return {C:n, H:2*n};
+      if(family === 'alkyne') return {C:n, H:2*n-2};
+      if(family === 'haloalkane') return {[halo]:1, C:n, H:2*n+1};
+      if(family === 'alcohol') return {C:n, H:2*n+2, O:1};
+      if(family === 'aldehyde') return {C:n, H:2*n, O:1};
+      if(family === 'ketone') return {C:n, H:2*n, O:1};
+      if(family === 'carboxylic') return {C:n, H:2*n, O:2};
+      if(family === 'amine') return {C:n, H:2*n+3, N:1};
+      if(family === 'amide') return {C:n, H:2*n+1, N:1, O:1};
+      return {C:n, H:2*n+2};
+    }
+
+    function nameCompound(n, family, bondPos, fgPos, halo, alkoxy){
+      const r = ROOTS[n];
+      if(family === 'alkane') return r.alkane;
+      if(family === 'alkene'){
+        if(n === 2) return 'ethene';
+        if(n === 3) return 'propene';
+        return `${r.prefix}-${bondPos}-ene`;
+      }
+      if(family === 'alkyne'){
+        if(n === 2) return 'ethyne';
+        if(n === 3) return 'propyne';
+        return `${r.prefix}-${bondPos}-yne`;
+      }
+      if(family === 'haloalkane'){
+        const loc = n <= 2 ? '' : `${fgPos}-`;
+        return `${loc}${HALO_NAMES[halo]}${r.alkane}`;
+      }
+      if(family === 'alcohol'){
+        if(n === 1) return 'methanol';
+        if(n === 2) return 'ethanol';
+        return `${r.prefix}an-${fgPos}-ol`;
+      }
+      if(family === 'aldehyde') return `${r.prefix}anal`;
+      if(family === 'ketone'){
+        if(n === 3) return 'propanone';
+        return `${r.prefix}an-${fgPos}-one`;
+      }
+      if(family === 'carboxylic') return `${r.prefix}anoic acid`;
+      if(family === 'amine'){
+        if(n === 1) return 'methanamine';
+        if(n === 2) return 'ethanamine';
+        return `${r.prefix}an-${fgPos}-amine`;
+      }
+      if(family === 'amide') return `${r.prefix}anamide`;
+      if(family === 'ester') return `${ROOTS[alkoxy].alkyl} ${r.prefix}anoate`;
+      return r.alkane;
+    }
+
+    function familyNote(n, family, bondPos, fgPos, halo, alkoxy){
+      const r = ROOTS[n];
+      if(family === 'alkane') return `${r.alkane[0].toUpperCase()+r.alkane.slice(1)} is a saturated hydrocarbon. Alkanes contain only single C–C bonds and follow C<sub>n</sub>H<sub>2n+2</sub>.`;
+      if(family === 'alkene') return `This alkene has one C=C double bond. Compared with the matching alkane, the double bond removes two hydrogen atoms, giving C<sub>n</sub>H<sub>2n</sub>.`;
+      if(family === 'alkyne') return `This alkyne has one C≡C triple bond. Compared with the matching alkane, the triple bond removes four hydrogen atoms, giving C<sub>n</sub>H<sub>2n−2</sub>.`;
+      if(family === 'haloalkane') return `A haloalkane forms when one hydrogen atom in an alkane is replaced by a halogen atom. Here the substituent is ${HALO_NAMES[halo]} (${halo}).`;
+      if(family === 'alcohol') return `An alcohol contains the hydroxyl functional group, –OH. The –OH replaces one hydrogen on the carbon chain, but adds oxygen and hydrogen to the molecular formula.`;
+      if(family === 'aldehyde') return `An aldehyde contains a terminal carbonyl group, –CHO. The carbonyl carbon must be at the end of the chain in this simplified model.`;
+      if(family === 'ketone') return `A ketone contains an internal carbonyl group, C=O. The carbonyl carbon cannot be carbon 1 because that would make an aldehyde instead.`;
+      if(family === 'carboxylic') return `A carboxylic acid contains the terminal carboxyl group, –COOH. The carbon of –COOH is counted as carbon 1 in the parent chain.`;
+      if(family === 'amine') return `An amine contains the amino group, –NH<sub>2</sub>. In this model it is treated as a primary amine attached to one carbon chain.`;
+      if(family === 'amide') return `An amide contains the terminal group –CONH<sub>2</sub>. The carbonyl carbon is counted as carbon 1 in the parent chain.`;
+      if(family === 'ester') return `An ester contains the –COO– linkage. This model builds simple alkyl alkanoates from an acid-side chain and an alkyl group.`;
+      return '';
+    }
+
+    function isomerMessage(n, family, bondPos, fgPos, halo, alkoxy){
+      if(family === 'alkane') return {type:'success', html:'No positional isomer is possible in this straight-chain alkane-only view. Branching is outside this model.'};
+      if(family === 'alkene' || family === 'alkyne'){
+        if(n >= 4) return {type:'warn', html:`Move the multiple bond to compare positional isomers. For example, ${root(n)}-1-${family==='alkene'?'ene':'yne'} and ${root(n)}-2-${family==='alkene'?'ene':'yne'} can have the same molecular formula but different structures.`};
+        return {type:'success', html:'Only one multiple-bond position is possible for this chain length once equivalent numbering is considered.'};
+      }
+      if(['haloalkane','alcohol','amine'].includes(family)){
+        if(n >= 3) return {type:'warn', html:'Move the functional group to compare positional isomers with the same molecular formula but different structural formulae.'};
+        return {type:'success', html:'Only one distinct functional-group position is possible for this chain length.'};
+      }
+      if(family === 'ketone'){
+        if(n >= 5) return {type:'warn', html:'Move the carbonyl group to compare positional ketone isomers.'};
+        return {type:'success', html:'Only one distinct ketone position is possible for this chain length.'};
+      }
+      if(family === 'ester') return {type:'warn', html:'Changing the acid-side chain or alkyl group can produce structural isomers with the same molecular formula.'};
+      return {type:'success', html:'The functional group is locked to the end of the chain for this family.'};
+    }
+
+    function nameBreakdown(n, family, bondPos, fgPos, halo, alkoxy){
+      const rows = [];
+      const chips = [];
+      rows.push([ROOTS[n].prefix, `${n} ${endingText('chain', n)} in the parent chain`]);
+      chips.push(`${chainText(n)} parent`);
+      if(family === 'alkane'){
+        rows.push(['-ane', 'single C–C bonds only']);
+        chips.push('saturated');
+      } else if(family === 'alkene'){
+        if(n > 3) rows.push([String(bondPos), `C=C starts at carbon ${bondPos}`]);
+        rows.push(['-ene', 'one C=C double bond']);
+        chips.push('unsaturated');
+      } else if(family === 'alkyne'){
+        if(n > 3) rows.push([String(bondPos), `C≡C starts at carbon ${bondPos}`]);
+        rows.push(['-yne', 'one C≡C triple bond']);
+        chips.push('unsaturated');
+      } else if(family === 'haloalkane'){
+        if(n > 2) rows.push([String(fgPos), `${HALO_NAMES[halo]} group is attached to carbon ${fgPos}`]);
+        rows.push([HALO_NAMES[halo], `${halo} has replaced one hydrogen atom`]);
+        rows.push(['-ane', 'single C–C bonds in the parent chain']);
+        chips.push('halogen substituent');
+      } else if(family === 'alcohol'){
+        if(n > 2) rows.push([String(fgPos), `–OH group is attached to carbon ${fgPos}`]);
+        rows.push(['-ol', 'alcohol / hydroxyl functional group']);
+        chips.push('hydroxyl group');
+      } else if(family === 'aldehyde'){
+        rows.push(['-al', 'terminal aldehyde group, –CHO']);
+        chips.push('terminal carbonyl');
+      } else if(family === 'ketone'){
+        if(n > 3) rows.push([String(fgPos), `C=O group is on carbon ${fgPos}`]);
+        rows.push(['-one', 'ketone / internal carbonyl group']);
+        chips.push('internal carbonyl');
+      } else if(family === 'carboxylic'){
+        rows.push(['-oic acid', 'terminal carboxyl group, –COOH']);
+        chips.push('carboxyl group');
+      } else if(family === 'amine'){
+        if(n > 2) rows.push([String(fgPos), `–NH₂ group is attached to carbon ${fgPos}`]);
+        rows.push(['-amine', 'amine / amino functional group']);
+        chips.push('amino group');
+      } else if(family === 'amide'){
+        rows.push(['-amide', 'terminal amide group, –CONH₂']);
+        chips.push('amide group');
+      } else if(family === 'ester'){
+        rows.length = 0;
+        rows.push([ROOTS[alkoxy].alkyl, `${alkoxy} carbon${alkoxy===1?'':'s'} on the alkyl side of the ester`]);
+        rows.push([`${ROOTS[n].prefix}anoate`, `${n} carbon${n===1?'':'s'} on the acid-side parent chain`]);
+        rows.push(['–COO–', 'ester linkage']);
+        chips.push('alkyl alkanoate');
+      }
+      return {rows, chips};
+    }
+
+    function makeNodes(n, family){
+      const w = els.canvas.width;
+      const gap = n <= 2 ? 210 : n <= 4 ? 160 : n <= 6 ? 130 : n <= 8 ? 106 : 92;
+      const startX = (w - gap*(n-1))/2;
+      const nodes = [];
+      for(let i=0;i<n;i++){
+        nodes.push({x:startX + i*gap, y:270 + (i%2===0 ? -18 : 18), index:i+1});
+      }
+      if(family === 'ester'){
+        nodes.forEach(node => node.y = 278);
+      }
+      return nodes;
+    }
+
+    function drawRoundRect(ctx,x,y,w,h,r){
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+      ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+      ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+      ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    }
+
+    function drawBond(A,B,order){
+      const dx = B.x - A.x;
+      const dy = B.y - A.y;
+      const len = Math.sqrt(dx*dx + dy*dy) || 1;
+      const nx = -dy/len;
+      const ny = dx/len;
+
+      ctx.strokeStyle = '#243247';
+      ctx.lineCap = 'round';
+
+      if(order === 1){
+        // Single bonds are drawn as one clean line only. A centre highlight
+        // made them look too much like double bonds.
+        ctx.lineWidth = 5.5;
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.lineTo(B.x, B.y);
+        ctx.stroke();
+        return;
+      }
+
+      const offsets = order === 2 ? [-6,6] : [-9,0,9];
+      offsets.forEach(off => {
+        ctx.lineWidth = 4.2;
+        ctx.beginPath();
+        ctx.moveTo(A.x + nx*off, A.y + ny*off);
+        ctx.lineTo(B.x + nx*off, B.y + ny*off);
+        ctx.stroke();
+      });
+    }
+
+    function drawNode(node,label,isFunctional=false){
+      ctx.fillStyle = isFunctional ? '#9a3412' : '#17356e';
+      ctx.beginPath(); ctx.arc(node.x,node.y,46,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = label.length > 4 ? 'bold 18px system-ui, -apple-system, Segoe UI, sans-serif' : 'bold 24px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(subscriptPlain(label), node.x, node.y+1);
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
+
+    function drawTag(from, text, side='up'){
+      let xOff = 0, yOff = 0;
+      if(side === 'up') yOff = -92;
+      if(side === 'down') yOff = 92;
+      if(side === 'upFar') yOff = -118;
+      if(side === 'downFar') yOff = 118;
+      if(side === 'left') xOff = -118;
+      if(side === 'right') xOff = 118;
+      if(side === 'leftFar') xOff = -136;
+      if(side === 'rightFar') xOff = 136;
+      const tag = {x:from.x + xOff, y:from.y + yOff};
+      ctx.strokeStyle = '#93a3bb'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(tag.x,tag.y); ctx.stroke();
+      const width = Math.max(82, text.length*12 + 22);
+      drawRoundRect(ctx, tag.x - width/2, tag.y - 25, width, 50, 16);
+      ctx.fillStyle = '#fff7ed'; ctx.fill();
+      ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#7c2d12';
+      ctx.font = 'bold 20px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(subscriptPlain(text), tag.x, tag.y+1);
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
+
+    function getHydrogenPositions(node, hCount, totalNodes){
+      const positions = [];
+      if(hCount <= 0) return positions;
+      if(totalNodes === 1){
+        if(hCount >= 1) positions.push({x:node.x, y:node.y-74});
+        if(hCount >= 2) positions.push({x:node.x, y:node.y+74});
+        if(hCount >= 3) positions.push({x:node.x-74, y:node.y});
+        if(hCount >= 4) positions.push({x:node.x+74, y:node.y});
+      } else {
+        if(hCount >= 1) positions.push({x:node.x, y:node.y-74});
+        if(hCount >= 2) positions.push({x:node.x, y:node.y+74});
+        if(hCount >= 4) positions.push({x:node.x-74, y:node.y});
+      }
+      return positions;
+    }
+
+    function drawHydrogenLinesForNode(node, hCount, totalNodes){
+      const positions = getHydrogenPositions(node, hCount, totalNodes);
+      positions.forEach(pos => {
+        ctx.strokeStyle = '#93a3bb'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(node.x,node.y); ctx.lineTo(pos.x,pos.y); ctx.stroke();
+      });
+    }
+
+    function drawHydrogenAtomsForNode(node, hCount, totalNodes){
+      const positions = getHydrogenPositions(node, hCount, totalNodes);
+      positions.forEach(pos => {
+        ctx.fillStyle = '#f3f7ff'; ctx.strokeStyle = '#75a1ff'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(pos.x,pos.y,17,0,Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#17356e'; ctx.font = 'bold 16px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('H', pos.x,pos.y);
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      });
+    }
+
+    function groupTagSide(node, totalNodes){
+      if(node.index === 1) return 'left';
+      if(node.index === totalNodes) return 'right';
+      return node.index % 2 ? 'upFar' : 'downFar';
+    }
+
+    function drawEsterSpecial(n, alkoxy, name, formula, condensed){
+      const w = els.canvas.width;
+      const h = els.canvas.height;
+      ctx.clearRect(0,0,w,h);
+      const grad = ctx.createLinearGradient(0,0,0,h);
+      grad.addColorStop(0,'#ffffff'); grad.addColorStop(1,'#f8fbff');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+      drawGrid(w,h);
+      drawHeader(name, formula, condensed, 'Simple ester: acid-side chain plus –COO– plus alkyl group');
+
+      const centre = {x:w/2, y:270};
+      const acidX = centre.x - 180;
+      const alkylX = centre.x + 180;
+      const leftLabel = n === 1 ? 'H' : `C${n-1}H${2*(n-1)+1}`;
+      const rightLabel = `C${alkoxy}H${2*alkoxy+1}`;
+      const nodes = [
+        {x:acidX,y:270,label:leftLabel,colour:'#17356e'},
+        {x:centre.x-45,y:270,label:'C=O',colour:'#9a3412'},
+        {x:centre.x+45,y:270,label:'O',colour:'#9a3412'},
+        {x:alkylX,y:270,label:rightLabel,colour:'#0f766e'}
+      ];
+      drawBond(nodes[0],nodes[1],1);
+      drawBond(nodes[1],nodes[2],1);
+      drawBond(nodes[2],nodes[3],1);
+      nodes.forEach(nd => {
+        ctx.fillStyle = nd.colour; ctx.beginPath(); ctx.arc(nd.x,nd.y,48,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.stroke();
+        ctx.fillStyle = '#fff'; ctx.font = nd.label.length > 4 ? 'bold 17px system-ui, -apple-system, Segoe UI, sans-serif' : 'bold 22px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(subscriptPlain(nd.label),nd.x,nd.y);
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      });
+      drawTag(nodes[1], 'O', 'up');
+      drawFooterBox(formula, condensed);
+    }
+
+    function drawGrid(w,h){
+      ctx.strokeStyle = '#dbe6f5'; ctx.lineWidth = 2;
+      for(let x=55; x<w; x+=55){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for(let y=45; y<h; y+=45){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+    }
+
+    function drawHeader(name, formula, condensed, subtitle){
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 27px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(name, 48, 52);
+      ctx.font = '18px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillStyle = '#526071';
+      ctx.fillText(subtitle, 48, 84);
+    }
+
+    function drawFooterBox(formula, condensed){
+      const w = els.canvas.width;
+      drawRoundRect(ctx, 54, 430, w-108, 82, 18);
+      ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill();
+      ctx.strokeStyle = '#d8e1ee'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#132033';
+      ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(`Molecular formula: ${subscriptPlain(formula)}`, 78, 464);
+      ctx.fillText(`Condensed structural formula: ${subscriptPlain(condensed)}`, 78, 496);
+    }
+
+    function drawModel(data){
+      const {n,family,bondPos,fgPos,halo,alkoxy,name,formula,condensed} = data;
+      if(family === 'ester'){
+        drawEsterSpecial(n, alkoxy, name, formula, condensed);
+        return;
+      }
+      const w = els.canvas.width;
+      const h = els.canvas.height;
+      ctx.clearRect(0,0,w,h);
+      const grad = ctx.createLinearGradient(0,0,0,h);
+      grad.addColorStop(0,'#ffffff'); grad.addColorStop(1,'#f8fbff');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+      drawGrid(w,h);
+      const subtitle = els.hydrogenToggle.checked ? 'Hydrogens on the main chain are shown separately; terminal side hydrogens are hidden so the chain ends stay clear.' : 'Carbon circles show condensed group labels.';
+      drawHeader(name, formula, condensed, subtitle);
+
+      const nodes = makeNodes(n, family);
+      const orders = baseBondOrders(n, family, bondPos);
+      for(let i=0;i<nodes.length-1;i++) drawBond(nodes[i], nodes[i+1], orders[i]);
+
+      if(['haloalkane','alcohol','amine'].includes(family)){
+        const target = nodes[fgPos-1];
+        const side = els.hydrogenToggle.checked ? groupTagSide(target, nodes.length) : (fgPos % 2 ? 'up' : 'down');
+        drawTag(target, family === 'haloalkane' ? halo : family === 'alcohol' ? 'OH' : 'NH2', side);
+      }
+      if(family === 'ketone'){
+        const side = els.hydrogenToggle.checked ? groupTagSide(nodes[fgPos-1], nodes.length) : 'up';
+        drawTag(nodes[fgPos-1], 'O', side);
+      }
+      if(family === 'aldehyde') drawTag(nodes[0], 'O', els.hydrogenToggle.checked ? 'left' : 'up');
+      if(family === 'carboxylic'){
+        drawTag(nodes[0], 'O', els.hydrogenToggle.checked ? 'left' : 'up');
+        drawTag(nodes[0], 'OH', els.hydrogenToggle.checked ? 'upFar' : 'down');
+      }
+      if(family === 'amide'){
+        drawTag(nodes[0], 'O', els.hydrogenToggle.checked ? 'left' : 'up');
+        drawTag(nodes[0], 'NH2', els.hydrogenToggle.checked ? 'upFar' : 'down');
+      }
+
+      if(els.hydrogenToggle.checked){
+        nodes.forEach((node, idx) => {
+          const i = idx + 1;
+          const hCount = carbonHydrogens(i,n,orders,family,fgPos);
+          drawHydrogenLinesForNode(node, hCount, nodes.length);
+        });
+      }
+
+      nodes.forEach((node, idx) => {
+        const i = idx + 1;
+        const hCount = carbonHydrogens(i,n,orders,family,fgPos);
+        let label = els.hydrogenToggle.checked ? 'C' : carbonLabel(hCount);
+        if(!els.hydrogenToggle.checked){
+          if(family === 'ketone' && i === fgPos) label = 'C=O';
+          if(family === 'aldehyde' && i === 1) label = 'CHO';
+          if(family === 'carboxylic' && i === 1) label = 'COOH';
+          if(family === 'amide' && i === 1) label = 'CONH2';
+          if(family === 'haloalkane' && i === fgPos) label += halo;
+          if(family === 'alcohol' && i === fgPos) label += 'OH';
+          if(family === 'amine' && i === fgPos) label += 'NH2';
+        }
+        const isFunctional = (['ketone','aldehyde','carboxylic','amide'].includes(family) && (i === fgPos || i === 1));
+        drawNode(node, label, isFunctional);
+      });
+
+      if(els.hydrogenToggle.checked){
+        nodes.forEach((node, idx) => {
+          const i = idx + 1;
+          const hCount = carbonHydrogens(i,n,orders,family,fgPos);
+          drawHydrogenAtomsForNode(node, hCount, nodes.length);
+        });
+      }
+      drawFooterBox(formula, condensed);
+    }
+
+    function currentData(){
+      const family = els.familySelect.value;
+      const n = Number(els.carbonSelect.value);
+      const bondPos = Number(els.bondPosSelect.value) || 1;
+      const fgPos = Number(els.fgPosSelect.value) || 1;
+      const halo = els.haloSelect.value;
+      const alkoxy = Number(els.alkoxySelect.value) || 1;
+      const name = nameCompound(n,family,bondPos,fgPos,halo,alkoxy);
+      const counts = molecularCounts(n,family,bondPos,fgPos,halo,alkoxy);
+      const formula = formulaString(counts);
+      const condensed = buildCondensed(n,family,bondPos,fgPos,halo,alkoxy);
+      return {family,n,bondPos,fgPos,halo,alkoxy,name,counts,formula,condensed};
+    }
+
+    function updateOutputs(){
+      updatePositionControls();
+      const data = currentData();
+      const fam = FAMILY[data.family];
+      els.compoundName.textContent = data.name;
+      els.molecularFormula.innerHTML = subscriptFormula(data.formula);
+      els.condensedFormula.innerHTML = subscriptFormula(data.condensed);
+      els.parentInfo.textContent = data.family === 'ester' ? `${data.n} carbon acid-side chain + ${data.alkoxy} carbon alkyl group` : chainText(data.n);
+      els.bondingInfo.textContent = ['alkene','alkyne'].includes(data.family) ? 'unsaturated' : 'single-bond parent chain';
+      els.groupInfo.textContent = fam.group;
+      els.patternFormula.innerHTML = fam.pattern.replace(/ₙ/g,'<sub>n</sub>').replace(/₂/g,'<sub>2</sub>').replace(/₊/g,'+').replace(/₋/g,'−');
+      els.patternNote.innerHTML = familyNote(data.n,data.family,data.bondPos,data.fgPos,data.halo,data.alkoxy);
+      const iso = isomerMessage(data.n,data.family,data.bondPos,data.fgPos,data.halo,data.alkoxy);
+      els.isomerNote.className = `note ${iso.type === 'warn' ? '' : 'success-note'}`;
+      els.isomerNote.innerHTML = iso.html;
+      updateBreakdown(data);
+      drawModel(data);
+      updateStatus(`Showing ${data.name}`);
+    }
+
+    function updateBreakdown(data){
+      const breakdown = nameBreakdown(data.n,data.family,data.bondPos,data.fgPos,data.halo,data.alkoxy);
+      els.breakdownBody.innerHTML = '';
+      breakdown.rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><b>${subscriptFormula(row[0])}</b></td><td>${subscriptFormula(row[1])}</td>`;
+        els.breakdownBody.appendChild(tr);
+      });
+      els.chipRow.innerHTML = '';
+      breakdown.chips.forEach(txt => {
+        const span = document.createElement('span');
+        span.className = 'chip';
+        span.textContent = txt;
+        els.chipRow.appendChild(span);
+      });
+    }
+
+    function resetModel(){
+      els.familySelect.value = 'alkane';
+      els.carbonSelect.value = '1';
+      els.bondPosSelect.value = '1';
+      els.fgPosSelect.value = '1';
+      els.haloSelect.value = 'Cl';
+      els.alkoxySelect.value = '1';
+      els.hydrogenToggle.checked = false;
+      updateOutputs();
+    }
+
+    function buildAnswerText(){
+      const examples = [
+        ['alkane',4,1,1,'Cl',1],
+        ['alkene',4,1,1,'Cl',1],
+        ['alkene',4,2,1,'Cl',1],
+        ['alkyne',5,2,1,'Cl',1],
+        ['haloalkane',3,1,1,'Cl',1],
+        ['haloalkane',3,1,2,'Cl',1],
+        ['alcohol',4,1,1,'Cl',1],
+        ['alcohol',4,1,2,'Cl',1],
+        ['aldehyde',3,1,1,'Cl',1],
+        ['ketone',5,1,2,'Cl',1],
+        ['ketone',5,1,3,'Cl',1],
+        ['carboxylic',4,1,1,'Cl',1],
+        ['amine',3,1,1,'Cl',1],
+        ['amide',2,1,1,'Cl',1],
+        ['ester',2,1,1,'Cl',1],
+        ['ester',2,1,1,'Cl',2]
+      ];
+      const lines = ['Name\tMolecular formula\tCondensed structural formula\tTeaching point'];
+      examples.forEach(([family,n,bondPos,fgPos,halo,alkoxy]) => {
+        const name = nameCompound(n,family,bondPos,fgPos,halo,alkoxy);
+        const formula = formulaString(molecularCounts(n,family,bondPos,fgPos,halo,alkoxy));
+        const condensed = buildCondensed(n,family,bondPos,fgPos,halo,alkoxy);
+        const teaching = FAMILY[family].label;
+        lines.push(`${name}\t${formula}\t${condensed}\t${teaching}`);
+      });
+      els.answerText.value = lines.join('\n');
+    }
+
+    function switchTab(tabId){
+      els.tabs.forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.tab === tabId)));
+      els.panels.forEach(panel => panel.classList.toggle('active', panel.id === tabId));
+      updateStatus(`Opened ${document.querySelector(`[data-tab="${tabId}"]`).textContent}`);
+    }
+
+    function attachEvents(){
+      els.tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+      [els.familySelect, els.carbonSelect, els.bondPosSelect, els.fgPosSelect, els.haloSelect, els.alkoxySelect, els.hydrogenToggle].forEach(el => {
+        el.addEventListener('change', updateOutputs);
+      });
+      els.resetModel.addEventListener('click', resetModel);
+      els.copyAnswers.addEventListener('click', async () => {
+        els.answerText.select();
+        try{
+          await navigator.clipboard.writeText(els.answerText.value);
+          updateStatus('Examples copied');
+        } catch(err){
+          updateStatus('Copy failed — use Cmd/Ctrl+C');
+        }
+      });
+      window.addEventListener('resize', () => drawModel(currentData()));
+    }
+
+    function init(){
+      populateBaseControls();
+      buildAnswerText();
+      attachEvents();
+      resetModel();
+    }
+
+    init();
+  </script>
+</body>
+</html>
