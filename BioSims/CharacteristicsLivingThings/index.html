@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.3.1 Characteristics of Living Things | SciSims</title>
+
+  <style>
+    :root {
+      --blue-dark: #1f3f9f;
+      --blue: #2563eb;
+      --blue-light: #38bdf8;
+      --bg: #edf6ff;
+      --panel: #ffffff;
+      --soft-blue: #eaf4ff;
+      --border: #cfe0f4;
+      --text: #172033;
+      --muted: #50627d;
+      --green: #15803d;
+      --green-soft: #eafff1;
+      --orange: #9a3412;
+      --orange-soft: #fff4e8;
+      --red: #b91c1c;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e4f3ff 0, var(--bg) 36%, #f8fbff 100%);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1235px, calc(100% - 34px));
+      margin: 14px auto 30px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: #164bd7;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .hero {
+      border-radius: 22px;
+      padding: 28px 30px;
+      color: white;
+      background: linear-gradient(125deg, #243f9b 0%, #2563eb 58%, #38bdf8 100%);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .hero .topic {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.05rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p:last-child {
+      margin: 12px 0 0;
+      font-size: 1.03rem;
+      font-weight: 650;
+      max-width: 960px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .setup-card { padding: 18px; }
+    .model-card { padding: 18px; min-height: 620px; }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.45rem;
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      margin: 16px 0 8px;
+      font-size: 1rem;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-size: 0.82rem;
+      font-weight: 850;
+      color: #2c3d58;
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid #bfd1e7;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #ffffff;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #80b8ff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .info-box,
+    .how-box,
+    .teach-box {
+      border-radius: 15px;
+      padding: 13px;
+      font-size: 0.91rem;
+      line-height: 1.38;
+    }
+
+    .info-box {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      background: #f4f9ff;
+    }
+
+    .how-box {
+      margin-top: 16px;
+      border: 1px solid #a7f3c5;
+      background: var(--green-soft);
+      color: #065f2c;
+    }
+
+    .teach-box {
+      margin-top: 12px;
+      border: 1px solid #fed7aa;
+      background: var(--orange-soft);
+      color: #7c2d12;
+    }
+
+    .trait-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .trait-tile {
+      border: 1px solid #bfd7ff;
+      background: #f4f9ff;
+      border-radius: 14px;
+      padding: 10px 11px;
+      cursor: pointer;
+      transition: 0.16s ease;
+      user-select: none;
+    }
+
+    .trait-tile:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.10);
+    }
+
+    .trait-tile.selected {
+      background: #dbeafe;
+      border-color: #2563eb;
+      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.18);
+    }
+
+    .trait-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      color: #1e3a8a;
+    }
+
+    .trait-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      background: #ffffff;
+      border: 1px solid #bfdbfe;
+      font-weight: 950;
+    }
+
+    .trait-hint {
+      margin-top: 4px;
+      color: #4b5d78;
+      font-size: 0.82rem;
+    }
+
+    .model-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .model-header h2 { margin-bottom: 5px; }
+
+    .subtext {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .instruction-pill {
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      color: #263957;
+      max-width: 470px;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 8px 0 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.16s ease;
+      font-family: inherit;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    .btn-green {
+      background: #15803d;
+      color: white;
+      box-shadow: 0 8px 18px rgba(21, 128, 61, 0.18);
+    }
+
+    .btn-blue {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+    }
+
+    .btn-grey {
+      background: #e5edf6;
+      color: #1f2b3d;
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .case-card,
+    .decision-card,
+    .evidence-card,
+    .progress-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: #f8fbff;
+      padding: 16px;
+    }
+
+    .case-card {
+      display: grid;
+      grid-template-columns: 106px 1fr;
+      gap: 16px;
+      align-items: center;
+      min-height: 210px;
+    }
+
+    .case-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 128px;
+      border-radius: 24px;
+      border: 2px solid #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff, #dbeafe);
+      font-size: 4.3rem;
+    }
+
+    .case-kicker {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eaf4ff;
+      border: 1px solid #bfd7ff;
+      color: #1e3a8a;
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .case-title {
+      margin: 0 0 7px;
+      font-size: 1.45rem;
+      letter-spacing: -0.03em;
+    }
+
+    .case-description {
+      margin: 0;
+      color: #43546f;
+      line-height: 1.45;
+    }
+
+    .decision-card h3,
+    .evidence-card h3,
+    .progress-card h3 {
+      margin-top: 0;
+    }
+
+    .category-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .category-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      border: 1px solid #c8d8eb;
+      background: white;
+      color: #182238;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    .category-btn.selected {
+      border-color: #2563eb;
+      background: #eaf2ff;
+      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.14);
+    }
+
+    .category-name {
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .category-desc {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.82rem;
+      color: #50627d;
+      font-weight: 650;
+    }
+
+    .tick-space {
+      min-width: 24px;
+      font-size: 1.2rem;
+      color: #1d4ed8;
+    }
+
+    .wide-section { grid-column: 1 / -1; }
+
+    .evidence-card {
+      min-height: 170px;
+      background: #ffffff;
+    }
+
+    .feedback {
+      border-radius: 15px;
+      padding: 13px;
+      border: 1px solid #d8e1ed;
+      background: #f8fafc;
+      color: #34445c;
+      line-height: 1.45;
+    }
+
+    .feedback.good {
+      border-color: #a7f3c5;
+      background: #ecfdf5;
+      color: #065f2c;
+    }
+
+    .feedback.bad {
+      border-color: #fecaca;
+      background: #fff1f2;
+      color: #7f1d1d;
+    }
+
+    .feedback.warn {
+      border-color: #fed7aa;
+      background: #fff7ed;
+      color: #7c2d12;
+    }
+
+    .evidence-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .evidence-list li { margin: 5px 0; }
+
+    .mrs-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .mrs-pill {
+      border-radius: 14px;
+      border: 1px solid #d4e4f7;
+      background: #f8fbff;
+      padding: 9px 7px;
+      text-align: center;
+      min-height: 64px;
+    }
+
+    .mrs-pill.active {
+      border-color: #86efac;
+      background: #ecfdf5;
+    }
+
+    .mrs-letter {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 950;
+      color: #1d4ed8;
+    }
+
+    .mrs-label {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #465873;
+    }
+
+    .progress-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      background: #f4f9ff;
+    }
+
+    .stat {
+      border: 1px solid #d4e4f7;
+      background: white;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.55rem;
+      font-weight: 950;
+      color: #1e40af;
+      line-height: 1;
+    }
+
+    .stat-label {
+      margin-top: 4px;
+      color: #53657f;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .lesson-frame {
+      margin-top: 20px;
+      padding: 18px;
+    }
+
+    .lesson-frame h2 { margin-bottom: 14px; }
+
+    .li-sc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid #1f2937;
+      background: white;
+    }
+
+    .li-sc-grid > div {
+      padding: 10px 12px;
+      min-height: 105px;
+    }
+
+    .li-sc-grid > div:first-child {
+      border-right: 1px solid #1f2937;
+    }
+
+    .li-sc-grid h3 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+      text-decoration: underline;
+    }
+
+    .li-sc-grid p {
+      margin: 0;
+      line-height: 1.32;
+    }
+
+    .teacher-notes {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fbff;
+      padding: 14px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 950;
+      color: #1e3a8a;
+    }
+
+    .teacher-notes ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .teacher-notes li { margin: 6px 0; }
+
+    @media (max-width: 980px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .activity-grid { grid-template-columns: 1fr; }
+      .model-header { grid-template-columns: 1fr; }
+      .instruction-pill { max-width: none; }
+      .mrs-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .page { width: min(100% - 20px, 1235px); }
+      .hero { padding: 22px; }
+      .case-card { grid-template-columns: 1fr; }
+      .case-icon { height: 110px; }
+
+      .li-sc-grid { grid-template-columns: 1fr; }
+      .li-sc-grid > div:first-child {
+        border-right: none;
+        border-bottom: 1px solid #1f2937;
+      }
+
+      .progress-card { grid-template-columns: 1fr; }
+      .mrs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a class="back-link" href="../../index.html">← Back to main SciSims page</a>
+
+    <header class="hero">
+      <p class="topic">Classification of living things</p>
+      <h1>7.3.1 Characteristics of Living Things</h1>
+      <p>
+        Use MRS GREN evidence to decide whether an example is living, once-living or from a living thing, or non-living.
+      </p>
+    </header>
+
+    <main class="main-grid">
+      <aside class="card setup-card">
+        <h2>Set up the challenge</h2>
+
+        <label for="caseSelect">Choose a case</label>
+        <select id="caseSelect"></select>
+
+        <label for="modeSelect">Choose a mode</label>
+        <select id="modeSelect">
+          <option value="full">Full mode: living, once-living or from a living thing, or non-living</option>
+          <option value="easy">Easy mode: living or not currently living</option>
+        </select>
+
+        <div class="info-box">
+          <strong>MRS GREN</strong> is a memory tool for the shared characteristics of living things:
+          movement, respiration, sensitivity, growth, reproduction, excretion and nutrition.
+        </div>
+
+        <h3>Evidence tiles</h3>
+        <p class="subtext">
+          Click the life-process evidence that is directly supported by the case file.
+        </p>
+        <div class="trait-grid" id="traitGrid"></div>
+
+        <div class="how-box">
+          <strong>How to use:</strong><br>
+          Read the case file, choose the MRS GREN evidence that is directly supported, then classify the example.
+          Check your answer and use the evidence notes to improve your reasoning.
+        </div>
+
+        <div class="teach-box">
+          <strong>Teaching point:</strong><br>
+          Living things carry out life processes. Some examples may only show some evidence in the case file,
+          but the classification should still be based on whether they are organisms.
+        </div>
+      </aside>
+
+      <section class="card model-card">
+        <div class="model-header">
+          <div>
+            <h2>Characteristics evidence board</h2>
+            <p class="subtext">
+              Use evidence before choosing a classification.
+            </p>
+          </div>
+          <div class="instruction-pill">
+            Click evidence tiles on the left, choose a classification, then check your answer.
+            The tiles show evidence in the case file, not every life process the organism can carry out.
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="btn-green" id="checkBtn">Check answer</button>
+          <button class="btn-grey" id="resetBtn">Reset case</button>
+          <button class="btn-grey" id="showBtn">Show evidence</button>
+          <button class="btn-blue" id="nextBtn">Random next challenge</button>
+        </div>
+
+        <div class="activity-grid">
+          <section class="case-card">
+            <div class="case-icon" id="caseIcon" aria-hidden="true">🦘</div>
+            <div>
+              <div class="case-kicker" id="caseKicker">Case file</div>
+              <h3 class="case-title" id="caseTitle">Kangaroo</h3>
+              <p class="case-description" id="caseDescription"></p>
+            </div>
+          </section>
+
+          <section class="decision-card">
+            <h3>Classify the example</h3>
+            <p class="subtext">
+              Use the evidence. Do not rely only on whether it moves.
+            </p>
+            <div class="category-options" id="categoryOptions"></div>
+          </section>
+
+          <section class="evidence-card wide-section">
+            <h3>Evidence notes</h3>
+            <div class="feedback" id="feedbackBox">
+              Start by selecting evidence tiles and choosing a classification.
+            </div>
+            <div class="mrs-grid" id="mrsGrid"></div>
+          </section>
+
+          <section class="progress-card wide-section">
+            <div class="stat">
+              <div class="stat-value" id="attemptsStat">0</div>
+              <div class="stat-label">Cases checked</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="correctStat">0</div>
+              <div class="stat-label">Correct before reveal</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="caseStat">1/15</div>
+              <div class="stat-label">Current case</div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <section class="card lesson-frame">
+      <h2>Lesson frame</h2>
+
+      <div class="li-sc-grid">
+        <div>
+          <h3>Learning Intention</h3>
+          <p>
+            Students will learn about the characteristics shared by living things. They will understand
+            how these characteristics can be used to decide whether something is living, once-living or
+            non-living.
+          </p>
+        </div>
+        <div>
+          <h3>Success Criteria</h3>
+          <p>
+            Students can describe the main characteristics of living things, explain what MRS GREN
+            stands for, and use evidence to classify examples as living, once-living or from a living thing, or non-living.
+          </p>
+        </div>
+      </div>
+
+      <div class="teacher-notes">
+        <details>
+          <summary>Teacher notes</summary>
+          <ul>
+            <li>
+              The evidence tiles are based on what is directly stated in each case file. A living organism
+              may carry out all life processes across its life cycle, even if only some are visible in a
+              short case description.
+            </li>
+            <li>
+              Use the robot dog and fire examples to challenge the misconception that movement or apparent
+              growth alone makes something living.
+            </li>
+            <li>
+              In easy mode, once-living or from a living thing examples are grouped with non-living examples as
+              “not currently living”.
+            </li>
+            <li>
+              In full mode, students must separate objects that came from organisms from objects that were
+              never organisms.
+            </li>
+          </ul>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const traits = [
+      {
+        key: "movement",
+        letter: "M",
+        label: "Movement",
+        hint: "The organism or part of it changes position."
+      },
+      {
+        key: "respiration",
+        letter: "R",
+        label: "Respiration",
+        hint: "Cells release energy from nutrients."
+      },
+      {
+        key: "sensitivity",
+        letter: "S",
+        label: "Sensitivity",
+        hint: "The organism detects and responds to stimuli."
+      },
+      {
+        key: "growth",
+        letter: "G",
+        label: "Growth",
+        hint: "The organism increases in size or develops."
+      },
+      {
+        key: "reproduction",
+        letter: "R",
+        label: "Reproduction",
+        hint: "The organism can produce offspring as part of its life cycle."
+      },
+      {
+        key: "excretion",
+        letter: "E",
+        label: "Excretion",
+        hint: "Waste substances are removed."
+      },
+      {
+        key: "nutrition",
+        letter: "N",
+        label: "Nutrition",
+        hint: "The organism obtains or makes nutrients."
+      }
+    ];
+
+    const traitNames = Object.fromEntries(traits.map(trait => [trait.key, trait.label]));
+
+    const challenges = [
+      {
+        id: "kangaroo",
+        title: "Kangaroo",
+        icon: "🦘",
+        category: "living",
+        description:
+          "A kangaroo eats grass, breathes, responds to sound, hops away from danger and produces waste.",
+        traits: ["movement", "respiration", "sensitivity", "excretion", "nutrition"],
+        explanation:
+          "The kangaroo is living. This case directly shows movement, respiration, sensitivity, excretion and nutrition. Kangaroos also grow and reproduce across their life cycle."
+      },
+      {
+        id: "wooden-ruler",
+        title: "Wooden ruler",
+        icon: "📏",
+        category: "once",
+        description:
+          "A wooden ruler was made from timber. The timber came from a tree, but the ruler does not grow, respire or reproduce.",
+        traits: [],
+        explanation:
+          "The wooden ruler is once-living or from a living thing. The material came from a tree, but the ruler is not alive now."
+      },
+      {
+        id: "robot-dog",
+        title: "Robot dog",
+        icon: "🤖",
+        category: "non",
+        description:
+          "A robot dog can walk and respond to sensors, but it is a machine made from manufactured parts.",
+        traits: [],
+        explanation:
+          "The robot dog is non-living. Its movement and responses are mechanical or programmed, not biological life processes."
+      },
+      {
+        id: "bean-seedling",
+        title: "Bean seedling",
+        icon: "🌱",
+        category: "living",
+        description:
+          "A bean seedling grows taller, bends towards light, uses nutrients, respires in its cells and releases waste gases.",
+        traits: ["movement", "respiration", "sensitivity", "growth", "excretion", "nutrition"],
+        explanation:
+          "The bean seedling is living. This case directly shows slow plant movement, respiration, sensitivity, growth, excretion and nutrition. Plants also reproduce across their life cycle."
+      },
+      {
+        id: "dead-leaf",
+        title: "Dead leaf",
+        icon: "🍂",
+        category: "once",
+        description:
+          "A dry leaf fell from a plant weeks ago. It came from a living plant, but it is no longer carrying out life processes.",
+        traits: [],
+        explanation:
+          "The dead leaf is once-living or from a living thing. It came from a living plant, but it is not currently alive."
+      },
+      {
+        id: "rock",
+        title: "Rock",
+        icon: "🪨",
+        category: "non",
+        description:
+          "A rock may change shape through weathering, but it has no cells and does not carry out life processes.",
+        traits: [],
+        explanation:
+          "The rock is non-living. It was never an organism and does not carry out MRS GREN life processes."
+      },
+      {
+        id: "mushroom",
+        title: "Mushroom",
+        icon: "🍄",
+        category: "living",
+        description:
+          "A mushroom grows from fungal threads, obtains nutrients from dead material and releases spores.",
+        traits: ["growth", "reproduction", "nutrition"],
+        explanation:
+          "The mushroom is living. This case directly shows growth, reproduction and nutrition. Fungi also carry out other life processes, including respiration."
+      },
+      {
+        id: "wool-jumper",
+        title: "Woollen jumper",
+        icon: "🧶",
+        category: "once",
+        description:
+          "A woollen jumper is made from sheep wool. It came from a living animal, but the jumper itself is not alive.",
+        traits: [],
+        explanation:
+          "The woollen jumper is once-living or from a living thing. Wool comes from sheep, but a jumper does not carry out life processes."
+      },
+      {
+        id: "candle-flame",
+        title: "Candle flame",
+        icon: "🔥",
+        category: "non",
+        description:
+          "A flame can spread, use oxygen and appear to grow, but it has no cells and does not reproduce biologically.",
+        traits: [],
+        explanation:
+          "The flame is non-living. Burning is a chemical process, not cellular respiration, growth or biological reproduction."
+      },
+      {
+        id: "bacterium",
+        title: "Bacterium",
+        icon: "🦠",
+        category: "living",
+        description:
+          "A bacterium uses nutrients, responds to its surroundings, removes waste and divides to make more bacteria.",
+        traits: ["sensitivity", "reproduction", "excretion", "nutrition"],
+        explanation:
+          "The bacterium is living. This case directly shows sensitivity, reproduction, excretion and nutrition. Bacteria also grow and respire as living cells."
+      },
+      {
+        id: "paper-sheet",
+        title: "Sheet of paper",
+        icon: "📄",
+        category: "once",
+        description:
+          "A sheet of paper is made from plant fibres. It does not have living cells and does not carry out life processes.",
+        traits: [],
+        explanation:
+          "The sheet of paper is once-living or from a living thing. It was made from plant material, but it is not alive now."
+      },
+      {
+        id: "glass-marble",
+        title: "Glass marble",
+        icon: "🔵",
+        category: "non",
+        description:
+          "A glass marble can roll if pushed, but it has no cells and does not need nutrients or release wastes.",
+        traits: [],
+        explanation:
+          "The glass marble is non-living. It was never an organism and does not carry out life processes."
+      },
+      {
+        id: "snail",
+        title: "Garden snail",
+        icon: "🐌",
+        category: "living",
+        description:
+          "A snail moves across a leaf, eats plant material, responds when touched and leaves waste behind.",
+        traits: ["movement", "sensitivity", "excretion", "nutrition"],
+        explanation:
+          "The snail is living. This case directly shows movement, sensitivity, excretion and nutrition. Snails also respire, grow and reproduce across their life cycle."
+      },
+      {
+        id: "empty-shell",
+        title: "Empty shell",
+        icon: "🐚",
+        category: "once",
+        description:
+          "An empty shell was produced by an animal. The animal is gone, and the shell is not carrying out life processes.",
+        traits: [],
+        explanation:
+          "The empty shell is once-living or from a living thing. It was produced by a living animal, but the shell itself is not alive."
+      },
+      {
+        id: "cloud",
+        title: "Cloud",
+        icon: "☁️",
+        category: "non",
+        description:
+          "A cloud can move across the sky and change shape, but it is water droplets and air, not an organism.",
+        traits: [],
+        explanation:
+          "The cloud is non-living. Its movement is caused by wind and weather, not life processes."
+      }
+    ];
+
+    const state = {
+      currentIndex: 0,
+      selectedTraits: new Set(),
+      selectedCategory: null,
+      attempts: 0,
+      correct: 0,
+      checkedCases: new Set(),
+      evidenceRevealed: false,
+      challengeOrder: [],
+      orderPosition: 0
+    };
+
+    const caseSelect = document.getElementById("caseSelect");
+    const modeSelect = document.getElementById("modeSelect");
+    const traitGrid = document.getElementById("traitGrid");
+    const mrsGrid = document.getElementById("mrsGrid");
+    const categoryOptions = document.getElementById("categoryOptions");
+    const caseIcon = document.getElementById("caseIcon");
+    const caseTitle = document.getElementById("caseTitle");
+    const caseDescription = document.getElementById("caseDescription");
+    const caseKicker = document.getElementById("caseKicker");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const attemptsStat = document.getElementById("attemptsStat");
+    const correctStat = document.getElementById("correctStat");
+    const caseStat = document.getElementById("caseStat");
+
+    const checkBtn = document.getElementById("checkBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const showBtn = document.getElementById("showBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function makeNewChallengeOrder(avoidIndex = null) {
+      let order = shuffle(challenges.map((_, index) => index));
+
+      if (avoidIndex !== null && order[0] === avoidIndex && order.length > 1) {
+        const swapIndex = Math.floor(Math.random() * (order.length - 1)) + 1;
+        [order[0], order[swapIndex]] = [order[swapIndex], order[0]];
+      }
+
+      state.challengeOrder = order;
+      state.orderPosition = 0;
+    }
+
+    function currentCase() {
+      return challenges[state.currentIndex];
+    }
+
+    function init() {
+      makeNewChallengeOrder();
+      state.currentIndex = state.challengeOrder[0];
+
+      renderCaseSelect();
+      renderTraits();
+      renderCase();
+      attachEvents();
+    }
+
+    function renderCaseSelect() {
+      caseSelect.innerHTML = "";
+
+      state.challengeOrder.forEach(index => {
+        const challenge = challenges[index];
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = challenge.title;
+        caseSelect.appendChild(option);
+      });
+    }
+
+    function attachEvents() {
+      caseSelect.addEventListener("change", () => {
+        state.currentIndex = Number(caseSelect.value);
+        const foundPosition = state.challengeOrder.indexOf(state.currentIndex);
+        state.orderPosition = foundPosition >= 0 ? foundPosition : 0;
+        resetCase();
+      });
+
+      modeSelect.addEventListener("change", () => {
+        state.selectedCategory = null;
+        renderCategories();
+        setInitialFeedback();
+      });
+
+      checkBtn.addEventListener("click", checkAnswer);
+      resetBtn.addEventListener("click", resetCase);
+      showBtn.addEventListener("click", showEvidence);
+      nextBtn.addEventListener("click", nextChallenge);
+    }
+
+    function renderTraits() {
+      traitGrid.innerHTML = "";
+
+      traits.forEach(trait => {
+        const tile = document.createElement("div");
+        tile.className = "trait-tile";
+        tile.dataset.key = trait.key;
+        tile.innerHTML = `
+          <div class="trait-title">
+            <span class="trait-letter">${trait.letter}</span>
+            <span>${trait.label}</span>
+          </div>
+          <div class="trait-hint">${trait.hint}</div>
+        `;
+
+        tile.addEventListener("click", () => {
+          if (state.selectedTraits.has(trait.key)) {
+            state.selectedTraits.delete(trait.key);
+          } else {
+            state.selectedTraits.add(trait.key);
+          }
+          updateTraitTiles();
+          renderMrsGrid();
+        });
+
+        traitGrid.appendChild(tile);
+      });
+    }
+
+    function updateTraitTiles() {
+      document.querySelectorAll(".trait-tile").forEach(tile => {
+        const selected = state.selectedTraits.has(tile.dataset.key);
+        tile.classList.toggle("selected", selected);
+      });
+    }
+
+    function renderCase() {
+      const challenge = currentCase();
+
+      caseSelect.value = String(state.currentIndex);
+      caseIcon.textContent = challenge.icon;
+      caseTitle.textContent = challenge.title;
+      caseDescription.textContent = challenge.description;
+      caseKicker.textContent = `Case file ${state.orderPosition + 1}`;
+
+      renderCategories();
+      renderMrsGrid();
+      updateTraitTiles();
+      updateStats();
+      setInitialFeedback();
+    }
+
+    function renderCategories() {
+      categoryOptions.innerHTML = "";
+
+      const mode = modeSelect.value;
+      const categories =
+        mode === "easy"
+          ? [
+              {
+                key: "living",
+                name: "Living",
+                desc: "Currently carries out the life processes"
+              },
+              {
+                key: "nonLiving",
+                name: "Not currently living",
+                desc: "Does not currently carry out the life processes"
+              }
+            ]
+          : [
+              {
+                key: "living",
+                name: "Living",
+                desc: "Currently carries out the life processes"
+              },
+              {
+                key: "once",
+                name: "Once-living or from a living thing",
+                desc: "Came from an organism, but is not alive now"
+              },
+              {
+                key: "non",
+                name: "Non-living",
+                desc: "Was never an organism"
+              }
+            ];
+
+      categories.forEach(category => {
+        const button = document.createElement("button");
+        button.className = "category-btn";
+        button.dataset.key = category.key;
+        button.innerHTML = `
+          <span>
+            <span class="category-name">${category.name}</span>
+            <span class="category-desc">${category.desc}</span>
+          </span>
+          <span class="tick-space">${state.selectedCategory === category.key ? "✓" : ""}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          state.selectedCategory = category.key;
+          renderCategories();
+        });
+
+        categoryOptions.appendChild(button);
+      });
+    }
+
+    function renderMrsGrid(showExpected = false) {
+      const challenge = currentCase();
+      mrsGrid.innerHTML = "";
+
+      traits.forEach(trait => {
+        const selected = showExpected
+          ? challenge.traits.includes(trait.key)
+          : state.selectedTraits.has(trait.key);
+
+        const pill = document.createElement("div");
+        pill.className = `mrs-pill ${selected ? "active" : ""}`;
+        pill.innerHTML = `
+          <span class="mrs-letter">${trait.letter}</span>
+          <span class="mrs-label">${trait.label}</span>
+        `;
+        mrsGrid.appendChild(pill);
+      });
+    }
+
+    function setInitialFeedback() {
+      feedbackBox.className = "feedback";
+      feedbackBox.innerHTML =
+        "Start by selecting evidence tiles and choosing a classification.";
+      renderMrsGrid();
+    }
+
+    function expectedCategoryForMode(challenge) {
+      if (modeSelect.value === "easy") {
+        return challenge.category === "living" ? "living" : "nonLiving";
+      }
+      return challenge.category;
+    }
+
+    function categoryLabel(key) {
+      const labels = {
+        living: "living",
+        once: "once-living or from a living thing",
+        non: "non-living",
+        nonLiving: "not currently living"
+      };
+      return labels[key] || key;
+    }
+
+    function readableTraitList(keys) {
+      if (keys.length === 0) return "none of the MRS GREN tiles";
+      const names = keys.map(key => traitNames[key] || key);
+      if (names.length === 1) return names[0];
+      return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+    }
+
+    function checkAnswer() {
+      const challenge = currentCase();
+
+      if (!state.selectedCategory) {
+        feedbackBox.className = "feedback warn";
+        feedbackBox.innerHTML = "Choose a classification before checking your answer.";
+        return;
+      }
+
+      const expected = expectedCategoryForMode(challenge);
+      const isCorrect = state.selectedCategory === expected;
+
+      if (!state.checkedCases.has(challenge.id)) {
+        state.attempts += 1;
+        if (isCorrect && !state.evidenceRevealed) {
+          state.correct += 1;
+        }
+        state.checkedCases.add(challenge.id);
+      }
+
+      const selectedTraitArray = Array.from(state.selectedTraits);
+      const expectedTraits = challenge.traits;
+
+      const missingTraits = expectedTraits.filter(key => !state.selectedTraits.has(key));
+      const extraTraits = selectedTraitArray.filter(key => !expectedTraits.includes(key));
+
+      let traitComment = "";
+
+      if (missingTraits.length === 0 && extraTraits.length === 0) {
+        traitComment = "Your evidence tiles match the case file.";
+      } else {
+        const missingText = missingTraits.length
+          ? `Missing evidence: ${readableTraitList(missingTraits)}.`
+          : "";
+        const extraText = extraTraits.length
+          ? `Extra evidence selected: ${readableTraitList(extraTraits)}.`
+          : "";
+        traitComment = `${missingText} ${extraText}`.trim();
+      }
+
+      const revealNote = state.evidenceRevealed
+        ? "<br><em>Evidence was revealed before checking, so this case does not count as correct before reveal.</em>"
+        : "";
+
+      if (isCorrect) {
+        feedbackBox.className = "feedback good";
+        feedbackBox.innerHTML = `
+          <strong>Correct.</strong> ${challenge.title} is classified as <strong>${categoryLabel(expected)}</strong>.
+          ${revealNote}
+          <ul class="evidence-list">
+            <li><strong>Case-file evidence:</strong> ${readableTraitList(expectedTraits)}.</li>
+            <li>${traitComment}</li>
+            <li>${challenge.explanation}</li>
+          </ul>
+        `;
+      } else {
+        feedbackBox.className = "feedback bad";
+        feedbackBox.innerHTML = `
+          <strong>Not quite.</strong> You chose <strong>${categoryLabel(state.selectedCategory)}</strong>, but the best classification is <strong>${categoryLabel(expected)}</strong>.
+          ${revealNote}
+          <ul class="evidence-list">
+            <li><strong>Case-file evidence:</strong> ${readableTraitList(expectedTraits)}.</li>
+            <li>${traitComment}</li>
+            <li>${challenge.explanation}</li>
+            <li>Check whether the example is currently an organism, came from an organism, or was never an organism.</li>
+          </ul>
+        `;
+      }
+
+      renderMrsGrid(true);
+      updateStats();
+    }
+
+    function showEvidence() {
+      const challenge = currentCase();
+      state.evidenceRevealed = true;
+      state.selectedTraits = new Set(challenge.traits);
+      state.selectedCategory = expectedCategoryForMode(challenge);
+
+      updateTraitTiles();
+      renderCategories();
+      renderMrsGrid(true);
+
+      feedbackBox.className = "feedback";
+      feedbackBox.innerHTML = `
+        <strong>Evidence shown.</strong>
+        <ul class="evidence-list">
+          <li><strong>Best classification:</strong> ${categoryLabel(state.selectedCategory)}.</li>
+          <li><strong>Case-file evidence:</strong> ${readableTraitList(challenge.traits)}.</li>
+          <li>${challenge.explanation}</li>
+        </ul>
+      `;
+    }
+
+    function resetCase() {
+      state.selectedTraits.clear();
+      state.selectedCategory = null;
+      state.evidenceRevealed = false;
+      renderCase();
+    }
+
+    function nextChallenge() {
+      const previousIndex = state.currentIndex;
+
+      if (state.orderPosition >= state.challengeOrder.length - 1) {
+        makeNewChallengeOrder(previousIndex);
+        renderCaseSelect();
+      } else {
+        state.orderPosition += 1;
+      }
+
+      state.currentIndex = state.challengeOrder[state.orderPosition];
+      resetCase();
+    }
+
+    function updateStats() {
+      attemptsStat.textContent = String(state.attempts);
+      correctStat.textContent = String(state.correct);
+      caseStat.textContent = `${state.orderPosition + 1}/${challenges.length}`;
+    }
+
+    init();
+  </script>
+</body>
+</html>
