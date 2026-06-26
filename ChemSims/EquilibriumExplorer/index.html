@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Equilibrium Explorer: Open and Closed Systems</title>
+  <style>
+    :root{
+      --bg:#eaf4ff;
+      --panel:#ffffff;
+      --ink:#17324d;
+      --muted:#5c7086;
+      --blue:#2563eb;
+      --blue2:#0ea5e9;
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --red:#ef4444;
+      --purple:#7c3aed;
+      --line:#d8e6f5;
+      --soft:#f5faff;
+      --shadow:0 16px 40px rgba(23,50,77,.12);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(14,165,233,.18), transparent 32rem),
+        radial-gradient(circle at 85% 12%, rgba(124,58,237,.12), transparent 28rem),
+        var(--bg);
+      color:var(--ink);
+      min-height:100vh;
+    }
+
+    .page{
+      max-width:1320px;
+      margin:0 auto;
+      padding:18px clamp(14px,2vw,28px) 42px;
+    }
+
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:#fff;
+      color:var(--blue);
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 8px 24px rgba(37,99,235,.14);
+      border:1px solid rgba(37,99,235,.14);
+      margin-bottom:18px;
+    }
+
+    .hero{
+      border-radius:32px;
+      padding:28px clamp(22px,4vw,48px);
+      background:
+        linear-gradient(135deg, rgba(37,99,235,.96), rgba(14,165,233,.92)),
+        radial-gradient(circle at 80% 25%, rgba(255,255,255,.34), transparent 18rem);
+      color:#fff;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::after{
+      content:"A ⇌ B";
+      position:absolute;
+      right:clamp(18px,5vw,70px);
+      bottom:-18px;
+      font-size:clamp(54px,9vw,124px);
+      font-weight:900;
+      letter-spacing:-.08em;
+      opacity:.15;
+      pointer-events:none;
+    }
+
+    .hero h1{
+      margin:0 0 8px;
+      font-size:clamp(30px,4.6vw,56px);
+      line-height:1;
+      letter-spacing:-.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:850px;
+      font-size:clamp(16px,1.7vw,21px);
+      line-height:1.45;
+      color:rgba(255,255,255,.92);
+      font-weight:550;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.55fr) minmax(360px,.9fr);
+      gap:14px;
+      margin-top:12px;
+      align-items:start;
+    }
+
+    .card{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(37,99,235,.12);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .card h2,.card h3{
+      margin:0 0 12px;
+      letter-spacing:-.02em;
+    }
+
+    .card h2{font-size:24px}
+    .card h3{font-size:18px}
+
+    .model-toolbar{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .badge-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      background:var(--soft);
+      color:var(--ink);
+      border:1px solid var(--line);
+    }
+    .badge.good{background:#ecfdf5;color:#166534;border-color:#bbf7d0}
+    .badge.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+    .badge.bad{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+    .badge.info{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+
+
+    .sim-action-bar{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-top:12px;
+      padding:9px;
+      border-radius:22px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(37,99,235,.14);
+      box-shadow:var(--shadow);
+      overflow-x:auto;
+      white-space:nowrap;
+    }
+    .sim-action-bar button{
+      flex:1 0 auto;
+      min-width:max-content;
+      padding:9px 11px;
+      border-radius:14px;
+      font-size:13px;
+      box-shadow:none;
+    }
+
+    .canvas-wrap{
+      position:relative;
+      background:
+        linear-gradient(180deg, rgba(245,250,255,.85), rgba(255,255,255,.96));
+      border:1px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+    }
+
+    canvas#simCanvas{
+      display:block;
+      width:100%;
+      height:360px;
+      touch-action:none;
+    }
+
+    .canvas-key{
+      position:static;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:10px 14px 12px;
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.94);
+      pointer-events:none;
+    }
+
+    .key-item{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(216,230,245,.9);
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+    }
+    .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+    .dot.a{background:#2563eb}.dot.b{background:#f59e0b}.dot.f{background:#22c55e}.dot.r{background:#a855f7}
+
+    .micro-note{
+      margin-top:10px;
+      background:#f8fbff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      line-height:1.4;
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .controls-section{
+      margin-top:12px;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+    }
+
+    .under-model-grid{
+      display:grid;
+      grid-template-columns:minmax(300px,1fr) minmax(300px,.95fr);
+      gap:12px;
+      align-items:start;
+    }
+
+    .panel-heading{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+
+    .panel-heading h2{
+      margin:0;
+    }
+
+    .controls-grid{
+      display:grid;
+      gap:9px;
+    }
+
+    label.control{
+      display:grid;
+      gap:7px;
+      padding:10px;
+      border-radius:16px;
+      background:#f8fbff;
+      border:1px solid var(--line);
+      font-weight:800;
+      color:var(--ink);
+    }
+    label.control span{font-size:14px}
+    .hint{font-size:12px;color:var(--muted);font-weight:650;line-height:1.35}
+
+    select,input[type="range"]{
+      width:100%;
+      accent-color:var(--blue);
+    }
+    select{
+      appearance:none;
+      border:1px solid #c7d8ea;
+      background:#fff;
+      padding:10px 12px;
+      border-radius:14px;
+      color:var(--ink);
+      font-weight:750;
+    }
+    input[type="range"]{height:28px}
+
+    .button-grid{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      overflow-x:auto;
+      white-space:nowrap;
+      margin-top:0;
+    }
+
+    button{
+      border:0;
+      border-radius:16px;
+      padding:11px 12px;
+      font-weight:900;
+      color:#fff;
+      background:linear-gradient(135deg,var(--blue),var(--blue2));
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(37,99,235,.18);
+      transition:transform .12s ease, filter .12s ease;
+    }
+    button:hover{transform:translateY(-1px);filter:saturate(1.08)}
+    button.secondary{background:#ecf2ff;color:#1d4ed8;box-shadow:none;border:1px solid #bfdbfe}
+    button.amber{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    button.green{background:linear-gradient(135deg,#16a34a,#22c55e)}
+    button.purple{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+    button.red{background:linear-gradient(135deg,#ef4444,#f97316)}
+
+    .evidence-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:9px;
+      margin-top:10px;
+    }
+
+    .metric{
+      border:1px solid var(--line);
+      background:#f8fbff;
+      border-radius:16px;
+      padding:10px;
+      min-height:76px;
+    }
+    .metric .label{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:850;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    .metric .value{
+      font-size:25px;
+      line-height:1.1;
+      font-weight:950;
+      letter-spacing:-.04em;
+      margin-top:5px;
+    }
+    .metric .sub{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+
+    .wide{grid-column:1/-1}
+
+    .status-box{
+      margin-top:10px;
+      padding:12px;
+      border-radius:16px;
+      background:#eef6ff;
+      border:1px solid #bfdbfe;
+      font-weight:750;
+      line-height:1.42;
+    }
+    .status-title{font-weight:950;margin-bottom:4px;color:#1d4ed8}
+
+    .evidence-focus{
+      margin-top:0;
+      padding:12px;
+      border-radius:16px;
+      background:#f0fdf4;
+      border:1px solid #bbf7d0;
+      line-height:1.42;
+      color:#14532d;
+    }
+    .evidence-focus h3{
+      margin:0 0 8px;
+      font-size:16px;
+      color:#166534;
+    }
+    .evidence-focus ul{
+      margin:0;
+      padding-left:20px;
+      font-weight:750;
+    }
+    .evidence-focus li{margin:5px 0}
+
+    .concept-strip{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      margin-top:10px;
+    }
+    .concept-pill{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:750;
+      line-height:1.3;
+    }
+    .concept-pill strong{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+
+    .graphs{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:6px;
+    }
+    .graph-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:12px;
+      min-width:0;
+    }
+    .graph-card h3{font-size:16px;margin:0 0 8px}
+    .graph-card canvas{display:block;width:100%;height:205px;border-radius:14px;background:#fbfdff;border:1px solid #e2edf8}
+    .graph-card:first-child canvas{height:250px}
+    .graph-explanation{font-size:13px}
+
+    .lower-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .challenge-card,.notes-card{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(37,99,235,.12);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .challenge-body{
+      background:#f8fbff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      line-height:1.5;
+      min-height:120px;
+    }
+    .challenge-options{display:grid;gap:10px;margin-top:12px}
+    .challenge-options button{text-align:left;box-shadow:none;background:#fff;color:var(--ink);border:1px solid var(--line)}
+    .challenge-options button.correct{background:#ecfdf5;border-color:#86efac;color:#166534}
+    .challenge-options button.incorrect{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .feedback{margin-top:12px;font-weight:800;line-height:1.45;color:var(--muted)}
+
+    .two-col-list{
+      columns:2 260px;
+      column-gap:28px;
+      margin:8px 0 0;
+      padding-left:20px;
+      line-height:1.5;
+    }
+    .two-col-list li{break-inside:avoid;margin-bottom:7px}
+
+    .teacher-notes{
+      display:grid;
+      gap:12px;
+      line-height:1.52;
+      color:#24425f;
+    }
+    .note-box{
+      padding:13px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:#f8fbff;
+    }
+    .note-box strong{color:var(--ink)}
+
+    .sources{
+      font-size:13px;
+      line-height:1.45;
+      color:var(--muted);
+    }
+    .sources a{color:var(--blue);font-weight:800}
+
+    @media (max-width:980px){
+      .layout,.under-model-grid,.lower-grid{grid-template-columns:1fr}
+      canvas#simCanvas{height:340px}
+      .graph-card:first-child canvas{height:230px}
+    }
+    @media (max-width:580px){
+      .evidence-grid,.concept-strip{grid-template-columns:1fr}
+      .sim-action-bar button{font-size:12px;padding:8px 10px}
+      .hero{border-radius:24px}
+      .card,.challenge-card,.notes-card{padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Equilibrium Explorer</h1>
+      <p>Model static and dynamic equilibrium, then analyse why a contained reversible reaction can reach chemical equilibrium while a product-escape open system does not settle into the same balance.</p>
+    </section>
+
+
+    <div class="sim-action-bar" aria-label="simulation buttons">
+      <button id="playPause">Start model</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+      <button id="addA" class="green">Add A</button>
+      <button id="addB" class="amber">Add B</button>
+      <button id="removeB" class="red">Remove B</button>
+      <button id="labelsBtn" class="purple">Labels: on</button>
+      <button id="arrowsBtn" class="secondary">Tendency arrows: on</button>
+      <button id="downloadCsv" class="secondary">Download CSV</button>
+    </div>
+
+    <section class="layout" aria-label="simulation layout">
+      <article class="card">
+        <div class="model-toolbar">
+          <h2>Particle model: A ⇌ B</h2>
+          <div class="badge-row">
+            <span id="runBadge" class="badge warn">Paused</span>
+            <span id="systemBadge" class="badge info">Closed system</span>
+            <span id="modeBadge" class="badge info">Dynamic model</span>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" width="900" height="500" aria-label="Particle model of a reversible reaction"></canvas>
+          <div class="canvas-key" aria-hidden="true">
+            <span class="key-item"><span class="dot a"></span>A reactant</span>
+            <span class="key-item"><span class="dot b"></span>B product</span>
+            <span class="key-item"><span class="dot f"></span>forward event</span>
+            <span class="key-item"><span class="dot r"></span>reverse event</span>
+          </div>
+        </div>
+
+        <div class="micro-note" id="microNote">
+          In the dynamic model, particles keep changing between A and B. At equilibrium, the visible concentrations stay roughly constant because the forward and reverse event counts are balanced. The amounts of A and B do not need to be equal.
+        </div>
+
+        <div class="concept-strip" aria-label="equilibrium reminders">
+          <div class="concept-pill"><strong>Dynamic</strong>Particles are still reacting in both directions.</div>
+          <div class="concept-pill"><strong>Balanced rates</strong>Forward and reverse event counts are similar.</div>
+          <div class="concept-pill"><strong>Not equal amounts</strong>A and B can be different amounts at equilibrium.</div>
+        </div>
+
+        <section class="controls-section" aria-label="controls and evidence">
+          <div class="under-model-grid">
+            <div>
+              <div class="panel-heading">
+                <h2>Controls</h2>
+              </div>
+              <div class="controls-grid">
+                <label class="control">
+                  <span>System type</span>
+                  <select id="systemType">
+                    <option value="closed">Closed system: lid on</option>
+                    <option value="open">Open system: product can escape</option>
+                  </select>
+                  <div class="hint">Closed systems keep matter in. Open systems allow matter to leave or enter.</div>
+                </label>
+
+                <label class="control">
+                  <span>Model type</span>
+                  <select id="modelType">
+                    <option value="dynamic">Dynamic reaction model</option>
+                    <option value="static">Static comparison model</option>
+                  </select>
+                  <div class="hint">Static mode keeps the concentrations constant by stopping reactions. This is not chemical equilibrium.</div>
+                </label>
+
+                <label class="control">
+                  <span>Starting mixture</span>
+                  <select id="startMix">
+                    <option value="mostlyA">Mostly A</option>
+                    <option value="mostlyB">Mostly B</option>
+                    <option value="even">Equal A and B</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>Forward reaction tendency: A → B <strong id="forwardVal">50</strong></span>
+                  <input id="forwardRate" type="range" min="5" max="95" value="50" />
+                </label>
+
+                <label class="control">
+                  <span>Reverse reaction tendency: B → A <strong id="reverseVal">50</strong></span>
+                  <input id="reverseRate" type="range" min="5" max="95" value="50" />
+                </label>
+
+                <label class="control" id="escapeControl">
+                  <span>Open-system escape rate <strong id="escapeVal">35</strong></span>
+                  <input id="escapeRate" type="range" min="0" max="90" value="35" />
+                  <div class="hint">Only affects open systems. Escaping B removes product from the reaction mixture.</div>
+                </label>
+              </div>
+
+            </div>
+
+            <div>
+              <div class="evidence-focus">
+                <h3>Evidence focus</h3>
+                <ul>
+                  <li>Look for <strong>constant concentrations</strong> on the concentration graph.</li>
+                  <li>Check that <strong>forward and reverse event counts</strong> are similar.</li>
+                  <li>Do not assume equilibrium means equal numbers of A and B.</li>
+                </ul>
+              </div>
+
+              <section class="evidence-grid" aria-label="live evidence">
+                <div class="metric">
+                  <div class="label">A particles</div>
+                  <div class="value" id="countA">0</div>
+                  <div class="sub">reactant amount</div>
+                </div>
+                <div class="metric">
+                  <div class="label">B particles</div>
+                  <div class="value" id="countB">0</div>
+                  <div class="sub">product amount</div>
+                </div>
+                <div class="metric">
+                  <div class="label">Forward events</div>
+                  <div class="value" id="forwardCount">0</div>
+                  <div class="sub">A → B events recently</div>
+                </div>
+                <div class="metric">
+                  <div class="label">Reverse events</div>
+                  <div class="value" id="reverseCount">0</div>
+                  <div class="sub">B → A events recently</div>
+                </div>
+                <div class="metric wide">
+                  <div class="label">Total particles in container</div>
+                  <div class="value" id="totalCount">0</div>
+                  <div class="sub" id="totalHint">After deliberate additions/removals, a closed system keeps its particles contained.</div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </section>
+      </article>
+
+      <aside class="card">
+        <h2>Graphs</h2>
+        <section class="graphs" aria-label="graphs">
+          <div class="graph-card">
+            <h3>Concentration vs time</h3>
+            <canvas id="amountGraph" width="460" height="280" aria-label="Concentration of A and B over time"></canvas>
+          </div>
+          <div class="graph-card">
+            <h3>Reaction events vs time</h3>
+            <canvas id="rateGraph" width="460" height="230" aria-label="Forward and reverse reaction events over time"></canvas>
+          </div>
+        </section>
+        <div class="status-box" id="statusBox">
+          <div class="status-title">System status</div>
+          <div id="statusText">The model is paused. Press Start model to collect evidence.</div>
+        </div>
+        <div class="micro-note graph-explanation">The main graph shows relative concentration. The container volume is treated as constant, so concentration is proportional to the number of particles in the model.</div>
+      </aside>
+    </section>
+
+    <section class="lower-grid">
+      <article class="challenge-card">
+        <h2>Challenge questions</h2>
+        <label class="control">
+          <span>Choose a challenge</span>
+          <select id="challengeSelect">
+            <option value="0">1. Is equilibrium static or dynamic?</option>
+            <option value="1">2. Does equilibrium mean equal amounts?</option>
+            <option value="2">3. Why does the lid matter?</option>
+            <option value="3">4. What happens after adding A?</option>
+            <option value="4">5. What evidence proves equilibrium?</option>
+          </select>
+        </label>
+        <div class="challenge-body">
+          <div id="challengePrompt"></div>
+          <div class="challenge-options" id="challengeOptions"></div>
+          <div class="feedback" id="challengeFeedback"></div>
+        </div>
+      </article>
+
+      <article class="notes-card">
+        <h2>Teacher notes</h2>
+        <div class="teacher-notes">
+          <div class="note-box"><strong>Core idea:</strong> Dynamic equilibrium occurs in a closed system when the forward and reverse reactions continue at equal rates, so the concentrations of reactants and products remain constant overall.</div>
+          <div class="note-box"><strong>Key misconception:</strong> Constant concentrations do not prove that the reaction has stopped. In a dynamic equilibrium, particles are still changing between reactants and products.</div>
+          <div class="note-box"><strong>Open-system contrast:</strong> In this model, product particles can escape from the open container. Because the reacting mixture is no longer fully contained, it should drift rather than settle into true chemical equilibrium. This is different from a steady state in some advanced open-system contexts.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>How to use this sim</h2>
+      <ul class="two-col-list">
+        <li>Start with a <strong>closed system</strong> and <strong>dynamic model</strong>.</li>
+        <li>Watch the forward and reverse event counts. They should become similar over time.</li>
+        <li>Compare the dynamic model with the <strong>static comparison model</strong>.</li>
+        <li>Switch to an <strong>open system</strong> and observe the product escaping.</li>
+        <li>Use <strong>Add A</strong>, <strong>Add B</strong> and <strong>Remove B</strong> to disturb the system.</li>
+        <li>Use both graphs as evidence: constant concentrations plus similar forward and reverse event counts.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Student self-test</h2>
+      <ul class="two-col-list">
+        <li>Explain why equilibrium is described as <strong>dynamic</strong>.</li>
+        <li>Explain why a closed system is needed for chemical equilibrium.</li>
+        <li>Describe the evidence that shows equilibrium has been reached.</li>
+        <li>Compare a static model with a dynamic equilibrium model.</li>
+        <li>Predict what happens in this product-escape open-system model.</li>
+        <li>Explain why equal rates do not always mean equal amounts of reactants and products.</li>
+      </ul>
+    </section>
+
+    <section class="card sources" style="margin-top:18px;">
+      <h2>Source notes</h2>
+      <p>This model is based on standard descriptions of chemical equilibrium as a state in which forward and reverse reactions occur at equal rates and concentrations remain constant in a closed system. The open-system section is a simplified product-escape contrast model. Useful teacher references: <a href="https://chem.libretexts.org/Bookshelves/Introductory_Chemistry/Chemistry_for_Allied_Health_%28Soult%29/08%3A_Properties_of_Solutions/8.02%3A_Chemical_Equilibrium" target="_blank" rel="noopener">Chemistry LibreTexts: Chemical Equilibrium</a>, <a href="https://www.monash.edu/student-academic-success/chemistry/yield-of-reactions/dynamic-equilibrium" target="_blank" rel="noopener">Monash University: Dynamic equilibrium</a>, and <a href="https://www.chemguide.co.uk/physical/equilibria/introduction.html" target="_blank" rel="noopener">Chemguide: Introduction to chemical equilibria</a>.</p>
+    </section>
+  </main>
+
+  <script>
+    const simCanvas = document.getElementById('simCanvas');
+    const ctx = simCanvas.getContext('2d');
+    const amountCanvas = document.getElementById('amountGraph');
+    const amountCtx = amountCanvas.getContext('2d');
+    const rateCanvas = document.getElementById('rateGraph');
+    const rateCtx = rateCanvas.getContext('2d');
+
+    const controls = {
+      systemType: document.getElementById('systemType'),
+      modelType: document.getElementById('modelType'),
+      startMix: document.getElementById('startMix'),
+      forwardRate: document.getElementById('forwardRate'),
+      reverseRate: document.getElementById('reverseRate'),
+      escapeRate: document.getElementById('escapeRate')
+    };
+
+    const els = {
+      playPause: document.getElementById('playPause'),
+      resetBtn: document.getElementById('resetBtn'),
+      addA: document.getElementById('addA'),
+      addB: document.getElementById('addB'),
+      removeB: document.getElementById('removeB'),
+      labelsBtn: document.getElementById('labelsBtn'),
+      arrowsBtn: document.getElementById('arrowsBtn'),
+      downloadCsv: document.getElementById('downloadCsv'),
+      runBadge: document.getElementById('runBadge'),
+      systemBadge: document.getElementById('systemBadge'),
+      modeBadge: document.getElementById('modeBadge'),
+      countA: document.getElementById('countA'),
+      countB: document.getElementById('countB'),
+      forwardCount: document.getElementById('forwardCount'),
+      reverseCount: document.getElementById('reverseCount'),
+      totalCount: document.getElementById('totalCount'),
+      totalHint: document.getElementById('totalHint'),
+      statusText: document.getElementById('statusText'),
+      statusBox: document.getElementById('statusBox'),
+      microNote: document.getElementById('microNote'),
+      forwardVal: document.getElementById('forwardVal'),
+      reverseVal: document.getElementById('reverseVal'),
+      escapeVal: document.getElementById('escapeVal'),
+      challengeSelect: document.getElementById('challengeSelect'),
+      challengePrompt: document.getElementById('challengePrompt'),
+      challengeOptions: document.getElementById('challengeOptions'),
+      challengeFeedback: document.getElementById('challengeFeedback')
+    };
+
+    const colours = {
+      A:'#2563eb', B:'#f59e0b', F:'#22c55e', R:'#a855f7', wall:'#7aa2c9', lid:'#426b95'
+    };
+
+    let particles = [];
+    let flashes = [];
+    let escapes = [];
+    let running = false;
+    let showLabels = true;
+    let showRateArrows = true;
+    let lastTime = performance.now();
+    let time = 0;
+    let history = [];
+    let eventWindow = [];
+    let recentForward = 0;
+    let recentReverse = 0;
+
+    const bounds = {x:75, y:74, w:750, h:350};
+    const concentrationScale = 60;
+
+    function relativeConcentration(count){
+      return count / concentrationScale;
+    }
+
+    function resizeCanvasForDisplay(canvas){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      if(canvas.width !== width || canvas.height !== height){
+        canvas.width = width;
+        canvas.height = height;
+      }
+      const context = canvas.getContext('2d');
+      context.setTransform(dpr,0,0,dpr,0,0);
+    }
+
+    function modelWidth(){return simCanvas.getBoundingClientRect().width || 900;}
+    function modelHeight(){return simCanvas.getBoundingClientRect().height || 500;}
+
+    function currentBounds(){
+      const w = modelWidth();
+      const h = modelHeight();
+      return {x:w*0.085, y:h*0.14, w:w*0.83, h:h*0.60};
+    }
+
+    function rand(min,max){return min + Math.random()*(max-min);}
+
+    function makeParticle(type){
+      const b = currentBounds();
+      const angle = rand(0, Math.PI*2);
+      const speed = rand(18, 46);
+      return {
+        type,
+        x:rand(b.x+24,b.x+b.w-24),
+        y:rand(b.y+34,b.y+b.h-24),
+        vx:Math.cos(angle)*speed,
+        vy:Math.sin(angle)*speed,
+        r:10,
+        pulse:0
+      };
+    }
+
+    function setInitialParticles(){
+      particles = [];
+      const mix = controls.startMix.value;
+      let aCount = 52, bCount = 8;
+      if(mix === 'mostlyB'){ aCount = 8; bCount = 52; }
+      if(mix === 'even'){ aCount = 30; bCount = 30; }
+      for(let i=0;i<aCount;i++) particles.push(makeParticle('A'));
+      for(let i=0;i<bCount;i++) particles.push(makeParticle('B'));
+      flashes = [];
+      escapes = [];
+      history = [];
+      eventWindow = [];
+      recentForward = 0;
+      recentReverse = 0;
+      time = 0;
+      updateEvidence();
+      drawAll();
+    }
+
+    function resetSimulation(){
+      running = false;
+      els.playPause.textContent = 'Start model';
+      lastTime = performance.now();
+      setInitialParticles();
+      updateBadges();
+    }
+
+    function addParticleType(type, n=8){
+      const maxParticles = 95;
+      for(let i=0;i<n && particles.length < maxParticles;i++) particles.push(makeParticle(type));
+      recordHistory(true);
+      updateEvidence();
+    }
+
+    function removeBParticles(n=8){
+      let removed = 0;
+      for(let i=particles.length-1;i>=0 && removed<n;i--){
+        if(particles[i].type === 'B'){
+          const p = particles[i];
+          flashes.push({x:p.x,y:p.y,type:'remove',life:0.9,max:0.9});
+          particles.splice(i,1);
+          removed++;
+        }
+      }
+      recordHistory(true);
+      updateEvidence();
+    }
+
+    function updateBadges(){
+      els.runBadge.textContent = running ? 'Running' : 'Paused';
+      els.runBadge.className = running ? 'badge good' : 'badge warn';
+      els.systemBadge.textContent = controls.systemType.value === 'closed' ? 'Closed system' : 'Open system';
+      els.systemBadge.className = controls.systemType.value === 'closed' ? 'badge info' : 'badge warn';
+      els.modeBadge.textContent = controls.modelType.value === 'dynamic' ? 'Dynamic model' : 'Static comparison';
+      els.modeBadge.className = controls.modelType.value === 'dynamic' ? 'badge info' : 'badge bad';
+      els.forwardVal.textContent = controls.forwardRate.value;
+      els.reverseVal.textContent = controls.reverseRate.value;
+      els.escapeVal.textContent = controls.escapeRate.value;
+    }
+
+    function updateEvidence(){
+      const a = particles.filter(p=>p.type==='A').length;
+      const b = particles.filter(p=>p.type==='B').length;
+      els.countA.textContent = a;
+      els.countB.textContent = b;
+      els.totalCount.textContent = particles.length;
+      els.forwardCount.textContent = recentForward;
+      els.reverseCount.textContent = recentReverse;
+      els.totalHint.textContent = controls.systemType.value === 'closed'
+        ? 'After deliberate additions/removals, a closed system keeps its particles contained.'
+        : 'In an open system, escaping particles reduce the total in the container.';
+
+      const status = classifyStatus(a,b);
+      els.statusText.textContent = status.text;
+      els.statusBox.style.background = status.bg;
+      els.statusBox.style.borderColor = status.border;
+      els.statusBox.querySelector('.status-title').style.color = status.title;
+      els.microNote.textContent = status.note;
+    }
+
+    function classifyStatus(a,b){
+      if(!running && history.length < 5){
+        return {
+          text:'The model is paused. Press Start model to collect evidence.',
+          note:'Start the model and compare relative concentrations with reaction event counts. The amounts of A and B do not need to become equal.',
+          bg:'#eef6ff', border:'#bfdbfe', title:'#1d4ed8'
+        };
+      }
+      if(controls.modelType.value === 'static'){
+        return {
+          text:'Static comparison: the concentrations are constant because reactions have been stopped. This is not chemical equilibrium.',
+          note:'Static means unchanged because nothing is happening. Dynamic equilibrium means unchanged overall while forward and reverse reactions continue at similar rates.',
+          bg:'#fef2f2', border:'#fecaca', title:'#991b1b'
+        };
+      }
+      if(controls.systemType.value === 'open'){
+        return {
+          text:'Product-escape open system: B can leave the container, so the reacting mixture is not fully contained. In this model, the system may drift rather than settle into true chemical equilibrium.',
+          note:'This model represents an open system where product is lost. It contrasts true chemical equilibrium with an uncontained reaction mixture, not every possible advanced open-system steady state.',
+          bg:'#fff7ed', border:'#fed7aa', title:'#9a3412'
+        };
+      }
+      const rateDiff = Math.abs(recentForward - recentReverse);
+      const rateTotal = Math.max(1, recentForward + recentReverse);
+      const stableAmounts = isStableAmounts();
+      if(time > 8 && stableAmounts && rateDiff <= Math.max(2, rateTotal * 0.18)){
+        return {
+          text:'Dynamic equilibrium: forward and reverse reaction events are occurring at similar rates, so the relative concentrations of A and B remain roughly constant.',
+          note:'This is the key idea: the graph can look flat while particles are still changing between A and B. Equal rates do not require equal amounts.',
+          bg:'#ecfdf5', border:'#bbf7d0', title:'#166534'
+        };
+      }
+      return {
+        text:'Approaching equilibrium: the forward and reverse event counts are not yet balanced, so the concentrations are still adjusting.',
+        note:'Look for the concentration graph to level out and the forward and reverse event counts to become similar. A and B counts may settle at different values.',
+        bg:'#eef6ff', border:'#bfdbfe', title:'#1d4ed8'
+      };
+    }
+
+    function isStableAmounts(){
+      if(history.length < 12) return false;
+      const recent = history.slice(-12);
+      const aVals = recent.map(h=>h.a);
+      const bVals = recent.map(h=>h.b);
+      return (Math.max(...aVals)-Math.min(...aVals) <= 7) && (Math.max(...bVals)-Math.min(...bVals) <= 7);
+    }
+
+    function step(dt){
+      time += dt;
+      const b = currentBounds();
+      const dynamic = controls.modelType.value === 'dynamic';
+      const open = controls.systemType.value === 'open';
+      const kF = Number(controls.forwardRate.value) / 100;
+      const kR = Number(controls.reverseRate.value) / 100;
+      const escapeK = Number(controls.escapeRate.value) / 100;
+
+      for(const p of particles){
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.pulse = Math.max(0, p.pulse - dt*2.5);
+
+        if(p.x < b.x + p.r){ p.x = b.x + p.r; p.vx *= -1; }
+        if(p.x > b.x + b.w - p.r){ p.x = b.x + b.w - p.r; p.vx *= -1; }
+        if(p.y > b.y + b.h - p.r){ p.y = b.y + b.h - p.r; p.vy *= -1; }
+
+        if(!open && p.y < b.y + 18 + p.r){ p.y = b.y + 18 + p.r; p.vy *= -1; }
+        if(open && p.y < b.y + 10 + p.r){ p.y = b.y + 10 + p.r; p.vy *= -0.75; }
+
+        p.vx += rand(-4,4)*dt;
+        p.vy += rand(-4,4)*dt;
+        const maxV = 72;
+        const speed = Math.hypot(p.vx,p.vy);
+        if(speed > maxV){ p.vx = p.vx/speed*maxV; p.vy = p.vy/speed*maxV; }
+
+        if(dynamic){
+          if(p.type === 'A' && Math.random() < kF * dt * 0.17){
+            p.type = 'B';
+            p.pulse = 1;
+            flashes.push({x:p.x,y:p.y,type:'forward',life:0.65,max:0.65});
+            eventWindow.push({t:time,type:'F'});
+          } else if(p.type === 'B' && Math.random() < kR * dt * 0.17){
+            p.type = 'A';
+            p.pulse = 1;
+            flashes.push({x:p.x,y:p.y,type:'reverse',life:0.65,max:0.65});
+            eventWindow.push({t:time,type:'R'});
+          }
+        }
+      }
+
+      if(open && dynamic){
+        for(let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          const nearOpening = p.type === 'B' && p.y < b.y + 42 && Math.abs(p.x - (b.x + b.w*0.5)) < b.w * 0.28;
+          const escapeChance = nearOpening ? escapeK * dt * 0.22 : escapeK * dt * 0.006;
+          if(p.type === 'B' && Math.random() < escapeChance){
+            escapes.push({x:p.x,y:p.y,life:1.0,max:1.0});
+            particles.splice(i,1);
+          }
+        }
+      }
+
+      flashes = flashes.filter(f => (f.life -= dt) > 0);
+      escapes = escapes.filter(e => (e.life -= dt) > 0);
+      eventWindow = eventWindow.filter(e => time - e.t <= 4);
+      recentForward = eventWindow.filter(e=>e.type==='F').length;
+      recentReverse = eventWindow.filter(e=>e.type==='R').length;
+
+      if(history.length === 0 || time - history[history.length-1].t >= 0.45){
+        recordHistory(false);
+      }
+      updateEvidence();
+    }
+
+    function recordHistory(force){
+      const a = particles.filter(p=>p.type==='A').length;
+      const b = particles.filter(p=>p.type==='B').length;
+      if(force || history.length === 0 || time - history[history.length-1].t >= 0.35){
+        history.push({
+          t:time,
+          a,
+          b,
+          total:a+b,
+          f:recentForward,
+          r:recentReverse,
+          system:controls.systemType.value,
+          model:controls.modelType.value,
+          forwardSetting:controls.forwardRate.value,
+          reverseSetting:controls.reverseRate.value,
+          escapeSetting:controls.escapeRate.value
+        });
+        if(history.length > 160) history.shift();
+      }
+    }
+
+    function drawContainer(){
+      const b = currentBounds();
+      const open = controls.systemType.value === 'open';
+      ctx.save();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = colours.wall;
+      ctx.fillStyle = 'rgba(239, 247, 255, .62)';
+
+      ctx.beginPath();
+      ctx.roundRect(b.x, b.y+18, b.w, b.h-18, 22);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(66,107,149,.16)';
+      ctx.fillRect(b.x+6, b.y+18, b.w-12, 36);
+
+      if(open){
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([9,9]);
+        ctx.beginPath();
+        ctx.moveTo(b.x+22, b.y+19);
+        ctx.lineTo(b.x+b.w*0.32, b.y+19);
+        ctx.moveTo(b.x+b.w*0.68, b.y+19);
+        ctx.lineTo(b.x+b.w-22, b.y+19);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#9a3412';
+        ctx.font = '800 15px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('open gap: B can escape', b.x+b.w*0.5, b.y+14);
+        drawEscapeArrow(b.x+b.w*0.5, b.y+25);
+      } else {
+        ctx.fillStyle = colours.lid;
+        ctx.beginPath();
+        ctx.roundRect(b.x-8, b.y, b.w+16, 24, 12);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '900 15px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('sealed lid: matter stays inside', b.x+b.w*0.5, b.y+17);
+      }
+
+      ctx.restore();
+    }
+
+    function drawEscapeArrow(x,y){
+      ctx.save();
+      ctx.strokeStyle = '#ef4444';
+      ctx.fillStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x,y+32);
+      ctx.lineTo(x,y-2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x,y-7);
+      ctx.lineTo(x-7,y+6);
+      ctx.lineTo(x+7,y+6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawParticles(){
+      for(const p of particles){
+        ctx.save();
+        const colour = p.type === 'A' ? colours.A : colours.B;
+        const glow = p.pulse * 10;
+        ctx.shadowColor = colour;
+        ctx.shadowBlur = glow;
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r + p.pulse*3,0,Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(255,255,255,.8)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        if(showLabels){
+          ctx.fillStyle = '#fff';
+          ctx.font = '900 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(p.type, p.x, p.y+.5);
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawFlashes(){
+      for(const f of flashes){
+        const progress = 1 - f.life/f.max;
+        ctx.save();
+        if(f.type === 'forward'){
+          ctx.strokeStyle = `rgba(34,197,94,${1-progress})`;
+          ctx.fillStyle = `rgba(34,197,94,${0.12*(1-progress)})`;
+        } else if(f.type === 'reverse'){
+          ctx.strokeStyle = `rgba(168,85,247,${1-progress})`;
+          ctx.fillStyle = `rgba(168,85,247,${0.12*(1-progress)})`;
+        } else {
+          ctx.strokeStyle = `rgba(239,68,68,${1-progress})`;
+          ctx.fillStyle = `rgba(239,68,68,${0.12*(1-progress)})`;
+        }
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(f.x,f.y,18 + progress*20,0,Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = '900 12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = f.type === 'forward' ? '#166534' : f.type === 'reverse' ? '#6b21a8' : '#991b1b';
+        const label = f.type === 'forward' ? 'A→B' : f.type === 'reverse' ? 'B→A' : 'removed';
+        ctx.globalAlpha = Math.max(0, 1-progress);
+        ctx.fillText(label, f.x, f.y-24-progress*8);
+        ctx.restore();
+      }
+
+      for(const e of escapes){
+        const progress = 1 - e.life/e.max;
+        ctx.save();
+        ctx.globalAlpha = 1-progress;
+        ctx.fillStyle = colours.B;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y - progress*72, 8, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#9a3412';
+        ctx.font = '900 12px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('B escaped', e.x, e.y - progress*72 - 16);
+        ctx.restore();
+      }
+    }
+
+    function drawRateArrows(){
+      const b = currentBounds();
+      const topY = Math.min(b.y + b.h + 28, modelHeight() - 72);
+      ctx.save();
+      ctx.font = '900 15px system-ui';
+      ctx.lineWidth = 5;
+      const fScale = Number(controls.forwardRate.value)/100;
+      const rScale = Number(controls.reverseRate.value)/100;
+      drawArrow(b.x+b.w*.26, topY, b.x+b.w*.44, topY, colours.F, `A → B tendency ${controls.forwardRate.value}`, fScale);
+      drawArrow(b.x+b.w*.74, topY+26, b.x+b.w*.56, topY+26, colours.R, `B → A tendency ${controls.reverseRate.value}`, rScale);
+      ctx.restore();
+    }
+
+    function drawArrow(x1,y1,x2,y2,colour,label,scale){
+      ctx.save();
+      ctx.strokeStyle = colour;
+      ctx.fillStyle = colour;
+      ctx.globalAlpha = 0.45 + scale*0.5;
+      ctx.lineWidth = 2 + scale*5;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.stroke();
+      const angle = Math.atan2(y2-y1,x2-x1);
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2 - 12*Math.cos(angle-.45), y2 - 12*Math.sin(angle-.45));
+      ctx.lineTo(x2 - 12*Math.cos(angle+.45), y2 - 12*Math.sin(angle+.45));
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.font = '850 12px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, (x1+x2)/2, y1-10);
+      ctx.restore();
+    }
+
+    function drawAll(){
+      resizeCanvasForDisplay(simCanvas);
+      const w = modelWidth();
+      const h = modelHeight();
+      ctx.clearRect(0,0,w,h);
+      drawContainer();
+      drawParticles();
+      drawFlashes();
+      if(showRateArrows) drawRateArrows();
+      drawGraphs();
+    }
+
+    function drawGraphs(){
+      resizeCanvasForDisplay(amountCanvas);
+      resizeCanvasForDisplay(rateCanvas);
+      drawGraph(amountCtx, amountCanvas, 'concentration');
+      drawGraph(rateCtx, rateCanvas, 'rate');
+    }
+
+    function graphSize(canvas){
+      return {w:canvas.getBoundingClientRect().width || 460, h:canvas.getBoundingClientRect().height || 240};
+    }
+
+    function drawGraph(g, canvas, kind){
+      const size = graphSize(canvas);
+      const w = size.w, h = size.h;
+      g.clearRect(0,0,w,h);
+      const pad = {l:42,r:14,t:18,b:34};
+      const plotW = w - pad.l - pad.r;
+      const plotH = h - pad.t - pad.b;
+      g.fillStyle = '#fbfdff';
+      g.fillRect(0,0,w,h);
+      g.strokeStyle = '#d8e6f5';
+      g.lineWidth = 1;
+      for(let i=0;i<=4;i++){
+        const y = pad.t + plotH*i/4;
+        g.beginPath(); g.moveTo(pad.l,y); g.lineTo(w-pad.r,y); g.stroke();
+      }
+      g.strokeStyle = '#8aa9c8';
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(pad.l,pad.t);
+      g.lineTo(pad.l,pad.t+plotH);
+      g.lineTo(w-pad.r,pad.t+plotH);
+      g.stroke();
+
+      if(history.length < 2){
+        g.fillStyle = '#64748b';
+        g.font = '800 13px system-ui';
+        g.textAlign = 'center';
+        g.fillText('Press Start model to collect graph data', w/2, h/2);
+        return;
+      }
+
+      const startT = history[0].t;
+      const endT = Math.max(history[history.length-1].t, startT+1);
+      const maxY = kind === 'concentration'
+        ? Math.max(1, ...history.map(d=>Math.max(relativeConcentration(d.a), relativeConcentration(d.b)))) * 1.05
+        : Math.max(8, ...history.map(d=>Math.max(d.f,d.r)));
+      const xFor = d => pad.l + ((d.t-startT)/(endT-startT))*plotW;
+      const yFor = v => pad.t + plotH - (v/maxY)*plotH;
+
+      if(kind === 'concentration'){
+        plotLine(g, history.map(d=>[xFor(d), yFor(relativeConcentration(d.a))]), colours.A);
+        plotLine(g, history.map(d=>[xFor(d), yFor(relativeConcentration(d.b))]), colours.B);
+        drawLegend(g, [['[A]', colours.A], ['[B]', colours.B]], pad.l+8, 14);
+      } else {
+        plotLine(g, history.map(d=>[xFor(d), yFor(d.f)]), colours.F);
+        plotLine(g, history.map(d=>[xFor(d), yFor(d.r)]), colours.R);
+        drawLegend(g, [['forward events', colours.F], ['reverse events', colours.R]], pad.l+8, 14);
+      }
+
+      g.fillStyle = '#64748b';
+      g.font = '750 11px system-ui';
+      g.textAlign = 'right';
+      g.fillText('time', w-pad.r, h-10);
+      g.save();
+      g.translate(12, h/2);
+      g.rotate(-Math.PI/2);
+      g.textAlign = 'center';
+      g.fillText(kind === 'concentration' ? 'relative concentration' : 'recent events', 0, 0);
+      g.restore();
+    }
+
+    function plotLine(g, pts, colour){
+      if(pts.length < 2) return;
+      g.save();
+      g.strokeStyle = colour;
+      g.lineWidth = 3;
+      g.lineJoin = 'round';
+      g.lineCap = 'round';
+      g.beginPath();
+      g.moveTo(pts[0][0], pts[0][1]);
+      for(let i=1;i<pts.length;i++) g.lineTo(pts[i][0], pts[i][1]);
+      g.stroke();
+      g.restore();
+    }
+
+    function drawLegend(g, items, x, y){
+      g.save();
+      g.font = '850 11px system-ui';
+      let dx = 0;
+      for(const [label, colour] of items){
+        g.fillStyle = colour;
+        g.beginPath(); g.arc(x+dx, y, 5, 0, Math.PI*2); g.fill();
+        g.fillStyle = '#334155';
+        g.fillText(label, x+dx+9, y+4);
+        dx += 86;
+      }
+      g.restore();
+    }
+    function csvEscape(value){
+      const text = String(value ?? '');
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function downloadCsv(){
+      const rows = history.length ? history : [{
+        t: time,
+        a: particles.filter(p=>p.type==='A').length,
+        b: particles.filter(p=>p.type==='B').length,
+        total: particles.length,
+        f: recentForward,
+        r: recentReverse,
+        system: controls.systemType.value,
+        model: controls.modelType.value,
+        forwardSetting: controls.forwardRate.value,
+        reverseSetting: controls.reverseRate.value,
+        escapeSetting: controls.escapeRate.value
+      }];
+      const header = [
+        'time_s',
+        'A_particles',
+        'B_particles',
+        'total_particles',
+        'A_relative_concentration',
+        'B_relative_concentration',
+        'forward_events_recent',
+        'reverse_events_recent',
+        'system_type',
+        'model_type',
+        'forward_tendency',
+        'reverse_tendency',
+        'escape_rate'
+      ];
+      const data = rows.map(d => [
+        d.t.toFixed(2),
+        d.a,
+        d.b,
+        d.total,
+        relativeConcentration(d.a).toFixed(4),
+        relativeConcentration(d.b).toFixed(4),
+        d.f,
+        d.r,
+        d.system ?? controls.systemType.value,
+        d.model ?? controls.modelType.value,
+        d.forwardSetting ?? controls.forwardRate.value,
+        d.reverseSetting ?? controls.reverseRate.value,
+        d.escapeSetting ?? controls.escapeRate.value
+      ]);
+      const csv = [header, ...data].map(row => row.map(csvEscape).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = url;
+      a.download = `equilibrium_explorer_data_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function loop(now){
+      const dt = Math.min(0.04, (now-lastTime)/1000 || 0);
+      lastTime = now;
+      if(running) step(dt);
+      drawAll();
+      requestAnimationFrame(loop);
+    }
+
+    const challenges = [
+      {
+        prompt:'The concentration graph is flat and the amounts of A and B are not changing. Which extra evidence is needed before calling this dynamic equilibrium?',
+        options:[
+          'The forward and reverse reactions are still occurring at equal rates.',
+          'There are equal numbers of A and B particles.',
+          'No particles are moving inside the container.',
+          'The container is open so product can leave.'
+        ],
+        answer:0,
+        feedback:'Correct. Dynamic equilibrium needs ongoing forward and reverse reactions with equal rates, not just a flat graph.'
+      },
+      {
+        prompt:'At equilibrium, the model shows 20 A particles and 40 B particles. Is this allowed?',
+        options:[
+          'Yes. Equilibrium means equal rates, not necessarily equal amounts.',
+          'No. Equilibrium must always have equal amounts of reactants and products.',
+          'No. Products must always be lower than reactants at equilibrium.',
+          'Only if the container is open.'
+        ],
+        answer:0,
+        feedback:'Correct. Equilibrium amounts remain constant, but they do not need to be numerically equal.'
+      },
+      {
+        prompt:'Why does the closed-system lid matter in this model?',
+        options:[
+          'It keeps A and B inside so the forward and reverse reactions occur within the same contained mixture.',
+          'It makes the particles stop moving.',
+          'It forces the amounts of A and B to become equal.',
+          'It prevents the reverse reaction.'
+        ],
+        answer:0,
+        feedback:'Correct. A closed system keeps matter contained, allowing a stable reversible reaction mixture to reach dynamic equilibrium.'
+      },
+      {
+        prompt:'In a closed dynamic system at equilibrium, extra A is added. What should happen next?',
+        options:[
+          'The forward reaction initially increases until a new balance is approached.',
+          'All reactions stop immediately.',
+          'The reverse reaction becomes impossible.',
+          'The system becomes open.'
+        ],
+        answer:0,
+        feedback:'Correct. Adding reactant disturbs the balance, so the forward direction is favoured until the rates settle again.'
+      },
+      {
+        prompt:'Which evidence best supports the claim that the model has reached dynamic equilibrium?',
+        options:[
+          'A and B concentrations are roughly constant and forward and reverse event counts are similar.',
+          'There are no flashes in the container.',
+          'Only product particles are present.',
+          'The total particle number is decreasing.'
+        ],
+        answer:0,
+        feedback:'Correct. The strongest evidence combines constant concentrations with equal ongoing forward and reverse reaction rates.'
+      }
+    ];
+
+    function renderChallenge(){
+      const c = challenges[Number(els.challengeSelect.value)];
+      els.challengePrompt.textContent = c.prompt;
+      els.challengeOptions.innerHTML = '';
+      els.challengeFeedback.textContent = '';
+      c.options.forEach((option, index)=>{
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = option;
+        btn.addEventListener('click', ()=>{
+          Array.from(els.challengeOptions.children).forEach(b=>{
+            b.classList.remove('correct','incorrect');
+          });
+          if(index === c.answer){
+            btn.classList.add('correct');
+            els.challengeFeedback.textContent = c.feedback;
+          } else {
+            btn.classList.add('incorrect');
+            els.challengeFeedback.textContent = 'Not quite. Re-check the particle model and focus on rates, containment and whether reactions are still occurring.';
+          }
+        });
+        els.challengeOptions.appendChild(btn);
+      });
+    }
+
+    els.playPause.addEventListener('click', ()=>{
+      running = !running;
+      lastTime = performance.now();
+      els.playPause.textContent = running ? 'Pause model' : 'Start model';
+      updateBadges();
+    });
+    els.resetBtn.addEventListener('click', resetSimulation);
+    els.addA.addEventListener('click', ()=>addParticleType('A'));
+    els.addB.addEventListener('click', ()=>addParticleType('B'));
+    els.removeB.addEventListener('click', ()=>removeBParticles());
+    els.labelsBtn.addEventListener('click', ()=>{
+      showLabels = !showLabels;
+      els.labelsBtn.textContent = showLabels ? 'Labels: on' : 'Labels: off';
+    });
+    els.arrowsBtn.addEventListener('click', ()=>{
+      showRateArrows = !showRateArrows;
+      els.arrowsBtn.textContent = showRateArrows ? 'Tendency arrows: on' : 'Tendency arrows: off';
+      drawAll();
+    });
+
+    els.downloadCsv.addEventListener('click', downloadCsv);
+
+    Object.values(controls).forEach(control => {
+      control.addEventListener('input', ()=>{
+        updateBadges();
+        if(control === controls.startMix) setInitialParticles();
+        updateEvidence();
+      });
+      control.addEventListener('change', ()=>{
+        updateBadges();
+        if(control === controls.startMix) setInitialParticles();
+        updateEvidence();
+      });
+    });
+
+    controls.systemType.addEventListener('change', ()=>{
+      flashes = [];
+      escapes = [];
+      recordHistory(true);
+    });
+    controls.modelType.addEventListener('change', ()=>{
+      eventWindow = [];
+      recentForward = 0;
+      recentReverse = 0;
+      recordHistory(true);
+      updateEvidence();
+    });
+    els.challengeSelect.addEventListener('change', renderChallenge);
+    window.addEventListener('resize', ()=>{
+      for(const p of particles){
+        const b = currentBounds();
+        p.x = Math.min(Math.max(p.x, b.x+p.r), b.x+b.w-p.r);
+        p.y = Math.min(Math.max(p.y, b.y+24+p.r), b.y+b.h-p.r);
+      }
+      drawAll();
+    });
+
+    CanvasRenderingContext2D.prototype.roundRect = CanvasRenderingContext2D.prototype.roundRect || function(x,y,w,h,r){
+      const rr = Math.min(r, w/2, h/2);
+      this.beginPath();
+      this.moveTo(x+rr,y);
+      this.arcTo(x+w,y,x+w,y+h,rr);
+      this.arcTo(x+w,y+h,x,y+h,rr);
+      this.arcTo(x,y+h,x,y,rr);
+      this.arcTo(x,y,x+w,y,rr);
+      this.closePath();
+      return this;
+    };
+
+    updateBadges();
+    setInitialParticles();
+    renderChallenge();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
