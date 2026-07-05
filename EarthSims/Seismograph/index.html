@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seismograph Simulator</title>
+
+  <style>
+    :root{
+      --bg:#eef7fb;
+      --card:#ffffff;
+      --ink:#123143;
+      --muted:#557184;
+      --blue:#1d7ed0;
+      --blue2:#56b5e8;
+      --deep:#0f3d5c;
+      --soft:#d9eef9;
+      --line:#c9dfec;
+      --good:#1f9d63;
+      --warn:#e89b20;
+      --bad:#d64545;
+      --shadow:0 10px 25px rgba(12,54,82,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eaf6fb 0%,#f6fbfe 100%);
+      color:var(--ink);
+    }
+
+    .page{
+      width:min(1240px,calc(100% - 28px));
+      margin:0 auto;
+      padding:18px 0 36px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:none;
+      background:#dff1fa;
+      color:#0c4d73;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(12,54,82,.08);
+      margin-bottom:14px;
+      text-decoration:none;
+    }
+
+    .hero{
+      border-radius:28px;
+      padding:24px 28px;
+      color:white;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),
+        linear-gradient(135deg,#0e4f78 0%,#1e91d6 52%,#59c2eb 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.7rem);
+      letter-spacing:-.04em;
+      line-height:1;
+    }
+
+    .hero p{
+      max-width:900px;
+      margin:10px 0 0;
+      font-size:1.03rem;
+      line-height:1.5;
+      color:rgba(255,255,255,.92);
+    }
+
+    .top-controls{
+      margin-top:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .control-grid{
+      display:grid;
+      grid-template-columns:repeat(9,minmax(98px,1fr));
+      gap:10px;
+      align-items:end;
+    }
+
+    body.simple-mode .advanced-only{
+      display:none !important;
+    }
+
+    body.simple-mode .control-grid{
+      grid-template-columns:repeat(7,minmax(105px,1fr));
+    }
+
+    label{
+      display:block;
+      font-size:.8rem;
+      color:var(--muted);
+      font-weight:850;
+      margin-bottom:5px;
+    }
+
+    select,input[type="range"]{
+      width:100%;
+    }
+
+    select{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:9px 10px;
+      background:#f8fcff;
+      color:var(--ink);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      accent-color:var(--blue);
+    }
+
+    .readout{
+      margin-top:3px;
+      font-size:.82rem;
+      font-weight:850;
+      color:var(--deep);
+    }
+
+    .button-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:14px;
+      padding:10px 13px;
+      font-weight:900;
+      cursor:pointer;
+      background:#e2f1f8;
+      color:#0d4a6e;
+      transition:.15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(.98);
+    }
+
+    .primary{
+      background:linear-gradient(135deg,#107bd1,#56b5e8);
+      color:white;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.54fr) minmax(320px,.72fr);
+      gap:16px;
+      margin-top:16px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#f6fbfe;
+    }
+
+    .card-header h2{
+      margin:0;
+      font-size:1.08rem;
+      letter-spacing:-.02em;
+    }
+
+    .card-header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
+    }
+
+    .canvas-wrap{
+      padding:10px;
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:510px;
+      border-radius:18px;
+      background:#071625;
+      border:1px solid #15364f;
+    }
+
+    .status-strip{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+
+    .status{
+      border-radius:15px;
+      padding:10px;
+      background:#eef7fb;
+      border:1px solid var(--line);
+    }
+
+    .status b{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .status span{
+      font-size:1.02rem;
+      font-weight:950;
+      color:var(--deep);
+    }
+
+    .metric-list{
+      padding:12px;
+      display:grid;
+      gap:9px;
+    }
+
+    .metric{
+      padding:10px;
+      border:1px solid var(--line);
+      background:#f7fbfe;
+      border-radius:15px;
+    }
+
+    .metric-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:7px;
+    }
+
+    .metric-name{
+      font-weight:900;
+      color:var(--deep);
+      font-size:.91rem;
+    }
+
+    .metric-value{
+      font-weight:950;
+      color:var(--blue);
+      font-size:.91rem;
+      white-space:nowrap;
+    }
+
+    .bar{
+      height:9px;
+      border-radius:999px;
+      background:#d9eaf3;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      width:50%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#58b7e8,#1f9d63);
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.42;
+      padding:0 12px 12px;
+    }
+
+    .below-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .text-card{
+      padding:16px;
+    }
+
+    .text-card h2{
+      margin:0 0 9px;
+      font-size:1.1rem;
+    }
+
+    .text-card p,.text-card li{
+      color:#24485c;
+      line-height:1.5;
+      font-size:.94rem;
+    }
+
+    .text-card ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+
+    .challenge{
+      margin-top:12px;
+      padding:11px;
+      border-radius:15px;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+    }
+
+    .challenge strong{
+      color:var(--deep);
+    }
+
+    .quiz{
+      display:grid;
+      gap:9px;
+    }
+
+    .quiz button{
+      text-align:left;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+      color:#183f57;
+      font-weight:750;
+    }
+
+    .quiz button.correct{
+      background:#e6f6ee;
+      border-color:#a7dfc1;
+      color:#146442;
+    }
+
+    .quiz button.incorrect{
+      background:#fdeeee;
+      border-color:#f0b8b8;
+      color:#8f2f2f;
+    }
+
+    .feedback{
+      min-height:28px;
+      color:var(--deep);
+      font-weight:850;
+      margin-top:8px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:5px 9px;
+      background:#e7f5fb;
+      color:#0d5278;
+      font-weight:850;
+      font-size:.78rem;
+      margin-right:6px;
+      margin-top:6px;
+    }
+
+    @media (max-width:1100px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+
+      .main-grid,.below-grid{
+        grid-template-columns:1fr;
+      }
+
+      canvas{
+        height:480px;
+      }
+    }
+
+    @media (max-width:650px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:1fr;
+      }
+
+      .status-strip{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        padding:22px;
+      }
+
+      canvas{
+        height:420px;
+      }
+    }
+  </style>
+</head>
+
+<body class="simple-mode">
+  <div class="page">
+    <a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Seismograph Simulator</h1>
+      <p>
+        Model how a seismograph records ground motion during an earthquake. Compare P-waves, S-waves and surface waves,
+        then use the time gap between P and S arrivals to estimate the distance to the epicentre.
+      </p>
+    </section>
+
+    <section class="top-controls">
+      <div class="control-grid">
+        <div class="control">
+          <label for="learningMode">Learning mode</label>
+          <select id="learningMode">
+            <option value="simple">Simple</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="magnitude">Magnitude</label>
+          <input id="magnitude" type="range" min="3" max="8" step="0.1" value="5.6" />
+          <div class="readout">M <span id="magnitudeRead">5.6</span></div>
+        </div>
+
+        <div class="control">
+          <label for="distance">Epicentre distance</label>
+          <input id="distance" type="range" min="20" max="800" step="10" value="260" />
+          <div class="readout"><span id="distanceRead">260</span> km</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="depth">Depth</label>
+          <input id="depth" type="range" min="5" max="250" step="5" value="35" />
+          <div class="readout"><span id="depthRead">35</span> km</div>
+        </div>
+
+        <div class="control">
+          <label for="groundType">Ground type</label>
+          <select id="groundType">
+            <option value="rock">Hard rock</option>
+            <option value="soil">Soil</option>
+            <option value="sediment">Soft sediment</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="challengeMode">Challenge mode</label>
+          <select id="challengeMode">
+            <option value="show">Show distance</option>
+            <option value="hide">Hide distance</option>
+          </select>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="damping">Instrument damping</label>
+          <input id="damping" type="range" min="10" max="90" value="55" />
+          <div class="readout"><span id="dampingRead">55</span>%</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="sensitivity">Sensitivity</label>
+          <input id="sensitivity" type="range" min="25" max="160" value="90" />
+          <div class="readout"><span id="sensitivityRead">90</span>%</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="noise">Background noise</label>
+          <input id="noise" type="range" min="0" max="60" value="10" />
+          <div class="readout"><span id="noiseRead">10</span>%</div>
+        </div>
+
+        <div class="control">
+          <label for="speed">Simulation speed</label>
+          <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1.2" />
+          <div class="readout"><span id="speedRead">1.2</span>×</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" id="runBtn">▶ Start earthquake</button>
+        <button id="resetBtn">Reset</button>
+        <button id="nearBtn">Nearby quake</button>
+        <button id="farBtn">Distant quake</button>
+        <button id="csvBtn">Download CSV</button>
+      </div>
+      <p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">
+        Challenge mode: hide the distance, run the earthquake, then use the S–P interval to estimate the epicentre distance.
+      </p>
+    </section>
+
+    <main class="main-grid">
+      <section class="card">
+        <div class="card-header">
+          <h2>Seismograph model</h2>
+          <p>
+            Watch ground motion move the frame while the suspended mass stays nearly still, causing the pen to draw a seismogram.
+          </p>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="seismoCanvas"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="status">
+            <b>System status</b>
+            <span id="systemStatus">Paused</span>
+          </div>
+
+          <div class="status">
+            <b>Current wave</b>
+            <span id="waveStatus">Waiting</span>
+          </div>
+
+          <div class="status">
+            <b>Interpretation</b>
+            <span id="adviceStatus">Start the quake</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-header">
+          <h2>Measurements</h2>
+          <p>Use the times and amplitudes as evidence from the seismogram.</p>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">P-wave arrival</span>
+              <span class="metric-value" id="pArrivalValue">43.7 s</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="pBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">S-wave arrival</span>
+              <span class="metric-value" id="sArrivalValue">74.9 s</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="sBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">S–P interval</span>
+              <span class="metric-value" id="spValue">31.2 s</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="spBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Estimated distance</span>
+              <span class="metric-value" id="estimatedDistanceValue">260 km</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="estimateBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Distance clue</span>
+              <span class="metric-value" id="distanceClueValue">Shown</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="distanceClueBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Peak amplitude</span>
+              <span class="metric-value" id="amplitudeValue">Medium</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="amplitudeBar"></div></div>
+          </div>
+
+          <div class="metric advanced-only">
+            <div class="metric-top">
+              <span class="metric-name">Ground amplification</span>
+              <span class="metric-value" id="groundAmpValue">1.0×</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="groundAmpBar"></div></div>
+          </div>
+        </div>
+
+        <p class="small-note" id="measurementNote">
+          The farther away the earthquake is, the larger the time gap between the P-wave and S-wave arrivals.
+        </p>
+      </aside>
+    </main>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>How to use</h2>
+        <ul>
+          <li>Start the earthquake and watch the seismogram trace build across the paper.</li>
+          <li>Identify the first small movement as the <strong>P-wave arrival</strong>.</li>
+          <li>Identify the stronger later shaking as the <strong>S-wave arrival</strong>.</li>
+          <li>Compare nearby and distant earthquakes to see how the S–P interval changes.</li>
+          <li>Turn on <strong>Hide distance</strong> and estimate the epicentre distance from the seismogram.</li>
+        </ul>
+
+        <div class="challenge">
+          <strong>Challenge:</strong> Hide the distance, run the earthquake, then use the S–P interval to estimate how far the epicentre is from the station.
+        </div>
+      </div>
+
+      <div class="card text-card">
+        <h2>What the model shows</h2>
+        <p>
+          A seismograph records ground motion. During an earthquake, P-waves usually arrive first, followed by S-waves and then larger surface waves.
+          The time between the P and S arrivals can be used to estimate how far the earthquake was from the station.
+        </p>
+
+        <p class="advanced-only">
+          This model uses simplified wave speeds and amplitude scaling. Real seismologists use multiple stations, detailed travel-time models and more than one component of ground motion.
+        </p>
+
+        <span class="tag">Earthquakes</span>
+        <span class="tag">Seismographs</span>
+        <span class="tag">P-waves</span>
+        <span class="tag">S-waves</span>
+        <span class="tag">Epicentre</span>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>Self-test</h2>
+        <div class="quiz" id="quiz">
+          <button data-answer="wrong">If the S–P interval is larger, the earthquake is closer to the station.</button>
+          <button data-answer="correct">If the S–P interval is larger, the earthquake is farther from the station.</button>
+          <button data-answer="wrong">P-waves and S-waves always arrive at exactly the same time.</button>
+        </div>
+        <div class="feedback" id="quizFeedback"></div>
+      </div>
+
+      <div class="card text-card">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Use this to introduce seismograms, P/S arrival times and epicentre distance.</li>
+          <li>Students should not treat the distance estimate as exact; it is a simplified model designed for pattern recognition.</li>
+          <li>Good follow-up: compare recordings from three stations and triangulate an epicentre.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("seismoCanvas");
+    const ctx = canvas.getContext("2d");
+
+    if(!CanvasRenderingContext2D.prototype.roundRect){
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        if(w < 2*r) r = w/2;
+        if(h < 2*r) r = h/2;
+        this.beginPath();
+        this.moveTo(x+r,y);
+        this.arcTo(x+w,y,x+w,y+h,r);
+        this.arcTo(x+w,y+h,x,y+h,r);
+        this.arcTo(x,y+h,x,y,r);
+        this.arcTo(x,y,x+w,y,r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    const controls = {
+      learningMode: document.getElementById("learningMode"),
+      magnitude: document.getElementById("magnitude"),
+      distance: document.getElementById("distance"),
+      depth: document.getElementById("depth"),
+      groundType: document.getElementById("groundType"),
+      challengeMode: document.getElementById("challengeMode"),
+      damping: document.getElementById("damping"),
+      sensitivity: document.getElementById("sensitivity"),
+      noise: document.getElementById("noise"),
+      speed: document.getElementById("speed")
+    };
+
+    const output = {
+      magnitudeRead: document.getElementById("magnitudeRead"),
+      distanceRead: document.getElementById("distanceRead"),
+      depthRead: document.getElementById("depthRead"),
+      dampingRead: document.getElementById("dampingRead"),
+      sensitivityRead: document.getElementById("sensitivityRead"),
+      noiseRead: document.getElementById("noiseRead"),
+      speedRead: document.getElementById("speedRead"),
+      systemStatus: document.getElementById("systemStatus"),
+      waveStatus: document.getElementById("waveStatus"),
+      adviceStatus: document.getElementById("adviceStatus"),
+      pArrivalValue: document.getElementById("pArrivalValue"),
+      sArrivalValue: document.getElementById("sArrivalValue"),
+      spValue: document.getElementById("spValue"),
+      estimatedDistanceValue: document.getElementById("estimatedDistanceValue"),
+      distanceClueValue: document.getElementById("distanceClueValue"),
+      amplitudeValue: document.getElementById("amplitudeValue"),
+      groundAmpValue: document.getElementById("groundAmpValue"),
+      pBar: document.getElementById("pBar"),
+      sBar: document.getElementById("sBar"),
+      spBar: document.getElementById("spBar"),
+      estimateBar: document.getElementById("estimateBar"),
+      distanceClueBar: document.getElementById("distanceClueBar"),
+      amplitudeBar: document.getElementById("amplitudeBar"),
+      groundAmpBar: document.getElementById("groundAmpBar"),
+      measurementNote: document.getElementById("measurementNote"),
+      challengeHint: document.getElementById("challengeHint")
+    };
+
+    const state = {
+      running:false,
+      t:0,
+      lastLog:0,
+      data:[]
+    };
+
+    const groundFactors = {
+      rock:1.0,
+      soil:1.45,
+      sediment:2.1
+    };
+
+    const groundLabels = {
+      rock:"Hard rock",
+      soil:"Soil",
+      sediment:"Soft sediment"
+    };
+
+    function clamp(value,min,max){
+      return Math.max(min,Math.min(max,value));
+    }
+
+    function lerp(a,b,t){
+      return a + (b-a) * t;
+    }
+
+    function map(value,inMin,inMax,outMin,outMax){
+      const t = clamp((value-inMin)/(inMax-inMin),0,1);
+      return lerp(outMin,outMax,t);
+    }
+
+    function getValues(){
+      const learningMode = controls.learningMode.value;
+      const magnitude = Number(controls.magnitude.value);
+      const distance = Number(controls.distance.value);
+      const depth = learningMode === "simple" ? 35 : Number(controls.depth.value);
+      const groundType = controls.groundType.value;
+      const challengeMode = controls.challengeMode.value;
+      const damping = learningMode === "simple" ? 55 : Number(controls.damping.value);
+      const sensitivity = learningMode === "simple" ? 90 : Number(controls.sensitivity.value);
+      const noise = learningMode === "simple" ? 10 : Number(controls.noise.value);
+      const speed = Number(controls.speed.value);
+
+      const pSpeed = 6.0;
+      const sSpeed = 3.5;
+      const surfaceSpeed = 3.0;
+
+      const pathDistance = Math.sqrt(distance * distance + depth * depth);
+
+      const pArrival = pathDistance / pSpeed;
+      const sArrival = pathDistance / sSpeed;
+      const surfaceArrival = pathDistance / surfaceSpeed;
+      const spInterval = sArrival - pArrival;
+
+      const estimatedDistance = spInterval * (pSpeed * sSpeed) / (pSpeed - sSpeed);
+
+      const magEnergy = Math.pow(10,(magnitude - 4.5) * 0.38);
+      const distanceLoss = 1 / Math.pow(pathDistance / 100 + 0.7,1.18);
+      const groundAmp = groundFactors[groundType];
+      const dampingFactor = map(damping,10,90,1.25,0.48);
+      const sensitivityFactor = sensitivity / 100;
+      const peak = clamp(magEnergy * distanceLoss * groundAmp * dampingFactor * sensitivityFactor,0.02,6.2);
+
+      let intensity = "Low";
+      if(peak > 3.8) intensity = "Extreme";
+      else if(peak > 2.1) intensity = "High";
+      else if(peak > 0.8) intensity = "Medium";
+
+      let currentWave = "Waiting";
+      if(state.running){
+        if(state.t < pArrival) currentWave = "No arrival yet";
+        else if(state.t < sArrival) currentWave = "P-wave";
+        else if(state.t < surfaceArrival) currentWave = "S-wave";
+        else currentWave = "Surface waves";
+      }
+
+      let advice = "Start the quake";
+      if(state.running){
+        if(state.t < pArrival) advice = "Wait for P-wave";
+        else if(state.t < sArrival) advice = "Mark P arrival";
+        else if(state.t < surfaceArrival) advice = "Mark S arrival";
+        else advice = "Read peak amplitude";
+      }
+
+      return {
+        learningMode,
+        magnitude,
+        distance,
+        depth,
+        groundType,
+        challengeMode,
+        damping,
+        sensitivity,
+        noise,
+        speed,
+        pSpeed,
+        sSpeed,
+        surfaceSpeed,
+        pathDistance,
+        pArrival,
+        sArrival,
+        surfaceArrival,
+        spInterval,
+        estimatedDistance,
+        groundAmp,
+        peak,
+        intensity,
+        currentWave,
+        advice
+      };
+    }
+
+    function updateReadouts(){
+      const v = getValues();
+
+      document.body.classList.toggle("simple-mode",v.learningMode === "simple");
+
+      output.magnitudeRead.textContent = v.magnitude.toFixed(1);
+      output.distanceRead.textContent = v.challengeMode === "hide" ? "?" : v.distance.toFixed(0);
+      output.depthRead.textContent = v.depth.toFixed(0);
+      output.dampingRead.textContent = v.damping.toFixed(0);
+      output.sensitivityRead.textContent = v.sensitivity.toFixed(0);
+      output.noiseRead.textContent = v.noise.toFixed(0);
+      output.speedRead.textContent = v.speed.toFixed(1);
+
+      output.systemStatus.textContent = state.running ? "Running" : "Paused";
+      output.waveStatus.textContent = v.currentWave;
+      output.adviceStatus.textContent = v.advice;
+
+      output.pArrivalValue.textContent = `${v.pArrival.toFixed(1)} s`;
+      output.sArrivalValue.textContent = `${v.sArrival.toFixed(1)} s`;
+      output.spValue.textContent = `${v.spInterval.toFixed(1)} s`;
+      output.estimatedDistanceValue.textContent = v.challengeMode === "hide" && !state.running && state.t === 0
+        ? "Run first"
+        : `${Math.round(v.estimatedDistance)} km`;
+      output.distanceClueValue.textContent = v.challengeMode === "hide" ? "Hidden" : "Shown";
+      output.amplitudeValue.textContent = v.intensity;
+      output.groundAmpValue.textContent = `${v.groundAmp.toFixed(1)}×`;
+
+      output.pBar.style.width = `${clamp(v.pArrival / 150 * 100,4,100)}%`;
+      output.sBar.style.width = `${clamp(v.sArrival / 240 * 100,4,100)}%`;
+      output.spBar.style.width = `${clamp(v.spInterval / 95 * 100,4,100)}%`;
+      output.estimateBar.style.width = `${clamp(v.estimatedDistance / 800 * 100,4,100)}%`;
+      output.distanceClueBar.style.width = v.challengeMode === "hide" ? "35%" : "100%";
+      output.amplitudeBar.style.width = `${clamp(v.peak / 6.2 * 100,4,100)}%`;
+      output.groundAmpBar.style.width = `${clamp(v.groundAmp / 2.1 * 100,4,100)}%`;
+
+      output.amplitudeBar.style.background =
+        v.peak > 3.8 ? "linear-gradient(90deg,#f09a9a,#d64545)" :
+        v.peak > 2.1 ? "linear-gradient(90deg,#f0c85a,#e89b20)" :
+        "linear-gradient(90deg,#58b7e8,#1f9d63)";
+
+      output.measurementNote.textContent =
+        v.learningMode === "simple"
+        ? "The P-wave arrives first. The S-wave arrives later. A larger S–P interval means a greater distance from the station."
+        : `Ground type: ${groundLabels[v.groundType]}. Soft sediments amplify shaking in this simplified model.`;
+
+      output.challengeHint.textContent = v.challengeMode === "hide"
+        ? "Challenge mode is ON: the distance is hidden. Use the P and S markers, calculate the S–P interval, then estimate the epicentre distance."
+        : "Challenge mode: hide the distance, run the earthquake, then use the S–P interval to estimate the epicentre distance.";
+    }
+
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      draw();
+    }
+
+    function drawBoxLabel(text,x,y,align="center"){
+      ctx.save();
+      ctx.font = "850 12px system-ui";
+      ctx.textAlign = align;
+      ctx.textBaseline = "middle";
+
+      const padX = 8;
+      const metrics = ctx.measureText(text);
+      const width = metrics.width + padX * 2;
+      const height = 24;
+
+      let left = x - width / 2;
+      if(align === "left") left = x;
+      if(align === "right") left = x - width;
+
+      ctx.fillStyle = "rgba(6,19,34,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,y - height / 2,width,height,8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(230,246,255,.96)";
+      ctx.fillText(text,x,y);
+      ctx.restore();
+    }
+
+    function drawBackground(w,h){
+      const bg = ctx.createLinearGradient(0,0,0,h);
+      bg.addColorStop(0,"#061322");
+      bg.addColorStop(1,"#0c2338");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0,0,w,h);
+
+      ctx.save();
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = "#ffffff";
+      for(let i=0;i<76;i++){
+        const x = (i * 83) % w;
+        const y = (i * 59) % h;
+        const r = ((i * 19) % 3 + 1) / 2.6;
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function envelope(t,start,duration,attack=0.18){
+      if(t < start || t > start + duration) return 0;
+      const x = (t - start) / duration;
+      const rise = clamp(x / attack,0,1);
+      const decay = Math.exp(-3.2 * x);
+      return rise * decay;
+    }
+
+    function waveSignal(t,v){
+      const p = envelope(t,v.pArrival,38,0.16) * Math.sin(t * 6.2);
+      const s = envelope(t,v.sArrival,52,0.13) * Math.sin(t * 4.15 + 1.2);
+      const surf = envelope(t,v.surfaceArrival,80,0.10) * (Math.sin(t * 2.2) + 0.55 * Math.sin(t * 3.4 + 0.7));
+
+      const noise = (Math.sin(t*7.7) + Math.sin(t*11.3 + 2.1)) * 0.06 * (v.noise / 60);
+      return (p * 0.38 + s * 0.72 + surf * 1.05 + noise) * v.peak;
+    }
+
+    function drawSeismograph(left,top,w,h,v,currentSignal){
+      const groundY = top + h - 48;
+
+      const mechanismX = left + 22;
+      const mechanismY = top + 34;
+      const mechanismW = Math.min(292,w * 0.32);
+      const mechanismH = h - 76;
+
+      const paperX = mechanismX + mechanismW + 26;
+      const paperY = top + 36;
+      const paperW = w - mechanismW - 78;
+      const paperH = h - 102;
+
+      const groundShake = state.running ? clamp(currentSignal * 10,-22,22) : 0;
+      const frameShake = groundShake;
+      const massLag = -groundShake * 0.22;
+
+      ctx.save();
+
+      // Ground layers across the whole model
+      ctx.fillStyle = "rgba(90,65,50,.92)";
+      ctx.beginPath();
+      ctx.roundRect(left + 16,groundY,w - 32,32,16);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(140,100,70,.88)";
+      ctx.beginPath();
+      ctx.moveTo(left + 16,groundY + 10);
+      for(let x=left+16;x<left+w-16;x+=32){
+        ctx.lineTo(x,groundY + 10 + Math.sin((x+state.t)*0.05)*5);
+      }
+      ctx.lineTo(left+w-16,groundY+32);
+      ctx.lineTo(left+16,groundY+32);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mechanism zone background
+      ctx.fillStyle = "rgba(8,30,48,.62)";
+      ctx.strokeStyle = "rgba(180,225,250,.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(mechanismX,mechanismY,mechanismW,mechanismH,18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(235,248,255,.96)";
+      ctx.font = "850 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Seismograph mechanism",mechanismX + 14,mechanismY + 26);
+
+      ctx.save();
+      ctx.translate(frameShake,0);
+
+      const frameX = mechanismX + 62;
+      const frameTop = mechanismY + 72;
+
+      // Frame attached to the ground
+      ctx.strokeStyle = "rgba(210,240,255,.88)";
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(frameX,groundY);
+      ctx.lineTo(frameX,frameTop);
+      ctx.lineTo(frameX + 128,frameTop);
+      ctx.stroke();
+
+      drawBoxLabel("frame moves with ground",frameX + 104,frameTop - 22);
+
+      // Spring
+      ctx.strokeStyle = "rgba(255,238,145,.9)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      const springX = frameX + 68;
+      const springTop = frameTop + 4;
+      const springBottom = frameTop + 74;
+      ctx.moveTo(springX,springTop);
+      for(let i=0;i<12;i++){
+        const y = springTop + i * ((springBottom - springTop) / 11);
+        const x = springX + (i%2===0 ? -10 : 10);
+        ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+
+      // Suspended mass
+      const massX = springX + massLag;
+      const massY = springBottom + 28;
+      ctx.fillStyle = "rgba(130,190,225,.95)";
+      ctx.strokeStyle = "rgba(220,245,255,.95)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(massX,massY,32,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      drawBoxLabel("mass stays nearly still",massX + 10,massY + 54);
+
+      // Pen arm and pen
+      ctx.strokeStyle = "rgba(255,245,215,.95)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(massX + 30,massY);
+      ctx.lineTo(paperX + 24,paperY + paperH/2 + currentSignal*18);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,105,105,.95)";
+      ctx.beginPath();
+      ctx.arc(paperX + 24,paperY + paperH/2 + currentSignal*18,5,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // Shaking direction arrows
+      if(state.running){
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,235,130,.75)";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        const arrowY = groundY - 18;
+        const arrowX = mechanismX + 60 + groundShake * 2;
+        ctx.beginPath();
+        ctx.moveTo(arrowX - 28,arrowY);
+        ctx.lineTo(arrowX + 28,arrowY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(arrowX + 28,arrowY);
+        ctx.lineTo(arrowX + 18,arrowY - 7);
+        ctx.moveTo(arrowX + 28,arrowY);
+        ctx.lineTo(arrowX + 18,arrowY + 7);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      drawBoxLabel("ground motion",mechanismX + 94,groundY - 18);
+
+      // Seismogram paper
+      ctx.fillStyle = "rgba(245,252,255,.94)";
+      ctx.strokeStyle = "rgba(185,225,245,.95)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(paperX,paperY,paperW,paperH,14);
+      ctx.fill();
+      ctx.stroke();
+
+      // Grid and trace
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(paperX,paperY,paperW,paperH,14);
+      ctx.clip();
+
+      ctx.strokeStyle = "rgba(45,100,130,.16)";
+      ctx.lineWidth = 1;
+      for(let x=paperX;x<paperX+paperW;x+=34){
+        ctx.beginPath();
+        ctx.moveTo(x,paperY);
+        ctx.lineTo(x,paperY+paperH);
+        ctx.stroke();
+      }
+      for(let y=paperY;y<paperY+paperH;y+=28){
+        ctx.beginPath();
+        ctx.moveTo(paperX,y);
+        ctx.lineTo(paperX+paperW,y);
+        ctx.stroke();
+      }
+
+      const baseLine = paperY + paperH/2;
+      ctx.strokeStyle = "rgba(45,100,130,.38)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(paperX,baseLine);
+      ctx.lineTo(paperX+paperW,baseLine);
+      ctx.stroke();
+
+      const maxT = 180;
+      const pX = paperX + (v.pArrival / maxT) * paperW;
+      const sX = paperX + (v.sArrival / maxT) * paperW;
+      const surfX = paperX + (v.surfaceArrival / maxT) * paperW;
+
+      function marker(x,label,colour){
+        if(x < paperX || x > paperX+paperW) return;
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6,5]);
+        ctx.beginPath();
+        ctx.moveTo(x,paperY);
+        ctx.lineTo(x,paperY+paperH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.roundRect(x - 22,paperY + 8,44,30,10);
+        ctx.fill();
+
+        ctx.fillStyle = "white";
+        ctx.font = "950 16px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(label,x,paperY+29);
+      }
+
+      marker(pX,"P","rgba(20,120,215,.92)");
+      marker(sX,"S","rgba(220,135,25,.92)");
+      if(v.learningMode === "advanced") marker(surfX,"Surf","rgba(210,70,70,.9)");
+
+      // Trace
+      const visibleT = Math.min(Math.max(state.t,18),maxT);
+      const step = 1.1;
+      ctx.strokeStyle = "rgba(20,55,75,.95)";
+      ctx.lineWidth = 2.3;
+      ctx.beginPath();
+
+      let first = true;
+
+      for(let x=0;x<=paperW;x+=step){
+        const t = (x / paperW) * maxT;
+        if(t > visibleT) break;
+
+        const signal = waveSignal(t,v);
+        const y = baseLine - clamp(signal * 24,-paperH*0.44,paperH*0.44);
+
+        if(first){
+          ctx.moveTo(paperX+x,y);
+          first = false;
+        }else{
+          ctx.lineTo(paperX+x,y);
+        }
+      }
+
+      ctx.stroke();
+
+      // Moving pen position
+      const penX = paperX + (clamp(state.t,0,maxT) / maxT) * paperW;
+      if(state.running && penX >= paperX && penX <= paperX + paperW){
+        ctx.fillStyle = "rgba(255,105,105,.96)";
+        ctx.beginPath();
+        ctx.arc(penX,baseLine - clamp(currentSignal * 24,-paperH*0.44,paperH*0.44),5,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      drawBoxLabel("seismogram evidence",paperX + paperW/2,paperY - 22);
+
+      // Epicentre wavefront hint
+      if(state.running){
+        ctx.save();
+        const epicentreX = left + 60;
+        const epicentreY = groundY + 14;
+        const waveRadius = (state.t * 10) % 220;
+        ctx.strokeStyle = "rgba(255,235,130,.32)";
+        ctx.lineWidth = 3;
+        for(let i=0;i<3;i++){
+          ctx.beginPath();
+          ctx.arc(epicentreX,epicentreY,waveRadius + i*45,0,Math.PI*2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function drawTimeline(left,top,w,h,v){
+      const x0 = left + 20;
+      const y0 = top + h - 30;
+      const width = w - 40;
+
+      ctx.save();
+
+      ctx.fillStyle = "rgba(8,30,48,.82)";
+      ctx.strokeStyle = "rgba(180,225,250,.28)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,top,w,h,18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(235,248,255,.95)";
+      ctx.font = "850 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Wave arrival reading aid",left+18,top+24);
+
+      ctx.strokeStyle = "rgba(180,225,250,.35)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x0,y0);
+      ctx.lineTo(x0+width,y0);
+      ctx.stroke();
+
+      const maxTime = 180;
+      const pX = x0 + (v.pArrival / maxTime) * width;
+      const sX = x0 + (v.sArrival / maxTime) * width;
+      const surfaceX = x0 + (v.surfaceArrival / maxTime) * width;
+
+      function dot(x,label,desc,colour){
+        if(x < x0 || x > x0+width) return;
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.arc(x,y0,9,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x,y0);
+        ctx.lineTo(x,top+34);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(235,248,255,.96)";
+        ctx.font = "850 13px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(label,x,top+36);
+        ctx.font = "700 11px system-ui";
+        ctx.fillStyle = "rgba(210,232,245,.82)";
+        ctx.fillText(desc,x,top+52);
+      }
+
+      dot(pX,"P",`${v.pArrival.toFixed(1)} s`,"rgba(40,150,235,.95)");
+      dot(sX,"S",`${v.sArrival.toFixed(1)} s`,"rgba(235,155,45,.95)");
+      dot(surfaceX,"surface",`${v.surfaceArrival.toFixed(1)} s`,"rgba(230,85,85,.9)");
+
+      const nowX = x0 + (clamp(state.t,0,maxTime) / maxTime) * width;
+      ctx.strokeStyle = "rgba(255,255,255,.8)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(nowX,y0-18);
+      ctx.lineTo(nowX,y0+18);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function draw(){
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      const v = getValues();
+      const currentSignal = state.running ? waveSignal(state.t,v) : 0;
+
+      ctx.clearRect(0,0,w,h);
+      drawBackground(w,h);
+
+      const leftW = w * 0.98;
+      drawSeismograph(18,22,leftW-36,h-126,v,currentSignal);
+      drawTimeline(28,h-86,w-56,64,v);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "800 13px system-ui";
+      ctx.textAlign = "left";
+      const distanceText = v.challengeMode === "hide" ? "distance hidden" : `${v.distance.toFixed(0)} km from station`;
+      ctx.fillText(
+        `Model earthquake: M ${v.magnitude.toFixed(1)} | ${distanceText} | ${groundLabels[v.groundType]}`,
+        22,
+        h-14
+      );
+      ctx.restore();
+    }
+
+    function logData(){
+      const v = getValues();
+      state.data.push({
+        time_s:state.t.toFixed(2),
+        learning_mode:v.learningMode,
+        magnitude:v.magnitude.toFixed(1),
+        distance_km:v.distance.toFixed(0),
+        depth_km:v.depth.toFixed(0),
+        ground_type:v.groundType,
+        challenge_mode:v.challengeMode,
+        p_arrival_s:v.pArrival.toFixed(2),
+        s_arrival_s:v.sArrival.toFixed(2),
+        surface_arrival_s:v.surfaceArrival.toFixed(2),
+        sp_interval_s:v.spInterval.toFixed(2),
+        estimated_distance_km:v.estimatedDistance.toFixed(1),
+        peak_amplitude_model:v.peak.toFixed(3),
+        current_wave:v.currentWave
+      });
+    }
+
+    function animate(){
+      if(state.running){
+        state.t += 0.33 * getValues().speed;
+
+        if(state.t - state.lastLog > 2){
+          logData();
+          state.lastLog = state.t;
+        }
+
+        if(state.t > 185){
+          state.running = false;
+          document.getElementById("runBtn").textContent = "▶ Replay earthquake";
+        }
+      }
+
+      updateReadouts();
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    function reset(){
+      controls.learningMode.value = "simple";
+      controls.magnitude.value = "5.6";
+      controls.distance.value = "260";
+      controls.depth.value = "35";
+      controls.groundType.value = "rock";
+      controls.challengeMode.value = "show";
+      controls.damping.value = "55";
+      controls.sensitivity.value = "90";
+      controls.noise.value = "10";
+      controls.speed.value = "1.2";
+      state.running = false;
+      state.t = 0;
+      state.lastLog = 0;
+      state.data = [];
+      document.getElementById("runBtn").textContent = "▶ Start earthquake";
+      updateReadouts();
+      draw();
+    }
+
+    function nearbyPreset(){
+      controls.magnitude.value = "4.9";
+      controls.distance.value = "80";
+      controls.depth.value = "20";
+      controls.groundType.value = "rock";
+      controls.challengeMode.value = "show";
+      controls.speed.value = "1.3";
+      state.running = false;
+      state.t = 0;
+      state.data = [];
+      document.getElementById("runBtn").textContent = "▶ Start nearby quake";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function distantPreset(){
+      controls.magnitude.value = "6.8";
+      controls.distance.value = "620";
+      controls.depth.value = "60";
+      controls.groundType.value = "sediment";
+      controls.challengeMode.value = "show";
+      controls.speed.value = "1.6";
+      state.running = false;
+      state.t = 0;
+      state.data = [];
+      document.getElementById("runBtn").textContent = "▶ Start distant quake";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function downloadCSV(){
+      if(state.data.length === 0) logData();
+
+      const headers = Object.keys(state.data[0]);
+      const rows = state.data.map(row => headers.map(h => row[h]).join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+
+      const blob = new Blob([csv],{type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "seismograph_simulation_data.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("runBtn").addEventListener("click",()=>{
+      if(state.t > 184) state.t = 0;
+      state.running = !state.running;
+      document.getElementById("runBtn").textContent = state.running ? "⏸ Pause earthquake" : "▶ Resume earthquake";
+      updateReadouts();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",reset);
+    document.getElementById("nearBtn").addEventListener("click",nearbyPreset);
+    document.getElementById("farBtn").addEventListener("click",distantPreset);
+    document.getElementById("csvBtn").addEventListener("click",downloadCSV);
+
+    Object.values(controls).forEach(control=>{
+      control.addEventListener("input",()=>{
+        state.t = 0;
+        state.running = false;
+        document.getElementById("runBtn").textContent = "▶ Start earthquake";
+        logData();
+        updateReadouts();
+        draw();
+      });
+
+      control.addEventListener("change",()=>{
+        state.t = 0;
+        state.running = false;
+        document.getElementById("runBtn").textContent = "▶ Start earthquake";
+        logData();
+        updateReadouts();
+        draw();
+      });
+    });
+
+    document.querySelectorAll("#quiz button").forEach(button=>{
+      button.addEventListener("click",()=>{
+        document.querySelectorAll("#quiz button").forEach(b=>{
+          b.classList.remove("correct","incorrect");
+        });
+
+        if(button.dataset.answer === "correct"){
+          button.classList.add("correct");
+          document.getElementById("quizFeedback").textContent = "Correct. The farther away the earthquake is, the larger the P–S arrival time gap becomes.";
+        }else{
+          button.classList.add("incorrect");
+          document.getElementById("quizFeedback").textContent = "Not quite. P-waves travel faster, so S-waves arrive later; a larger gap usually means greater distance.";
+        }
+      });
+    });
+
+    window.addEventListener("resize",resizeCanvas);
+
+    reset();
+    resizeCanvas();
+    animate();
+  </script>
+</body>
+</html>
