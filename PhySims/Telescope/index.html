@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telescope Light Path Explorer</title>
+
+  <style>
+    :root{
+      --bg:#eef7fb;
+      --card:#ffffff;
+      --ink:#123143;
+      --muted:#557184;
+      --blue:#1d7ed0;
+      --blue2:#56b5e8;
+      --deep:#0f3d5c;
+      --soft:#d9eef9;
+      --line:#c9dfec;
+      --good:#1f9d63;
+      --warn:#e89b20;
+      --bad:#d64545;
+      --shadow:0 10px 25px rgba(12,54,82,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eaf6fb 0%,#f6fbfe 100%);
+      color:var(--ink);
+    }
+
+    .page{
+      width:min(1220px,calc(100% - 28px));
+      margin:0 auto;
+      padding:18px 0 36px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:none;
+      background:#dff1fa;
+      color:#0c4d73;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(12,54,82,.08);
+      margin-bottom:14px;
+      text-decoration:none;
+    }
+
+    .hero{
+      border-radius:28px;
+      padding:24px 28px;
+      color:white;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),
+        linear-gradient(135deg,#0e4f78 0%,#1e91d6 52%,#59c2eb 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.7rem);
+      letter-spacing:-.04em;
+      line-height:1;
+    }
+
+    .hero p{
+      max-width:820px;
+      margin:10px 0 0;
+      font-size:1.03rem;
+      line-height:1.5;
+      color:rgba(255,255,255,.92);
+    }
+
+    .top-controls{
+      margin-top:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .control-grid{
+      display:grid;
+      grid-template-columns:repeat(7,minmax(108px,1fr));
+      gap:10px;
+      align-items:end;
+    }
+
+    body.simple-mode .control-grid{
+      grid-template-columns:repeat(6,minmax(108px,1fr));
+    }
+
+    label{
+      display:block;
+      font-size:.8rem;
+      color:var(--muted);
+      font-weight:850;
+      margin-bottom:5px;
+    }
+
+    select,input[type="range"]{
+      width:100%;
+    }
+
+    select{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:9px 10px;
+      background:#f8fcff;
+      color:var(--ink);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      accent-color:var(--blue);
+    }
+
+    .readout{
+      margin-top:3px;
+      font-size:.82rem;
+      font-weight:850;
+      color:var(--deep);
+    }
+
+    .button-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:14px;
+      padding:10px 13px;
+      font-weight:900;
+      cursor:pointer;
+      background:#e2f1f8;
+      color:#0d4a6e;
+      transition:.15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(.98);
+    }
+
+    .primary{
+      background:linear-gradient(135deg,#107bd1,#56b5e8);
+      color:white;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.5fr) minmax(310px,.72fr);
+      gap:16px;
+      margin-top:16px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#f6fbfe;
+    }
+
+    .card-header h2{
+      margin:0;
+      font-size:1.08rem;
+      letter-spacing:-.02em;
+    }
+
+    .card-header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
+    }
+
+    .canvas-wrap{
+      padding:10px;
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:470px;
+      border-radius:18px;
+      background:#071625;
+      border:1px solid #15364f;
+    }
+
+    .status-strip{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+
+    .status{
+      border-radius:15px;
+      padding:10px;
+      background:#eef7fb;
+      border:1px solid var(--line);
+    }
+
+    .status b{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .status span{
+      font-size:1.02rem;
+      font-weight:950;
+      color:var(--deep);
+    }
+
+    .metric-list{
+      padding:12px;
+      display:grid;
+      gap:9px;
+    }
+
+    .metric{
+      padding:10px;
+      border:1px solid var(--line);
+      background:#f7fbfe;
+      border-radius:15px;
+    }
+
+    .metric-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:7px;
+    }
+
+    .metric-name{
+      font-weight:900;
+      color:var(--deep);
+      font-size:.91rem;
+    }
+
+    .metric-value{
+      font-weight:950;
+      color:var(--blue);
+      font-size:.91rem;
+      white-space:nowrap;
+    }
+
+    .bar{
+      height:9px;
+      border-radius:999px;
+      background:#d9eaf3;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      width:50%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#58b7e8,#1f9d63);
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.42;
+      padding:0 12px 12px;
+    }
+
+    .below-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .text-card{
+      padding:16px;
+    }
+
+    .text-card h2{
+      margin:0 0 9px;
+      font-size:1.1rem;
+    }
+
+    .text-card p,.text-card li{
+      color:#24485c;
+      line-height:1.5;
+      font-size:.94rem;
+    }
+
+    .text-card ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+
+    .challenge{
+      margin-top:12px;
+      padding:11px;
+      border-radius:15px;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+    }
+
+    .challenge strong{
+      color:var(--deep);
+    }
+
+    .quiz{
+      display:grid;
+      gap:9px;
+    }
+
+    .quiz button{
+      text-align:left;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+      color:#183f57;
+      font-weight:750;
+    }
+
+    .quiz button.correct{
+      background:#e6f6ee;
+      border-color:#a7dfc1;
+      color:#146442;
+    }
+
+    .quiz button.incorrect{
+      background:#fdeeee;
+      border-color:#f0b8b8;
+      color:#8f2f2f;
+    }
+
+    .feedback{
+      min-height:28px;
+      color:var(--deep);
+      font-weight:850;
+      margin-top:8px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:5px 9px;
+      background:#e7f5fb;
+      color:#0d5278;
+      font-weight:850;
+      font-size:.78rem;
+      margin-right:6px;
+      margin-top:6px;
+    }
+
+    body.simple-mode .advanced-only{
+      display:none !important;
+    }
+
+    @media (max-width:1050px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+
+      .main-grid,.below-grid{
+        grid-template-columns:1fr;
+      }
+
+      canvas{
+        height:450px;
+      }
+    }
+
+    @media (max-width:650px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:1fr;
+      }
+
+      .status-strip{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        padding:22px;
+      }
+
+      canvas{
+        height:390px;
+      }
+    }
+  </style>
+</head>
+
+<body class="simple-mode">
+  <div class="page">
+    <a class="back-btn" href="../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Telescope Light Path Explorer</h1>
+      <p>
+        Explore how telescopes collect light, focus it, and use an eyepiece to make a distant object easier to see.
+        Compare lens-based refractors with mirror-based reflectors.
+      </p>
+    </section>
+
+    <section class="top-controls">
+      <div class="control-grid">
+        <div class="control">
+          <label for="learningMode">Learning mode</label>
+          <select id="learningMode">
+            <option value="simple">Simple</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="mode">Telescope type</label>
+          <select id="mode">
+            <option value="refractor">Refracting telescope</option>
+            <option value="reflector">Reflecting telescope</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="target">Target</label>
+          <select id="target">
+            <option value="moon">Moon</option>
+            <option value="planet">Planet</option>
+            <option value="star">Star cluster</option>
+            <option value="galaxy">Galaxy</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="aperture">Aperture</label>
+          <input id="aperture" type="range" min="40" max="300" value="120" />
+          <div class="readout"><span id="apertureRead">120</span> mm</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="objectiveFocal">Objective / primary focal length</label>
+          <input id="objectiveFocal" type="range" min="300" max="1500" value="800" />
+          <div class="readout"><span id="objectiveRead">800</span> mm</div>
+        </div>
+
+        <div class="control">
+          <label for="eyepieceFocal">Eyepiece focal length</label>
+          <input id="eyepieceFocal" type="range" min="5" max="40" value="20" />
+          <div class="readout"><span id="eyepieceRead">20</span> mm</div>
+        </div>
+
+        <div class="control">
+          <label for="focusOffset">Focus adjustment</label>
+          <input id="focusOffset" type="range" min="-80" max="80" value="0" />
+          <div class="readout"><span id="focusRead">0</span></div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" id="runBtn">▶ Run model</button>
+        <button id="resetBtn">Reset</button>
+        <button id="presetMoon">Moon preset</button>
+        <button id="presetGalaxy">Faint galaxy preset</button>
+        <button id="csvBtn">Download CSV</button>
+      </div>
+    </section>
+
+    <main class="main-grid">
+      <section class="card">
+        <div class="card-header">
+          <h2>Light path model</h2>
+          <p>
+            Yellow rays show light entering the telescope. The red marker shows where the first image forms.
+          </p>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="scopeCanvas"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="status">
+            <b>System status</b>
+            <span id="systemStatus">Paused</span>
+          </div>
+
+          <div class="status">
+            <b>Current image</b>
+            <span id="imageStatus">In focus</span>
+          </div>
+
+          <div class="status">
+            <b>Best use</b>
+            <span id="bestUse">General observing</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-header">
+          <h2>Measurements</h2>
+          <p>Use the values as evidence when comparing telescope settings.</p>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Magnification</span>
+              <span class="metric-value" id="magValue">40×</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="magBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Light gathering</span>
+              <span class="metric-value" id="lightValue">294× eye</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="lightBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">View quality</span>
+              <span class="metric-value" id="qualityValue">92%</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="qualityBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Field of view</span>
+              <span class="metric-value" id="fieldValue">1.25°</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="fieldBar"></div></div>
+          </div>
+
+          <div class="metric advanced-only">
+            <div class="metric-top">
+              <span class="metric-name">Exit pupil</span>
+              <span class="metric-value" id="exitValue">3.0 mm</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="exitBar"></div></div>
+          </div>
+        </div>
+
+        <p class="small-note" id="measurementNote">
+          A larger aperture collects more light. A shorter eyepiece focal length usually gives greater magnification.
+        </p>
+      </aside>
+    </main>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>How to use</h2>
+        <ul>
+          <li>Use <strong>aperture</strong> to change how much light the telescope collects.</li>
+          <li>Use <strong>eyepiece focal length</strong> to change the magnification.</li>
+          <li>Move <strong>focus adjustment</strong> away from zero to blur the image.</li>
+          <li>Compare a <strong>refractor</strong> with a <strong>reflector</strong> and follow the ray path.</li>
+        </ul>
+
+        <div class="challenge">
+          <strong>Challenge:</strong> Make the faint galaxy clearer. Does increasing magnification always help?
+        </div>
+      </div>
+
+      <div class="card text-card">
+        <h2>What the model shows</h2>
+        <p>
+          Telescopes do not just “zoom in”. Their first job is to collect light. The objective lens or primary mirror
+          forms a small image at the focus. The eyepiece then makes that image easier to see.
+        </p>
+
+        <p class="advanced-only">
+          In advanced mode, exit pupil estimates the width of the light beam leaving the eyepiece.
+          If it becomes too small, the image can appear dim even when magnification is high.
+        </p>
+
+        <span class="tag">Light</span>
+        <span class="tag">Reflection</span>
+        <span class="tag">Refraction</span>
+        <span class="tag">Focal length</span>
+        <span class="tag">Magnification</span>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>Self-test</h2>
+        <div class="quiz" id="quiz">
+          <button data-answer="correct">Which change collects more light? Increasing the aperture.</button>
+          <button data-answer="wrong">Which change collects more light? Increasing magnification only.</button>
+          <button data-answer="wrong">Which change collects more light? Making the field of view smaller.</button>
+        </div>
+        <div class="feedback" id="quizFeedback"></div>
+      </div>
+
+      <div class="card text-card">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Use simple mode for junior students and advanced mode for deeper optics discussion.</li>
+          <li>The reflector is shown as a simplified Newtonian-style telescope.</li>
+          <li>The model is qualitative. It is designed to support conceptual ray tracing, not replace formal optical calculations.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("scopeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    if(!CanvasRenderingContext2D.prototype.roundRect){
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        if(w < 2*r) r = w/2;
+        if(h < 2*r) r = h/2;
+        this.beginPath();
+        this.moveTo(x+r,y);
+        this.arcTo(x+w,y,x+w,y+h,r);
+        this.arcTo(x+w,y+h,x,y+h,r);
+        this.arcTo(x,y+h,x,y,r);
+        this.arcTo(x,y,x+w,y,r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    const controls = {
+      learningMode: document.getElementById("learningMode"),
+      mode: document.getElementById("mode"),
+      target: document.getElementById("target"),
+      aperture: document.getElementById("aperture"),
+      objectiveFocal: document.getElementById("objectiveFocal"),
+      eyepieceFocal: document.getElementById("eyepieceFocal"),
+      focusOffset: document.getElementById("focusOffset")
+    };
+
+    const output = {
+      apertureRead: document.getElementById("apertureRead"),
+      objectiveRead: document.getElementById("objectiveRead"),
+      eyepieceRead: document.getElementById("eyepieceRead"),
+      focusRead: document.getElementById("focusRead"),
+      systemStatus: document.getElementById("systemStatus"),
+      imageStatus: document.getElementById("imageStatus"),
+      bestUse: document.getElementById("bestUse"),
+      magValue: document.getElementById("magValue"),
+      lightValue: document.getElementById("lightValue"),
+      exitValue: document.getElementById("exitValue"),
+      fieldValue: document.getElementById("fieldValue"),
+      qualityValue: document.getElementById("qualityValue"),
+      magBar: document.getElementById("magBar"),
+      lightBar: document.getElementById("lightBar"),
+      exitBar: document.getElementById("exitBar"),
+      fieldBar: document.getElementById("fieldBar"),
+      qualityBar: document.getElementById("qualityBar"),
+      measurementNote: document.getElementById("measurementNote")
+    };
+
+    const state = {
+      running:false,
+      t:0,
+      lastLog:0,
+      data:[]
+    };
+
+    function clamp(value,min,max){
+      return Math.max(min,Math.min(max,value));
+    }
+
+    function lerp(a,b,t){
+      return a + (b-a) * t;
+    }
+
+    function map(value,inMin,inMax,outMin,outMax){
+      const t = clamp((value-inMin)/(inMax-inMin),0,1);
+      return lerp(outMin,outMax,t);
+    }
+
+    function getValues(){
+      const aperture = Number(controls.aperture.value);
+      const objectiveFocal = Number(controls.objectiveFocal.value);
+      const eyepieceFocal = Number(controls.eyepieceFocal.value);
+      const focusOffset = Number(controls.focusOffset.value);
+      const magnification = objectiveFocal / eyepieceFocal;
+      const lightGain = Math.pow(aperture / 7, 2);
+      const exitPupil = aperture / magnification;
+      const field = 50 / magnification;
+
+      const focusPenalty = Math.abs(focusOffset) / 80;
+      const overMagPenalty = clamp((magnification - aperture * 2) / (aperture * 2), 0, 1);
+      const exitPenalty = exitPupil < 0.6 ? clamp((0.6 - exitPupil) / 0.6, 0, 1) : 0;
+
+      const quality = clamp(1 - focusPenalty * 0.58 - overMagPenalty * 0.35 - exitPenalty * 0.25, 0.05, 1);
+
+      let bestUse = "General observing";
+      if(aperture > 210 && magnification < 80) bestUse = "Faint objects";
+      if(magnification > 100 && quality > 0.65) bestUse = "Moon / planets";
+      if(field > 1.5) bestUse = "Wide sky view";
+      if(quality < 0.45) bestUse = "Needs adjustment";
+
+      let imageStatus = "In focus";
+      if(Math.abs(focusOffset) > 45) imageStatus = "Very blurry";
+      else if(Math.abs(focusOffset) > 18) imageStatus = "Slightly blurry";
+      if(overMagPenalty > 0.25) imageStatus = "Over-magnified";
+
+      return {
+        learningMode:controls.learningMode.value,
+        mode:controls.mode.value,
+        target:controls.target.value,
+        aperture,
+        objectiveFocal,
+        eyepieceFocal,
+        focusOffset,
+        magnification,
+        lightGain,
+        exitPupil,
+        field,
+        quality,
+        bestUse,
+        imageStatus
+      };
+    }
+
+    function updateReadouts(){
+      const v = getValues();
+
+      document.body.classList.toggle("simple-mode", v.learningMode === "simple");
+
+      output.apertureRead.textContent = v.aperture;
+      output.objectiveRead.textContent = v.objectiveFocal;
+      output.eyepieceRead.textContent = v.eyepieceFocal;
+      output.focusRead.textContent = v.focusOffset;
+
+      output.systemStatus.textContent = state.running ? "Running" : "Paused";
+      output.imageStatus.textContent = v.imageStatus;
+      output.bestUse.textContent = v.bestUse;
+
+      output.magValue.textContent = `${v.magnification.toFixed(0)}×`;
+      output.lightValue.textContent = `${v.lightGain.toFixed(0)}× eye`;
+      output.exitValue.textContent = `${v.exitPupil.toFixed(1)} mm`;
+      output.fieldValue.textContent = `${v.field.toFixed(2)}°`;
+      output.qualityValue.textContent = `${Math.round(v.quality * 100)}%`;
+
+      output.magBar.style.width = `${clamp(v.magnification / 180 * 100, 4, 100)}%`;
+      output.lightBar.style.width = `${clamp(v.lightGain / 1800 * 100, 4, 100)}%`;
+      output.exitBar.style.width = `${clamp(v.exitPupil / 7 * 100, 4, 100)}%`;
+      output.fieldBar.style.width = `${clamp(v.field / 4 * 100, 4, 100)}%`;
+      output.qualityBar.style.width = `${clamp(v.quality * 100, 4, 100)}%`;
+
+      output.qualityBar.style.background =
+        v.quality > 0.7 ? "linear-gradient(90deg,#58b7e8,#1f9d63)" :
+        v.quality > 0.4 ? "linear-gradient(90deg,#f0c85a,#e89b20)" :
+        "linear-gradient(90deg,#f09a9a,#d64545)";
+
+      output.measurementNote.textContent =
+        v.learningMode === "simple"
+        ? "A larger aperture collects more light. Higher magnification is useful, but too much can make the image dimmer or blurrier."
+        : "Aperture controls light gathering. Magnification is objective focal length divided by eyepiece focal length. Exit pupil estimates the light beam leaving the eyepiece.";
+    }
+
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      draw();
+    }
+
+    function drawStars(w,h){
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.85)";
+      for(let i=0;i<100;i++){
+        const x = (i * 71) % w;
+        const y = (i * 113) % h;
+        const r = ((i * 17) % 3 + 1) / 2.9;
+        ctx.globalAlpha = 0.25 + ((i * 13) % 8) / 15;
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawLabel(text,x,y,align="center"){
+      ctx.save();
+      ctx.font = "750 12px system-ui";
+      ctx.textAlign = align;
+      ctx.fillStyle = "rgba(224,244,255,.94)";
+      ctx.fillText(text,x,y);
+      ctx.restore();
+    }
+
+    function drawBoxLabel(text,x,y,align="center"){
+      ctx.save();
+      ctx.font = "850 12px system-ui";
+      ctx.textAlign = align;
+      ctx.textBaseline = "middle";
+
+      const padX = 8;
+      const metrics = ctx.measureText(text);
+      const width = metrics.width + padX * 2;
+      const height = 24;
+
+      let left = x - width / 2;
+      if(align === "left") left = x;
+      if(align === "right") left = x - width;
+
+      ctx.fillStyle = "rgba(6,19,34,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,y - height / 2,width,height,8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(230,246,255,.96)";
+      ctx.fillText(text,x,y);
+      ctx.restore();
+    }
+
+    function drawTargetSymbol(target,x,y,scale,inverted=false){
+      ctx.save();
+      ctx.translate(x,y);
+      if(inverted) ctx.rotate(Math.PI);
+
+      if(target === "moon"){
+        ctx.fillStyle = "#d6dde5";
+        ctx.beginPath();
+        ctx.arc(0,0,22*scale,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(90,105,118,.42)";
+        [[-8,-4,4],[6,5,5],[3,-10,3],[-13,9,3]].forEach(c=>{
+          ctx.beginPath();
+          ctx.arc(c[0]*scale,c[1]*scale,c[2]*scale,0,Math.PI*2);
+          ctx.fill();
+        });
+      }
+
+      if(target === "planet"){
+        ctx.fillStyle = "#d99d5b";
+        ctx.beginPath();
+        ctx.arc(0,0,18*scale,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,235,190,.75)";
+        ctx.lineWidth = Math.max(1,3*scale);
+        ctx.beginPath();
+        ctx.ellipse(0,0,34*scale,8*scale,-0.18,0,Math.PI*2);
+        ctx.stroke();
+      }
+
+      if(target === "star"){
+        for(let i=0;i<14;i++){
+          const a = i * Math.PI * 2 / 14;
+          const r = 8 + (i%3)*7;
+          ctx.fillStyle = i%2 ? "#e8f8ff" : "#ffd979";
+          ctx.beginPath();
+          ctx.arc(Math.cos(a)*r*scale,Math.sin(a)*r*scale,Math.max(1.2,2.2*scale),0,Math.PI*2);
+          ctx.fill();
+        }
+      }
+
+      if(target === "galaxy"){
+        ctx.strokeStyle = "rgba(177,220,255,.8)";
+        ctx.lineWidth = Math.max(1,3*scale);
+        for(let i=0;i<3;i++){
+          ctx.beginPath();
+          ctx.ellipse(0,0,(18+i*7)*scale,(5+i*3)*scale,0.55,0,Math.PI*2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = "#fff5b8";
+        ctx.beginPath();
+        ctx.arc(0,0,Math.max(1.5,4*scale),0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawFocalPlane(x,y,v,labelOffset=44){
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,130,130,.95)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x,y-32);
+      ctx.lineTo(x,y+32);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,110,110,.95)";
+      ctx.beginPath();
+      ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.globalAlpha = .85;
+      drawTargetSymbol(v.target,x,y,0.36,true);
+      ctx.globalAlpha = 1;
+
+      drawLabel("first image",x,y+labelOffset);
+      ctx.restore();
+    }
+
+    function drawSideFocalImage(x,y,v){
+      ctx.save();
+
+      ctx.strokeStyle = "rgba(255,125,125,.95)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x - 30,y);
+      ctx.lineTo(x + 30,y);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,105,105,.95)";
+      ctx.beginPath();
+      ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.globalAlpha = .88;
+      drawTargetSymbol(v.target,x,y,0.34,true);
+      ctx.globalAlpha = 1;
+
+      drawBoxLabel("first image",x + 42,y,"left");
+
+      ctx.restore();
+    }
+
+    function drawMovingDot(points,p){
+      const segments = [];
+      let total = 0;
+
+      for(let i=0;i<points.length-1;i++){
+        const [x1,y1] = points[i];
+        const [x2,y2] = points[i+1];
+        const d = Math.hypot(x2-x1,y2-y1);
+        segments.push({x1,y1,x2,y2,d});
+        total += d;
+      }
+
+      let dist = p * total;
+
+      for(const s of segments){
+        if(dist <= s.d){
+          const t = s.d === 0 ? 0 : dist / s.d;
+          const x = lerp(s.x1,s.x2,t);
+          const y = lerp(s.y1,s.y2,t);
+          ctx.fillStyle = "rgba(255,250,170,.96)";
+          ctx.beginPath();
+          ctx.arc(x,y,4,0,Math.PI*2);
+          ctx.fill();
+          return;
+        }
+        dist -= s.d;
+      }
+    }
+
+    function drawEyepieceView(w,h,v){
+      const isReflector = v.mode === "reflector";
+
+      const cx = isReflector ? w - 135 : w - 116;
+      const cy = isReflector ? 110 : h - 98;
+      const radius = isReflector ? 52 : 66;
+
+      const brightness = clamp(0.23 + Math.sqrt(v.lightGain) / 52,0.23,1);
+      const imageScale = clamp(v.magnification / 55,0.35,2.2);
+      const blur = 1 - v.quality;
+
+      ctx.save();
+
+      ctx.fillStyle = "#06101c";
+      ctx.strokeStyle = "rgba(150,220,255,.85)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx,cy,radius,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.clip();
+
+      ctx.globalAlpha = 0.26 * brightness;
+      drawStars(w,h);
+
+      ctx.globalAlpha = brightness;
+      ctx.filter = `blur(${blur * 6}px)`;
+      drawTargetSymbol(v.target,cx,cy,imageScale,false);
+
+      ctx.filter = "none";
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "800 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("eyepiece view",cx,cy + radius - 11);
+
+      ctx.restore();
+    }
+
+    function drawRefractor(w,h,v){
+      const mid = h * 0.47;
+      const aperturePx = map(v.aperture,40,300,70,205);
+      const xObj = 180;
+      const xFocus = map(v.objectiveFocal,300,1500,330,w-305);
+      const xEye = clamp(xFocus + map(v.eyepieceFocal,5,40,35,95) + v.focusOffset * 0.7, xFocus+35, w-105);
+
+      ctx.save();
+
+      ctx.strokeStyle = "rgba(87,181,232,.23)";
+      ctx.lineWidth = aperturePx + 30;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(xObj,mid);
+      ctx.lineTo(xEye,mid);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(225,244,255,.76)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(xObj,mid - aperturePx/2 - 18);
+      ctx.lineTo(xEye,mid - 42);
+      ctx.lineTo(xEye,mid + 42);
+      ctx.lineTo(xObj,mid + aperturePx/2 + 18);
+      ctx.closePath();
+      ctx.stroke();
+
+      const lensGrad = ctx.createLinearGradient(xObj,mid-aperturePx/2,xObj,mid+aperturePx/2);
+      lensGrad.addColorStop(0,"rgba(157,221,255,.12)");
+      lensGrad.addColorStop(.5,"rgba(185,235,255,.75)");
+      lensGrad.addColorStop(1,"rgba(157,221,255,.12)");
+
+      ctx.fillStyle = lensGrad;
+      ctx.strokeStyle = "rgba(210,245,255,.95)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.ellipse(xObj,mid,17,aperturePx/2,0,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(245,252,255,.9)";
+      ctx.strokeStyle = "rgba(245,252,255,.9)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.ellipse(xEye,mid,10,43,0,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      drawBoxLabel("objective lens",xObj,mid + aperturePx/2 + 30);
+      drawBoxLabel("eyepiece",xEye,mid + 62);
+
+      const rayStarts = v.learningMode === "simple"
+        ? [mid - aperturePx/2, mid, mid + aperturePx/2]
+        : [mid - aperturePx/2, mid - aperturePx/4, mid, mid + aperturePx/4, mid + aperturePx/2];
+
+      rayStarts.forEach((y,i)=>{
+        const wave = state.running ? Math.sin(state.t*0.05 + i) * 2 : 0;
+
+        ctx.strokeStyle = Math.abs(y - mid) < 1 ? "rgba(255,235,130,.96)" : "rgba(255,231,120,.72)";
+        ctx.lineWidth = Math.abs(y - mid) < 1 ? 3 : 2;
+
+        ctx.beginPath();
+        ctx.moveTo(35,y + wave);
+        ctx.lineTo(xObj,y + wave);
+        ctx.lineTo(xFocus,mid);
+        ctx.lineTo(xEye,mid + (y-mid) * -0.2);
+        ctx.lineTo(w-35,mid + (y-mid) * -0.25);
+        ctx.stroke();
+
+        if(state.running){
+          drawMovingDot([
+            [35,y+wave],
+            [xObj,y+wave],
+            [xFocus,mid],
+            [xEye,mid + (y-mid) * -0.2]
+          ], (state.t*0.006 + i*0.15) % 1);
+        }
+      });
+
+      drawFocalPlane(xFocus,mid,v,45);
+      ctx.restore();
+    }
+
+    function drawReflector(w,h,v){
+      const mid = h * 0.58;
+      const aperturePx = map(v.aperture,40,300,80,220);
+
+      const tubeLeft = 35;
+      const tubeRight = w - 230;
+      const tubeTop = mid - aperturePx / 2 - 20;
+      const tubeBottom = mid + aperturePx / 2 + 20;
+
+      // A Newtonian primary is concave and faces the incoming light.
+      // Visually this should read as a ")" shape at the back of the tube.
+      const mirrorVertexX = tubeRight - 18;
+      const mirrorRimX = mirrorVertexX - 52;
+
+      // Secondary mirror sits inside the tube near the top, directly below the side eyepiece.
+      const xSecondary = mirrorVertexX - 245;
+      const ySecondary = tubeTop + 58 + v.focusOffset * 0.10;
+
+      // Side eyepiece position.
+      const eyepieceX = xSecondary;
+      const eyepieceTopY = tubeTop - 74;
+      const eyepieceBaseY = tubeTop + 10;
+
+      // First image point after redirection.
+      const sideFocusX = xSecondary;
+      const sideFocusY = tubeTop - 18;
+
+      ctx.save();
+
+      // Tube body.
+      ctx.fillStyle = "rgba(70,150,195,.24)";
+      ctx.beginPath();
+      ctx.roundRect(
+        tubeLeft,
+        tubeTop - 10,
+        tubeRight - tubeLeft + 30,
+        tubeBottom - tubeTop + 20,
+        70
+      );
+      ctx.fill();
+
+      // Tube edges.
+      ctx.strokeStyle = "rgba(210,240,255,.78)";
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(tubeLeft + 55,tubeTop);
+      ctx.lineTo(mirrorRimX,tubeTop + 8);
+      ctx.moveTo(tubeLeft + 55,tubeBottom);
+      ctx.lineTo(mirrorRimX,tubeBottom - 8);
+      ctx.stroke();
+
+      // Side focuser tube.
+      ctx.strokeStyle = "rgba(210,240,255,.30)";
+      ctx.lineWidth = 34;
+      ctx.beginPath();
+      ctx.moveTo(eyepieceX,eyepieceBaseY);
+      ctx.lineTo(eyepieceX,eyepieceTopY + 28);
+      ctx.stroke();
+
+      // Eyepiece body.
+      ctx.fillStyle = "rgba(245,252,255,.94)";
+      ctx.beginPath();
+      ctx.roundRect(eyepieceX - 34,eyepieceTopY,68,42,12);
+      ctx.fill();
+
+      // Primary mirror: concave face opens towards the incoming light.
+      // The curve is drawn as ")" so it does not read as a convex mirror.
+      ctx.strokeStyle = "rgba(170,220,255,.96)";
+      ctx.lineWidth = 11;
+      ctx.beginPath();
+      ctx.moveTo(mirrorRimX,mid - aperturePx / 2 + 10);
+      ctx.quadraticCurveTo(
+        mirrorVertexX,
+        mid,
+        mirrorRimX,
+        mid + aperturePx / 2 - 10
+      );
+      ctx.stroke();
+
+      // Flat secondary mirror, tilted so light from the primary is sent UP to the side eyepiece.
+      // In screen coordinates this needs a positive angle so the mirror reads as "\".
+      ctx.save();
+      ctx.translate(xSecondary,ySecondary);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillStyle = "rgba(230,250,255,.96)";
+      ctx.strokeStyle = "rgba(230,250,255,.96)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(0,0,28,7,0,0,Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // Labels.
+      drawBoxLabel("side eyepiece",eyepieceX + 52,eyepieceTopY + 18,"left");
+      drawBoxLabel("flat secondary mirror",xSecondary - 118,ySecondary + 36,"left");
+      drawBoxLabel("concave primary mirror",mirrorRimX - 130,mid - aperturePx / 2 - 26,"left");
+
+      // Incoming parallel rays, then reflection from the concave primary mirror to the secondary mirror.
+      const offsets = v.learningMode === "simple"
+        ? [-0.38,0,0.38]
+        : [-0.5,-0.25,0,0.25,0.5];
+
+      offsets.forEach((offset,i)=>{
+        const yStart = mid + offset * (aperturePx * 0.78);
+        const wave = state.running ? Math.sin(state.t * 0.05 + i) * 2 : 0;
+
+        const startX = tubeLeft + 10;
+        const startY = yStart + wave;
+
+        // Rays hit the curved primary mirror. The centre ray hits deepest in the concave mirror.
+        const normalisedOffset = clamp(Math.abs(offset) / 0.5,0,1);
+        const mirrorHitX = mirrorVertexX - 50 * Math.pow(normalisedOffset,1.6);
+        const mirrorHitY = yStart + wave;
+
+        // The reflected rays converge towards the flat secondary mirror.
+        const secondaryHitX = xSecondary + offset * 5;
+        const secondaryHitY = ySecondary + offset * 9;
+
+        ctx.strokeStyle = Math.abs(offset) < 0.01
+          ? "rgba(255,235,130,.98)"
+          : "rgba(255,231,120,.72)";
+        ctx.lineWidth = Math.abs(offset) < 0.01 ? 3 : 2;
+
+        ctx.beginPath();
+        ctx.moveTo(startX,startY);
+        ctx.lineTo(mirrorHitX,mirrorHitY);
+        ctx.lineTo(secondaryHitX,secondaryHitY);
+        ctx.stroke();
+
+        if(state.running){
+          drawMovingDot(
+            [
+              [startX,startY],
+              [mirrorHitX,mirrorHitY],
+              [secondaryHitX,secondaryHitY]
+            ],
+            (state.t * 0.006 + i * 0.15) % 1
+          );
+        }
+      });
+
+      // Redirected beam from the secondary mirror to the side eyepiece.
+      ctx.strokeStyle = "rgba(255,235,130,.94)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(xSecondary,ySecondary);
+      ctx.lineTo(sideFocusX,sideFocusY);
+      ctx.lineTo(eyepieceX,eyepieceTopY + 36);
+      ctx.stroke();
+
+      drawSideFocalImage(sideFocusX,sideFocusY,v);
+
+      ctx.restore();
+    }
+
+    function draw(){
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      const v = getValues();
+
+      ctx.clearRect(0,0,w,h);
+
+      const sky = ctx.createLinearGradient(0,0,0,h);
+      sky.addColorStop(0,"#061322");
+      sky.addColorStop(1,"#0c2338");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0,0,w,h);
+
+      drawStars(w,h);
+
+      ctx.save();
+      ctx.globalAlpha = 0.96;
+      drawTargetSymbol(v.target,82,82,1.02);
+      drawBoxLabel(
+        v.target === "moon" ? "distant Moon" :
+        v.target === "planet" ? "distant planet" :
+        v.target === "star" ? "star cluster" : "faint galaxy",
+        82,130
+      );
+      ctx.restore();
+
+      if(v.mode === "refractor"){
+        drawRefractor(w,h,v);
+      }else{
+        drawReflector(w,h,v);
+      }
+
+      drawEyepieceView(w,h,v);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "800 13px system-ui";
+      ctx.textAlign = "left";
+
+      const statement = v.mode === "refractor"
+        ? "Refractor: lenses bend light towards a focus."
+        : "Reflector: mirrors reflect light to a secondary mirror and then to the eyepiece.";
+
+      ctx.fillText(statement,18,h-22);
+      ctx.restore();
+    }
+
+    function logData(){
+      const v = getValues();
+      state.data.push({
+        time_s:(state.t/60).toFixed(2),
+        learning_mode:v.learningMode,
+        mode:v.mode,
+        target:v.target,
+        aperture_mm:v.aperture,
+        objective_or_primary_focal_length_mm:v.objectiveFocal,
+        eyepiece_focal_length_mm:v.eyepieceFocal,
+        focus_adjustment:v.focusOffset,
+        magnification_x:v.magnification.toFixed(2),
+        light_gain_vs_eye:v.lightGain.toFixed(2),
+        exit_pupil_mm:v.exitPupil.toFixed(2),
+        field_of_view_deg:v.field.toFixed(3),
+        view_quality_percent:Math.round(v.quality*100)
+      });
+    }
+
+    function animate(){
+      if(state.running){
+        state.t += 1;
+        if(state.t - state.lastLog > 24){
+          logData();
+          state.lastLog = state.t;
+        }
+      }
+
+      updateReadouts();
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    function reset(){
+      controls.learningMode.value = "simple";
+      controls.mode.value = "refractor";
+      controls.target.value = "moon";
+      controls.aperture.value = 120;
+      controls.objectiveFocal.value = 800;
+      controls.eyepieceFocal.value = 20;
+      controls.focusOffset.value = 0;
+      state.running = false;
+      state.t = 0;
+      state.lastLog = 0;
+      state.data = [];
+      document.getElementById("runBtn").textContent = "▶ Run model";
+      updateReadouts();
+      draw();
+    }
+
+    function applyMoonPreset(){
+      controls.target.value = "moon";
+      controls.aperture.value = 100;
+      controls.objectiveFocal.value = 900;
+      controls.eyepieceFocal.value = 12;
+      controls.focusOffset.value = 0;
+      updateReadouts();
+      draw();
+    }
+
+    function applyGalaxyPreset(){
+      controls.target.value = "galaxy";
+      controls.aperture.value = 260;
+      controls.objectiveFocal.value = 750;
+      controls.eyepieceFocal.value = 30;
+      controls.focusOffset.value = 0;
+      updateReadouts();
+      draw();
+    }
+
+    function downloadCSV(){
+      if(state.data.length === 0) logData();
+
+      const headers = Object.keys(state.data[0]);
+      const rows = state.data.map(row => headers.map(h => row[h]).join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+
+      const blob = new Blob([csv],{type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "telescope_light_path_data.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("runBtn").addEventListener("click",()=>{
+      state.running = !state.running;
+      document.getElementById("runBtn").textContent = state.running ? "⏸ Pause model" : "▶ Run model";
+      updateReadouts();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",reset);
+    document.getElementById("presetMoon").addEventListener("click",applyMoonPreset);
+    document.getElementById("presetGalaxy").addEventListener("click",applyGalaxyPreset);
+    document.getElementById("csvBtn").addEventListener("click",downloadCSV);
+
+    Object.values(controls).forEach(control=>{
+      control.addEventListener("input",()=>{
+        logData();
+        updateReadouts();
+        draw();
+      });
+
+      control.addEventListener("change",()=>{
+        logData();
+        updateReadouts();
+        draw();
+      });
+    });
+
+    document.querySelectorAll("#quiz button").forEach(button=>{
+      button.addEventListener("click",()=>{
+        document.querySelectorAll("#quiz button").forEach(b=>{
+          b.classList.remove("correct","incorrect");
+        });
+
+        if(button.dataset.answer === "correct"){
+          button.classList.add("correct");
+          document.getElementById("quizFeedback").textContent = "Correct. A larger aperture collects more light.";
+        }else{
+          button.classList.add("incorrect");
+          document.getElementById("quizFeedback").textContent = "Not quite. Magnification changes image size, but aperture controls how much light is collected.";
+        }
+      });
+    });
+
+    window.addEventListener("resize",resizeCanvas);
+
+    reset();
+    resizeCanvas();
+    animate();
+  </script>
+</body>
+</html>
