@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Renewable Energy Grid Simulator</title>
+<style>
+:root{
+  --bg:#eef7fb;--card:#fff;--ink:#102a3a;--muted:#587184;--blue:#1d7ed0;--line:#c9dfec;
+  --shadow:0 10px 25px rgba(12,54,82,.12);--radius:22px;--green:#1f9d63;--orange:#e89b20;--red:#d64545
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eaf6fb,#f7fbfe);color:var(--ink)}
+.page{width:min(1240px,calc(100% - 28px));margin:auto;padding:18px 0 36px}
+.back-btn{display:inline-flex;background:#dff1fa;color:#0c4d73;padding:10px 16px;border-radius:999px;font-weight:850;text-decoration:none;box-shadow:0 4px 12px rgba(12,54,82,.08);margin-bottom:14px}
+.hero{border-radius:28px;padding:24px 28px;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.22),transparent 30%),linear-gradient(135deg,#0e4f78,#1e91d6 52%,#60c3e9);box-shadow:var(--shadow)}
+.hero h1{margin:0;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-.04em;line-height:1}
+.hero p{max-width:1020px;margin:10px 0 0;font-size:1.03rem;line-height:1.5;color:rgba(255,255,255,.92)}
+.top-controls{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.control-section-title{font-weight:950;color:#0f3d5c;margin:2px 0 9px}
+.setup-grid{display:grid;grid-template-columns:repeat(7,minmax(112px,1fr));gap:10px;align-items:end;margin-bottom:13px}
+.response-grid{display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:10px;align-items:end}
+body.simple-mode .advanced-only{display:none!important} body.simple-mode .student-hide{display:none!important} body.advanced-mode .student-only{display:none!important}
+body.simple-mode .setup-grid{grid-template-columns:repeat(5,minmax(115px,1fr))}
+body.simple-mode .response-grid{grid-template-columns:repeat(4,minmax(140px,1fr))}
+label{display:block;font-size:.8rem;color:var(--muted);font-weight:850;margin-bottom:5px}
+select,input[type=range]{width:100%}
+select{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#f8fcff;color:var(--ink);font-weight:750}
+input[type=range]{accent-color:var(--blue)}
+.readout{margin-top:3px;font-size:.82rem;font-weight:850;color:#0f3d5c}
+.button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:none;border-radius:14px;padding:10px 13px;font-weight:900;cursor:pointer;background:#e2f1f8;color:#0d4a6e;transition:.15s ease}
+button:hover{transform:translateY(-1px);filter:brightness(.98)}
+.primary{background:linear-gradient(135deg,#107bd1,#56b5e8);color:#fff}
+.danger{background:linear-gradient(135deg,#d64545,#ef7e63);color:#fff}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,.76fr);gap:16px;margin-top:16px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-header{padding:14px 16px;border-bottom:1px solid var(--line);background:#f6fbfe}
+.card-header h2{margin:0;font-size:1.08rem}
+.card-header p{margin:4px 0 0;color:var(--muted);font-size:.9rem;line-height:1.35}
+.canvas-wrap{padding:10px}
+canvas{display:block;width:100%;height:555px;border-radius:18px;background:#071625;border:1px solid #15364f}
+.status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;border-top:1px solid var(--line);background:#fbfdff}
+.status{border-radius:15px;padding:10px;background:#eef7fb;border:1px solid var(--line)}
+.status b{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px}
+.status span{font-size:1.02rem;font-weight:950;color:#0f3d5c}
+.metric-list{padding:12px;display:grid;gap:9px}
+.metric{padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}
+.metric-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}
+.metric-name{font-weight:900;color:#0f3d5c;font-size:.91rem}
+.metric-value{font-weight:950;color:var(--blue);font-size:.91rem;white-space:nowrap}
+.bar{height:9px;border-radius:999px;background:#d9eaf3;overflow:hidden}
+.bar-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#58b7e8,#1f9d63)}
+.small-note{color:var(--muted);font-size:.84rem;line-height:1.42;padding:0 12px 12px}
+.response-feedback{margin:0 12px 12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:#f5fbff;color:#153d55;line-height:1.45}
+.response-feedback strong{display:block;color:#0f3d5c;margin-bottom:4px}
+.warning-panel{margin:0 12px 12px;padding:10px 12px;border-radius:15px;border:1px solid #f3c37d;background:#fff7e8;color:#7a3f00;font-weight:850;display:none}
+.scorecard-wrap{margin:0 12px 12px;padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}
+.scorecard-title{display:flex;justify-content:space-between;gap:10px;font-weight:950;color:#0f3d5c;margin-bottom:4px}.mixbar-wrap{margin:0 12px 12px;padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.mixbar-title{display:flex;justify-content:space-between;gap:10px;font-weight:950;color:#0f3d5c;margin-bottom:7px}.mixbar{display:flex;height:18px;border-radius:999px;overflow:hidden;background:#d9eaf3;border:1px solid #c4dce9}.mix-seg{height:100%;min-width:0;transition:width .2s ease}.mix-solar{background:#f5c84b}.mix-wind{background:#69c6e8}.mix-battery{background:#42c77a}.mix-fossil{background:#777c86}.mix-import{background:#a78bfa}.mix-shortfall{background:#d64545}.mix-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:.76rem;color:#456377;font-weight:800}.legend-dot{display:inline-flex;align-items:center;gap:4px}.legend-dot::before{content:'';width:9px;height:9px;border-radius:99px;display:inline-block;background:#aaa}.solar-dot::before{background:#f5c84b}.wind-dot::before{background:#69c6e8}.battery-dot::before{background:#42c77a}.fossil-dot::before{background:#777c86}.import-dot::before{background:#a78bfa}.shortfall-dot::before{background:#d64545}.final-judgement{margin:0 12px 12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:#eef9f2;color:#174f34;line-height:1.45;font-weight:800}.compare-panel{margin:0 12px 12px;padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.compare-panel h3{font-size:.95rem;margin:0 0 6px;color:#0f3d5c}.comparison-note{font-size:.82rem;color:var(--muted);line-height:1.35;margin:6px 0 0}.fault-note{font-size:.78rem;color:#7a3f00;font-weight:850;margin-top:4px}
+.mini-table{width:100%;border-collapse:collapse;margin-top:8px}
+.mini-table td{border-top:1px solid var(--line);padding:6px 4px;font-size:.86rem;color:#24485c}
+.mini-table td:last-child{text-align:right;font-weight:850;color:#0f3d5c}
+.below-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.text-card{padding:16px}
+.text-card h2{margin:0 0 9px;font-size:1.1rem}
+.text-card p,.text-card li{color:#24485c;line-height:1.5;font-size:.94rem}
+.text-card ul{margin:8px 0 0;padding-left:20px}
+.challenge{margin-top:12px;padding:11px;border-radius:15px;background:#f3f9fd;border:1px solid var(--line)}
+.challenge strong{color:#0f3d5c}
+.quiz{display:grid;gap:9px}
+.quiz button{text-align:left;background:#f3f9fd;border:1px solid var(--line);color:#183f57;font-weight:750}
+.quiz button.correct{background:#e6f6ee;border-color:#a7dfc1;color:#146442}
+.quiz button.incorrect{background:#fdeeee;border-color:#f0b8b8;color:#8f2f2f}
+.feedback{min-height:28px;color:#0f3d5c;font-weight:850;margin-top:8px}
+.tag{display:inline-flex;border-radius:999px;padding:5px 9px;background:#e7f5fb;color:#0d5278;font-weight:850;font-size:.78rem;margin-right:6px;margin-top:6px}
+@media(max-width:1100px){.setup-grid,.response-grid,body.simple-mode .setup-grid,body.simple-mode .response-grid{grid-template-columns:repeat(3,1fr)}.main-grid,.below-grid{grid-template-columns:1fr}canvas{height:500px}}
+@media(max-width:650px){.setup-grid,.response-grid,body.simple-mode .setup-grid,body.simple-mode .response-grid{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.hero{padding:22px}canvas{height:440px}}
+</style>
+</head>
+<body class="simple-mode">
+<div class="page">
+<a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+<section class="hero">
+<h1>Renewable Energy Grid Simulator</h1>
+<p>Build a simple electricity grid using renewables, battery storage and backup power. Try to keep the lights on while reducing emissions and controlling cost.</p>
+</section>
+
+<section class="top-controls">
+<div class="control-section-title">Student grid setup — changing these restarts the simulation</div>
+<div class="setup-grid">
+<div><label for="learningMode">Learning mode</label><select id="learningMode"><option value="simple" selected>Student</option><option value="advanced">Advanced</option></select></div>
+<div><label for="scenario">Weather/demand week</label><select id="scenario"><option value="typical" selected>Typical week</option><option value="heatwave">Hot high-demand week</option><option value="cloudyCalm">Cloudy calm week</option><option value="windy">Windy week</option><option value="winterEvening">Winter evening demand</option></select></div>
+<div><label for="gridFault">Remove part of grid</label><select id="gridFault"><option value="none" selected>None</option><option value="solar">Solar offline</option><option value="wind">Wind offline</option><option value="battery">Battery offline</option><option value="backup">Backup offline</option><option value="transmission">Transmission loss</option></select><div class="fault-note" id="faultRead">No grid section removed</div></div>
+<div class="student-only"><label for="renewableBuild">Renewable build</label><select id="renewableBuild"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+<div class="student-only"><label for="studentBattery">Battery storage</label><select id="studentBattery"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+<div class="student-only"><label for="studentBackup">Backup power</label><select id="studentBackup"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+
+<div class="advanced-only"><label for="solarCap">Solar capacity</label><input id="solarCap" type="range" min="0" max="120" value="58"><div class="readout"><span id="solarCapRead">58</span>%</div></div>
+<div class="advanced-only"><label for="windCap">Wind capacity</label><input id="windCap" type="range" min="0" max="120" value="48"><div class="readout"><span id="windCapRead">48</span>%</div></div>
+<div class="advanced-only"><label for="batteryCap">Battery capacity</label><input id="batteryCap" type="range" min="0" max="120" value="42"><div class="readout"><span id="batteryCapRead">42</span>%</div></div>
+<div class="advanced-only"><label for="fossilCap">Fossil backup</label><input id="fossilCap" type="range" min="0" max="100" value="45"><div class="readout"><span id="fossilCapRead">45</span>%</div></div>
+<div class="advanced-only"><label for="gridDemand">Base demand</label><input id="gridDemand" type="range" min="65" max="130" value="100"><div class="readout"><span id="gridDemandRead">100</span>%</div></div>
+</div>
+
+<div class="control-section-title">Operating choice — adjust before advancing time</div>
+<div class="response-grid">
+<div class="student-only"><label for="studentStrategy">Main strategy</label><select id="studentStrategy"><option value="balanced" selected>Balanced</option><option value="reliable">Keep lights on</option><option value="lowEmission">Cut emissions</option><option value="lowCost">Keep cost down</option></select></div>
+<div class="student-only"><label for="studentDemand">Reduce demand</label><select id="studentDemand"><option value="none">None</option><option value="some" selected>Some</option><option value="strong">Strong</option></select></div>
+
+<div class="advanced-only"><label for="batteryStrategy">Battery strategy</label><select id="batteryStrategy"><option value="balanced" selected>Balanced</option><option value="saveEvening">Save for evening</option><option value="useEarly">Use early</option><option value="emergency">Emergency reserve</option></select></div>
+<div class="advanced-only"><label for="fossilPolicy">Fossil backup policy</label><select id="fossilPolicy"><option value="low">Low emissions</option><option value="balanced" selected>Balanced</option><option value="highReliability">High reliability</option></select></div>
+<div class="advanced-only"><label for="demandResponse">Demand response</label><input id="demandResponse" type="range" min="0" max="35" value="8"><div class="readout"><span id="demandResponseRead">8</span>%</div></div>
+<div class="advanced-only"><label for="priceLimit">Cost sensitivity</label><select id="priceLimit"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+<div class="advanced-only"><label for="interconnector">Imported power</label><input id="interconnector" type="range" min="0" max="40" value="10"><div class="readout"><span id="interconnectorRead">10</span>%</div></div>
+<div class="advanced-only"><label for="weatherVolatility">Weather volatility</label><input id="weatherVolatility" type="range" min="0" max="100" value="45"><div class="readout"><span id="weatherVolatilityRead">45</span>%</div></div>
+<div class="advanced-only"><label for="decisionFocus">Decision focus</label><select id="decisionFocus"><option value="reliable" selected>Keep lights on</option><option value="lowEmission">Cut emissions</option><option value="lowCost">Control cost</option><option value="renewable">Max renewables</option></select></div>
+</div>
+
+<div class="button-row"><button class="primary" id="nextHourBtn">Next hour</button><button id="nextDayBtn">Run 24 hours</button><button id="runWeekBtn">Run 7 days</button><button id="autoBtn">▶ Auto-run hours</button><button id="resetBtn">Reset grid</button><button id="cloudBtn">Hard weather challenge</button><button id="balancedBtn">Balanced grid preset</button><button id="saveRunBtn">Save comparison period</button><button id="clearRunsBtn">Clear comparison</button><button id="csvBtn">Download CSV</button></div>
+<p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">Challenge: find a grid that usually meets demand while keeping emissions and cost under control. A good starting point is Medium renewables, Medium battery, Medium backup, Balanced strategy and Some demand reduction.</p>
+</section>
+
+<main class="main-grid">
+<section class="card">
+<div class="card-header"><h2>Grid model</h2><p>Renewable output changes with time and weather. Batteries can shift energy, but they cannot create new energy.</p></div>
+<div class="canvas-wrap"><canvas id="gridCanvas"></canvas></div>
+<div class="status-strip">
+<div class="status"><b>Time</b><span id="timeStatus">Day 1, 00:00</span></div>
+<div class="status"><b>Grid status</b><span id="gridStatus">Starting</span></div>
+<div class="status"><b>Battery</b><span id="batteryStatus">50%</span></div>
+<div class="status"><b>Advice</b><span id="adviceStatus">Balance supply</span></div>
+</div>
+</section>
+
+<aside class="card">
+<div class="card-header"><h2>Evidence panel</h2><p>Use the evidence to balance reliability, emissions and cost.</p></div>
+<div class="metric-list">
+<div class="metric"><div class="metric-top"><span class="metric-name">Demand met</span><span class="metric-value" id="demandMetValue">100%</span></div><div class="bar"><div class="bar-fill" id="demandMetBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Solar output</span><span class="metric-value" id="solarValue">0 MW</span></div><div class="bar"><div class="bar-fill" id="solarBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Wind output</span><span class="metric-value" id="windValue">0 MW</span></div><div class="bar"><div class="bar-fill" id="windBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Battery charge</span><span class="metric-value" id="batteryValue">50%</span></div><div class="bar"><div class="bar-fill" id="batteryBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Fossil generation</span><span class="metric-value" id="fossilValue">0 MW</span></div><div class="bar"><div class="bar-fill" id="fossilBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Emissions intensity</span><span class="metric-value" id="emissionsValue">Low</span></div><div class="bar"><div class="bar-fill" id="emissionsBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Cost pressure</span><span class="metric-value" id="costValue">Moderate</span></div><div class="bar"><div class="bar-fill" id="costBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Renewable share</span><span class="metric-value" id="renewableValue">0%</span></div><div class="bar"><div class="bar-fill" id="renewableBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Weekly score</span><span class="metric-value" id="scoreValue">Starting</span></div><div class="bar"><div class="bar-fill" id="scoreBar"></div></div></div>
+</div>
+<div class="mixbar-wrap">
+  <div class="mixbar-title"><span>Live supply mix</span><span id="mixTotalLabel">0 / 0 MW</span></div>
+  <div class="mixbar" aria-label="Live electricity supply mix">
+    <div class="mix-seg mix-solar" id="mixSolar"></div>
+    <div class="mix-seg mix-wind" id="mixWind"></div>
+    <div class="mix-seg mix-battery" id="mixBattery"></div>
+    <div class="mix-seg mix-fossil" id="mixFossil"></div>
+    <div class="mix-seg mix-import" id="mixImport"></div>
+    <div class="mix-seg mix-shortfall" id="mixShortfall"></div>
+  </div>
+  <div class="mix-legend">
+    <span class="legend-dot solar-dot">Solar</span>
+    <span class="legend-dot wind-dot">Wind</span>
+    <span class="legend-dot battery-dot">Battery</span>
+    <span class="legend-dot fossil-dot">Fossil</span>
+    <span class="legend-dot import-dot">Imports</span>
+    <span class="legend-dot shortfall-dot">Shortfall</span>
+  </div>
+</div>
+<div class="warning-panel" id="warningPanel">Reliability warning: this hour has a supply shortfall.</div>
+<div class="response-feedback" id="hourFeedback"><strong>Hourly feedback</strong>Start by inspecting demand, weather and storage. Then advance the grid one hour.</div>
+<div class="scorecard-wrap">
+  <div class="scorecard-title"><span>Grid trade-off scorecard</span><span id="scorecardStatus">Live</span></div>
+  <table class="mini-table">
+    <tr><td>Reliability</td><td id="scoreReliability">Starting</td></tr>
+    <tr><td>Low emissions</td><td id="scoreEmissions">Starting</td></tr>
+    <tr><td>Cost control</td><td id="scoreCost">Starting</td></tr>
+    <tr><td>Storage management</td><td id="scoreStorage">Starting</td></tr>
+    <tr><td>Renewable use</td><td id="scoreRenewables">Starting</td></tr>
+    <tr><td>Overall grid balance</td><td id="scoreOverall">Starting</td></tr>
+  </table>
+</div>
+<div class="final-judgement" id="finalJudgement">Current judgement updates as the grid keeps running.</div>
+<div class="compare-panel">
+  <h3>Compare strategies</h3>
+  <table class="mini-table" id="comparisonTable">
+    <tr><td>No saved runs yet</td><td>Run a strategy for a while, then save that period.</td></tr>
+  </table>
+  <div class="comparison-note">Tip: keep the simulation running, change one setting, then save another period to compare strategies within the same trial.</div>
+</div>
+<p class="small-note" id="measurementNote">Solar and wind vary with the weather. Battery storage improves reliability, but it has limited capacity.</p>
+</aside>
+</main>
+
+<section class="below-grid">
+<div class="card text-card">
+<h2>How to use</h2>
+<ul>
+<li>Choose the weather week and build a grid using renewables, batteries and backup power.</li>
+<li>Run the grid hour by hour, one day at a time, or for the full week.</li>
+<li>Try to keep demand met without letting emissions or cost become too high. In Student mode, Medium settings should usually work in a typical week.</li>
+<li>Use Advanced mode only when students are ready for more detailed controls.</li>
+</ul>
+<div class="challenge"><strong>Challenge:</strong> Keep the grid reliable while reducing emissions and avoiding very high cost. There is no perfect setting: each variable affects supply, storage, cost, emissions or reliability.</div>
+</div>
+<div class="card text-card">
+<h2>What the model shows</h2>
+<p>Energy systems involve trade-offs. More renewables can lower emissions, but weather changes. More batteries help store energy, but storage is limited. More backup power improves reliability, but it can increase emissions and cost. The aim is to find a balanced solution, not a perfect one.</p>
+<table class="mini-table">
+<tr><td>Solar</td><td>low emissions, variable by time of day</td></tr>
+<tr><td>Wind</td><td>low emissions, variable by weather</td></tr>
+<tr><td>Battery</td><td>stores energy, limited capacity</td></tr>
+<tr><td>Fossil fuel</td><td>reliable backup, higher emissions</td></tr>
+</table>
+<span class="tag">Renewable energy</span><span class="tag">Electricity grid</span><span class="tag">Energy storage</span><span class="tag">Emissions</span><span class="tag">Trade-offs</span>
+</div>
+</section>
+
+<section class="below-grid">
+<div class="card text-card">
+<h2>Self-test</h2>
+<div class="quiz" id="quiz">
+<button data-answer="wrong">A grid with solar and wind never needs storage or backup.</button>
+<button data-answer="correct">A reliable low-emission grid usually needs a mix of generation, storage, demand management and backup.</button>
+<button data-answer="wrong">The cheapest option is always the best scientific solution.</button>
+</div>
+<div class="feedback" id="quizFeedback"></div>
+</div>
+<div class="card text-card">
+<h2>Teacher notes</h2>
+<ul>
+<li>Designed for Year 8 energy and sustainability discussions. Start in Student mode; use Advanced mode for extension students.</li>
+<li>The values are classroom model units, not real grid data.</li>
+<li>Suggested task: students run two different strategies, save each run for comparison, export CSV data, then write a CER response explaining the trade-offs.</li>
+<li>Extension: compare a high-renewable grid, a high-reliability fossil-backed grid, a storage-heavy grid and a low-cost grid.</li>
+</ul>
+</div>
+</section>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('gridCanvas'),ctx=canvas.getContext('2d');
+
+const controls={
+  learningMode:$('learningMode'),scenario:$('scenario'),gridFault:$('gridFault'),renewableBuild:$('renewableBuild'),studentBattery:$('studentBattery'),studentBackup:$('studentBackup'),solarCap:$('solarCap'),windCap:$('windCap'),batteryCap:$('batteryCap'),fossilCap:$('fossilCap'),gridDemand:$('gridDemand'),
+  studentStrategy:$('studentStrategy'),studentDemand:$('studentDemand'),batteryStrategy:$('batteryStrategy'),fossilPolicy:$('fossilPolicy'),demandResponse:$('demandResponse'),priceLimit:$('priceLimit'),interconnector:$('interconnector'),weatherVolatility:$('weatherVolatility'),decisionFocus:$('decisionFocus')
+};
+const out={
+  solarCapRead:$('solarCapRead'),windCapRead:$('windCapRead'),batteryCapRead:$('batteryCapRead'),fossilCapRead:$('fossilCapRead'),gridDemandRead:$('gridDemandRead'),
+  demandResponseRead:$('demandResponseRead'),interconnectorRead:$('interconnectorRead'),weatherVolatilityRead:$('weatherVolatilityRead'),faultRead:$('faultRead'),
+  timeStatus:$('timeStatus'),gridStatus:$('gridStatus'),batteryStatus:$('batteryStatus'),adviceStatus:$('adviceStatus'),
+  demandMetValue:$('demandMetValue'),solarValue:$('solarValue'),windValue:$('windValue'),batteryValue:$('batteryValue'),fossilValue:$('fossilValue'),emissionsValue:$('emissionsValue'),costValue:$('costValue'),renewableValue:$('renewableValue'),scoreValue:$('scoreValue'),
+  demandMetBar:$('demandMetBar'),solarBar:$('solarBar'),windBar:$('windBar'),batteryBar:$('batteryBar'),fossilBar:$('fossilBar'),emissionsBar:$('emissionsBar'),costBar:$('costBar'),renewableBar:$('renewableBar'),scoreBar:$('scoreBar'),
+  mixTotalLabel:$('mixTotalLabel'),mixSolar:$('mixSolar'),mixWind:$('mixWind'),mixBattery:$('mixBattery'),mixFossil:$('mixFossil'),mixImport:$('mixImport'),mixShortfall:$('mixShortfall'),warningPanel:$('warningPanel'),hourFeedback:$('hourFeedback'),scorecardStatus:$('scorecardStatus'),scoreReliability:$('scoreReliability'),scoreEmissions:$('scoreEmissions'),scoreCost:$('scoreCost'),scoreStorage:$('scoreStorage'),scoreRenewables:$('scoreRenewables'),scoreOverall:$('scoreOverall'),finalJudgement:$('finalJudgement'),comparisonTable:$('comparisonTable'),measurementNote:$('measurementNote'),challengeHint:$('challengeHint')
+};
+
+const state={
+  hour:0,batteryCharge:.50,auto:false,rngSeed:91273,data:[],history:[],
+  last:{demand:100,solar:0,wind:0,batteryFlow:0,fossil:0,imported:0,shortfall:0,curtailed:0,cost:.20,buildCost:.12,operatingCost:.08,emissions:.15,renewableShare:.50,demandMet:1,score:.55,weather:'Starting'},
+  stats:{totalDemand:0,totalMet:0,totalCost:0,totalEmissions:0,totalRenewable:0,totalBatteryStress:0,shortfallHours:0,curtailedEnergy:0},
+  hourFeedback:'Start by inspecting demand, weather and storage. Then advance the grid one hour.',
+  comparisons:[],periodStartHour:0,periodStartStats:null
+};
+
+const scenarioProfiles={
+  typical:{name:'Typical week',sun:1.08,wind:1.04,demand:.92,cloud:.18,vol:.38,note:'A typical week has mixed sun, variable wind and normal demand.'},
+  heatwave:{name:'Summer heatwave',sun:1.18,wind:.88,demand:1.08,cloud:.14,vol:.48,note:'Hot weather raises electricity demand, especially in the afternoon and evening.'},
+  cloudyCalm:{name:'Cloudy calm week',sun:.68,wind:.58,demand:1.00,cloud:.58,vol:.32,note:'Cloudy calm conditions reduce solar and wind output at the same time.'},
+  windy:{name:'Windy week',sun:.88,wind:1.38,demand:.96,cloud:.32,vol:.68,note:'Strong wind can produce surplus renewable electricity, but storage can still fill up.'},
+  winterEvening:{name:'Winter evening demand',sun:.72,wind:1.08,demand:1.04,cloud:.36,vol:.44,note:'Shorter daylight and evening demand make storage and backup more important.'}
+};
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rand(){state.rngSeed=(state.rngSeed*1664525+1013904223)>>>0;return state.rngSeed/4294967296}
+function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h)}
+function dayNumber(){return Math.floor(state.hour/24)+1}
+function hourOfDay(){return state.hour%24}
+function totalHours(){return Infinity}
+function rollingWeekHours(){return 168}
+function complete(){return false}
+function labelFor(v,goodHigh=true){
+  if(goodHigh){if(v>.82)return 'Strong';if(v>.65)return 'Stable';if(v>.45)return 'Vulnerable';return 'At risk'}
+  if(v<.16)return 'Low';if(v<.42)return 'Moderate';if(v<.70)return 'High';return 'Very high'
+}
+function values(){
+  const mode=controls.learningMode.value;
+  const profile=scenarioProfiles[controls.scenario.value];
+
+  let solarCap=+controls.solarCap.value;
+  let windCap=+controls.windCap.value;
+  let batteryCap=+controls.batteryCap.value;
+  let fossilCap=+controls.fossilCap.value;
+  let gridDemand=+controls.gridDemand.value;
+  let demandResponse=+controls.demandResponse.value;
+  let imported=+controls.interconnector.value;
+  let volatility=+controls.weatherVolatility.value;
+  let batteryStrategy=controls.batteryStrategy.value;
+  let fossilPolicy=controls.fossilPolicy.value;
+  let priceLimit=controls.priceLimit.value;
+  let focus=controls.decisionFocus.value;
+
+  if(mode==='simple'){
+    const renewableMap={
+      low:{solar:50,wind:44},
+      medium:{solar:82,wind:72},
+      high:{solar:112,wind:98}
+    }[controls.renewableBuild.value];
+    const batteryMap={low:38,medium:72,high:110}[controls.studentBattery.value];
+    const backupMap={low:32,medium:58,high:86}[controls.studentBackup.value];
+    const demandMap={none:0,some:14,strong:28}[controls.studentDemand.value];
+
+    solarCap=renewableMap.solar;
+    windCap=renewableMap.wind;
+    batteryCap=batteryMap;
+    fossilCap=backupMap;
+    gridDemand=100;
+    demandResponse=demandMap;
+    imported=0;
+    volatility=45;
+
+    focus=controls.studentStrategy.value==='balanced'?'reliable':controls.studentStrategy.value;
+    batteryStrategy=controls.studentStrategy.value==='reliable'?'emergency':controls.studentStrategy.value==='lowEmission'?'saveEvening':'balanced';
+    fossilPolicy=controls.studentStrategy.value==='reliable'?'highReliability':controls.studentStrategy.value==='lowEmission'?'low':'balanced';
+    priceLimit=controls.studentStrategy.value==='lowCost'?'high':'medium';
+  }
+
+  const fault=controls.gridFault.value;
+  if(fault==='solar')solarCap=0;
+  if(fault==='wind')windCap=0;
+  if(fault==='battery')batteryCap=0;
+  if(fault==='backup')fossilCap=0;
+  if(fault==='transmission'){
+    solarCap*=.82;
+    windCap*=.82;
+    imported=0;
+  }
+
+  return{mode,profile,solarCap,windCap,batteryCap,fossilCap,gridDemand,demandResponse,imported,volatility,batteryStrategy,fossilPolicy,priceLimit,focus,fault}
+}
+function weatherForHour(absHour){
+  const v=values(),h=absHour%24,day=Math.floor(absHour/24);
+  const dailyWave=Math.sin((day*1.7)+1.2)*.12;
+  const volatility=v.volatility/100;
+  const noise=(rand()-.5)*volatility*.55;
+  const cloudBase=v.profile.cloud+dailyWave+(Math.sin(absHour*.73)*.08)+noise;
+  const cloud=clamp(cloudBase,0,1);
+  const windPulse=.55+.30*Math.sin(absHour*.35+1.7)+.22*Math.sin(absHour*.91)+((rand()-.5)*volatility*.55);
+  const wind=clamp(windPulse*v.profile.wind,0.05,1.55);
+  const solarShape=Math.max(0,Math.sin((h-6)/12*Math.PI));
+  const solar=clamp(solarShape*v.profile.sun*(1-cloud*.72),0,1.25);
+  let event='Normal';
+  if(cloud>.65&&wind<.45)event='cloudy and calm';
+  else if(wind>1.12)event='windy period';
+  else if(solar>.82)event='strong solar';
+  else if(h>=17&&h<=21)event='evening demand peak';
+  return{cloud,wind,solar,event}
+}
+function demandForHour(absHour){
+  const v=values(),h=absHour%24;
+  let shape=.60;
+  shape += .14*Math.exp(-Math.pow((h-8)/3.0,2));
+  shape += .25*Math.exp(-Math.pow((h-18.5)/3.4,2));
+  if(controls.scenario.value==='heatwave')shape += .11*Math.exp(-Math.pow((h-15)/4,2));
+  if(controls.scenario.value==='winterEvening')shape += .13*Math.exp(-Math.pow((h-19)/3,2));
+  const dayVariation=1+Math.sin(Math.floor(absHour/24)*1.15)*.025;
+  const responseEffect=1-v.demandResponse/100*.72;
+  const studentScale=v.mode==='simple'?.86:1;
+  return 100*(v.gridDemand/100)*v.profile.demand*shape*dayVariation*responseEffect*studentScale;
+}
+function reset(){
+  const v=values();
+  state.hour=0;
+  state.batteryCharge=.50;
+  state.auto=false;
+  state.rngSeed=91273+Math.round(v.solarCap*13+v.windCap*17+v.batteryCap*19)+controls.scenario.value.length*131;
+  state.data=[];
+  state.history=[];
+  state.stats={totalDemand:0,totalMet:0,totalCost:0,totalEmissions:0,totalRenewable:0,totalBatteryStress:0,shortfallHours:0,curtailedEnergy:0};
+  state.periodStartHour=0;
+  state.periodStartStats={...state.stats};
+  state.last={demand:100,solar:0,wind:0,batteryFlow:0,fossil:0,imported:0,shortfall:0,curtailed:0,cost:.20,buildCost:.12,operatingCost:.08,emissions:.15,renewableShare:.50,demandMet:1,score:.55,weather:'Starting'};
+  state.hourFeedback='Start by inspecting demand, weather and storage. Then advance the grid one hour.';
+  $('autoBtn').textContent='▶ Auto-run hours';
+  logData('start');
+  updateReadouts();
+  draw();
+}
+function runHour(){
+  if(complete())return;
+  const v=values(),weather=weatherForHour(state.hour),demand=demandForHour(state.hour);
+  const solar=v.solarCap*weather.solar;
+  const wind=v.windCap*weather.wind;
+  const renewable=solar+wind;
+  const importPower=v.imported;
+  const maxStorage=v.batteryCap;
+  const maxChargeRate=Math.max(4,v.batteryCap*.32);
+  const maxDischargeRate=Math.max(4,v.batteryCap*.38);
+  let batteryEnergy=state.batteryCharge*maxStorage;
+  let supply=renewable+importPower;
+  let batteryFlow=0;
+  let fossil=0,shortfall=0,curtailed=0;
+  const h=hourOfDay();
+
+  const reserveTarget={
+    balanced:.32,
+    saveEvening:(h<16?.58:.28),
+    useEarly:.18,
+    emergency:.72
+  }[v.batteryStrategy];
+
+  const backupTrigger={
+    low:.88,
+    balanced:.96,
+    highReliability:1.02
+  }[v.fossilPolicy];
+
+  const surplus=supply-demand;
+  if(surplus>0 && maxStorage>0){
+    const space=Math.max(0,maxStorage-batteryEnergy);
+    const charge=Math.min(surplus,maxChargeRate,space);
+    batteryEnergy+=charge*.92;
+    batteryFlow=-charge;
+    curtailed=Math.max(0,surplus-charge);
+  }else if(supply<demand && maxStorage>0){
+    const needed=demand-supply;
+    const reserve=batteryEnergy-reserveTarget*maxStorage;
+    if(reserve>0){
+      const discharge=Math.min(needed,maxDischargeRate,reserve);
+      batteryEnergy-=discharge;
+      supply+=discharge*.92;
+      batteryFlow=discharge;
+    }
+  }
+
+  const remaining=demand-supply;
+  if(remaining>0){
+    const policyFactor=v.fossilPolicy==='low'?.72:v.fossilPolicy==='balanced'?.92:1.10;
+    const priceFactor=v.priceLimit==='high'?.74:v.priceLimit==='medium'?.92:1.05;
+    const fossilNeed=Math.max(0,demand*backupTrigger-supply);
+    fossil=Math.min(v.fossilCap,Math.max(remaining,fossilNeed)*policyFactor*priceFactor);
+    supply+=fossil;
+  }
+  shortfall=Math.max(0,demand-supply);
+
+  const met=clamp((demand-shortfall)/Math.max(1,demand),0,1);
+  const renewableUsed=Math.min(demand,renewable+Math.max(0,batteryFlow));
+  const renewableShare=clamp(renewableUsed/Math.max(1,demand-shortfall),0,1);
+  const emissions=clamp((fossil*.72+importPower*.28)/Math.max(1,demand),0,1.2);
+  // Student-facing cost is a blended pressure score.
+  // Clean renewable supply can be low cost, but fossil generation and shortfalls should be visible.
+  const renewableBuildCost=(v.solarCap*.00024+v.windCap*.00028);
+  const storageBuildCost=v.batteryCap*.00038;
+  const firmCapacityCost=(v.fossilCap*.00024+v.imported*.00038);
+  const buildCost=clamp(renewableBuildCost+storageBuildCost+firmCapacityCost,0,.42);
+  const fossilOperatingCost=fossil*.0058;
+  const importOperatingCost=importPower*.0052;
+  const batteryOperatingCost=Math.max(0,batteryFlow)*.00105+Math.max(0,-batteryFlow)*.00055;
+  const curtailmentCost=curtailed*.00115;
+  const demandResponseCost=v.demandResponse*.00125;
+  const operatingCost=clamp(fossilOperatingCost+importOperatingCost+batteryOperatingCost+curtailmentCost+demandResponseCost,0,.58);
+  const shortageCost=shortfall>0?clamp(shortfall/demand*.58,0,.42):0;
+  const cost=clamp(buildCost*.34+operatingCost+shortageCost,0,1);
+  const batteryStress=maxStorage?Math.abs(batteryFlow)/Math.max(1,maxStorage):0;
+  const score=clamp(met*.35+(1-emissions)*.24+(1-cost)*.16+renewableShare*.15+(1-batteryStress)*.10,0,1);
+
+  const oldBattery=state.batteryCharge;
+  state.batteryCharge=maxStorage>0?clamp(batteryEnergy/maxStorage,0,1):0;
+
+  state.stats.totalDemand+=demand;
+  state.stats.totalMet+=demand-shortfall;
+  state.stats.totalCost+=cost;
+  state.stats.totalEmissions+=emissions;
+  state.stats.totalRenewable+=renewableShare;
+  state.stats.totalBatteryStress+=batteryStress;
+  state.stats.curtailedEnergy+=curtailed;
+  if(shortfall>0.5)state.stats.shortfallHours++;
+
+  state.last={demand,solar,wind,batteryFlow,fossil,imported:importPower,shortfall,curtailed,cost,buildCost,operatingCost,emissions,renewableShare,demandMet:met,score,weather:weather.event};
+  state.history.push({hour:state.hour,demand,solar,wind,battery:state.batteryCharge,batteryFlow,fossil,met,emissions,cost,renewableShare,shortfall,gridFault:v.fault});
+  state.hourFeedback=buildFeedback(oldBattery,v,weather);
+  logData('hour advanced');
+  state.hour++;
+  
+  updateReadouts();
+  draw();
+}
+function buildFeedback(oldBattery,v,weather){
+  const l=state.last,lines=[];
+  if(l.shortfall>1)lines.push('Demand was not fully met. Reliability fell because available supply, storage or backup was too low.');
+  else lines.push('Demand was met this hour.');
+  if(l.solar+l.wind>l.demand && l.curtailed>2)lines.push('Renewable energy was curtailed because supply exceeded demand and storage was limited or full.');
+  if(l.batteryFlow>0)lines.push('The battery discharged to cover a supply gap.');
+  if(l.batteryFlow<0)lines.push('The battery charged using surplus electricity.');
+  if(l.fossil>0 && l.shortfall<1)lines.push('Fossil backup improved reliability, but increased emissions and cost.');
+  if(l.fossil<1 && l.emissions<.18)lines.push('Emissions stayed low, but reliability depends on weather and storage.');
+  if(weather.event==='cloudy and calm')lines.push('Cloudy calm weather reduced both solar and wind output.');
+  if(v.demandResponse>22)lines.push('Strong demand response lowered demand, but may be difficult to maintain in a real community.');
+  if(state.batteryCharge<.18)lines.push('Battery storage is low; the next demand peak could be risky.');
+  if(state.batteryCharge>.88)lines.push('Battery storage is high; extra renewable generation may be wasted if demand is low.');
+  return lines.join(' ');
+}
+function runHours(count){
+  state.auto=false;$('autoBtn').textContent='▶ Auto-run hours';
+  for(let i=0;i<count;i++)runHour();
+}
+function scorecard(){
+  const recent=state.history.slice(-rollingWeekHours());
+  const hrs=Math.max(1,recent.length);
+  const totals=recent.reduce((acc,p)=>{
+    acc.demand+=p.demand||0;
+    acc.met+=(p.demand||0)-(p.shortfall||0);
+    acc.emissions+=p.emissions||0;
+    acc.cost+=p.cost||0;
+    acc.renew+=p.renewableShare||0;
+    acc.storage+=Math.abs(p.batteryFlow||0)/Math.max(1,values().batteryCap||1);
+    return acc;
+  },{demand:0,met:0,emissions:0,cost:0,renew:0,storage:0});
+  const reliability=clamp(totals.met/Math.max(1,totals.demand),0,1);
+  const emissions=clamp(1-totals.emissions/hrs,0,1);
+  const cost=clamp(1-totals.cost/hrs,0,1);
+  const storage=clamp(1-totals.storage/hrs,0,1);
+  const renew=clamp(totals.renew/hrs,0,1);
+  const overall=clamp(reliability*.34+emissions*.22+cost*.16+storage*.10+renew*.18,0,1);
+  return{reliability,emissions,cost,storage,renew,overall,hrs}
+}
+function scoreLabel(x){
+  if(x>.82)return 'Strong';
+  if(x>.65)return 'Stable';
+  if(x>.45)return 'Vulnerable';
+  return 'At risk';
+}
+function finalJudgement(){
+  const card=scorecard();
+  const recent=state.history.slice(-rollingWeekHours());
+  const hrs=Math.max(1,recent.length);
+  const shortfallRate=recent.filter(p=>(p.shortfall||0)>0.5).length/hrs;
+  const avgEmissions=recent.reduce((s,p)=>s+(p.emissions||0),0)/hrs;
+  const avgCost=recent.reduce((s,p)=>s+(p.cost||0),0)/hrs;
+  const avgRenew=recent.reduce((s,p)=>s+(p.renewableShare||0),0)/hrs;
+  let headline='Current grid summary.';
+  let detail='The judgement uses the most recent running period, so students can change settings and compare strategies within the same trial.';
+  if(card.reliability>.96&&avgEmissions<.38&&avgCost<.42){
+    headline='Balanced grid: reliable, lower-emission and cost controlled.';
+    detail='The current strategy is meeting demand with a workable mix of renewables, storage and backup.';
+  }else if(card.reliability>.96&&avgEmissions>=.48){
+    headline='Reliable grid, but emissions are high.';
+    detail='Backup is helping reliability, but the current strategy trades environmental performance for security.';
+  }else if(card.reliability<.92&&avgEmissions<.35){
+    headline='Low-emission strategy, but reliability is vulnerable.';
+    detail='The grid is avoiding fossil generation, but weather or demand peaks are exposing storage and backup limits.';
+  }else if(avgCost>=.70&&card.reliability>.95){
+    headline='Reliable grid, but cost pressure is high.';
+    detail='The current mix is keeping supply secure but relies on costly capacity, backup, imports, curtailment or demand response.';
+  }else if(avgRenew>.72&&state.stats.curtailedEnergy>45){
+    headline='High-renewable grid with wasted surplus.';
+    detail='Renewable generation is strong, but storage or flexible demand is not enough to use all available energy.';
+  }else if(shortfallRate>.10){
+    headline='Grid stress: too many hours have supply shortfalls.';
+    detail='The system needs more storage, backup, demand response or firmer renewable output to protect reliability.';
+  }else{
+    headline='Mixed grid outcome: some goals are met, but trade-offs remain.';
+    detail='Use the scorecard and comparison periods to identify whether reliability, emissions, cost or storage is the main limit.';
+  }
+  if(values().fault!=='none')detail+=` Grid removal active: ${out.faultRead.textContent}.`;
+  return `<strong>${headline}</strong><br>${detail}`;
+}
+function runLabel(){
+  const focus=controls.decisionFocus.options[controls.decisionFocus.selectedIndex].text;
+  const scenario=scenarioProfiles[controls.scenario.value].name;
+  return `${focus} — ${scenario}`;
+}
+function periodStats(){
+  const start=state.periodStartHour||0;
+  const rows=state.history.filter(p=>p.hour>=start);
+  const hrs=Math.max(1,rows.length);
+  const totals=rows.reduce((acc,p)=>{
+    acc.demand+=p.demand||0;
+    acc.met+=(p.demand||0)-(p.shortfall||0);
+    acc.emissions+=p.emissions||0;
+    acc.cost+=p.cost||0;
+    acc.renew+=p.renewableShare||0;
+    acc.shortfallHours+=(p.shortfall||0)>0.5?1:0;
+    return acc;
+  },{demand:0,met:0,emissions:0,cost:0,renew:0,shortfallHours:0});
+  return{
+    hrs,
+    reliability:clamp(totals.met/Math.max(1,totals.demand),0,1),
+    emissions:clamp(1-totals.emissions/hrs,0,1),
+    cost:clamp(1-totals.cost/hrs,0,1),
+    renew:clamp(totals.renew/hrs,0,1),
+    shortfallHours:totals.shortfallHours
+  };
+}
+function saveRunForComparison(){
+  const stats=periodStats();
+  const saved={
+    label:runLabel(),
+    startHour:state.periodStartHour,
+    endHour:state.hour,
+    hours:stats.hrs,
+    gridFault:values().fault,
+    reliability:stats.reliability,
+    emissions:stats.emissions,
+    cost:stats.cost,
+    renew:stats.renew,
+    overall:clamp(stats.reliability*.36+stats.emissions*.24+stats.cost*.18+stats.renew*.22,0,1),
+    shortfallHours:stats.shortfallHours
+  };
+  state.comparisons.push(saved);
+  if(state.comparisons.length>6)state.comparisons.shift();
+  state.periodStartHour=state.hour;
+  updateComparisonTable();
+}
+function clearComparisons(){
+  state.comparisons=[];
+  state.periodStartHour=state.hour;
+  updateComparisonTable();
+}
+function updateComparisonTable(){
+  if(!out.comparisonTable)return;
+  if(!state.comparisons.length){
+    out.comparisonTable.innerHTML='<tr><td>No saved runs yet</td><td>Run a strategy for a while, then save that period.</td></tr>';
+    return;
+  }
+  out.comparisonTable.innerHTML=state.comparisons.map((run,i)=>{
+    const status=`h ${run.startHour}–${run.endHour} (${run.hours} h)`;
+    const fault=run.gridFault&&run.gridFault!=='none'?` | removed: ${run.gridFault}`:'';
+    return `<tr><td>${i+1}. ${run.label}<br><span style="color:#557184;font-size:.78rem;">${status}${fault} | ${scoreLabel(run.overall)}</span></td><td>rel ${Math.round(run.reliability*100)}%<br>em ${scoreLabel(run.emissions)} | cost ${scoreLabel(run.cost)}<br>renew ${Math.round(run.renew*100)}%</td></tr>`;
+  }).join('');
+}
+function updateReadouts(){
+  const v=values(),l=state.last,card=scorecard();
+  document.body.classList.toggle('simple-mode',v.mode==='simple');document.body.classList.toggle('advanced-mode',v.mode==='advanced');
+  out.solarCapRead.textContent=v.solarCap.toFixed(0);out.windCapRead.textContent=v.windCap.toFixed(0);out.batteryCapRead.textContent=v.batteryCap.toFixed(0);out.fossilCapRead.textContent=v.fossilCap.toFixed(0);out.gridDemandRead.textContent=v.gridDemand.toFixed(0);
+  out.demandResponseRead.textContent=v.demandResponse.toFixed(0);out.interconnectorRead.textContent=v.imported.toFixed(0);out.weatherVolatilityRead.textContent=v.volatility.toFixed(0);
+  out.faultRead.textContent={
+    none:'No grid section removed',
+    solar:'Solar generation removed',
+    wind:'Wind generation removed',
+    battery:'Battery storage removed',
+    backup:'Fossil backup removed',
+    transmission:'Transmission loss: renewables reduced, imports removed'
+  }[v.fault];
+  out.timeStatus.textContent=`Day ${dayNumber()}, ${String(hourOfDay()).padStart(2,'0')}:00`;
+  out.gridStatus.textContent=l.shortfall>1?'Shortfall':l.curtailed>5?'Surplus':l.emissions>.55?'High emissions':'Balanced';
+  out.batteryStatus.textContent=v.batteryCap<=0?'offline':`${Math.round(state.batteryCharge*100)}%`;
+  out.adviceStatus.textContent=l.shortfall>1?'Increase supply/storage':state.batteryCharge<.18?'Protect storage':l.emissions>.55?'Reduce fossil use':l.curtailed>6?'Use/store surplus':'Maintain balance';
+  out.demandMetValue.textContent=`${Math.round(l.demandMet*100)}%`;
+  out.solarValue.textContent=`${Math.round(l.solar)} MW`;out.windValue.textContent=`${Math.round(l.wind)} MW`;out.batteryValue.textContent=v.batteryCap<=0?'offline':`${Math.round(state.batteryCharge*100)}%`;out.fossilValue.textContent=`${Math.round(l.fossil)} MW`;
+  out.emissionsValue.textContent=labelFor(l.emissions,false);out.costValue.textContent=labelFor(l.cost,false);out.renewableValue.textContent=`${Math.round(l.renewableShare*100)}%`;out.scoreValue.textContent=scoreLabel(card.overall);
+  const demandPct=clamp(l.demandMet*100,4,100),solarPct=clamp(l.solar/130*100,4,100),windPct=clamp(l.wind/130*100,4,100),fossilPct=clamp(l.fossil/100*100,2,100);
+  out.demandMetBar.style.width=`${demandPct}%`;out.solarBar.style.width=`${solarPct}%`;out.windBar.style.width=`${windPct}%`;out.batteryBar.style.width=`${clamp(state.batteryCharge*100,4,100)}%`;out.fossilBar.style.width=`${fossilPct}%`;out.emissionsBar.style.width=`${clamp(l.emissions*100,3,100)}%`;out.costBar.style.width=`${clamp(l.cost*100,3,100)}%`;out.renewableBar.style.width=`${clamp(l.renewableShare*100,4,100)}%`;out.scoreBar.style.width=`${clamp(card.overall*100,4,100)}%`;
+  const good='linear-gradient(90deg,#58b7e8,#1f9d63)',warn='linear-gradient(90deg,#f0c85a,#e89b20)',bad='linear-gradient(90deg,#f09a9a,#d64545)';
+  out.demandMetBar.style.background=l.demandMet<.95?bad:good;out.batteryBar.style.background=state.batteryCharge<.18?bad:state.batteryCharge>.90?warn:good;out.fossilBar.style.background=l.fossil>35?warn:good;out.emissionsBar.style.background=l.emissions>.55?bad:l.emissions>.32?warn:good;out.costBar.style.background=l.cost>.70?bad:l.cost>.42?warn:good;out.scoreBar.style.background=card.overall<.50?bad:card.overall<.70?warn:good;
+  const metSupply=Math.max(0,l.demand-l.shortfall);
+  const mixScale=Math.max(1,l.demand);
+  const solarPart=Math.min(l.solar,metSupply);
+  const windPart=Math.min(l.wind,Math.max(0,metSupply-solarPart));
+  const batteryPart=Math.max(0,Math.min(l.batteryFlow,Math.max(0,metSupply-solarPart-windPart)));
+  const fossilPart=Math.min(l.fossil,Math.max(0,metSupply-solarPart-windPart-batteryPart));
+  const importPart=Math.min(l.imported,Math.max(0,metSupply-solarPart-windPart-batteryPart-fossilPart));
+  const shortfallPart=Math.max(0,l.shortfall);
+  out.mixSolar.style.width=`${clamp(solarPart/mixScale*100,0,100)}%`;
+  out.mixWind.style.width=`${clamp(windPart/mixScale*100,0,100)}%`;
+  out.mixBattery.style.width=`${clamp(batteryPart/mixScale*100,0,100)}%`;
+  out.mixFossil.style.width=`${clamp(fossilPart/mixScale*100,0,100)}%`;
+  out.mixImport.style.width=`${clamp(importPart/mixScale*100,0,100)}%`;
+  out.mixShortfall.style.width=`${clamp(shortfallPart/mixScale*100,0,100)}%`;
+  out.mixTotalLabel.textContent=`${Math.round(metSupply)} / ${Math.round(l.demand)} MW`;
+  out.warningPanel.style.display=l.shortfall>1?'block':'none';
+  out.hourFeedback.innerHTML=`<strong>Hourly feedback</strong>${state.hourFeedback}`;
+  out.scorecardStatus.textContent=`Rolling ${card.hrs} h`;
+  out.scoreReliability.textContent=scoreLabel(card.reliability);out.scoreEmissions.textContent=scoreLabel(card.emissions);out.scoreCost.textContent=scoreLabel(card.cost);out.scoreStorage.textContent=scoreLabel(card.storage);out.scoreRenewables.textContent=scoreLabel(card.renew);out.scoreOverall.textContent=scoreLabel(card.overall);out.finalJudgement.innerHTML=finalJudgement();updateComparisonTable();
+  out.measurementNote.textContent=`${v.profile.note} Current weather: ${l.weather}. Cost pressure combines build cost and hourly operating pressure. A clean renewable hour should usually show low or moderate cost. Fossil generation, imports, shortfalls and wasted surplus should push cost upward.`;
+  out.challengeHint.textContent=complete()?'Week complete. Export the CSV or reset to test a different grid mix.':'Inspect demand, weather, storage and trade-offs before advancing time.';
+}
+function resize(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
+function label(text,x,y,align='center'){
+  ctx.save();ctx.font='850 12px system-ui';ctx.textAlign=align;ctx.textBaseline='middle';const w=ctx.measureText(text).width+16,h=24;let l=x-w/2;if(align==='left')l=x;if(align==='right')l=x-w;ctx.fillStyle='rgba(6,19,34,.72)';ctx.strokeStyle='rgba(180,225,250,.35)';rr(l,y-h/2,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(230,246,255,.96)';ctx.fillText(text,x,y);ctx.restore()
+}
+function bg(w,h){
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#061322');g.addColorStop(1,'#0c253e');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<70;i++){ctx.beginPath();ctx.arc((i*83)%w,(i*59)%h,((i*19)%3+1)/2.5,0,Math.PI*2);ctx.fill()}
+}
+function drawGrid(left,top,w,h){
+  const l=state.last,v=values();
+  ctx.save();
+  ctx.fillStyle='rgba(25,55,76,.92)';rr(left,top,w,h,24);ctx.fill();
+  ctx.strokeStyle='rgba(220,245,255,.18)';ctx.lineWidth=2;
+  for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(left+w*i/4,top+16);ctx.lineTo(left+w*i/4,top+h-16);ctx.stroke();ctx.beginPath();ctx.moveTo(left+16,top+h*i/4);ctx.lineTo(left+w-16,top+h*i/4);ctx.stroke()}
+  // city
+  const cityX=left+w*.72,cityY=top+h*.55;
+  ctx.fillStyle='rgba(190,210,225,.95)';
+  for(let i=0;i<7;i++){const bh=34+(i%4)*18;rr(cityX-70+i*22,cityY+42-bh,16,bh,3);ctx.fill()}
+  label(`demand ${Math.round(l.demand)} MW`,cityX,cityY+70);
+  // solar panels
+  const solarX=left+w*.18,solarY=top+h*.34;
+  ctx.fillStyle='rgba(35,105,150,.95)';ctx.strokeStyle='rgba(170,230,255,.75)';
+  for(let r=0;r<3;r++)for(let c=0;c<4;c++){ctx.save();ctx.translate(solarX+c*30,solarY+r*18);ctx.rotate(-0.18);rr(-12,-6,24,12,2);ctx.fill();ctx.stroke();ctx.restore()}
+  ctx.fillStyle='rgba(255,224,80,.96)';ctx.beginPath();ctx.arc(solarX-40,solarY-44,18,0,Math.PI*2);ctx.fill();
+  label(`solar ${Math.round(l.solar)} MW`,solarX+30,solarY+76);
+  // wind turbines
+  const windX=left+w*.20,windY=top+h*.72;
+  ctx.strokeStyle='rgba(230,245,255,.95)';ctx.lineWidth=3;
+  for(let i=0;i<3;i++){const x=windX+i*48,y=windY-(i%2)*10;ctx.beginPath();ctx.moveTo(x,y+45);ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.stroke();for(let a=0;a<3;a++){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a*2.09+state.hour*.2)*24,y+Math.sin(a*2.09+state.hour*.2)*24);ctx.stroke()}}
+  label(`wind ${Math.round(l.wind)} MW`,windX+48,windY+70);
+  // battery
+  const batX=left+w*.49,batY=top+h*.66,batW=92,batH=46;
+  ctx.strokeStyle='rgba(160,240,180,.9)';ctx.lineWidth=3;rr(batX-batW/2,batY-batH/2,batW,batH,9);ctx.stroke();
+  ctx.fillStyle='rgba(60,210,115,.85)';rr(batX-batW/2+5,batY-batH/2+5,(batW-10)*state.batteryCharge,batH-10,6);ctx.fill();
+  label(`battery ${Math.round(state.batteryCharge*100)}%`,batX,batY+48);
+  // fossil
+  const fx=left+w*.49,fy=top+h*.28;
+  ctx.fillStyle='rgba(120,120,130,.95)';rr(fx-38,fy-28,76,56,8);ctx.fill();
+  ctx.fillStyle='rgba(205,215,225,.95)';rr(fx+34,fy-52,18,80,5);ctx.fill();
+  if(l.fossil>1){ctx.fillStyle='rgba(230,230,230,.28)';for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(fx+46+i*8,fy-62-i*5,8+i*2,0,Math.PI*2);ctx.fill()}}
+  label(`backup ${Math.round(l.fossil)} MW`,fx,fy+55);
+  // grid lines
+  const nodes=[[solarX+30,solarY+35],[windX+48,windY+20],[fx,fy+28],[batX,batY-25],[cityX,cityY]];
+  ctx.strokeStyle='rgba(100,205,255,.55)';ctx.lineWidth=3;
+  nodes.slice(0,4).forEach(n=>{ctx.beginPath();ctx.moveTo(n[0],n[1]);ctx.lineTo(cityX,cityY);ctx.stroke()});
+  // power particles
+  const flow=(state.hour%12)/12;
+  ctx.fillStyle='rgba(255,245,140,.9)';
+  nodes.slice(0,4).forEach((n,i)=>{const t=(flow+i*.21)%1,x=n[0]+(cityX-n[0])*t,y=n[1]+(cityY-n[1])*t;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill()});
+  if(l.shortfall>1){ctx.fillStyle='rgba(220,50,50,.86)';rr(cityX-76,cityY-96,150,36,12);ctx.fill();ctx.fillStyle='white';ctx.font='950 14px system-ui';ctx.textAlign='center';ctx.fillText('SHORTFALL',cityX,cityY-73)}
+  else if(l.curtailed>6){ctx.fillStyle='rgba(232,155,32,.9)';rr(solarX-54,solarY-86,178,34,12);ctx.fill();ctx.fillStyle='white';ctx.font='950 13px system-ui';ctx.textAlign='center';ctx.fillText('SURPLUS CURTAILED',solarX+36,solarY-64)}
+  label(`${scenarioProfiles[controls.scenario.value].name}: ${l.weather}`,left+w/2,top+22);
+  if(v.fault!=='none')label(`removed: ${v.fault}`,left+w/2,top+52);
+  ctx.restore();
+}
+function drawGraph(left,top,w,h){
+  ctx.save();ctx.fillStyle='rgba(8,30,48,.72)';ctx.strokeStyle='rgba(180,225,250,.28)';rr(left,top,w,h,18);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(235,248,255,.96)';ctx.font='850 14px system-ui';ctx.textAlign='left';ctx.fillText('Supply and demand history',left+16,top+26);
+  ctx.font='800 10px system-ui';ctx.fillStyle='rgba(255,255,255,.88)';ctx.fillText('demand',left+16,top+43);ctx.fillStyle='rgba(255,222,90,.95)';ctx.fillText('solar+wind',left+72,top+43);ctx.fillStyle='rgba(120,220,145,.95)';ctx.fillText('demand met',left+154,top+43);
+  const gx=left+42,gy=top+h-30,gw=w-66,gh=h-84;
+  ctx.strokeStyle='rgba(180,225,250,.28)';for(let i=0;i<=4;i++){const y=gy-i/4*gh;ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx+gw,y);ctx.stroke()}
+  const hist=state.history.length?state.history.slice(-rollingWeekHours()):[{hour:state.hour,demand:state.last.demand,solar:state.last.solar,wind:state.last.wind,met:state.last.demandMet}];
+  const startHour=hist.length?hist[0].hour:state.hour;
+  function tr(fn,col,norm){
+    ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.beginPath();
+    hist.forEach((p,i)=>{
+      const x=gx+clamp(((p.hour||0)-startHour)/Math.max(1,rollingWeekHours()-1),0,1)*gw;
+      const y=gy-clamp(norm(fn(p)),0,1)*gh;
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    if(hist.length===1){const p=hist[0];const y=gy-clamp(norm(fn(p)),0,1)*gh;ctx.lineTo(gx+8,y)}
+    ctx.stroke()
+  }
+  tr(p=>p.demand,'rgba(255,255,255,.88)',v=>v/150);
+  tr(p=>p.solar+p.wind,'rgba(255,222,90,.95)',v=>v/150);
+  tr(p=>p.met,'rgba(120,220,145,.95)',v=>v);
+  ctx.fillStyle='rgba(220,240,250,.75)';ctx.font='800 10px system-ui';ctx.textAlign='right';ctx.fillText(`rolling ${Math.min(state.history.length,rollingWeekHours())} h`,gx+gw,top+64);
+  ctx.restore();
+}
+function draw(){
+  const r=canvas.getBoundingClientRect(),w=r.width,h=r.height;
+  ctx.clearRect(0,0,w,h);bg(w,h);drawGrid(18,20,w*.61,h-44);drawGraph(w*.64,42,w*.33,h*.43);
+  const l=state.last,time=`Day ${dayNumber()}, ${String(hourOfDay()).padStart(2,'0')}:00`;
+  ctx.save();ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='800 13px system-ui';ctx.textAlign='left';
+  ctx.fillText(`${time} | demand ${Math.round(l.demand)} MW | met ${Math.round(l.demandMet*100)}% | battery ${Math.round(state.batteryCharge*100)}% | emissions ${Math.round(l.emissions*100)}%`,22,h-14);ctx.restore();
+}
+function logData(action){
+  const l=state.last,v=values(),card=scorecard();
+  state.data.push({
+    hour:state.hour,day:dayNumber(),hour_of_day:hourOfDay(),comparison_period_start_hour:state.periodStartHour,action,scenario:v.profile.name,grid_fault:v.fault,
+    solar_capacity_percent:v.solarCap,wind_capacity_percent:v.windCap,battery_capacity_percent:v.batteryCap,fossil_backup_percent:v.fossilCap,
+    battery_strategy:v.batteryStrategy,fossil_policy:v.fossilPolicy,demand_response_percent:v.demandResponse,
+    demand_mw:l.demand.toFixed(1),solar_mw:l.solar.toFixed(1),wind_mw:l.wind.toFixed(1),battery_flow_mw:l.batteryFlow.toFixed(1),battery_charge_percent:(state.batteryCharge*100).toFixed(1),
+    fossil_generation_mw:l.fossil.toFixed(1),imported_power_mw:l.imported.toFixed(1),shortfall_mw:l.shortfall.toFixed(1),curtailed_mw:l.curtailed.toFixed(1),
+    demand_met_percent:(l.demandMet*100).toFixed(1),renewable_share_percent:(l.renewableShare*100).toFixed(1),emissions_intensity_percent:(l.emissions*100).toFixed(1),cost_pressure_percent:(l.cost*100).toFixed(1),build_cost_percent:(l.buildCost*100).toFixed(1),operating_cost_percent:(l.operatingCost*100).toFixed(1),shortfall_cost_warning:l.shortfall>0?'yes':'no',fossil_cost_warning:l.fossil>0?'yes':'no',
+    weekly_reliability_percent:(card.reliability*100).toFixed(1),weekly_emissions_score:scoreLabel(card.emissions),weekly_cost_score:scoreLabel(card.cost),overall_grid_balance:scoreLabel(card.overall),final_judgement:finalJudgement().replace(/<[^>]*>/g,' '),saved_comparison_runs:state.comparisons.length,feedback:state.hourFeedback
+  });
+}
+function csv(){
+  if(!state.data.length)logData('export');
+  const heads=Object.keys(state.data[0]);
+  const rows=state.data.map(row=>heads.map(h=>String(row[h]).replaceAll(',',';')).join(','));
+  const blob=new Blob([[heads.join(','),...rows].join('\n')],{type:'text/csv'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='renewable_energy_grid_simulation_data.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function cloudChallenge(){controls.scenario.value='cloudyCalm';controls.renewableBuild.value='medium';controls.studentBattery.value='medium';controls.studentBackup.value='low';controls.studentStrategy.value='lowEmission';controls.studentDemand.value='some';controls.solarCap.value=60;controls.windCap.value=56;controls.batteryCap.value=34;controls.fossilCap.value=32;controls.demandResponse.value=8;controls.batteryStrategy.value='balanced';controls.fossilPolicy.value='low';reset()}
+function balancedPreset(){controls.scenario.value='typical';controls.renewableBuild.value='medium';controls.studentBattery.value='medium';controls.studentBackup.value='medium';controls.studentStrategy.value='balanced';controls.studentDemand.value='some';controls.solarCap.value=82;controls.windCap.value=72;controls.batteryCap.value=72;controls.fossilCap.value=58;controls.demandResponse.value=14;controls.batteryStrategy.value='balanced';controls.fossilPolicy.value='balanced';reset()}
+
+$('nextHourBtn').addEventListener('click',runHour);
+$('nextDayBtn').addEventListener('click',()=>runHours(24));
+$('runWeekBtn').addEventListener('click',()=>runHours(rollingWeekHours()));
+$('autoBtn').addEventListener('click',()=>{state.auto=!state.auto;$('autoBtn').textContent=state.auto?'⏸ Pause auto-run':'▶ Auto-run hours'});
+$('resetBtn').addEventListener('click',reset);
+$('cloudBtn').addEventListener('click',cloudChallenge);
+$('balancedBtn').addEventListener('click',balancedPreset);
+$('saveRunBtn').addEventListener('click',saveRunForComparison);
+$('clearRunsBtn').addEventListener('click',clearComparisons);
+$('csvBtn').addEventListener('click',csv);
+
+[controls.learningMode,controls.scenario,controls.renewableBuild,controls.studentBattery,controls.studentBackup,controls.solarCap,controls.windCap,controls.batteryCap,controls.fossilCap,controls.gridDemand].forEach(c=>{c.addEventListener('input',reset);c.addEventListener('change',reset)});
+[controls.gridFault,controls.studentStrategy,controls.studentDemand,controls.batteryStrategy,controls.fossilPolicy,controls.demandResponse,controls.priceLimit,controls.interconnector,controls.weatherVolatility,controls.decisionFocus].forEach(c=>{c.addEventListener('input',()=>{updateReadouts();draw()});c.addEventListener('change',()=>{updateReadouts();draw()})});
+document.querySelectorAll('#quiz button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#quiz button').forEach(x=>x.classList.remove('correct','incorrect'));
+  if(b.dataset.answer==='correct'){b.classList.add('correct');$('quizFeedback').textContent='Correct. Reliable low-emission grids usually need a mix of sources, storage and demand management.'}
+  else{b.classList.add('incorrect');$('quizFeedback').textContent='Not quite. Energy decisions involve trade-offs between reliability, cost, emissions and storage limits.'}
+}));
+function anim(){if(state.auto){if(!state.lastAuto||performance.now()-state.lastAuto>450){runHour();state.lastAuto=performance.now()}}updateReadouts();draw();requestAnimationFrame(anim)}
+window.addEventListener('resize',resize);
+reset();resize();anim();
+</script>
+</body>
+</html>
