@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Water Management Simulator</title>
+<style>
+:root{--bg:#eef7fb;--card:#fff;--ink:#123143;--muted:#557184;--blue:#1d7ed0;--line:#c9dfec;--shadow:0 10px 25px rgba(12,54,82,.12);--radius:22px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eaf6fb,#f6fbfe);color:var(--ink)}.page{width:min(1240px,calc(100% - 28px));margin:auto;padding:18px 0 36px}.back-btn{display:inline-flex;background:#dff1fa;color:#0c4d73;padding:10px 16px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(12,54,82,.08);margin-bottom:14px}.hero{border-radius:28px;padding:24px 28px;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),linear-gradient(135deg,#0e4f78,#1e91d6 52%,#59c2eb);box-shadow:var(--shadow)}.hero h1{margin:0;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-.04em;line-height:1}.hero p{max-width:990px;margin:10px 0 0;font-size:1.03rem;line-height:1.5;color:rgba(255,255,255,.92)}
+.top-controls{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}.control-section-title{font-weight:950;color:#0f3d5c;margin:2px 0 9px}.control-grid{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:10px;align-items:end;margin-bottom:13px}.management-grid{display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:10px;align-items:end}body.simple-mode .advanced-only{display:none!important}body.simple-mode .control-grid{grid-template-columns:repeat(5,minmax(115px,1fr))}body.simple-mode .management-grid{grid-template-columns:repeat(5,minmax(115px,1fr))}label{display:block;font-size:.8rem;color:var(--muted);font-weight:850;margin-bottom:5px}select,input[type=range]{width:100%}select{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#f8fcff;color:var(--ink);font-weight:750}input[type=range]{accent-color:var(--blue)}.readout{margin-top:3px;font-size:.82rem;font-weight:850;color:#0f3d5c}.button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:none;border-radius:14px;padding:10px 13px;font-weight:900;cursor:pointer;background:#e2f1f8;color:#0d4a6e;transition:.15s ease}button:hover{transform:translateY(-1px);filter:brightness(.98)}.primary{background:linear-gradient(135deg,#107bd1,#56b5e8);color:#fff}.danger{background:linear-gradient(135deg,#d64545,#ef7e63);color:#fff}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,.76fr);gap:16px;margin-top:16px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card-header{padding:14px 16px;border-bottom:1px solid var(--line);background:#f6fbfe}.card-header h2{margin:0;font-size:1.08rem}.card-header p{margin:4px 0 0;color:var(--muted);font-size:.9rem;line-height:1.35}.canvas-wrap{padding:10px}canvas{display:block;width:100%;height:540px;border-radius:18px;background:#071625;border:1px solid #15364f}
+.status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;border-top:1px solid var(--line);background:#fbfdff}.status{border-radius:15px;padding:10px;background:#eef7fb;border:1px solid var(--line)}.status b{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px}.status span{font-size:1.02rem;font-weight:950;color:#0f3d5c}.metric-list{padding:12px;display:grid;gap:9px}.metric{padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.metric-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}.metric-name{font-weight:900;color:#0f3d5c;font-size:.91rem}.metric-value{font-weight:950;color:var(--blue);font-size:.91rem;white-space:nowrap}.bar{height:9px;border-radius:999px;background:#d9eaf3;overflow:hidden}.bar-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#58b7e8,#1f9d63)}.small-note{color:var(--muted);font-size:.84rem;line-height:1.42;padding:0 12px 12px}.below-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.text-card{padding:16px}.text-card h2{margin:0 0 9px;font-size:1.1rem}.text-card p,.text-card li{color:#24485c;line-height:1.5;font-size:.94rem}.text-card ul{margin:8px 0 0;padding-left:20px}.challenge{margin-top:12px;padding:11px;border-radius:15px;background:#f3f9fd;border:1px solid var(--line)}.challenge strong{color:#0f3d5c}.quiz{display:grid;gap:9px}.quiz button{text-align:left;background:#f3f9fd;border:1px solid var(--line);color:#183f57;font-weight:750}.quiz button.correct{background:#e6f6ee;border-color:#a7dfc1;color:#146442}.quiz button.incorrect{background:#fdeeee;border-color:#f0b8b8;color:#8f2f2f}.feedback{min-height:28px;color:#0f3d5c;font-weight:850;margin-top:8px}.tag{display:inline-flex;border-radius:999px;padding:5px 9px;background:#e7f5fb;color:#0d5278;font-weight:850;font-size:.78rem;margin-right:6px;margin-top:6px}.mini-table{width:100%;border-collapse:collapse;margin-top:8px}.mini-table td{border-top:1px solid var(--line);padding:6px 4px;font-size:.86rem;color:#24485c}.mini-table td:last-child{text-align:right;font-weight:850;color:#0f3d5c}
+@media(max-width:1100px){.control-grid,.management-grid,body.simple-mode .control-grid,body.simple-mode .management-grid{grid-template-columns:repeat(3,1fr)}.main-grid,.below-grid{grid-template-columns:1fr}canvas{height:500px}}@media(max-width:650px){.control-grid,.management-grid,body.simple-mode .control-grid,body.simple-mode .management-grid{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.hero{padding:22px}canvas{height:440px}}
+</style>
+</head>
+<body class="simple-mode">
+<div class="page">
+<a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+<section class="hero"><h1>Water Management Simulator</h1><p>Manage a simplified Sydney-region water system one week at a time across several years. Test how repeated decisions affect long-term storage, water reliability, cost, flood risk and river health.</p></section>
+
+<section class="top-controls">
+<div class="control-section-title">Scenario setup — changing these restarts the water year</div>
+<div class="control-grid">
+<div><label for="learningMode">Learning mode</label><select id="learningMode"><option value="simple">Simple</option><option value="advanced">Advanced</option></select></div>
+<div><label for="climate">Sydney climate year</label><select id="climate"><option value="dry">Dry year</option><option value="typical" selected>Typical Sydney year</option><option value="wet">Wet coastal year</option><option value="variable">Highly variable year</option></select></div>
+<div><label for="startSeason">Start season</label><select id="startSeason"><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option><option value="spring" selected>Spring</option></select></div>
+<div><label for="simulationYears">Simulation length</label><select id="simulationYears"><option value="1">1 year</option><option value="3" selected>3 years</option><option value="5">5 years</option><option value="10">10 years</option></select></div>
+<div><label for="storageStart">Starting storage</label><input id="storageStart" type="range" min="15" max="100" value="64"><div class="readout"><span id="storageStartRead">64</span>%</div></div>
+<div><label for="population">Town demand</label><input id="population" type="range" min="30" max="135" value="78"><div class="readout"><span id="populationRead">78</span>%</div></div>
+<div class="advanced-only"><label for="catchmentWetness">Catchment wetness</label><input id="catchmentWetness" type="range" min="20" max="100" value="58"><div class="readout"><span id="catchmentWetnessRead">58</span>%</div></div>
+<div class="advanced-only"><label for="leakLoss">Pipe/leak losses</label><input id="leakLoss" type="range" min="0" max="30" value="8"><div class="readout"><span id="leakLossRead">8</span>%</div></div>
+<div class="advanced-only"><label for="eventMode">Coastal events</label><select id="eventMode"><option value="normal" selected>Normal</option><option value="calm">Fewer extremes</option><option value="active">More extremes</option></select></div>
+<div class="advanced-only"><label for="climateTrend">Long-term trend</label><select id="climateTrend"><option value="stable" selected>Stable</option><option value="drying">Drying trend</option><option value="wetting">Wetter trend</option><option value="volatile">More volatile</option></select></div>
+<div class="advanced-only"><label for="demandGrowth">Demand growth / year</label><input id="demandGrowth" type="range" min="0" max="4" step="0.5" value="1"><div class="readout"><span id="demandGrowthRead">1</span>%</div></div>
+</div>
+
+<div class="control-section-title">Weekly management — adjust these before pressing Next week</div>
+<div class="management-grid">
+<div><label for="restrictions">Water restrictions</label><select id="restrictions"><option value="0">None</option><option value="1">Level 1</option><option value="2" selected>Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option></select></div>
+<div><label for="recycling">Recycling/desal</label><input id="recycling" type="range" min="0" max="85" value="24"><div class="readout"><span id="recyclingRead">24</span>%</div></div>
+<div><label for="plannedRelease">Planned dam release</label><input id="plannedRelease" type="range" min="0" max="80" value="20"><div class="readout"><span id="plannedReleaseRead">20</span>%</div></div>
+<div class="advanced-only"><label for="environmentFlow">Environmental flow</label><input id="environmentFlow" type="range" min="10" max="100" value="52"><div class="readout"><span id="environmentFlowRead">52</span>%</div></div>
+<div class="advanced-only"><label for="irrigation">Irrigation allocation</label><input id="irrigation" type="range" min="0" max="100" value="42"><div class="readout"><span id="irrigationRead">42</span>%</div></div>
+<div class="advanced-only"><label for="stormPrep">Storm preparation</label><input id="stormPrep" type="range" min="0" max="100" value="35"><div class="readout"><span id="stormPrepRead">35</span>%</div></div>
+<div><label for="decisionNote">Decision focus</label><select id="decisionNote"><option value="security">Water security</option><option value="balanced" selected>Balanced plan</option><option value="environment">River health</option><option value="flood">Flood readiness</option></select></div>
+</div>
+
+<div class="button-row"><button class="primary" id="nextWeekBtn">Next week</button><button id="nextMonthBtn">Next month</button><button id="runYearBtn">Run to end of year</button><button id="runFullBtn">Run full simulation</button><button id="autoBtn">▶ Auto-run weeks</button><button id="resetBtn">Reset simulation</button><button id="droughtBtn">Drought challenge</button><button id="floodBtn">Wet coastal challenge</button><button id="balancedBtn">Balanced start</button><button id="csvBtn">Download CSV</button></div>
+<p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">Challenge: each week, inspect Sydney-style climate conditions, adjust management controls, then advance. Compare outcomes across several years.</p>
+</section>
+
+<main class="main-grid">
+<section class="card"><div class="card-header"><h2>Weekly Sydney catchment model</h2><p>Rainfall varies by season and includes occasional coastal rain events. Management decisions affect storage, supply, river health, spill and cost.</p></div><div class="canvas-wrap"><canvas id="waterCanvas"></canvas></div><div class="status-strip"><div class="status"><b>Time</b><span id="weekStatus">Year 1, Week 1</span></div><div class="status"><b>This week's climate</b><span id="climateStatus">Spring</span></div><div class="status"><b>Water security</b><span id="waterStatus">Waiting</span></div><div class="status"><b>Recommendation</b><span id="adviceStatus">Set plan</span></div></div></section>
+
+<aside class="card"><div class="card-header"><h2>Evidence panel</h2><p>Use the readings to justify the next weekly decision.</p></div>
+<div class="metric-list">
+<div class="metric"><div class="metric-top"><span class="metric-name">Reservoir storage</span><span class="metric-value" id="storageValue">64%</span></div><div class="bar"><div class="bar-fill" id="storageBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Demand met this week</span><span class="metric-value" id="demandValue">Good</span></div><div class="bar"><div class="bar-fill" id="demandBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Days of supply</span><span class="metric-value" id="daysValue">180</span></div><div class="bar"><div class="bar-fill" id="daysBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Environmental health</span><span class="metric-value" id="environmentValue">Stable</span></div><div class="bar"><div class="bar-fill" id="environmentBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Flood / spill risk</span><span class="metric-value" id="spillValue">Low</span></div><div class="bar"><div class="bar-fill" id="spillBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Cost / energy use</span><span class="metric-value" id="costValue">Low</span></div><div class="bar"><div class="bar-fill" id="costBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Long-term resilience</span><span class="metric-value" id="resilienceValue">Starting</span></div><div class="bar"><div class="bar-fill" id="resilienceBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Reliability so far</span><span class="metric-value" id="reliabilityValue">100%</span></div><div class="bar"><div class="bar-fill" id="reliabilityBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Weekly climate detail</span><span class="metric-value" id="rainValue">0 mm</span></div><p class="small-note" id="climateDetail" style="padding:0;margin:0;">Advance a week to generate climate data.</p></div>
+</div>
+
+<div class="metric" style="margin:0 12px 12px;">
+  <div class="metric-top">
+    <span class="metric-name">Final management scorecard</span>
+    <span class="metric-value" id="scorecardStatus">In progress</span>
+  </div>
+  <table class="mini-table" id="scorecardTable">
+    <tr><td>Water security</td><td id="scoreWater">Starting</td></tr>
+    <tr><td>Demand reliability</td><td id="scoreDemand">Starting</td></tr>
+    <tr><td>Environmental sustainability</td><td id="scoreEnv">Starting</td></tr>
+    <tr><td>Flood preparedness</td><td id="scoreFlood">Starting</td></tr>
+    <tr><td>Cost efficiency</td><td id="scoreCost">Starting</td></tr>
+    <tr><td>Overall resilience</td><td id="scoreOverall">Starting</td></tr>
+  </table>
+</div>
+
+<p class="small-note" id="measurementNote">Management controls can be changed week by week without restarting the year.</p>
+</aside>
+</main>
+
+<section class="below-grid">
+<div class="card text-card"><h2>How to use</h2><ul><li>Set the scenario, then manage the water system week by week.</li><li>Before each week, adjust restrictions, recycling/desalination, planned release and, in advanced mode, environmental flow and irrigation.</li><li>Spring in Sydney is usually a useful stress test because rainfall can be lower and demand begins to rise.</li><li>Watch for coastal rain events that can rapidly increase inflow and spill risk.</li></ul><div class="challenge"><strong>Challenge:</strong> Finish the full simulation with storage above 35%, average demand reliability above 85%, environmental health at Stable or Healthy, and flood spill under control.</div></div>
+<div class="card text-card"><h2>What the model shows</h2><p>This is a simplified Sydney-region catchment model. Sydney does not have one single dry season, but rainfall and demand are seasonal. The model uses lower spring rainfall pressure, higher summer demand and evaporation, occasional heavy coastal rain events, and optional long-term climate and demand trends.</p><div class="challenge"><strong>Key idea:</strong> Water management is adaptive and cumulative. Short-term decisions can solve one week’s problem, but repeated choices affect long-term reliability, river health, cost and flood resilience.</div><table class="mini-table"><tr><td>Summer</td><td>higher demand and evaporation</td></tr><tr><td>Autumn / winter</td><td>higher chance of coastal rain events</td></tr><tr><td>Spring</td><td>often drier; storage may be tested</td></tr></table><span class="tag">Sydney NSW</span><span class="tag">Catchments</span><span class="tag">Drought</span><span class="tag">Floods</span><span class="tag">Adaptive management</span></div>
+</section>
+
+<section class="below-grid">
+<div class="card text-card"><h2>Self-test</h2><div class="quiz" id="quiz"><button data-answer="wrong">A good water plan should use the same restrictions every week.</button><button data-answer="correct">A good water plan changes as rainfall, storage, demand and river health change.</button><button data-answer="wrong">A heavy rainfall week always solves the water-management problem.</button></div><div class="feedback" id="quizFeedback"></div></div>
+<div class="card text-card"><h2>Teacher notes</h2><ul><li>Students can run the same starting scenario with different week-by-week decisions and compare long-term outcomes.</li><li>The climate is Sydney-style and conceptual: it is not a live forecast or a real dam operating model.</li><li>Good assessment task: students export CSV data, identify three decision points across multiple years, and justify how they changed their management plan.</li><li>Extension: ask students to compare a dry year, typical year and wet coastal year.</li></ul></div>
+</section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),canvas=$('waterCanvas'),ctx=canvas.getContext('2d');
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h)}
+const controls={learningMode:$('learningMode'),climate:$('climate'),startSeason:$('startSeason'),simulationYears:$('simulationYears'),storageStart:$('storageStart'),population:$('population'),catchmentWetness:$('catchmentWetness'),leakLoss:$('leakLoss'),eventMode:$('eventMode'),climateTrend:$('climateTrend'),demandGrowth:$('demandGrowth'),restrictions:$('restrictions'),recycling:$('recycling'),plannedRelease:$('plannedRelease'),environmentFlow:$('environmentFlow'),irrigation:$('irrigation'),stormPrep:$('stormPrep'),decisionNote:$('decisionNote')};
+const out={storageStartRead:$('storageStartRead'),populationRead:$('populationRead'),catchmentWetnessRead:$('catchmentWetnessRead'),demandGrowthRead:$('demandGrowthRead'),leakLossRead:$('leakLossRead'),recyclingRead:$('recyclingRead'),plannedReleaseRead:$('plannedReleaseRead'),environmentFlowRead:$('environmentFlowRead'),irrigationRead:$('irrigationRead'),stormPrepRead:$('stormPrepRead'),weekStatus:$('weekStatus'),climateStatus:$('climateStatus'),waterStatus:$('waterStatus'),adviceStatus:$('adviceStatus'),storageValue:$('storageValue'),demandValue:$('demandValue'),daysValue:$('daysValue'),environmentValue:$('environmentValue'),spillValue:$('spillValue'),costValue:$('costValue'),rainValue:$('rainValue'),climateDetail:$('climateDetail'),storageBar:$('storageBar'),demandBar:$('demandBar'),daysBar:$('daysBar'),environmentBar:$('environmentBar'),spillBar:$('spillBar'),costBar:$('costBar'),resilienceValue:$('resilienceValue'),reliabilityValue:$('reliabilityValue'),resilienceBar:$('resilienceBar'),reliabilityBar:$('reliabilityBar'),scorecardStatus:$('scorecardStatus'),scoreWater:$('scoreWater'),scoreDemand:$('scoreDemand'),scoreEnv:$('scoreEnv'),scoreFlood:$('scoreFlood'),scoreCost:$('scoreCost'),scoreOverall:$('scoreOverall'),measurementNote:$('measurementNote'),challengeHint:$('challengeHint')};
+const state={week:1,storage:64,envHealth:.68,auto:false,last:null,previewClimate:null,data:[],history:[],rngSeed:417,stats:{shortageWeeks:0,totalDemand:0,totalEnv:0,totalCost:0,totalSpill:0,criticalWeeks:0}};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function lerp(a,b,t){return a+(b-a)*t}function map(v,a,b,c,d){return lerp(c,d,clamp((v-a)/(b-a),0,1))}
+function rand(){state.rngSeed=(state.rngSeed*1664525+1013904223)>>>0;return state.rngSeed/4294967296}
+function monthFromWeek(week){return Math.floor((week-1)/4.345)%12}
+function seasonForMonth(m){return m===11||m===0||m===1?'Summer':m>=2&&m<=4?'Autumn':m>=5&&m<=7?'Winter':'Spring'}
+function seasonStartOffset(){return {summer:1,autumn:10,winter:23,spring:36}[controls.startSeason.value]||36}
+function totalWeeks(){return (+controls.simulationYears.value||1)*52}
+function yearNumber(){return Math.floor((state.week-1)/52)+1}
+function weekInYear(){return ((state.week-1)%52)+1}
+function displayWeekAbsolute(){return Math.min(Math.max(1,state.week),totalWeeks())}
+function displayYearNumber(){return Math.floor((displayWeekAbsolute()-1)/52)+1}
+function displayWeekInYear(){return ((displayWeekAbsolute()-1)%52)+1}
+function simulationComplete(){return state.week>totalWeeks()}
+function progressRatio(){return clamp((state.week-1)/Math.max(1,totalWeeks()),0,1)}
+function calendarWeek(){return ((seasonStartOffset()+weekInYear()-2)%52)+1}
+function getSydneyClimate(week){
+  const m=monthFromWeek(week);
+  const season=seasonForMonth(m);
+  // Relative Sydney-style weekly rainfall: no true dry season, spring lower, coastal events possible.
+  const monthlyRain=[82,105,120,112,108,125,95,82,62,72,84,78];
+  const base=monthlyRain[m]/4.345;
+  const yearIndex=yearNumber()-1;
+  const trend=controls.learningMode.value==='simple'?'stable':controls.climateTrend.value;
+  let trendRain=1,trendVol=1;
+  if(trend==='drying')trendRain=clamp(1-yearIndex*.035,.68,1);
+  if(trend==='wetting')trendRain=clamp(1+yearIndex*.025,1,1.28);
+  if(trend==='volatile'){trendVol=1+yearIndex*.055;trendRain=clamp(.98-yearIndex*.01,.82,1)}
+  const climateMult=({dry:.62,typical:1,wet:1.32,variable:0.86+rand()*.70}[controls.climate.value])*trendRain;
+  const eventMode=controls.learningMode.value==='simple'?'normal':controls.eventMode.value;
+  const eventMult={calm:.65,normal:1,active:1.45}[eventMode]||1;
+  const coastalSeason=(season==='Autumn'||season==='Winter')?1.35:(season==='Summer'?1.05:.75);
+  const stormChance=clamp(((.09*coastalSeason*eventMult)+(controls.climate.value==='wet'?.06:0))*trendVol,.03,.44);
+  let event='none',eventBoost=1;
+  if(rand()<stormChance){event='coastal rain event';eventBoost=2.2+rand()*2.8}
+  else if(rand()<.12 && season==='Spring'){event='dry spring week';eventBoost=.25+rand()*.35}
+  else if(rand()<.10 && season==='Summer'){event='hot demand week';eventBoost=.55+rand()*.35}
+  const noise=.55+rand()*1.05;
+  const rainfallMm=Math.max(0,base*climateMult*noise*eventBoost);
+  const tempStress=season==='Summer'?1.32:season==='Spring'?1.08:season==='Autumn'?.92:.72;
+  return{month:m,season,rainfallMm,event,tempStress,stormChance}
+}
+
+function currentClimatePreview(){
+  if(state.last && state.last.week===state.week)return state.last.climate;
+  if(!state.previewClimate || state.previewClimate.week!==state.week){
+    state.previewClimate={week:state.week,climate:getSydneyClimate(calendarWeek())};
+  }
+  return state.previewClimate.climate;
+}
+
+function values(){
+  const mode=controls.learningMode.value,storageStart=+controls.storageStart.value,demandGrowth=mode==='simple'?0:+controls.demandGrowth.value,pop=(+controls.population.value)*(1+demandGrowth/100*(yearNumber()-1)),restriction=+controls.restrictions.value,recycling=+controls.recycling.value,release=+controls.plannedRelease.value,catchmentWetness=mode==='simple'?58:+controls.catchmentWetness.value,leakLoss=mode==='simple'?8:+controls.leakLoss.value,envFlow=mode==='simple'?52:+controls.environmentFlow.value,irrigation=mode==='simple'?36:+controls.irrigation.value,stormPrep=mode==='simple'?35:+controls.stormPrep.value,decision=controls.decisionNote.value;
+  const c=currentClimatePreview();
+  const runoffEfficiency=clamp(.23+catchmentWetness/100*.40+(state.storage>85?.08:0),.20,.78);
+  const inflow=c.rainfallMm*runoffEfficiency*.23;
+  const restrictionSavings=[0,.08,.18,.31,.45][restriction];
+  const townDemand=pop/100*(1.72*c.tempStress)*(1-restrictionSavings);
+  const leaks=townDemand*(leakLoss/100);
+  const irrigationUse=irrigation/100*(c.tempStress>1.1?1.18:.88);
+  const envRelease=envFlow/100*.92;
+  const plannedDamRelease=release/100*.75;
+  const recyclingSupply=recycling/100*1.35;
+  const evaporation=.34*c.tempStress*(1+(state.storage/160));
+  const totalUse=townDemand+leaks+irrigationUse+envRelease+plannedDamRelease;
+  const netUse=Math.max(0,totalUse-recyclingSupply);
+  const rawNextStorage=state.storage+inflow-netUse-evaporation;
+  const prepStorageBuffer=stormPrep/100*5;
+  const spill=Math.max(0,rawNextStorage-(100-prepStorageBuffer));
+  const nextStorage=clamp(rawNextStorage-spill,0,100);
+  const demandMet=clamp((state.storage+inflow+recyclingSupply)/(townDemand+irrigationUse+leaks+.01),0,1.08);
+  const daysSupply=clamp(state.storage/(townDemand+irrigationUse+leaks+.16)*7*5.6,0,430);
+  const envTrend=(envRelease+.18*spill)>.45?.025:(envRelease>.28?.005:-.030);
+  const cost=clamp(recycling/85*.70+restriction*.055+stormPrep/100*.12,0,1);
+  let storageState='Secure';if(state.storage<18)storageState='Emergency';else if(state.storage<33)storageState='Low';else if(state.storage<55)storageState='Watch';else if(state.storage>92)storageState='Flood watch';
+  let demandLabel='Good';if(demandMet<.58)demandLabel='Severe shortage';else if(demandMet<.76)demandLabel='Shortage';else if(demandMet<.90)demandLabel='Tight';
+  let envLabel='Healthy';if(state.envHealth<.30)envLabel='Poor';else if(state.envHealth<.50)envLabel='Stressed';else if(state.envHealth<.70)envLabel='Stable';
+  let spillLabel=spill>4?'High':spill>1.2?'Moderate':'Low';
+  let costLabel=cost>.70?'High':cost>.38?'Moderate':'Low';
+  let advice='Set weekly plan';
+  if(state.storage<28)advice='Increase restrictions / supply';
+  else if(spill>2)advice='Reduce flood risk';
+  else if(state.envHealth<.45)advice='Increase river flow';
+  else if(cost>.74)advice='Reduce high-cost supply';
+  else if(demandMet<.9)advice='Reduce demand or add supply';
+  else advice='Plan is balanced';
+  return{mode,storageStart,demandGrowth,pop,restriction,recycling,release,catchmentWetness,leakLoss,envFlow,irrigation,stormPrep,decision,c,inflow,townDemand,leaks,irrigationUse,envRelease,plannedDamRelease,recyclingSupply,evaporation,totalUse,netUse,spill,nextStorage,demandMet,daysSupply,envTrend,cost,storageState,demandLabel,envLabel,spillLabel,costLabel,advice}
+}
+function resetYear(){state.week=1;state.storage=+controls.storageStart.value;state.envHealth=.68;state.auto=false;state.last=null;state.previewClimate=null;state.data=[];state.history=[];state.stats={shortageWeeks:0,totalDemand:0,totalEnv:0,totalCost:0,totalSpill:0,criticalWeeks:0};state.rngSeed=417+Math.floor(+controls.storageStart.value*31)+controls.climate.value.length*97;document.getElementById('autoBtn').textContent='▶ Auto-run weeks';logCurrent('start');updateReadouts();draw()}
+function nextWeek(){
+  if(state.week>totalWeeks())return;
+  const climate=currentClimatePreview();
+  state.last={week:state.week,climate};
+  const v=values();
+  const previousStorage=state.storage;
+  state.storage=v.nextStorage;
+  state.envHealth=clamp(state.envHealth+v.envTrend-(state.storage<15?.018:0),0,1);
+  state.history.push({week:state.week,storage:state.storage,env:state.envHealth,demand:v.demandMet,rain:climate.rainfallMm,spill:v.spill,year:yearNumber()});
+  state.stats.totalDemand+=v.demandMet;
+  state.stats.totalEnv+=state.envHealth;
+  state.stats.totalCost+=v.cost;
+  state.stats.totalSpill+=v.spill;
+  if(v.demandMet<.85)state.stats.shortageWeeks++;
+  if(state.storage<25||state.envHealth<.40||v.spill>4)state.stats.criticalWeeks++;
+  logCurrent('week advanced',previousStorage,v,climate);
+  state.week++;
+  state.previewClimate=null;
+  if(state.week>totalWeeks()){state.auto=false;document.getElementById('autoBtn').textContent='▶ Auto-run weeks'}
+  updateReadouts();draw()
+}
+function longTermScores(){
+  const completed=Math.max(1,state.history.length);
+  const avgDemand=state.stats.totalDemand/completed;
+  const avgEnv=state.stats.totalEnv/completed;
+  const avgCost=state.stats.totalCost/completed;
+  const spillPenalty=clamp(state.stats.totalSpill/(completed*3.5),0,1);
+  const shortagePenalty=state.stats.shortageWeeks/completed;
+  const criticalPenalty=state.stats.criticalWeeks/completed;
+  const storageScore=clamp(state.storage/70,0,1);
+  const resilience=clamp((avgDemand*.30)+(avgEnv*.25)+(storageScore*.20)+((1-avgCost)*.10)+((1-spillPenalty)*.10)+((1-criticalPenalty)*.05),0,1);
+  return{completed,avgDemand,avgEnv,avgCost,spillPenalty,shortagePenalty,criticalPenalty,resilience}
+}
+function resilienceLabel(score){
+  if(score>=.82)return 'Strong';
+  if(score>=.65)return 'Stable';
+  if(score>=.48)return 'Vulnerable';
+  return 'At risk';
+}
+function gradeByScore(score,labels=['Strong','Stable','Vulnerable','At risk']){
+  if(score>=.82)return labels[0];
+  if(score>=.65)return labels[1];
+  if(score>=.48)return labels[2];
+  return labels[3];
+}
+function finalScorecard(){
+  const scores=longTermScores();
+  const completed=Math.max(1,state.history.length);
+  const avgSpill=state.stats.totalSpill/completed;
+  const water=clamp((state.storage/70)*.55+(1-scores.shortagePenalty)*.45,0,1);
+  const demand=clamp(scores.avgDemand,0,1);
+  const env=clamp(scores.avgEnv,0,1);
+  const flood=clamp(1-(avgSpill/3.8),0,1);
+  const cost=clamp(1-scores.avgCost,0,1);
+  const overall=scores.resilience;
+  return{
+    water,demand,env,flood,cost,overall,
+    waterLabel:gradeByScore(water,['Secure','Stable','Vulnerable','At risk']),
+    demandLabel:`${Math.round(demand*100)}%`,
+    envLabel:gradeByScore(env,['Healthy','Stable','Stressed','Poor']),
+    floodLabel:gradeByScore(flood,['Prepared','Managed','Vulnerable','High risk']),
+    costLabel:gradeByScore(cost,['Efficient','Moderate','High cost','Unsustainable']),
+    overallLabel:resilienceLabel(overall)
+  }
+}
+
+function updateReadouts(){
+  const v=values(),week=Math.min(state.week,totalWeeks()),cal=currentClimatePreview(),scores=longTermScores();
+  document.body.classList.toggle('simple-mode',v.mode==='simple');
+  out.storageStartRead.textContent=v.storageStart.toFixed(0);out.populationRead.textContent=v.pop.toFixed(0);out.demandGrowthRead.textContent=v.demandGrowth.toFixed(1);out.catchmentWetnessRead.textContent=v.catchmentWetness.toFixed(0);out.leakLossRead.textContent=v.leakLoss.toFixed(0);out.recyclingRead.textContent=v.recycling.toFixed(0);out.plannedReleaseRead.textContent=v.release.toFixed(0);out.environmentFlowRead.textContent=v.envFlow.toFixed(0);out.irrigationRead.textContent=v.irrigation.toFixed(0);out.stormPrepRead.textContent=v.stormPrep.toFixed(0);
+  out.weekStatus.textContent=simulationComplete()?`Complete — Year ${displayYearNumber()}, Week ${displayWeekInYear()}`:`Year ${displayYearNumber()}, Week ${displayWeekInYear()} / ${controls.simulationYears.value} yr`;out.climateStatus.textContent=`${cal.season}`;out.waterStatus.textContent=v.storageState;out.adviceStatus.textContent=v.advice;out.storageValue.textContent=`${Math.round(state.storage)}%`;out.demandValue.textContent=v.demandLabel;out.daysValue.textContent=`${Math.round(v.daysSupply)} days`;out.environmentValue.textContent=v.envLabel;out.spillValue.textContent=v.spillLabel;out.costValue.textContent=v.costLabel;out.resilienceValue.textContent=resilienceLabel(scores.resilience);out.reliabilityValue.textContent=`${Math.round(scores.avgDemand*100)}%`;out.rainValue.textContent=`${Math.round(cal.rainfallMm)} mm`;
+  const card=finalScorecard();
+  out.scorecardStatus.textContent=simulationComplete()?'Final':'Live';
+  out.scoreWater.textContent=card.waterLabel;
+  out.scoreDemand.textContent=card.demandLabel;
+  out.scoreEnv.textContent=card.envLabel;
+  out.scoreFlood.textContent=card.floodLabel;
+  out.scoreCost.textContent=card.costLabel;
+  out.scoreOverall.textContent=card.overallLabel;
+  out.storageBar.style.width=`${clamp(state.storage,4,100)}%`;out.demandBar.style.width=`${clamp(v.demandMet*100,4,100)}%`;out.daysBar.style.width=`${clamp(v.daysSupply/320*100,4,100)}%`;out.environmentBar.style.width=`${clamp(state.envHealth*100,4,100)}%`;out.spillBar.style.width=`${clamp(v.spill/7*100,4,100)}%`;out.costBar.style.width=`${clamp(v.cost*100,4,100)}%`;out.resilienceBar.style.width=`${clamp(scores.resilience*100,4,100)}%`;out.reliabilityBar.style.width=`${clamp(scores.avgDemand*100,4,100)}%`;
+  out.storageBar.style.background=state.storage<25?'linear-gradient(90deg,#f09a9a,#d64545)':state.storage<45?'linear-gradient(90deg,#f0c85a,#e89b20)':'linear-gradient(90deg,#58b7e8,#1f9d63)';
+  out.environmentBar.style.background=state.envHealth<.45?'linear-gradient(90deg,#f09a9a,#d64545)':'linear-gradient(90deg,#58b7e8,#1f9d63)';
+  out.spillBar.style.background=v.spill>1?'linear-gradient(90deg,#f0c85a,#d64545)':'linear-gradient(90deg,#58b7e8,#1f9d63)';
+  out.costBar.style.background=v.cost>.65?'linear-gradient(90deg,#f0c85a,#e89b20)':'linear-gradient(90deg,#58b7e8,#1f9d63)';out.resilienceBar.style.background=scores.resilience<.50?'linear-gradient(90deg,#f09a9a,#d64545)':scores.resilience<.70?'linear-gradient(90deg,#f0c85a,#e89b20)':'linear-gradient(90deg,#58b7e8,#1f9d63)';out.reliabilityBar.style.background=scores.avgDemand<.85?'linear-gradient(90deg,#f09a9a,#d64545)':'linear-gradient(90deg,#58b7e8,#1f9d63)';
+  const eventText=cal.event==='none'?'no major event':cal.event;
+  out.climateDetail.textContent=`${cal.season}: ${Math.round(cal.rainfallMm)} mm rainfall, ${eventText}. Temperature/demand stress: ${cal.tempStress.toFixed(2)}×.`;
+  out.measurementNote.textContent=`This week: inflow ${v.inflow.toFixed(1)}, use ${v.totalUse.toFixed(1)}, recycling/desal ${v.recyclingSupply.toFixed(1)}, predicted storage after decisions ${v.nextStorage.toFixed(1)}%.`;
+  out.challengeHint.textContent=state.week>totalWeeks()?'Simulation complete. Export the CSV or reset to test another long-term plan.':'Inspect the climate detail, choose this week’s management settings, then press Next week. Use the scorecard to compare long-term plans.';
+}
+function resize(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
+function label(text,x,y,align='center'){ctx.save();ctx.font='850 12px system-ui';ctx.textAlign=align;ctx.textBaseline='middle';const w=ctx.measureText(text).width+16,h=24;let l=x-w/2;if(align==='left')l=x;if(align==='right')l=x-w;ctx.fillStyle='rgba(6,19,34,.72)';ctx.strokeStyle='rgba(180,225,250,.35)';rr(l,y-h/2,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(230,246,255,.96)';ctx.fillText(text,x,y);ctx.restore()}
+function bg(w,h){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#061322');g.addColorStop(1,'#0c2338');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<70;i++){ctx.beginPath();ctx.arc((i*83)%w,(i*59)%h,((i*19)%3+1)/2.5,0,Math.PI*2);ctx.fill()}}
+function drawCatchment(left,top,w,h,v,cal){
+  const ground=top+h-78;ctx.save();
+  ctx.fillStyle='rgba(30,75,62,.92)';ctx.beginPath();ctx.moveTo(left+12,ground);ctx.quadraticCurveTo(left+w*.22,top+h*.30,left+w*.42,ground);ctx.quadraticCurveTo(left+w*.62,top+h*.42,left+w*.80,ground);ctx.lineTo(left+w-12,ground);ctx.lineTo(left+w-12,ground+58);ctx.lineTo(left+12,ground+58);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(64,125,86,.90)';ctx.beginPath();ctx.moveTo(left+22,ground);ctx.quadraticCurveTo(left+w*.30,top+h*.38,left+w*.52,ground);ctx.lineTo(left+22,ground);ctx.fill();
+  ctx.fillStyle=cal.event==='coastal rain event'?'rgba(170,210,230,.95)':'rgba(230,246,255,.90)';
+  for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(left+92+i*32,top+50+(i%2)*5,28,0,Math.PI*2);ctx.fill()}
+  const drops=Math.floor(4+Math.min(cal.rainfallMm,90)/3);ctx.strokeStyle='rgba(120,210,255,.78)';ctx.lineWidth=2;
+  for(let i=0;i<drops;i++){const x=left+48+(i*29)%190,y=top+92+((state.week*9+i*17)%116);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-4,y+12);ctx.stroke()}
+  label(`${cal.season} climate`,left+135,top+28);
+  const damX=left+w*.43,damY=ground-8,damW=w*.30,damH=200,level=state.storage/100;
+  ctx.fillStyle='rgba(170,185,190,.95)';ctx.beginPath();ctx.moveTo(damX+damW,damY);ctx.lineTo(damX+damW+38,damY);ctx.lineTo(damX+damW+18,damY-damH);ctx.lineTo(damX+damW-18,damY-damH);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(70,170,220,.78)';rr(damX,damY-damH*level,damW,damH*level,10);ctx.fill();ctx.strokeStyle='rgba(220,245,255,.9)';ctx.lineWidth=2;ctx.stroke();label(`reservoir ${Math.round(state.storage)}%`,damX+damW/2,damY-damH-22);
+  ctx.strokeStyle='rgba(65,180,230,.85)';ctx.lineWidth=18;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(damX+damW+30,damY-20);ctx.bezierCurveTo(left+w*.84,ground-25,left+w*.72,ground+34,left+w-28,ground+32);ctx.stroke();label('river / environmental flow',left+w*.80,ground+64);
+  const townX=left+w*.12,townY=ground-18;ctx.fillStyle='rgba(235,240,245,.92)';for(let i=0;i<5;i++){rr(townX+i*24,townY-28-(i%2)*10,18,30+(i%2)*10,4);ctx.fill()}label('town demand',townX+60,townY+24);
+  ctx.fillStyle='rgba(210,180,90,.92)';for(let i=0;i<4;i++){rr(left+w*.61+i*28,ground+20,22,18,4);ctx.fill()}label('irrigation',left+w*.68,ground+60);
+  ctx.strokeStyle='rgba(255,235,130,.9)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(damX+30,damY-40);ctx.lineTo(townX+80,townY-28);ctx.moveTo(damX+damW-18,damY-34);ctx.lineTo(left+w*.68,ground+18);ctx.stroke();
+  if(v.spill>1){ctx.fillStyle='rgba(120,220,255,.50)';for(let i=0;i<10;i++){ctx.beginPath();ctx.arc(damX+damW+35+(i*18)%90,damY-35+((state.week*7+i*12)%66),10,0,Math.PI*2);ctx.fill()}label('spillway risk',damX+damW+88,damY-100,'left')}
+  if(cal.event!=='none'){ctx.fillStyle=cal.event==='coastal rain event'?'rgba(28,126,214,.88)':'rgba(232,155,32,.88)';ctx.strokeStyle='rgba(255,245,210,.95)';rr(left+18,top+84,260,44,14);ctx.fill();ctx.stroke();ctx.fillStyle='white';ctx.font='950 13px system-ui';ctx.textAlign='left';ctx.fillText(cal.event,left+36,top+111)}
+  ctx.restore()
+}
+function drawGraph(left,top,w,h){
+  ctx.save();ctx.fillStyle='rgba(8,30,48,.72)';ctx.strokeStyle='rgba(180,225,250,.28)';rr(left,top,w,h,18);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(235,248,255,.96)';ctx.font='850 14px system-ui';ctx.textAlign='left';ctx.fillText('Long-term management evidence',left+16,top+26);ctx.font='800 10px system-ui';ctx.fillStyle='rgba(95,190,235,.95)';ctx.fillText('storage',left+16,top+43);ctx.fillStyle='rgba(120,220,145,.95)';ctx.fillText('environment',left+78,top+43);ctx.fillStyle='rgba(255,228,120,.95)';ctx.fillText('demand met',left+170,top+43);
+  const gx=left+42,gy=top+h-30,gw=w-66,gh=h-84;ctx.strokeStyle='rgba(180,225,250,.28)';for(let i=0;i<=4;i++){const y=gy-i/4*gh;ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx+gw,y);ctx.stroke()}
+  const hist=state.history.length?state.history:[{storage:state.storage,env:state.envHealth,demand:values().demandMet}];
+  function tr(key,col,norm){ctx.strokeStyle=col;ctx.lineWidth=2.3;ctx.beginPath();hist.forEach((p,i)=>{const x=gx+(hist.length<=1?0:(p.week-1)/Math.max(1,totalWeeks()-1))*gw,y=gy-clamp(norm(p[key]),0,1)*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke()}
+  tr('storage','rgba(95,190,235,.95)',v=>v/100);tr('env','rgba(120,220,145,.95)',v=>v);tr('demand','rgba(255,228,120,.92)',v=>v);
+  ctx.fillStyle='rgba(220,240,250,.75)';ctx.font='800 10px system-ui';ctx.textAlign='right';ctx.fillText(simulationComplete()?`complete: ${controls.simulationYears.value} yr`:`year ${displayYearNumber()} / ${controls.simulationYears.value}`,gx+gw,top+64);ctx.restore()
+}
+function draw(){
+  const r=canvas.getBoundingClientRect(),w=r.width,h=r.height,v=values(),cal=currentClimatePreview();
+  ctx.clearRect(0,0,w,h);bg(w,h);drawCatchment(18,20,w*.61,h-44,v,cal);drawGraph(w*.64,42,w*.33,h*.43);
+  ctx.save();ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='800 13px system-ui';ctx.textAlign='left';const timeLabel=simulationComplete()?`Complete — Year ${displayYearNumber()}, Week ${displayWeekInYear()}`:`Year ${displayYearNumber()}, Week ${displayWeekInYear()}`;
+  ctx.fillText(`${timeLabel} | ${cal.season} | rain ${Math.round(cal.rainfallMm)} mm | storage ${Math.round(state.storage)}% | demand met ${Math.round(v.demandMet*100)}% | env ${Math.round(state.envHealth*100)}%`,22,h-14);ctx.restore()
+}
+function logCurrent(action,previousStorage='',v=values(),cal=currentClimatePreview()){
+  state.data.push({year:yearNumber(),week_in_year:weekInYear(),absolute_week:Math.min(state.week,totalWeeks()),simulation_years:+controls.simulationYears.value,action,season:cal.season,climate_year:controls.climate.value,climate_event:cal.event,rainfall_mm:cal.rainfallMm.toFixed(1),previous_storage_percent:previousStorage===''?'':previousStorage.toFixed(1),storage_percent:state.storage.toFixed(1),predicted_next_storage_percent:v.nextStorage.toFixed(1),town_demand_percent:v.pop,restrictions_level:v.restriction,recycling_desal_percent:v.recycling,planned_release_percent:v.release,environmental_flow_percent:v.envFlow,irrigation_percent:v.irrigation,storm_preparation_percent:v.stormPrep,inflow_units:v.inflow.toFixed(2),total_use_units:v.totalUse.toFixed(2),demand_met_percent:(v.demandMet*100).toFixed(1),environmental_health_percent:(state.envHealth*100).toFixed(1),spill_units:v.spill.toFixed(2),days_supply:Math.round(v.daysSupply),cost_score:v.cost.toFixed(2),long_term_resilience:longTermScores().resilience.toFixed(3),average_reliability_percent:(longTermScores().avgDemand*100).toFixed(1),shortage_weeks:state.stats.shortageWeeks,critical_weeks:state.stats.criticalWeeks,score_water_security:finalScorecard().waterLabel,score_environment:finalScorecard().envLabel,score_flood:finalScorecard().floodLabel,score_cost:finalScorecard().costLabel,score_overall:finalScorecard().overallLabel,advice:v.advice})
+}
+function scenarioPreset(kind){
+  if(kind==='drought'){controls.climate.value='dry';controls.startSeason.value='spring';controls.simulationYears.value='5';controls.storageStart.value='42';controls.population.value='98';controls.restrictions.value='3';controls.recycling.value='42';controls.plannedRelease.value='12'}
+  if(kind==='flood'){controls.climate.value='wet';controls.startSeason.value='autumn';controls.simulationYears.value='3';controls.storageStart.value='88';controls.population.value='72';controls.restrictions.value='0';controls.recycling.value='10';controls.plannedRelease.value='55';controls.stormPrep.value='75'}
+  if(kind==='balanced'){controls.climate.value='typical';controls.startSeason.value='spring';controls.simulationYears.value='3';controls.storageStart.value='68';controls.population.value='78';controls.restrictions.value='2';controls.recycling.value='28';controls.plannedRelease.value='24';controls.environmentFlow.value='58';controls.irrigation.value='38';controls.stormPrep.value='35'}
+  resetYear()
+}
+function csv(){if(!state.data.length)logCurrent('export');const heads=Object.keys(state.data[0]);const rows=state.data.map(row=>heads.map(h=>String(row[h]).replaceAll(',',';')).join(','));const blob=new Blob([[heads.join(','),...rows].join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='sydney_water_management_multi_year_data.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
+function runWeeks(count){
+  state.auto=false;
+  document.getElementById('autoBtn').textContent='▶ Auto-run weeks';
+  for(let i=0;i<count && state.week<=totalWeeks();i++){
+    nextWeek();
+  }
+  updateReadouts();
+  draw();
+}
+function nextMonth(){
+  runWeeks(4);
+}
+function runToEndOfYear(){
+  const remaining=52-displayWeekInYear()+1;
+  runWeeks(remaining);
+}
+function runFullSimulation(){
+  runWeeks(totalWeeks()-state.week+1);
+}
+
+$('nextWeekBtn').addEventListener('click',nextWeek);
+$('nextMonthBtn').addEventListener('click',nextMonth);
+$('runYearBtn').addEventListener('click',runToEndOfYear);
+$('runFullBtn').addEventListener('click',runFullSimulation);
+$('autoBtn').addEventListener('click',()=>{state.auto=!state.auto;$('autoBtn').textContent=state.auto?'⏸ Pause auto-run':'▶ Auto-run weeks'});
+$('resetBtn').addEventListener('click',resetYear);$('droughtBtn').addEventListener('click',()=>scenarioPreset('drought'));$('floodBtn').addEventListener('click',()=>scenarioPreset('flood'));$('balancedBtn').addEventListener('click',()=>scenarioPreset('balanced'));$('csvBtn').addEventListener('click',csv);
+const scenarioControls=[controls.learningMode,controls.climate,controls.startSeason,controls.simulationYears,controls.storageStart,controls.population,controls.catchmentWetness,controls.leakLoss,controls.eventMode,controls.climateTrend,controls.demandGrowth];
+const managementControls=[controls.restrictions,controls.recycling,controls.plannedRelease,controls.environmentFlow,controls.irrigation,controls.stormPrep,controls.decisionNote];
+scenarioControls.forEach(c=>{c.addEventListener('input',resetYear);c.addEventListener('change',resetYear)});
+managementControls.forEach(c=>{c.addEventListener('input',()=>{updateReadouts();draw()});c.addEventListener('change',()=>{updateReadouts();draw()})});
+document.querySelectorAll('#quiz button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#quiz button').forEach(x=>x.classList.remove('correct','incorrect'));if(b.dataset.answer==='correct'){b.classList.add('correct');$('quizFeedback').textContent='Correct. Adaptive management means changing the plan as evidence changes.'}else{b.classList.add('incorrect');$('quizFeedback').textContent='Not quite. Water management must respond to changing rainfall, storage, demand and ecosystem health.'}}));
+function anim(){if(state.auto&&state.week<=totalWeeks()){if(!state.lastAuto||performance.now()-state.lastAuto>480){nextWeek();state.lastAuto=performance.now()}}updateReadouts();draw();requestAnimationFrame(anim)}
+window.addEventListener('resize',resize);resetYear();resize();anim();
+</script>
+</body>
+</html>
