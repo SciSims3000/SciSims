@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microscope Focus and Magnification Explorer</title>
+
+  <style>
+    :root{
+      --bg:#eef7fb;
+      --card:#ffffff;
+      --ink:#123143;
+      --muted:#557184;
+      --blue:#1d7ed0;
+      --blue2:#56b5e8;
+      --deep:#0f3d5c;
+      --soft:#d9eef9;
+      --line:#c9dfec;
+      --good:#1f9d63;
+      --warn:#e89b20;
+      --bad:#d64545;
+      --shadow:0 10px 25px rgba(12,54,82,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eaf6fb 0%,#f6fbfe 100%);
+      color:var(--ink);
+    }
+
+    .page{
+      width:min(1240px,calc(100% - 28px));
+      margin:0 auto;
+      padding:18px 0 36px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:none;
+      background:#dff1fa;
+      color:#0c4d73;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(12,54,82,.08);
+      margin-bottom:14px;
+      text-decoration:none;
+    }
+
+    .hero{
+      border-radius:28px;
+      padding:24px 28px;
+      color:white;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),
+        linear-gradient(135deg,#0e4f78 0%,#1e91d6 52%,#59c2eb 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.7rem);
+      letter-spacing:-.04em;
+      line-height:1;
+    }
+
+    .hero p{
+      max-width:900px;
+      margin:10px 0 0;
+      font-size:1.03rem;
+      line-height:1.5;
+      color:rgba(255,255,255,.92);
+    }
+
+    .top-controls{
+      margin-top:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .control-grid{
+      display:grid;
+      grid-template-columns:repeat(10,minmax(92px,1fr));
+      gap:10px;
+      align-items:end;
+    }
+
+    body.simple-mode .advanced-only{
+      display:none !important;
+    }
+
+    body.simple-mode .control-grid{
+      grid-template-columns:repeat(8,minmax(92px,1fr));
+    }
+
+    label{
+      display:block;
+      font-size:.8rem;
+      color:var(--muted);
+      font-weight:850;
+      margin-bottom:5px;
+    }
+
+    select,input[type="range"]{
+      width:100%;
+    }
+
+    select{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:9px 10px;
+      background:#f8fcff;
+      color:var(--ink);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      accent-color:var(--blue);
+    }
+
+    .readout{
+      margin-top:3px;
+      font-size:.82rem;
+      font-weight:850;
+      color:var(--deep);
+    }
+
+    .button-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:14px;
+      padding:10px 13px;
+      font-weight:900;
+      cursor:pointer;
+      background:#e2f1f8;
+      color:#0d4a6e;
+      transition:.15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(.98);
+    }
+
+    .primary{
+      background:linear-gradient(135deg,#107bd1,#56b5e8);
+      color:white;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.52fr) minmax(320px,.72fr);
+      gap:16px;
+      margin-top:16px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#f6fbfe;
+    }
+
+    .card-header h2{
+      margin:0;
+      font-size:1.08rem;
+      letter-spacing:-.02em;
+    }
+
+    .card-header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
+    }
+
+    .canvas-wrap{
+      padding:10px;
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:500px;
+      border-radius:18px;
+      background:#071625;
+      border:1px solid #15364f;
+    }
+
+    .status-strip{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+
+    .status{
+      border-radius:15px;
+      padding:10px;
+      background:#eef7fb;
+      border:1px solid var(--line);
+    }
+
+    .status b{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .status span{
+      font-size:1.02rem;
+      font-weight:950;
+      color:var(--deep);
+    }
+
+    .metric-list{
+      padding:12px;
+      display:grid;
+      gap:9px;
+    }
+
+    .metric{
+      padding:10px;
+      border:1px solid var(--line);
+      background:#f7fbfe;
+      border-radius:15px;
+    }
+
+    .metric-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:7px;
+    }
+
+    .metric-name{
+      font-weight:900;
+      color:var(--deep);
+      font-size:.91rem;
+    }
+
+    .metric-value{
+      font-weight:950;
+      color:var(--blue);
+      font-size:.91rem;
+      white-space:nowrap;
+    }
+
+    .bar{
+      height:9px;
+      border-radius:999px;
+      background:#d9eaf3;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      width:50%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#58b7e8,#1f9d63);
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.42;
+      padding:0 12px 12px;
+    }
+
+    .below-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .text-card{
+      padding:16px;
+    }
+
+    .text-card h2{
+      margin:0 0 9px;
+      font-size:1.1rem;
+    }
+
+    .text-card p,.text-card li{
+      color:#24485c;
+      line-height:1.5;
+      font-size:.94rem;
+    }
+
+    .text-card ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+
+    .challenge{
+      margin-top:12px;
+      padding:11px;
+      border-radius:15px;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+    }
+
+    .challenge strong{
+      color:var(--deep);
+    }
+
+    .quiz{
+      display:grid;
+      gap:9px;
+    }
+
+    .quiz button{
+      text-align:left;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+      color:#183f57;
+      font-weight:750;
+    }
+
+    .quiz button.correct{
+      background:#e6f6ee;
+      border-color:#a7dfc1;
+      color:#146442;
+    }
+
+    .quiz button.incorrect{
+      background:#fdeeee;
+      border-color:#f0b8b8;
+      color:#8f2f2f;
+    }
+
+    .feedback{
+      min-height:28px;
+      color:var(--deep);
+      font-weight:850;
+      margin-top:8px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:5px 9px;
+      background:#e7f5fb;
+      color:#0d5278;
+      font-weight:850;
+      font-size:.78rem;
+      margin-right:6px;
+      margin-top:6px;
+    }
+
+    @media (max-width:1100px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:repeat(4,1fr);
+      }
+
+      .main-grid,.below-grid{
+        grid-template-columns:1fr;
+      }
+
+      canvas{
+        height:470px;
+      }
+    }
+
+    @media (max-width:650px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:1fr;
+      }
+
+      .status-strip{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        padding:22px;
+      }
+
+      canvas{
+        height:410px;
+      }
+    }
+  </style>
+</head>
+
+<body class="simple-mode">
+  <div class="page">
+    <a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Microscope Focus and Magnification Explorer</h1>
+      <p>
+        Explore how a compound light microscope uses objective and eyepiece lenses, light and focus to make tiny specimens visible.
+        Practise finding, centring and sharpening a specimen as you switch from low power to high power.
+      </p>
+    </section>
+
+    <section class="top-controls">
+      <div class="control-grid">
+        <div class="control">
+          <label for="learningMode">Learning mode</label>
+          <select id="learningMode">
+            <option value="simple">Simple</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="specimen">Specimen</label>
+          <select id="specimen">
+            <option value="letter">Printed letter e</option>
+            <option value="onion">Onion epidermis</option>
+            <option value="cheek">Cheek cells</option>
+            <option value="pond">Pond water</option>
+            <option value="leaf">Leaf cells</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="objective">Objective lens</label>
+          <select id="objective">
+            <option value="4">Scanning 4×</option>
+            <option value="10">Low power 10×</option>
+            <option value="40">High power 40×</option>
+            <option value="100">Oil immersion 100×</option>
+          </select>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="eyepiece">Eyepiece lens</label>
+          <select id="eyepiece">
+            <option value="10">10×</option>
+            <option value="15">15×</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="coarseFocus">Coarse focus</label>
+          <input id="coarseFocus" type="range" min="-100" max="100" value="0" />
+          <div class="readout"><span id="coarseRead">0</span></div>
+        </div>
+
+        <div class="control">
+          <label for="fineFocus">Fine focus</label>
+          <input id="fineFocus" type="range" min="-50" max="50" value="0" />
+          <div class="readout"><span id="fineRead">0</span></div>
+        </div>
+
+        <div class="control">
+          <label for="stageX">Stage left/right</label>
+          <input id="stageX" type="range" min="-100" max="100" value="0" />
+          <div class="readout"><span id="stageXRead">0</span></div>
+        </div>
+
+        <div class="control">
+          <label for="stageY">Stage up/down</label>
+          <input id="stageY" type="range" min="-100" max="100" value="0" />
+          <div class="readout"><span id="stageYRead">0</span></div>
+        </div>
+
+        <div class="control">
+          <label for="lightLevel">Light intensity</label>
+          <input id="lightLevel" type="range" min="0" max="100" value="62" />
+          <div class="readout"><span id="lightRead">62</span>%</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="diaphragm">Diaphragm opening</label>
+          <input id="diaphragm" type="range" min="10" max="100" value="55" />
+          <div class="readout"><span id="diaphragmRead">55</span>%</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" id="runBtn">▶ Run model</button>
+        <button id="resetBtn">Reset</button>
+        <button id="lowPowerBtn">Find on low power</button>
+        <button id="highPowerBtn">Switch to high power</button>
+        <button id="centreBtn">Centre specimen</button>
+        <button id="csvBtn">Download CSV</button>
+      </div>
+    </section>
+
+    <main class="main-grid">
+      <section class="card">
+        <div class="card-header">
+          <h2>Microscope model</h2>
+          <p>
+            The left side shows the microscope and slide. The circular view shows what a student would see through the eyepiece.
+          </p>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="scopeCanvas"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="status">
+            <b>System status</b>
+            <span id="systemStatus">Paused</span>
+          </div>
+
+          <div class="status">
+            <b>Image status</b>
+            <span id="imageStatus">Clear</span>
+          </div>
+
+          <div class="status">
+            <b>Recommended action</b>
+            <span id="adviceStatus">Observe</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-header">
+          <h2>Measurements</h2>
+          <p>Use these values as evidence when comparing microscope settings.</p>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Total magnification</span>
+              <span class="metric-value" id="magValue">40×</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="magBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Image clarity</span>
+              <span class="metric-value" id="clarityValue">92%</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="clarityBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Brightness</span>
+              <span class="metric-value" id="brightnessValue">72%</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="brightnessBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Field of view</span>
+              <span class="metric-value" id="fieldValue">4.5 mm</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="fieldBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Centring</span>
+              <span class="metric-value" id="centringValue">Good</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="centringBar"></div></div>
+          </div>
+
+          <div class="metric advanced-only">
+            <div class="metric-top">
+              <span class="metric-name">Depth of field</span>
+              <span class="metric-value" id="depthValue">High</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="depthBar"></div></div>
+          </div>
+
+          <div class="metric advanced-only">
+            <div class="metric-top">
+              <span class="metric-name">Contrast</span>
+              <span class="metric-value" id="contrastValue">Medium</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="contrastBar"></div></div>
+          </div>
+        </div>
+
+        <p class="small-note" id="measurementNote">
+          Start on low power to find the specimen. Each new view starts very blurred and off centre, so use the stage and focus controls to centre and sharpen it.
+        </p>
+      </aside>
+    </main>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>How to use</h2>
+        <ul>
+          <li>Start with the <strong>4× or 10× objective</strong> to find the specimen.</li>
+          <li>Use <strong>stage controls</strong> to centre the specimen before increasing magnification.</li>
+          <li>Each new view begins <strong>very blurred and off centre</strong>, so you need to move the stage and focus it yourself.</li>
+          <li>Use <strong>coarse focus</strong> for large adjustments on low power.</li>
+          <li>Use <strong>fine focus</strong> when the image is nearly sharp or when using high power.</li>
+          <li>Increase <strong>light intensity</strong> and adjust the diaphragm if the image is too dark or washed out.</li>
+        </ul>
+
+        <div class="challenge">
+          <strong>Challenge:</strong> Find the onion cells on low power, centre them, then switch to 400× and get the image clear using fine focus.
+        </div>
+      </div>
+
+      <div class="card text-card">
+        <h2>What the model shows</h2>
+        <p>
+          A compound light microscope uses an objective lens near the specimen and an eyepiece lens near the eye.
+          Total magnification is found by multiplying the objective magnification by the eyepiece magnification.
+        </p>
+
+        <p class="advanced-only">
+          At higher magnification, the field of view and depth of field become smaller. This means less of the specimen is visible and focus becomes more sensitive.
+        </p>
+
+        <span class="tag">Cells</span>
+        <span class="tag">Microscopes</span>
+        <span class="tag">Lenses</span>
+        <span class="tag">Magnification</span>
+        <span class="tag">Focus</span>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>Self-test</h2>
+        <div class="quiz" id="quiz">
+          <button data-answer="correct">A 10× eyepiece with a 40× objective gives 400× total magnification.</button>
+          <button data-answer="wrong">A 10× eyepiece with a 40× objective gives 50× total magnification.</button>
+          <button data-answer="wrong">A 10× eyepiece with a 40× objective gives 4× total magnification.</button>
+        </div>
+        <div class="feedback" id="quizFeedback"></div>
+      </div>
+
+      <div class="card text-card">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Use this before a practical to practise microscope handling decisions.</li>
+          <li>Emphasise that high magnification is not always better: brightness, field of view, centring and focus all matter.</li>
+          <li>The microscope view is a simplified model designed to support conceptual understanding rather than exact optical calculation.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("scopeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    if(!CanvasRenderingContext2D.prototype.roundRect){
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        if(w < 2*r) r = w/2;
+        if(h < 2*r) r = h/2;
+        this.beginPath();
+        this.moveTo(x+r,y);
+        this.arcTo(x+w,y,x+w,y+h,r);
+        this.arcTo(x+w,y+h,x,y+h,r);
+        this.arcTo(x,y+h,x,y,r);
+        this.arcTo(x,y,x+w,y,r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    const controls = {
+      learningMode: document.getElementById("learningMode"),
+      specimen: document.getElementById("specimen"),
+      objective: document.getElementById("objective"),
+      eyepiece: document.getElementById("eyepiece"),
+      coarseFocus: document.getElementById("coarseFocus"),
+      fineFocus: document.getElementById("fineFocus"),
+      stageX: document.getElementById("stageX"),
+      stageY: document.getElementById("stageY"),
+      lightLevel: document.getElementById("lightLevel"),
+      diaphragm: document.getElementById("diaphragm")
+    };
+
+    const output = {
+      coarseRead: document.getElementById("coarseRead"),
+      fineRead: document.getElementById("fineRead"),
+      stageXRead: document.getElementById("stageXRead"),
+      stageYRead: document.getElementById("stageYRead"),
+      lightRead: document.getElementById("lightRead"),
+      diaphragmRead: document.getElementById("diaphragmRead"),
+      systemStatus: document.getElementById("systemStatus"),
+      imageStatus: document.getElementById("imageStatus"),
+      adviceStatus: document.getElementById("adviceStatus"),
+      magValue: document.getElementById("magValue"),
+      clarityValue: document.getElementById("clarityValue"),
+      brightnessValue: document.getElementById("brightnessValue"),
+      fieldValue: document.getElementById("fieldValue"),
+      centringValue: document.getElementById("centringValue"),
+      depthValue: document.getElementById("depthValue"),
+      contrastValue: document.getElementById("contrastValue"),
+      magBar: document.getElementById("magBar"),
+      clarityBar: document.getElementById("clarityBar"),
+      brightnessBar: document.getElementById("brightnessBar"),
+      fieldBar: document.getElementById("fieldBar"),
+      centringBar: document.getElementById("centringBar"),
+      depthBar: document.getElementById("depthBar"),
+      contrastBar: document.getElementById("contrastBar"),
+      measurementNote: document.getElementById("measurementNote")
+    };
+
+    const state = {
+      running:false,
+      t:0,
+      lastLog:0,
+      data:[]
+    };
+
+    const fieldByObjective = {
+      4:4.5,
+      10:1.8,
+      40:0.45,
+      100:0.18
+    };
+
+    const depthByObjective = {
+      4:0.95,
+      10:0.72,
+      40:0.36,
+      100:0.18
+    };
+
+    const idealLightByObjective = {
+      4:38,
+      10:52,
+      40:70,
+      100:86
+    };
+
+    function clamp(value,min,max){
+      return Math.max(min,Math.min(max,value));
+    }
+
+    function lerp(a,b,t){
+      return a + (b-a) * t;
+    }
+
+    function map(value,inMin,inMax,outMin,outMax){
+      const t = clamp((value-inMin)/(inMax-inMin),0,1);
+      return lerp(outMin,outMax,t);
+    }
+
+    function getValues(){
+      const learningMode = controls.learningMode.value;
+      const specimen = controls.specimen.value;
+      let objective = Number(controls.objective.value);
+      const eyepiece = learningMode === "simple" ? 10 : Number(controls.eyepiece.value);
+      const coarse = Number(controls.coarseFocus.value);
+      const fine = Number(controls.fineFocus.value);
+      const stageX = Number(controls.stageX.value);
+      const stageY = Number(controls.stageY.value);
+      const light = Number(controls.lightLevel.value);
+      const diaphragm = learningMode === "simple" ? 55 : Number(controls.diaphragm.value);
+
+      if(learningMode === "simple" && objective === 100){
+        objective = 40;
+        controls.objective.value = "40";
+      }
+
+      const totalMagnification = objective * eyepiece;
+      const fieldOfView = fieldByObjective[objective] * (10 / eyepiece);
+      const depth = depthByObjective[objective];
+
+      const focusError = Math.abs(coarse * 0.75 + fine * 0.32);
+      const focusTolerance = objective <= 4 ? 72 : objective <= 10 ? 42 : objective <= 40 ? 22 : 13;
+      const focusQuality = clamp(1 - focusError / focusTolerance,0,1);
+
+      const stageScale = objective <= 4 ? 1 : objective <= 10 ? 1.7 : objective <= 40 ? 3.2 : 6;
+      const stageDistance = Math.hypot(stageX,stageY) * stageScale;
+      const stageTolerance = 110;
+      const centringQuality = clamp(1 - stageDistance / stageTolerance,0,1);
+
+      const idealLight = idealLightByObjective[objective];
+      const lightError = Math.abs(light - idealLight);
+      const lightQuality = clamp(1 - lightError / 70,0,1);
+      const diaphragmQuality = clamp(1 - Math.abs(diaphragm - 55) / 70,0,1);
+
+      const brightness = clamp((light / 100) * (0.35 + diaphragm / 90) * (1 - objective / 180),0,1);
+      const contrast = clamp(0.28 + diaphragmQuality * 0.42 + (specimen === "letter" ? 0.2 : 0.08),0,1);
+      const clarity = clamp((focusQuality * 0.58) + (lightQuality * 0.14) + (contrast * 0.12) + (centringQuality * 0.16),0,1);
+
+      let imageStatus = "Clear";
+      if(centringQuality < 0.18) imageStatus = "Specimen out of view";
+      else if(clarity < 0.35) imageStatus = "Very blurry";
+      else if(clarity < 0.62) imageStatus = "Partly focused";
+      else if(brightness < 0.23) imageStatus = "Too dark";
+      else if(brightness > 0.86) imageStatus = "Washed out";
+
+      let advice = "Observe";
+      if(centringQuality < 0.4) advice = "Centre specimen";
+      else if(objective >= 40 && Math.abs(coarse) > 18) advice = "Use fine focus";
+      else if(focusQuality < 0.55 && objective <= 10) advice = "Adjust coarse focus";
+      else if(focusQuality < 0.70) advice = "Adjust fine focus";
+      else if(brightness < 0.25) advice = "Increase light";
+      else if(brightness > 0.86) advice = "Reduce light";
+
+      return {
+        learningMode,
+        specimen,
+        objective,
+        eyepiece,
+        coarse,
+        fine,
+        stageX,
+        stageY,
+        light,
+        diaphragm,
+        totalMagnification,
+        fieldOfView,
+        depth,
+        focusQuality,
+        lightQuality,
+        brightness,
+        contrast,
+        clarity,
+        centringQuality,
+        imageStatus,
+        advice,
+        specimenLabel: controls.specimen.options[controls.specimen.selectedIndex].text
+      };
+    }
+
+    function updateReadouts(){
+      const v = getValues();
+
+      document.body.classList.toggle("simple-mode",v.learningMode === "simple");
+
+      output.coarseRead.textContent = v.coarse;
+      output.fineRead.textContent = v.fine;
+      output.stageXRead.textContent = v.stageX;
+      output.stageYRead.textContent = v.stageY;
+      output.lightRead.textContent = v.light;
+      output.diaphragmRead.textContent = v.diaphragm;
+
+      output.systemStatus.textContent = state.running ? "Running" : "Paused";
+      output.imageStatus.textContent = v.imageStatus;
+      output.adviceStatus.textContent = v.advice;
+
+      output.magValue.textContent = `${v.totalMagnification}×`;
+      output.clarityValue.textContent = `${Math.round(v.clarity * 100)}%`;
+      output.brightnessValue.textContent = `${Math.round(v.brightness * 100)}%`;
+      output.fieldValue.textContent = `${v.fieldOfView.toFixed(2)} mm`;
+      output.centringValue.textContent = v.centringQuality > 0.72 ? "Good" : v.centringQuality > 0.42 ? "Fair" : "Poor";
+      output.depthValue.textContent = v.depth > 0.7 ? "High" : v.depth > 0.35 ? "Medium" : "Low";
+      output.contrastValue.textContent = v.contrast > 0.72 ? "High" : v.contrast > 0.48 ? "Medium" : "Low";
+
+      output.magBar.style.width = `${clamp(v.totalMagnification / 1000 * 100,4,100)}%`;
+      output.clarityBar.style.width = `${clamp(v.clarity * 100,4,100)}%`;
+      output.brightnessBar.style.width = `${clamp(v.brightness * 100,4,100)}%`;
+      output.fieldBar.style.width = `${clamp(v.fieldOfView / 4.5 * 100,4,100)}%`;
+      output.centringBar.style.width = `${clamp(v.centringQuality * 100,4,100)}%`;
+      output.depthBar.style.width = `${clamp(v.depth * 100,4,100)}%`;
+      output.contrastBar.style.width = `${clamp(v.contrast * 100,4,100)}%`;
+
+      output.clarityBar.style.background =
+        v.clarity > 0.72 ? "linear-gradient(90deg,#58b7e8,#1f9d63)" :
+        v.clarity > 0.42 ? "linear-gradient(90deg,#f0c85a,#e89b20)" :
+        "linear-gradient(90deg,#f09a9a,#d64545)";
+
+      output.measurementNote.textContent =
+        v.learningMode === "simple"
+        ? "Find the specimen on low power, centre it, then increase magnification. If the image becomes blurry, use fine focus."
+        : "Higher magnification gives a smaller field of view and lower depth of field, so centring, focus and light adjustments become more important.";
+    }
+
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      draw();
+    }
+
+    function drawBoxLabel(text,x,y,align="center"){
+      ctx.save();
+      ctx.font = "850 12px system-ui";
+      ctx.textAlign = align;
+      ctx.textBaseline = "middle";
+
+      const padX = 8;
+      const metrics = ctx.measureText(text);
+      const width = metrics.width + padX * 2;
+      const height = 24;
+
+      let left = x - width / 2;
+      if(align === "left") left = x;
+      if(align === "right") left = x - width;
+
+      ctx.fillStyle = "rgba(6,19,34,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,y - height / 2,width,height,8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(230,246,255,.96)";
+      ctx.fillText(text,x,y);
+      ctx.restore();
+    }
+
+    function drawBackground(w,h){
+      const bg = ctx.createLinearGradient(0,0,0,h);
+      bg.addColorStop(0,"#061322");
+      bg.addColorStop(1,"#0c2338");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0,0,w,h);
+
+      ctx.save();
+      ctx.globalAlpha = 0.25;
+      ctx.fillStyle = "#ffffff";
+      for(let i=0;i<72;i++){
+        const x = (i * 89) % w;
+        const y = (i * 53) % h;
+        const r = ((i * 19) % 3 + 1) / 2.6;
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawLightCone(x1,y1,x2,y2,alpha=0.18){
+      ctx.save();
+      const grad = ctx.createLinearGradient(x1,y1,x2,y2);
+      grad.addColorStop(0,`rgba(255,245,150,${alpha})`);
+      grad.addColorStop(1,"rgba(255,245,150,0.02)");
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 40;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+        function drawMicroscope(w,h,v){
+      const baseLeft = 58;
+      const baseTop = h - 78;
+      const stageX = 262;
+      const stageY = h - 210;
+      const stageWidth = 250;
+      const noseX = 314;
+      const noseY = stageY - 104;
+      const tubeTopX = stageX;
+      const tubeTopY = 108;
+      const eyepieceX = tubeTopX;
+      const eyepieceY = tubeTopY - 34;
+      const objectiveLength = v.objective <= 4 ? 36 : v.objective <= 10 ? 48 : v.objective <= 40 ? 64 : 78;
+
+      ctx.save();
+
+      const metalGrad = ctx.createLinearGradient(0,0,0,h);
+      metalGrad.addColorStop(0,"rgba(245,252,255,.98)");
+      metalGrad.addColorStop(1,"rgba(178,216,235,.96)");
+
+      const blueMetal = ctx.createLinearGradient(0,0,0,h);
+      blueMetal.addColorStop(0,"rgba(198,230,246,.98)");
+      blueMetal.addColorStop(1,"rgba(125,183,214,.96)");
+
+      // Base
+      ctx.fillStyle = blueMetal;
+      ctx.beginPath();
+      ctx.roundRect(baseLeft,baseTop,392,34,18);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(115,170,200,.7)";
+      ctx.beginPath();
+      ctx.roundRect(baseLeft + 38,baseTop - 22,278,28,13);
+      ctx.fill();
+
+      // Pillar and arm
+      ctx.fillStyle = metalGrad;
+      ctx.beginPath();
+      ctx.moveTo(366,baseTop + 8);
+      ctx.bezierCurveTo(436,h - 238,456,170,268,96);
+      ctx.lineTo(228,110);
+      ctx.bezierCurveTo(398,176,386,h - 234,326,baseTop + 8);
+      ctx.closePath();
+      ctx.fill();
+
+      // Head and body tube
+      // Keep the eyepiece vertically aligned with the optical axis/light ray.
+      const tubeAngle = Math.atan2((noseY - 16) - tubeTopY,noseX - tubeTopX);
+
+      ctx.strokeStyle = "rgba(215,243,255,.98)";
+      ctx.lineWidth = 40;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(tubeTopX,tubeTopY);
+      ctx.lineTo(noseX,noseY - 16);
+      ctx.stroke();
+
+      // Vertical eyepiece barrel directly above the optical axis
+      ctx.fillStyle = "rgba(245,252,255,.97)";
+      ctx.beginPath();
+      ctx.roundRect(eyepieceX - 18,eyepieceY - 8,36,54,12);
+      ctx.fill();
+
+      // Top opening / eyecup
+      ctx.fillStyle = "rgba(210,226,236,.92)";
+      ctx.beginPath();
+      ctx.ellipse(eyepieceX,eyepieceY + 2,15,9,0,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(85,102,118,.82)";
+      ctx.beginPath();
+      ctx.ellipse(eyepieceX,eyepieceY + 2,6,4.5,0,0,Math.PI*2);
+      ctx.fill();
+
+      // Floating labels above the model
+      drawBoxLabel("eyepiece lens",eyepieceX - 22,34);
+      drawBoxLabel("stage and slide",stageX,stageY + 68);
+      drawBoxLabel("light source",stageX,baseTop - 14);
+
+      // Stage
+      ctx.fillStyle = "rgba(208,232,244,.95)";
+      ctx.beginPath();
+      ctx.roundRect(stageX - 130,stageY,stageWidth,30,10);
+      ctx.fill();
+
+      // Mechanical stage top plate
+      ctx.fillStyle = "rgba(65,95,120,.72)";
+      ctx.beginPath();
+      ctx.roundRect(stageX - 116,stageY - 8,220,14,6);
+      ctx.fill();
+
+      // Slide
+      ctx.fillStyle = "rgba(255,255,255,.82)";
+      ctx.strokeStyle = "rgba(185,225,245,.92)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(stageX - 82,stageY - 12,166,18,6);
+      ctx.fill();
+      ctx.stroke();
+
+      // Specimen marker on slide
+      ctx.fillStyle = "rgba(80,145,120,.85)";
+      ctx.beginPath();
+      ctx.ellipse(stageX + v.stageX * 0.26,stageY - 3 + v.stageY * 0.18,18,5,0,0,Math.PI*2);
+      ctx.fill();
+
+      // Stage clips
+      ctx.strokeStyle = "rgba(232,240,248,.95)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(stageX - 90,stageY - 18);
+      ctx.lineTo(stageX - 54,stageY - 18);
+      ctx.moveTo(stageX + 58,stageY - 18);
+      ctx.lineTo(stageX + 94,stageY - 18);
+      ctx.stroke();
+
+      // Condenser and diaphragm
+      ctx.strokeStyle = "rgba(230,245,255,.86)";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(stageX,stageY + 40,22,0,Math.PI*2);
+      ctx.stroke();
+
+      const opening = map(v.diaphragm,10,100,8,22);
+      ctx.fillStyle = "rgba(255,240,140,.75)";
+      ctx.beginPath();
+      ctx.arc(stageX,stageY + 40,opening,0,Math.PI*2);
+      ctx.fill();
+
+      // Illuminator
+      const lightAlpha = 0.36 + v.light / 150;
+      ctx.fillStyle = `rgba(255,238,120,${lightAlpha})`;
+      ctx.beginPath();
+      ctx.arc(stageX,baseTop - 52,28,0,Math.PI*2);
+      ctx.fill();
+
+      drawLightCone(stageX,baseTop - 52,stageX,stageY - 2,0.12 + v.light/400);
+
+      // Focus knobs: clearly attached to the microscope arm.
+      const knobX = 392;
+      const coarseY = stageY - 55;
+      const fineY = stageY - 9;
+
+      // Small connector plate
+      ctx.fillStyle = "rgba(55,95,120,.82)";
+      ctx.beginPath();
+      ctx.roundRect(knobX - 18,coarseY - 20,26,82,12);
+      ctx.fill();
+
+      // Coarse focus knob
+      ctx.fillStyle = "rgba(70,135,170,.96)";
+      ctx.strokeStyle = "rgba(205,238,252,.96)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(knobX,coarseY,24,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Fine focus knob
+      ctx.fillStyle = "rgba(95,160,195,.96)";
+      ctx.beginPath();
+      ctx.arc(knobX + 7,fineY,14,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Knob grip marks
+      ctx.strokeStyle = "rgba(230,248,255,.75)";
+      ctx.lineWidth = 2;
+      for(let a=0;a<Math.PI*2;a+=Math.PI/5){
+        ctx.beginPath();
+        ctx.moveTo(knobX + Math.cos(a)*15,coarseY + Math.sin(a)*15);
+        ctx.lineTo(knobX + Math.cos(a)*21,coarseY + Math.sin(a)*21);
+        ctx.stroke();
+      }
+
+      drawBoxLabel("focus knobs",knobX + 38,coarseY - 24,"left");
+
+      // Mechanical stage controls: small paired knobs beside the stage.
+      ctx.fillStyle = "rgba(80,145,180,.92)";
+      ctx.strokeStyle = "rgba(185,230,250,.9)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(stageX + 125,stageY + 12,9,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(stageX + 146,stageY + 35,7,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Light path
+      // Keep the student model simple: one straight optical axis through lamp, specimen and objective.
+      const opticalAxisX = stageX;
+      const opticalAxisTopY = noseY - 18;
+
+      // Vertical optical tube highlight
+      ctx.strokeStyle = "rgba(220,245,255,.22)";
+      ctx.lineWidth = 26;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(opticalAxisX,stageY - 2);
+      ctx.lineTo(opticalAxisX,opticalAxisTopY);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(255,235,130,.86)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8,7]);
+      ctx.beginPath();
+      ctx.moveTo(stageX,baseTop - 52);
+      ctx.lineTo(stageX,stageY - 2);
+      ctx.lineTo(opticalAxisX,opticalAxisTopY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Animated turn-ring on active knobs
+      if(state.running){
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,235,130,.7)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6,5]);
+        ctx.beginPath();
+        ctx.arc(424,stageY - 42,36 + Math.sin(state.t*0.05)*2,0,Math.PI*2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(stageX + 125,stageY + 12,17 + Math.sin(state.t*0.06)*1.5,0,Math.PI*2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function drawSpecimenPattern(cx,cy,r,v){
+      ctx.save();
+
+      const stageEffect = clamp(v.totalMagnification / 40,1,10);
+      const xShift = -v.stageX * stageEffect * 0.9;
+      const yShift = -v.stageY * stageEffect * 0.9;
+
+      ctx.translate(cx + xShift,cy + yShift);
+
+      const magScale = clamp(v.totalMagnification / 100,0.45,5.5);
+      const motion = state.running ? Math.sin(state.t * 0.04) : 0;
+
+      if(v.specimen === "letter"){
+        ctx.save();
+        ctx.rotate(Math.PI);
+        ctx.fillStyle = "rgba(25,45,65,.92)";
+        ctx.font = `${72 * magScale}px Georgia, serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("e",0,0);
+        ctx.restore();
+      }
+
+      if(v.specimen === "onion"){
+        ctx.strokeStyle = "rgba(115,90,175,.75)";
+        ctx.lineWidth = Math.max(1,2.2 * magScale/2);
+        ctx.fillStyle = "rgba(210,190,245,.16)";
+        const cellW = 46 * magScale;
+        const cellH = 28 * magScale;
+        for(let row=-3;row<=3;row++){
+          for(let col=-4;col<=4;col++){
+            const x = col * cellW * 0.86 + (row%2)*cellW*0.42;
+            const y = row * cellH * 0.82;
+            ctx.beginPath();
+            ctx.roundRect(x - cellW/2,y - cellH/2,cellW,cellH,9 * magScale);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "rgba(95,55,145,.45)";
+            ctx.beginPath();
+            ctx.arc(x + cellW*0.18,y,Math.max(2,4*magScale),0,Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "rgba(210,190,245,.16)";
+          }
+        }
+      }
+
+      if(v.specimen === "cheek"){
+        for(let i=0;i<18;i++){
+          const x = ((i*57)%220 - 110) * magScale * 0.6;
+          const y = ((i*41)%180 - 90) * magScale * 0.55;
+          const rot = i * 0.6;
+          ctx.save();
+          ctx.translate(x,y);
+          ctx.rotate(rot);
+          ctx.fillStyle = "rgba(245,205,210,.30)";
+          ctx.strokeStyle = "rgba(165,90,130,.75)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(0,0,22*magScale,14*magScale,0,0,Math.PI*2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "rgba(100,70,150,.65)";
+          ctx.beginPath();
+          ctx.arc(4*magScale,-2*magScale,5*magScale,0,Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      if(v.specimen === "pond"){
+        for(let i=0;i<16;i++){
+          const x = ((i*73)%260 - 130) * magScale * 0.55 + Math.sin(state.t*0.03+i)*12;
+          const y = ((i*47)%200 - 100) * magScale * 0.55 + Math.cos(state.t*0.025+i)*9;
+          ctx.save();
+          ctx.translate(x,y);
+          ctx.rotate(Math.sin(state.t*0.02+i));
+          ctx.fillStyle = i%3 === 0 ? "rgba(120,220,155,.42)" : "rgba(120,200,225,.35)";
+          ctx.strokeStyle = i%3 === 0 ? "rgba(50,150,85,.8)" : "rgba(50,140,170,.8)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(0,0,(9+i%4*4)*magScale,(5+i%3*3)*magScale,0,0,Math.PI*2);
+          ctx.fill();
+          ctx.stroke();
+          if(i%4 === 0){
+            ctx.strokeStyle = "rgba(50,140,170,.7)";
+            ctx.beginPath();
+            ctx.moveTo(8*magScale,0);
+            ctx.quadraticCurveTo(20*magScale,8*motion,28*magScale,0);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      }
+
+      if(v.specimen === "leaf"){
+        const cell = 38 * magScale;
+        for(let row=-3;row<=3;row++){
+          for(let col=-4;col<=4;col++){
+            const x = col * cell * 0.92;
+            const y = row * cell * 0.75;
+            ctx.fillStyle = "rgba(165,230,160,.16)";
+            ctx.strokeStyle = "rgba(65,145,75,.78)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x - cell/2,y - cell/2,cell,cell*0.75,8);
+            ctx.fill();
+            ctx.stroke();
+
+            for(let c=0;c<4;c++){
+              ctx.fillStyle = "rgba(45,155,70,.75)";
+              ctx.beginPath();
+              ctx.arc(x - cell*0.25 + c*cell*0.15,y + Math.sin(c)*cell*0.1,Math.max(2,3*magScale),0,Math.PI*2);
+              ctx.fill();
+            }
+          }
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawEyepieceView(w,h,v){
+      const cx = w - 190;
+      const cy = h * 0.47;
+      const radius = 146;
+
+      const blur = clamp((1 - v.clarity) * 16,0,16);
+      const brightnessOverlay = 1 - v.brightness;
+      const washedOut = clamp((v.brightness - 0.82) / 0.18,0,1);
+      const contrastAlpha = clamp(0.55 + v.contrast * 0.45,0.55,1);
+
+      ctx.save();
+
+      ctx.fillStyle = "#06101c";
+      ctx.strokeStyle = "rgba(150,220,255,.85)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx,cy,radius,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx,cy,radius-8,0,Math.PI*2);
+      ctx.clip();
+
+      const fieldGrad = ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
+      fieldGrad.addColorStop(0,`rgba(246,252,255,${0.88 + washedOut*0.12})`);
+      fieldGrad.addColorStop(1,`rgba(210,235,245,${0.72 + washedOut*0.18})`);
+      ctx.fillStyle = fieldGrad;
+      ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);
+
+      ctx.globalAlpha = contrastAlpha;
+      ctx.filter = `blur(${blur}px)`;
+      drawSpecimenPattern(cx,cy,radius,v);
+      ctx.filter = "none";
+      ctx.globalAlpha = 1;
+
+      if(v.brightness < 0.45){
+        ctx.fillStyle = `rgba(0,20,30,${brightnessOverlay * 0.55})`;
+        ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);
+      }
+
+      if(washedOut > 0){
+        ctx.fillStyle = `rgba(255,255,255,${washedOut*0.45})`;
+        ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);
+      }
+
+      ctx.strokeStyle = "rgba(10,60,80,.18)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx-radius,cy);
+      ctx.lineTo(cx+radius,cy);
+      ctx.moveTo(cx,cy-radius);
+      ctx.lineTo(cx,cy+radius);
+      ctx.stroke();
+
+      ctx.restore();
+
+      ctx.fillStyle = "rgba(255,255,255,.9)";
+      ctx.font = "850 13px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("eyepiece view",cx,cy + radius + 24);
+
+      ctx.restore();
+    }
+
+    function draw(){
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      const v = getValues();
+
+      ctx.clearRect(0,0,w,h);
+      drawBackground(w,h);
+      drawMicroscope(w,h,v);
+      drawEyepieceView(w,h,v);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "800 13px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`Current view: ${v.specimenLabel} at ${v.totalMagnification}×`,18,h-22);
+      ctx.restore();
+    }
+
+    function logData(){
+      const v = getValues();
+      state.data.push({
+        time_s:(state.t/60).toFixed(2),
+        learning_mode:v.learningMode,
+        specimen:v.specimen,
+        objective_x:v.objective,
+        eyepiece_x:v.eyepiece,
+        total_magnification_x:v.totalMagnification,
+        coarse_focus:v.coarse,
+        fine_focus:v.fine,
+        stage_x:v.stageX,
+        stage_y:v.stageY,
+        light_percent:v.light,
+        diaphragm_percent:v.diaphragm,
+        field_of_view_mm:v.fieldOfView.toFixed(2),
+        brightness_percent:Math.round(v.brightness*100),
+        clarity_percent:Math.round(v.clarity*100),
+        contrast_percent:Math.round(v.contrast*100),
+        centring_percent:Math.round(v.centringQuality*100),
+        image_status:v.imageStatus
+      });
+    }
+
+    function animate(){
+      if(state.running){
+        state.t += 1;
+
+        if(getValues().specimen === "pond"){
+          controls.stageX.value = String(clamp(Number(controls.stageX.value) + Math.sin(state.t * 0.03) * 0.08,-100,100));
+          controls.stageY.value = String(clamp(Number(controls.stageY.value) + Math.cos(state.t * 0.027) * 0.08,-100,100));
+        }
+
+        if(state.t - state.lastLog > 24){
+          logData();
+          state.lastLog = state.t;
+        }
+      }
+
+      updateReadouts();
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    function reset(){
+      controls.learningMode.value = "simple";
+      controls.specimen.value = "letter";
+      controls.objective.value = "4";
+      controls.eyepiece.value = "10";
+      controls.coarseFocus.value = "70";
+      controls.fineFocus.value = "25";
+      controls.stageX.value = "-36";
+      controls.stageY.value = "22";
+      controls.lightLevel.value = "62";
+      controls.diaphragm.value = "55";
+      state.running = false;
+      state.t = 0;
+      state.lastLog = 0;
+      state.data = [];
+      document.getElementById("runBtn").textContent = "▶ Run model";
+      updateReadouts();
+      draw();
+    }
+
+    function lowPowerPreset(){
+      controls.objective.value = "10";
+      controls.coarseFocus.value = "42";
+      controls.fineFocus.value = "18";
+      controls.stageX.value = "-30";
+      controls.stageY.value = "18";
+      controls.lightLevel.value = "55";
+      controls.diaphragm.value = "55";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function highPowerPreset(){
+      controls.objective.value = "40";
+      controls.coarseFocus.value = "24";
+      controls.fineFocus.value = "18";
+      controls.stageX.value = "-18";
+      controls.stageY.value = "12";
+      controls.lightLevel.value = "74";
+      controls.diaphragm.value = "55";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function centreSpecimen(){
+      controls.stageX.value = "0";
+      controls.stageY.value = "0";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function setBlurredStartingFocus(){
+      const objective = Number(controls.objective.value);
+
+      if(objective <= 4){
+        controls.coarseFocus.value = "70";
+        controls.fineFocus.value = "25";
+        controls.stageX.value = "-36";
+        controls.stageY.value = "22";
+      }else if(objective <= 10){
+        controls.coarseFocus.value = "48";
+        controls.fineFocus.value = "22";
+        controls.stageX.value = "-30";
+        controls.stageY.value = "18";
+      }else if(objective <= 40){
+        controls.coarseFocus.value = "26";
+        controls.fineFocus.value = "20";
+        controls.stageX.value = "-18";
+        controls.stageY.value = "12";
+      }else{
+        controls.coarseFocus.value = "16";
+        controls.fineFocus.value = "18";
+        controls.stageX.value = "-10";
+        controls.stageY.value = "8";
+      }
+    }
+
+    function downloadCSV(){
+      if(state.data.length === 0) logData();
+
+      const headers = Object.keys(state.data[0]);
+      const rows = state.data.map(row => headers.map(h => row[h]).join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+
+      const blob = new Blob([csv],{type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "microscope_focus_data.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("runBtn").addEventListener("click",()=>{
+      state.running = !state.running;
+      document.getElementById("runBtn").textContent = state.running ? "⏸ Pause model" : "▶ Run model";
+      updateReadouts();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",reset);
+    document.getElementById("lowPowerBtn").addEventListener("click",lowPowerPreset);
+    document.getElementById("highPowerBtn").addEventListener("click",highPowerPreset);
+    document.getElementById("centreBtn").addEventListener("click",centreSpecimen);
+    document.getElementById("csvBtn").addEventListener("click",downloadCSV);
+
+    Object.values(controls).forEach(control=>{
+      control.addEventListener("input",()=>{
+        logData();
+        updateReadouts();
+        draw();
+      });
+
+      control.addEventListener("change",()=>{
+        logData();
+        updateReadouts();
+        draw();
+      });
+    });
+
+    controls.specimen.addEventListener("change",()=>{
+      setBlurredStartingFocus();
+      logData();
+      updateReadouts();
+      draw();
+    });
+
+    controls.objective.addEventListener("change",()=>{
+      setBlurredStartingFocus();
+      logData();
+      updateReadouts();
+      draw();
+    });
+
+    document.querySelectorAll("#quiz button").forEach(button=>{
+      button.addEventListener("click",()=>{
+        document.querySelectorAll("#quiz button").forEach(b=>{
+          b.classList.remove("correct","incorrect");
+        });
+
+        if(button.dataset.answer === "correct"){
+          button.classList.add("correct");
+          document.getElementById("quizFeedback").textContent = "Correct. Total magnification = eyepiece magnification × objective magnification.";
+        }else{
+          button.classList.add("incorrect");
+          document.getElementById("quizFeedback").textContent = "Not quite. Multiply the eyepiece and objective values: 10 × 40 = 400.";
+        }
+      });
+    });
+
+    window.addEventListener("resize",resizeCanvas);
+
+    reset();
+    resizeCanvas();
+    animate();
+  </script>
+</body>
+</html>
