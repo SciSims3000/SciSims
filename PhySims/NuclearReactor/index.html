@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nuclear Reactor Simulator</title>
+<style>
+:root{--bg:#eef7fb;--card:#fff;--ink:#123143;--muted:#557184;--blue:#1d7ed0;--line:#c9dfec;--shadow:0 10px 25px rgba(12,54,82,.12);--radius:22px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eaf6fb,#f6fbfe);color:var(--ink)}.page{width:min(1240px,calc(100% - 28px));margin:auto;padding:18px 0 36px}.back-btn{display:inline-flex;background:#dff1fa;color:#0c4d73;padding:10px 16px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(12,54,82,.08);margin-bottom:14px}.hero{border-radius:28px;padding:24px 28px;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),linear-gradient(135deg,#0e4f78,#1e91d6 52%,#59c2eb);box-shadow:var(--shadow)}.hero h1{margin:0;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-.04em;line-height:1}.hero p{max-width:970px;margin:10px 0 0;font-size:1.03rem;line-height:1.5;color:rgba(255,255,255,.92)}
+.top-controls{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}.control-grid{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:10px;align-items:end}body.simple-mode .advanced-only{display:none!important}body.simple-mode .control-grid{grid-template-columns:repeat(7,minmax(105px,1fr))}label{display:block;font-size:.8rem;color:var(--muted);font-weight:850;margin-bottom:5px}select,input[type=range]{width:100%}select{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#f8fcff;color:var(--ink);font-weight:750}input[type=range]{accent-color:var(--blue)}.readout{margin-top:3px;font-size:.82rem;font-weight:850;color:#0f3d5c}.button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:none;border-radius:14px;padding:10px 13px;font-weight:900;cursor:pointer;background:#e2f1f8;color:#0d4a6e;transition:.15s ease}button:hover{transform:translateY(-1px);filter:brightness(.98)}.primary{background:linear-gradient(135deg,#107bd1,#56b5e8);color:#fff}.danger{background:linear-gradient(135deg,#d64545,#ef7e63);color:#fff}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,.76fr);gap:16px;margin-top:16px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card-header{padding:14px 16px;border-bottom:1px solid var(--line);background:#f6fbfe}.card-header h2{margin:0;font-size:1.08rem}.card-header p{margin:4px 0 0;color:var(--muted);font-size:.9rem;line-height:1.35}.canvas-wrap{padding:10px}canvas{display:block;width:100%;height:520px;border-radius:18px;background:#071625;border:1px solid #15364f}
+.status-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px;border-top:1px solid var(--line);background:#fbfdff}.status{border-radius:15px;padding:10px;background:#eef7fb;border:1px solid var(--line)}.status b{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px}.status span{font-size:1.02rem;font-weight:950;color:#0f3d5c}.metric-list{padding:12px;display:grid;gap:9px}.metric{padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.metric-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}.metric-name{font-weight:900;color:#0f3d5c;font-size:.91rem}.metric-value{font-weight:950;color:var(--blue);font-size:.91rem;white-space:nowrap}.bar{height:9px;border-radius:999px;background:#d9eaf3;overflow:hidden}.bar-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#58b7e8,#1f9d63)}.small-note{color:var(--muted);font-size:.84rem;line-height:1.42;padding:0 12px 12px}.below-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.text-card{padding:16px}.text-card h2{margin:0 0 9px;font-size:1.1rem}.text-card p,.text-card li{color:#24485c;line-height:1.5;font-size:.94rem}.text-card ul{margin:8px 0 0;padding-left:20px}.challenge{margin-top:12px;padding:11px;border-radius:15px;background:#f3f9fd;border:1px solid var(--line)}.challenge strong{color:#0f3d5c}.quiz{display:grid;gap:9px}.quiz button{text-align:left;background:#f3f9fd;border:1px solid var(--line);color:#183f57;font-weight:750}.quiz button.correct{background:#e6f6ee;border-color:#a7dfc1;color:#146442}.quiz button.incorrect{background:#fdeeee;border-color:#f0b8b8;color:#8f2f2f}.feedback{min-height:28px;color:#0f3d5c;font-weight:850;margin-top:8px}.tag{display:inline-flex;border-radius:999px;padding:5px 9px;background:#e7f5fb;color:#0d5278;font-weight:850;font-size:.78rem;margin-right:6px;margin-top:6px}
+@media(max-width:1100px){.control-grid,body.simple-mode .control-grid{grid-template-columns:repeat(3,1fr)}.main-grid,.below-grid{grid-template-columns:1fr}canvas{height:490px}}@media(max-width:650px){.control-grid,body.simple-mode .control-grid{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.hero{padding:22px}canvas{height:430px}}
+</style>
+</head>
+<body class="simple-mode">
+<div class="page">
+<a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+<section class="hero"><h1>Nuclear Reactor Simulator</h1><p>Model a simplified nuclear power reactor. Adjust control rods, coolant flow and turbine load to keep a controlled fission chain reaction stable, transfer heat to water, make steam and generate electricity.</p></section>
+
+<section class="top-controls">
+<div class="control-grid">
+<div><label for="learningMode">Learning mode</label><select id="learningMode"><option value="simple">Simple</option><option value="advanced">Advanced</option></select></div>
+<div><label for="reactorFocus">Model focus</label><select id="reactorFocus"><option value="power">Power generation</option><option value="chain">Chain reaction</option><option value="safety">Safety systems</option></select></div>
+<div><label for="controlRods">Control rods inserted</label><input id="controlRods" type="range" min="0" max="100" value="55"><div class="readout"><span id="controlRodsRead">55</span>%</div></div>
+<div><label for="coolantFlow">Coolant flow</label><input id="coolantFlow" type="range" min="20" max="100" value="72"><div class="readout"><span id="coolantFlowRead">72</span>%</div></div>
+<div><label for="turbineLoad">Turbine load</label><input id="turbineLoad" type="range" min="20" max="100" value="68"><div class="readout"><span id="turbineLoadRead">68</span>%</div></div>
+<div><label for="fuelCondition">Fuel condition</label><select id="fuelCondition"><option value="low">Low activity</option><option value="normal" selected>Normal activity</option><option value="high">High activity</option></select></div>
+<div><label for="randomMode">Random events</label><select id="randomMode"><option value="off">Off</option><option value="training">Training</option><option value="challenge">Challenge</option></select></div>
+<div class="advanced-only"><label for="moderatorTemp">Moderator temperature</label><input id="moderatorTemp" type="range" min="250" max="360" step="5" value="300"><div class="readout"><span id="moderatorTempRead">300</span> °C</div></div>
+<div class="advanced-only"><label for="heatExchanger">Heat exchanger efficiency</label><input id="heatExchanger" type="range" min="45" max="100" value="82"><div class="readout"><span id="heatExchangerRead">82</span>%</div></div>
+</div>
+<div class="button-row"><button class="primary" id="runBtn">▶ Start reactor model</button><button id="resetBtn">Reset</button><button id="stableBtn">Stable power preset</button><button id="overheatBtn">Poor cooling test</button><button id="triggerEventBtn">Trigger random event</button><button class="danger" id="scramBtn">SCRAM / insert rods</button><button id="csvBtn">Download CSV</button></div>
+<p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">Challenge: adjust the rods and coolant to keep the reactor stable while producing useful electrical power. Use Trigger random event for a quick fault-response test.</p>
+</section>
+
+<main class="main-grid">
+<section class="card"><div class="card-header"><h2>Reactor model</h2><p>The core releases heat through controlled fission. Coolant carries heat to a steam generator, steam spins a turbine, and the generator produces electricity.</p></div><div class="canvas-wrap"><canvas id="reactorCanvas"></canvas></div><div class="status-strip"><div class="status"><b>System status</b><span id="systemStatus">Paused</span></div><div class="status"><b>Reactor state</b><span id="reactorStatus">Waiting</span></div><div class="status"><b>Recommendation</b><span id="adviceStatus">Start model</span></div></div></section>
+<aside class="card"><div class="card-header"><h2>Evidence panel</h2><p>Use these readings to decide whether the reaction is controlled and useful.</p></div><div class="metric-list">
+<div class="metric"><div class="metric-top"><span class="metric-name">Neutron activity</span><span class="metric-value" id="neutronValue">Stable</span></div><div class="bar"><div class="bar-fill" id="neutronBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Fission rate</span><span class="metric-value" id="fissionValue">58%</span></div><div class="bar"><div class="bar-fill" id="fissionBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Core temperature</span><span class="metric-value" id="coreTempValue">520 °C</span></div><div class="bar"><div class="bar-fill" id="coreTempBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Coolant temperature</span><span class="metric-value" id="coolantTempValue">310 °C</span></div><div class="bar"><div class="bar-fill" id="coolantTempBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Electrical output</span><span class="metric-value" id="powerValue">45%</span></div><div class="bar"><div class="bar-fill" id="powerBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Safety margin</span><span class="metric-value" id="safetyValue">Good</span></div><div class="bar"><div class="bar-fill" id="safetyBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Random event</span><span class="metric-value" id="eventValue">None</span></div><div class="bar"><div class="bar-fill" id="eventBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Effective system values</span><span class="metric-value" id="effectiveValue">Normal</span></div><p class="small-note" id="effectiveText" style="padding:0;margin:0;">No fault is currently changing the system values.</p></div>
+<div class="metric advanced-only"><div class="metric-top"><span class="metric-name">Steam production</span><span class="metric-value" id="steamValue">Medium</span></div><div class="bar"><div class="bar-fill" id="steamBar"></div></div></div>
+</div>
+<p class="small-note" id="measurementNote">Control rods absorb neutrons. Inserting more rods reduces the chain reaction; withdrawing rods increases it.</p>
+<div class="metric" style="margin:0 12px 12px;"><div class="metric-top"><span class="metric-name" id="componentTitle">Component focus</span><span class="metric-value" id="componentTag">Core</span></div><p class="small-note" id="componentText" style="padding:0;margin:0;">Select a model focus to see how each part contributes to controlled electricity generation.</p></div>
+</aside>
+</main>
+
+<section class="below-grid">
+<div class="card text-card"><h2>How to use</h2><ul><li>Start the model and watch the neutron activity, heat transfer and turbine output.</li><li>Move the <strong>control rods</strong> in or out to control the fission chain reaction.</li><li>Increase <strong>coolant flow</strong> to remove heat from the core more effectively.</li><li>Use <strong>SCRAM</strong> to rapidly insert the rods and reduce the reaction.</li><li>Turn on <strong>Random events</strong> to practise responding to changing reactor conditions.</li></ul><div class="challenge"><strong>Challenge:</strong> Produce at least 60% electrical output while keeping the safety margin at Good or Stable. In Random events mode, explain what changed and how you responded.</div></div>
+<div class="card text-card"><h2>What the model shows</h2><p>A nuclear reactor uses a controlled chain reaction. Fission releases neutrons and heat. Control rods absorb some neutrons, coolant removes heat from the core, and a steam-turbine system converts heat energy into electrical energy.</p><div class="challenge"><strong>Key idea:</strong> More fission does not automatically mean a better reactor. The useful goal is a controlled, stable reaction with enough cooling and a safe operating margin.</div><div class="challenge"><strong>Component guide:</strong><ul><li><strong>Fuel rods</strong> contain atoms that can undergo fission.</li><li><strong>Control rods</strong> absorb neutrons and slow the chain reaction.</li><li><strong>Coolant</strong> removes heat from the core.</li><li><strong>Steam generator</strong> transfers heat to produce steam.</li><li><strong>Turbine and generator</strong> convert moving steam into electrical energy.</li></ul></div><p class="advanced-only">This is a simplified teaching model. It shows energy transfer and feedback patterns, not a real reactor design or operating procedure.</p><span class="tag">Nuclear fission</span><span class="tag">Chain reaction</span><span class="tag">Control rods</span><span class="tag">Coolant</span><span class="tag">Energy transfer</span></div>
+</section>
+
+<section class="below-grid"><div class="card text-card"><h2>Self-test</h2><div class="quiz" id="quiz"><button data-answer="wrong">Withdrawing control rods absorbs more neutrons and slows the reaction.</button><button data-answer="correct">Inserting control rods absorbs more neutrons and slows the chain reaction.</button><button data-answer="wrong">Coolant is only used to make the reactor look colder; it does not transfer energy.</button></div><div class="feedback" id="quizFeedback"></div></div><div class="card text-card"><h2>Teacher notes</h2><ul><li>Use this to connect fission, chain reactions, heat transfer and electricity generation.</li><li>The model is deliberately conceptual: it uses arbitrary classroom units rather than real reactor operating data.</li><li>Good prompts: What happens when rods are inserted? What happens when cooling is reduced? Why is a stable reaction more useful than an uncontrolled one?</li><li>Emphasise that the simulator is about safe conceptual understanding, not engineering design.</li></ul></div></section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),canvas=$('reactorCanvas'),ctx=canvas.getContext('2d');
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h)}
+const controls={learningMode:$('learningMode'),reactorFocus:$('reactorFocus'),controlRods:$('controlRods'),coolantFlow:$('coolantFlow'),turbineLoad:$('turbineLoad'),fuelCondition:$('fuelCondition'),randomMode:$('randomMode'),moderatorTemp:$('moderatorTemp'),heatExchanger:$('heatExchanger')};
+const out={controlRodsRead:$('controlRodsRead'),coolantFlowRead:$('coolantFlowRead'),turbineLoadRead:$('turbineLoadRead'),moderatorTempRead:$('moderatorTempRead'),heatExchangerRead:$('heatExchangerRead'),systemStatus:$('systemStatus'),reactorStatus:$('reactorStatus'),adviceStatus:$('adviceStatus'),neutronValue:$('neutronValue'),fissionValue:$('fissionValue'),coreTempValue:$('coreTempValue'),coolantTempValue:$('coolantTempValue'),powerValue:$('powerValue'),safetyValue:$('safetyValue'),eventValue:$('eventValue'),effectiveValue:$('effectiveValue'),effectiveText:$('effectiveText'),steamValue:$('steamValue'),neutronBar:$('neutronBar'),fissionBar:$('fissionBar'),coreTempBar:$('coreTempBar'),coolantTempBar:$('coolantTempBar'),powerBar:$('powerBar'),safetyBar:$('safetyBar'),eventBar:$('eventBar'),steamBar:$('steamBar'),measurementNote:$('measurementNote'),challengeHint:$('challengeHint'),componentTitle:$('componentTitle'),componentTag:$('componentTag'),componentText:$('componentText')};
+const fuel={low:{label:'Low activity',factor:.78},normal:{label:'Normal activity',factor:1},high:{label:'High activity',factor:1.22}};
+const component={power:{title:'Energy transfer pathway',tag:'Power',text:'Heat from fission is carried by coolant to the steam generator. Steam spins the turbine, and the generator produces electrical energy.'},chain:{title:'Controlled chain reaction',tag:'Neutrons',text:'Fission releases neutrons. Some neutrons trigger more fission. Control rods absorb neutrons so the chain reaction stays controlled.'},safety:{title:'Safety systems',tag:'Control',text:'Safety depends on keeping neutron activity and core temperature within a safe range. SCRAM rapidly inserts control rods to slow the reaction.'}};
+const state={running:false,t:0,neutron:.48,coreTemp:510,coolantTemp:305,data:[],history:[],scram:false,event:null,nextEvent:7,eventLog:[]};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function lerp(a,b,t){return a+(b-a)*t}function map(v,a,b,c,d){return lerp(c,d,clamp((v-a)/(b-a),0,1))}
+
+const randomEvents=[
+  {
+    key:'coolantDip',
+    label:'Coolant pump fault',
+    duration:22,
+    response:'Increase coolant flow above 88% or insert rods above 76%.',
+    text:'Coolant flow has dropped sharply. Core temperature will rise unless students increase coolant flow or insert the control rods further.',
+    effects:{flow:-52},
+    resolve:v=>v.baseFlow>=88||v.baseRods>=76
+  },
+  {
+    key:'rodDrift',
+    label:'Control rod drift',
+    duration:20,
+    response:'Insert control rods above 78%.',
+    text:'Control rods have drifted outward. Neutron activity rises until students insert the rods further.',
+    effects:{rods:-42},
+    resolve:v=>v.baseRods>=78
+  },
+  {
+    key:'heatLoss',
+    label:'Heat exchanger fault',
+    duration:24,
+    response:'Increase coolant flow above 90% and insert rods above 66%.',
+    text:'Heat transfer to the steam generator has become less efficient. More heat remains in the reactor loop unless students improve cooling and slow the reaction.',
+    effects:{hx:-48,flow:-14},
+    resolve:v=>v.baseFlow>=90&&v.baseRods>=66
+  },
+  {
+    key:'turbineSurge',
+    label:'Turbine load surge',
+    duration:18,
+    response:'Reduce turbine load below 58% or insert rods above 70%.',
+    text:'The turbine load has surged. The system becomes unstable unless students reduce the load or slow the chain reaction.',
+    effects:{load:48},
+    resolve:v=>v.baseLoad<=58||v.baseRods>=70
+  },
+  {
+    key:'moderatorShift',
+    label:'Moderator temperature shift',
+    duration:20,
+    response:'Insert rods above 72% and keep coolant flow above 78%.',
+    text:'Moderator conditions have shifted and neutron activity is less predictable. Students need to add control and maintain cooling.',
+    effects:{mod:45,rods:-18},
+    resolve:v=>v.baseRods>=72&&v.baseFlow>=78
+  }
+];
+
+function eventBaseValues(){
+  const mode=controls.learningMode.value;
+  return {
+    baseRods:+controls.controlRods.value,
+    baseFlow:+controls.coolantFlow.value,
+    baseLoad:+controls.turbineLoad.value,
+    baseHx:mode==='simple'?82:+controls.heatExchanger.value,
+    baseMod:mode==='simple'?300:+controls.moderatorTemp.value
+  };
+}
+
+function scheduleNextEvent(){
+  const mode=controls.randomMode.value;
+  if(mode==='off'){state.nextEvent=Infinity;return}
+  const min=mode==='challenge'?4:7;
+  const spread=mode==='challenge'?6:9;
+  state.nextEvent=state.t+min+Math.random()*spread;
+}
+
+function triggerRandomEvent(){
+  const event=randomEvents[Math.floor(Math.random()*randomEvents.length)];
+  state.event={...event,start:state.t,end:state.t+event.duration,resolved:false,resolvedAt:null};
+  state.eventLog.push({time:state.t.toFixed(1),event:event.label,response:event.response});
+  scheduleNextEvent();
+}
+
+function updateEventState(){
+  if(!state.event)return;
+
+  const bases=eventBaseValues();
+  if(!state.event.resolved && state.event.resolve && state.event.resolve(bases)){
+    state.event.resolved=true;
+    state.event.resolvedAt=state.t;
+    state.eventLog.push({time:state.t.toFixed(1),event:state.event.label,response:'resolved'});
+  }
+
+  if(state.event.resolved && state.t-state.event.resolvedAt>2.8){
+    state.event=null;
+    return;
+  }
+
+  if(!state.event.resolved && state.t>state.event.end){
+    // If ignored, the fault continues at reduced severity rather than vanishing instantly.
+    state.event.end=state.t+8;
+    state.event.effects=Object.fromEntries(Object.entries(state.event.effects||{}).map(([k,v])=>[k,Math.round(v*0.72)]));
+    state.event.text='The fault has not been fully corrected. Its effect is reduced, but the system still needs attention: '+state.event.response;
+  }
+}
+
+function eventEffect(name,base){
+  if(!state.event||state.event.resolved)return base;
+  const e=state.event.effects||{};
+  return base+(e[name]||0);
+}
+function changedEffectiveValues(v){
+  const changes=[];
+  if(Math.round(v.baseRods)!==Math.round(v.rods))changes.push(`rods ${Math.round(v.baseRods)}% → ${Math.round(v.rods)}%`);
+  if(Math.round(v.baseFlow)!==Math.round(v.flow))changes.push(`coolant ${Math.round(v.baseFlow)}% → ${Math.round(v.flow)}%`);
+  if(Math.round(v.baseLoad)!==Math.round(v.load))changes.push(`turbine load ${Math.round(v.baseLoad)}% → ${Math.round(v.load)}%`);
+  if(Math.round(v.baseHx)!==Math.round(v.hx))changes.push(`heat exchanger ${Math.round(v.baseHx)}% → ${Math.round(v.hx)}%`);
+  if(Math.round(v.baseMod)!==Math.round(v.mod))changes.push(`moderator ${Math.round(v.baseMod)} °C → ${Math.round(v.mod)} °C`);
+  return changes;
+}
+
+function manualTriggerEvent(){
+  if(state.event&&!state.event.resolved)return;
+  state.event=null;
+  triggerRandomEvent();
+  updateReadouts();
+  draw();
+}
+
+
+function values(){const mode=controls.learningMode.value,focus=controls.reactorFocus.value,randomMode=controls.randomMode.value,baseRods=+controls.controlRods.value,baseFlow=+controls.coolantFlow.value,baseLoad=+controls.turbineLoad.value,fc=controls.fuelCondition.value,baseHx=mode==='simple'?82:+controls.heatExchanger.value,baseMod=mode==='simple'?300:+controls.moderatorTemp.value,rods=clamp(eventEffect('rods',baseRods),0,100),flow=clamp(eventEffect('flow',baseFlow),5,100),load=clamp(eventEffect('load',baseLoad),20,130),mod=clamp(eventEffect('mod',baseMod),240,380),hx=clamp(eventEffect('hx',baseHx),20,100),ff=fuel[fc];const rodAbs=rods/100,avail=1-rodAbs,modEff=clamp(1.08-Math.abs(mod-300)/180,.62,1.08),targetN=clamp((.18+avail*.92)*ff.factor*modEff,.05,1.55),fission=clamp(state.neutron*.86,0,1.35),heat=fission*740,cool=flow*7.3+hx*2,targetCore=clamp(280+heat-cool*.42,250,980),targetCool=clamp(145+state.coreTemp*.30+flow*.45,150,430),steam=clamp((state.coolantTemp-220)/150*(hx/82),0,1.25),match=clamp(1-Math.abs(load/100-steam)*.72,.35,1),power=clamp(steam*load/100*match,0,1),tempRisk=clamp((state.coreTemp-650)/250,0,1),reactRisk=clamp((state.neutron-.95)/.55,0,1),coolRisk=flow<40?(40-flow)/40:0,risk=clamp(tempRisk*.55+reactRisk*.35+coolRisk*.25,0,1);let safety='Good';if(risk>.78)safety='Critical';else if(risk>.52)safety='Warning';else if(risk>.25)safety='Stable';let nState='Low';if(state.neutron>1.05)nState='Rising fast';else if(state.neutron>.72)nState='High';else if(state.neutron>.40)nState='Stable';let status='Waiting';if(state.running){if(state.scram)status='SCRAM';else if(safety==='Critical')status='Too hot';else if(nState==='Rising fast')status='Power rising';else if(power>.55&&safety==='Good')status='Generating';else status='Adjusting'}let advice='Start model';if(state.scram)advice='Rods inserted';else if(safety==='Critical')advice='Insert rods + increase coolant';else if(safety==='Warning')advice='Improve cooling or insert rods';else if(power<.35)advice='Increase stable power';else if(power>.60&&(safety==='Good'||safety==='Stable'))advice='Good operating balance';else advice='Keep monitoring';return{mode,focus,randomMode,baseRods,baseFlow,baseLoad,baseHx,baseMod,rods,flow,load,fc,mod,hx,ff,targetN,fission,heat,cool,targetCore,targetCool,steam,match,power,risk,safety,nState,status,advice}}
+function updateModel(){if(!state.running)return;const before=state.t;if(controls.randomMode.value!=='off'&&state.t>=state.nextEvent&&!state.event)triggerRandomEvent();updateEventState();const v=values(),dt=.018,nt=state.scram?.08:v.targetN;state.neutron+= (nt-state.neutron)*dt*(state.scram?5.5:1.15);state.coreTemp+=(v.targetCore-state.coreTemp)*dt*.52;state.coolantTemp+=(v.targetCool-state.coolantTemp)*dt*.65;state.neutron=clamp(state.neutron,.04,1.55);state.coreTemp=clamp(state.coreTemp,240,980);state.coolantTemp=clamp(state.coolantTemp,130,430);state.t+=.04;const nv=values();state.history.push({t:state.t,coreTemp:state.coreTemp,power:nv.power,neutron:state.neutron,coolantTemp:state.coolantTemp,safety:nv.risk});if(state.history.length>520)state.history.shift();if(Math.floor(state.t*3)!==Math.floor(before*3))logData()}
+function updateReadouts(){const v=values();document.body.classList.toggle('simple-mode',v.mode==='simple');out.controlRodsRead.textContent=v.rods.toFixed(0);out.coolantFlowRead.textContent=v.flow.toFixed(0);out.turbineLoadRead.textContent=v.load.toFixed(0);out.moderatorTempRead.textContent=v.mod.toFixed(0);out.heatExchangerRead.textContent=v.hx.toFixed(0);out.systemStatus.textContent=state.running?'Running':'Paused';out.reactorStatus.textContent=v.status;out.adviceStatus.textContent=v.advice;out.neutronValue.textContent=v.nState;out.fissionValue.textContent=`${Math.round(v.fission*100)}%`;out.coreTempValue.textContent=`${Math.round(state.coreTemp)} °C`;out.coolantTempValue.textContent=`${Math.round(state.coolantTemp)} °C`;out.powerValue.textContent=`${Math.round(v.power*100)}%`;out.safetyValue.textContent=v.safety;out.eventValue.textContent=state.event?(state.event.resolved?'Resolved':state.event.label):(v.randomMode==='off'?'Off':'Ready');
+const effectiveChanges=changedEffectiveValues(v);
+out.effectiveValue.textContent=effectiveChanges.length?`${effectiveChanges.length} changed`:'Normal';
+out.effectiveText.textContent=effectiveChanges.length?effectiveChanges.join(' | '):'No fault is currently changing the system values.';
+let steam='Low';if(v.steam>.9)steam='High';else if(v.steam>.45)steam='Medium';out.steamValue.textContent=steam;out.neutronBar.style.width=`${clamp(state.neutron/1.4*100,4,100)}%`;out.fissionBar.style.width=`${clamp(v.fission/1.2*100,4,100)}%`;out.coreTempBar.style.width=`${clamp((state.coreTemp-250)/650*100,4,100)}%`;out.coolantTempBar.style.width=`${clamp((state.coolantTemp-150)/260*100,4,100)}%`;out.powerBar.style.width=`${clamp(v.power*100,4,100)}%`;out.safetyBar.style.width=`${clamp((1-v.risk)*100,4,100)}%`;out.steamBar.style.width=`${clamp(v.steam/1.25*100,4,100)}%`;out.eventBar.style.width=state.event?(state.event.resolved?'100%':`${clamp((state.event.end-state.t)/state.event.duration*100,4,100)}%`):(v.randomMode==='off'?'4%':'100%');out.eventBar.style.background=state.event?(state.event.resolved?'linear-gradient(90deg,#58b7e8,#1f9d63)':'linear-gradient(90deg,#f0c85a,#d64545)'):'linear-gradient(90deg,#58b7e8,#1f9d63)';const riskCol=v.safety==='Critical'?'linear-gradient(90deg,#f09a9a,#d64545)':v.safety==='Warning'?'linear-gradient(90deg,#f0c85a,#e89b20)':'linear-gradient(90deg,#58b7e8,#1f9d63)';out.coreTempBar.style.background=riskCol;out.safetyBar.style.background=riskCol;out.neutronBar.style.background=state.neutron>1.05?'linear-gradient(90deg,#f0c85a,#d64545)':'linear-gradient(90deg,#58b7e8,#1f9d63)';out.measurementNote.textContent=state.event?(state.event.resolved?'Fault response successful. The event is clearing.':`${state.event.text} Check the Effective system values panel. Response required: ${state.event.response}`):(state.scram?'SCRAM has rapidly inserted the control rods in this model. Neutron activity and fission rate should fall.':'Control rods absorb neutrons. Coolant removes heat. The goal is stable power output without losing safety margin.');out.challengeHint.textContent=state.event&&!state.event.resolved?`Random event active: ${state.event.response}`:'Challenge: adjust rods, coolant and turbine load to generate useful electrical output while keeping the reactor state stable.';const c=component[v.focus];out.componentTitle.textContent=c.title;out.componentTag.textContent=c.tag;out.componentText.textContent=c.text}
+function resize(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
+function label(text,x,y,align='center'){ctx.save();ctx.font='850 12px system-ui';ctx.textAlign=align;ctx.textBaseline='middle';const pad=8,w=ctx.measureText(text).width+pad*2,h=24;let l=x-w/2;if(align==='left')l=x;if(align==='right')l=x-w;ctx.fillStyle='rgba(6,19,34,.72)';ctx.strokeStyle='rgba(180,225,250,.35)';ctx.lineWidth=1;rr(l,y-h/2,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(230,246,255,.96)';ctx.fillText(text,x,y);ctx.restore()}
+function bg(w,h){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#061322');g.addColorStop(1,'#0c2338');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.save();ctx.globalAlpha=.18;ctx.fillStyle='#fff';for(let i=0;i<72;i++){const x=i*89%w,y=i*57%h,r=((i*19)%3+1)/2.5;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}ctx.restore()}
+function drawCore(cx,cy,w,h,v){ctx.save();ctx.fillStyle='rgba(155,205,225,.20)';ctx.strokeStyle='rgba(200,235,250,.86)';ctx.lineWidth=4;rr(cx-w/2,cy-h/2,w,h,26);ctx.fill();ctx.stroke();ctx.fillStyle=`rgba(75,170,220,${.40+Math.sin(state.t*2.4)*.03})`;rr(cx-w/2+12,cy-h/2+14,w-24,h-28,20);ctx.fill();for(let i=0;i<6;i++){const x=cx-(w-70)/2+i*((w-70)/5),a=clamp((state.coreTemp-300)/520,.1,.95);ctx.fillStyle=`rgba(255,${Math.round(210-a*80)},80,${.72+a*.2})`;ctx.strokeStyle='rgba(255,245,190,.9)';ctx.lineWidth=2;rr(x-8,cy-h/2+48,16,h-94,7);ctx.fill();ctx.stroke()}const depth=map(v.rods,0,100,0,h-82);for(let i=0;i<5;i++){const x=cx-(w-86)/2+i*((w-86)/4);ctx.fillStyle='rgba(45,65,82,.96)';ctx.strokeStyle='rgba(180,210,225,.9)';ctx.lineWidth=2;rr(x-6,cy-h/2+20,12,depth,5);ctx.fill();ctx.stroke()}if(state.scram){ctx.save();ctx.fillStyle='rgba(214,69,69,.88)';ctx.strokeStyle='rgba(255,220,210,.95)';ctx.lineWidth=2;rr(cx-w/2+22,cy-h/2+8,w-44,30,10);ctx.fill();ctx.stroke();ctx.fillStyle='white';ctx.font='950 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('SCRAM: rods fully inserted',cx,cy-h/2+23);ctx.restore()}const n=Math.floor(12+state.neutron*34);for(let i=0;i<n;i++){const ang=i*2.399+state.t*(.7+i%4*.11),rad=18+(i*31)%Math.max(28,(w/2-28)),x=cx+Math.cos(ang)*rad*.62,y=cy+Math.sin(ang*1.18)*rad*.78,a=clamp(.25+state.neutron*.38,.25,.85);ctx.fillStyle=`rgba(120,220,255,${a})`;ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();if(v.focus==='chain'&&i%6===0){ctx.strokeStyle=`rgba(120,220,255,${a*.65})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(ang+1.1)*22,y+Math.sin(ang+1.1)*22);ctx.stroke()}}const glow=clamp((state.coreTemp-300)/600,0,1),gr=ctx.createRadialGradient(cx,cy,20,cx,cy,w*.55);gr.addColorStop(0,`rgba(255,190,80,${.12+glow*.34})`);gr.addColorStop(1,'rgba(255,95,75,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,w*.6,0,Math.PI*2);ctx.fill();label('reactor core',cx,cy+h/2+28);label('control rods',cx-w/2+6,cy-h/2-18,'left');label('fuel rods',cx+w/2+12,cy-24,'left');ctx.restore()}
+function drawLoop(x,y,w,h,v){ctx.save();const sx=x+w*.54,tx=x+w*.74,ty=y+h*.45;ctx.strokeStyle='rgba(255,165,105,.9)';ctx.lineWidth=13;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x+12,y+h*.35);ctx.lineTo(sx,y+h*.35);ctx.lineTo(sx,ty-56);ctx.stroke();ctx.strokeStyle='rgba(95,180,220,.84)';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(sx,ty+72);ctx.lineTo(sx,y+h*.77);ctx.lineTo(x+12,y+h*.77);ctx.stroke();ctx.fillStyle='rgba(255,228,120,.96)';for(let i=0;i<5;i++){const ax=x+46+((state.t*42*v.flow/100+i*78)%Math.max(80,w*.45)),ay=y+h*.35;ctx.beginPath();ctx.moveTo(ax,ay-8);ctx.lineTo(ax+16,ay);ctx.lineTo(ax,ay+8);ctx.closePath();ctx.fill()}label('heat carried by coolant',x+w*.22,y+h*.28);ctx.fillStyle='rgba(210,235,245,.92)';ctx.strokeStyle='rgba(235,250,255,.92)';ctx.lineWidth=3;rr(sx-44,ty-92,88,154,20);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(255,255,255,.58)';for(let i=0;i<Math.floor(4+v.steam*13);i++){const bx=sx-24+(i*17)%48,by=ty+44-((state.t*28+i*21)%122);ctx.beginPath();ctx.arc(bx,by,4+i%3,0,Math.PI*2);ctx.fill()}label('steam generator',sx,ty+88);ctx.strokeStyle='rgba(235,248,255,.82)';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(sx+44,ty-46);ctx.lineTo(tx-54,ty-12);ctx.stroke();ctx.fillStyle='rgba(255,255,255,.82)';for(let i=0;i<4;i++){const ax=sx+58+((state.t*34+i*48)%Math.max(30,tx-sx-112)),ay=ty-42+i%2*10;ctx.beginPath();ctx.moveTo(ax,ay-6);ctx.lineTo(ax+13,ay);ctx.lineTo(ax,ay+6);ctx.closePath();ctx.fill()}label('steam spins turbine',(sx+tx)/2,ty-70);ctx.fillStyle='rgba(140,195,220,.92)';ctx.strokeStyle='rgba(220,245,255,.92)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(tx,ty,48,0,Math.PI*2);ctx.fill();ctx.stroke();const spin=state.running?state.t*(2+v.power*9):state.t;ctx.strokeStyle='rgba(255,245,190,.92)';ctx.lineWidth=5;for(let i=0;i<4;i++){const a=spin+i*Math.PI/2;ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(tx+Math.cos(a)*38,ty+Math.sin(a)*38);ctx.stroke()}label('turbine',tx,ty+70);const gx=tx+112;ctx.fillStyle='rgba(255,228,120,.95)';ctx.strokeStyle='rgba(255,248,210,.95)';ctx.lineWidth=3;rr(gx-38,ty-34,76,68,14);ctx.fill();ctx.stroke();ctx.strokeStyle='rgba(255,228,120,.86)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(tx+48,ty);ctx.lineTo(gx-38,ty);ctx.stroke();ctx.strokeStyle=`rgba(255,228,120,${clamp(v.power,.12,1)})`;ctx.beginPath();ctx.moveTo(gx+42,ty-16);ctx.lineTo(gx+102,ty-52);ctx.moveTo(gx+42,ty+16);ctx.lineTo(gx+102,ty+52);ctx.stroke();label('generator',gx,ty+58);label('electricity output',gx+78,ty-70,'left');ctx.restore()}
+function drawGraph(left,top,w,h,v){ctx.save();ctx.fillStyle='rgba(8,30,48,.72)';ctx.strokeStyle='rgba(180,225,250,.28)';ctx.lineWidth=1;rr(left,top,w,h,18);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(235,248,255,.96)';ctx.font='850 14px system-ui';ctx.textAlign='left';ctx.fillText('Time-history evidence',left+16,top+26);ctx.font='800 10px system-ui';ctx.fillStyle='rgba(255,135,95,.95)';ctx.fillText('core temperature',left+16,top+43);ctx.fillStyle='rgba(95,190,235,.95)';ctx.fillText('electrical output',left+128,top+43);ctx.fillStyle='rgba(255,228,120,.95)';ctx.fillText('neutron activity',left+238,top+43);const gx=left+42,gy=top+h-30,gw=w-66,gh=h-84;ctx.strokeStyle='rgba(180,225,250,.28)';ctx.lineWidth=1;for(let i=0;i<=4;i++){const yy=gy-i/4*gh;ctx.beginPath();ctx.moveTo(gx,yy);ctx.lineTo(gx+gw,yy);ctx.stroke()}ctx.strokeStyle='rgba(180,225,250,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx+gw,gy);ctx.stroke();const hist=state.history.length?state.history:[{coreTemp:state.coreTemp,power:v.power,neutron:state.neutron}],visible=hist.slice(Math.max(0,hist.length-520));function tr(key,col,norm){ctx.strokeStyle=col;ctx.lineWidth=2.3;ctx.beginPath();visible.forEach((p,i)=>{const x=gx+(visible.length<=1?0:i/(visible.length-1))*gw,y=gy-clamp(norm(p[key]),0,1)*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke()}tr('coreTemp','rgba(255,135,95,.95)',val=>(val-250)/650);tr('power','rgba(95,190,235,.95)',val=>val);tr('neutron','rgba(255,228,120,.92)',val=>val/1.4);ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx+gw,top+54);ctx.lineTo(gx+gw,gy+4);ctx.stroke();ctx.fillStyle='rgba(220,240,250,.80)';ctx.font='800 10px system-ui';ctx.textAlign='right';ctx.fillText('now',gx+gw,top+66);ctx.restore()}
+function draw(){const r=canvas.getBoundingClientRect(),w=r.width,h=r.height,v=values();ctx.clearRect(0,0,w,h);bg(w,h);drawCore(w*.24,h*.45,210,315,v);drawLoop(w*.36,h*.13,w*.55,h*.58,v);drawGraph(w*.42,h*.70,w*.50,h*.22,v);if(state.event){ctx.save();ctx.fillStyle='rgba(232,155,32,.90)';ctx.strokeStyle='rgba(255,240,190,.95)';ctx.lineWidth=2;rr(24,24,410,58,14);ctx.fill();ctx.stroke();ctx.fillStyle='white';ctx.font='950 15px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText((state.event.resolved?'Resolved: ':'Random event: ')+state.event.label,42,45);ctx.font='800 11px system-ui';ctx.fillText(state.event.resolved?'fault clearing':state.event.response,42,64);ctx.restore()}if(v.safety==='Critical'){ctx.save();ctx.strokeStyle=`rgba(214,69,69,${.45+Math.sin(state.t*7)*.25})`;ctx.lineWidth=8;rr(10,10,w-20,h-20,24);ctx.stroke();ctx.restore()}ctx.save();ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='800 13px system-ui';ctx.textAlign='left';const mode=v.focus==='chain'?'Focus: neutrons and controlled chain reaction':v.focus==='safety'?'Focus: safety margin, cooling and SCRAM response':'Focus: heat transfer to steam, turbine and generator';const eventTxt=state.event&&!state.event.resolved?` | effective rods ${Math.round(v.rods)}%, coolant ${Math.round(v.flow)}%`:'';ctx.fillText(`${mode} | rods set ${v.baseRods}% | coolant set ${v.baseFlow}% | output ${Math.round(v.power*100)}%${eventTxt}`,22,h-14);ctx.restore()}
+function logData(){const v=values();state.data.push({time_s:state.t.toFixed(2),learning_mode:v.mode,model_focus:v.focus,random_mode:v.randomMode,current_event:state.event?state.event.label:'none',event_resolved:state.event&&state.event.resolved?'yes':'no',event_response_required:state.event?state.event.response:'none',effective_changes:changedEffectiveValues(v).join(' | ')||'none',control_rods_inserted_percent:v.rods.toFixed(0),coolant_flow_percent:v.flow.toFixed(0),turbine_load_percent:v.load.toFixed(0),fuel_condition:v.ff.label,neutron_activity:v.nState,neutron_level_model:state.neutron.toFixed(3),fission_rate_percent:(v.fission*100).toFixed(1),core_temperature_C:state.coreTemp.toFixed(1),coolant_temperature_C:state.coolantTemp.toFixed(1),steam_production_model:v.steam.toFixed(3),electrical_output_percent:(v.power*100).toFixed(1),safety_margin:v.safety,scram_active:state.scram?'yes':'no'})}
+function reset(){controls.learningMode.value='simple';controls.reactorFocus.value='power';controls.controlRods.value='55';controls.coolantFlow.value='72';controls.turbineLoad.value='68';controls.fuelCondition.value='normal';controls.moderatorTemp.value='300';controls.heatExchanger.value='82';state.running=false;state.t=0;state.neutron=.48;state.coreTemp=510;state.coolantTemp=305;state.data=[];state.history=[];state.scram=false;state.event=null;state.eventLog=[];scheduleNextEvent();$('runBtn').textContent='▶ Start reactor model';updateReadouts();draw();logData()}
+function stable(){controls.controlRods.value='58';controls.coolantFlow.value='78';controls.turbineLoad.value='72';controls.fuelCondition.value='normal';controls.reactorFocus.value='power';state.scram=false;state.running=false;state.t=0;state.neutron=.55;state.coreTemp=505;state.coolantTemp=300;state.history=[];state.event=null;scheduleNextEvent();$('runBtn').textContent='▶ Start stable power test';updateReadouts();draw();logData()}
+function poorCooling(){controls.controlRods.value='18';controls.coolantFlow.value='28';controls.turbineLoad.value='60';controls.fuelCondition.value='high';controls.reactorFocus.value='safety';state.scram=false;state.running=false;state.t=0;state.neutron=.82;state.coreTemp=610;state.coolantTemp=325;state.history=[];state.event=null;scheduleNextEvent();$('runBtn').textContent='▶ Start poor cooling test';updateReadouts();draw();logData()}
+function scram(){controls.controlRods.value='100';state.scram=true;state.running=true;$('runBtn').textContent='⏸ Pause reactor model';logData();updateReadouts();draw()}
+function csv(){if(!state.data.length)logData();const heads=Object.keys(state.data[0]);const rows=state.data.map(row=>heads.map(h=>row[h]).join(','));const blob=new Blob([[heads.join(','),...rows].join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nuclear_reactor_simulation_data.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
+$('runBtn').addEventListener('click',()=>{state.running=!state.running;$('runBtn').textContent=state.running?'⏸ Pause reactor model':'▶ Resume reactor model';logData();updateReadouts()});$('resetBtn').addEventListener('click',reset);$('stableBtn').addEventListener('click',stable);$('overheatBtn').addEventListener('click',poorCooling);$('triggerEventBtn').addEventListener('click',manualTriggerEvent);$('scramBtn').addEventListener('click',scram);$('csvBtn').addEventListener('click',csv);
+Object.values(controls).forEach(c=>{c.addEventListener('input',()=>{if(c===controls.randomMode){state.event=null;state.nextEvent=controls.randomMode.value==='off'?Infinity:state.t+2.5}if(c===controls.controlRods&&+controls.controlRods.value<100)state.scram=false;else if(c!==controls.controlRods&&c!==controls.reactorFocus&&c!==controls.randomMode)state.scram=false;logData();updateReadouts();draw()});c.addEventListener('change',()=>{if(c===controls.randomMode){state.event=null;state.nextEvent=controls.randomMode.value==='off'?Infinity:state.t+2.5}if(c===controls.controlRods&&+controls.controlRods.value<100)state.scram=false;else if(c!==controls.controlRods&&c!==controls.reactorFocus&&c!==controls.randomMode)state.scram=false;logData();updateReadouts();draw()})});
+document.querySelectorAll('#quiz button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#quiz button').forEach(x=>x.classList.remove('correct','incorrect'));if(b.dataset.answer==='correct'){b.classList.add('correct');$('quizFeedback').textContent='Correct. Control rods absorb neutrons, reducing the number of further fission events.'}else{b.classList.add('incorrect');$('quizFeedback').textContent='Not quite. In this model, inserting rods absorbs more neutrons and slows the chain reaction.'}}));
+function anim(){updateModel();updateReadouts();draw();requestAnimationFrame(anim)}window.addEventListener('resize',resize);reset();resize();anim();
+</script>
+</body>
+</html>
