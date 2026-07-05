@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earthquake Building Protection Simulator</title>
+
+  <style>
+    :root{
+      --bg:#eef7fb;
+      --card:#ffffff;
+      --ink:#123143;
+      --muted:#557184;
+      --blue:#1d7ed0;
+      --blue2:#56b5e8;
+      --deep:#0f3d5c;
+      --soft:#d9eef9;
+      --line:#c9dfec;
+      --good:#1f9d63;
+      --warn:#e89b20;
+      --bad:#d64545;
+      --shadow:0 10px 25px rgba(12,54,82,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eaf6fb 0%,#f6fbfe 100%);
+      color:var(--ink);
+    }
+
+    .page{
+      width:min(1240px,calc(100% - 28px));
+      margin:0 auto;
+      padding:18px 0 36px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:none;
+      background:#dff1fa;
+      color:#0c4d73;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(12,54,82,.08);
+      margin-bottom:14px;
+      text-decoration:none;
+    }
+
+    .hero{
+      border-radius:28px;
+      padding:24px 28px;
+      color:white;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),
+        linear-gradient(135deg,#0e4f78 0%,#1e91d6 52%,#59c2eb 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.6rem);
+      letter-spacing:-.04em;
+      line-height:1;
+    }
+
+    .hero p{
+      max-width:960px;
+      margin:10px 0 0;
+      font-size:1.03rem;
+      line-height:1.5;
+      color:rgba(255,255,255,.92);
+    }
+
+    .top-controls{
+      margin-top:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .control-grid{
+      display:grid;
+      grid-template-columns:repeat(8,minmax(108px,1fr));
+      gap:10px;
+      align-items:end;
+    }
+
+    body.simple-mode .advanced-only{
+      display:none !important;
+    }
+
+    body.simple-mode .control-grid{
+      grid-template-columns:repeat(6,minmax(115px,1fr));
+    }
+
+    label{
+      display:block;
+      font-size:.8rem;
+      color:var(--muted);
+      font-weight:850;
+      margin-bottom:5px;
+    }
+
+    select,input[type="range"]{
+      width:100%;
+    }
+
+    select{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:9px 10px;
+      background:#f8fcff;
+      color:var(--ink);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      accent-color:var(--blue);
+    }
+
+    .readout{
+      margin-top:3px;
+      font-size:.82rem;
+      font-weight:850;
+      color:var(--deep);
+    }
+
+    .button-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:14px;
+      padding:10px 13px;
+      font-weight:900;
+      cursor:pointer;
+      background:#e2f1f8;
+      color:#0d4a6e;
+      transition:.15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(.98);
+    }
+
+    .primary{
+      background:linear-gradient(135deg,#107bd1,#56b5e8);
+      color:white;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.5fr) minmax(330px,.76fr);
+      gap:16px;
+      margin-top:16px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#f6fbfe;
+    }
+
+    .card-header h2{
+      margin:0;
+      font-size:1.08rem;
+      letter-spacing:-.02em;
+    }
+
+    .card-header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
+    }
+
+    .canvas-wrap{
+      padding:10px;
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:520px;
+      border-radius:18px;
+      background:#071625;
+      border:1px solid #15364f;
+    }
+
+    .status-strip{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+
+    .status{
+      border-radius:15px;
+      padding:10px;
+      background:#eef7fb;
+      border:1px solid var(--line);
+    }
+
+    .status b{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .status span{
+      font-size:1.02rem;
+      font-weight:950;
+      color:var(--deep);
+    }
+
+    .metric-list{
+      padding:12px;
+      display:grid;
+      gap:9px;
+    }
+
+    .metric{
+      padding:10px;
+      border:1px solid var(--line);
+      background:#f7fbfe;
+      border-radius:15px;
+    }
+
+    .metric-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:7px;
+    }
+
+    .metric-name{
+      font-weight:900;
+      color:var(--deep);
+      font-size:.91rem;
+    }
+
+    .metric-value{
+      font-weight:950;
+      color:var(--blue);
+      font-size:.91rem;
+      white-space:nowrap;
+    }
+
+    .bar{
+      height:9px;
+      border-radius:999px;
+      background:#d9eaf3;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      width:50%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#58b7e8,#1f9d63);
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.42;
+      padding:0 12px 12px;
+    }
+
+    .below-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .text-card{
+      padding:16px;
+    }
+
+    .text-card h2{
+      margin:0 0 9px;
+      font-size:1.1rem;
+    }
+
+    .text-card p,.text-card li{
+      color:#24485c;
+      line-height:1.5;
+      font-size:.94rem;
+    }
+
+    .text-card ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+
+    .challenge{
+      margin-top:12px;
+      padding:11px;
+      border-radius:15px;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+    }
+
+    .challenge strong{
+      color:var(--deep);
+    }
+
+    .quiz{
+      display:grid;
+      gap:9px;
+    }
+
+    .quiz button{
+      text-align:left;
+      background:#f3f9fd;
+      border:1px solid var(--line);
+      color:#183f57;
+      font-weight:750;
+    }
+
+    .quiz button.correct{
+      background:#e6f6ee;
+      border-color:#a7dfc1;
+      color:#146442;
+    }
+
+    .quiz button.incorrect{
+      background:#fdeeee;
+      border-color:#f0b8b8;
+      color:#8f2f2f;
+    }
+
+    .feedback{
+      min-height:28px;
+      color:var(--deep);
+      font-weight:850;
+      margin-top:8px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:5px 9px;
+      background:#e7f5fb;
+      color:#0d5278;
+      font-weight:850;
+      font-size:.78rem;
+      margin-right:6px;
+      margin-top:6px;
+    }
+
+    @media (max-width:1100px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+
+      .main-grid,.below-grid{
+        grid-template-columns:1fr;
+      }
+
+      canvas{
+        height:490px;
+      }
+    }
+
+    @media (max-width:650px){
+      .control-grid,
+      body.simple-mode .control-grid{
+        grid-template-columns:1fr;
+      }
+
+      .status-strip{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        padding:22px;
+      }
+
+      canvas{
+        height:430px;
+      }
+    }
+  </style>
+</head>
+
+<body class="simple-mode">
+  <div class="page">
+    <a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Earthquake Building Protection Simulator</h1>
+      <p>
+        Test different engineering devices designed to reduce earthquake damage. Shake a building, compare peak sway and acceleration,
+        then decide which protection system works best for the conditions.
+      </p>
+    </section>
+
+    <section class="top-controls">
+      <div class="control-grid">
+        <div class="control">
+          <label for="learningMode">Learning mode</label>
+          <select id="learningMode">
+            <option value="simple">Simple</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="device">Protection device</label>
+          <select id="device">
+            <option value="none">No protection</option>
+            <option value="base">Base isolation</option>
+            <option value="bracing">Cross bracing</option>
+            <option value="dampers">Viscous dampers</option>
+            <option value="shear">Shear walls</option>
+            <option value="tmd">Tuned mass damper</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="quakeIntensity">Earthquake intensity</label>
+          <input id="quakeIntensity" type="range" min="1" max="10" step="1" value="6" />
+          <div class="readout"><span id="quakeIntensityRead">6</span>/10</div>
+        </div>
+
+        <div class="control">
+          <label for="quakeFrequency">Shake frequency</label>
+          <input id="quakeFrequency" type="range" min="0.4" max="2.4" step="0.1" value="1.2" />
+          <div class="readout"><span id="quakeFrequencyRead">1.2</span> Hz</div>
+        </div>
+
+        <div class="control">
+          <label for="buildingHeight">Building height</label>
+          <input id="buildingHeight" type="range" min="3" max="14" step="1" value="8" />
+          <div class="readout"><span id="buildingHeightRead">8</span> floors</div>
+        </div>
+
+        <div class="control">
+          <label for="soilType">Ground type</label>
+          <select id="soilType">
+            <option value="rock">Hard rock</option>
+            <option value="soil">Soil</option>
+            <option value="sediment">Soft sediment</option>
+          </select>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="buildingFlex">Building flexibility</label>
+          <input id="buildingFlex" type="range" min="25" max="140" step="5" value="75" />
+          <div class="readout"><span id="buildingFlexRead">75</span>%</div>
+        </div>
+
+        <div class="control advanced-only">
+          <label for="retrofitCost">Cost limit</label>
+          <input id="retrofitCost" type="range" min="1" max="10" step="1" value="7" />
+          <div class="readout"><span id="retrofitCostRead">7</span>/10</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" id="runBtn">▶ Start shake test</button>
+        <button id="resetBtn">Reset</button>
+        <button id="compareBtn">Run device comparison</button>
+        <button id="resonanceBtn">Resonance test</button>
+        <button id="failureBtn">Extreme failure test</button>
+        <button id="csvBtn">Download CSV</button>
+      </div>
+
+      <p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">
+        Challenge: choose a protection device, run a shake test, then justify which design best reduces building damage.
+      </p>
+    </section>
+
+    <main class="main-grid">
+      <section class="card">
+        <div class="card-header">
+          <h2>Shake-table model</h2>
+          <p>
+            The ground moves side-to-side. The building sways. Protection devices try to reduce drift, acceleration or damage risk.
+          </p>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="buildingCanvas"></canvas>
+        </div>
+
+        <div class="status-strip">
+          <div class="status">
+            <b>System status</b>
+            <span id="systemStatus">Paused</span>
+          </div>
+
+          <div class="status">
+            <b>Structural response</b>
+            <span id="responseStatus">Waiting</span>
+          </div>
+
+          <div class="status">
+            <b>Recommendation</b>
+            <span id="adviceStatus">Start test</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-header">
+          <h2>Evidence panel</h2>
+          <p>Compare the building response using quantitative evidence.</p>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Peak roof sway</span>
+              <span class="metric-value" id="swayValue">0.0 m</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="swayBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Peak acceleration</span>
+              <span class="metric-value" id="accelValue">0.00 g</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="accelBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Damage risk</span>
+              <span class="metric-value" id="riskValue">Low</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="riskBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Structural state</span>
+              <span class="metric-value" id="structuralStateValue">Standing</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="structuralStateBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Comfort / contents risk</span>
+              <span class="metric-value" id="comfortValue">Low</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="comfortBar"></div></div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-top">
+              <span class="metric-name">Device effectiveness</span>
+              <span class="metric-value" id="effectValue">0%</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="effectBar"></div></div>
+          </div>
+
+          <div class="metric advanced-only">
+            <div class="metric-top">
+              <span class="metric-name">Cost fit</span>
+              <span class="metric-value" id="costValue">Good</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="costBar"></div></div>
+          </div>
+        </div>
+
+        <p class="small-note" id="measurementNote">
+          Lower peak sway usually means less structural drift. Lower acceleration usually means less force on contents and occupants.
+        </p>
+
+        <div class="metric" style="margin:0 12px 12px;">
+          <div class="metric-top">
+            <span class="metric-name" id="deviceExplainTitle">Protection explanation</span>
+            <span class="metric-value" id="deviceExplainTag">Baseline</span>
+          </div>
+          <p class="small-note" id="deviceExplainText" style="padding:0;margin:0;">
+            Select a protection device to see how it is intended to reduce earthquake effects.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>How to use</h2>
+        <ul>
+          <li>Choose a protection device and run a shake test.</li>
+          <li>Compare <strong>peak roof sway</strong>, <strong>peak acceleration</strong> and <strong>damage risk</strong>.</li>
+          <li>Try the same earthquake with each device to make the test fair.</li>
+          <li>Use the comparison button to quickly test every device under the same conditions.</li>
+        </ul>
+
+        <div class="challenge">
+          <strong>Challenge:</strong> Which device is best for a tall building on soft sediment during a strong earthquake? Use evidence from the simulator.
+        </div>
+
+        <div class="challenge">
+          <strong>Evidence prompt:</strong> The best design is <em>...</em> because it reduced <em>...</em> compared with <em>...</em>.
+        </div>
+      </div>
+
+      <div class="card text-card">
+        <h2>What the model shows</h2>
+        <p>
+          Earthquake protection systems do not all work the same way. Some make the building stiffer, some absorb energy,
+          and some isolate the building from ground motion. A good design depends on the building, the earthquake and the ground conditions.
+        </p>
+
+        <div class="challenge">
+          <strong>Protection guide:</strong>
+          <ul>
+            <li><strong>Base isolation</strong> separates the building from some ground motion.</li>
+            <li><strong>Cross bracing</strong> stiffens the frame and reduces sideways drift.</li>
+            <li><strong>Viscous dampers</strong> absorb shaking energy and reduce repeated swaying.</li>
+            <li><strong>Shear walls</strong> add strong vertical walls to resist sideways forces.</li>
+            <li><strong>Tuned mass dampers</strong> use a heavy moving mass to oppose building sway.</li>
+          </ul>
+        </div>
+
+        <p class="advanced-only">
+          This is a simplified conceptual model. Real earthquake engineering uses detailed structural models, material properties,
+          building codes, soil data and safety factors.
+        </p>
+
+        <span class="tag">Earthquakes</span>
+        <span class="tag">Engineering</span>
+        <span class="tag">Base isolation</span>
+        <span class="tag">Damping</span>
+        <span class="tag">Resonance</span>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <div class="card text-card">
+        <h2>Self-test</h2>
+        <div class="quiz" id="quiz">
+          <button data-answer="wrong">The best earthquake device is always the one that makes the building completely rigid.</button>
+          <button data-answer="correct">A useful device reduces damaging motion by changing stiffness, damping or how ground motion reaches the building.</button>
+          <button data-answer="wrong">If two devices look different, they must always reduce damage by the same amount.</button>
+        </div>
+        <div class="feedback" id="quizFeedback"></div>
+      </div>
+
+      <div class="card text-card">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Use this after the seismograph simulator to connect earthquake evidence with engineering responses.</li>
+          <li>Ask students to keep one variable constant while changing the protection device.</li>
+          <li>The comparison mode supports CER writing: claim, evidence and reasoning.</li>
+          <li>The collapse animation is triggered when the simplified drift and acceleration risk becomes very high.</li>
+          <li>Emphasise that this is a model for pattern recognition, not a real engineering design tool.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("buildingCanvas");
+    const ctx = canvas.getContext("2d");
+
+    if(!CanvasRenderingContext2D.prototype.roundRect){
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        if(w < 2*r) r = w/2;
+        if(h < 2*r) r = h/2;
+        this.beginPath();
+        this.moveTo(x+r,y);
+        this.arcTo(x+w,y,x+w,y+h,r);
+        this.arcTo(x+w,y+h,x,y+h,r);
+        this.arcTo(x,y+h,x,y,r);
+        this.arcTo(x,y,x+w,y,r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    const controls = {
+      learningMode: document.getElementById("learningMode"),
+      device: document.getElementById("device"),
+      quakeIntensity: document.getElementById("quakeIntensity"),
+      quakeFrequency: document.getElementById("quakeFrequency"),
+      buildingHeight: document.getElementById("buildingHeight"),
+      soilType: document.getElementById("soilType"),
+      buildingFlex: document.getElementById("buildingFlex"),
+      retrofitCost: document.getElementById("retrofitCost")
+    };
+
+    const output = {
+      quakeIntensityRead: document.getElementById("quakeIntensityRead"),
+      quakeFrequencyRead: document.getElementById("quakeFrequencyRead"),
+      buildingHeightRead: document.getElementById("buildingHeightRead"),
+      buildingFlexRead: document.getElementById("buildingFlexRead"),
+      retrofitCostRead: document.getElementById("retrofitCostRead"),
+      systemStatus: document.getElementById("systemStatus"),
+      responseStatus: document.getElementById("responseStatus"),
+      adviceStatus: document.getElementById("adviceStatus"),
+      swayValue: document.getElementById("swayValue"),
+      accelValue: document.getElementById("accelValue"),
+      riskValue: document.getElementById("riskValue"),
+      structuralStateValue: document.getElementById("structuralStateValue"),
+      comfortValue: document.getElementById("comfortValue"),
+      effectValue: document.getElementById("effectValue"),
+      costValue: document.getElementById("costValue"),
+      swayBar: document.getElementById("swayBar"),
+      accelBar: document.getElementById("accelBar"),
+      riskBar: document.getElementById("riskBar"),
+      structuralStateBar: document.getElementById("structuralStateBar"),
+      comfortBar: document.getElementById("comfortBar"),
+      effectBar: document.getElementById("effectBar"),
+      costBar: document.getElementById("costBar"),
+      measurementNote: document.getElementById("measurementNote"),
+      challengeHint: document.getElementById("challengeHint"),
+      deviceExplainTitle: document.getElementById("deviceExplainTitle"),
+      deviceExplainTag: document.getElementById("deviceExplainTag"),
+      deviceExplainText: document.getElementById("deviceExplainText")
+    };
+
+    const deviceInfo = {
+      none:{
+        label:"No protection",
+        tag:"Baseline",
+        stiffness:1.00,
+        damping:1.00,
+        isolation:1.00,
+        accelTransfer:1.00,
+        cost:0,
+        description:"Reference case. The building receives the full ground motion.",
+        explanation:"No protection is the baseline test. It shows how much the building would sway if no earthquake-resistant device was added.",
+        strength:"Useful comparison point.",
+        limitation:"High sway and acceleration can lead to failure during severe shaking."
+      },
+      base:{
+        label:"Base isolation",
+        tag:"Isolates motion",
+        stiffness:0.72,
+        damping:1.35,
+        isolation:0.48,
+        accelTransfer:0.52,
+        cost:9,
+        description:"Flexible bearings reduce how much ground motion reaches the building.",
+        explanation:"Base isolation places flexible bearings or sliding systems between the building and the ground. The ground can move while less motion is transferred into the building.",
+        strength:"Very effective at reducing acceleration and overall force transfer.",
+        limitation:"Can be costly and needs space for movement at the base."
+      },
+      bracing:{
+        label:"Cross bracing",
+        tag:"Stiffens frame",
+        stiffness:1.75,
+        damping:1.05,
+        isolation:0.95,
+        accelTransfer:1.08,
+        cost:5,
+        description:"Diagonal braces stiffen the frame and reduce drift, but may increase acceleration.",
+        explanation:"Cross bracing adds diagonal members that stop the frame from deforming sideways. It is like adding triangles to stop the building from changing shape.",
+        strength:"Good at reducing sideways drift and can be cheaper than more advanced systems.",
+        limitation:"A stiffer building may transfer more acceleration to people and contents."
+      },
+      dampers:{
+        label:"Viscous dampers",
+        tag:"Absorbs energy",
+        stiffness:1.05,
+        damping:2.05,
+        isolation:0.86,
+        accelTransfer:0.82,
+        cost:6,
+        description:"Dampers absorb energy and reduce repeated swaying.",
+        explanation:"Viscous dampers work like shock absorbers. As the building moves, the damper resists the motion and turns some movement energy into heat.",
+        strength:"Good at reducing repeated swaying and resonance effects.",
+        limitation:"May not reduce all drift unless combined with a strong frame."
+      },
+      shear:{
+        label:"Shear walls",
+        tag:"Resists sideways force",
+        stiffness:1.95,
+        damping:1.25,
+        isolation:0.92,
+        accelTransfer:1.02,
+        cost:7,
+        description:"Strong walls increase lateral strength and reduce sideways drift.",
+        explanation:"Shear walls are strong vertical walls that resist horizontal earthquake forces. They act like a stiff spine inside or around the building.",
+        strength:"Good at reducing drift and strengthening the structure.",
+        limitation:"Can increase stiffness, so acceleration may still be high in some shaking conditions."
+      },
+      tmd:{
+        label:"Tuned mass damper",
+        tag:"Opposes sway",
+        stiffness:1.00,
+        damping:1.55,
+        isolation:0.82,
+        accelTransfer:0.86,
+        cost:8,
+        description:"A heavy mass near the top moves out of phase with the building to reduce sway.",
+        explanation:"A tuned mass damper is a heavy mass near the top of a building. It is designed to move opposite to the building sway, reducing the motion.",
+        strength:"Especially useful for tall buildings when shaking is near the building's natural frequency.",
+        limitation:"Works best when tuned to the right building and shaking conditions."
+      }
+    };
+
+    const soilInfo = {
+      rock:{label:"Hard rock",amp:0.80,periodShift:0.88},
+      soil:{label:"Soil",amp:1.10,periodShift:1.00},
+      sediment:{label:"Soft sediment",amp:1.55,periodShift:1.16}
+    };
+
+    const state = {
+      running:false,
+      t:0,
+      duration:24,
+      data:[],
+      comparisons:[],
+      compareFlash:0,
+      collapsed:false,
+      collapseTime:null
+    };
+
+    function clamp(value,min,max){
+      return Math.max(min,Math.min(max,value));
+    }
+
+    function lerp(a,b,t){
+      return a + (b-a) * t;
+    }
+
+    function map(value,inMin,inMax,outMin,outMax){
+      const t = clamp((value-inMin)/(inMax-inMin),0,1);
+      return lerp(outMin,outMax,t);
+    }
+
+    function getValues(deviceOverride=null){
+      const learningMode = controls.learningMode.value;
+      const device = deviceOverride || controls.device.value;
+      const quakeIntensity = Number(controls.quakeIntensity.value);
+      const quakeFrequency = Number(controls.quakeFrequency.value);
+      const buildingHeight = Number(controls.buildingHeight.value);
+      const soilType = controls.soilType.value;
+      const buildingFlex = learningMode === "simple" ? 75 : Number(controls.buildingFlex.value);
+      const retrofitCost = learningMode === "simple" ? 7 : Number(controls.retrofitCost.value);
+
+      const dev = deviceInfo[device];
+      const soil = soilInfo[soilType];
+
+      // Conceptual natural frequency: taller and more flexible buildings tend to sway more slowly.
+      const baseNaturalFrequency = clamp(2.25 - buildingHeight * 0.105 - buildingFlex * 0.006,0.45,2.2);
+      const adjustedNaturalFrequency = clamp(baseNaturalFrequency * dev.stiffness / soil.periodShift,0.35,2.8);
+
+      const resonanceGap = Math.abs(quakeFrequency - adjustedNaturalFrequency);
+      const resonanceFactor = 1 + 2.4 * Math.exp(-Math.pow(resonanceGap / 0.32,2));
+
+      const groundMotion = quakeIntensity * 0.14 * soil.amp;
+      const heightFactor = 0.72 + buildingHeight * 0.095;
+      const flexibilityFactor = buildingFlex / 75;
+
+      let sway = groundMotion * heightFactor * flexibilityFactor * resonanceFactor * dev.isolation / (dev.damping * Math.sqrt(dev.stiffness));
+      let accel = groundMotion * resonanceFactor * dev.accelTransfer * Math.sqrt(dev.stiffness) / Math.sqrt(dev.damping);
+
+      // Tuned mass damper is strongest near resonance.
+      let tmdEffectiveness = 0;
+      if(device === "tmd"){
+        tmdEffectiveness = clamp(1 - resonanceGap / 0.55,0,1);
+        sway *= (1 - 0.38 * tmdEffectiveness);
+        accel *= (1 - 0.16 * tmdEffectiveness);
+      }
+
+      const none = deviceInfo.none;
+      const baselineSway = groundMotion * heightFactor * flexibilityFactor * resonanceFactor * none.isolation / (none.damping * Math.sqrt(none.stiffness));
+      const baselineAccel = groundMotion * resonanceFactor * none.accelTransfer * Math.sqrt(none.stiffness) / Math.sqrt(none.damping);
+
+      const effectiveness = clamp((baselineSway - sway) / baselineSway,0,0.9);
+      const driftRatio = sway / Math.max(1,buildingHeight * 3.2);
+      // Damage/collapse is deliberately tuned for classroom investigation.
+      // Ordinary tests should show different performance; collapse mainly appears in severe, resonant or poorly protected cases.
+      const riskScore = clamp((sway * 10 + accel * 22 + Math.max(0,resonanceFactor - 1) * 8) / 100,0,1);
+      const collapseRisk = clamp((riskScore - 0.50) / 0.42,0,1);
+
+      const severeConditions =
+        quakeIntensity >= 8 ||
+        (soilType === "sediment" && buildingHeight >= 9) ||
+        resonanceFactor > 2.55;
+
+      const vulnerableSystem =
+        device === "none" ||
+        device === "bracing" ||
+        device === "shear";
+
+      const collapseLikely =
+        riskScore > 0.93 ||
+        (riskScore > 0.74 && severeConditions && vulnerableSystem) ||
+        (sway > buildingHeight * 0.75 && severeConditions);
+
+      const comfortScore = clamp(accel / 2.2,0,1);
+
+      let structuralState = "Standing";
+      if(state.collapsed) structuralState = "Collapsed";
+      else if(collapseLikely) structuralState = "Failure likely";
+      else if(collapseRisk > 0.48) structuralState = "Critical";
+      else if(collapseRisk > 0.20) structuralState = "Strained";
+
+      let riskLabel = "Low";
+      if(riskScore > 0.82) riskLabel = "Extreme";
+      else if(riskScore > 0.62) riskLabel = "High";
+      else if(riskScore > 0.34) riskLabel = "Moderate";
+
+      let comfortLabel = "Low";
+      if(comfortScore > 0.74) comfortLabel = "Extreme";
+      else if(comfortScore > 0.52) comfortLabel = "High";
+      else if(comfortScore > 0.28) comfortLabel = "Moderate";
+
+      let costFit = "Good";
+      const overCost = dev.cost - retrofitCost;
+      if(dev.cost === 0) costFit = "No cost";
+      else if(overCost > 2) costFit = "Too costly";
+      else if(overCost > 0) costFit = "Tight";
+      else costFit = "Good";
+
+      let responseStatus = "Waiting";
+      if(state.collapsed) responseStatus = "Collapsed";
+      else if(state.running){
+        if(collapseLikely) responseStatus = "Near failure";
+        else if(riskScore > 0.82) responseStatus = "Severe shaking";
+        else if(riskScore > 0.62) responseStatus = "High shaking";
+        else if(riskScore > 0.34) responseStatus = "Controlled shaking";
+        else responseStatus = "Stable";
+      }
+
+      let advice = "Start test";
+      if(state.collapsed) advice = "Design failed";
+      else if(collapseLikely) advice = "Collapse risk";
+      else if(effectiveness > 0.45 && riskScore < 0.45) advice = "Strong design";
+      else if(effectiveness > 0.20) advice = "Useful reduction";
+      else if(device === "none") advice = "Needs protection";
+      else advice = "Try another device";
+
+      return {
+        learningMode,device,quakeIntensity,quakeFrequency,buildingHeight,soilType,buildingFlex,retrofitCost,
+        dev,soil,baseNaturalFrequency,adjustedNaturalFrequency,resonanceGap,resonanceFactor,groundMotion,
+        sway,accel,baselineSway,baselineAccel,effectiveness,driftRatio,riskScore,collapseRisk,collapseLikely,structuralState,riskLabel,comfortScore,comfortLabel,costFit,
+        responseStatus,advice,tmdEffectiveness
+      };
+    }
+
+    function updateReadouts(){
+      const v = getValues();
+
+      document.body.classList.toggle("simple-mode",v.learningMode === "simple");
+
+      output.quakeIntensityRead.textContent = v.quakeIntensity.toFixed(0);
+      output.quakeFrequencyRead.textContent = v.quakeFrequency.toFixed(1);
+      output.buildingHeightRead.textContent = v.buildingHeight.toFixed(0);
+      output.buildingFlexRead.textContent = v.buildingFlex.toFixed(0);
+      output.retrofitCostRead.textContent = v.retrofitCost.toFixed(0);
+
+      output.systemStatus.textContent = state.running ? "Running" : "Paused";
+      output.responseStatus.textContent = v.responseStatus;
+      output.adviceStatus.textContent = v.advice;
+
+      output.swayValue.textContent = `${v.sway.toFixed(2)} m`;
+      output.accelValue.textContent = `${v.accel.toFixed(2)} g`;
+      output.riskValue.textContent = v.riskLabel;
+      output.structuralStateValue.textContent = v.structuralState;
+      output.comfortValue.textContent = v.comfortLabel;
+      output.effectValue.textContent = `${Math.round(v.effectiveness * 100)}%`;
+      output.costValue.textContent = v.costFit;
+
+      output.swayBar.style.width = `${clamp(v.sway / 4.8 * 100,4,100)}%`;
+      output.accelBar.style.width = `${clamp(v.accel / 2.8 * 100,4,100)}%`;
+      output.riskBar.style.width = `${clamp(v.riskScore * 100,4,100)}%`;
+      output.structuralStateBar.style.width = `${clamp(v.collapseRisk * 100,4,100)}%`;
+      output.comfortBar.style.width = `${clamp(v.comfortScore * 100,4,100)}%`;
+      output.effectBar.style.width = `${clamp(v.effectiveness * 100,4,100)}%`;
+      output.costBar.style.width = `${v.dev.cost === 0 ? 100 : clamp((v.retrofitCost - v.dev.cost + 4) / 14 * 100,4,100)}%`;
+
+      const riskColour =
+        v.riskScore > 0.74 ? "linear-gradient(90deg,#f09a9a,#d64545)" :
+        v.riskScore > 0.52 ? "linear-gradient(90deg,#f0c85a,#e89b20)" :
+        "linear-gradient(90deg,#58b7e8,#1f9d63)";
+
+      output.riskBar.style.background = riskColour;
+      output.structuralStateBar.style.background =
+        state.collapsed || v.collapseLikely ? "linear-gradient(90deg,#f09a9a,#d64545)" :
+        v.collapseRisk > .48 ? "linear-gradient(90deg,#f0c85a,#e89b20)" :
+        "linear-gradient(90deg,#58b7e8,#1f9d63)";
+      output.swayBar.style.background = riskColour;
+
+      output.measurementNote.textContent =
+        state.collapsed
+        ? `The structure collapsed in this simplified model because the combined sway and acceleration became too large. ${v.dev.description}`
+        : `${v.dev.description} Natural frequency: ${v.adjustedNaturalFrequency.toFixed(2)} Hz. ` +
+          `If the shaking frequency is close to this, resonance can increase sway.`;
+
+      output.challengeHint.textContent =
+        "Challenge: keep the earthquake settings the same, change only the protection device, then justify your best design using peak sway, acceleration and damage risk.";
+
+      output.deviceExplainTitle.textContent = v.dev.label;
+      output.deviceExplainTag.textContent = v.dev.tag;
+      output.deviceExplainText.innerHTML =
+        `<strong>How it works:</strong> ${v.dev.explanation}<br>` +
+        `<strong>Strength:</strong> ${v.dev.strength}<br>` +
+        `<strong>Limitation:</strong> ${v.dev.limitation}`;
+    }
+
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      draw();
+    }
+
+    function drawBoxLabel(text,x,y,align="center"){
+      ctx.save();
+      ctx.font = "850 12px system-ui";
+      ctx.textAlign = align;
+      ctx.textBaseline = "middle";
+
+      const padX = 8;
+      const metrics = ctx.measureText(text);
+      const width = metrics.width + padX * 2;
+      const height = 24;
+
+      let left = x - width / 2;
+      if(align === "left") left = x;
+      if(align === "right") left = x - width;
+
+      ctx.fillStyle = "rgba(6,19,34,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,y - height / 2,width,height,8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(230,246,255,.96)";
+      ctx.fillText(text,x,y);
+      ctx.restore();
+    }
+
+    function drawBackground(w,h){
+      const bg = ctx.createLinearGradient(0,0,0,h);
+      bg.addColorStop(0,"#061322");
+      bg.addColorStop(1,"#0c2338");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0,0,w,h);
+
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = "#ffffff";
+      for(let i=0;i<70;i++){
+        const x = (i * 89) % w;
+        const y = (i * 57) % h;
+        const r = ((i * 19) % 3 + 1) / 2.5;
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function shakeEnvelope(t){
+      if(t < 0) return 0;
+      const attack = clamp(t / 4,0,1);
+      const decay = t > 14 ? Math.exp(-(t-14)/8) : 1;
+      return attack * decay;
+    }
+
+    function currentGroundOffset(v){
+      if(!state.running) return 0;
+      const env = shakeEnvelope(state.t);
+      const wave = Math.sin(state.t * Math.PI * 2 * v.quakeFrequency) + 0.35 * Math.sin(state.t * Math.PI * 2 * v.quakeFrequency * 1.7 + 0.9);
+      return wave * env * v.groundMotion * 22;
+    }
+
+    function currentBuildingSway(v,floorRatio){
+      if(!state.running) return 0;
+      const env = shakeEnvelope(state.t);
+      const main = Math.sin(state.t * Math.PI * 2 * v.adjustedNaturalFrequency - 0.55) * env;
+      const secondary = Math.sin(state.t * Math.PI * 2 * v.quakeFrequency + 0.8) * env * 0.35;
+      return (main + secondary) * v.sway * 18 * Math.pow(floorRatio,1.25);
+    }
+
+    function drawProtectionDevice(v,baseX,baseY,buildingW,buildingH,floors,floorH,groundOffset){
+      const device = v.device;
+
+      ctx.save();
+      ctx.translate(groundOffset,0);
+
+      if(device === "base"){
+        // Base isolation rollers and flexible bearings
+        ctx.fillStyle = "rgba(255,228,120,.95)";
+        ctx.strokeStyle = "rgba(255,248,210,.9)";
+        ctx.lineWidth = 2;
+        for(let i=0;i<4;i++){
+          const x = baseX + 20 + i * (buildingW-40)/3;
+          ctx.beginPath();
+          ctx.arc(x,baseY + 16,8,0,Math.PI*2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "rgba(255,228,120,.85)";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(baseX + 8,baseY + 4);
+        ctx.lineTo(baseX + buildingW - 8,baseY + 4);
+        ctx.stroke();
+        drawBoxLabel("base isolation",baseX + buildingW + 18,baseY + 16,"left");
+      }
+
+      if(device === "bracing"){
+        ctx.strokeStyle = "rgba(255,228,120,.86)";
+        ctx.lineWidth = 4;
+        for(let f=0;f<floors;f+=2){
+          const y1 = baseY - f * floorH;
+          const y2 = baseY - Math.min(f+2,floors) * floorH;
+          ctx.beginPath();
+          ctx.moveTo(baseX,y1);
+          ctx.lineTo(baseX + buildingW,y2);
+          ctx.moveTo(baseX + buildingW,y1);
+          ctx.lineTo(baseX,y2);
+          ctx.stroke();
+        }
+        drawBoxLabel("cross bracing",baseX + buildingW + 18,baseY - buildingH * .48,"left");
+      }
+
+      if(device === "dampers"){
+        ctx.strokeStyle = "rgba(255,155,120,.92)";
+        ctx.lineWidth = 5;
+        for(let f=1;f<floors;f+=2){
+          const y = baseY - f * floorH;
+          ctx.beginPath();
+          ctx.moveTo(baseX + 8,y);
+          ctx.lineTo(baseX + buildingW - 8,y - floorH);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(255,200,170,.95)";
+          ctx.beginPath();
+          ctx.roundRect(baseX + buildingW/2 - 9,y - floorH/2 - 7,18,14,5);
+          ctx.fill();
+        }
+        drawBoxLabel("energy dampers",baseX + buildingW + 18,baseY - buildingH * .52,"left");
+      }
+
+      if(device === "shear"){
+        ctx.fillStyle = "rgba(255,228,120,.28)";
+        ctx.strokeStyle = "rgba(255,228,120,.78)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(baseX + buildingW * .38,baseY - buildingH,buildingW * .24,buildingH,6);
+        ctx.fill();
+        ctx.stroke();
+        drawBoxLabel("shear wall core",baseX + buildingW + 18,baseY - buildingH * .45,"left");
+      }
+
+      if(device === "tmd"){
+        const tmdY = baseY - buildingH - 24;
+        const motion = state.running ? -currentBuildingSway(v,1) * (0.65 + v.tmdEffectiveness * 0.5) : 0;
+
+        ctx.strokeStyle = "rgba(255,228,120,.88)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(baseX + buildingW/2,tmdY - 18);
+        ctx.lineTo(baseX + buildingW/2 + motion,tmdY + 12);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255,228,120,.95)";
+        ctx.strokeStyle = "rgba(255,248,210,.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(baseX + buildingW/2 - 24 + motion,tmdY + 8,48,24,8);
+        ctx.fill();
+        ctx.stroke();
+
+        drawBoxLabel("tuned mass damper",baseX + buildingW + 18,tmdY + 22,"left");
+      }
+
+      ctx.restore();
+    }
+
+    function drawCollapsedBuilding(baseX,baseY,buildingW,buildingH,floors,floorH,groundOffset,v){
+      const progress = state.collapseTime === null ? 1 : clamp((state.t - state.collapseTime) / 3.2,0,1);
+      const lean = lerp(0.15,0.95,progress);
+      const fallDir = Math.sin(v.quakeFrequency * 3.1) >= 0 ? 1 : -1;
+      const rubbleY = baseY + 12;
+
+      ctx.save();
+      ctx.translate(groundOffset,0);
+
+      // Breaking frame, leaning as it fails.
+      ctx.save();
+      ctx.translate(baseX + buildingW/2,baseY);
+      ctx.rotate(fallDir * lean * 0.55);
+      ctx.translate(-(baseX + buildingW/2),-baseY);
+
+      ctx.strokeStyle = "rgba(255,170,130,.95)";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+
+      const brokenFloors = Math.min(floors,10);
+      for(let f=0;f<brokenFloors;f++){
+        const y = baseY - f * floorH;
+        const offset = Math.sin(f * 1.7) * 16 * progress;
+        ctx.beginPath();
+        ctx.moveTo(baseX + offset,y);
+        ctx.lineTo(baseX + buildingW + offset * .5,y - floorH * .25);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(baseX + 8 + offset,y);
+        ctx.lineTo(baseX + buildingW - 8 - offset,y - floorH);
+        ctx.moveTo(baseX + buildingW - 8 + offset,y);
+        ctx.lineTo(baseX + 8 - offset,y - floorH * .8);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      // Rubble pile
+      ctx.fillStyle = "rgba(160,180,190,.95)";
+      ctx.strokeStyle = "rgba(220,240,250,.8)";
+      ctx.lineWidth = 2;
+      for(let i=0;i<32;i++){
+        const x = baseX - 35 + (i * 37) % (buildingW + 90);
+        const y = rubbleY + ((i * 23) % 34);
+        const size = 8 + (i * 5) % 16;
+        ctx.save();
+        ctx.translate(x,y);
+        ctx.rotate((i * 0.7) % Math.PI);
+        ctx.beginPath();
+        ctx.roundRect(-size/2,-size/2,size,size * 0.58,3);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Dust cloud
+      ctx.fillStyle = "rgba(210,205,190,.25)";
+      for(let i=0;i<10;i++){
+        ctx.beginPath();
+        ctx.arc(baseX + (i*41)%(buildingW+55) - 18,rubbleY + 10 + Math.sin(i)*10,18 + (i%3)*8,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      drawBoxLabel("collapse: forces too high",baseX + buildingW/2,baseY - buildingH * .58);
+    }
+
+    function drawBuilding(left,top,w,h,v){
+      const groundY = top + h - 70;
+      const baseCentre = left + w * 0.41;
+      const buildingW = clamp(120 + v.buildingHeight * 2,128,165);
+      const buildingH = clamp(v.buildingHeight * 30,120,355);
+      const floors = v.buildingHeight;
+      const floorH = buildingH / floors;
+      const baseX = baseCentre - buildingW/2;
+      const baseY = groundY - 32;
+
+      const groundOffset = currentGroundOffset(v);
+
+      // ground
+      ctx.save();
+      ctx.fillStyle = "rgba(88,65,52,.92)";
+      ctx.beginPath();
+      ctx.roundRect(left + 20,groundY,w - 40,42,18);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(145,105,72,.88)";
+      ctx.beginPath();
+      ctx.moveTo(left + 20,groundY + 12);
+      for(let x=left+20;x<left+w-20;x+=38){
+        ctx.lineTo(x,groundY + 12 + Math.sin((x+state.t*8)*0.04)*5);
+      }
+      ctx.lineTo(left+w-20,groundY+42);
+      ctx.lineTo(left+20,groundY+42);
+      ctx.closePath();
+      ctx.fill();
+
+      // shake table
+      ctx.save();
+      ctx.translate(groundOffset,0);
+      ctx.fillStyle = "rgba(160,205,225,.96)";
+      ctx.strokeStyle = "rgba(220,245,255,.95)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(baseX - 32,baseY + 24,buildingW + 64,18,9);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      if(state.collapsed){
+        drawCollapsedBuilding(baseX,baseY,buildingW,buildingH,floors,floorH,groundOffset,v);
+        drawBoxLabel("shake table / ground motion",baseX + buildingW/2,baseY + 62);
+        ctx.restore();
+        return;
+      }
+
+      // building skeleton
+      ctx.save();
+      ctx.translate(groundOffset,0);
+
+      ctx.strokeStyle = "rgba(210,240,255,.96)";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+
+      const leftPoints = [];
+      const rightPoints = [];
+      const centrePoints = [];
+
+      for(let f=0;f<=floors;f++){
+        const ratio = f / floors;
+        const y = baseY - ratio * buildingH;
+        const sway = currentBuildingSway(v,ratio);
+        const bend = sway * (0.35 + ratio * 0.65);
+        leftPoints.push({x:baseX + bend,y});
+        rightPoints.push({x:baseX + buildingW + bend,y});
+        centrePoints.push({x:baseX + buildingW/2 + bend,y});
+      }
+
+      // columns
+      [leftPoints,rightPoints,centrePoints].forEach(points=>{
+        ctx.beginPath();
+        points.forEach((p,i)=>{
+          if(i===0) ctx.moveTo(p.x,p.y);
+          else ctx.lineTo(p.x,p.y);
+        });
+        ctx.stroke();
+      });
+
+      // floors
+      for(let f=0;f<=floors;f++){
+        ctx.beginPath();
+        ctx.moveTo(leftPoints[f].x,leftPoints[f].y);
+        ctx.lineTo(rightPoints[f].x,rightPoints[f].y);
+        ctx.stroke();
+      }
+
+      // windows
+      ctx.fillStyle = "rgba(105,190,230,.55)";
+      for(let f=0;f<floors;f++){
+        if(f % 2 === 0 || floors < 8){
+          const ratio = (f + 0.48) / floors;
+          const y = baseY - ratio * buildingH;
+          const sway = currentBuildingSway(v,ratio);
+          for(let c=0;c<3;c++){
+            const x = baseX + 24 + c * ((buildingW - 48) / 2) + sway;
+            ctx.beginPath();
+            ctx.roundRect(x - 7,y - 6,14,12,3);
+            ctx.fill();
+          }
+        }
+      }
+
+      // roof sway arrow
+      const roofSway = currentBuildingSway(v,1);
+      if(state.running){
+        ctx.strokeStyle = "rgba(255,105,105,.9)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(baseX + buildingW + 18,baseY - buildingH);
+        ctx.lineTo(baseX + buildingW + 18 + roofSway,baseY - buildingH);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255,105,105,.95)";
+        ctx.beginPath();
+        ctx.arc(baseX + buildingW + 18 + roofSway,baseY - buildingH,5,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      drawProtectionDevice(v,baseX,baseY,buildingW,buildingH,floors,floorH,groundOffset);
+
+      // Labels
+      drawBoxLabel("shake table / ground motion",baseX + buildingW/2,baseY + 62);
+      drawBoxLabel("roof sway",baseX + buildingW + 44,baseY - buildingH - 8,"left");
+
+      // Ground wave hint
+      if(state.running){
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,235,130,.35)";
+        ctx.lineWidth = 3;
+        const cx = left + 64;
+        const cy = groundY + 18;
+        for(let i=0;i<4;i++){
+          ctx.beginPath();
+          ctx.arc(cx,cy,((state.t*35)%170)+i*44,0,Math.PI*2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function drawGraph(left,top,w,h,v){
+      ctx.save();
+
+      ctx.fillStyle = "rgba(8,30,48,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.28)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,top,w,h,18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(235,248,255,.96)";
+      ctx.font = "850 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Roof sway over time",left + 16,top + 26);
+
+      const gx = left + 42;
+      const gy = top + h - 30;
+      const gw = w - 64;
+      const gh = h - 86;
+
+      ctx.strokeStyle = "rgba(180,225,250,.3)";
+      ctx.lineWidth = 1;
+      for(let i=0;i<=4;i++){
+        const y = gy - (i/4)*gh;
+        ctx.beginPath();
+        ctx.moveTo(gx,y);
+        ctx.lineTo(gx+gw,y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(180,225,250,.7)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(gx,gy-gh/2);
+      ctx.lineTo(gx+gw,gy-gh/2);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(95,190,235,.95)";
+      ctx.lineWidth = 2.3;
+      ctx.beginPath();
+
+      const maxTime = state.duration;
+      const visibleTime = state.running ? clamp(state.t,0,maxTime) : maxTime;
+      let first = true;
+
+      for(let x=0;x<=gw;x+=2){
+        const t = (x/gw)*maxTime;
+        if(state.running && t > visibleTime) break;
+
+        const env = shakeEnvelope(t);
+        const signal = (Math.sin(t * Math.PI * 2 * v.adjustedNaturalFrequency - 0.55) +
+          0.35 * Math.sin(t * Math.PI * 2 * v.quakeFrequency + 0.8)) * env * v.sway;
+
+        const y = gy - gh/2 - clamp(signal / 3.4,-0.48,0.48) * gh;
+
+        if(first){
+          ctx.moveTo(gx+x,y);
+          first = false;
+        }else{
+          ctx.lineTo(gx+x,y);
+        }
+      }
+
+      ctx.stroke();
+
+      // Resonance reference
+      // Natural frequency label: second line to avoid overlapping the graph title.
+      ctx.fillStyle = "rgba(255,228,120,.95)";
+      ctx.font = "800 10px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`natural frequency: ${v.adjustedNaturalFrequency.toFixed(2)} Hz`,left + 16,top + 44);
+
+      ctx.restore();
+    }
+
+    function drawComparison(left,top,w,h){
+      ctx.save();
+
+      ctx.fillStyle = "rgba(8,30,48,.72)";
+      ctx.strokeStyle = "rgba(180,225,250,.28)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(left,top,w,h,18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(235,248,255,.96)";
+      ctx.font = "850 14px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Device comparison",left + 16,top + 26);
+
+      if(state.comparisons.length){
+        const best = state.comparisons[0];
+        ctx.fillStyle = "rgba(255,228,120,.95)";
+        ctx.font = "850 11px system-ui";
+        ctx.textAlign = "right";
+        ctx.fillText(`Best under these settings: ${best.label}`,left + w - 16,top + 26);
+      }
+
+      const rows = state.comparisons.length ? state.comparisons : Object.keys(deviceInfo).map(k=>{
+        const v = getValues(k);
+        return {key:k,label:deviceInfo[k].label,sway:v.sway,risk:v.riskScore,collapseLikely:v.collapseLikely,effectiveness:v.effectiveness};
+      });
+
+      const maxSway = Math.max(...rows.map(r=>r.sway),0.1);
+      const startY = top + 50;
+      const rowH = Math.min(28,(h-64)/rows.length);
+
+      rows.forEach((row,i)=>{
+        const y = startY + i*rowH;
+        const barW = (w - 180) * (row.sway/maxSway);
+
+        ctx.fillStyle = row.key === controls.device.value ? "rgba(255,228,120,.18)" : "rgba(255,255,255,.04)";
+        ctx.beginPath();
+        ctx.roundRect(left + 10,y - 15,w - 20,rowH - 3,8);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(220,240,250,.92)";
+        ctx.font = "800 11px system-ui";
+        ctx.textAlign = "left";
+        ctx.fillText(row.label,left + 18,y + 3);
+
+        ctx.fillStyle = row.collapseLikely ? "rgba(220,70,70,.95)" :
+          row.risk > .62 ? "rgba(230,95,95,.88)" :
+          row.risk > .34 ? "rgba(235,170,55,.9)" :
+          "rgba(80,195,135,.9)";
+        ctx.beginPath();
+        ctx.roundRect(left + 136,y - 9,barW,12,6);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(220,240,250,.9)";
+        ctx.font = "800 10px system-ui";
+        ctx.textAlign = "right";
+        const rowText = row.collapseLikely ? `FAILED · ${row.sway.toFixed(2)} m` : `${row.sway.toFixed(2)} m`;
+        ctx.fillText(rowText,left + w - 14,y + 2);
+      });
+
+      ctx.restore();
+    }
+
+    function draw(){
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      const v = getValues();
+
+      ctx.clearRect(0,0,w,h);
+      drawBackground(w,h);
+
+      const leftPanelW = w * 0.64;
+      drawBuilding(18,20,leftPanelW-28,h-38,v);
+      drawGraph(leftPanelW + 8,30,w - leftPanelW - 28,205,v);
+      drawComparison(leftPanelW + 8,252,w - leftPanelW - 28,h - 288);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.88)";
+      ctx.font = "800 13px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(
+        `${deviceInfo[v.device].label} | intensity ${v.quakeIntensity}/10 | ${v.quakeFrequency.toFixed(1)} Hz | ${v.buildingHeight} floors | ${soilInfo[v.soilType].label}`,
+        22,
+        h-12
+      );
+      ctx.restore();
+    }
+
+    function logData(){
+      const v = getValues();
+      state.data.push({
+        time_s:state.t.toFixed(2),
+        learning_mode:v.learningMode,
+        protection_device:v.dev.label,
+        quake_intensity:v.quakeIntensity,
+        quake_frequency_hz:v.quakeFrequency.toFixed(2),
+        building_height_floors:v.buildingHeight,
+        soil_type:v.soil.label,
+        building_flexibility_percent:v.buildingFlex,
+        natural_frequency_hz:v.adjustedNaturalFrequency.toFixed(2),
+        resonance_factor:v.resonanceFactor.toFixed(2),
+        peak_roof_sway_m:v.sway.toFixed(3),
+        peak_acceleration_g:v.accel.toFixed(3),
+        damage_risk:v.riskLabel,
+        damage_risk_score:v.riskScore.toFixed(3),
+        collapse_likely:v.collapseLikely ? "yes" : "no",
+        structural_state:v.structuralState,
+        device_effectiveness_percent:(v.effectiveness*100).toFixed(1),
+        cost_fit:v.costFit
+      });
+    }
+
+    function runComparison(){
+      const rows = Object.keys(deviceInfo).map(key=>{
+        const v = getValues(key);
+        return {
+          key,
+          label:deviceInfo[key].label,
+          sway:v.sway,
+          accel:v.accel,
+          risk:v.riskScore,
+          riskLabel:v.riskLabel,
+          collapseLikely:v.collapseLikely,
+          effectiveness:v.effectiveness,
+          costFit:v.costFit
+        };
+      }).sort((a,b)=>{
+        const advanced = controls.learningMode.value === "advanced";
+        const aPenalty = advanced && a.costFit === "Too costly" ? 0.28 : advanced && a.costFit === "Tight" ? 0.08 : 0;
+        const bPenalty = advanced && b.costFit === "Too costly" ? 0.28 : advanced && b.costFit === "Tight" ? 0.08 : 0;
+        return (a.risk + aPenalty) - (b.risk + bPenalty) || a.sway - b.sway;
+      });
+
+      state.comparisons = rows;
+      rows.forEach(row=>{
+        state.data.push({
+          time_s:state.t.toFixed(2),
+          learning_mode:getValues().learningMode,
+          protection_device:row.label,
+          quake_intensity:controls.quakeIntensity.value,
+          quake_frequency_hz:Number(controls.quakeFrequency.value).toFixed(2),
+          building_height_floors:controls.buildingHeight.value,
+          soil_type:soilInfo[controls.soilType.value].label,
+          building_flexibility_percent:getValues().buildingFlex,
+          natural_frequency_hz:getValues(row.key).adjustedNaturalFrequency.toFixed(2),
+          resonance_factor:getValues(row.key).resonanceFactor.toFixed(2),
+          peak_roof_sway_m:row.sway.toFixed(3),
+          peak_acceleration_g:row.accel.toFixed(3),
+          damage_risk:row.riskLabel,
+          damage_risk_score:row.risk.toFixed(3),
+          collapse_likely:row.collapseLikely ? "yes" : "no",
+          structural_state:row.collapseLikely ? "Failure likely" : "Standing",
+          device_effectiveness_percent:(row.effectiveness*100).toFixed(1),
+          cost_fit:row.costFit
+        });
+      });
+
+      const best = rows[0];
+      controls.device.value = best.key;
+      state.compareFlash = 1;
+      output.adviceStatus.textContent = `Best: ${best.label}`;
+      updateReadouts();
+      draw();
+    }
+
+    function reset(){
+      controls.learningMode.value = "simple";
+      controls.device.value = "none";
+      controls.quakeIntensity.value = "6";
+      controls.quakeFrequency.value = "1.2";
+      controls.buildingHeight.value = "8";
+      controls.soilType.value = "soil";
+      controls.buildingFlex.value = "75";
+      controls.retrofitCost.value = "7";
+      state.running = false;
+      state.collapsed = false;
+      state.collapseTime = null;
+      state.t = 0;
+      state.data = [];
+      state.comparisons = [];
+      document.getElementById("runBtn").textContent = "▶ Start shake test";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function resonancePreset(){
+      controls.quakeIntensity.value = "7";
+      controls.buildingHeight.value = "10";
+      controls.soilType.value = "sediment";
+
+      // Calculate the natural frequency after the new conditions are applied.
+      const target = getValues();
+      controls.quakeFrequency.value = clamp(target.adjustedNaturalFrequency,0.4,2.4).toFixed(1);
+
+      state.running = false;
+      state.collapsed = false;
+      state.collapseTime = null;
+      state.t = 0;
+      document.getElementById("runBtn").textContent = "▶ Start resonance test";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function failurePreset(){
+      controls.learningMode.value = "simple";
+      controls.device.value = "none";
+      controls.quakeIntensity.value = "9";
+      controls.buildingHeight.value = "12";
+      controls.soilType.value = "sediment";
+
+      // Set the shake close to the unprotected building's natural frequency to encourage failure.
+      const target = getValues("none");
+      controls.quakeFrequency.value = clamp(target.adjustedNaturalFrequency,0.4,2.4).toFixed(1);
+
+      state.running = false;
+      state.collapsed = false;
+      state.collapseTime = null;
+      state.t = 0;
+      state.comparisons = [];
+      document.getElementById("runBtn").textContent = "▶ Start extreme failure test";
+      updateReadouts();
+      draw();
+      logData();
+    }
+
+    function downloadCSV(){
+      if(state.data.length === 0) logData();
+
+      const headers = Object.keys(state.data[0]);
+      const rows = state.data.map(row => headers.map(h => row[h]).join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+
+      const blob = new Blob([csv],{type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "earthquake_building_protection_data.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("runBtn").addEventListener("click",()=>{
+      if(state.t >= state.duration || state.collapsed){
+        state.t = 0;
+        state.collapsed = false;
+        state.collapseTime = null;
+      }
+      state.running = !state.running;
+      document.getElementById("runBtn").textContent = state.running ? "⏸ Pause shake test" : "▶ Resume shake test";
+      logData();
+      updateReadouts();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",reset);
+    document.getElementById("compareBtn").addEventListener("click",runComparison);
+    document.getElementById("resonanceBtn").addEventListener("click",resonancePreset);
+    document.getElementById("failureBtn").addEventListener("click",failurePreset);
+    document.getElementById("csvBtn").addEventListener("click",downloadCSV);
+
+    Object.values(controls).forEach(control=>{
+      control.addEventListener("input",()=>{
+        state.t = 0;
+        state.running = false;
+        state.collapsed = false;
+        state.collapseTime = null;
+        state.comparisons = [];
+        document.getElementById("runBtn").textContent = "▶ Start shake test";
+        logData();
+        updateReadouts();
+        draw();
+      });
+
+      control.addEventListener("change",()=>{
+        state.t = 0;
+        state.running = false;
+        state.collapsed = false;
+        state.collapseTime = null;
+        state.comparisons = [];
+        document.getElementById("runBtn").textContent = "▶ Start shake test";
+        logData();
+        updateReadouts();
+        draw();
+      });
+    });
+
+    document.querySelectorAll("#quiz button").forEach(button=>{
+      button.addEventListener("click",()=>{
+        document.querySelectorAll("#quiz button").forEach(b=>{
+          b.classList.remove("correct","incorrect");
+        });
+
+        if(button.dataset.answer === "correct"){
+          button.classList.add("correct");
+          document.getElementById("quizFeedback").textContent = "Correct. Earthquake-resistant design can reduce damaging motion by changing stiffness, adding damping, or isolating the building from the ground.";
+        }else{
+          button.classList.add("incorrect");
+          document.getElementById("quizFeedback").textContent = "Not quite. Making a building rigid is not always best; engineers manage sway, acceleration, energy transfer and resonance.";
+        }
+      });
+    });
+
+    function animate(){
+      if(state.running){
+        const before = state.t;
+        state.t += 0.075;
+        const vNow = getValues();
+
+        if(!state.collapsed && vNow.collapseLikely && state.t > 4.2){
+          state.collapsed = true;
+          state.collapseTime = state.t;
+          logData();
+        }
+
+        if(Math.floor(state.t * 4) !== Math.floor(before*4)){
+          logData();
+        }
+
+        if(state.collapsed && state.collapseTime !== null && state.t > state.collapseTime + 4.2){
+          state.running = false;
+          document.getElementById("runBtn").textContent = "▶ Rebuild and replay";
+        }else if(state.t >= state.duration){
+          state.running = false;
+          document.getElementById("runBtn").textContent = state.collapsed ? "▶ Rebuild and replay" : "▶ Replay shake test";
+        }
+      }
+
+      updateReadouts();
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize",resizeCanvas);
+
+    reset();
+    resizeCanvas();
+    animate();
+  </script>
+</body>
+</html>
