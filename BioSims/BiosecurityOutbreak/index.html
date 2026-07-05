@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biosecurity Outbreak Simulator</title>
+<style>
+:root{--bg:#eef7fb;--card:#fff;--ink:#123143;--muted:#557184;--blue:#1d7ed0;--line:#c9dfec;--shadow:0 10px 25px rgba(12,54,82,.12);--radius:22px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eaf6fb,#f6fbfe);color:var(--ink)}.page{width:min(1240px,calc(100% - 28px));margin:auto;padding:18px 0 36px}.back-btn{display:inline-flex;background:#dff1fa;color:#0c4d73;padding:10px 16px;border-radius:999px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(12,54,82,.08);margin-bottom:14px}.hero{border-radius:28px;padding:24px 28px;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.24),transparent 30%),linear-gradient(135deg,#0e4f78,#1e91d6 52%,#59c2eb);box-shadow:var(--shadow)}.hero h1{margin:0;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-.04em;line-height:1}.hero p{max-width:990px;margin:10px 0 0;font-size:1.03rem;line-height:1.5;color:rgba(255,255,255,.92)}
+.top-controls{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}.control-section-title{font-weight:950;color:#0f3d5c;margin:2px 0 9px}.setup-grid{display:grid;grid-template-columns:repeat(7,minmax(112px,1fr));gap:10px;align-items:end;margin-bottom:13px}.response-grid{display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:10px;align-items:end}body.simple-mode .advanced-only{display:none!important}body.simple-mode .setup-grid{grid-template-columns:repeat(5,minmax(115px,1fr))}body.simple-mode .response-grid{grid-template-columns:repeat(5,minmax(115px,1fr))}label{display:block;font-size:.8rem;color:var(--muted);font-weight:850;margin-bottom:5px}select,input[type=range]{width:100%}select{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#f8fcff;color:var(--ink);font-weight:750}input[type=range]{accent-color:var(--blue)}.readout{margin-top:3px;font-size:.82rem;font-weight:850;color:#0f3d5c}.button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:none;border-radius:14px;padding:10px 13px;font-weight:900;cursor:pointer;background:#e2f1f8;color:#0d4a6e;transition:.15s ease}button:hover{transform:translateY(-1px);filter:brightness(.98)}.primary{background:linear-gradient(135deg,#107bd1,#56b5e8);color:#fff}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,.76fr);gap:16px;margin-top:16px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card-header{padding:14px 16px;border-bottom:1px solid var(--line);background:#f6fbfe}.card-header h2{margin:0;font-size:1.08rem}.card-header p{margin:4px 0 0;color:var(--muted);font-size:.9rem;line-height:1.35}.canvas-wrap{padding:10px}canvas{display:block;width:100%;height:550px;border-radius:18px;background:#071625;border:1px solid #15364f}.status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;border-top:1px solid var(--line);background:#fbfdff}.status{border-radius:15px;padding:10px;background:#eef7fb;border:1px solid var(--line)}.status b{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px}.status span{font-size:1.02rem;font-weight:950;color:#0f3d5c}.metric-list{padding:12px;display:grid;gap:9px}.metric{padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.metric-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}.metric-name{font-weight:900;color:#0f3d5c;font-size:.91rem}.metric-value{font-weight:950;color:var(--blue);font-size:.91rem;white-space:nowrap}.bar{height:9px;border-radius:999px;background:#d9eaf3;overflow:hidden}.bar-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#58b7e8,#1f9d63)}.small-note{color:var(--muted);font-size:.84rem;line-height:1.42;padding:0 12px 12px}.below-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.text-card{padding:16px}.text-card h2{margin:0 0 9px;font-size:1.1rem}.text-card p,.text-card li{color:#24485c;line-height:1.5;font-size:.94rem}.text-card ul{margin:8px 0 0;padding-left:20px}.challenge{margin-top:12px;padding:11px;border-radius:15px;background:#f3f9fd;border:1px solid var(--line)}.challenge strong{color:#0f3d5c}.quiz{display:grid;gap:9px}.quiz button{text-align:left;background:#f3f9fd;border:1px solid var(--line);color:#183f57;font-weight:750}.quiz button.correct{background:#e6f6ee;border-color:#a7dfc1;color:#146442}.quiz button.incorrect{background:#fdeeee;border-color:#f0b8b8;color:#8f2f2f}.feedback{min-height:28px;color:#0f3d5c;font-weight:850;margin-top:8px}.tag{display:inline-flex;border-radius:999px;padding:5px 9px;background:#e7f5fb;color:#0d5278;font-weight:850;font-size:.78rem;margin-right:6px;margin-top:6px}.mini-table{width:100%;border-collapse:collapse;margin-top:8px}.mini-table td{border-top:1px solid var(--line);padding:6px 4px;font-size:.86rem;color:#24485c}.mini-table td:last-child{text-align:right;font-weight:850;color:#0f3d5c}.response-feedback{margin:0 12px 12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:#f5fbff;color:#153d55;line-height:1.45}.response-feedback strong{display:block;color:#0f3d5c;margin-bottom:4px}.warning-panel{margin:0 12px 12px;padding:10px 12px;border-radius:15px;border:1px solid #f3c37d;background:#fff7e8;color:#7a3f00;font-weight:800;display:none}.scorecard-wrap{margin:0 12px 12px;padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.scorecard-title{display:flex;justify-content:space-between;gap:10px;font-weight:950;color:#0f3d5c;margin-bottom:4px}.final-judgement{margin:0 12px 12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:#eef9f2;color:#174f34;line-height:1.45;font-weight:800}.compare-panel{margin:0 12px 12px;padding:10px;border:1px solid var(--line);background:#f7fbfe;border-radius:15px}.compare-panel h3{font-size:.95rem;margin:0 0 6px;color:#0f3d5c}.compare-actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.compare-actions button{padding:7px 9px;border-radius:10px;font-size:.78rem}.comparison-note{font-size:.82rem;color:var(--muted);line-height:1.35;margin:6px 0 0}@media(max-width:1100px){.setup-grid,.response-grid,body.simple-mode .setup-grid,body.simple-mode .response-grid{grid-template-columns:repeat(3,1fr)}.main-grid,.below-grid{grid-template-columns:1fr}canvas{height:500px}}@media(max-width:650px){.setup-grid,.response-grid,body.simple-mode .setup-grid,body.simple-mode .response-grid{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr}.hero{padding:22px}canvas{height:440px}}
+</style>
+</head>
+<body class="simple-mode">
+<div class="page">
+<a class="back-btn" href="../../index.html">← Back to main SciSims page</a>
+<section class="hero"><h1>Biosecurity Outbreak Simulator</h1><p>Respond to an invasive species or agricultural disease outbreak. Make weekly decisions about monitoring, quarantine, treatment, culling/removal, public communication and research while evidence is uncertain and impacts change over time.</p></section>
+
+<section class="top-controls">
+<div class="control-section-title">Outbreak setup — changing these restarts the scenario</div>
+<div class="setup-grid">
+<div><label for="learningMode">Learning mode</label><select id="learningMode"><option value="simple">Simple</option><option value="advanced">Advanced</option></select></div>
+<div><label for="threatType">Biosecurity threat</label><select id="threatType"><option value="invasive">Invasive species</option><option value="crop">Crop disease</option><option value="livestock">Livestock disease</option><option value="unknown" selected>Uncertain early evidence</option></select></div>
+<div><label for="landscape">Affected area</label><select id="landscape"><option value="farms" selected>Mixed farms</option><option value="orchards">Orchards</option><option value="wetland">Wetland edge</option><option value="port">Port and transport hub</option></select></div>
+<div><label for="initialReports">Initial reports</label><input id="initialReports" type="range" min="5" max="70" value="24"><div class="readout"><span id="initialReportsRead">24</span>%</div></div>
+<div><label for="evidenceQuality">Early evidence</label><select id="evidenceQuality"><option value="poor">Poor</option><option value="mixed" selected>Mixed</option><option value="good">Good</option></select></div>
+<div class="advanced-only"><label for="season">Season</label><select id="season"><option value="spring" selected>Spring</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select></div>
+<div class="advanced-only"><label for="tradeExposure">Trade exposure</label><input id="tradeExposure" type="range" min="10" max="100" value="55"><div class="readout"><span id="tradeExposureRead">55</span>%</div></div>
+</div>
+
+<div class="control-section-title">Weekly response strategy — adjust before pressing Next week</div>
+<div class="response-grid">
+<div><label for="monitoring">Monitoring</label><input id="monitoring" type="range" min="0" max="100" value="45"><div class="readout"><span id="monitoringRead">45</span>%</div></div>
+<div><label for="quarantine">Quarantine</label><input id="quarantine" type="range" min="0" max="100" value="35"><div class="readout"><span id="quarantineRead">35</span>%</div></div>
+<div><label for="treatment">Treatment/control</label><input id="treatment" type="range" min="0" max="100" value="35"><div class="readout"><span id="treatmentRead">35</span>%</div></div>
+<div><label for="culling">Culling/removal</label><input id="culling" type="range" min="0" max="100" value="18"><div class="readout"><span id="cullingRead">18</span>%</div></div>
+<div><label for="communication">Public communication</label><input id="communication" type="range" min="0" max="100" value="42"><div class="readout"><span id="communicationRead">42</span>%</div></div>
+<div class="advanced-only"><label for="research">Research/testing</label><input id="research" type="range" min="0" max="100" value="38"><div class="readout"><span id="researchRead">38</span>%</div></div>
+<div><label for="decisionFocus">Decision focus</label><select id="decisionFocus"><option value="contain" selected>Contain spread</option><option value="confirm">Improve evidence</option><option value="economy">Protect economy</option><option value="ecology">Protect ecosystems</option></select></div>
+</div>
+<div class="button-row"><button class="primary" id="nextWeekBtn">Next week</button><button id="nextMonthBtn">Next month</button><button id="autoBtn">▶ Auto-run weeks</button><button id="resetBtn">Reset outbreak</button><button id="mysteryBtn">Mystery outbreak</button><button id="containBtn">Strong containment</button><button id="eventBtn">Trigger surprise event</button><button id="saveRunBtn">Save run for comparison</button><button id="clearRunsBtn">Clear comparison</button><button id="csvBtn">Download CSV</button></div>
+<p id="challengeHint" class="small-note" style="padding:10px 2px 0;margin:0;">Challenge: act early enough to control the outbreak, but avoid causing unnecessary economic, ecological or social harm when evidence is still uncertain.</p>
+</section>
+
+<main class="main-grid">
+<section class="card"><div class="card-header"><h2>Outbreak map</h2><p>The map shows confirmed detections, suspected spread and quarantine zones. Early in the outbreak, the true spread may be larger than the detected spread.</p></div><div class="canvas-wrap"><canvas id="bioCanvas"></canvas></div><div class="status-strip"><div class="status"><b>Week</b><span id="weekStatus">1 / 24</span></div><div class="status"><b>Threat status</b><span id="threatStatus">Investigating</span></div><div class="status"><b>Evidence confidence</b><span id="confidenceStatus">Uncertain</span></div><div class="status"><b>Recommendation</b><span id="adviceStatus">Gather evidence</span></div></div></section>
+<aside class="card"><div class="card-header"><h2>Evidence panel</h2><p>Use the evidence to choose a proportionate biosecurity response.</p></div><div class="metric-list">
+<div class="metric"><div class="metric-top"><span class="metric-name">Detected outbreak</span><span class="metric-value" id="detectedValue">24%</span></div><div class="bar"><div class="bar-fill" id="detectedBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Estimated true spread</span><span class="metric-value" id="spreadValue">Unknown</span></div><div class="bar"><div class="bar-fill" id="spreadBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Evidence confidence</span><span class="metric-value" id="confidenceValue">Low</span></div><div class="bar"><div class="bar-fill" id="confidenceBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Economic impact</span><span class="metric-value" id="economicValue">Moderate</span></div><div class="bar"><div class="bar-fill" id="economicBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Ecological impact</span><span class="metric-value" id="ecologyValue">Moderate</span></div><div class="bar"><div class="bar-fill" id="ecologyBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Public trust</span><span class="metric-value" id="trustValue">Stable</span></div><div class="bar"><div class="bar-fill" id="trustBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Budget pressure</span><span class="metric-value" id="budgetValue">Low</span></div><div class="bar"><div class="bar-fill" id="budgetBar"></div></div></div>
+<div class="metric"><div class="metric-top"><span class="metric-name">Response score</span><span class="metric-value" id="scoreValue">Starting</span></div><div class="bar"><div class="bar-fill" id="scoreBar"></div></div></div>
+</div>
+<div class="warning-panel" id="falseWarning">False confidence risk: detected cases look low, but evidence confidence is also low. True spread may be underestimated.</div>
+<div class="response-feedback" id="weeklyFeedback"><strong>Weekly feedback</strong>Start by inspecting the evidence, then choose a response strategy.</div>
+<div class="scorecard-wrap">
+  <div class="scorecard-title"><span>Outbreak response scorecard</span><span id="scorecardStatus">Live</span></div>
+  <table class="mini-table">
+    <tr><td>Containment</td><td id="scoreContainment">Starting</td></tr>
+    <tr><td>Evidence quality</td><td id="scoreEvidence">Starting</td></tr>
+    <tr><td>Economic protection</td><td id="scoreEconomy">Starting</td></tr>
+    <tr><td>Ecological protection</td><td id="scoreEcology">Starting</td></tr>
+    <tr><td>Public trust</td><td id="scoreTrust">Starting</td></tr>
+    <tr><td>Overall response</td><td id="scoreOverall">Starting</td></tr>
+  </table>
+</div>
+<div class="final-judgement" id="finalJudgement">Final judgement will appear when the 24-week outbreak scenario is complete.</div>
+<div class="compare-panel">
+  <h3>Compare strategies</h3>
+  <table class="mini-table" id="comparisonTable">
+    <tr><td>No saved runs yet</td><td>Finish a scenario, then save it.</td></tr>
+  </table>
+  <div class="comparison-note">Tip: keep the same setup, reset the outbreak, then test a different response strategy.</div>
+</div>
+<p class="small-note" id="measurementNote">Early evidence may underestimate true spread. Monitoring and research improve confidence.</p></aside>
+</main>
+
+<section class="below-grid">
+<div class="card text-card"><h2>How to use</h2><ul><li>Choose an outbreak scenario, then respond week by week.</li><li>Monitoring and research improve evidence confidence, but they cost money and take time.</li><li>Quarantine and treatment slow spread, but can affect farms, trade, movement and public support.</li><li>Culling/removal can be effective but may cause ecological, ethical or social consequences if overused.</li></ul><div class="challenge"><strong>Challenge:</strong> Finish with the outbreak contained, confidence above 70%, public trust above 55%, and economic and ecological impacts below severe.</div></div>
+<div class="card text-card"><h2>What the model shows</h2><p>Biosecurity decisions involve uncertainty. Early evidence may be incomplete, so managers need to balance fast action with better information. A delayed response may allow spread, while an excessive response can create unnecessary economic, ecological and social costs.</p><div class="challenge"><strong>Key idea:</strong> Biosecurity is a systems problem. A good response uses evidence, acts proportionately, communicates clearly and adapts as new data arrives.</div><table class="mini-table"><tr><td>Monitoring</td><td>finds cases and reduces uncertainty</td></tr><tr><td>Quarantine</td><td>slows spread through movement control</td></tr><tr><td>Treatment/control</td><td>reduces active cases</td></tr><tr><td>Communication</td><td>improves cooperation and trust</td></tr></table><span class="tag">Biosecurity</span><span class="tag">Invasive species</span><span class="tag">Agricultural disease</span><span class="tag">Uncertainty</span><span class="tag">Systems thinking</span></div>
+</section>
+<section class="below-grid"><div class="card text-card"><h2>Self-test</h2><div class="quiz" id="quiz"><button data-answer="wrong">The best response is always the strongest possible response immediately.</button><button data-answer="correct">A good response balances evidence, spread risk, economic impacts, ecological impacts and public cooperation.</button><button data-answer="wrong">Monitoring is only useful after the outbreak has already been controlled.</button></div><div class="feedback" id="quizFeedback"></div></div><div class="card text-card"><h2>Teacher notes</h2><ul><li>Suitable for Stage 4/5 discussions of ecosystems, agriculture, disease, evidence, uncertainty and decision-making.</li><li>The model is conceptual. Values are classroom model units, not real outbreak data.</li><li>Suggested task: students export CSV data and write a CER response justifying their response strategy.</li><li>Extension: use Save run for comparison to compare an evidence-first response, a strong-containment response and an economy-first response under the same setup.</li></ul></div></section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),canvas=$('bioCanvas'),ctx=canvas.getContext('2d');function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h)}
+const controls={learningMode:$('learningMode'),threatType:$('threatType'),landscape:$('landscape'),initialReports:$('initialReports'),evidenceQuality:$('evidenceQuality'),season:$('season'),tradeExposure:$('tradeExposure'),monitoring:$('monitoring'),quarantine:$('quarantine'),treatment:$('treatment'),culling:$('culling'),communication:$('communication'),research:$('research'),decisionFocus:$('decisionFocus')};
+const out={initialReportsRead:$('initialReportsRead'),tradeExposureRead:$('tradeExposureRead'),monitoringRead:$('monitoringRead'),quarantineRead:$('quarantineRead'),treatmentRead:$('treatmentRead'),cullingRead:$('cullingRead'),communicationRead:$('communicationRead'),researchRead:$('researchRead'),weekStatus:$('weekStatus'),threatStatus:$('threatStatus'),confidenceStatus:$('confidenceStatus'),adviceStatus:$('adviceStatus'),detectedValue:$('detectedValue'),spreadValue:$('spreadValue'),confidenceValue:$('confidenceValue'),economicValue:$('economicValue'),ecologyValue:$('ecologyValue'),trustValue:$('trustValue'),budgetValue:$('budgetValue'),scoreValue:$('scoreValue'),detectedBar:$('detectedBar'),spreadBar:$('spreadBar'),confidenceBar:$('confidenceBar'),economicBar:$('economicBar'),ecologyBar:$('ecologyBar'),trustBar:$('trustBar'),budgetBar:$('budgetBar'),scoreBar:$('scoreBar'),falseWarning:$('falseWarning'),weeklyFeedback:$('weeklyFeedback'),scorecardStatus:$('scorecardStatus'),scoreContainment:$('scoreContainment'),scoreEvidence:$('scoreEvidence'),scoreEconomy:$('scoreEconomy'),scoreEcology:$('scoreEcology'),scoreTrust:$('scoreTrust'),scoreOverall:$('scoreOverall'),finalJudgement:$('finalJudgement'),comparisonTable:$('comparisonTable'),measurementNote:$('measurementNote'),challengeHint:$('challengeHint')};
+const state={week:1,trueSpread:32,detectedSpread:24,confidence:.34,economy:.18,ecology:.16,trust:.64,budget:.08,auto:false,data:[],history:[],rngSeed:3817,lastEvent:'Initial reports',forcedEvent:'',weekFeedback:'Start by inspecting the evidence, then choose a response strategy.',comparisons:[]};
+const threatProfiles={invasive:{name:'Invasive species',spread:.115,econ:.045,eco:.070,detect:.74,note:'The organism may spread through movement corridors and natural habitat.'},crop:{name:'Crop disease',spread:.100,econ:.078,eco:.040,detect:.70,note:'Crop losses and trade restrictions can increase economic impact.'},livestock:{name:'Livestock disease',spread:.108,econ:.082,eco:.032,detect:.72,note:'Movement controls are important because livestock transport can spread disease.'},unknown:{name:'Uncertain threat',spread:.112,econ:.055,eco:.055,detect:.58,note:'The exact threat is unclear. Research and testing are especially useful.'}};
+const landscapeProfiles={farms:{name:'Mixed farms',spread:1.00,econ:1.05,eco:.90},orchards:{name:'Orchards',spread:.92,econ:1.22,eco:.82},wetland:{name:'Wetland edge',spread:1.10,econ:.75,eco:1.35},port:{name:'Port and transport hub',spread:1.22,econ:1.20,eco:.80}};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function rand(){state.rngSeed=(state.rngSeed*1664525+1013904223)>>>0;return state.rngSeed/4294967296}function labelFor(value,goodHigh=false){if(goodHigh){if(value>.78)return'Strong';if(value>.58)return'Stable';if(value>.38)return'Low';return'Very low'}if(value>.78)return'Severe';if(value>.55)return'High';if(value>.32)return'Moderate';return'Low'}
+function values(){const mode=controls.learningMode.value,profile=threatProfiles[controls.threatType.value],land=landscapeProfiles[controls.landscape.value],initial=+controls.initialReports.value,evidence=controls.evidenceQuality.value,season=mode==='simple'?'spring':controls.season.value,trade=mode==='simple'?55:+controls.tradeExposure.value,monitoring=+controls.monitoring.value,quarantine=+controls.quarantine.value,treatment=+controls.treatment.value,culling=+controls.culling.value,communication=+controls.communication.value,research=mode==='simple'?34:+controls.research.value,focus=controls.decisionFocus.value;const evidenceBase={poor:.20,mixed:.34,good:.52}[evidence],seasonSpread={spring:1.08,summer:1.18,autumn:.96,winter:.78}[season],monitoringEffect=monitoring/100,quarantineEffect=quarantine/100,treatmentEffect=treatment/100,cullingEffect=culling/100,communicationEffect=communication/100,researchEffect=research/100;const cooperation=clamp(.45+communicationEffect*.42-cullingEffect*.18-quarantineEffect*.10,0,1),detectionCapacity=clamp(profile.detect*(.25+monitoringEffect*.55+researchEffect*.25)*(.65+cooperation*.35),.05,1),confidenceGain=(monitoringEffect*.045+researchEffect*.055+communicationEffect*.012)*(controls.threatType.value==='unknown'?1.22:1),controlStrength=quarantineEffect*.34+treatmentEffect*.31+cullingEffect*.20+cooperation*.10,spreadPressure=profile.spread*land.spread*seasonSpread*(1+trade/160),spreadChange=spreadPressure*(1-controlStrength)+(.015*(1-state.confidence)),treatmentReduction=treatmentEffect*.072+cullingEffect*.055+quarantineEffect*.025,economicCost=profile.econ*land.econ*(state.trueSpread/100)+quarantineEffect*.045+cullingEffect*.035+treatmentEffect*.025+researchEffect*.018+monitoringEffect*.018+(trade/100)*.018,ecologicalCost=profile.eco*land.eco*(state.trueSpread/100)+cullingEffect*.045+treatmentEffect*.020-quarantineEffect*.010,budgetPressure=monitoringEffect*.10+quarantineEffect*.14+treatmentEffect*.18+cullingEffect*.16+communicationEffect*.07+researchEffect*.12,trustChange=communicationEffect*.055+state.confidence*.014-quarantineEffect*.020-cullingEffect*.045-(state.trueSpread>60?.025:0),detectedTarget=clamp(state.trueSpread*detectionCapacity,0,100),uncertaintyGap=Math.abs(state.trueSpread-state.detectedSpread);let status=state.trueSpread>80?'Widespread':state.trueSpread>55?'Escalating':state.trueSpread>30?'Active':state.trueSpread>12?'Contained risk':'Contained',advice='Gather evidence';if(state.confidence<.45)advice='Increase monitoring/research';else if(state.trueSpread>55)advice='Increase quarantine/control';else if(state.economy>.62)advice='Reduce economic pressure';else if(state.ecology>.62)advice='Protect ecosystem health';else if(state.trust<.45)advice='Improve communication';else advice='Response is balanced';const score=clamp((1-state.trueSpread/100)*.32+(1-state.economy)*.18+(1-state.ecology)*.18+state.confidence*.16+state.trust*.12+(1-state.budget)*.04,0,1);return{mode,profile,land,initial,evidence,evidenceBase,season,trade,monitoring,quarantine,treatment,culling,communication,research,focus,cooperation,detectionCapacity,confidenceGain,controlStrength,spreadPressure,spreadChange,treatmentReduction,economicCost,ecologicalCost,budgetPressure,trustChange,detectedTarget,uncertaintyGap,status,advice,score}}
+function reset(){const v=values();state.week=1;state.trueSpread=clamp(+controls.initialReports.value*(1.10+(1-v.evidenceBase)*1.25),8,88);state.detectedSpread=+controls.initialReports.value;state.confidence=v.evidenceBase;state.economy=.12+state.detectedSpread/300;state.ecology=.10+state.detectedSpread/330;state.trust=.64;state.budget=.08;state.auto=false;state.data=[];state.history=[];state.rngSeed=3817+Math.round(state.trueSpread*19)+controls.threatType.value.length*83+controls.landscape.value.length*41;state.lastEvent='Initial reports';state.forcedEvent='';state.weekFeedback='Start by inspecting the evidence, then choose a response strategy.';$('autoBtn').textContent='▶ Auto-run weeks';logData('start');updateReadouts();draw()}
+function classifyScore(value,highGood=true){
+  if(highGood){if(value>.78)return 'Strong';if(value>.58)return 'Stable';if(value>.38)return 'Vulnerable';return 'At risk'}
+  if(value<.22)return 'Strong';if(value<.42)return 'Stable';if(value<.65)return 'Vulnerable';return 'At risk'
+}
+function scorecard(){
+  const v=values();
+  const containment=clamp(1-state.trueSpread/100,0,1);
+  const evidence=clamp(state.confidence,0,1);
+  const economy=clamp(1-state.economy,0,1);
+  const ecology=clamp(1-state.ecology,0,1);
+  const trust=clamp(state.trust,0,1);
+  const overall=clamp(containment*.30+evidence*.18+economy*.17+ecology*.17+trust*.13+(1-state.budget)*.05,0,1);
+  return{containment,evidence,economy,ecology,trust,overall,
+    containmentLabel:classifyScore(containment),
+    evidenceLabel:classifyScore(evidence),
+    economyLabel:classifyScore(economy),
+    ecologyLabel:classifyScore(ecology),
+    trustLabel:classifyScore(trust),
+    overallLabel:v.score>.75?'Strong':v.score>.55?'Stable':v.score>.35?'Vulnerable':'At risk'}
+}
+function buildWeeklyFeedback(oldSpread,oldEconomy,oldEcology,oldTrust,v,event){
+  const spreadDelta=state.trueSpread-oldSpread;
+  const econDelta=state.economy-oldEconomy;
+  const ecoDelta=state.ecology-oldEcology;
+  const trustDelta=state.trust-oldTrust;
+  const lines=[];
+  if(spreadDelta<-4)lines.push('Containment improved: true spread fell this week.');
+  else if(spreadDelta>6)lines.push('The outbreak expanded quickly this week.');
+  else if(spreadDelta>1.5)lines.push('Spread continued, but not explosively.');
+  else lines.push('Spread was mostly held steady this week.');
+  if(v.monitoring<35&&state.confidence<.50)lines.push('Low monitoring means detected cases may still underestimate true spread.');
+  if(v.quarantine>65&&spreadDelta<3)lines.push('Quarantine helped slow movement, but it increased economic pressure.');
+  if(v.treatment>60)lines.push('Treatment/control reduced active cases, with extra budget cost.');
+  if(v.culling>45)lines.push('High culling/removal increased control pressure, but may reduce trust and ecological stability.');
+  if(v.communication>60&&trustDelta>=0)lines.push('Clear communication supported cooperation and public trust.');
+  if(econDelta>.035)lines.push('Economic impact rose because spread and response costs increased.');
+  if(ecoDelta>.035)lines.push('Ecological impact rose; check whether removal/control is becoming too damaging.');
+  if(event && event!=='No major surprise')lines.push(`Surprise event: ${event}.`);
+  if(state.detectedSpread<35&&state.trueSpread>50&&state.confidence<.45)lines.push('False confidence warning: visible cases look manageable, but uncertainty is high.');
+  return lines.join(' ');
+}
+function finalJudgement(){
+  const card=scorecard();
+  const controlled=state.trueSpread<25;
+  const confident=state.confidence>.70;
+  const econOK=state.economy<.55;
+  const ecoOK=state.ecology<.55;
+  const trustOK=state.trust>.55;
+  let headline='Scenario in progress.';
+  let detail='Continue responding week by week. The final judgement will combine containment, confidence, economic impact, ecological impact and trust.';
+  if(state.week>24){
+    if(controlled&&confident&&econOK&&ecoOK&&trustOK){
+      headline='Strong response: outbreak controlled with acceptable system impacts.';
+      detail='The strategy contained spread, improved evidence confidence and avoided severe economic, ecological or social harm.';
+    }else if(controlled&&!econOK){
+      headline='Outbreak controlled, but economic cost was high.';
+      detail='The strategy reduced spread, but quarantine, control costs or trade impacts created substantial economic pressure.';
+    }else if(controlled&&!ecoOK){
+      headline='Outbreak controlled, but ecological harm was high.';
+      detail='The response reduced spread, but removal, treatment or habitat disruption created significant ecological consequences.';
+    }else if(!controlled&&state.confidence<.55){
+      headline='Hidden spread problem: evidence improved too slowly.';
+      detail='Detected cases did not provide enough certainty early enough, allowing the true outbreak to keep expanding.';
+    }else if(!controlled&&trustOK){
+      headline='Public cooperation held, but containment was not strong enough.';
+      detail='Communication helped trust, but monitoring, quarantine or treatment were not sufficient to control spread.';
+    }else if(!trustOK){
+      headline='Trust breakdown: the response lost public cooperation.';
+      detail='The response may have been too disruptive, poorly communicated or too uncertain for the community to support.';
+    }else{
+      headline='Mixed response: some goals were met, but the outbreak remained vulnerable.';
+      detail='Review the scorecard and CSV to identify which trade-off limited the overall outcome.';
+    }
+  }
+  return `<strong>${headline}</strong><br>${detail}`;
+}
+function runLabel(){
+  const focus=controls.decisionFocus.options[controls.decisionFocus.selectedIndex].text;
+  const threat=threatProfiles[controls.threatType.value].name;
+  return `${focus} — ${threat}`;
+}
+function saveRunForComparison(){
+  const card=scorecard();
+  const label=runLabel();
+  const saved={
+    label,
+    week:Math.min(state.week,24),
+    complete:state.week>24,
+    trueSpread:state.trueSpread,
+    confidence:state.confidence,
+    economy:state.economy,
+    ecology:state.ecology,
+    trust:state.trust,
+    overall:card.overallLabel,
+    score:values().score
+  };
+  state.comparisons.push(saved);
+  if(state.comparisons.length>5)state.comparisons.shift();
+  updateComparisonTable();
+}
+function clearComparisons(){
+  state.comparisons=[];
+  updateComparisonTable();
+}
+function updateComparisonTable(){
+  if(!out.comparisonTable)return;
+  if(!state.comparisons.length){
+    out.comparisonTable.innerHTML='<tr><td>No saved runs yet</td><td>Finish a scenario, then save it.</td></tr>';
+    return;
+  }
+  out.comparisonTable.innerHTML=state.comparisons.map((run,i)=>{
+    const status=run.complete?'complete':`week ${run.week}`;
+    return `<tr><td>${i+1}. ${run.label}<br><span style="color:#557184;font-size:.78rem;">${status} | ${run.overall}</span></td><td>spread ${Math.round(run.trueSpread)}%<br>conf ${Math.round(run.confidence*100)}%<br>econ ${Math.round(run.economy*100)}% | eco ${Math.round(run.ecology*100)}%</td></tr>`;
+  }).join('');
+}
+function triggerSurpriseEvent(){
+  const events=['New unconfirmed reports','Movement breach','Hidden cluster found','High public cooperation'];
+  state.forcedEvent=events[Math.floor(rand()*events.length)];
+  state.lastEvent=`Event primed: ${state.forcedEvent}`;
+  state.weekFeedback=`Teacher event ready. Press Next week to apply: ${state.forcedEvent}.`;
+  updateReadouts();draw();
+}
+function nextWeek(){if(state.week>24)return;const v=values();let randomEvent='No major surprise',eventShift=0;
+  if(state.forcedEvent){
+    randomEvent=state.forcedEvent;
+    state.forcedEvent='';
+    if(randomEvent==='New unconfirmed reports')eventShift=.055;
+    if(randomEvent==='Movement breach')eventShift=.050;
+    if(randomEvent==='Hidden cluster found'){eventShift=.030;state.confidence=clamp(state.confidence+.070,0,1)}
+    if(randomEvent==='High public cooperation'){eventShift=-.030;state.trust=clamp(state.trust+.055,0,1)}
+  }else if(rand()<.16*(1-state.confidence)){randomEvent='New unconfirmed reports';eventShift=.055}else if(rand()<.10){randomEvent='Movement breach';eventShift=.040}else if(rand()<.08&&v.monitoring>55){randomEvent='Hidden cluster found';eventShift=.030;state.confidence=clamp(state.confidence+.055,0,1)}else if(rand()<.08&&v.communication>55){randomEvent='High public cooperation';eventShift=-.025;state.trust=clamp(state.trust+.045,0,1)}
+  const oldSpread=state.trueSpread,oldEconomy=state.economy,oldEcology=state.ecology,oldTrust=state.trust;state.trueSpread=clamp(state.trueSpread+(v.spreadChange+eventShift)*100-v.treatmentReduction*100,0,100);state.detectedSpread=clamp(state.detectedSpread+(v.detectedTarget-state.detectedSpread)*(.35+v.monitoring/240),0,100);state.confidence=clamp(state.confidence+v.confidenceGain-(state.trueSpread>72?.015:0),0,1);state.economy=clamp(state.economy+v.economicCost*.42-(state.trueSpread<20?.020:0),0,1);state.ecology=clamp(state.ecology+v.ecologicalCost*.42-(state.trueSpread<18?.015:0),0,1);state.trust=clamp(state.trust+v.trustChange,0,1);state.budget=clamp(state.budget+v.budgetPressure*.20,0,1);state.lastEvent=randomEvent;state.weekFeedback=buildWeeklyFeedback(oldSpread,oldEconomy,oldEcology,oldTrust,v,randomEvent);state.history.push({week:state.week,trueSpread:state.trueSpread,detected:state.detectedSpread,confidence:state.confidence,economy:state.economy,ecology:state.ecology,trust:state.trust,score:v.score});logData('week advanced',oldSpread,v,randomEvent);state.week++;if(state.week>24){state.auto=false;$('autoBtn').textContent='▶ Auto-run weeks'}updateReadouts();draw()}
+function runWeeks(count){state.auto=false;$('autoBtn').textContent='▶ Auto-run weeks';for(let i=0;i<count&&state.week<=24;i++)nextWeek()}function mystery(){const threats=['invasive','crop','livestock','unknown'],lands=['farms','orchards','wetland','port'],evidence=['poor','mixed','good'];controls.threatType.value=threats[Math.floor(rand()*threats.length)];controls.landscape.value=lands[Math.floor(rand()*lands.length)];controls.initialReports.value=Math.round(12+rand()*44);controls.evidenceQuality.value=evidence[Math.floor(rand()*evidence.length)];controls.monitoring.value=35;controls.quarantine.value=30;controls.treatment.value=28;controls.culling.value=12;controls.communication.value=38;controls.research.value=36;reset()}function strongContainment(){controls.monitoring.value=72;controls.quarantine.value=75;controls.treatment.value=68;controls.culling.value=28;controls.communication.value=66;controls.research.value=56;updateReadouts();draw()}
+function updateReadouts(){const v=values();document.body.classList.toggle('simple-mode',v.mode==='simple');out.initialReportsRead.textContent=v.initial.toFixed(0);out.tradeExposureRead.textContent=v.trade.toFixed(0);out.monitoringRead.textContent=v.monitoring.toFixed(0);out.quarantineRead.textContent=v.quarantine.toFixed(0);out.treatmentRead.textContent=v.treatment.toFixed(0);out.cullingRead.textContent=v.culling.toFixed(0);out.communicationRead.textContent=v.communication.toFixed(0);out.researchRead.textContent=v.research.toFixed(0);out.weekStatus.textContent=state.week>24?'Complete':`${state.week} / 24`;out.threatStatus.textContent=v.status;out.confidenceStatus.textContent=labelFor(state.confidence,true);out.adviceStatus.textContent=v.advice;const card=scorecard();out.detectedValue.textContent=`${Math.round(state.detectedSpread)}%`;out.spreadValue.textContent=state.confidence<.32?'Very uncertain':`${Math.round(state.trueSpread)}%`;out.confidenceValue.textContent=labelFor(state.confidence,true);out.economicValue.textContent=labelFor(state.economy);out.ecologyValue.textContent=labelFor(state.ecology);out.trustValue.textContent=labelFor(state.trust,true);out.budgetValue.textContent=labelFor(state.budget);out.scoreValue.textContent=card.overallLabel;out.falseWarning.style.display=(state.detectedSpread<35&&state.trueSpread>50&&state.confidence<.45)?'block':'none';out.weeklyFeedback.innerHTML=`<strong>Weekly feedback</strong>${state.weekFeedback}`;out.scorecardStatus.textContent=state.week>24?'Final':'Live';out.scoreContainment.textContent=card.containmentLabel;out.scoreEvidence.textContent=card.evidenceLabel;out.scoreEconomy.textContent=card.economyLabel;out.scoreEcology.textContent=card.ecologyLabel;out.scoreTrust.textContent=card.trustLabel;out.scoreOverall.textContent=card.overallLabel;out.detectedBar.style.width=`${clamp(state.detectedSpread,4,100)}%`;out.spreadBar.style.width=`${clamp(state.trueSpread,4,100)}%`;out.confidenceBar.style.width=`${clamp(state.confidence*100,4,100)}%`;out.economicBar.style.width=`${clamp(state.economy*100,4,100)}%`;out.ecologyBar.style.width=`${clamp(state.ecology*100,4,100)}%`;out.trustBar.style.width=`${clamp(state.trust*100,4,100)}%`;out.budgetBar.style.width=`${clamp(state.budget*100,4,100)}%`;out.scoreBar.style.width=`${clamp(v.score*100,4,100)}%`;const badCol='linear-gradient(90deg,#f09a9a,#d64545)',warnCol='linear-gradient(90deg,#f0c85a,#e89b20)',goodCol='linear-gradient(90deg,#58b7e8,#1f9d63)';out.spreadBar.style.background=state.trueSpread>55?badCol:state.trueSpread>32?warnCol:goodCol;out.economicBar.style.background=state.economy>.55?badCol:state.economy>.32?warnCol:goodCol;out.ecologyBar.style.background=state.ecology>.55?badCol:state.ecology>.32?warnCol:goodCol;out.confidenceBar.style.background=state.confidence<.45?warnCol:goodCol;out.trustBar.style.background=state.trust<.45?badCol:state.trust<.60?warnCol:goodCol;out.scoreBar.style.background=v.score<.42?badCol:v.score<.62?warnCol:goodCol;out.finalJudgement.innerHTML=finalJudgement();updateComparisonTable();out.measurementNote.textContent=`${v.profile.note} Last update: ${state.lastEvent}. Detected spread may lag behind true spread when confidence is low.`;out.challengeHint.textContent=state.week>24?'Outbreak scenario complete. Export the CSV or reset to test another strategy.':'Inspect the evidence, adjust the weekly response, then press Next week.'}
+function resize(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}function label(text,x,y,align='center'){ctx.save();ctx.font='850 12px system-ui';ctx.textAlign=align;ctx.textBaseline='middle';const w=ctx.measureText(text).width+16,h=24;let l=x-w/2;if(align==='left')l=x;if(align==='right')l=x-w;ctx.fillStyle='rgba(6,19,34,.72)';ctx.strokeStyle='rgba(180,225,250,.35)';rr(l,y-h/2,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(230,246,255,.96)';ctx.fillText(text,x,y);ctx.restore()}function bg(w,h){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#061322');g.addColorStop(1,'#0c2338');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<70;i++){ctx.beginPath();ctx.arc((i*83)%w,(i*59)%h,((i*19)%3+1)/2.5,0,Math.PI*2);ctx.fill()}}
+function drawMap(left,top,w,h,v){ctx.save();ctx.fillStyle=v.land.name.includes('Wetland')?'rgba(30,92,84,.92)':v.land.name.includes('Port')?'rgba(72,83,98,.92)':'rgba(54,105,62,.92)';rr(left,top,w,h,24);ctx.fill();ctx.strokeStyle='rgba(220,245,255,.22)';ctx.lineWidth=2;for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(left+w*i/4,top+16);ctx.lineTo(left+w*i/4,top+h-16);ctx.stroke();ctx.beginPath();ctx.moveTo(left+16,top+h*i/4);ctx.lineTo(left+w-16,top+h*i/4);ctx.stroke()}if(controls.landscape.value==='port'){ctx.fillStyle='rgba(190,200,210,.95)';for(let i=0;i<5;i++){rr(left+42+i*55,top+h-90,40,48,5);ctx.fill()}ctx.strokeStyle='rgba(120,210,255,.65)';ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(left+20,top+h-38);ctx.lineTo(left+w-20,top+h-38);ctx.stroke();label('transport hub',left+w/2,top+h-116)}else if(controls.landscape.value==='wetland'){ctx.strokeStyle='rgba(95,190,235,.82)';ctx.lineWidth=24;ctx.beginPath();ctx.moveTo(left+30,top+h*.72);ctx.bezierCurveTo(left+w*.32,top+h*.52,left+w*.66,top+h*.84,left+w-30,top+h*.58);ctx.stroke();label('wetland corridor',left+w*.55,top+h*.84)}else{ctx.strokeStyle='rgba(225,210,140,.65)';ctx.lineWidth=3;for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(left+30+i*55,top+36);ctx.lineTo(left+60+i*45,top+h-34);ctx.stroke()}label(controls.landscape.value==='orchards'?'orchard blocks':'mixed farms',left+w/2,top+h-34)}// visual risk zones: suspected zone is based on estimated true spread; confirmed zone is based on detected spread
+  const zoneCx=left+w*.52,zoneCy=top+h*.50;
+  const suspectedRadius=clamp(26+state.trueSpread/100*Math.min(w,h)*.46,35,Math.min(w,h)*.52);
+  const confirmedRadius=clamp(20+state.detectedSpread/100*Math.min(w,h)*.33,26,Math.min(w,h)*.39);
+  ctx.fillStyle='rgba(214,69,69,.10)';ctx.strokeStyle='rgba(214,69,69,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(zoneCx,zoneCy,suspectedRadius,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,222,90,.10)';ctx.strokeStyle='rgba(255,222,90,.75)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(zoneCx,zoneCy,confirmedRadius,0,Math.PI*2);ctx.fill();ctx.stroke();
+  label('suspected zone',zoneCx+suspectedRadius*.42,zoneCy-suspectedRadius*.72);
+  label('confirmed zone',zoneCx,zoneCy-confirmedRadius*.68);
+  const trueCases=Math.floor(8+state.trueSpread/100*58),detectedCases=Math.floor(5+state.detectedSpread/100*45);for(let i=0;i<trueCases;i++){const x=left+34+(i*97+state.week*13)%Math.max(80,w-68),y=top+42+(i*71+state.week*7)%Math.max(80,h-92);ctx.fillStyle='rgba(214,69,69,.22)';ctx.beginPath();ctx.arc(x,y,9+(i%3)*2,0,Math.PI*2);ctx.fill()}for(let i=0;i<detectedCases;i++){const x=left+40+(i*83+state.week*11)%Math.max(80,w-80),y=top+48+(i*67+state.week*5)%Math.max(80,h-100);ctx.fillStyle='rgba(255,222,90,.95)';ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,5.5,0,Math.PI*2);ctx.fill();ctx.stroke()}if(v.quarantine>45){ctx.strokeStyle=`rgba(90,210,255,${0.30+v.quarantine/180})`;ctx.lineWidth=5;rr(left+28,top+28,w-56,h-56,22);ctx.stroke();label('quarantine zone',left+w-44,top+48,'right')}const teams=Math.floor((v.monitoring+v.treatment+v.culling)/55);ctx.fillStyle='rgba(120,230,170,.95)';for(let i=0;i<teams;i++){const x=left+52+(i*119)%Math.max(120,w-104),y=top+h-58-((i*41)%Math.max(60,h-116));rr(x-8,y-8,16,16,4);ctx.fill()}if(state.lastEvent!=='No major surprise'&&state.lastEvent!=='Initial reports'){ctx.fillStyle='rgba(232,155,32,.9)';ctx.strokeStyle='rgba(255,245,210,.95)';rr(left+22,top+22,235,42,14);ctx.fill();ctx.stroke();ctx.fillStyle='white';ctx.font='950 13px system-ui';ctx.textAlign='left';ctx.fillText(state.lastEvent,left+40,top+48)}label(`${v.profile.name}: detected cases in yellow`,left+w/2,top+20);ctx.restore()}
+function drawGraph(left,top,w,h){ctx.save();ctx.fillStyle='rgba(8,30,48,.72)';ctx.strokeStyle='rgba(180,225,250,.28)';rr(left,top,w,h,18);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(235,248,255,.96)';ctx.font='850 14px system-ui';ctx.textAlign='left';ctx.fillText('Outbreak evidence over time',left+16,top+26);ctx.font='800 10px system-ui';ctx.fillStyle='rgba(255,100,100,.95)';ctx.fillText('true spread',left+16,top+43);ctx.fillStyle='rgba(255,222,90,.95)';ctx.fillText('detected',left+92,top+43);ctx.fillStyle='rgba(120,220,145,.95)';ctx.fillText('confidence',left+154,top+43);const gx=left+42,gy=top+h-30,gw=w-66,gh=h-84;ctx.strokeStyle='rgba(180,225,250,.28)';for(let i=0;i<=4;i++){const y=gy-i/4*gh;ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx+gw,y);ctx.stroke()}const hist=state.history.length?state.history:[{week:1,trueSpread:state.trueSpread,detected:state.detectedSpread,confidence:state.confidence}];function tr(key,col,norm){ctx.strokeStyle=col;ctx.lineWidth=2.3;ctx.beginPath();hist.forEach(p=>{const x=gx+(p.week-1)/23*gw,y=gy-clamp(norm(p[key]),0,1)*gh;if(p.week===hist[0].week)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke()}tr('trueSpread','rgba(255,100,100,.95)',v=>v/100);tr('detected','rgba(255,222,90,.95)',v=>v/100);tr('confidence','rgba(120,220,145,.95)',v=>v);ctx.fillStyle='rgba(220,240,250,.75)';ctx.font='800 10px system-ui';ctx.textAlign='right';ctx.fillText(`week ${Math.min(state.week,24)}`,gx+gw,top+64);ctx.restore()}
+function draw(){const r=canvas.getBoundingClientRect(),w=r.width,h=r.height,v=values();ctx.clearRect(0,0,w,h);bg(w,h);drawMap(18,20,w*.61,h-44,v);drawGraph(w*.64,42,w*.33,h*.43);ctx.save();ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='800 13px system-ui';ctx.textAlign='left';ctx.fillText(`Week ${Math.min(state.week,24)} | true spread ${Math.round(state.trueSpread)}% | detected ${Math.round(state.detectedSpread)}% | confidence ${Math.round(state.confidence*100)}% | score ${Math.round(v.score*100)}%`,22,h-14);ctx.restore()}
+function logData(action,oldSpread='',v=values(),event=state.lastEvent){state.data.push({week:Math.min(state.week,24),action,threat_type:v.profile.name,landscape:v.land.name,event,old_true_spread_percent:oldSpread===''?'':oldSpread.toFixed(1),true_spread_percent:state.trueSpread.toFixed(1),detected_spread_percent:state.detectedSpread.toFixed(1),evidence_confidence_percent:(state.confidence*100).toFixed(1),monitoring_percent:v.monitoring,quarantine_percent:v.quarantine,treatment_percent:v.treatment,culling_removal_percent:v.culling,public_communication_percent:v.communication,research_testing_percent:v.research,economic_impact_percent:(state.economy*100).toFixed(1),ecological_impact_percent:(state.ecology*100).toFixed(1),public_trust_percent:(state.trust*100).toFixed(1),budget_pressure_percent:(state.budget*100).toFixed(1),response_score_percent:(v.score*100).toFixed(1),score_containment:scorecard().containmentLabel,score_evidence:scorecard().evidenceLabel,score_economy:scorecard().economyLabel,score_ecology:scorecard().ecologyLabel,score_trust:scorecard().trustLabel,score_overall:scorecard().overallLabel,weekly_feedback:state.weekFeedback,final_judgement:finalJudgement().replace(/<[^>]*>/g,' '),saved_comparison_runs:state.comparisons.length,advice:v.advice})}
+function csv(){if(!state.data.length)logData('export');const heads=Object.keys(state.data[0]);const rows=state.data.map(row=>heads.map(h=>String(row[h]).replaceAll(',',';')).join(','));const blob=new Blob([[heads.join(','),...rows].join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='biosecurity_outbreak_simulation_data.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
+$('nextWeekBtn').addEventListener('click',nextWeek);$('nextMonthBtn').addEventListener('click',()=>runWeeks(4));$('autoBtn').addEventListener('click',()=>{state.auto=!state.auto;$('autoBtn').textContent=state.auto?'⏸ Pause auto-run':'▶ Auto-run weeks'});$('resetBtn').addEventListener('click',reset);$('mysteryBtn').addEventListener('click',mystery);$('containBtn').addEventListener('click',strongContainment);$('eventBtn').addEventListener('click',triggerSurpriseEvent);$('saveRunBtn').addEventListener('click',saveRunForComparison);$('clearRunsBtn').addEventListener('click',clearComparisons);$('csvBtn').addEventListener('click',csv);
+[controls.learningMode,controls.threatType,controls.landscape,controls.initialReports,controls.evidenceQuality,controls.season,controls.tradeExposure].forEach(c=>{c.addEventListener('input',reset);c.addEventListener('change',reset)});[controls.monitoring,controls.quarantine,controls.treatment,controls.culling,controls.communication,controls.research,controls.decisionFocus].forEach(c=>{c.addEventListener('input',()=>{updateReadouts();draw()});c.addEventListener('change',()=>{updateReadouts();draw()})});
+document.querySelectorAll('#quiz button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#quiz button').forEach(x=>x.classList.remove('correct','incorrect'));if(b.dataset.answer==='correct'){b.classList.add('correct');$('quizFeedback').textContent='Correct. Biosecurity responses need to balance evidence, spread risk, impacts and cooperation.'}else{b.classList.add('incorrect');$('quizFeedback').textContent='Not quite. Strong action can be necessary, but the response should still be evidence-based and proportionate.'}}));
+function anim(){if(state.auto&&state.week<=24){if(!state.lastAuto||performance.now()-state.lastAuto>650){nextWeek();state.lastAuto=performance.now()}}updateReadouts();draw();requestAnimationFrame(anim)}
+window.addEventListener('resize',resize);reset();resize();anim();
+</script>
+</body>
+</html>
