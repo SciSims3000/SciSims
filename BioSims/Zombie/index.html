@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Zombie Outbreak Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --danger:#dc2626;
+      --human:#2563eb;
+      --zombie:#ef4444;
+      --removed:#94a3b8;
+      --safe:#16a34a;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #052e16, #166534 48%, #dc2626);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:920px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    .sub-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    input[type="range"],
+    select{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="number"],
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font:inherit;
+      font-weight:750;
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    button{
+      font:inherit;
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.danger{ background:var(--danger); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:#0f172a;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:var(--human);
+    }
+
+    .legend-dot.zombie{ background:var(--zombie); }
+    .legend-dot.removed{ background:var(--removed); }
+    .legend-dot.pressure{ background:var(--warn); }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.35rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .event-log{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:58px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .lower-controls{
+      margin-top:18px;
+    }
+
+    .lower-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr 1.15fr;
+      gap:18px;
+      margin-top:12px;
+      align-items:start;
+    }
+
+    .lower-grid .control-group{
+      margin-top:0;
+      height:100%;
+    }
+
+    .notes-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-grid{
+      display:grid;
+      grid-template-columns:1.15fr 0.85fr;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .formula-intro{
+      margin-bottom:14px;
+    }
+
+    .equation-steps{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .eq-step{
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:12px;
+      align-items:start;
+      background:#ffffff;
+      border:1px solid #bfdbfe;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .eq-number{
+      width:32px;
+      height:32px;
+      border-radius:999px;
+      background:#2563eb;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+    }
+
+    .eq-title{
+      margin:0 0 5px;
+      color:#0f172a;
+      font-weight:900;
+    }
+
+    .eq-line{
+      display:block;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:10px;
+      padding:9px 10px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.92rem;
+      line-height:1.5;
+      overflow:auto;
+    }
+
+    .term-grid{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .term-card{
+      background:#ffffff;
+      border:1px solid #bfdbfe;
+      border-radius:14px;
+      padding:12px;
+      color:#1e3a8a;
+    }
+
+    .term-card strong{
+      display:block;
+      color:#0f172a;
+      margin-bottom:3px;
+    }
+
+    .assumption-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .assumption-box h3{
+      margin:0 0 8px;
+      color:#ffffff;
+    }
+
+    .assumption-box ul{
+      margin:0;
+      padding-left:20px;
+    }
+
+    .assumption-box li{
+      color:#cbd5e1;
+      margin:6px 0;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+
+      .lower-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .number-grid,
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Zombie Outbreak Simulator</h1>
+      <p>Use a fictional zombie outbreak to explore how contact rate, infection rate, response measures and safe zones can change the spread of a population-level outbreak.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Biology</span>
+        <span class="pill">Disease modelling</span>
+        <span class="pill">Population change</span>
+        <span class="pill">Pandemic analogy</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how simple population models can represent spread, removal and control measures during an outbreak.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can adjust model parameters, interpret H-Z-R population curves, and explain why small changes in spread or response can produce large differences over time.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Zombie outbreak simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Starting population</p>
+
+          <div class="number-grid">
+            <div>
+              <label for="h0">Initial humans H₀</label>
+              <input id="h0" type="number" min="0" max="10000" step="1" value="900">
+            </div>
+
+            <div>
+              <label for="z0">Initial zombies Z₀</label>
+              <input id="z0" type="number" min="0" max="10000" step="1" value="10">
+            </div>
+          </div>
+
+          <div class="slider-block">
+            <label for="scenario">Scenario preset</label>
+            <select id="scenario">
+              <option value="balanced" selected>Balanced outbreak</option>
+              <option value="fast">Fast outbreak</option>
+              <option value="safe">Safe zones introduced</option>
+              <option value="response">Strong response</option>
+              <option value="spike">Random outbreak spikes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Core spread controls</p>
+
+          <div class="slider-block">
+            <label for="enc">Encounter rate</label>
+            <div class="sub-label">
+              <span>Low contact</span>
+              <strong id="encVal">0.080</strong>
+              <span>High contact</span>
+            </div>
+            <input id="enc" type="range" min="0" max="1" step="0.001" value="0.08">
+          </div>
+
+          <div class="slider-block">
+            <label for="beta">Infection rate β</label>
+            <div class="sub-label">
+              <span>Lower spread</span>
+              <strong id="betaVal">0.400</strong>
+              <span>Higher spread</span>
+            </div>
+            <input id="beta" type="range" min="0" max="1" step="0.001" value="0.40">
+          </div>
+
+          <div class="slider-block">
+            <label for="kappa">Response/removal rate κ</label>
+            <div class="sub-label">
+              <span>Weak response</span>
+              <strong id="kappaVal">0.100</strong>
+              <span>Strong response</span>
+            </div>
+            <input id="kappa" type="range" min="0" max="1" step="0.001" value="0.10">
+          </div>
+
+          <div class="slider-block">
+            <label for="safezone">Safe zone size</label>
+            <div class="sub-label">
+              <span>None</span>
+              <strong id="safeVal">0%</strong>
+              <span>Large</span>
+            </div>
+            <input id="safezone" type="range" min="0" max="0.9" step="0.05" value="0">
+          </div>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Outbreak model">
+        <h2>Outbreak model</h2>
+        <p>The model tracks <strong>H</strong> humans, <strong>Z</strong> zombies/infected, and <strong>R</strong> removed from the active population. The graph is the main evidence.</p>
+
+        <canvas id="modelCanvas" width="1000" height="620" aria-label="Zombie outbreak model with population snapshot and graph"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot"></span>Humans H</span>
+          <span class="legend-item"><span class="legend-dot zombie"></span>Zombies / infected Z</span>
+          <span class="legend-item"><span class="legend-dot removed"></span>Removed R</span>
+          <span class="legend-item"><span class="legend-dot pressure"></span>Spread pressure</span>
+        </div>
+
+        <div class="results" aria-label="Current outbreak results">
+          <div class="metric">
+            <div class="label">Humans</div>
+            <div class="value" id="sh">900</div>
+            <div class="small">Uninfected population</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Zombies</div>
+            <div class="value" id="sz">10</div>
+            <div class="small">Infected / active spreaders</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Removed</div>
+            <div class="value" id="sr">0</div>
+            <div class="small">No longer active in the model</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Spread pressure</div>
+            <div class="value" id="pressure">—</div>
+            <div class="small">Rough growth indicator, not a true R₀</div>
+          </div>
+        </div>
+
+        <div class="event-log" id="eventLog">Ready. Choose settings, then run the outbreak.</div>
+      </section>
+    </section>
+
+    <section class="panel lower-controls" aria-label="Extension and simulation controls">
+      <h2>Extension and simulation controls</h2>
+
+      <div class="lower-grid">
+        <div class="control-group">
+          <p class="control-heading">Extension controls</p>
+
+          <div class="slider-block">
+            <label for="delta">Zombie decay rate δ</label>
+            <div class="sub-label">
+              <span>Slow</span>
+              <strong id="deltaVal">0.010</strong>
+              <span>Fast</span>
+            </div>
+            <input id="delta" type="range" min="0" max="1" step="0.001" value="0.01">
+          </div>
+
+          <div class="slider-block">
+            <label for="spikeChance">Random outbreak spike chance</label>
+            <div class="sub-label">
+              <span>Stable</span>
+              <strong id="spikeVal">0.0%</strong>
+              <span>Unstable</span>
+            </div>
+            <input id="spikeChance" type="range" min="0" max="0.1" step="0.001" value="0">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Simulation controls</p>
+
+          <div class="slider-block">
+            <label for="tps">Ticks per second</label>
+            <div class="sub-label">
+              <span>Slow</span>
+              <strong id="tpsVal">20</strong>
+              <span>Fast</span>
+            </div>
+            <input id="tps" type="range" min="1" max="60" step="1" value="20">
+          </div>
+
+          <div class="button-row">
+            <button id="runBtn" type="button">Run outbreak</button>
+            <button id="stepBtn" class="ghost" type="button">Step</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+            <button id="csvBtn" class="ghost" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a fictional model. It is useful for exploring patterns in spread and control, but it is not a real epidemiological forecast.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Run the balanced outbreak. What happens to humans, zombies and removed over time?</li>
+          <li>Reset and increase the safe zone size. How does the curve change?</li>
+          <li>Increase the response/removal rate. What happens to the zombie peak?</li>
+          <li>Increase the infection rate. Does the outbreak grow faster or slower?</li>
+          <li>Export the CSV and identify the tick where the zombie population was highest.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This is a fictional H-Z-R model inspired by compartment models. It is useful for discussing model assumptions, spread, control measures and why simulations are simplified representations of reality.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Which parameter has the biggest effect on the peak number of zombies?</li>
+          <li>Good prompt: What assumptions does this model make that would not be true in a real outbreak?</li>
+          <li>Extension: Compare this H-Z-R model with an SIR model: susceptible, infected and removed.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+
+        <p class="formula-intro">
+          This sim uses a simple discrete-time compartment model. The population is grouped into three compartments:
+          <strong>H</strong> humans, <strong>Z</strong> zombies/infected, and <strong>R</strong> removed. Each tick, the model estimates how many new infections occur and how many zombies are removed from active spread.
+        </p>
+
+        <div class="equation-steps">
+          <div class="eq-step">
+            <div class="eq-number">1</div>
+            <div>
+              <p class="eq-title">Work out how many humans are exposed</p>
+              <code class="eq-line">effectiveH = H × (1 − safezone)</code>
+            </div>
+          </div>
+
+          <div class="eq-step">
+            <div class="eq-number">2</div>
+            <div>
+              <p class="eq-title">Estimate contacts between humans and zombies</p>
+              <code class="eq-line">contacts = encounter × effectiveH × Z ÷ (effectiveH + Z)</code>
+            </div>
+          </div>
+
+          <div class="eq-step">
+            <div class="eq-number">3</div>
+            <div>
+              <p class="eq-title">Calculate new zombies</p>
+              <code class="eq-line">newZ = contacts × infection rate β</code>
+            </div>
+          </div>
+
+          <div class="eq-step">
+            <div class="eq-number">4</div>
+            <div>
+              <p class="eq-title">Calculate zombies removed from active spread</p>
+              <code class="eq-line">removed = response rate κ × Z + decay rate δ × remaining Z</code>
+            </div>
+          </div>
+
+          <div class="eq-step">
+            <div class="eq-number">5</div>
+            <div>
+              <p class="eq-title">Update the compartments</p>
+              <code class="eq-line">next H = H − newZ<br>next Z = Z + newZ − removed<br>next R = R + removed</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+
+        <p>
+          The model asks three questions: how many risky contacts occur, how many contacts create new infections, and how many infected individuals are removed from active spread.
+        </p>
+
+        <div class="term-grid">
+          <div class="term-card">
+            <strong>Encounter rate</strong>
+            How often humans and zombies interact.
+          </div>
+
+          <div class="term-card">
+            <strong>Infection rate β</strong>
+            How likely a contact is to create a new zombie.
+          </div>
+
+          <div class="term-card">
+            <strong>Response/removal rate κ</strong>
+            How quickly zombies are removed from active spread.
+          </div>
+
+          <div class="term-card">
+            <strong>Safe zone size</strong>
+            The fraction of humans protected from contact.
+          </div>
+
+          <div class="term-card">
+            <strong>Decay rate δ</strong>
+            The rate at which zombies leave the active population without direct response.
+          </div>
+
+          <div class="term-card">
+            <strong>Random outbreak spike</strong>
+            A temporary increase in spread for one tick.
+          </div>
+        </div>
+
+        <div class="assumption-box">
+          <h3>Important assumptions</h3>
+          <ul>
+            <li>The population is simplified into only three groups.</li>
+            <li>All exposed humans are treated as equally likely to meet zombies.</li>
+            <li>Safe zones reduce exposure rather than changing behaviour in detail.</li>
+            <li>The model is fictional and should be used to discuss patterns, not to predict real outbreaks.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initZombieOutbreakSim(){
+      const canvas = document.getElementById("modelCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const inputs = {
+        h0:document.getElementById("h0"),
+        z0:document.getElementById("z0"),
+        scenario:document.getElementById("scenario"),
+        enc:document.getElementById("enc"),
+        beta:document.getElementById("beta"),
+        kappa:document.getElementById("kappa"),
+        delta:document.getElementById("delta"),
+        safezone:document.getElementById("safezone"),
+        spikeChance:document.getElementById("spikeChance"),
+        tps:document.getElementById("tps")
+      };
+
+      const readouts = {
+        enc:document.getElementById("encVal"),
+        beta:document.getElementById("betaVal"),
+        kappa:document.getElementById("kappaVal"),
+        delta:document.getElementById("deltaVal"),
+        safe:document.getElementById("safeVal"),
+        spike:document.getElementById("spikeVal"),
+        tps:document.getElementById("tpsVal"),
+        sh:document.getElementById("sh"),
+        sz:document.getElementById("sz"),
+        sr:document.getElementById("sr"),
+        pressure:document.getElementById("pressure"),
+        eventLog:document.getElementById("eventLog")
+      };
+
+      const runBtn = document.getElementById("runBtn");
+      const stepBtn = document.getElementById("stepBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const csvBtn = document.getElementById("csvBtn");
+
+      const state = {
+        t:0,
+        H:900,
+        Z:10,
+        R:0,
+        history:[],
+        lastEvent:"Ready. Choose settings, then run the outbreak."
+      };
+
+      let running = false;
+      let raf = null;
+      let lastStep = performance.now();
+      let accumulator = 0;
+
+      const MAX_TOKENS = 260;
+      const tokenPositions = [];
+
+      function buildTokenPositions(){
+        tokenPositions.length = 0;
+        let seed = 1234567;
+
+        function random(){
+          seed = (seed * 1664525 + 1013904223) % 4294967296;
+          return seed / 4294967296;
+        }
+
+        for(let i = 0; i < MAX_TOKENS; i++){
+          tokenPositions.push({
+            x:78 + random() * 844,
+            y:86 + random() * 210
+          });
+        }
+      }
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function numeric(id){
+        return Number(inputs[id].value);
+      }
+
+      function updateControlReadouts(){
+        readouts.enc.textContent = numeric("enc").toFixed(3);
+        readouts.beta.textContent = numeric("beta").toFixed(3);
+        readouts.kappa.textContent = numeric("kappa").toFixed(3);
+        readouts.delta.textContent = numeric("delta").toFixed(3);
+        readouts.safe.textContent = Math.round(numeric("safezone") * 100) + "%";
+        readouts.spike.textContent = (numeric("spikeChance") * 100).toFixed(1) + "%";
+        readouts.tps.textContent = numeric("tps").toFixed(0);
+      }
+
+      function spreadPressure(){
+        const enc = numeric("enc");
+        const beta = numeric("beta");
+        const kappa = numeric("kappa");
+        const delta = numeric("delta");
+        const safe = numeric("safezone");
+
+        return (enc * beta * (1 - safe)) / Math.max(0.001, kappa + delta);
+      }
+
+      function updateStats(){
+        readouts.sh.textContent = Math.round(state.H).toLocaleString("en-AU");
+        readouts.sz.textContent = Math.round(state.Z).toLocaleString("en-AU");
+        readouts.sr.textContent = Math.round(state.R).toLocaleString("en-AU");
+
+        const pressure = spreadPressure();
+        readouts.pressure.textContent = pressure.toFixed(2);
+        readouts.pressure.style.color = pressure >= 1 ? "#dc2626" : "#16a34a";
+        readouts.eventLog.textContent = state.lastEvent;
+      }
+
+      function stochasticRound(value){
+        const base = Math.floor(value);
+        const remainder = value - base;
+        return base + (Math.random() < remainder ? 1 : 0);
+      }
+
+      function seed(){
+        stop();
+
+        state.t = 0;
+        state.H = clamp(Math.floor(Number(inputs.h0.value) || 0), 0, 10000);
+        state.Z = clamp(Math.floor(Number(inputs.z0.value) || 0), 0, 10000);
+        state.R = 0;
+        state.history = [{ t:0, H:state.H, Z:state.Z, R:state.R }];
+        state.lastEvent = "Ready. Choose settings, then run the outbreak.";
+
+        updateControlReadouts();
+        updateStats();
+        draw();
+      }
+
+      function applyScenario(){
+        const scenario = inputs.scenario.value;
+
+        if(scenario === "balanced"){
+          inputs.h0.value = 900;
+          inputs.z0.value = 10;
+          inputs.enc.value = 0.08;
+          inputs.beta.value = 0.40;
+          inputs.kappa.value = 0.10;
+          inputs.delta.value = 0.01;
+          inputs.safezone.value = 0;
+          inputs.spikeChance.value = 0;
+          inputs.tps.value = 20;
+        }
+
+        if(scenario === "fast"){
+          inputs.h0.value = 900;
+          inputs.z0.value = 10;
+          inputs.enc.value = 0.16;
+          inputs.beta.value = 0.55;
+          inputs.kappa.value = 0.06;
+          inputs.delta.value = 0.005;
+          inputs.safezone.value = 0;
+          inputs.spikeChance.value = 0;
+          inputs.tps.value = 20;
+        }
+
+        if(scenario === "safe"){
+          inputs.h0.value = 900;
+          inputs.z0.value = 10;
+          inputs.enc.value = 0.08;
+          inputs.beta.value = 0.40;
+          inputs.kappa.value = 0.10;
+          inputs.delta.value = 0.01;
+          inputs.safezone.value = 0.40;
+          inputs.spikeChance.value = 0;
+          inputs.tps.value = 20;
+        }
+
+        if(scenario === "response"){
+          inputs.h0.value = 900;
+          inputs.z0.value = 10;
+          inputs.enc.value = 0.08;
+          inputs.beta.value = 0.40;
+          inputs.kappa.value = 0.30;
+          inputs.delta.value = 0.03;
+          inputs.safezone.value = 0.20;
+          inputs.spikeChance.value = 0;
+          inputs.tps.value = 20;
+        }
+
+        if(scenario === "spike"){
+          inputs.h0.value = 900;
+          inputs.z0.value = 10;
+          inputs.enc.value = 0.08;
+          inputs.beta.value = 0.35;
+          inputs.kappa.value = 0.12;
+          inputs.delta.value = 0.01;
+          inputs.safezone.value = 0.10;
+          inputs.spikeChance.value = 0.04;
+          inputs.tps.value = 20;
+        }
+
+        seed();
+      }
+
+      function shouldStopAfterStep(){
+        const kappa = numeric("kappa");
+        const delta = numeric("delta");
+
+        if(state.Z <= 0){
+          state.lastEvent = "Tick " + state.t + ": outbreak ended. No zombies remain.";
+          return true;
+        }
+
+        if(state.H <= 0 && kappa + delta <= 0){
+          state.lastEvent = "Tick " + state.t + ": no humans remain and no removal process is active.";
+          return true;
+        }
+
+        return false;
+      }
+
+      function step(){
+        const H = state.H;
+        const Z = state.Z;
+
+        if(shouldStopAfterStep()){
+          stop();
+          updateStats();
+          return;
+        }
+
+        const enc = numeric("enc");
+        const beta = numeric("beta");
+        const kappa = numeric("kappa");
+        const delta = numeric("delta");
+        const safe = numeric("safezone");
+        const spikeChance = numeric("spikeChance");
+
+        let betaEff = beta;
+        let spikeEvent = false;
+
+        if(Math.random() < spikeChance){
+          betaEff = Math.min(1, beta + 0.15);
+          spikeEvent = true;
+        }
+
+        const effectiveH = H * (1 - safe);
+        const activePopulation = Math.max(1, effectiveH + Z);
+        const contacts = enc * effectiveH * (Z / activePopulation);
+
+        const newZ = Math.min(H, stochasticRound(contacts * betaEff));
+
+        const zRemovedByResponse = Math.min(Z, stochasticRound(kappa * Z));
+        const zAfterResponse = Math.max(0, Z - zRemovedByResponse);
+        const zDecayed = Math.min(zAfterResponse, stochasticRound(delta * zAfterResponse));
+
+        state.H = Math.max(0, H - newZ);
+        state.Z = Math.max(0, Z + newZ - zRemovedByResponse - zDecayed);
+        state.R = Math.max(0, state.R + zRemovedByResponse + zDecayed);
+        state.t++;
+
+        state.history.push({
+          t:state.t,
+          H:state.H,
+          Z:state.Z,
+          R:state.R
+        });
+
+        if(spikeEvent){
+          state.lastEvent = "Tick " + state.t + ": random outbreak spike increased spread for this tick.";
+        }else if(newZ > 0 && zRemovedByResponse + zDecayed > 0){
+          state.lastEvent = "Tick " + state.t + ": " + newZ + " new infection" + (newZ === 1 ? "" : "s") + ", with " + (zRemovedByResponse + zDecayed) + " removed.";
+        }else if(newZ > 0){
+          state.lastEvent = "Tick " + state.t + ": " + newZ + " human" + (newZ === 1 ? "" : "s") + " became infected.";
+        }else if(zRemovedByResponse + zDecayed > 0){
+          state.lastEvent = "Tick " + state.t + ": " + (zRemovedByResponse + zDecayed) + " zombie" + ((zRemovedByResponse + zDecayed) === 1 ? "" : "s") + " were removed.";
+        }else{
+          state.lastEvent = "Tick " + state.t + ": no population change this tick.";
+        }
+
+        if(shouldStopAfterStep()){
+          stop();
+        }
+
+        updateStats();
+      }
+
+      function run(){
+        if(running){ return; }
+
+        running = true;
+        runBtn.textContent = "Pause outbreak";
+        lastStep = performance.now();
+        accumulator = 0;
+        raf = requestAnimationFrame(loop);
+      }
+
+      function stop(){
+        running = false;
+        runBtn.textContent = "Run outbreak";
+
+        if(raf){
+          cancelAnimationFrame(raf);
+          raf = null;
+        }
+      }
+
+      function toggleRun(){
+        if(running){
+          stop();
+        }else{
+          run();
+        }
+      }
+
+      function loop(now){
+        if(!running){ return; }
+
+        const tps = numeric("tps");
+        const dt = now - lastStep;
+        const stepMs = 1000 / Math.max(1, tps);
+
+        lastStep = now;
+        accumulator += dt;
+
+        let stepsThisFrame = 0;
+
+        while(accumulator >= stepMs && stepsThisFrame < 10){
+          step();
+          accumulator -= stepMs;
+          stepsThisFrame++;
+        }
+
+        draw();
+
+        if(running){
+          raf = requestAnimationFrame(loop);
+        }
+      }
+
+      function drawRoundedRect(x, y, w, h, r, fillStyle, strokeStyle){
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+
+        if(fillStyle){
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+        }
+
+        if(strokeStyle){
+          ctx.strokeStyle = strokeStyle;
+          ctx.stroke();
+        }
+      }
+
+      function drawSnapshot(){
+        const x = 36;
+        const y = 46;
+        const w = 928;
+        const h = 255;
+        const total = Math.max(1, state.H + state.Z + state.R);
+
+        drawRoundedRect(x, y, w, h, 18, "#07111f", "rgba(203,213,225,0.25)");
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "900 19px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Population snapshot", x + 20, y + 32);
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "700 13px system-ui, sans-serif";
+        ctx.fillText("Each dot represents a sample of the population, not one exact person.", x + 20, y + 54);
+
+        const hTokens = Math.round((state.H / total) * MAX_TOKENS);
+        const zTokens = Math.round((state.Z / total) * MAX_TOKENS);
+        const rTokens = Math.max(0, MAX_TOKENS - hTokens - zTokens);
+
+        for(let i = 0; i < MAX_TOKENS; i++){
+          let colour = "#94a3b8";
+
+          if(i < hTokens){
+            colour = "#2563eb";
+          }else if(i < hTokens + zTokens){
+            colour = "#ef4444";
+          }else if(i < hTokens + zTokens + rTokens){
+            colour = "#94a3b8";
+          }
+
+          const p = tokenPositions[i];
+
+          ctx.fillStyle = colour;
+          ctx.globalAlpha = 0.92;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalAlpha = 1;
+
+        const safe = numeric("safezone");
+
+        if(safe > 0){
+          ctx.strokeStyle = "rgba(22,163,74,0.8)";
+          ctx.lineWidth = 4;
+          ctx.setLineDash([10, 10]);
+          ctx.strokeRect(x + 18, y + 68, w * safe - 24, h - 92);
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = "#86efac";
+          ctx.font = "900 15px system-ui, sans-serif";
+          ctx.fillText("Safe zone protects " + Math.round(safe * 100) + "% of humans", x + 30, y + h - 22);
+        }
+      }
+
+      function drawGraph(){
+        const x = 36;
+        const y = 330;
+        const w = 928;
+        const h = 245;
+        const padL = 58;
+        const padR = 22;
+        const padT = 32;
+        const padB = 44;
+        const plotX = x + padL;
+        const plotY = y + padT;
+        const plotW = w - padL - padR;
+        const plotH = h - padT - padB;
+
+        drawRoundedRect(x, y, w, h, 18, "#ffffff", "rgba(203,213,225,0.35)");
+
+        const data = state.history;
+        const maxT = Math.max(1, data[data.length - 1].t);
+        const maxPop = Math.max(10, ...data.map(function(d){
+          return Math.max(d.H, d.Z, d.R);
+        }));
+
+        ctx.strokeStyle = "#dbe3ef";
+        ctx.lineWidth = 1;
+
+        for(let i = 0; i <= 5; i++){
+          const yy = plotY + plotH - (i / 5) * plotH;
+
+          ctx.beginPath();
+          ctx.moveTo(plotX, yy);
+          ctx.lineTo(plotX + plotW, yy);
+          ctx.stroke();
+
+          ctx.fillStyle = "#64748b";
+          ctx.font = "700 12px system-ui, sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText(Math.round(maxPop * i / 5), plotX - 8, yy + 4);
+        }
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(plotX, plotY);
+        ctx.lineTo(plotX, plotY + plotH);
+        ctx.lineTo(plotX + plotW, plotY + plotH);
+        ctx.stroke();
+
+        function xScale(t){
+          return plotX + (t / maxT) * plotW;
+        }
+
+        function yScale(v){
+          return plotY + plotH - (v / maxPop) * plotH;
+        }
+
+        function plot(key, colour){
+          ctx.strokeStyle = colour;
+          ctx.lineWidth = 4;
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+
+          for(let i = 0; i < data.length; i++){
+            const d = data[i];
+            const xx = xScale(d.t);
+            const yy = yScale(d[key]);
+
+            if(i === 0){
+              ctx.moveTo(xx, yy);
+            }else{
+              ctx.lineTo(xx, yy);
+            }
+          }
+
+          ctx.stroke();
+        }
+
+        plot("H", "#2563eb");
+        plot("Z", "#ef4444");
+        plot("R", "#94a3b8");
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 18px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("H-Z-R time series", x + 22, y + 26);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("time in ticks", plotX + plotW / 2, y + h - 14);
+      }
+
+      function drawPressureBar(){
+        const pressure = spreadPressure();
+        const x = 36;
+        const y = 594;
+        const w = 928;
+        const h = 12;
+        const fillW = Math.min(1, pressure / 2.5) * w;
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fillRect(x, y, w, h);
+
+        ctx.fillStyle = pressure >= 1 ? "#dc2626" : "#16a34a";
+        ctx.fillRect(x, y, fillW, h);
+      }
+
+      function draw(){
+        const W = canvas.width;
+        const H = canvas.height;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, "#020617");
+        bg.addColorStop(1, "#0f172a");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        drawSnapshot();
+        drawGraph();
+        drawPressureBar();
+      }
+
+      function exportCSV(){
+        const rows = [["tick","humans_H","zombies_Z","removed_R"]];
+
+        state.history.forEach(function(d){
+          rows.push([d.t, Math.round(d.H), Math.round(d.Z), Math.round(d.R)]);
+        });
+
+        const csv = rows.map(function(row){
+          return row.join(",");
+        }).join("\n");
+
+        const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, "0");
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const yyyy = now.getFullYear();
+
+        link.href = url;
+        link.download = "zombie_outbreak_sim_" + dd + "-" + mm + "-" + yyyy + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      runBtn.addEventListener("click", toggleRun);
+
+      stepBtn.addEventListener("click", function(){
+        if(!running){
+          step();
+          draw();
+        }
+      });
+
+      resetBtn.addEventListener("click", seed);
+      csvBtn.addEventListener("click", exportCSV);
+      inputs.scenario.addEventListener("change", applyScenario);
+
+      [inputs.enc, inputs.beta, inputs.kappa, inputs.delta, inputs.safezone, inputs.spikeChance, inputs.tps].forEach(function(input){
+        input.addEventListener("input", function(){
+          updateControlReadouts();
+          updateStats();
+          draw();
+        });
+      });
+
+      [inputs.h0, inputs.z0].forEach(function(input){
+        input.addEventListener("change", seed);
+      });
+
+      window.addEventListener("keydown", function(event){
+        const active = document.activeElement;
+        const typing = active && (active.tagName === "INPUT" || active.tagName === "SELECT");
+
+        if(typing){ return; }
+
+        if(event.code === "Space"){
+          event.preventDefault();
+          toggleRun();
+        }
+
+        if(event.key.toLowerCase() === "r"){
+          seed();
+        }
+
+        if(event.key.toLowerCase() === "e"){
+          exportCSV();
+        }
+      });
+
+      buildTokenPositions();
+      seed();
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initZombieOutbreakSim);
+    }else{
+      initZombieOutbreakSim();
+    }
+  </script>
+</body>
+</html>
