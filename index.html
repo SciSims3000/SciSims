@@ -21,6 +21,7 @@
       --soft-slate:#f1f5f9;
       --soft-teal:#ccfbf1;
       --soft-pink:#fce7f3;
+      --soft-yellow:#fef9c3;
       --shadow:0 4px 14px rgba(0,0,0,0.08);
       --radius:16px;
     }
@@ -298,6 +299,7 @@
     .tag.chem{background:var(--soft-purple);border-color:#ddd6fe;color:#5b21b6;}
     .tag.earth{background:var(--soft-orange);border-color:#fed7aa;color:#9a3412;}
     .tag.physics{background:var(--soft-blue);border-color:#bfdbfe;color:#1d4ed8;}
+    .tag.math{background:var(--soft-yellow);border-color:#fde68a;color:#854d0e;}
     .tag.working{background:#fef3c7;border-color:#fde68a;color:#92400e;}
     .tag.invsci{background:var(--soft-teal);border-color:#99f6e4;color:#115e59;}
     .tag.interesting{background:#e2e8f0;border-color:#cbd5e1;color:#334155;}
@@ -437,6 +439,13 @@
       intro:'Physics simulations for forces, motion, energy, waves, electricity and light.',
       banner:'physicssims.png',
       tagClass:'physics'
+    },
+    {
+      id:'mathsims',
+      title:'Maths',
+      intro:'Mathematics simulations for probability, statistics, chance, distributions, randomness and data modelling.',
+      banner:'interestingsims.png',
+      tagClass:'math'
     },
     {
       id:'brainbreak',
@@ -1111,6 +1120,94 @@
       description:'Explore the Mandelbrot set using guided zoom, infinite zoom, preset fractal regions, colour palettes and live coordinate data.',
       path:'InterestingSims/Fractal/',
       tags:['Fractals', 'Mathematics', 'Patterns', 'Visual model']
+    },
+    {
+      section:'physicssims',
+      group:'Forces and Motion',
+      title:'Car Motion and Ticker Tape Simulator',
+      description:'Model car motion and generate matching ticker-timer tape. Compare constant speed, acceleration, braking, delayed starts and two-car motion using measurable dot patterns.',
+      path:'PhySims/Cars/',
+      tags:['Physics', 'Motion', 'Speed', 'Acceleration', 'Ticker tape', 'Average speed', 'Data analysis']
+    },
+    {
+      section:'physicssims',
+      group:'Forces and Motion',
+      title:'Ticker Timer Simulator',
+      description:'Generate ticker-timer tapes at 50 Hz and analyse the spacing between dots. Compare constant speed, acceleration and slowing-down motion using one or two virtual tapes.',
+      path:'PhySims/TickerTimer/',
+      tags:['Physics', 'Motion', 'Ticker timer', 'Speed', 'Acceleration', 'Data analysis', 'CSV export']
+    },
+    {
+      section:'physicssims',
+      group:'Electricity and Magnetism',
+      title:'Magnetic Field Around a Wire',
+      description:'Explore the circular magnetic field produced by a straight current-carrying wire. Change current and wire position, then use a probe to compare distance, direction and relative field strength.',
+      path:'PhySims/StaticWire/',
+      tags:['Physics', 'Magnetism', 'Current', 'Magnetic field', 'Right-hand rule', 'Field strength']
+    },
+    {
+      section:'physicssims',
+      group:'Electricity and Magnetism',
+      title:'Magnetic Field Around Two Wires',
+      description:'Explore how magnetic fields from two current-carrying wires combine. Compare same-direction and opposite-direction currents using resultant field arrows and a probe point.',
+      path:'PhySims/TwoWire/',
+      tags:['Physics', 'Magnetism', 'Current', 'Magnetic fields', 'Superposition', 'Vector addition']
+    },
+    {
+      section:'physicssims',
+      group:'Light and Waves',
+      title:'Cathode Ray Oscilloscope and Audio Oscillator',
+      description:'Generate audio tones and view their waveform on a simulated oscilloscope. Adjust frequency, volume and presets, then compare wave period, pitch and signal shape.',
+      path:'PhySims/CRO/',
+      tags:['Physics', 'Waves', 'Sound', 'Frequency', 'Oscilloscope', 'Waveform', 'Period']
+    },
+    {
+      section:'physicssims',
+      group:'Light and Waves',
+      title:'Longitudinal Wave Simulator',
+      description:'Model a longitudinal wave by showing particles moving left and right as compressions and rarefactions travel through the medium.',
+      path:'PhySims/LongWave/',
+      tags:['Physics', 'Waves', 'Longitudinal waves', 'Compression', 'Rarefaction', 'Sound']
+    },
+    {
+      section:'physicssims',
+      group:'Light and Waves',
+      title:'Sound Wave Generator',
+      description:'Generate sine, square, sawtooth and triangle waves in the browser. Adjust frequency and volume, use preset tones and compare waveform shape on a live scope.',
+      path:'PhySims/SoundGen/',
+      tags:['Physics', 'Sound', 'Waves', 'Frequency', 'Pitch', 'Waveform', 'Oscillator']
+    },
+    {
+      section:'physicssims',
+      group:'Light and Waves',
+      title:'Transverse Wave Simulator',
+      description:'Model a transverse wave by changing amplitude, wavelength, frequency and wave speed. Toggle labels and vectors to compare crests, troughs and particle motion.',
+      path:'PhySims/TransWave/',
+      tags:['Physics', 'Waves', 'Transverse waves', 'Amplitude', 'Wavelength', 'Frequency']
+    },
+    {
+      section:'biosims',
+      group:'Disease and Microbes',
+      title:'Zombie Outbreak Model',
+      description:'Use a fictional outbreak model to explore how contact rate, infection rate, response rate, safe zones and removal affect the spread of an infection-like population system.',
+      path:'BioSims/Zombie/',
+      tags:['Biology', 'Disease modelling', 'Population model', 'Outbreak', 'Infection spread', 'Compartment model', 'Data']
+    },
+    {
+      section:'mathsims',
+      group:'Probability and Statistics',
+      title:'Galton Board Simulator',
+      description:'Drop balls through a Galton board to model random pathways, binomial distributions, variation, repeated trials and the emergence of a bell-shaped pattern.',
+      path:'Math/Galton/',
+      tags:['Maths', 'Probability', 'Statistics', 'Galton board', 'Binomial distribution', 'Randomness', 'Data']
+    },
+    {
+      section:'mathsims',
+      group:'Probability and Statistics',
+      title:'Lottery Probability Simulator',
+      description:'Model lottery-style random draws to compare combinations, odds, rare events and the difference between possible outcomes and likely outcomes.',
+      path:'Math/Lottery/',
+      tags:['Maths', 'Probability', 'Combinations', 'Randomness', 'Odds', 'Statistics']
     }
   ];
 
@@ -1132,6 +1229,7 @@
     chemsims:['Elements and Atomic Structure','Chemical Bonding','Chemical Equilibrium','Organic Chemistry'],
     earthsims:['Climate and Energy Balance','Energy and Sustainability','Earthquakes and Geology','Water and Climate'],
     physicssims:['Forces and Motion','Forces and Fields','Electricity','Electricity and Magnetism','Light and Waves','Nuclear and Atomic Physics'],
+    mathsims:['Probability and Statistics'],
     brainbreak:['Science Games','Reaction and Focus Games'],
     interestingsims:['Mathematical and Cross-topic Models']
   };
