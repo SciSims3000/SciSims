@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Car Motion and Ticker Tape Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --road:#4b5563;
+      --lane:#d9e1ea;
+      --tape:#fff7d6;
+      --tape-line:#d7c987;
+      --dot:#0f172a;
+      --timer:#dc2626;
+      --carA:#e53935;
+      --carB:#1e88e5;
+      --measure:#0f766e;
+      --ghost:rgba(120,120,120,0.28);
+      --group:#2563eb;
+      --group5:#8b5cf6;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:370px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    input,
+    select,
+    button{
+      font:inherit;
+    }
+
+    input[type="number"],
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    input:disabled{
+      background:#e2e8f0;
+      color:#64748b;
+      cursor:not-allowed;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .field-block + .field-block,
+    .number-grid + .field-block,
+    .field-block + .number-grid{
+      margin-top:12px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    .car-card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#ffffff;
+      margin-top:14px;
+    }
+
+    .car-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .car-header h3{
+      margin:0;
+    }
+
+    .status-pill{
+      border-radius:999px;
+      padding:7px 10px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:900;
+      font-size:0.88rem;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+      cursor:crosshair;
+    }
+
+    .info-row,
+    .measure-box{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:750;
+    }
+
+    .info-chip{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 10px;
+      background:#f8fafc;
+    }
+
+    .info-chip.warn{
+      background:#fff7ed;
+      border-color:#fed7aa;
+      color:#92400e;
+    }
+
+    .measure-box{
+      min-height:24px;
+      color:#0f766e;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.25rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .hidden{ display:none; }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .number-grid,
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Car Motion and Ticker Tape Simulator</h1>
+      <p>Model car motion and generate matching ticker-timer tape. Compare constant speed, acceleration, braking, delayed starts and two-car motion using measurable dot patterns.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Motion</span>
+        <span class="pill">Speed</span>
+        <span class="pill">Acceleration</span>
+        <span class="pill">Ticker tape</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how car motion can be represented using both a moving object and ticker-timer dot spacing.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can compare dot spacing patterns, use two-dot measurements to calculate average speed, and explain how acceleration changes ticker-tape evidence.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Car motion and ticker tape simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Run controls</p>
+
+          <div class="button-row">
+            <button id="startBtn" type="button">Start</button>
+            <button id="pauseBtn" class="ghost" type="button">Pause</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+            <button id="csvBtn" class="ghost" type="button">Export CSV</button>
+          </div>
+
+          <div class="button-row">
+            <button id="stepDotBtn" class="ghost" type="button">Step +1 dot</button>
+            <button id="step5Btn" class="ghost" type="button">Step +5 dots</button>
+            <button id="step10Btn" class="ghost" type="button">Step +10 dots</button>
+            <button id="stepTimeBtn" class="ghost" type="button">Step +0.10 s</button>
+          </div>
+
+          <div class="button-row">
+            <button id="quickConstantBtn" class="ghost" type="button">Constant speed</button>
+            <button id="quickSpeedUpBtn" class="ghost" type="button">Speeding up</button>
+            <button id="quickSlowDownBtn" class="ghost" type="button">Slowing down</button>
+            <button id="quickDelayBtn" class="ghost" type="button">Delayed start</button>
+            <button id="quickRaceBtn" class="ghost" type="button">Two-car race</button>
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="twoCarToggle"> Second car</label>
+            <label class="toggle-label"><input type="checkbox" id="previewToggle" checked> Motion preview</label>
+            <label class="toggle-label"><input type="checkbox" id="ghostToggle"> Ghost previous run</label>
+            <label class="toggle-label"><input type="checkbox" id="measureToggle"> Measurement mode</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Display controls</p>
+
+          <div class="field-block">
+            <label for="viewMode">View mode</label>
+            <select id="viewMode">
+              <option value="both" selected>Car and ticker tape</option>
+              <option value="car">Car only</option>
+              <option value="tape">Ticker tape only</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="groupMode">Grouping</label>
+              <select id="groupMode">
+                <option value="0">No groups</option>
+                <option value="5" selected>5-gap groups</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="freqSelect">Frequency</label>
+              <select id="freqSelect">
+                <option value="10">10 Hz</option>
+                <option value="50" selected>50 Hz</option>
+                <option value="100">100 Hz</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <label for="scaleRange">Zoom scale</label>
+            <div class="slider-readout">
+              <span>Zoomed out</span>
+              <strong id="scaleLabel">9 px/cm</strong>
+              <span>Zoomed in</span>
+            </div>
+            <input type="range" id="scaleRange" min="3" max="22" step="1" value="9">
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="autoFitToggle" checked> Auto fit view</label>
+            <label class="toggle-label"><input type="checkbox" id="rulerToggle" checked> Ruler</label>
+            <label class="toggle-label"><input type="checkbox" id="timerToggle" checked> Ticker timer</label>
+            <label class="toggle-label"><input type="checkbox" id="tapeToggle" checked> Tape</label>
+            <label class="toggle-label"><input type="checkbox" id="numberToggle"> Number dots</label>
+            <label class="toggle-label"><input type="checkbox" id="quick5Toggle"> Extra 5-gap guides</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Car A</p>
+
+          <div class="field-block">
+            <label for="aPreset">Preset</label>
+            <select id="aPreset">
+              <option value="custom">Custom</option>
+              <option value="stationary">Stationary</option>
+              <option value="constant">Constant speed</option>
+              <option value="accelerating" selected>Accelerating</option>
+              <option value="braking">Braking</option>
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="aMode">Motion type</label>
+            <select id="aMode">
+              <option value="constant">Constant speed</option>
+              <option value="accelerating" selected>Accelerating or braking</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="aSpeed">Initial speed</label>
+              <input type="number" id="aSpeed" min="0" max="400" step="1" value="25">
+            </div>
+
+            <div>
+              <label for="aAccel">Acceleration</label>
+              <input type="number" id="aAccel" min="-200" max="200" step="1" value="20">
+            </div>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="aDelay">Start delay</label>
+              <input type="number" id="aDelay" min="0" max="10" step="0.1" value="0">
+            </div>
+
+            <div>
+              <label for="aLength">Run time</label>
+              <input type="number" id="aLength" min="1" max="20" step="0.5" value="6">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group hidden" id="carBControls">
+          <p class="control-heading">Car B</p>
+
+          <div class="field-block">
+            <label for="bPreset">Preset</label>
+            <select id="bPreset">
+              <option value="custom">Custom</option>
+              <option value="stationary">Stationary</option>
+              <option value="constant" selected>Constant speed</option>
+              <option value="accelerating">Accelerating</option>
+              <option value="braking">Braking</option>
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="bMode">Motion type</label>
+            <select id="bMode">
+              <option value="constant" selected>Constant speed</option>
+              <option value="accelerating">Accelerating or braking</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="bSpeed">Initial speed</label>
+              <input type="number" id="bSpeed" min="0" max="400" step="1" value="40">
+            </div>
+
+            <div>
+              <label for="bAccel">Acceleration</label>
+              <input type="number" id="bAccel" min="-200" max="200" step="1" value="0">
+            </div>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="bDelay">Start delay</label>
+              <input type="number" id="bDelay" min="0" max="10" step="0.1" value="0">
+            </div>
+
+            <div>
+              <label for="bLength">Run time</label>
+              <input type="number" id="bLength" min="1" max="20" step="0.5" value="6">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Units</h3>
+          <p>Speed is measured in cm/s. Acceleration is measured in cm/s². At 50 Hz, the ticker timer makes one dot every 0.02 s. A 5-gap group takes 0.10 s.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Car and ticker tape model">
+        <h2>Car and ticker-tape model</h2>
+        <p>The car and ticker tape show the same motion in two ways. Wider dot spacing means the car was moving faster. Use measurement mode to click two dots and calculate average speed.</p>
+
+        <div class="results" aria-label="Ticker timer key values">
+          <div class="metric">
+            <div class="label">Global time</div>
+            <div class="value" id="globalTimeLabel">0.00 s</div>
+            <div class="small">Current simulation time</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Ticker frequency</div>
+            <div class="value" id="freqOut">50 Hz</div>
+            <div class="small">Dots made per second</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Dot interval</div>
+            <div class="value" id="dotIntervalOut">0.02 s</div>
+            <div class="small">Time between adjacent dots</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Active cars</div>
+            <div class="value" id="activeCarsOut">1</div>
+            <div class="small">Shared scale is used when two cars are active</div>
+          </div>
+        </div>
+
+        <div class="car-card">
+          <div class="car-header">
+            <h3>Car A</h3>
+            <span class="status-pill" id="aStatus">Ready</span>
+          </div>
+
+          <canvas id="canvasA" width="1100" height="360" aria-label="Car A motion and ticker tape"></canvas>
+          <div class="info-row" id="aInfo"></div>
+          <div class="measure-box" id="aMeasure"></div>
+        </div>
+
+        <div class="car-card hidden" id="rowB">
+          <div class="car-header">
+            <h3>Car B</h3>
+            <span class="status-pill" id="bStatus">Ready</span>
+          </div>
+
+          <canvas id="canvasB" width="1100" height="360" aria-label="Car B motion and ticker tape"></canvas>
+          <div class="info-row" id="bInfo"></div>
+          <div class="measure-box" id="bMeasure"></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Run a constant-speed car. Describe the ticker tape pattern.</li>
+          <li>Run an accelerating car. How does the spacing between dots change?</li>
+          <li>Use measurement mode to select two dots and calculate average speed.</li>
+          <li>Turn on the second car and compare a delayed start with a faster constant-speed car.</li>
+          <li>Use ghost previous run to compare before-and-after changes to acceleration.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim links object motion, ticker tape evidence and quantitative measurement. It works well before or after a practical investigation using real ticker timers or video analysis.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: How can you tell from the dots that the car is accelerating?</li>
+          <li>Good prompt: Why is average speed calculated using distance divided by time?</li>
+          <li>Extension: Ask students to export the data and graph position against time.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+
+        <p>
+          The sim calculates position and speed from initial speed, acceleration and time.
+          If braking would make the speed negative, the car stops instead of reversing.
+        </p>
+
+        <div class="equation-box">Ticker timer frequency:
+f = 50 Hz by default
+
+Dot interval:
+Δt = 1 ÷ f
+At 50 Hz, Δt = 0.02 s
+
+Position while moving:
+x = ut + ½at²
+
+Speed while moving:
+v = u + at
+
+If acceleration is negative:
+stop time = u ÷ |a|
+
+After stop time:
+v = 0
+x = stopping distance
+
+Average speed from two dots:
+average speed = distance between dots ÷ time between dots
+
+5-gap group:
+5 × 0.02 s = 0.10 s at 50 Hz</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Equal spacing</strong> means the car moves the same distance in each time interval.</li>
+          <li><strong>Increasing spacing</strong> means the car is speeding up.</li>
+          <li><strong>Decreasing spacing</strong> means the car is slowing down.</li>
+          <li><strong>Repeated dots at the same place</strong> show the car has stopped.</li>
+          <li><strong>Measurement mode</strong> lets students calculate average speed directly from ticker tape evidence.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initCarTickerSim(){
+      const PRESETS = {
+        stationary:{ mode:"constant", speed:0, accel:0 },
+        constant:{ mode:"constant", speed:35, accel:0 },
+        accelerating:{ mode:"accelerating", speed:25, accel:20 },
+        braking:{ mode:"accelerating", speed:60, accel:-15 }
+      };
+
+      const $ = function(id){ return document.getElementById(id); };
+
+      const simState = {
+        running:false,
+        globalTime:0,
+        lastTimestamp:null
+      };
+
+      window.simState = simState;
+
+      let simA;
+      let simB;
+
+      function clamp(value, min, max){
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function fmt(value, places){
+        return Number(value).toFixed(places);
+      }
+
+      function chip(label, value, warn){
+        return '<span class="info-chip' + (warn ? ' warn' : '') + '">' + label + ': <strong>' + value + '</strong></span>';
+      }
+
+      function getFrequency(){
+        return Number($("freqSelect").value);
+      }
+
+      function getDotInterval(){
+        return 1 / getFrequency();
+      }
+
+      function getRequestedScale(){
+        return Number($("scaleRange").value);
+      }
+
+      function settingNumber(id, min, max, fallback){
+        const raw = Number($(id).value);
+
+        if(!Number.isFinite(raw)){
+          return fallback;
+        }
+
+        return clamp(raw, min, max);
+      }
+
+      function settingsA(){
+        return {
+          mode:$("aMode").value,
+          speed:settingNumber("aSpeed", 0, 400, 25),
+          accel:settingNumber("aAccel", -200, 200, 20),
+          delay:settingNumber("aDelay", 0, 10, 0),
+          length:settingNumber("aLength", 1, 20, 6)
+        };
+      }
+
+      function settingsB(){
+        return {
+          mode:$("bMode").value,
+          speed:settingNumber("bSpeed", 0, 400, 40),
+          accel:settingNumber("bAccel", -200, 200, 0),
+          delay:settingNumber("bDelay", 0, 10, 0),
+          length:settingNumber("bLength", 1, 20, 6)
+        };
+      }
+
+      function sharedScaleFor(sim){
+        const requested = getRequestedScale();
+
+        if(!$("autoFitToggle").checked){
+          return requested;
+        }
+
+        const leftPad = 82;
+        const rightPad = 28;
+        const usable = sim.canvas.width - leftPad - rightPad;
+
+        let maxX = sim.maxDistance();
+
+        if($("twoCarToggle").checked && simA && simB){
+          maxX = Math.max(simA.maxDistance(), simB.maxDistance());
+        }
+
+        maxX = Math.max(1, maxX);
+
+        const fitScale = (usable - 40) / maxX;
+        return Math.max(0.4, Math.min(requested, fitScale));
+      }
+
+      class CarSim{
+        constructor(opts){
+          this.name = opts.name;
+          this.canvas = opts.canvas;
+          this.ctx = this.canvas.getContext("2d");
+          this.statusEl = opts.statusEl;
+          this.infoEl = opts.infoEl;
+          this.measureEl = opts.measureEl;
+          this.colour = opts.colour;
+          this.getSettings = opts.getSettings;
+
+          this.ghostDots = [];
+          this.measureSelection = [];
+          this.renderedDots = [];
+
+          this.canvas.addEventListener("click", (event) => this.handleCanvasClick(event));
+          this.updateMeasurementText();
+        }
+
+        get settings(){
+          return this.getSettings();
+        }
+
+        localTime(globalTime){
+          return globalTime - this.settings.delay;
+        }
+
+        getMaxEndTime(){
+          const s = this.settings;
+          return s.delay + s.length;
+        }
+
+        acceleration(){
+          const s = this.settings;
+          return s.mode === "accelerating" ? s.accel : 0;
+        }
+
+        stopTime(){
+          const s = this.settings;
+          const a = this.acceleration();
+
+          if(a < 0 && s.speed > 0){
+            return s.speed / Math.abs(a);
+          }
+
+          if(s.speed === 0 && a <= 0){
+            return 0;
+          }
+
+          return Infinity;
+        }
+
+        stoppingDistance(){
+          const s = this.settings;
+          const a = this.acceleration();
+          const tStop = this.stopTime();
+
+          if(!Number.isFinite(tStop)){
+            return Infinity;
+          }
+
+          return Math.max(0, s.speed * tStop + 0.5 * a * tStop * tStop);
+        }
+
+        positionAtLocalTime(t){
+          const s = this.settings;
+          const a = this.acceleration();
+
+          if(t <= 0){
+            return 0;
+          }
+
+          const tStop = this.stopTime();
+
+          if(Number.isFinite(tStop) && t >= tStop){
+            return Math.max(0, this.stoppingDistance());
+          }
+
+          return Math.max(0, s.speed * t + 0.5 * a * t * t);
+        }
+
+        speedAtLocalTime(t){
+          const s = this.settings;
+          const a = this.acceleration();
+
+          if(t < 0){
+            return 0;
+          }
+
+          const tStop = this.stopTime();
+
+          if(Number.isFinite(tStop) && t >= tStop){
+            return 0;
+          }
+
+          return Math.max(0, s.speed + a * t);
+        }
+
+        maxDistance(){
+          const s = this.settings;
+          const endDistance = this.positionAtLocalTime(s.length);
+          const stopDistance = this.stoppingDistance();
+
+          if(Number.isFinite(stopDistance)){
+            return Math.max(endDistance, stopDistance);
+          }
+
+          return endDistance;
+        }
+
+        effectiveScale(){
+          return sharedScaleFor(this);
+        }
+
+        getDots(globalTime){
+          const s = this.settings;
+          const dots = [];
+          const dt = getDotInterval();
+
+          if(globalTime < s.delay){
+            return dots;
+          }
+
+          const effectiveLocal = Math.min(globalTime - s.delay, s.length);
+          const count = Math.floor(effectiveLocal / dt) + 1;
+
+          for(let i = 0; i < count; i++){
+            const tLocal = i * dt;
+
+            if(tLocal > s.length + 1e-9){
+              break;
+            }
+
+            dots.push({
+              index:i,
+              tLocal:tLocal,
+              tGlobal:s.delay + tLocal,
+              xCm:this.positionAtLocalTime(tLocal),
+              vCms:this.speedAtLocalTime(tLocal)
+            });
+          }
+
+          return dots;
+        }
+
+        saveGhost(globalTime){
+          this.ghostDots = this.getDots(globalTime);
+        }
+
+        clearMeasurement(){
+          this.measureSelection = [];
+          this.updateMeasurementText();
+        }
+
+        handleCanvasClick(event){
+          if(!$("measureToggle").checked){
+            return;
+          }
+
+          if(this.renderedDots.length === 0){
+            return;
+          }
+
+          const rect = this.canvas.getBoundingClientRect();
+          const x = (event.clientX - rect.left) * (this.canvas.width / rect.width);
+          const y = (event.clientY - rect.top) * (this.canvas.height / rect.height);
+
+          let best = null;
+          let bestDist = Infinity;
+
+          for(const dot of this.renderedDots){
+            const dx = dot.px - x;
+            const dy = dot.py - y;
+            const dist = Math.hypot(dx, dy);
+
+            if(dist < bestDist){
+              bestDist = dist;
+              best = dot;
+            }
+          }
+
+          if(!best || bestDist > 20){
+            return;
+          }
+
+          if(this.measureSelection.length >= 2){
+            this.measureSelection = [];
+          }
+
+          this.measureSelection.push({
+            index:best.index,
+            tLocal:best.tLocal,
+            xCm:best.xCm
+          });
+
+          this.updateMeasurementText();
+          this.draw(simState.globalTime);
+        }
+
+        updateMeasurementText(){
+          if(this.measureSelection.length === 0){
+            this.measureEl.innerHTML = '<span>Measurement: turn on measurement mode, then click two dots.</span>';
+            return;
+          }
+
+          if(this.measureSelection.length === 1){
+            const d = this.measureSelection[0];
+            this.measureEl.innerHTML =
+              '<span>Measurement: selected dot ' + d.index + '</span>' +
+              '<span>Time = <strong>' + fmt(d.tLocal, 2) + ' s</strong></span>' +
+              '<span>Position = <strong>' + fmt(d.xCm, 2) + ' cm</strong></span>';
+            return;
+          }
+
+          const pair = this.measureSelection.slice().sort(function(a, b){
+            return a.index - b.index;
+          });
+
+          const d1 = pair[0];
+          const d2 = pair[1];
+          const dx = d2.xCm - d1.xCm;
+          const dt = d2.tLocal - d1.tLocal;
+          const vAvg = dt > 0 ? dx / dt : 0;
+
+          this.measureEl.innerHTML =
+            '<span>Measurement: dots ' + d1.index + ' to ' + d2.index + '</span>' +
+            '<span>Δx = <strong>' + fmt(dx, 2) + ' cm</strong></span>' +
+            '<span>Δt = <strong>' + fmt(dt, 3) + ' s</strong></span>' +
+            '<span>Average speed = <strong>' + fmt(vAvg, 2) + ' cm/s</strong></span>';
+        }
+
+        updateInfo(globalTime){
+          const s = this.settings;
+          const local = this.localTime(globalTime);
+          const activeLocal = clamp(local, 0, s.length);
+          const dots = this.getDots(globalTime);
+          const position = this.positionAtLocalTime(activeLocal);
+          const speed = this.speedAtLocalTime(activeLocal);
+          const tStop = this.stopTime();
+          const scale = this.effectiveScale();
+          const autoFitChanged = $("autoFitToggle").checked && scale < getRequestedScale();
+
+          let status = "Ready";
+
+          if(globalTime > 0 && globalTime < s.delay){
+            status = "Waiting";
+          }
+
+          if(globalTime >= s.delay && globalTime < s.delay + s.length){
+            status = simState.running ? "Running" : "Paused";
+          }
+
+          if(Number.isFinite(tStop) && local >= tStop && local < s.length && globalTime >= s.delay){
+            status = "Stopped";
+          }
+
+          if(globalTime >= s.delay + s.length){
+            status = "Finished";
+          }
+
+          this.statusEl.textContent = status;
+
+          let info =
+            chip("Dots", dots.length) +
+            chip("Elapsed for car", fmt(activeLocal, 2) + " s") +
+            chip("Current speed", fmt(speed, 1) + " cm/s") +
+            chip("Distance", fmt(position, 2) + " cm") +
+            chip("Delay", fmt(s.delay, 1) + " s") +
+            chip("Scale", fmt(scale, 2) + " px/cm", autoFitChanged);
+
+          if($("twoCarToggle").checked && $("autoFitToggle").checked){
+            info += chip("Scale mode", "shared between cars");
+          }
+
+          if(Number.isFinite(tStop) && tStop <= s.length){
+            info += chip("Stops", fmt(tStop, 2) + " s", true);
+          }
+
+          this.infoEl.innerHTML = info;
+        }
+
+        draw(globalTime){
+          const ctx = this.ctx;
+          const w = this.canvas.width;
+          const h = this.canvas.height;
+
+          ctx.clearRect(0, 0, w, h);
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+
+          const scale = this.effectiveScale();
+          const leftPad = 82;
+          const rightPad = 28;
+          const roadY = 50;
+          const roadH = 78;
+          const rulerY = 192;
+          const tapeTop = 224;
+          const tapeH = 62;
+          const dotY = tapeTop + tapeH / 2;
+
+          const viewMode = $("viewMode").value;
+          const showCar = viewMode === "both" || viewMode === "car";
+          const showTape = viewMode === "tape" || ($("tapeToggle").checked && viewMode === "both");
+          const showTimer = $("timerToggle").checked && showTape;
+          const showRuler = $("rulerToggle").checked;
+          const showPreview = $("previewToggle").checked;
+          const showGhost = $("ghostToggle").checked;
+          const showNumbers = $("numberToggle").checked;
+          const groupMode = Number($("groupMode").value);
+          const quick5 = $("quick5Toggle").checked;
+          const measureMode = $("measureToggle").checked;
+
+          ctx.fillStyle = "#f8fafc";
+          ctx.fillRect(0, 0, w, h);
+
+          if(showCar){
+            ctx.fillStyle = "#4b5563";
+            ctx.fillRect(leftPad, roadY, w - leftPad - rightPad, roadH);
+
+            ctx.strokeStyle = "#d9e1ea";
+            ctx.lineWidth = 3;
+
+            for(let x = leftPad + 12; x < w - rightPad - 20; x += 46){
+              ctx.beginPath();
+              ctx.moveTo(x, roadY + roadH / 2);
+              ctx.lineTo(x + 22, roadY + roadH / 2);
+              ctx.stroke();
+            }
+
+            ctx.fillStyle = "#475569";
+            ctx.font = "800 13px system-ui, sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("Road motion", leftPad, 28);
+          }
+
+          if(showRuler){
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 1.5;
+
+            ctx.beginPath();
+            ctx.moveTo(leftPad, rulerY);
+            ctx.lineTo(w - rightPad, rulerY);
+            ctx.stroke();
+
+            const usable = w - leftPad - rightPad;
+            const maxCm = Math.floor(usable / scale);
+
+            let tickStep = 1;
+            let labelStep = 5;
+
+            if(scale < 6){
+              tickStep = 5;
+              labelStep = 10;
+            }
+
+            if(scale < 2.5){
+              tickStep = 10;
+              labelStep = 20;
+            }
+
+            for(let cm = 0; cm <= maxCm; cm += tickStep){
+              const x = leftPad + cm * scale;
+              const major = cm % labelStep === 0;
+              const tick = major ? 13 : 7;
+
+              ctx.beginPath();
+              ctx.moveTo(x, rulerY);
+              ctx.lineTo(x, rulerY - tick);
+              ctx.stroke();
+
+              if(major){
+                ctx.fillStyle = "#64748b";
+                ctx.font = "700 12px system-ui, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(String(cm), x, rulerY - 18);
+              }
+            }
+
+            ctx.fillStyle = "#64748b";
+            ctx.font = "800 12px system-ui, sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText("cm", w - rightPad, rulerY - 18);
+          }
+
+          if(showTape){
+            ctx.fillStyle = "#fff7d6";
+            ctx.fillRect(leftPad, tapeTop, w - leftPad - rightPad, tapeH);
+
+            ctx.strokeStyle = "#d7c987";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(leftPad, tapeTop, w - leftPad - rightPad, tapeH);
+
+            ctx.fillStyle = "#475569";
+            ctx.font = "800 13px system-ui, sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("Ticker tape", 12, tapeTop + 38);
+
+            if(showTimer){
+              ctx.fillStyle = "#dc2626";
+              ctx.fillRect(leftPad - 8, tapeTop - 10, 16, tapeH + 20);
+
+              ctx.save();
+              ctx.translate(leftPad - 12, tapeTop + 50);
+              ctx.rotate(-Math.PI / 2);
+              ctx.fillStyle = "#ffffff";
+              ctx.font = "900 12px system-ui, sans-serif";
+              ctx.fillText("TIMER", 0, 0);
+              ctx.restore();
+            }
+          }
+
+          const dots = this.getDots(globalTime);
+          this.renderedDots = [];
+
+          if(showGhost && showTape && this.ghostDots.length > 0){
+            ctx.fillStyle = "rgba(120,120,120,0.28)";
+
+            for(const dot of this.ghostDots){
+              const px = leftPad + dot.xCm * scale;
+
+              if(px > w - rightPad + 8){
+                continue;
+              }
+
+              ctx.beginPath();
+              ctx.arc(px, dotY, 2.4, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
+          if(showTape){
+            for(let i = 0; i < dots.length; i++){
+              const dot = dots[i];
+              const px = leftPad + dot.xCm * scale;
+
+              if(px > w - rightPad + 8){
+                continue;
+              }
+
+              if(groupMode > 0 && i > 0 && i % groupMode === 0){
+                ctx.strokeStyle = "#2563eb";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([]);
+
+                ctx.beginPath();
+                ctx.moveTo(px - 4, tapeTop + 7);
+                ctx.lineTo(px - 4, tapeTop + tapeH - 7);
+                ctx.stroke();
+              }
+
+              if(quick5 && i > 0 && i % 5 === 0){
+                ctx.strokeStyle = "#8b5cf6";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 4]);
+
+                ctx.beginPath();
+                ctx.moveTo(px - 1, tapeTop + 5);
+                ctx.lineTo(px - 1, tapeTop + tapeH - 5);
+                ctx.stroke();
+                ctx.setLineDash([]);
+              }
+
+              ctx.beginPath();
+              ctx.fillStyle = "#0f172a";
+              ctx.arc(px, dotY, 3, 0, Math.PI * 2);
+              ctx.fill();
+
+              this.renderedDots.push({
+                index:dot.index,
+                tLocal:dot.tLocal,
+                tGlobal:dot.tGlobal,
+                xCm:dot.xCm,
+                vCms:dot.vCms,
+                px:px,
+                py:dotY
+              });
+
+              if(showNumbers){
+                ctx.fillStyle = "#64748b";
+                ctx.font = "10px system-ui, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(String(i), px, dotY - 11);
+              }
+            }
+          }
+
+          if(measureMode && this.measureSelection.length > 0 && showTape){
+            const selectedCurrentDots = [];
+
+            for(const selected of this.measureSelection){
+              const match = this.renderedDots.find(function(dot){
+                return dot.index === selected.index;
+              });
+
+              if(match){
+                selectedCurrentDots.push(match);
+              }
+            }
+
+            ctx.strokeStyle = "#0f766e";
+            ctx.fillStyle = "#0f766e";
+            ctx.lineWidth = 2;
+
+            selectedCurrentDots.forEach(function(dot){
+              ctx.beginPath();
+              ctx.arc(dot.px, dot.py, 8, 0, Math.PI * 2);
+              ctx.stroke();
+            });
+
+            if(selectedCurrentDots.length === 2){
+              ctx.beginPath();
+              ctx.moveTo(selectedCurrentDots[0].px, selectedCurrentDots[0].py);
+              ctx.lineTo(selectedCurrentDots[1].px, selectedCurrentDots[1].py);
+              ctx.stroke();
+            }
+          }
+
+          if(showCar){
+            const local = this.localTime(globalTime);
+            const activeLocal = clamp(local, 0, this.settings.length);
+            const previewXcm = this.positionAtLocalTime(activeLocal);
+            const carX = leftPad + previewXcm * scale;
+            const carY = roadY + roadH / 2 + 7;
+
+            if(showPreview && globalTime >= this.settings.delay && globalTime < this.settings.delay + this.settings.length){
+              ctx.beginPath();
+              ctx.fillStyle = "rgba(0,0,0,0.12)";
+              ctx.arc(carX, carY, 30, 0, Math.PI * 2);
+              ctx.fill();
+            }
+
+            ctx.save();
+            ctx.translate(carX, carY);
+
+            ctx.fillStyle = this.colour;
+
+            ctx.beginPath();
+            ctx.moveTo(-25, -14);
+            ctx.lineTo(10, -14);
+            ctx.lineTo(25, -6);
+            ctx.lineTo(25, 6);
+            ctx.lineTo(-25, 6);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(-8, -14);
+            ctx.lineTo(3, -29);
+            ctx.lineTo(15, -29);
+            ctx.lineTo(21, -14);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "#bfdbfe";
+            ctx.beginPath();
+            ctx.moveTo(1, -24);
+            ctx.lineTo(11, -24);
+            ctx.lineTo(16, -16);
+            ctx.lineTo(4, -16);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "#111827";
+            ctx.beginPath();
+            ctx.arc(-11, 10, 6, 0, Math.PI * 2);
+            ctx.arc(14, 10, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+          }
+
+          ctx.fillStyle = "#64748b";
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.textAlign = "left";
+
+          const dt = getDotInterval();
+          ctx.fillText("Dot interval = " + fmt(dt, 3) + " s", leftPad, 326);
+          ctx.fillText("Ticker frequency = " + getFrequency() + " Hz", leftPad + 170, 326);
+
+          if(viewMode === "car"){
+            ctx.fillText("View: car only", leftPad + 360, 326);
+          }
+
+          if(viewMode === "tape"){
+            ctx.fillText("View: tape only", leftPad + 360, 326);
+          }
+
+          if(viewMode === "both"){
+            ctx.fillText("View: car and tape", leftPad + 360, 326);
+          }
+
+          if(quick5 && showTape){
+            ctx.fillStyle = "#8b5cf6";
+            ctx.fillText("Extra 5-gap guides on", leftPad + 510, 326);
+          }
+
+          if($("autoFitToggle").checked && scale < getRequestedScale()){
+            ctx.fillStyle = "#b45309";
+            ctx.fillText("Auto fit has reduced the display scale.", leftPad + 690, 326);
+          }
+        }
+      }
+
+      simA = new CarSim({
+        name:"A",
+        canvas:$("canvasA"),
+        statusEl:$("aStatus"),
+        infoEl:$("aInfo"),
+        measureEl:$("aMeasure"),
+        colour:"#e53935",
+        getSettings:settingsA
+      });
+
+      simB = new CarSim({
+        name:"B",
+        canvas:$("canvasB"),
+        statusEl:$("bStatus"),
+        infoEl:$("bInfo"),
+        measureEl:$("bMeasure"),
+        colour:"#1e88e5",
+        getSettings:settingsB
+      });
+
+      function clearAllMeasurements(){
+        simA.clearMeasurement();
+        simB.clearMeasurement();
+      }
+
+      function saveCurrentGhost(){
+        simA.saveGhost(simState.globalTime);
+        simB.saveGhost(simState.globalTime);
+      }
+
+      function updateScaleLabel(){
+        $("scaleLabel").textContent = getRequestedScale() + " px/cm";
+      }
+
+      function updateStepLabels(){
+        const dt = getDotInterval();
+        $("stepDotBtn").textContent = "Step +1 dot (" + fmt(dt, 2) + " s)";
+        $("step5Btn").textContent = "Step +5 dots (" + fmt(5 * dt, 2) + " s)";
+        $("step10Btn").textContent = "Step +10 dots (" + fmt(10 * dt, 2) + " s)";
+      }
+
+      function maxEndTime(){
+        const times = [simA.getMaxEndTime()];
+
+        if($("twoCarToggle").checked){
+          times.push(simB.getMaxEndTime());
+        }
+
+        return Math.max.apply(null, times);
+      }
+
+      function updateModeInputs(){
+        $("aAccel").disabled = $("aMode").value === "constant";
+        $("bAccel").disabled = $("bMode").value === "constant";
+      }
+
+      function enforceViewLogic(){
+        if($("viewMode").value === "tape"){
+          $("tapeToggle").checked = true;
+          $("tapeToggle").disabled = true;
+        }else{
+          $("tapeToggle").disabled = false;
+        }
+      }
+
+      function refreshAll(){
+        enforceViewLogic();
+        updateScaleLabel();
+        updateStepLabels();
+        updateModeInputs();
+
+        $("globalTimeLabel").textContent = fmt(simState.globalTime, 2) + " s";
+        $("freqOut").textContent = getFrequency() + " Hz";
+        $("dotIntervalOut").textContent = fmt(getDotInterval(), 3) + " s";
+        $("activeCarsOut").textContent = $("twoCarToggle").checked ? "2" : "1";
+
+        $("rowB").classList.toggle("hidden", !$("twoCarToggle").checked);
+        $("carBControls").classList.toggle("hidden", !$("twoCarToggle").checked);
+
+        simA.updateInfo(simState.globalTime);
+        simA.draw(simState.globalTime);
+
+        if($("twoCarToggle").checked){
+          simB.updateInfo(simState.globalTime);
+          simB.draw(simState.globalTime);
+        }else{
+          simB.clearMeasurement();
+        }
+      }
+
+      function pauseSimulation(){
+        simState.running = false;
+        simState.lastTimestamp = null;
+        refreshAll();
+      }
+
+      function resetSimulation(saveGhost){
+        if(saveGhost !== false){
+          saveCurrentGhost();
+        }
+
+        simState.running = false;
+        simState.globalTime = 0;
+        simState.lastTimestamp = null;
+        clearAllMeasurements();
+        refreshAll();
+      }
+
+      function startSimulation(){
+        simState.running = true;
+        refreshAll();
+      }
+
+      function stepBy(seconds){
+        pauseSimulation();
+        simState.globalTime = Math.min(simState.globalTime + seconds, maxEndTime());
+        refreshAll();
+      }
+
+      function stepByDots(dotCount){
+        stepBy(dotCount * getDotInterval());
+      }
+
+      function animationLoop(timestamp){
+        if(simState.running){
+          if(simState.lastTimestamp === null){
+            simState.lastTimestamp = timestamp;
+          }
+
+          const dt = Math.min((timestamp - simState.lastTimestamp) / 1000, 0.05);
+          simState.lastTimestamp = timestamp;
+          simState.globalTime = Math.min(simState.globalTime + dt, maxEndTime());
+
+          if(simState.globalTime >= maxEndTime()){
+            simState.running = false;
+            simState.lastTimestamp = null;
+          }
+
+          refreshAll();
+        }else{
+          simState.lastTimestamp = null;
+        }
+
+        requestAnimationFrame(animationLoop);
+      }
+
+      function applyPreset(prefix){
+        const preset = $(prefix + "Preset").value;
+
+        if(preset === "custom"){
+          return;
+        }
+
+        saveCurrentGhost();
+
+        const values = PRESETS[preset];
+        $(prefix + "Mode").value = values.mode;
+        $(prefix + "Speed").value = values.speed;
+        $(prefix + "Accel").value = values.accel;
+
+        simState.running = false;
+        simState.globalTime = 0;
+        simState.lastTimestamp = null;
+        clearAllMeasurements();
+        refreshAll();
+      }
+
+      function setCar(prefix, mode, speed, accel, delay, length, preset){
+        $(prefix + "Preset").value = preset || "custom";
+        $(prefix + "Mode").value = mode;
+        $(prefix + "Speed").value = speed;
+        $(prefix + "Accel").value = accel;
+        $(prefix + "Delay").value = delay;
+        $(prefix + "Length").value = length;
+      }
+
+      function applyQuickPreset(kind){
+        saveCurrentGhost();
+
+        if(kind === "constant"){
+          $("twoCarToggle").checked = false;
+          setCar("a", "constant", 35, 0, 0, 6, "constant");
+        }
+
+        if(kind === "speedup"){
+          $("twoCarToggle").checked = false;
+          setCar("a", "accelerating", 15, 25, 0, 6, "accelerating");
+        }
+
+        if(kind === "slowdown"){
+          $("twoCarToggle").checked = false;
+          setCar("a", "accelerating", 80, -20, 0, 6, "braking");
+        }
+
+        if(kind === "delay"){
+          $("twoCarToggle").checked = true;
+          setCar("a", "constant", 55, 0, 1.2, 6, "custom");
+          setCar("b", "constant", 35, 0, 0, 6, "custom");
+        }
+
+        if(kind === "race"){
+          $("twoCarToggle").checked = true;
+          setCar("a", "accelerating", 10, 28, 0, 6, "custom");
+          setCar("b", "constant", 45, 0, 0, 6, "constant");
+        }
+
+        simState.running = false;
+        simState.globalTime = 0;
+        simState.lastTimestamp = null;
+        clearAllMeasurements();
+        refreshAll();
+      }
+
+      function exportCSV(){
+        const includeB = $("twoCarToggle").checked;
+        const dotsA = simA.getDots(simState.globalTime);
+        const dotsB = includeB ? simB.getDots(simState.globalTime) : [];
+        const maxDots = Math.max(dotsA.length, dotsB.length);
+        const rows = [];
+
+        if(includeB){
+          rows.push(["dot_index","time_s","carA_x_cm","carA_v_cm_s","carB_x_cm","carB_v_cm_s"]);
+        }else{
+          rows.push(["dot_index","time_s","carA_x_cm","carA_v_cm_s"]);
+        }
+
+        for(let i = 0; i < maxDots; i++){
+          const a = dotsA[i];
+          const b = dotsB[i];
+          const t = a ? a.tLocal : b ? b.tLocal : i * getDotInterval();
+
+          if(includeB){
+            rows.push([
+              i,
+              t.toFixed(3),
+              a ? a.xCm.toFixed(4) : "",
+              a ? a.vCms.toFixed(4) : "",
+              b ? b.xCm.toFixed(4) : "",
+              b ? b.vCms.toFixed(4) : ""
+            ]);
+          }else{
+            rows.push([
+              i,
+              t.toFixed(3),
+              a ? a.xCm.toFixed(4) : "",
+              a ? a.vCms.toFixed(4) : ""
+            ]);
+          }
+        }
+
+        const csv = rows.map(function(row){
+          return row.join(",");
+        }).join("\n");
+
+        const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, "0");
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const yyyy = now.getFullYear();
+
+        link.href = url;
+        link.download = "car_ticker_tape_data_" + dd + "-" + mm + "-" + yyyy + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      $("startBtn").addEventListener("click", startSimulation);
+      $("pauseBtn").addEventListener("click", pauseSimulation);
+      $("resetBtn").addEventListener("click", function(){ resetSimulation(true); });
+      $("csvBtn").addEventListener("click", exportCSV);
+
+      $("stepDotBtn").addEventListener("click", function(){ stepByDots(1); });
+      $("step5Btn").addEventListener("click", function(){ stepByDots(5); });
+      $("step10Btn").addEventListener("click", function(){ stepByDots(10); });
+      $("stepTimeBtn").addEventListener("click", function(){ stepBy(0.1); });
+
+      $("quickConstantBtn").addEventListener("click", function(){ applyQuickPreset("constant"); });
+      $("quickSpeedUpBtn").addEventListener("click", function(){ applyQuickPreset("speedup"); });
+      $("quickSlowDownBtn").addEventListener("click", function(){ applyQuickPreset("slowdown"); });
+      $("quickDelayBtn").addEventListener("click", function(){ applyQuickPreset("delay"); });
+      $("quickRaceBtn").addEventListener("click", function(){ applyQuickPreset("race"); });
+
+      $("aPreset").addEventListener("change", function(){ applyPreset("a"); });
+      $("bPreset").addEventListener("change", function(){ applyPreset("b"); });
+
+      const motionSettingIds = new Set([
+        "aMode",
+        "aSpeed",
+        "aAccel",
+        "aDelay",
+        "aLength",
+        "bMode",
+        "bSpeed",
+        "bAccel",
+        "bDelay",
+        "bLength",
+        "freqSelect"
+      ]);
+
+      [
+        "twoCarToggle",
+        "previewToggle",
+        "rulerToggle",
+        "timerToggle",
+        "tapeToggle",
+        "ghostToggle",
+        "numberToggle",
+        "measureToggle",
+        "quick5Toggle",
+        "autoFitToggle",
+        "viewMode",
+        "groupMode",
+        "freqSelect",
+        "scaleRange",
+        "aMode",
+        "aSpeed",
+        "aAccel",
+        "aDelay",
+        "aLength",
+        "bMode",
+        "bSpeed",
+        "bAccel",
+        "bDelay",
+        "bLength"
+      ].forEach(function(id){
+        $(id).addEventListener("input", function(){
+          if(motionSettingIds.has(id)){
+            clearAllMeasurements();
+          }
+
+          if(id === "measureToggle" && !$("measureToggle").checked){
+            clearAllMeasurements();
+          }
+
+          if(id === "twoCarToggle"){
+            clearAllMeasurements();
+          }
+
+          refreshAll();
+        });
+
+        $(id).addEventListener("change", function(){
+          if(motionSettingIds.has(id)){
+            clearAllMeasurements();
+          }
+
+          if(id === "measureToggle" && !$("measureToggle").checked){
+            clearAllMeasurements();
+          }
+
+          if(id === "twoCarToggle"){
+            clearAllMeasurements();
+          }
+
+          refreshAll();
+        });
+      });
+
+      window.addEventListener("keydown", function(event){
+        const active = document.activeElement;
+        const typing = active && (active.tagName === "INPUT" || active.tagName === "SELECT");
+
+        if(typing){
+          return;
+        }
+
+        if(event.code === "Space"){
+          event.preventDefault();
+
+          if(simState.running){
+            pauseSimulation();
+          }else{
+            startSimulation();
+          }
+        }
+
+        if(event.key.toLowerCase() === "r"){
+          resetSimulation(true);
+        }
+
+        if(event.key.toLowerCase() === "e"){
+          exportCSV();
+        }
+      });
+
+      simA.updateMeasurementText();
+      simB.updateMeasurementText();
+      refreshAll();
+      requestAnimationFrame(animationLoop);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initCarTickerSim);
+    }else{
+      initCarTickerSim();
+    }
+  </script>
+</body>
+</html>
