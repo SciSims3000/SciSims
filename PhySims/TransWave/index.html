@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Transverse Wave Simulation</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #14b8a6);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:880px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:340px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    .sub-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    button{
+      font:inherit;
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .toggle-label input{
+      accent-color:var(--button);
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:#2563eb;
+    }
+
+    .legend-dot.particle{ background:#0f172a; }
+    .legend-dot.vector{ background:#dc2626; }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.35rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .notes-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Transverse Wave Simulation</h1>
+      <p>Investigate how amplitude, wavelength, frequency and wave speed affect a transverse wave. Watch particles move up and down while the wave pattern travels sideways.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Waves</span>
+        <span class="pill">Transverse waves</span>
+        <span class="pill">Frequency</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand that a transverse wave transfers energy sideways while particles vibrate at right angles to the direction of travel.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can identify crests, troughs, amplitude and wavelength, and explain how changing wave properties affects the wave model.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Transverse wave simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Wave controls</p>
+
+          <div class="slider-block">
+            <label for="amp">Amplitude</label>
+            <div class="sub-label">
+              <span>Small</span>
+              <strong id="ampVal">60 units</strong>
+              <span>Large</span>
+            </div>
+            <input type="range" id="amp" min="10" max="120" value="60">
+          </div>
+
+          <div class="slider-block">
+            <label for="wave">Wavelength</label>
+            <div class="sub-label">
+              <span>Short</span>
+              <strong id="waveVal">180 units</strong>
+              <span>Long</span>
+            </div>
+            <input type="range" id="wave" min="80" max="320" value="180">
+          </div>
+
+          <div class="slider-block">
+            <label for="freq">Frequency</label>
+            <div class="sub-label">
+              <span>Low</span>
+              <strong id="freqVal">1.2 Hz</strong>
+              <span>High</span>
+            </div>
+            <input type="range" id="freq" min="2" max="30" value="12">
+          </div>
+
+          <div class="slider-block">
+            <label for="speed">Wave speed scale</label>
+            <div class="sub-label">
+              <span>Still</span>
+              <strong id="speedVal">1.0×</strong>
+              <span>Fast</span>
+            </div>
+            <input type="range" id="speed" min="0" max="300" value="100">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Animation controls</p>
+          <div class="button-row">
+            <button id="pauseBtn" type="button">Run wave</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Display options</p>
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+            <label class="toggle-label"><input type="checkbox" id="showVectors" checked> Particle motion</label>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>The particles move up and down, but the wave pattern travels sideways. This is the key feature of a transverse wave.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Wave model">
+        <h2>Wave model</h2>
+        <p>The screen shows a simplified transverse wave: <code>y = A sin(kx − ωt)</code></p>
+
+        <canvas id="canvas" width="1000" height="560" aria-label="Transverse wave model with particles"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot"></span>Blue line shows the wave pattern.</span>
+          <span class="legend-item"><span class="legend-dot particle"></span>Black dots show particles in the medium.</span>
+          <span class="legend-item"><span class="legend-dot vector"></span>Red arrows show particle vibration direction.</span>
+        </div>
+
+        <div class="results" aria-label="Current measurements">
+          <div class="metric">
+            <div class="label">Amplitude</div>
+            <div class="value" id="metricAmp">60</div>
+            <div class="small">Maximum displacement from rest position</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Wavelength</div>
+            <div class="value" id="metricWave">180</div>
+            <div class="small">Distance from crest to crest</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Frequency</div>
+            <div class="value" id="metricFreq">1.2 Hz</div>
+            <div class="small">Cycles per second</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Period</div>
+            <div class="value" id="metricPeriod">0.83 s</div>
+            <div class="small">Time for one full vibration</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Increase the amplitude. What changes about the wave, and what stays the same?</li>
+          <li>Increase the wavelength. How does the spacing between crests change?</li>
+          <li>Increase the frequency. What happens to the period?</li>
+          <li>Turn on particle motion and describe how the particles move compared with the direction of the wave.</li>
+          <li>Pause the wave and identify one crest, one trough, the amplitude and the wavelength.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim is useful for distinguishing wave motion from particle motion. Students often think particles travel along with the wave. The dots and arrows are designed to show that the particles vibrate up and down while the wave pattern moves horizontally.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: What evidence shows this is a transverse wave?</li>
+          <li>Good prompt: Which control changes the height of the wave?</li>
+          <li>Extension: Ask students to use <code>T = 1 ÷ f</code> to check the period readout.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initTransverseWaveSim(){
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const ampSlider = document.getElementById("amp");
+      const waveSlider = document.getElementById("wave");
+      const freqSlider = document.getElementById("freq");
+      const speedSlider = document.getElementById("speed");
+
+      const showLabels = document.getElementById("showLabels");
+      const showVectors = document.getElementById("showVectors");
+
+      const ampVal = document.getElementById("ampVal");
+      const waveVal = document.getElementById("waveVal");
+      const freqVal = document.getElementById("freqVal");
+      const speedVal = document.getElementById("speedVal");
+
+      const metricAmp = document.getElementById("metricAmp");
+      const metricWave = document.getElementById("metricWave");
+      const metricFreq = document.getElementById("metricFreq");
+      const metricPeriod = document.getElementById("metricPeriod");
+
+      const pauseBtn = document.getElementById("pauseBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      let amplitude = 60;
+      let wavelength = 180;
+      let frequency = 1.2;
+      let speedFactor = 1.0;
+
+      let running = false;
+      let startTime = null;
+      let freezeTime = 0;
+
+      const particleXs = [];
+      for(let x = 120; x <= 860; x += 80){
+        particleXs.push(x);
+      }
+
+      function midY(){
+        return canvas.height / 2;
+      }
+
+      function updateReadouts(){
+        const period = frequency > 0 ? 1 / frequency : 0;
+
+        ampVal.textContent = amplitude + " units";
+        waveVal.textContent = wavelength + " units";
+        freqVal.textContent = frequency.toFixed(1) + " Hz";
+        speedVal.textContent = speedFactor.toFixed(1) + "×";
+
+        metricAmp.textContent = amplitude;
+        metricWave.textContent = wavelength;
+        metricFreq.textContent = frequency.toFixed(1) + " Hz";
+        metricPeriod.textContent = period.toFixed(2) + " s";
+      }
+
+      function yAt(x, t){
+        const k = 2 * Math.PI / wavelength;
+        const omega = 2 * Math.PI * frequency * speedFactor;
+        return midY() + amplitude * Math.sin(k * x - omega * t);
+      }
+
+      function drawArrow(x1, y1, x2, y2, colour){
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const size = 9;
+
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - size * Math.cos(angle - Math.PI / 6), y2 - size * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawGrid(){
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "#e0e7f1";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= canvas.width; x += 50){
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= canvas.height; y += 50){
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.beginPath();
+        ctx.moveTo(0, midY());
+        ctx.lineTo(canvas.width, midY());
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "700 15px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Rest position", 20, midY() - 12);
+      }
+
+      function drawWave(t){
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#2563eb";
+
+        for(let x = 0; x <= canvas.width; x++){
+          const y = yAt(x, t);
+          if(x === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+      }
+
+      function drawParticles(t){
+        for(const px of particleXs){
+          const py = yAt(px, t);
+
+          ctx.fillStyle = "#0f172a";
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = "rgba(15,23,42,0.25)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(px, midY());
+          ctx.lineTo(px, py);
+          ctx.stroke();
+
+          if(showVectors.checked){
+            drawArrow(px, py - 14, px, py - 48, "#dc2626");
+            drawArrow(px, py + 14, px, py + 48, "#dc2626");
+          }
+        }
+      }
+
+      function drawLabels(t){
+        if(!showLabels.checked){ return; }
+
+        const crestX = 260;
+        const crestY = yAt(crestX, t);
+        const troughX = crestX + wavelength / 2;
+        const troughY = yAt(troughX, t);
+
+        ctx.save();
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 18px system-ui, sans-serif";
+        ctx.textAlign = "center";
+
+        ctx.fillText("Crest", crestX, crestY - 22);
+        ctx.fillText("Trough", troughX, troughY + 32);
+
+        drawArrow(crestX, midY(), crestX, crestY, "#334155");
+
+        ctx.fillStyle = "#334155";
+        ctx.font = "800 16px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Amplitude", crestX + 12, (midY() + crestY) / 2);
+
+        const y = canvas.height - 55;
+        const lambdaStart = crestX;
+        const lambdaEnd = crestX + wavelength;
+
+        if(lambdaEnd < canvas.width - 30){
+          ctx.strokeStyle = "#334155";
+          ctx.fillStyle = "#334155";
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(lambdaStart, y);
+          ctx.lineTo(lambdaEnd, y);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(lambdaStart, y - 9);
+          ctx.lineTo(lambdaStart, y + 9);
+          ctx.moveTo(lambdaEnd, y - 9);
+          ctx.lineTo(lambdaEnd, y + 9);
+          ctx.stroke();
+
+          ctx.textAlign = "center";
+          ctx.fillText("One wavelength", (lambdaStart + lambdaEnd) / 2, y - 12);
+        }
+
+        ctx.restore();
+      }
+
+      function draw(t){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+        drawWave(t);
+        drawParticles(t);
+        drawLabels(t);
+      }
+
+      function animate(timestamp){
+        if(startTime === null){
+          startTime = timestamp;
+        }
+
+        const t = running ? (timestamp - startTime) / 1000 + freezeTime : freezeTime;
+
+        draw(t);
+        requestAnimationFrame(animate);
+      }
+
+      function resetSim(){
+        amplitude = 60;
+        wavelength = 180;
+        frequency = 1.2;
+        speedFactor = 1.0;
+
+        ampSlider.value = 60;
+        waveSlider.value = 180;
+        freqSlider.value = 12;
+        speedSlider.value = 100;
+
+        showLabels.checked = true;
+        showVectors.checked = true;
+
+        running = false;
+        pauseBtn.textContent = "Run wave";
+
+        startTime = performance.now();
+        freezeTime = 0;
+
+        updateReadouts();
+        draw(0);
+      }
+
+      function updateFromSliders(){
+        amplitude = Number(ampSlider.value);
+        wavelength = Number(waveSlider.value);
+        frequency = Number(freqSlider.value) / 10;
+        speedFactor = Number(speedSlider.value) / 100;
+        updateReadouts();
+      }
+
+      ampSlider.addEventListener("input", updateFromSliders);
+      waveSlider.addEventListener("input", updateFromSliders);
+      freqSlider.addEventListener("input", updateFromSliders);
+      speedSlider.addEventListener("input", updateFromSliders);
+
+      showLabels.addEventListener("change", function(){
+        draw(freezeTime);
+      });
+
+      showVectors.addEventListener("change", function(){
+        draw(freezeTime);
+      });
+
+      pauseBtn.addEventListener("click", function(){
+        if(running){
+          freezeTime += (performance.now() - startTime) / 1000;
+          running = false;
+          pauseBtn.textContent = "Run wave";
+        }else{
+          startTime = performance.now();
+          running = true;
+          pauseBtn.textContent = "Pause wave";
+        }
+      });
+
+      resetBtn.addEventListener("click", resetSim);
+
+      resetSim();
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initTransverseWaveSim);
+    }else{
+      initTransverseWaveSim();
+    }
+  </script>
+</body>
+</html>
