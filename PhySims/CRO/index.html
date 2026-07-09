@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: CRO Sound Oscillator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #06b6d4);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:880px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:340px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:18px;
+      margin-top:12px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .extra-controls .control-group + .control-group{
+      margin-top:0;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    .sub-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    button{
+      font:inherit;
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .preset-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .preset-row button{
+      padding:8px 10px;
+      font-size:0.92rem;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:#0f172a;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:#22c55e;
+    }
+
+    .legend-dot.grid{ background:#38bdf8; }
+    .legend-dot.axis{ background:#f8fafc; }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.35rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .extra-controls{
+      margin-top:18px;
+    }
+
+    .notes-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p,
+    .warning-note li{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+
+      .control-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:700px){
+      .control-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>CRO Sound Oscillator</h1>
+      <p>A cathode ray oscilloscope, or CRO, displays a changing signal as a graph of signal strength against time. Use this sim to investigate how frequency, amplitude, phase and time scale change the trace of a sound signal.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Waves</span>
+        <span class="pill">Sound</span>
+        <span class="pill">Oscilloscopes</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how a CRO-style display can represent a sound wave as a changing signal over time.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can describe frequency, amplitude, period and phase, and explain how each one changes the oscilloscope trace.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="CRO sound oscillator simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Core wave controls</p>
+
+          <div class="slider-block">
+            <label for="freq">Frequency</label>
+            <div class="sub-label">
+              <span>Low pitch</span>
+              <strong id="freqVal">440 Hz</strong>
+              <span>High pitch</span>
+            </div>
+            <input id="freq" type="range" min="0" max="100" value="44.75" step="0.1" />
+          </div>
+
+          <div class="slider-block">
+            <label for="amp">Amplitude</label>
+            <div class="sub-label">
+              <span>Small signal</span>
+              <strong id="ampVal">0.50</strong>
+              <span>Large signal</span>
+            </div>
+            <input id="amp" type="range" min="0" max="1" value="0.5" step="0.01" />
+          </div>
+
+          <div class="slider-block">
+            <label for="timeScale">Time scale</label>
+            <div class="sub-label">
+              <span>Zoomed in</span>
+              <strong id="timeVal">2.0 ms/div</strong>
+              <span>Zoomed out</span>
+            </div>
+            <input id="timeScale" type="range" min="0.5" max="10" value="2" step="0.5" />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Sound controls</p>
+          <div class="button-row">
+            <button id="playBtn" type="button">Play tone</button>
+            <button id="stopBtn" class="secondary" type="button">Stop tone</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Sound safety note</h3>
+          <p>Keep device volume low before pressing <strong>Play tone</strong>. High-frequency tones can be uncomfortable for some people.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Oscilloscope display">
+        <h2>Oscilloscope trace</h2>
+        <p>The screen shows a simplified signal: <code>y = A sin(2πft + φ)</code></p>
+
+        <canvas id="oscCanvas" width="1000" height="500" aria-label="Oscilloscope-style sine wave trace"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot"></span>Green trace shows the sound signal.</span>
+          <span class="legend-item"><span class="legend-dot grid"></span>Grid divisions show the time scale.</span>
+          <span class="legend-item"><span class="legend-dot axis"></span>Centre line represents zero displacement or pressure change.</span>
+        </div>
+
+        <div class="results" aria-label="Current measurements">
+          <div class="metric">
+            <div class="label">Period</div>
+            <div class="value" id="periodOut">2.27 ms</div>
+            <div class="small">Time for one wave cycle</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Wavelength in air</div>
+            <div class="value" id="lambdaOut">0.78 m</div>
+            <div class="small">Using 343 m/s as sound speed</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Angular frequency</div>
+            <div class="value" id="omegaOut">2765 rad/s</div>
+            <div class="small">2πf</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Relative amplitude</div>
+            <div class="value" id="loudOut">50%</div>
+            <div class="small">Used for trace height and tone volume</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel extra-controls" aria-label="Extra controls">
+      <h2>Extra controls</h2>
+
+      <div class="control-grid">
+        <div class="control-group">
+          <p class="control-heading">Extension control</p>
+
+          <div class="slider-block">
+            <label for="phase">Phase</label>
+            <div class="sub-label">
+              <span>0°</span>
+              <strong id="phaseVal">0°</strong>
+              <span>360°</span>
+            </div>
+            <input id="phase" type="range" min="0" max="360" value="0" step="1" />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Frequency presets</p>
+          <div class="preset-row">
+            <button class="presetBtn ghost" type="button" data-freq="20">20 Hz</button>
+            <button class="presetBtn ghost" type="button" data-freq="100">100 Hz</button>
+            <button class="presetBtn ghost" type="button" data-freq="440">440 Hz</button>
+            <button class="presetBtn ghost" type="button" data-freq="1000">1 kHz</button>
+            <button class="presetBtn ghost" type="button" data-freq="10000">10 kHz</button>
+            <button class="presetBtn ghost" type="button" data-freq="20000">20 kHz</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Trace controls</p>
+          <div class="button-row">
+            <button id="runTraceBtn" type="button">Run trace</button>
+            <button id="labelsBtn" class="ghost" type="button">Hide labels</button>
+            <button id="csvBtn" class="ghost" type="button">Export trace data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Set the frequency to 440 Hz. Record the period shown by the sim.</li>
+          <li>Double the frequency and describe what happens to the period.</li>
+          <li>Increase the amplitude and explain what changes on the trace.</li>
+          <li>Change the phase. What changes about the wave, and what stays the same?</li>
+          <li>Adjust the time scale until you can clearly see several wave cycles.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This is a simplified CRO-style signal model. It represents how a sound wave can be displayed as a voltage-like signal over time. It does not show the physical shape of air particles moving through space.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Why does a higher frequency produce more cycles on the same screen?</li>
+          <li>Good prompt: Why does amplitude affect loudness but not pitch?</li>
+          <li>Extension: Ask students to calculate period from frequency and compare it with the readout.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initCROSim(){
+      var canvas = document.getElementById('oscCanvas');
+      var ctx = canvas.getContext('2d');
+
+      var freq = document.getElementById('freq');
+      var amp = document.getElementById('amp');
+      var phase = document.getElementById('phase');
+      var timeScale = document.getElementById('timeScale');
+
+      var freqVal = document.getElementById('freqVal');
+      var ampVal = document.getElementById('ampVal');
+      var phaseVal = document.getElementById('phaseVal');
+      var timeVal = document.getElementById('timeVal');
+
+      var periodOut = document.getElementById('periodOut');
+      var lambdaOut = document.getElementById('lambdaOut');
+      var omegaOut = document.getElementById('omegaOut');
+      var loudOut = document.getElementById('loudOut');
+
+      var playBtn = document.getElementById('playBtn');
+      var stopBtn = document.getElementById('stopBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var runTraceBtn = document.getElementById('runTraceBtn');
+      var labelsBtn = document.getElementById('labelsBtn');
+      var csvBtn = document.getElementById('csvBtn');
+      var presetBtns = document.querySelectorAll('.presetBtn');
+
+      var audioCtx = null;
+      var oscNode = null;
+      var gainNode = null;
+      var analyser = null;
+
+      var traceRunning = false;
+      var showLabels = true;
+      var tOffset = 0;
+      var lastTs = null;
+
+      var MIN_FREQ = 20;
+      var MAX_FREQ = 20000;
+      var SPEED_OF_SOUND = 343;
+
+      function sliderToFreq(sliderValue){
+        var minLog = Math.log10(MIN_FREQ);
+        var maxLog = Math.log10(MAX_FREQ);
+        var scale = sliderValue / 100;
+        return Math.pow(10, minLog + scale * (maxLog - minLog));
+      }
+
+      function freqToSlider(frequency){
+        var minLog = Math.log10(MIN_FREQ);
+        var maxLog = Math.log10(MAX_FREQ);
+        var freqLog = Math.log10(frequency);
+        return ((freqLog - minLog) / (maxLog - minLog)) * 100;
+      }
+
+      function getFrequency(){
+        return sliderToFreq(parseFloat(freq.value));
+      }
+
+      function formatFrequency(f){
+        if(f >= 1000){
+          if(f >= 10000){
+            return (f / 1000).toFixed(1) + ' kHz';
+          }
+          return (f / 1000).toFixed(2) + ' kHz';
+        }
+        return Math.round(f) + ' Hz';
+      }
+
+      function formatPeriodMs(periodMs){
+        if(periodMs >= 1){
+          return periodMs.toFixed(2) + ' ms';
+        }
+        return (periodMs * 1000).toFixed(1) + ' µs';
+      }
+
+      function formatWavelength(lambda){
+        if(lambda >= 1){
+          return lambda.toFixed(2) + ' m';
+        }
+        if(lambda >= 0.01){
+          return (lambda * 100).toFixed(1) + ' cm';
+        }
+        return (lambda * 1000).toFixed(1) + ' mm';
+      }
+
+      function formatOmega(omega){
+        if(omega >= 10000){
+          return omega.toExponential(2) + ' rad/s';
+        }
+        return omega.toFixed(0) + ' rad/s';
+      }
+
+      function safeGain(amplitude){
+        return Math.min(amplitude * 0.18, 0.18);
+      }
+
+      function getState(){
+        return {
+          frequency:getFrequency(),
+          amplitude:parseFloat(amp.value),
+          phaseDeg:parseFloat(phase.value),
+          phaseRad:parseFloat(phase.value) * Math.PI / 180,
+          msPerDiv:parseFloat(timeScale.value)
+        };
+      }
+
+      function updateReadouts(){
+        var state = getState();
+
+        freqVal.textContent = formatFrequency(state.frequency);
+        ampVal.textContent = state.amplitude.toFixed(2);
+        phaseVal.textContent = state.phaseDeg.toFixed(0) + '°';
+        timeVal.textContent = state.msPerDiv.toFixed(1) + ' ms/div';
+
+        var periodMs = 1000 / state.frequency;
+        var lambda = SPEED_OF_SOUND / state.frequency;
+        var omega = 2 * Math.PI * state.frequency;
+        var relativeAmplitude = Math.round(state.amplitude * 100);
+
+        periodOut.textContent = formatPeriodMs(periodMs);
+        lambdaOut.textContent = formatWavelength(lambda);
+        omegaOut.textContent = formatOmega(omega);
+        loudOut.textContent = relativeAmplitude + '%';
+
+        if(oscNode && audioCtx){
+          oscNode.frequency.setValueAtTime(state.frequency, audioCtx.currentTime);
+        }
+
+        if(gainNode && audioCtx){
+          gainNode.gain.setValueAtTime(safeGain(state.amplitude), audioCtx.currentTime);
+        }
+      }
+
+      function roundedRect(ctx, x, y, w, h, r){
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function drawGrid(){
+        var w = canvas.width;
+        var h = canvas.height;
+        var screenX = 38;
+        var screenY = 34;
+        var screenW = w - 76;
+        var screenH = h - 76;
+
+        ctx.clearRect(0, 0, w, h);
+
+        var bg = ctx.createLinearGradient(0, 0, w, h);
+        bg.addColorStop(0, '#020617');
+        bg.addColorStop(1, '#0f172a');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        roundedRect(ctx, screenX, screenY, screenW, screenH, 18);
+        ctx.fillStyle = '#07111f';
+        ctx.fill();
+        ctx.clip();
+
+        ctx.strokeStyle = 'rgba(56,189,248,0.16)';
+        ctx.lineWidth = 1;
+
+        var divW = screenW / 10;
+        var divH = screenH / 8;
+
+        for(var x = screenX; x <= screenX + screenW + 0.5; x += divW){
+          ctx.beginPath();
+          ctx.moveTo(x, screenY);
+          ctx.lineTo(x, screenY + screenH);
+          ctx.stroke();
+        }
+
+        for(var y = screenY; y <= screenY + screenH + 0.5; y += divH){
+          ctx.beginPath();
+          ctx.moveTo(screenX, y);
+          ctx.lineTo(screenX + screenW, y);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(248,250,252,0.72)';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(screenX, screenY + screenH / 2);
+        ctx.lineTo(screenX + screenW, screenY + screenH / 2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(screenX + divW / 2, screenY);
+        ctx.lineTo(screenX + divW / 2, screenY + screenH);
+        ctx.stroke();
+
+        if(showLabels){
+          ctx.fillStyle = 'rgba(248,250,252,0.92)';
+          ctx.font = '800 20px system-ui, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'top';
+          ctx.fillText('Pressure / displacement', screenX + 30, screenY + 18);
+
+          ctx.textAlign = 'right';
+          ctx.fillText('Time', screenX + screenW - 26, screenY + screenH / 2 - 30);
+
+          ctx.font = '700 14px system-ui, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText('0', screenX + 12, screenY + screenH / 2 + 7);
+        }
+
+        ctx.restore();
+
+        ctx.strokeStyle = 'rgba(203,213,225,0.32)';
+        ctx.lineWidth = 2;
+        roundedRect(ctx, screenX, screenY, screenW, screenH, 18);
+        ctx.stroke();
+      }
+
+      function drawWave(){
+        var state = getState();
+        var w = canvas.width;
+        var h = canvas.height;
+
+        var screenX = 38;
+        var screenY = 34;
+        var screenW = w - 76;
+        var screenH = h - 76;
+
+        var plotLeft = screenX;
+        var plotRight = screenX + screenW;
+        var plotWidth = plotRight - plotLeft;
+        var centreY = screenY + screenH / 2;
+        var maxPixAmp = screenH * 0.36;
+        var pixAmp = state.amplitude * maxPixAmp;
+
+        var totalMs = state.msPerDiv * 10;
+        var totalSec = totalMs / 1000;
+
+        ctx.save();
+        roundedRect(ctx, screenX, screenY, screenW, screenH, 18);
+        ctx.clip();
+
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#22c55e';
+        ctx.shadowColor = 'rgba(34,197,94,0.75)';
+        ctx.shadowBlur = 10;
+
+        for(var i = 0; i <= plotWidth; i++){
+          var x = plotLeft + i;
+          var t = (i / plotWidth) * totalSec + tOffset;
+          var y = centreY - pixAmp * Math.sin(2 * Math.PI * state.frequency * t + state.phaseRad);
+
+          if(i === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+        ctx.restore();
+
+        if(showLabels){
+          drawAmplitudeMarker(centreY, pixAmp);
+          drawPeriodMarker(state);
+        }
+      }
+
+      function drawAmplitudeMarker(centreY, pixAmp){
+        var screenX = 38;
+        var screenY = 34;
+        var screenH = canvas.height - 76;
+        var markerX = screenX + 185;
+        var yTop = centreY - pixAmp;
+
+        if(pixAmp < 6){ return; }
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(248,250,252,0.78)';
+        ctx.fillStyle = 'rgba(248,250,252,0.92)';
+        ctx.lineWidth = 2;
+        ctx.font = '800 17px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.moveTo(markerX, centreY);
+        ctx.lineTo(markerX, yTop);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(markerX - 7, yTop + 10);
+        ctx.lineTo(markerX, yTop);
+        ctx.lineTo(markerX + 7, yTop + 10);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(markerX - 7, centreY - 10);
+        ctx.lineTo(markerX, centreY);
+        ctx.lineTo(markerX + 7, centreY - 10);
+        ctx.stroke();
+
+        var labelY = Math.max(screenY + 64, Math.min(screenY + screenH - 64, centreY - pixAmp / 2));
+        ctx.fillText('Amplitude', markerX + 14, labelY);
+
+        ctx.restore();
+      }
+
+      function drawPeriodMarker(state){
+        var screenX = 38;
+        var screenY = 34;
+        var screenW = canvas.width - 76;
+        var screenH = canvas.height - 76;
+
+        var totalMs = state.msPerDiv * 10;
+        var periodMs = 1000 / state.frequency;
+        var periodPx = (periodMs / totalMs) * screenW;
+
+        if(periodPx < 28 || periodPx > screenW * 0.72){ return; }
+
+        var startX = screenX + screenW * 0.56;
+        var endX = startX + periodPx;
+
+        if(endX > screenX + screenW - 26){
+          endX = screenX + screenW - 26;
+          startX = endX - periodPx;
+        }
+
+        var y = screenY + screenH - 44;
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(248,250,252,0.78)';
+        ctx.fillStyle = 'rgba(248,250,252,0.92)';
+        ctx.lineWidth = 2;
+        ctx.font = '800 16px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        ctx.beginPath();
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(startX, y - 8);
+        ctx.lineTo(startX, y + 8);
+        ctx.moveTo(endX, y - 8);
+        ctx.lineTo(endX, y + 8);
+        ctx.stroke();
+
+        ctx.fillText('One period', (startX + endX) / 2, y - 8);
+        ctx.restore();
+      }
+
+      function draw(){
+        drawGrid();
+        drawWave();
+      }
+
+      function update(){
+        updateReadouts();
+        draw();
+      }
+
+      function resetControls(){
+        stopTone();
+
+        freq.value = freqToSlider(440);
+        amp.value = 0.5;
+        phase.value = 0;
+        timeScale.value = 2;
+
+        tOffset = 0;
+        traceRunning = false;
+        runTraceBtn.textContent = 'Run trace';
+
+        update();
+      }
+
+      function exportCSV(){
+        var state = getState();
+        var totalMs = state.msPerDiv * 10;
+        var totalSec = totalMs / 1000;
+        var samples = 240;
+        var lines = [];
+
+        lines.push('Sample,Time (ms),Relative signal');
+
+        for(var i = 0; i <= samples; i++){
+          var t = (i / samples) * totalSec + tOffset;
+          var signal = state.amplitude * Math.sin(2 * Math.PI * state.frequency * t + state.phaseRad);
+          lines.push([i, (t * 1000).toFixed(5), signal.toFixed(6)].join(','));
+        }
+
+        var csvText = lines.join(String.fromCharCode(10));
+        var blob = new Blob([csvText], { type:'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+
+        link.href = url;
+        link.download = 'cro-sound-oscillator-trace-data.csv';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      async function playTone(){
+        var state = getState();
+
+        if(!audioCtx){
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if(audioCtx.state === 'suspended'){
+          await audioCtx.resume();
+        }
+
+        stopTone();
+
+        oscNode = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        analyser = audioCtx.createAnalyser();
+
+        oscNode.type = 'sine';
+        oscNode.frequency.value = state.frequency;
+        gainNode.gain.value = safeGain(state.amplitude);
+
+        oscNode.connect(gainNode);
+        gainNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        oscNode.start();
+      }
+
+      function stopTone(){
+        if(oscNode){
+          try{ oscNode.stop(); } catch(e){}
+          try{ oscNode.disconnect(); } catch(e){}
+          oscNode = null;
+        }
+
+        if(gainNode){
+          try{ gainNode.disconnect(); } catch(e){}
+          gainNode = null;
+        }
+
+        if(analyser){
+          try{ analyser.disconnect(); } catch(e){}
+          analyser = null;
+        }
+      }
+
+      function animate(ts){
+        if(lastTs === null){
+          lastTs = ts;
+        }
+
+        var dt = (ts - lastTs) / 1000;
+        lastTs = ts;
+
+        if(traceRunning){
+          var msPerDiv = parseFloat(timeScale.value);
+          var speedFactor = msPerDiv / 200;
+          tOffset += dt * speedFactor;
+          draw();
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      [freq, amp, phase, timeScale].forEach(function(el){
+        el.addEventListener('input', update);
+      });
+
+      presetBtns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var targetFreq = parseFloat(btn.dataset.freq);
+          freq.value = freqToSlider(targetFreq);
+          update();
+        });
+      });
+
+      playBtn.addEventListener('click', playTone);
+      stopBtn.addEventListener('click', stopTone);
+      resetBtn.addEventListener('click', resetControls);
+      csvBtn.addEventListener('click', exportCSV);
+
+      runTraceBtn.addEventListener('click', function(){
+        traceRunning = !traceRunning;
+        runTraceBtn.textContent = traceRunning ? 'Pause trace' : 'Run trace';
+        draw();
+      });
+
+      labelsBtn.addEventListener('click', function(){
+        showLabels = !showLabels;
+        labelsBtn.textContent = showLabels ? 'Hide labels' : 'Show labels';
+        draw();
+      });
+
+      resetControls();
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', initCROSim);
+    }else{
+      initCROSim();
+    }
+  </script>
+</body>
+</html>
