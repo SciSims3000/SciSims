@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Ticker Timer Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --tape:#fff7d6;
+      --tape-line:#d7c987;
+      --dot:#0f172a;
+      --timer:#dc2626;
+      --accent:#7c3aed;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:930px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    input,
+    select,
+    button{
+      font:inherit;
+    }
+
+    input[type="number"],
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    input:disabled{
+      background:#e2e8f0;
+      color:#64748b;
+      cursor:not-allowed;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .field-block + .field-block,
+    .number-grid + .field-block,
+    .field-block + .number-grid{
+      margin-top:12px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .tape-card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#ffffff;
+      margin-top:14px;
+    }
+
+    .tape-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .tape-header h3{
+      margin:0;
+    }
+
+    .status-pill{
+      border-radius:999px;
+      padding:7px 10px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:900;
+      font-size:0.88rem;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .info-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:750;
+    }
+
+    .info-chip{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 10px;
+      background:#f8fafc;
+    }
+
+    .info-chip.warn{
+      background:#fff7ed;
+      border-color:#fed7aa;
+      color:#92400e;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.25rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+      margin-top:10px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:620px;
+    }
+
+    th,
+    td{
+      padding:8px 9px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      text-align:center;
+      font-size:0.86rem;
+      white-space:nowrap;
+    }
+
+    th{
+      background:#f1f5f9;
+      color:#334155;
+      font-weight:900;
+    }
+
+    td{
+      color:#0f172a;
+      font-weight:700;
+    }
+
+    .hidden{ display:none; }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .number-grid,
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Ticker Timer Simulator</h1>
+      <p>Generate ticker-timer tapes at 50 Hz and analyse the spacing between dots. Compare constant speed, acceleration and slowing-down motion using one or two virtual tapes.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Motion</span>
+        <span class="pill">Speed</span>
+        <span class="pill">Acceleration</span>
+        <span class="pill">Data analysis</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how ticker-timer dot spacing can be used to describe speed and changes in speed.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can interpret dot spacing, group dots into equal time intervals, calculate average speed, and compare constant speed, acceleration and deceleration.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Ticker timer simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Run controls</p>
+          <div class="button-row">
+            <button id="startBtn" type="button">Start</button>
+            <button id="pauseBtn" class="ghost" type="button">Pause</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+            <button id="csvBtn" class="ghost" type="button">Export CSV</button>
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input id="groupToggle" type="checkbox" checked> 5-gap groups</label>
+            <label class="toggle-label"><input id="twoTapeToggle" type="checkbox"> Second tape</label>
+            <label class="toggle-label"><input id="trailToggle" type="checkbox" checked> Moving preview</label>
+            <label class="toggle-label"><input id="autoFitToggle" type="checkbox" checked> Auto fit tape</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Tape A</p>
+
+          <div class="field-block">
+            <label for="aMode">Motion type</label>
+            <select id="aMode">
+              <option value="constant">Constant speed</option>
+              <option value="accelerating" selected>Accelerating or slowing down</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="aSpeed">Initial speed</label>
+              <input type="number" id="aSpeed" min="0" max="200" step="1" value="10">
+            </div>
+
+            <div>
+              <label for="aAccel">Acceleration</label>
+              <input type="number" id="aAccel" min="-100" max="100" step="1" value="8">
+            </div>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="aLength">Run time</label>
+              <input type="number" id="aLength" min="1" max="20" step="0.5" value="3">
+            </div>
+
+            <div>
+              <label for="aScale">Scale</label>
+              <input type="number" id="aScale" min="1" max="50" step="1" value="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group hidden" id="tapeBControls">
+          <p class="control-heading">Tape B</p>
+
+          <div class="field-block">
+            <label for="bMode">Motion type</label>
+            <select id="bMode">
+              <option value="constant" selected>Constant speed</option>
+              <option value="accelerating">Accelerating or slowing down</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="bSpeed">Initial speed</label>
+              <input type="number" id="bSpeed" min="0" max="200" step="1" value="25">
+            </div>
+
+            <div>
+              <label for="bAccel">Acceleration</label>
+              <input type="number" id="bAccel" min="-100" max="100" step="1" value="0">
+            </div>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="bLength">Run time</label>
+              <input type="number" id="bLength" min="1" max="20" step="0.5" value="3">
+            </div>
+
+            <div>
+              <label for="bScale">Scale</label>
+              <input type="number" id="bScale" min="1" max="50" step="1" value="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Units</h3>
+          <p>Speed is measured in cm/s. Acceleration is measured in cm/s². The ticker timer creates 50 dots each second, so one dot is made every 0.02 s. A 5-gap group takes 0.10 s.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Ticker timer model">
+        <h2>Ticker tape model</h2>
+        <p>The tape moves past a timer that marks a dot every 0.02 s. Wider spacing means the tape was moving faster. A 5-gap group uses 6 dots as endpoints.</p>
+
+        <div class="results" aria-label="Ticker timer key values">
+          <div class="metric">
+            <div class="label">Timer frequency</div>
+            <div class="value">50 Hz</div>
+            <div class="small">50 dots per second</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Dot interval</div>
+            <div class="value">0.02 s</div>
+            <div class="small">Time between adjacent dots</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">5-gap group time</div>
+            <div class="value">0.10 s</div>
+            <div class="small">Five gaps between six dots</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Active tapes</div>
+            <div class="value" id="activeTapeOut">1</div>
+            <div class="small">Use second tape to compare motion</div>
+          </div>
+        </div>
+
+        <div class="tape-card">
+          <div class="tape-header">
+            <h3>Tape A</h3>
+            <span class="status-pill" id="aStatus">Ready</span>
+          </div>
+
+          <canvas id="canvasA" width="1100" height="260" aria-label="Ticker tape A"></canvas>
+          <div class="info-row" id="aInfo"></div>
+
+          <h3 style="margin:14px 0 0;">5-gap group evidence</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Group</th>
+                  <th>Start dot time (s)</th>
+                  <th>End dot time (s)</th>
+                  <th>5-gap distance (cm)</th>
+                  <th>Average speed (cm/s)</th>
+                </tr>
+              </thead>
+              <tbody id="aTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tape-card hidden" id="simRowB">
+          <div class="tape-header">
+            <h3>Tape B</h3>
+            <span class="status-pill" id="bStatus">Ready</span>
+          </div>
+
+          <canvas id="canvasB" width="1100" height="260" aria-label="Ticker tape B"></canvas>
+          <div class="info-row" id="bInfo"></div>
+
+          <h3 style="margin:14px 0 0;">5-gap group evidence</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Group</th>
+                  <th>Start dot time (s)</th>
+                  <th>End dot time (s)</th>
+                  <th>5-gap distance (cm)</th>
+                  <th>Average speed (cm/s)</th>
+                </tr>
+              </thead>
+              <tbody id="bTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Run a constant-speed tape. What pattern do the dot spacings make?</li>
+          <li>Run an accelerating tape. How do the dot spacings change over time?</li>
+          <li>Set a negative acceleration. What happens when the tape slows to a stop?</li>
+          <li>Turn on 5-gap groups. Use the table to compare average speed across each group.</li>
+          <li>Export the CSV and graph position against time in a spreadsheet.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim supports practical investigation planning and data analysis. Students can use grouped dot distances to estimate speed over equal time intervals.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: How do you know the tape is moving faster or slower?</li>
+          <li>Good prompt: Why does a 5-gap group use 6 dots as endpoints?</li>
+          <li>Extension: Compare ticker-timer data with a distance-time or velocity-time graph.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+
+        <p>
+          The sim calculates position from initial speed, acceleration and time.
+          A new dot is placed every 0.02 s. If negative acceleration would make
+          the speed fall below zero, the tape stops instead of reversing.
+        </p>
+
+        <div class="equation-box">Ticker timer frequency = 50 Hz
+
+Dot interval:
+Δt = 1 ÷ 50
+Δt = 0.02 s
+
+Position while moving:
+x = ut + ½at²
+
+Speed while moving:
+v = u + at
+
+If acceleration is negative:
+stop time = u ÷ |a|
+
+After stop time:
+v = 0
+x = stopping distance
+
+5-gap group time:
+5 × 0.02 s = 0.10 s
+
+Average speed for a 5-gap group:
+speed = 5-gap distance ÷ 0.10 s</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Equal dot spacing</strong> suggests constant speed.</li>
+          <li><strong>Increasing dot spacing</strong> suggests acceleration.</li>
+          <li><strong>Decreasing dot spacing</strong> suggests slowing down.</li>
+          <li><strong>Repeated dots at the same place</strong> show that the tape has stopped.</li>
+          <li><strong>5-gap groups</strong> make equal 0.10 s intervals, so students can compare distances directly.</li>
+          <li><strong>Model limitation:</strong> this is an idealised ticker timer, so it does not include friction, paper drag or mechanical timing error.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initTickerTimerSim(){
+      const DOT_RATE = 50;
+      const DOT_INTERVAL = 1 / DOT_RATE;
+      const GROUP_GAPS = 5;
+      const GROUP_TIME = DOT_INTERVAL * GROUP_GAPS;
+
+      const $ = function(id){ return document.getElementById(id); };
+
+      const startBtn = $("startBtn");
+      const pauseBtn = $("pauseBtn");
+      const resetBtn = $("resetBtn");
+      const csvBtn = $("csvBtn");
+
+      const groupToggle = $("groupToggle");
+      const twoTapeToggle = $("twoTapeToggle");
+      const trailToggle = $("trailToggle");
+      const autoFitToggle = $("autoFitToggle");
+
+      const tapeBControls = $("tapeBControls");
+      const simRowB = $("simRowB");
+      const activeTapeOut = $("activeTapeOut");
+
+      const LEFT_PAD = 82;
+      const RIGHT_PAD = 28;
+      const TAPE_TOP = 86;
+      const TAPE_HEIGHT = 92;
+      const RULER_Y = 48;
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function format(value, places){
+        return Number(value).toFixed(places);
+      }
+
+      function chip(label, value, warn){
+        return '<span class="info-chip' + (warn ? ' warn' : '') + '">' + label + ': <strong>' + value + '</strong></span>';
+      }
+
+      function getASettings(){
+        return {
+          mode:$("aMode").value,
+          speed:clamp(Number($("aSpeed").value) || 0, 0, 200),
+          accel:clamp(Number($("aAccel").value) || 0, -100, 100),
+          length:clamp(Number($("aLength").value) || 3, 1, 20),
+          scale:clamp(Number($("aScale").value) || 10, 1, 50)
+        };
+      }
+
+      function getBSettings(){
+        return {
+          mode:$("bMode").value,
+          speed:clamp(Number($("bSpeed").value) || 0, 0, 200),
+          accel:clamp(Number($("bAccel").value) || 0, -100, 100),
+          length:clamp(Number($("bLength").value) || 3, 1, 20),
+          scale:clamp(Number($("bScale").value) || 10, 1, 50)
+        };
+      }
+
+      class TapeSim{
+        constructor(name, canvas, statusEl, infoEl, tableEl, getSettings){
+          this.name = name;
+          this.canvas = canvas;
+          this.ctx = canvas.getContext("2d");
+          this.statusEl = statusEl;
+          this.infoEl = infoEl;
+          this.tableEl = tableEl;
+          this.getSettings = getSettings;
+          this.reset();
+        }
+
+        reset(){
+          const s = this.getSettings();
+
+          this.mode = s.mode;
+          this.v0 = s.speed;
+          this.a = s.mode === "accelerating" ? s.accel : 0;
+          this.duration = s.length;
+          this.requestedScale = s.scale;
+
+          this.dots = [];
+          this.elapsed = 0;
+          this.accumulator = 0;
+          this.running = false;
+          this.finished = false;
+          this.previewX = 0;
+          this.effectiveScale = this.requestedScale;
+
+          this.statusEl.textContent = "Ready";
+          this.draw();
+          this.updateInfo();
+          this.updateTable();
+        }
+
+        stopTime(){
+          if(this.a < 0 && this.v0 > 0){
+            return this.v0 / Math.abs(this.a);
+          }
+
+          if(this.v0 === 0 && this.a <= 0){
+            return 0;
+          }
+
+          return Infinity;
+        }
+
+        hasStoppedByDeceleration(t){
+          return t >= this.stopTime();
+        }
+
+        stoppingDistance(){
+          const tStop = this.stopTime();
+
+          if(!Number.isFinite(tStop)){
+            return Infinity;
+          }
+
+          return Math.max(0, this.v0 * tStop + 0.5 * this.a * tStop * tStop);
+        }
+
+        start(){
+          if(this.finished){ return; }
+
+          if(this.dots.length === 0){
+            this.addDot(0);
+          }
+
+          this.running = true;
+          this.statusEl.textContent = "Running";
+        }
+
+        pause(){
+          this.running = false;
+
+          if(!this.finished){
+            this.statusEl.textContent = "Paused";
+          }
+        }
+
+        addDot(t){
+          this.dots.push({
+            t:t,
+            xCm:this.positionAtTime(t),
+            vCms:this.speedAtTime(t)
+          });
+        }
+
+        positionAtTime(t){
+          if(this.hasStoppedByDeceleration(t)){
+            return Math.max(0, this.stoppingDistance());
+          }
+
+          const x = this.v0 * t + 0.5 * this.a * t * t;
+          return Math.max(0, x);
+        }
+
+        speedAtTime(t){
+          if(this.hasStoppedByDeceleration(t)){
+            return 0;
+          }
+
+          return Math.max(0, this.v0 + this.a * t);
+        }
+
+        maxDistance(){
+          const endDistance = this.positionAtTime(this.duration);
+          const stopDistance = this.stoppingDistance();
+
+          if(Number.isFinite(stopDistance)){
+            return Math.max(endDistance, stopDistance);
+          }
+
+          return endDistance;
+        }
+
+        usableWidth(){
+          return this.canvas.width - LEFT_PAD - RIGHT_PAD;
+        }
+
+        getScale(){
+          const requested = this.requestedScale;
+          const maxX = Math.max(1, this.maxDistance());
+          const fitScale = (this.usableWidth() - 20) / maxX;
+
+          if(autoFitToggle.checked){
+            return Math.max(0.5, Math.min(requested, fitScale));
+          }
+
+          return requested;
+        }
+
+        step(dt){
+          if(!this.running || this.finished){ return; }
+
+          this.elapsed += dt;
+          this.accumulator += dt;
+
+          const currentT = Math.min(this.elapsed, this.duration);
+          this.previewX = this.positionAtTime(currentT);
+
+          while(this.accumulator >= DOT_INTERVAL){
+            const dotTime = this.dots.length * DOT_INTERVAL;
+
+            if(dotTime <= this.duration + 1e-9){
+              this.addDot(dotTime);
+            }
+
+            this.accumulator -= DOT_INTERVAL;
+          }
+
+          if(this.elapsed >= this.duration){
+            this.running = false;
+            this.finished = true;
+            this.statusEl.textContent = "Finished";
+          }
+
+          this.draw();
+          this.updateInfo();
+          this.updateTable();
+        }
+
+        groupRows(){
+          const rows = [];
+
+          for(let startIndex = 0; startIndex + GROUP_GAPS < this.dots.length; startIndex += GROUP_GAPS){
+            const endIndex = startIndex + GROUP_GAPS;
+            const startDot = this.dots[startIndex];
+            const endDot = this.dots[endIndex];
+            const distance = endDot.xCm - startDot.xCm;
+            const avgSpeed = distance / GROUP_TIME;
+
+            rows.push({
+              group:rows.length + 1,
+              startTime:startDot.t,
+              endTime:endDot.t,
+              distance:distance,
+              avgSpeed:avgSpeed
+            });
+          }
+
+          return rows;
+        }
+
+        updateTable(){
+          const rows = this.groupRows().slice(0, 12);
+
+          if(rows.length === 0){
+            this.tableEl.innerHTML = '<tr><td colspan="5">Run the tape until at least 6 dots appear. Six dots create five gaps.</td></tr>';
+            return;
+          }
+
+          this.tableEl.innerHTML = rows.map(function(row){
+            return '<tr>' +
+              '<td>' + row.group + '</td>' +
+              '<td>' + format(row.startTime, 2) + '</td>' +
+              '<td>' + format(row.endTime, 2) + '</td>' +
+              '<td>' + format(row.distance, 2) + '</td>' +
+              '<td>' + format(row.avgSpeed, 1) + '</td>' +
+            '</tr>';
+          }).join("");
+        }
+
+        updateInfo(){
+          const t = Math.min(this.elapsed, this.duration);
+          const distance = this.positionAtTime(t);
+          const speed = this.speedAtTime(t);
+          const scale = this.getScale();
+          const tStop = this.stopTime();
+          const autoFitChanged = autoFitToggle.checked && scale < this.requestedScale;
+
+          let info =
+            chip("Dots", this.dots.length) +
+            chip("Elapsed", format(t, 2) + " s") +
+            chip("Speed", format(speed, 1) + " cm/s") +
+            chip("Distance", format(distance, 2) + " cm") +
+            chip("Display scale", format(scale, 2) + " px/cm", autoFitChanged);
+
+          if(Number.isFinite(tStop) && tStop <= this.duration){
+            info += chip("Tape stops", format(tStop, 2) + " s", true);
+          }
+
+          this.infoEl.innerHTML = info;
+        }
+
+        drawRuler(){
+          const ctx = this.ctx;
+          const scale = this.effectiveScale;
+          const usable = this.usableWidth();
+          const maxCm = usable / scale;
+
+          ctx.strokeStyle = "#64748b";
+          ctx.lineWidth = 1.5;
+
+          ctx.beginPath();
+          ctx.moveTo(LEFT_PAD, RULER_Y);
+          ctx.lineTo(this.canvas.width - RIGHT_PAD, RULER_Y);
+          ctx.stroke();
+
+          let tickStep = 1;
+          let labelStep = 5;
+
+          if(scale < 6){
+            tickStep = 5;
+            labelStep = 10;
+          }
+
+          if(scale < 2.5){
+            tickStep = 10;
+            labelStep = 20;
+          }
+
+          for(let cm = 0; cm <= maxCm; cm += tickStep){
+            const x = LEFT_PAD + cm * scale;
+            const major = cm % labelStep === 0;
+            const tick = major ? 13 : 7;
+
+            ctx.beginPath();
+            ctx.moveTo(x, RULER_Y);
+            ctx.lineTo(x, RULER_Y - tick);
+            ctx.stroke();
+
+            if(major){
+              ctx.fillStyle = "#64748b";
+              ctx.font = "700 12px system-ui, sans-serif";
+              ctx.textAlign = "center";
+              ctx.fillText(String(cm), x, RULER_Y - 18);
+            }
+          }
+
+          ctx.fillStyle = "#64748b";
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText("cm", this.canvas.width - RIGHT_PAD, RULER_Y - 18);
+        }
+
+        drawTape(){
+          const ctx = this.ctx;
+          const tapeW = this.canvas.width - LEFT_PAD - RIGHT_PAD;
+
+          ctx.fillStyle = "#fff7d6";
+          ctx.fillRect(LEFT_PAD, TAPE_TOP, tapeW, TAPE_HEIGHT);
+
+          ctx.strokeStyle = "#d7c987";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(LEFT_PAD, TAPE_TOP, tapeW, TAPE_HEIGHT);
+
+          ctx.fillStyle = "#dc2626";
+          ctx.fillRect(LEFT_PAD - 7, TAPE_TOP - 12, 14, TAPE_HEIGHT + 24);
+
+          ctx.save();
+          ctx.translate(LEFT_PAD - 12, TAPE_TOP + 72);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "900 12px system-ui, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("TIMER", 0, 0);
+          ctx.restore();
+
+          ctx.fillStyle = "#475569";
+          ctx.font = "800 13px system-ui, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText(this.name + " tape", 18, TAPE_TOP + 53);
+        }
+
+        drawDots(){
+          const ctx = this.ctx;
+          const scale = this.effectiveScale;
+          const y = TAPE_TOP + TAPE_HEIGHT / 2;
+          const maxX = this.canvas.width - RIGHT_PAD;
+
+          for(let i = 0; i < this.dots.length; i++){
+            const dot = this.dots[i];
+            const x = LEFT_PAD + dot.xCm * scale;
+
+            if(x > maxX + 6){ continue; }
+
+            if(groupToggle.checked && i > 0 && i % GROUP_GAPS === 0){
+              ctx.strokeStyle = "#2563eb";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(x - 4, TAPE_TOP + 10);
+              ctx.lineTo(x - 4, TAPE_TOP + TAPE_HEIGHT - 10);
+              ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.fillStyle = "#0f172a";
+            ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        drawPreview(){
+          if(!trailToggle.checked || this.finished){ return; }
+
+          const ctx = this.ctx;
+          const scale = this.effectiveScale;
+          const y = TAPE_TOP + TAPE_HEIGHT / 2;
+          const x = LEFT_PAD + this.previewX * scale;
+
+          if(x > this.canvas.width - RIGHT_PAD + 8){ return; }
+
+          ctx.beginPath();
+          ctx.fillStyle = "rgba(220,38,38,0.32)";
+          ctx.arc(x, y, 8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        drawStopMarker(){
+          const tStop = this.stopTime();
+
+          if(!Number.isFinite(tStop) || tStop > this.duration){
+            return;
+          }
+
+          const ctx = this.ctx;
+          const scale = this.effectiveScale;
+          const x = LEFT_PAD + this.stoppingDistance() * scale;
+
+          if(x > this.canvas.width - RIGHT_PAD + 8){ return; }
+
+          ctx.save();
+          ctx.strokeStyle = "#b45309";
+          ctx.fillStyle = "#b45309";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+
+          ctx.beginPath();
+          ctx.moveTo(x, TAPE_TOP - 10);
+          ctx.lineTo(x, TAPE_TOP + TAPE_HEIGHT + 10);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+          ctx.font = "900 12px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("stops", x, TAPE_TOP - 18);
+
+          ctx.restore();
+        }
+
+        drawFooter(){
+          const ctx = this.ctx;
+
+          ctx.fillStyle = "#64748b";
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("Dot interval = 0.02 s", LEFT_PAD, 224);
+          ctx.fillText("5-gap group = 0.10 s", LEFT_PAD + 180, 224);
+
+          if(autoFitToggle.checked && this.effectiveScale < this.requestedScale){
+            ctx.fillStyle = "#b45309";
+            ctx.fillText("Auto fit has reduced the display scale so the whole tape remains visible.", LEFT_PAD + 380, 224);
+          }
+        }
+
+        draw(){
+          const ctx = this.ctx;
+          this.effectiveScale = this.getScale();
+
+          ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+          this.drawRuler();
+          this.drawTape();
+          this.drawDots();
+          this.drawPreview();
+          this.drawStopMarker();
+          this.drawFooter();
+        }
+      }
+
+      const simA = new TapeSim("Tape A", $("canvasA"), $("aStatus"), $("aInfo"), $("aTable"), getASettings);
+      const simB = new TapeSim("Tape B", $("canvasB"), $("bStatus"), $("bInfo"), $("bTable"), getBSettings);
+
+      let lastTime = null;
+
+      function animate(timestamp){
+        if(lastTime === null){
+          lastTime = timestamp;
+        }
+
+        const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+        lastTime = timestamp;
+
+        simA.step(dt);
+
+        if(twoTapeToggle.checked){
+          simB.step(dt);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      function resetAll(){
+        simA.reset();
+        simB.reset();
+        lastTime = null;
+      }
+
+      function redrawAll(){
+        simA.draw();
+        simA.updateInfo();
+        simA.updateTable();
+
+        simB.draw();
+        simB.updateInfo();
+        simB.updateTable();
+
+        activeTapeOut.textContent = twoTapeToggle.checked ? "2" : "1";
+      }
+
+      function updateModeInputs(){
+        $("aAccel").disabled = $("aMode").value === "constant";
+        $("bAccel").disabled = $("bMode").value === "constant";
+      }
+
+      function exportCSV(){
+        const includeB = twoTapeToggle.checked;
+        const maxDots = Math.max(simA.dots.length, includeB ? simB.dots.length : 0);
+        const rows = [];
+
+        if(includeB){
+          rows.push(["dot_index","time_s","tapeA_x_cm","tapeA_v_cm_s","tapeB_x_cm","tapeB_v_cm_s"]);
+        }else{
+          rows.push(["dot_index","time_s","tapeA_x_cm","tapeA_v_cm_s"]);
+        }
+
+        for(let i = 0; i < maxDots; i++){
+          const a = simA.dots[i];
+          const b = simB.dots[i];
+          const t = a ? a.t : b ? b.t : i * DOT_INTERVAL;
+
+          if(includeB){
+            rows.push([
+              i,
+              t.toFixed(2),
+              a ? a.xCm.toFixed(4) : "",
+              a ? a.vCms.toFixed(4) : "",
+              b ? b.xCm.toFixed(4) : "",
+              b ? b.vCms.toFixed(4) : ""
+            ]);
+          }else{
+            rows.push([
+              i,
+              t.toFixed(2),
+              a ? a.xCm.toFixed(4) : "",
+              a ? a.vCms.toFixed(4) : ""
+            ]);
+          }
+        }
+
+        const csv = rows.map(function(row){
+          return row.join(",");
+        }).join("\n");
+
+        const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, "0");
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const yyyy = now.getFullYear();
+
+        link.href = url;
+        link.download = "ticker_timer_data_" + dd + "-" + mm + "-" + yyyy + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      startBtn.addEventListener("click", function(){
+        simA.start();
+
+        if(twoTapeToggle.checked){
+          simB.start();
+        }
+      });
+
+      pauseBtn.addEventListener("click", function(){
+        simA.pause();
+        simB.pause();
+      });
+
+      resetBtn.addEventListener("click", resetAll);
+      csvBtn.addEventListener("click", exportCSV);
+
+      groupToggle.addEventListener("change", redrawAll);
+      trailToggle.addEventListener("change", redrawAll);
+      autoFitToggle.addEventListener("change", redrawAll);
+
+      twoTapeToggle.addEventListener("change", function(){
+        tapeBControls.classList.toggle("hidden", !twoTapeToggle.checked);
+        simRowB.classList.toggle("hidden", !twoTapeToggle.checked);
+        activeTapeOut.textContent = twoTapeToggle.checked ? "2" : "1";
+        resetAll();
+      });
+
+      [
+        "aMode","aSpeed","aAccel","aLength","aScale",
+        "bMode","bSpeed","bAccel","bLength","bScale"
+      ].forEach(function(id){
+        $(id).addEventListener("input", function(){
+          updateModeInputs();
+          resetAll();
+        });
+
+        $(id).addEventListener("change", function(){
+          updateModeInputs();
+          resetAll();
+        });
+      });
+
+      window.addEventListener("keydown", function(event){
+        const active = document.activeElement;
+        const typing = active && (active.tagName === "INPUT" || active.tagName === "SELECT");
+
+        if(typing){ return; }
+
+        if(event.code === "Space"){
+          event.preventDefault();
+
+          if(simA.running || simB.running){
+            simA.pause();
+            simB.pause();
+          }else{
+            simA.start();
+            if(twoTapeToggle.checked){ simB.start(); }
+          }
+        }
+
+        if(event.key.toLowerCase() === "r"){
+          resetAll();
+        }
+
+        if(event.key.toLowerCase() === "e"){
+          exportCSV();
+        }
+      });
+
+      updateModeInputs();
+      activeTapeOut.textContent = "1";
+      resetAll();
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initTickerTimerSim);
+    }else{
+      initTickerTimerSim();
+    }
+  </script>
+</body>
+</html>
