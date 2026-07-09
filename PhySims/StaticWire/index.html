@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Magnetic Field Around a Wire</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --wire:#0f172a;
+      --strong:#f59e0b;
+      --weak:#2563eb;
+      --probe:#16a34a;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:900px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    .sub-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    button{
+      font:inherit;
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .toggle-label input{
+      accent-color:var(--button);
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+      cursor:crosshair;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:var(--weak);
+    }
+
+    .legend-dot.strong{ background:var(--strong); }
+    .legend-dot.wire{ background:var(--wire); }
+    .legend-dot.probe{ background:var(--probe); }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.24rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .status-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:14px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.94rem;
+      overflow:auto;
+      line-height:1.65;
+      margin-top:12px;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Magnetic Field Around a Wire</h1>
+      <p>Explore the magnetic field produced by a straight current-carrying wire. Change the current and wire position to see how the field direction and strength pattern change.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Electricity</span>
+        <span class="pill">Magnetism</span>
+        <span class="pill">Right-hand rule</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand that a current-carrying wire produces a circular magnetic field around the wire.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can use field arrows to describe magnetic field direction, explain the effect of current direction, and relate field strength to distance from the wire.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Magnetic field simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Wire and current</p>
+
+          <div class="slider-block">
+            <label for="current">Current</label>
+            <div class="sub-label">
+              <span>Into page</span>
+              <strong id="currentVal">5.0 A</strong>
+              <span>Out of page</span>
+            </div>
+            <input id="current" type="range" min="-10" max="10" step="0.1" value="5">
+          </div>
+
+          <div class="slider-block">
+            <label for="wireX">Wire x-position</label>
+            <div class="sub-label">
+              <span>Left</span>
+              <strong id="wireXVal">0.0</strong>
+              <span>Right</span>
+            </div>
+            <input id="wireX" type="range" min="-5" max="5" step="0.1" value="0">
+          </div>
+
+          <div class="slider-block">
+            <label for="wireY">Wire y-position</label>
+            <div class="sub-label">
+              <span>Down</span>
+              <strong id="wireYVal">0.0</strong>
+              <span>Up</span>
+            </div>
+            <input id="wireY" type="range" min="-5" max="5" step="0.1" value="0">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Display controls</p>
+
+          <div class="slider-block">
+            <label for="gridStep">Field arrow spacing</label>
+            <div class="sub-label">
+              <span>Dense</span>
+              <strong id="gridStepVal">1.0</strong>
+              <span>Sparse</span>
+            </div>
+            <input id="gridStep" type="range" min="0.6" max="2.0" step="0.1" value="1.0">
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input id="showGrid" type="checkbox" checked> Grid</label>
+            <label class="toggle-label"><input id="showCircles" type="checkbox" checked> Field circles</label>
+            <label class="toggle-label"><input id="showLabels" type="checkbox" checked> Labels</label>
+          </div>
+
+          <div class="button-row">
+            <button id="resetBtn" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Direction note</h3>
+          <p><strong>⊙</strong> means current comes out of the page. <strong>⊗</strong> means current goes into the page. Reversing the current reverses the magnetic field direction.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Magnetic field display">
+        <h2>Field model</h2>
+        <p>The arrows show the direction of the magnetic field around the wire. Click or drag the green probe to measure relative field strength at a point.</p>
+
+        <canvas id="field" width="1000" height="700" aria-label="Magnetic field around a current-carrying wire"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot wire"></span>Wire position and current direction.</span>
+          <span class="legend-item"><span class="legend-dot strong"></span>Warmer arrows show stronger field near the wire.</span>
+          <span class="legend-item"><span class="legend-dot"></span>Cooler arrows show weaker field further away.</span>
+          <span class="legend-item"><span class="legend-dot probe"></span>Green probe measures one point.</span>
+        </div>
+
+        <div class="results" aria-label="Current field measurements">
+          <div class="metric">
+            <div class="label">Current direction</div>
+            <div class="value" id="directionOut">Out of page</div>
+            <div class="small">Based on the sign of current</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Field direction</div>
+            <div class="value" id="rotationOut">Anticlockwise</div>
+            <div class="small">Using the right-hand grip rule</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Probe distance</div>
+            <div class="value" id="probeDistanceOut">—</div>
+            <div class="small">Distance from the wire</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Relative field</div>
+            <div class="value" id="probeFieldOut">—</div>
+            <div class="small">Relative value of |I|/r</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="status">Ready.</div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Set the current to +5 A. Describe the direction of the field arrows.</li>
+          <li>Change the current to −5 A. What changes?</li>
+          <li>Increase the current magnitude. What happens to the arrow length and colour?</li>
+          <li>Drag the probe closer to the wire. What happens to the relative field strength?</li>
+          <li>Explain why the field is strongest close to the wire.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This model is designed for visualising the magnetic field around a long straight current-carrying wire. The square plotting area keeps distances equal in the x and y directions so that circular field lines are represented accurately.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: How do we know the field is circular rather than straight?</li>
+          <li>Good prompt: What does reversing the current do to the field direction?</li>
+          <li>Extension: Link the model to the right-hand grip rule and the equation for field strength near a long straight wire.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The sim uses a simplified version of the magnetic field around a long straight wire. The real expression is:</p>
+
+        <div class="equation-box">
+B = μ₀I ÷ 2πr
+
+B = magnetic field strength
+μ₀ = permeability of free space
+I = current through the wire
+r = distance from the wire
+        </div>
+
+        <p style="margin-top:12px;">
+          In this sim, the exact physical constant is not needed because the arrows show <strong>relative</strong> field strength. The model keeps the key relationship: larger current gives a stronger field, and greater distance gives a weaker field.
+        </p>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Current direction matters:</strong> reversing the current reverses the magnetic field direction.</li>
+          <li><strong>Distance matters:</strong> field strength decreases as you move away from the wire.</li>
+          <li><strong>Right-hand grip rule:</strong> point your right thumb in the direction of conventional current; your curled fingers show the magnetic field direction.</li>
+          <li><strong>Model limitation:</strong> the sim shows a flat cross-section of a 3D field around a straight wire.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initStaticWireSim(){
+      const canvas = document.getElementById("field");
+      const ctx = canvas.getContext("2d");
+
+      const currentInput = document.getElementById("current");
+      const wireXInput = document.getElementById("wireX");
+      const wireYInput = document.getElementById("wireY");
+      const gridStepInput = document.getElementById("gridStep");
+
+      const showGridInput = document.getElementById("showGrid");
+      const showCirclesInput = document.getElementById("showCircles");
+      const showLabelsInput = document.getElementById("showLabels");
+
+      const currentVal = document.getElementById("currentVal");
+      const wireXVal = document.getElementById("wireXVal");
+      const wireYVal = document.getElementById("wireYVal");
+      const gridStepVal = document.getElementById("gridStepVal");
+
+      const directionOut = document.getElementById("directionOut");
+      const rotationOut = document.getElementById("rotationOut");
+      const probeDistanceOut = document.getElementById("probeDistanceOut");
+      const probeFieldOut = document.getElementById("probeFieldOut");
+      const status = document.getElementById("status");
+
+      const resetBtn = document.getElementById("resetBtn");
+
+      const AX_MIN = -6;
+      const AX_MAX = 6;
+      const AY_MIN = -6;
+      const AY_MAX = 6;
+      const TWO_PI = Math.PI * 2;
+      const MIN_R = 0.25;
+
+      let draggingProbe = false;
+      let probe = { x:3, y:2 };
+
+      function getPlot(){
+        const margin = 46;
+        const topExtra = 18;
+        const bottomExtra = 18;
+        const availableW = canvas.width - margin * 2;
+        const availableH = canvas.height - margin * 2 - topExtra - bottomExtra;
+        const size = Math.min(availableW, availableH);
+        return {
+          x:(canvas.width - size) / 2,
+          y:(canvas.height - size) / 2,
+          size:size,
+          scale:size / (AX_MAX - AX_MIN)
+        };
+      }
+
+      function worldToScreen(x, y){
+        const plot = getPlot();
+        const sx = plot.x + (x - AX_MIN) / (AX_MAX - AX_MIN) * plot.size;
+        const sy = plot.y + plot.size - (y - AY_MIN) / (AY_MAX - AY_MIN) * plot.size;
+        return [sx, sy];
+      }
+
+      function screenToWorld(sx, sy){
+        const plot = getPlot();
+        const x = AX_MIN + ((sx - plot.x) / plot.size) * (AX_MAX - AX_MIN);
+        const y = AY_MIN + ((plot.y + plot.size - sy) / plot.size) * (AY_MAX - AY_MIN);
+        return {
+          x:Math.max(AX_MIN, Math.min(AX_MAX, x)),
+          y:Math.max(AY_MIN, Math.min(AY_MAX, y))
+        };
+      }
+
+      function screenPointFromEvent(event){
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x:(event.clientX - rect.left) * (canvas.width / rect.width),
+          y:(event.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      function insidePlot(sx, sy){
+        const plot = getPlot();
+        return sx >= plot.x && sx <= plot.x + plot.size && sy >= plot.y && sy <= plot.y + plot.size;
+      }
+
+      function tangentialUnit(dx, dy){
+        const r = Math.hypot(dx, dy);
+        if(r === 0){
+          return [0, 0];
+        }
+        return [-dy / r, dx / r];
+      }
+
+      function fieldMag(I, r){
+        return Math.abs(I) / (TWO_PI * Math.max(r, MIN_R));
+      }
+
+      function relativeField(I, r){
+        if(I === 0){
+          return 0;
+        }
+        return Math.abs(I) / Math.max(r, MIN_R);
+      }
+
+      function vectorLength(I, r, gridStep){
+        const mag = fieldMag(I, r);
+        const maxLen = 0.90 * gridStep;
+        return Math.min(maxLen, mag * gridStep * 0.78);
+      }
+
+      function colourForMag(mag, magMin, magMax){
+        const t = Math.max(0, Math.min(1, (mag - magMin) / (magMax - magMin + 1e-9)));
+        const hue = 220 - 165 * t;
+        const saturation = 78;
+        const lightness = 52 + 10 * (1 - t);
+
+        return "hsl(" + hue + ", " + saturation + "%, " + lightness + "%)";
+      }
+
+      function drawArrow(x, y, vx, vy, lenWorld, colour, width){
+        const m = Math.hypot(vx, vy) || 1;
+        const uxW = vx / m;
+        const uyW = vy / m;
+        const x2 = x + uxW * lenWorld;
+        const y2 = y + uyW * lenWorld;
+
+        const start = worldToScreen(x, y);
+        const end = worldToScreen(x2, y2);
+
+        const dxs = end[0] - start[0];
+        const dys = end[1] - start[1];
+        const slen = Math.hypot(dxs, dys);
+
+        if(slen < 6){
+          ctx.beginPath();
+          ctx.arc(start[0], start[1], 2, 0, TWO_PI);
+          ctx.fillStyle = colour;
+          ctx.fill();
+          return;
+        }
+
+        const ux = dxs / slen;
+        const uy = dys / slen;
+        const nx = -uy;
+        const ny = ux;
+
+        let headPx = Math.max(5, Math.min(12, slen * 0.24));
+        headPx = Math.min(headPx, slen * 0.42);
+
+        const bx = end[0] - ux * headPx;
+        const by = end[1] - uy * headPx;
+        const half = headPx * 0.54;
+
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = width || 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(start[0], start[1]);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(end[0], end[1]);
+        ctx.lineTo(bx + nx * half, by + ny * half);
+        ctx.lineTo(bx - nx * half, by - ny * half);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawWireSymbol(x0, y0, I){
+        const p = worldToScreen(x0, y0);
+
+        ctx.save();
+        ctx.translate(p[0], p[1]);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 19, 0, TWO_PI);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.strokeStyle = "#0f172a";
+
+        if(I > 0){
+          ctx.beginPath();
+          ctx.arc(0, 0, 6, 0, TWO_PI);
+          ctx.fill();
+        }else if(I < 0){
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(-8, -8);
+          ctx.lineTo(8, 8);
+          ctx.moveTo(-8, 8);
+          ctx.lineTo(8, -8);
+          ctx.stroke();
+        }else{
+          ctx.fillStyle = "#64748b";
+          ctx.font = "900 18px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("0", 0, 1);
+        }
+
+        ctx.restore();
+      }
+
+      function drawBackground(){
+        const plot = getPlot();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f8fafc";
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 2;
+        ctx.fillRect(plot.x, plot.y, plot.size, plot.size);
+        ctx.strokeRect(plot.x, plot.y, plot.size, plot.size);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(plot.x, plot.y, plot.size, plot.size);
+        ctx.clip();
+
+        if(showGridInput.checked){
+          ctx.strokeStyle = "#e2e8f0";
+          ctx.lineWidth = 1;
+
+          for(let x = AX_MIN; x <= AX_MAX; x += 1){
+            const p1 = worldToScreen(x, AY_MIN);
+            const p2 = worldToScreen(x, AY_MAX);
+
+            ctx.beginPath();
+            ctx.moveTo(p1[0], p1[1]);
+            ctx.lineTo(p2[0], p2[1]);
+            ctx.stroke();
+          }
+
+          for(let y = AY_MIN; y <= AY_MAX; y += 1){
+            const p1 = worldToScreen(AX_MIN, y);
+            const p2 = worldToScreen(AX_MAX, y);
+
+            ctx.beginPath();
+            ctx.moveTo(p1[0], p1[1]);
+            ctx.lineTo(p2[0], p2[1]);
+            ctx.stroke();
+          }
+        }
+
+        const xAxisA = worldToScreen(AX_MIN, 0);
+        const xAxisB = worldToScreen(AX_MAX, 0);
+        const yAxisA = worldToScreen(0, AY_MIN);
+        const yAxisB = worldToScreen(0, AY_MAX);
+
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(xAxisA[0], xAxisA[1]);
+        ctx.lineTo(xAxisB[0], xAxisB[1]);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(yAxisA[0], yAxisA[1]);
+        ctx.lineTo(yAxisB[0], yAxisB[1]);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function drawFieldCircles(x0, y0, I){
+        if(!showCirclesInput.checked || I === 0){
+          return;
+        }
+
+        const plot = getPlot();
+        const centre = worldToScreen(x0, y0);
+        const radii = [1, 2, 3, 4, 5];
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(plot.x, plot.y, plot.size, plot.size);
+        ctx.clip();
+
+        ctx.strokeStyle = "rgba(15,23,42,0.12)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+
+        radii.forEach(function(r){
+          ctx.beginPath();
+          ctx.arc(centre[0], centre[1], r * plot.scale, 0, TWO_PI);
+          ctx.stroke();
+        });
+
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      function drawProbe(I, x0, y0){
+        const dx = probe.x - x0;
+        const dy = probe.y - y0;
+        const r = Math.hypot(dx, dy);
+        const pProbe = worldToScreen(probe.x, probe.y);
+        const pWire = worldToScreen(x0, y0);
+
+        ctx.save();
+
+        ctx.strokeStyle = "rgba(22,163,74,0.72)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(pWire[0], pWire[1]);
+        ctx.lineTo(pProbe[0], pProbe[1]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#16a34a";
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(pProbe[0], pProbe[1], 8, 0, TWO_PI);
+        ctx.fill();
+        ctx.stroke();
+
+        if(I !== 0 && r > MIN_R){
+          let dir = tangentialUnit(dx, dy);
+          if(I < 0){
+            dir = [-dir[0], -dir[1]];
+          }
+
+          drawArrow(probe.x, probe.y, dir[0], dir[1], 0.9, "#16a34a", 3);
+        }
+
+        if(showLabelsInput.checked){
+          ctx.fillStyle = "#14532d";
+          ctx.font = "900 14px system-ui, sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Probe", pProbe[0] + 12, pProbe[1] - 12);
+        }
+
+        ctx.restore();
+      }
+
+      function drawLabels(I, x0, y0){
+        const p = worldToScreen(x0, y0);
+
+        ctx.save();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 16px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+
+        let symbol = "I = 0 A";
+
+        if(I > 0){
+          symbol = "⊙ current out of page";
+        }else if(I < 0){
+          symbol = "⊗ current into page";
+        }
+
+        ctx.fillText(symbol, p[0] + 28, p[1] - 22);
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "800 14px system-ui, sans-serif";
+        ctx.fillText("Equal-scale field map", 28, 34);
+        ctx.fillText("Click or drag to move the probe", 28, 55);
+
+        ctx.restore();
+      }
+
+      function render(){
+        const I = Number(currentInput.value);
+        const x0 = Number(wireXInput.value);
+        const y0 = Number(wireYInput.value);
+        const gridStep = Number(gridStepInput.value);
+
+        currentVal.textContent = I.toFixed(1) + " A";
+        wireXVal.textContent = x0.toFixed(1);
+        wireYVal.textContent = y0.toFixed(1);
+        gridStepVal.textContent = gridStep.toFixed(1);
+
+        if(I > 0){
+          directionOut.textContent = "Out of page";
+          rotationOut.textContent = "Anticlockwise";
+        }else if(I < 0){
+          directionOut.textContent = "Into page";
+          rotationOut.textContent = "Clockwise";
+        }else{
+          directionOut.textContent = "No current";
+          rotationOut.textContent = "No field";
+        }
+
+        drawBackground();
+        drawFieldCircles(x0, y0, I);
+
+        const plot = getPlot();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(plot.x, plot.y, plot.size, plot.size);
+        ctx.clip();
+
+        const rFar = Math.max(
+          Math.hypot(AX_MIN - x0, AY_MIN - y0),
+          Math.hypot(AX_MIN - x0, AY_MAX - y0),
+          Math.hypot(AX_MAX - x0, AY_MIN - y0),
+          Math.hypot(AX_MAX - x0, AY_MAX - y0)
+        );
+
+        const magMax = fieldMag(I, MIN_R);
+        const magMin = fieldMag(I, rFar);
+        let vectorCount = 0;
+
+        for(let x = AX_MIN; x <= AX_MAX + 0.001; x += gridStep){
+          for(let y = AY_MIN; y <= AY_MAX + 0.001; y += gridStep){
+            const dx = x - x0;
+            const dy = y - y0;
+            const r = Math.hypot(dx, dy);
+
+            if(r < MIN_R || I === 0){
+              continue;
+            }
+
+            let dir = tangentialUnit(dx, dy);
+
+            if(I < 0){
+              dir = [-dir[0], -dir[1]];
+            }
+
+            const len = vectorLength(I, r, gridStep);
+
+            if(len <= 0){
+              continue;
+            }
+
+            const mag = fieldMag(I, r);
+            const colour = colourForMag(mag, magMin, magMax);
+
+            drawArrow(x, y, dir[0], dir[1], len, colour, 2);
+            vectorCount++;
+          }
+        }
+
+        ctx.restore();
+
+        drawProbe(I, x0, y0);
+        drawWireSymbol(x0, y0, I);
+
+        if(showLabelsInput.checked){
+          drawLabels(I, x0, y0);
+        }
+
+        const probeR = Math.hypot(probe.x - x0, probe.y - y0);
+        const relB = relativeField(I, probeR);
+
+        probeDistanceOut.textContent = probeR.toFixed(2);
+        probeFieldOut.textContent = relB.toFixed(2);
+        status.textContent = "Vectors shown: " + vectorCount.toLocaleString("en-AU") + ". Wire at (x = " + x0.toFixed(1) + ", y = " + y0.toFixed(1) + "), current = " + I.toFixed(1) + " A. Probe at r = " + probeR.toFixed(2) + ".";
+      }
+
+      function moveProbeFromEvent(event){
+        const p = screenPointFromEvent(event);
+
+        if(!insidePlot(p.x, p.y)){
+          return;
+        }
+
+        const world = screenToWorld(p.x, p.y);
+        probe.x = world.x;
+        probe.y = world.y;
+        render();
+      }
+
+      canvas.addEventListener("pointerdown", function(event){
+        draggingProbe = true;
+        canvas.setPointerCapture(event.pointerId);
+        moveProbeFromEvent(event);
+      });
+
+      canvas.addEventListener("pointermove", function(event){
+        if(draggingProbe){
+          moveProbeFromEvent(event);
+        }
+      });
+
+      canvas.addEventListener("pointerup", function(event){
+        draggingProbe = false;
+        try{
+          canvas.releasePointerCapture(event.pointerId);
+        }catch(e){}
+      });
+
+      canvas.addEventListener("pointerleave", function(){
+        draggingProbe = false;
+      });
+
+      function reset(){
+        currentInput.value = 5;
+        wireXInput.value = 0;
+        wireYInput.value = 0;
+        gridStepInput.value = 1.0;
+        showGridInput.checked = true;
+        showCirclesInput.checked = true;
+        showLabelsInput.checked = true;
+        probe = { x:3, y:2 };
+        render();
+      }
+
+      [currentInput, wireXInput, wireYInput, gridStepInput, showGridInput, showCirclesInput, showLabelsInput].forEach(function(input){
+        input.addEventListener("input", render);
+        input.addEventListener("change", render);
+      });
+
+      resetBtn.addEventListener("click", reset);
+
+      reset();
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initStaticWireSim);
+    }else{
+      initStaticWireSim();
+    }
+  </script>
+</body>
+</html>
