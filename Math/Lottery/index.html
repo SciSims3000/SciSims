@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Lottery Probability Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --accent:#7c3aed;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #312e81, #7c3aed 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:900px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:390px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    select,
+    input,
+    button{
+      font:inherit;
+    }
+
+    select,
+    input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font-weight:700;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .board{
+      display:grid;
+      gap:7px;
+      grid-template-columns:repeat(9, 1fr);
+      margin-top:8px;
+    }
+
+    .board.powerball-board{
+      grid-template-columns:repeat(10, 1fr);
+    }
+
+    .ball{
+      aspect-ratio:1 / 1;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      background:#ffffff;
+      color:#0f172a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      font-weight:900;
+      font-size:0.9rem;
+      box-shadow:0 3px 8px rgba(15,23,42,0.08);
+    }
+
+    .ball:hover{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(124,58,237,0.14);
+    }
+
+    .ball.sel{
+      background:linear-gradient(135deg, #7c3aed, #2563eb);
+      color:white;
+      border-color:#6d28d9;
+    }
+
+    .ball.pb.sel{
+      background:linear-gradient(135deg, #f59e0b, #ef4444);
+      border-color:#f59e0b;
+    }
+
+    .ball.off{
+      opacity:0.35;
+      pointer-events:none;
+    }
+
+    .selection-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .mini-card{
+      background:#ffffff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+    }
+
+    .mini-card .label{
+      color:var(--muted);
+      font-size:0.82rem;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .mini-card .value{
+      font-size:1rem;
+      font-weight:900;
+      color:#0f172a;
+      word-break:break-word;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:#2563eb;
+    }
+
+    .legend-dot.theory{ background:#f59e0b; }
+    .legend-dot.experiment{ background:#7c3aed; }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.25rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .table-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:760px;
+    }
+
+    th,
+    td{
+      padding:9px 10px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      text-align:center;
+      font-size:0.88rem;
+      white-space:nowrap;
+    }
+
+    th{
+      background:#f1f5f9;
+      color:#334155;
+      font-weight:900;
+    }
+
+    td{
+      color:#0f172a;
+      font-weight:700;
+    }
+
+    .notes-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p,
+    .warning-note li{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .selection-box,
+      .results{
+        grid-template-columns:1fr;
+      }
+
+      .board{
+        grid-template-columns:repeat(6, 1fr);
+      }
+
+      .board.powerball-board{
+        grid-template-columns:repeat(5, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Lottery Probability Simulator</h1>
+      <p>Choose numbers, run simulated lottery draws, and compare experimental outcomes with theoretical probability. This sim shows why rare events can feel possible but still remain extremely unlikely.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Maths</span>
+        <span class="pill">Probability</span>
+        <span class="pill">Combinations</span>
+        <span class="pill">Experimental data</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how probability can be estimated experimentally and calculated theoretically using combinations.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can run repeated trials, compare experimental frequencies with theoretical probabilities, and explain why large samples give more stable patterns.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Lottery probability simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Game mode</p>
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="6of45" selected>6 from 45</option>
+            <option value="pball">Powerball AU: 7 from 35 + Powerball 1–20</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Choose your numbers</p>
+          <p class="mini-card" style="margin:0 0 10px;color:#64748b;font-weight:700;">Select exactly <span id="needLabel">6</span> main numbers.</p>
+          <div class="board" id="mainBoard" aria-label="Main number board"></div>
+
+          <div id="pbWrap" style="display:none;margin-top:16px;">
+            <p class="control-heading" style="margin-top:0;">Choose your Powerball</p>
+            <div class="board powerball-board" id="pbBoard" aria-label="Powerball number board"></div>
+          </div>
+
+          <div class="button-row">
+            <button id="quick" type="button">Quick pick</button>
+            <button id="clear" class="ghost" type="button">Clear</button>
+          </div>
+
+          <div class="selection-box">
+            <div class="mini-card">
+              <div class="label">Your selection</div>
+              <div class="value" id="selLabel">—</div>
+            </div>
+            <div class="mini-card">
+              <div class="label">Draws run</div>
+              <div class="value" id="drawsLabel">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Run draws</p>
+
+          <label for="nDraws">Draws per click</label>
+          <input id="nDraws" type="number" min="1" max="250000" step="10" value="100">
+
+          <div class="button-row">
+            <button id="run" type="button">Run N</button>
+            <button id="run1" class="ghost" type="button">Run 1</button>
+            <button id="untilJackpot" class="secondary" type="button">Run until jackpot</button>
+            <button id="export" class="ghost" type="button">Export CSV</button>
+            <button id="resetData" class="secondary" type="button">Reset data</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This sim uses random computer-generated trials. Theoretical probabilities are based on combinations. A short run may look uneven; a very large run should move closer to the expected pattern.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Probability chart">
+        <h2>Experimental versus theoretical probability</h2>
+        <p>The bars show experimental relative frequency from your simulated draws. The orange line shows the theoretical probability for each outcome.</p>
+
+        <canvas id="chart" width="1000" height="500" aria-label="Chart comparing experimental and theoretical probability"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot experiment"></span>Purple bars show experimental relative frequency.</span>
+          <span class="legend-item"><span class="legend-dot theory"></span>Orange line shows theoretical probability.</span>
+          <span class="legend-item"><span class="legend-dot"></span>More draws usually gives a steadier comparison.</span>
+        </div>
+
+        <div class="results" aria-label="Current results">
+          <div class="metric">
+            <div class="label">Current mode</div>
+            <div class="value" id="metricMode">6 from 45</div>
+            <div class="small">Lottery structure being simulated</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Jackpot outcome</div>
+            <div class="value" id="metricJackpot">0</div>
+            <div class="small" id="metricJackpotLabel">6 matches</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Experimental jackpot rate</div>
+            <div class="value" id="metricJackpotRate">0%</div>
+            <div class="small">From your simulated draws</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Theoretical jackpot chance</div>
+            <div class="value" id="metricTheoryJackpot">—</div>
+            <div class="small">Expected probability per draw</div>
+          </div>
+        </div>
+
+        <div class="table-grid">
+          <div>
+            <h2>Experimental outcomes</h2>
+            <div class="table-wrap">
+              <table>
+                <thead><tr id="expHead"></tr></thead>
+                <tbody><tr id="expRow"></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h2>Theoretical probabilities per draw</h2>
+            <div class="table-wrap">
+              <table>
+                <thead><tr id="thHead"></tr></thead>
+                <tbody><tr id="thRow"></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Use Quick pick, then run 100 draws. Which outcome appears most often?</li>
+          <li>Run 10,000 draws. Does the experimental pattern move closer to the theoretical pattern?</li>
+          <li>Compare the jackpot probability with the chance of getting no matches.</li>
+          <li>Switch to Powerball AU mode. Why does adding the Powerball make the jackpot less likely?</li>
+          <li>Export the CSV and calculate the experimental relative frequency for one outcome.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>For 6 from 45, the number of matching main numbers follows a hypergeometric model. For the simplified Powerball AU mode, main-number matching is combined with an independent Powerball match or non-match.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Why do experimental results fluctuate more with small samples?</li>
+          <li>Good prompt: Why is “possible” not the same as “likely”?</li>
+          <li>Extension: Ask students to explain the role of combinations in calculating theoretical probability.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initLotterySimulator(){
+      const $ = function(sel){ return document.querySelector(sel); };
+      const $$ = function(sel){ return document.querySelectorAll(sel); };
+
+      let mode = "6of45";
+      let mainSel = new Set();
+      let pbSel = null;
+      let drawsRun = 0;
+      let expCounts = {};
+
+      const chart = $("#chart");
+      const ctx = chart.getContext("2d");
+
+      function getSpec(){
+        if(mode === "6of45"){
+          return {
+            label:"6 from 45",
+            mainMax:45,
+            mainPick:6,
+            jackpotLabel:"6 matches"
+          };
+        }
+
+        return {
+          label:"Powerball AU",
+          mainMax:35,
+          mainPick:7,
+          pbMax:20,
+          jackpotLabel:"7 + PB"
+        };
+      }
+
+      function combination(n, k){
+        if(k < 0 || k > n){ return 0; }
+
+        k = Math.min(k, n - k);
+
+        let c = 1;
+
+        for(let i = 0; i < k; i++){
+          c = c * (n - i) / (i + 1);
+        }
+
+        return c;
+      }
+
+      function outcomeLabels(){
+        if(mode === "6of45"){
+          return Array.from({ length:7 }, function(_, k){
+            return k + " match" + (k === 1 ? "" : "es");
+          });
+        }
+
+        const labels = [];
+
+        for(let k = 0; k <= 7; k++){
+          labels.push(k + " + PB No");
+          labels.push(k + " + PB Yes");
+        }
+
+        return labels;
+      }
+
+      function theoryProbs(){
+        if(mode === "6of45"){
+          const N = 45;
+          const K = 6;
+          const n = 6;
+          const denom = combination(N, n);
+          const probs = [];
+
+          for(let k = 0; k <= 6; k++){
+            const ways = combination(K, k) * combination(N - K, n - k);
+            probs.push(ways / denom);
+          }
+
+          return probs;
+        }
+
+        const N = 35;
+        const K = 7;
+        const n = 7;
+        const denom = combination(N, n);
+        const pbYes = 1 / 20;
+        const pbNo = 19 / 20;
+        const probs = [];
+
+        for(let k = 0; k <= 7; k++){
+          const mainP = combination(K, k) * combination(N - K, n - k) / denom;
+          probs.push(mainP * pbNo);
+          probs.push(mainP * pbYes);
+        }
+
+        return probs;
+      }
+
+      function formatPercent(value){
+        if(value === 0){ return "0%"; }
+
+        const p = value * 100;
+
+        if(p >= 1){ return p.toFixed(3) + "%"; }
+        if(p >= 0.01){ return p.toFixed(4) + "%"; }
+        if(p >= 0.0001){ return p.toFixed(6) + "%"; }
+
+        return p.toExponential(2) + "%";
+      }
+
+      function renderBoards(){
+        const mainBoard = $("#mainBoard");
+        const pbBoard = $("#pbBoard");
+        const pbWrap = $("#pbWrap");
+        const spec = getSpec();
+
+        mainBoard.innerHTML = "";
+        pbBoard.innerHTML = "";
+
+        $("#needLabel").textContent = spec.mainPick;
+
+        for(let i = 1; i <= spec.mainMax; i++){
+          const ball = document.createElement("div");
+          ball.className = "ball";
+          ball.textContent = i;
+
+          if(mainSel.has(i)){
+            ball.classList.add("sel");
+          }
+
+          ball.addEventListener("click", function(){
+            toggleMain(i);
+          });
+
+          mainBoard.appendChild(ball);
+        }
+
+        if(mode === "pball"){
+          pbWrap.style.display = "block";
+
+          for(let i = 1; i <= spec.pbMax; i++){
+            const ball = document.createElement("div");
+            ball.className = "ball pb";
+            ball.textContent = i;
+
+            if(pbSel === i){
+              ball.classList.add("sel");
+            }
+
+            ball.addEventListener("click", function(){
+              pbSel = pbSel === i ? null : i;
+              renderBoards();
+              syncUI();
+            });
+
+            pbBoard.appendChild(ball);
+          }
+        }else{
+          pbWrap.style.display = "none";
+        }
+
+        syncUI();
+      }
+
+      function toggleMain(i){
+        const spec = getSpec();
+
+        if(mainSel.has(i)){
+          mainSel.delete(i);
+        }else{
+          if(mainSel.size >= spec.mainPick){ return; }
+          mainSel.add(i);
+        }
+
+        syncUI();
+      }
+
+      function syncUI(){
+        const spec = getSpec();
+        const mainBalls = $$("#mainBoard .ball");
+
+        mainBalls.forEach(function(ball){
+          const n = Number(ball.textContent);
+          ball.classList.toggle("sel", mainSel.has(n));
+
+          if(!mainSel.has(n) && mainSel.size >= spec.mainPick){
+            ball.classList.add("off");
+          }else{
+            ball.classList.remove("off");
+          }
+        });
+
+        if(mode === "pball"){
+          $$("#pbBoard .ball").forEach(function(ball){
+            const n = Number(ball.textContent);
+            ball.classList.toggle("sel", pbSel === n);
+          });
+        }
+
+        const selText = Array.from(mainSel).sort(function(a, b){ return a - b; }).join(", ") || "—";
+        const pbText = mode === "pball" ? " | PB: " + (pbSel === null ? "—" : pbSel) : "";
+
+        $("#selLabel").textContent = selText + pbText;
+        $("#drawsLabel").textContent = drawsRun.toLocaleString("en-AU");
+        $("#metricMode").textContent = spec.label;
+
+        buildTables();
+        updateMetrics();
+        drawChart();
+      }
+
+      function buildTables(){
+        const labels = outcomeLabels();
+        const probs = theoryProbs();
+
+        $("#expHead").innerHTML = labels.map(function(label){
+          return "<th>" + label + "</th>";
+        }).join("");
+
+        $("#thHead").innerHTML = labels.map(function(label){
+          return "<th>" + label + "</th>";
+        }).join("");
+
+        $("#expRow").innerHTML = labels.map(function(label){
+          return "<td>" + (expCounts[label] || 0).toLocaleString("en-AU") + "</td>";
+        }).join("");
+
+        $("#thRow").innerHTML = probs.map(function(p){
+          return "<td>" + formatPercent(p) + "</td>";
+        }).join("");
+      }
+
+      function updateMetrics(){
+        const labels = outcomeLabels();
+        const probs = theoryProbs();
+        const jackpotKey = mode === "6of45" ? "6 matches" : "7 + PB Yes";
+        const jackpotIndex = labels.indexOf(jackpotKey);
+        const jackpotCount = expCounts[jackpotKey] || 0;
+        const rate = drawsRun > 0 ? jackpotCount / drawsRun : 0;
+
+        $("#metricJackpot").textContent = jackpotCount.toLocaleString("en-AU");
+        $("#metricJackpotRate").textContent = formatPercent(rate);
+        $("#metricTheoryJackpot").textContent = jackpotIndex >= 0 ? formatPercent(probs[jackpotIndex]) : "—";
+        $("#metricJackpotLabel").textContent = mode === "6of45" ? "6 matches" : "7 main matches plus Powerball";
+      }
+
+      function shuffle(array){
+        for(let i = array.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          const temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+      }
+
+      function drawOnce(){
+        const spec = getSpec();
+        const pool = Array.from({ length:spec.mainMax }, function(_, i){ return i + 1; });
+
+        shuffle(pool);
+
+        const drawMain = new Set(pool.slice(0, spec.mainPick));
+        let matches = 0;
+
+        mainSel.forEach(function(n){
+          if(drawMain.has(n)){
+            matches++;
+          }
+        });
+
+        let label;
+
+        if(mode === "6of45"){
+          label = matches + " match" + (matches === 1 ? "" : "es");
+        }else{
+          const drawnPB = 1 + Math.floor(Math.random() * spec.pbMax);
+          const hitPB = pbSel !== null && pbSel === drawnPB;
+          label = matches + " + PB " + (hitPB ? "Yes" : "No");
+        }
+
+        expCounts[label] = (expCounts[label] || 0) + 1;
+        drawsRun++;
+      }
+
+      function selectionReady(){
+        const spec = getSpec();
+
+        if(mainSel.size !== spec.mainPick){
+          alert("Please select exactly " + spec.mainPick + " main numbers.");
+          return false;
+        }
+
+        if(mode === "pball" && pbSel === null){
+          alert("Please select one Powerball.");
+          return false;
+        }
+
+        return true;
+      }
+
+      function runN(N){
+        if(!selectionReady()){ return; }
+
+        const safeN = Math.max(1, Math.min(250000, Number(N) || 100));
+
+        for(let i = 0; i < safeN; i++){
+          drawOnce();
+        }
+
+        syncUI();
+      }
+
+      function untilJackpot(){
+        if(!selectionReady()){ return; }
+
+        const jackpotKey = mode === "6of45" ? "6 matches" : "7 + PB Yes";
+        const previousJackpots = expCounts[jackpotKey] || 0;
+        const cap = 500000;
+        let count = 0;
+
+        while(count < cap){
+          drawOnce();
+          count++;
+
+          if((expCounts[jackpotKey] || 0) > previousJackpots){
+            break;
+          }
+        }
+
+        syncUI();
+
+        if(count >= cap){
+          alert("Safety cap reached after " + cap.toLocaleString("en-AU") + " draws without a jackpot.");
+        }
+      }
+
+      function quickPick(){
+        const spec = getSpec();
+        const pool = Array.from({ length:spec.mainMax }, function(_, i){ return i + 1; });
+
+        shuffle(pool);
+
+        mainSel = new Set(pool.slice(0, spec.mainPick));
+
+        if(mode === "pball"){
+          pbSel = 1 + Math.floor(Math.random() * spec.pbMax);
+        }else{
+          pbSel = null;
+        }
+
+        renderBoards();
+        syncUI();
+      }
+
+      function clearSelection(){
+        mainSel.clear();
+        pbSel = null;
+        renderBoards();
+        syncUI();
+      }
+
+      function resetData(){
+        expCounts = {};
+        drawsRun = 0;
+        syncUI();
+      }
+
+      function drawChart(){
+        const width = chart.width;
+        const height = chart.height;
+        const labels = outcomeLabels();
+        const probs = theoryProbs();
+        const counts = labels.map(function(label){ return expCounts[label] || 0; });
+        const expFreqs = counts.map(function(count){
+          return drawsRun > 0 ? count / drawsRun : 0;
+        });
+
+        const maxY = Math.max(0.0001, ...probs, ...expFreqs);
+        const padLeft = 70;
+        const padRight = 28;
+        const padTop = 42;
+        const padBottom = mode === "6of45" ? 74 : 112;
+        const plotW = width - padLeft - padRight;
+        const plotH = height - padTop - padBottom;
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = "#dbe3ef";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#64748b";
+        ctx.font = "700 13px system-ui, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        for(let i = 0; i <= 5; i++){
+          const value = maxY * i / 5;
+          const y = padTop + plotH - (value / maxY) * plotH;
+
+          ctx.beginPath();
+          ctx.moveTo(padLeft, y);
+          ctx.lineTo(width - padRight, y);
+          ctx.stroke();
+
+          ctx.fillText(formatPercent(value), padLeft - 10, y);
+        }
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, padTop);
+        ctx.lineTo(padLeft, padTop + plotH);
+        ctx.lineTo(width - padRight, padTop + plotH);
+        ctx.stroke();
+
+        const groupW = plotW / labels.length;
+        const barW = Math.max(6, groupW * 0.54);
+
+        for(let i = 0; i < labels.length; i++){
+          const x = padLeft + i * groupW + (groupW - barW) / 2;
+          const h = (expFreqs[i] / maxY) * plotH;
+          const y = padTop + plotH - h;
+
+          ctx.fillStyle = "#7c3aed";
+          ctx.fillRect(x, y, barW, h);
+        }
+
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 4;
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+
+        for(let i = 0; i < labels.length; i++){
+          const x = padLeft + i * groupW + groupW / 2;
+          const y = padTop + plotH - (probs[i] / maxY) * plotH;
+
+          if(i === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        ctx.fillStyle = "#f59e0b";
+
+        for(let i = 0; i < labels.length; i++){
+          const x = padLeft + i * groupW + groupW / 2;
+          const y = padTop + plotH - (probs[i] / maxY) * plotH;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 18px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("Experimental relative frequency versus theoretical probability", width / 2, 28);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.textBaseline = "top";
+
+        for(let i = 0; i < labels.length; i++){
+          const x = padLeft + i * groupW + groupW / 2;
+          const label = labels[i];
+
+          ctx.save();
+          ctx.translate(x, padTop + plotH + 12);
+          ctx.rotate(mode === "6of45" ? 0 : -Math.PI / 4);
+          ctx.textAlign = mode === "6of45" ? "center" : "right";
+          ctx.fillText(label, 0, 0);
+          ctx.restore();
+        }
+      }
+
+      function exportCSV(){
+        const labels = outcomeLabels();
+        const counts = labels.map(function(label){ return expCounts[label] || 0; });
+        const probs = theoryProbs();
+        const rows = [["Outcome","Experimental_Count","Experimental_Relative_Frequency","Theoretical_Probability"]];
+        const totalDraws = Math.max(1, drawsRun);
+
+        for(let i = 0; i < labels.length; i++){
+          rows.push([
+            labels[i],
+            counts[i],
+            (counts[i] / totalDraws).toFixed(8),
+            probs[i].toFixed(10)
+          ]);
+        }
+
+        const csv = rows.map(function(row){
+          return row.join(",");
+        }).join("\n");
+
+        const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, "0");
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const yyyy = now.getFullYear();
+
+        link.href = url;
+        link.download = "lottery_probability_" + mode + "_" + dd + "-" + mm + "-" + yyyy + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      $("#mode").addEventListener("change", function(){
+        mode = $("#mode").value;
+        mainSel.clear();
+        pbSel = null;
+        resetData();
+        renderBoards();
+      });
+
+      $("#quick").addEventListener("click", quickPick);
+      $("#clear").addEventListener("click", clearSelection);
+      $("#run").addEventListener("click", function(){
+        runN($("#nDraws").value);
+      });
+      $("#run1").addEventListener("click", function(){
+        runN(1);
+      });
+      $("#untilJackpot").addEventListener("click", untilJackpot);
+      $("#export").addEventListener("click", exportCSV);
+      $("#resetData").addEventListener("click", resetData);
+
+      window.addEventListener("keydown", function(e){
+        const active = document.activeElement;
+        const typing = active && (active.tagName === "INPUT" || active.tagName === "SELECT");
+
+        if(typing){ return; }
+
+        if(e.code === "Space"){
+          e.preventDefault();
+          runN($("#nDraws").value);
+        }
+
+        if(e.key.toLowerCase() === "r"){
+          quickPick();
+        }
+
+        if(e.key.toLowerCase() === "e"){
+          exportCSV();
+        }
+      });
+
+      renderBoards();
+      syncUI();
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initLotterySimulator);
+    }else{
+      initLotterySimulator();
+    }
+  </script>
+</body>
+</html>
