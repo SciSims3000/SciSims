@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Galton Board Simulator</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --accent:#7c3aed;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #312e81, #7c3aed 58%, #22c55e);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:920px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:340px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    .sub-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    input[type="range"],
+    select{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="number"],
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font:inherit;
+      font-weight:750;
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    button{
+      font:inherit;
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .toggle-label input{
+      accent-color:var(--button);
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:#0f172a;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:#22c55e;
+    }
+
+    .legend-dot.hist{ background:#7c3aed; }
+    .legend-dot.theory{ background:#f59e0b; }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.35rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+      margin-top:14px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:640px;
+    }
+
+    th,
+    td{
+      padding:9px 10px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      text-align:center;
+      font-size:0.9rem;
+      white-space:nowrap;
+    }
+
+    th{
+      background:#f1f5f9;
+      color:#334155;
+      font-weight:900;
+    }
+
+    td{
+      color:#0f172a;
+      font-weight:700;
+    }
+
+    .notes-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    code{
+      background:#f1f5f9;
+      border:1px solid #dbe3ef;
+      border-radius:8px;
+      padding:1px 6px;
+      font-weight:700;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Galton Board Simulator</h1>
+      <p>Drop beads through a peg board and watch random left-right choices build a distribution. Compare the experimental histogram with the theoretical binomial curve.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Maths</span>
+        <span class="pill">Probability</span>
+        <span class="pill">Binomial distribution</span>
+        <span class="pill">Normal approximation</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how repeated random choices can form a predictable distribution over many trials.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can describe how the histogram changes as more beads are dropped and compare experimental results with a theoretical binomial model.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Galton board simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Board settings</p>
+
+          <div class="slider-block">
+            <label for="rows">Rows of pegs</label>
+            <div class="sub-label">
+              <span>Fewer</span>
+              <strong><span id="rowsVal">10</span> rows</strong>
+              <span>More</span>
+            </div>
+            <input id="rows" type="range" min="3" max="20" step="1" value="10">
+          </div>
+
+          <div class="slider-block">
+            <label for="beads">Beads to drop</label>
+            <div class="sub-label">
+              <span>Few</span>
+              <strong><span id="beadsVal">500</span></strong>
+              <span>Many</span>
+            </div>
+            <input id="beads" type="range" min="1" max="5000" step="1" value="500">
+          </div>
+
+          <div class="slider-block">
+            <label for="rate">Drop rate</label>
+            <div class="sub-label">
+              <span>Slow</span>
+              <strong><span id="rateVal">60</span> beads/s</strong>
+              <span>Fast</span>
+            </div>
+            <input id="rate" type="range" min="1" max="200" step="1" value="60">
+          </div>
+
+          <div class="slider-block">
+            <label for="pRight">Probability of moving right</label>
+            <select id="pRight">
+              <option value="0.50" selected>0.50 fair</option>
+              <option value="0.55">0.55 right bias</option>
+              <option value="0.60">0.60 right bias</option>
+              <option value="0.45">0.45 left bias</option>
+              <option value="0.40">0.40 left bias</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Animation controls</p>
+          <div class="button-row">
+            <button id="start" type="button">Run board</button>
+            <button id="step" class="ghost" type="button">Drop 1 bead</button>
+            <button id="reset" class="secondary" type="button">Reset</button>
+            <button id="export" class="ghost" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Display options</p>
+          <label class="toggle-label"><input id="showTheory" type="checkbox" checked> Show theoretical curve</label>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>Each peg decision is modelled as a random left-right choice. With many beads and p = 0.50, the binomial distribution begins to resemble a normal curve.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Galton board model">
+        <h2>Galton board model</h2>
+        <p>The board shows beads falling through pegs. The lower histogram shows where beads finish after repeated random choices.</p>
+
+        <canvas id="scene" width="1280" height="720" aria-label="Animated Galton board and histogram"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot"></span>Green beads show active falling trials.</span>
+          <span class="legend-item"><span class="legend-dot hist"></span>Purple bars show experimental bin counts.</span>
+          <span class="legend-item"><span class="legend-dot theory"></span>Orange line shows theoretical binomial probability.</span>
+        </div>
+
+        <div class="results" aria-label="Current measurements">
+          <div class="metric">
+            <div class="label">Beads dropped</div>
+            <div class="value"><span id="metricDropped">0</span>/<span id="metricTotal">500</span></div>
+            <div class="small">Completed and active bead trials</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Rows</div>
+            <div class="value" id="metricRows">10</div>
+            <div class="small">Number of random left-right choices</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">p(right)</div>
+            <div class="value" id="metricP">0.50</div>
+            <div class="small">Probability of moving right at each peg</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Most common bin</div>
+            <div class="value" id="metricMode">—</div>
+            <div class="small">Based on current experimental results</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Bin counts">
+            <thead>
+              <tr>
+                <th>Bin index</th>
+                <th>Experimental count</th>
+                <th>Experimental relative frequency</th>
+                <th>Theoretical probability</th>
+              </tr>
+            </thead>
+            <tbody id="binTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Drop 50 beads. Describe the shape of the histogram.</li>
+          <li>Reset and drop 1000 beads. How does the shape change?</li>
+          <li>Change p(right) to 0.60. What happens to the centre of the distribution?</li>
+          <li>Increase the number of rows. What happens to the number of possible final bins?</li>
+          <li>Export the CSV and compare experimental relative frequency with theoretical probability.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>The final bin number represents how many times a bead moved right. For n rows, the possible final bins are 0 to n. This connects directly to the binomial distribution.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Why does the distribution become smoother with more beads?</li>
+          <li>Good prompt: Why does a biased p(right) shift the histogram left or right?</li>
+          <li>Extension: Connect the model to Pascal’s triangle and binomial coefficients.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initGaltonBoard(){
+      const scene = document.getElementById("scene");
+      const ctx = scene.getContext("2d");
+
+      const rowsInput = document.getElementById("rows");
+      const beadsInput = document.getElementById("beads");
+      const rateInput = document.getElementById("rate");
+      const pRightInput = document.getElementById("pRight");
+      const showTheoryInput = document.getElementById("showTheory");
+
+      const rowsVal = document.getElementById("rowsVal");
+      const beadsVal = document.getElementById("beadsVal");
+      const rateVal = document.getElementById("rateVal");
+
+      const metricDropped = document.getElementById("metricDropped");
+      const metricTotal = document.getElementById("metricTotal");
+      const metricRows = document.getElementById("metricRows");
+      const metricP = document.getElementById("metricP");
+      const metricMode = document.getElementById("metricMode");
+
+      const binTable = document.getElementById("binTable");
+
+      const startBtn = document.getElementById("start");
+      const stepBtn = document.getElementById("step");
+      const resetBtn = document.getElementById("reset");
+      const exportBtn = document.getElementById("export");
+
+      let nRows = 10;
+      let nBeads = 500;
+      let rate = 60;
+      let pR = 0.5;
+      let showTheory = true;
+
+      let bins = [];
+      let running = false;
+      let dropped = 0;
+      let completed = 0;
+      let lastTime = 0;
+      let spawnCarry = 0;
+
+      const beads = [];
+      const FALL_SPEED = 2.4;
+      const maxCache = new Map();
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function readSettings(){
+        nRows = clamp(parseInt(rowsInput.value, 10) || 10, 3, 20);
+        nBeads = clamp(parseInt(beadsInput.value, 10) || 500, 1, 5000);
+        rate = clamp(parseInt(rateInput.value, 10) || 60, 1, 200);
+        pR = parseFloat(pRightInput.value) || 0.5;
+        showTheory = showTheoryInput.checked;
+
+        rowsInput.value = nRows;
+        beadsInput.value = nBeads;
+        rateInput.value = rate;
+      }
+
+      function updateReadouts(){
+        rowsVal.textContent = nRows;
+        beadsVal.textContent = nBeads.toLocaleString("en-AU");
+        rateVal.textContent = rate;
+
+        metricDropped.textContent = dropped.toLocaleString("en-AU");
+        metricTotal.textContent = nBeads.toLocaleString("en-AU");
+        metricRows.textContent = nRows;
+        metricP.textContent = pR.toFixed(2);
+
+        let bestBin = "—";
+        let bestCount = 0;
+
+        for(let i = 0; i < bins.length; i++){
+          if(bins[i] > bestCount){
+            bestCount = bins[i];
+            bestBin = i;
+          }
+        }
+
+        metricMode.textContent = bestBin;
+      }
+
+      function posX(step, rights){
+        const margin = 52;
+        const boardLeft = margin;
+        const boardRight = scene.width - margin;
+        const width = boardRight - boardLeft;
+        const binW = width / (nRows + 1);
+        const channelIndex = rights + (nRows - step) / 2;
+
+        return boardLeft + (channelIndex + 0.5) * binW;
+      }
+
+      function spawnBead(){
+        if(dropped >= nBeads){ return; }
+
+        const xCentre = posX(0, 0);
+
+        beads.push({
+          step:0,
+          t:0,
+          rights:0,
+          xPrev:xCentre,
+          xNext:xCentre
+        });
+
+        dropped++;
+      }
+
+      function advanceBead(bead, dt){
+        if(bead.step >= nRows){
+          return true;
+        }
+
+        bead.t += FALL_SPEED * dt;
+
+        while(bead.t >= 1 && bead.step < nRows){
+          bead.t -= 1;
+
+          if(Math.random() < pR){
+            bead.rights++;
+          }
+
+          bead.step++;
+          bead.xPrev = bead.xNext;
+          bead.xNext = posX(bead.step + 1, bead.rights);
+        }
+
+        if(bead.step >= nRows){
+          bins[bead.rights]++;
+          completed++;
+          return true;
+        }
+
+        return false;
+      }
+
+      function reset(){
+        readSettings();
+
+        bins = new Array(nRows + 1).fill(0);
+        beads.length = 0;
+
+        running = false;
+        dropped = 0;
+        completed = 0;
+        lastTime = 0;
+        spawnCarry = 0;
+
+        startBtn.textContent = "Run board";
+
+        updateReadouts();
+        updateTable();
+        render();
+      }
+
+      function startPause(){
+        running = !running;
+        startBtn.textContent = running ? "Pause board" : "Run board";
+
+        if(running){
+          if(dropped < nBeads && beads.length === 0){
+            spawnBead();
+          }
+
+          lastTime = 0;
+          requestAnimationFrame(tick);
+        }
+      }
+
+      function tick(timestamp){
+        if(!running){ return; }
+
+        if(lastTime === 0){
+          lastTime = timestamp;
+        }
+
+        const dt = Math.min(0.05, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+
+        const spawns = rate * dt + spawnCarry;
+        const wholeSpawns = Math.floor(spawns);
+        spawnCarry = spawns - wholeSpawns;
+
+        for(let i = 0; i < wholeSpawns && dropped < nBeads; i++){
+          spawnBead();
+        }
+
+        for(let i = beads.length - 1; i >= 0; i--){
+          if(advanceBead(beads[i], dt)){
+            beads.splice(i, 1);
+          }
+        }
+
+        if(dropped >= nBeads && beads.length === 0){
+          running = false;
+          startBtn.textContent = "Run board";
+        }
+
+        updateReadouts();
+        updateTable();
+        render();
+
+        requestAnimationFrame(tick);
+      }
+
+      function stepOneBead(){
+        if(running || dropped >= nBeads){ return; }
+
+        spawnBead();
+
+        function miniStep(){
+          for(let i = beads.length - 1; i >= 0; i--){
+            if(advanceBead(beads[i], 1 / 60)){
+              beads.splice(i, 1);
+            }
+          }
+
+          updateReadouts();
+          updateTable();
+          render();
+
+          if(beads.length > 0){
+            requestAnimationFrame(miniStep);
+          }
+        }
+
+        requestAnimationFrame(miniStep);
+      }
+
+      function combination(n, k){
+        if(k < 0 || k > n){ return 0; }
+
+        k = Math.min(k, n - k);
+
+        let c = 1;
+
+        for(let i = 0; i < k; i++){
+          c = c * (n - i) / (i + 1);
+        }
+
+        return c;
+      }
+
+      function binomialPMF(n, k, p){
+        return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+      }
+
+      function theoryMax(n, p){
+        const key = n + "|" + p.toFixed(2);
+
+        if(maxCache.has(key)){
+          return maxCache.get(key);
+        }
+
+        let maxValue = 0;
+
+        for(let i = 0; i <= n; i++){
+          maxValue = Math.max(maxValue, binomialPMF(n, i, p));
+        }
+
+        maxCache.set(key, maxValue);
+
+        return maxValue;
+      }
+
+      function formatPercent(value){
+        if(value === 0){ return "0%"; }
+
+        const percent = value * 100;
+
+        if(percent >= 1){ return percent.toFixed(2) + "%"; }
+        if(percent >= 0.01){ return percent.toFixed(3) + "%"; }
+
+        return percent.toExponential(2) + "%";
+      }
+
+      function updateTable(){
+        const rows = [];
+        const total = Math.max(1, completed);
+
+        for(let i = 0; i <= nRows; i++){
+          const count = bins[i] || 0;
+          const rel = count / total;
+          const theory = binomialPMF(nRows, i, pR);
+
+          rows.push(
+            "<tr>" +
+            "<td>" + i + "</td>" +
+            "<td>" + count.toLocaleString("en-AU") + "</td>" +
+            "<td>" + formatPercent(rel) + "</td>" +
+            "<td>" + formatPercent(theory) + "</td>" +
+            "</tr>"
+          );
+        }
+
+        binTable.innerHTML = rows.join("");
+      }
+
+      function drawRoundedRect(x, y, w, h, r, fillStyle, strokeStyle){
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+
+        if(fillStyle){
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+        }
+
+        if(strokeStyle){
+          ctx.strokeStyle = strokeStyle;
+          ctx.stroke();
+        }
+      }
+
+      function render(){
+        const W = scene.width;
+        const H = scene.height;
+        const margin = 52;
+        const boardTop = 80;
+        const boardBottom = H - 170;
+        const boardLeft = margin;
+        const boardRight = W - margin;
+        const width = boardRight - boardLeft;
+        const pegAreaH = boardBottom - boardTop;
+        const pegRowGap = pegAreaH / (nRows + 1);
+
+        ctx.clearRect(0, 0, W, H);
+
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, "#020617");
+        bg.addColorStop(1, "#0f172a");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        drawRoundedRect(22, 22, W - 44, H - 44, 20, "#07111f", "rgba(203,213,225,0.28)");
+
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "900 22px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Rows n = " + nRows + "   |   p(right) = " + pR.toFixed(2) + "   |   Dropped = " + dropped + "/" + nBeads + "   |   Active = " + beads.length, margin, 48);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.16)";
+        ctx.lineWidth = 1;
+
+        for(let x = boardLeft; x <= boardRight; x += 48){
+          ctx.beginPath();
+          ctx.moveTo(x, boardTop - 12);
+          ctx.lineTo(x, boardBottom + 22);
+          ctx.stroke();
+        }
+
+        const cols = nRows + 1;
+
+        for(let r = 0; r < nRows; r++){
+          const y = boardTop + (r + 1) * pegRowGap;
+          const offset = r % 2 === 0 ? 0.5 : 0;
+
+          for(let c = 0; c < cols; c++){
+            const x = boardLeft + (c + offset) * (width / cols);
+
+            ctx.fillStyle = "#64748b";
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        const midX = posX(0, 0);
+
+        ctx.strokeStyle = "rgba(203,213,225,0.32)";
+        ctx.setLineDash([6, 8]);
+        ctx.beginPath();
+        ctx.moveTo(midX, boardTop - 16);
+        ctx.lineTo(midX, boardBottom + 12);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "800 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Centre start", midX, boardTop - 24);
+
+        beads.forEach(function(bead){
+          const y0 = boardTop + bead.step * pegRowGap;
+          const y1 = boardTop + (bead.step + 1) * pegRowGap;
+          const y = y0 + (y1 - y0) * bead.t;
+          const x = bead.xPrev + (bead.xNext - bead.xPrev) * bead.t;
+
+          ctx.fillStyle = "#22c55e";
+          ctx.shadowColor = "rgba(34,197,94,0.55)";
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(x, y, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        const histY = H - 124;
+        const histH = 78;
+        const binW = width / (nRows + 1);
+        const maxCount = Math.max(1, ...bins);
+        const maxTheory = theoryMax(nRows, pR);
+        const maxRel = Math.max(maxTheory, maxCount / Math.max(1, completed));
+
+        for(let i = 0; i < bins.length; i++){
+          const relFreq = completed > 0 ? bins[i] / completed : 0;
+          const barH = maxRel > 0 ? (relFreq / maxRel) * histH : 0;
+          const x = boardLeft + i * binW;
+          const y = histY + histH - barH;
+
+          ctx.fillStyle = "#7c3aed";
+          ctx.fillRect(x + binW * 0.08, y, binW * 0.84, barH);
+        }
+
+        if(showTheory){
+          ctx.strokeStyle = "#f59e0b";
+          ctx.lineWidth = 4;
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+
+          for(let i = 0; i <= nRows; i++){
+            const prob = binomialPMF(nRows, i, pR);
+            const x = boardLeft + i * binW + binW / 2;
+            const y = histY + histH - (prob / maxRel) * histH;
+
+            if(i === 0){
+              ctx.moveTo(x, y);
+            }else{
+              ctx.lineTo(x, y);
+            }
+          }
+
+          ctx.stroke();
+
+          ctx.fillStyle = "#f59e0b";
+
+          for(let i = 0; i <= nRows; i++){
+            const prob = binomialPMF(nRows, i, pR);
+            const x = boardLeft + i * binW + binW / 2;
+            const y = histY + histH - (prob / maxRel) * histH;
+
+            ctx.beginPath();
+            ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        ctx.strokeStyle = "rgba(203,213,225,0.45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(boardLeft, histY + histH);
+        ctx.lineTo(boardRight, histY + histH);
+        ctx.stroke();
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "800 13px system-ui, sans-serif";
+        ctx.textAlign = "center";
+
+        const skip = Math.max(1, Math.floor((nRows + 1) / 10));
+
+        for(let i = 0; i <= nRows; i += skip){
+          const x = boardLeft + i * binW + binW / 2;
+          ctx.fillText(String(i), x, histY + histH + 18);
+        }
+
+        ctx.textAlign = "left";
+        ctx.fillText("Final bin = number of right moves", boardLeft, H - 18);
+      }
+
+      function exportCSV(){
+        const rows = [["bin_index","experimental_count","experimental_relative_frequency","theoretical_probability"]];
+        const total = Math.max(1, completed);
+
+        bins.forEach(function(count, index){
+          rows.push([
+            index,
+            count,
+            (count / total).toFixed(8),
+            binomialPMF(nRows, index, pR).toFixed(10)
+          ]);
+        });
+
+        const csv = rows.map(function(row){
+          return row.join(",");
+        }).join("\n");
+
+        const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, "0");
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const yyyy = now.getFullYear();
+
+        link.href = url;
+        link.download = "galton_board_bins_" + dd + "-" + mm + "-" + yyyy + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      }
+
+      startBtn.addEventListener("click", startPause);
+      stepBtn.addEventListener("click", stepOneBead);
+      resetBtn.addEventListener("click", reset);
+      exportBtn.addEventListener("click", exportCSV);
+
+      [rowsInput, beadsInput, rateInput, pRightInput].forEach(function(control){
+        control.addEventListener("input", reset);
+        control.addEventListener("change", reset);
+      });
+
+      showTheoryInput.addEventListener("change", function(){
+        showTheory = showTheoryInput.checked;
+        render();
+      });
+
+      window.addEventListener("keydown", function(event){
+        const active = document.activeElement;
+        const typing = active && (active.tagName === "INPUT" || active.tagName === "SELECT");
+
+        if(typing){ return; }
+
+        if(event.code === "Space"){
+          event.preventDefault();
+          startPause();
+        }
+
+        if(event.key.toLowerCase() === "r"){
+          reset();
+        }
+
+        if(event.key.toLowerCase() === "e"){
+          exportCSV();
+        }
+      });
+
+      reset();
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initGaltonBoard);
+    }else{
+      initGaltonBoard();
+    }
+  </script>
+</body>
+</html>
