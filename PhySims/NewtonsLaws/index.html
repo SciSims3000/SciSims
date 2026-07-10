@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Newton's Laws Explorer</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --green:#22c55e;
+      --red:#ef4444;
+      --purple:#8b5cf6;
+      --orange:#f59e0b;
+      --yellow:#facc15;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:28px 30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 8px;
+      font-size:clamp(2rem, 5vw, 3.8rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.12rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:7px 11px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.92rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+      margin:16px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 7px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0,1fr);
+      gap:16px;
+      align-items:start;
+      margin-top:16px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:12px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:8px;
+    }
+
+    .control-heading{
+      margin:0 0 8px;
+      font-size:0.82rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    .view-explainer.control-group{
+      background:linear-gradient(180deg, #fffbeb, #fef3c7);
+      border-color:#facc15;
+      box-shadow:0 0 0 3px rgba(250,204,21,0.16);
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 4px;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+      font:inherit;
+    }
+
+    select,
+    input[type="number"],
+    textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:11px;
+      padding:8px 9px;
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    textarea{
+      min-height:54px;
+      resize:vertical;
+      font-weight:650;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block,
+    .field-block + .field-block,
+    .field-block + .slider-block,
+    .slider-block + .field-block{
+      margin-top:9px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      color:var(--muted);
+      font-size:0.86rem;
+      margin-bottom:3px;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:8px;
+    }
+
+    button{
+      border:0;
+      border-radius:11px;
+      padding:8px 11px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{background:var(--button-hover);}
+
+    button.secondary{background:var(--secondary);}
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{background:#cbd5e1;}
+
+    button.good{background:#047857;}
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:7px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin:0;
+      padding:8px 9px;
+      border-radius:11px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+      font-size:0.92rem;
+    }
+
+    .mode-badge{
+      display:inline-flex;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#fffbeb;
+      border:1px solid #facc15;
+      color:#92400e;
+      font-weight:900;
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    .small-note{
+      color:#64748b;
+      font-size:0.84rem;
+      margin:7px 0 0;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .run-panel,
+    .explainer-panel{
+      margin:10px 0;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) auto;
+      gap:12px;
+      align-items:center;
+    }
+
+    .explainer-panel{
+      background:linear-gradient(180deg, #fffbeb, #fef3c7);
+      border-color:#facc15;
+      box-shadow:0 0 0 3px rgba(250,204,21,0.18);
+    }
+
+    .run-panel h3,
+    .explainer-panel h3{
+      margin:0 0 4px;
+      font-size:1rem;
+    }
+
+    .explainer-panel h3{
+      color:#92400e;
+    }
+
+    .run-panel p,
+    .explainer-panel p{
+      margin:0;
+      color:var(--muted);
+      font-size:0.88rem;
+    }
+
+    .explainer-panel p{
+      color:#78350f;
+    }
+
+    .run-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:7px;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0, 1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.8rem;
+      font-weight:750;
+      margin-bottom:3px;
+    }
+
+    .metric .value{
+      font-size:1.05rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.76rem;
+      margin-top:4px;
+    }
+
+    .law-strip{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .law-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#f8fafc;
+      padding:11px;
+    }
+
+    .law-card.active{
+      border-color:#2563eb;
+      background:#eff6ff;
+      box-shadow:0 0 0 3px rgba(37,99,235,0.14);
+    }
+
+    .law-card h3{
+      margin:0 0 5px;
+      font-size:1rem;
+    }
+
+    .law-card p{
+      margin:0;
+      color:#64748b;
+      font-size:0.86rem;
+    }
+
+    .feedback-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .feedback-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+    }
+
+    .feedback-card h3{
+      margin:0 0 6px;
+      font-size:0.96rem;
+    }
+
+    .feedback-card p{
+      margin:0;
+      color:#475569;
+      font-size:0.9rem;
+    }
+
+    .status-box{
+      margin-top:10px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:11px;
+      min-height:48px;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .hint-list{
+      margin:8px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .hint-list li{margin:6px 0;}
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:14px 16px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.92rem;
+      overflow:auto;
+      line-height:1.65;
+      margin-top:10px;
+      white-space:pre-wrap;
+    }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid,
+      .law-strip,
+      .feedback-grid,
+      .run-panel,
+      .explainer-panel{
+        grid-template-columns:1fr;
+      }
+
+      .run-actions{
+        justify-content:flex-start;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{padding:22px;}
+
+      .results,
+      .number-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Newton's Laws Explorer</h1>
+      <p>Start with a guided explainer animation, then switch to prediction mode to test Newton's three laws using carts, forces, mass, friction and interaction pairs.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Forces</span>
+        <span class="pill">Motion</span>
+        <span class="pill">Newton's laws</span>
+        <span class="pill">F = ma</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how Newton's three laws explain changes in motion and interactions between objects.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can identify the net force, use F = ma, explain inertia, and describe action-reaction force pairs.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Newton's laws simulation">
+      <aside class="panel side-controls" aria-label="Newton's laws controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Learning sequence</p>
+
+          <div class="mode-badge" id="modeBadge">Explainer mode</div>
+
+          <div class="field-block">
+            <label for="learningMode">Mode</label>
+            <select id="learningMode">
+              <option value="explainer" selected>Explainer mode first</option>
+              <option value="prediction">Prediction mode</option>
+            </select>
+          </div>
+
+          <p class="small-note">Use the explainer first to build the idea, then move into prediction mode for student testing.</p>
+        </div>
+
+        <div class="control-group view-explainer">
+          <p class="control-heading">1. Watch the law explained</p>
+
+          <div class="field-block">
+            <label for="explainerLaw">Explainer focus</label>
+            <select id="explainerLaw">
+              <option value="law1">First law: inertia</option>
+              <option value="law2" selected>Second law: F = ma</option>
+              <option value="law3">Third law: force pairs</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button id="playExplainerBtn" type="button">Play explainer</button>
+            <button id="pauseExplainerBtn" class="ghost" type="button">Pause</button>
+            <button id="restartExplainerBtn" class="secondary" type="button">Restart</button>
+            <button id="nextExplainerBtn" class="ghost" type="button">Next law</button>
+          </div>
+
+          <div class="button-row">
+            <button id="beginPredictionBtn" class="good" type="button">Go to prediction mode</button>
+          </div>
+        </div>
+
+        <div class="control-group view-prediction hidden">
+          <p class="control-heading">1. Choose a law focus</p>
+
+          <div class="field-block">
+            <label for="lawMode">Law focus</label>
+            <select id="lawMode">
+              <option value="law1">First law: inertia</option>
+              <option value="law2" selected>Second law: F = ma</option>
+              <option value="law3">Third law: force pairs</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button class="ghost" data-preset="inertia" type="button">Inertia</button>
+            <button class="ghost" data-preset="push" type="button">Push cart</button>
+            <button class="ghost" data-preset="heavy" type="button">Heavy cart</button>
+            <button class="ghost" data-preset="pair" type="button">Action-reaction</button>
+          </div>
+        </div>
+
+        <div class="control-group view-prediction hidden">
+          <p class="control-heading">2. Set up objects and forces</p>
+
+          <div class="slider-block">
+            <label for="massA">Mass of cart A</label>
+            <div class="slider-readout">
+              <span>Light</span>
+              <strong id="massAVal">4.0 kg</strong>
+              <span>Heavy</span>
+            </div>
+            <input id="massA" type="range" min="1" max="20" step="0.5" value="4">
+          </div>
+
+          <div class="slider-block">
+            <label for="appliedForce">Applied force on A</label>
+            <div class="slider-readout">
+              <span>Left</span>
+              <strong id="appliedForceVal">16 N</strong>
+              <span>Right</span>
+            </div>
+            <input id="appliedForce" type="range" min="-40" max="40" step="1" value="16">
+          </div>
+
+          <div class="slider-block">
+            <label for="friction">Friction strength</label>
+            <div class="slider-readout">
+              <span>None</span>
+              <strong id="frictionVal">2 N</strong>
+              <span>High</span>
+            </div>
+            <input id="friction" type="range" min="0" max="20" step="1" value="2">
+          </div>
+
+          <div class="slider-block">
+            <label for="initialVelocity">Initial velocity of A</label>
+            <div class="slider-readout">
+              <span>Left</span>
+              <strong id="initialVelocityVal">0.0 m/s</strong>
+              <span>Right</span>
+            </div>
+            <input id="initialVelocity" type="range" min="-12" max="12" step="0.5" value="0">
+          </div>
+
+          <div class="slider-block">
+            <label for="massB">Mass of cart B</label>
+            <div class="slider-readout">
+              <span>Light</span>
+              <strong id="massBVal">8.0 kg</strong>
+              <span>Heavy</span>
+            </div>
+            <input id="massB" type="range" min="1" max="20" step="0.5" value="8">
+          </div>
+
+          <div class="slider-block">
+            <label for="interactionForce">Interaction force</label>
+            <div class="slider-readout">
+              <span>Small</span>
+              <strong id="interactionForceVal">24 N</strong>
+              <span>Large</span>
+            </div>
+            <input id="interactionForce" type="range" min="0" max="50" step="1" value="24">
+          </div>
+        </div>
+
+        <div class="control-group view-prediction hidden">
+          <p class="control-heading">3. Prediction</p>
+
+          <div class="field-block">
+            <label for="predictionSelect">What do you predict?</label>
+            <select id="predictionSelect">
+              <option value="speedup">Cart A will speed up</option>
+              <option value="slowdown">Cart A will slow down</option>
+              <option value="constant">Cart A will keep constant velocity</option>
+              <option value="sameForce">The two carts feel equal-sized forces</option>
+              <option value="biggerForce">The heavier cart feels the bigger force</option>
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="predictionReason">Reasoning</label>
+            <textarea id="predictionReason" placeholder="I predict this because..."></textarea>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a simplified straight-line model. Positive direction is to the right. Friction acts opposite motion or impending motion.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Newton's laws model">
+        <h2>Newton's laws model</h2>
+        <p id="modelIntro">Start in explainer mode, then move to prediction mode when students are ready to test a setup.</p>
+
+        <canvas id="motionCanvas" width="1000" height="360" aria-label="Newton's laws cart animation"></canvas>
+
+        <div class="explainer-panel view-explainer" aria-label="Explainer controls">
+          <div>
+            <h3 id="explainerTitle">Explainer animation</h3>
+            <p id="explainerText">Watch the animation, then move into prediction mode to test the idea yourself.</p>
+          </div>
+
+          <div class="run-actions">
+            <button id="panelPlayExplainerBtn" type="button">Play explainer</button>
+            <button id="panelBeginPredictionBtn" class="good" type="button">Start prediction mode</button>
+          </div>
+        </div>
+
+        <div class="run-panel view-prediction hidden" aria-label="Run controls">
+          <div>
+            <h3>Run the prediction test</h3>
+            <p>Watch how net force changes motion. In third-law mode, compare the forces on both carts.</p>
+          </div>
+
+          <div class="run-actions">
+            <button id="runBtn" type="button">Run</button>
+            <button id="pauseBtn" class="ghost" type="button">Pause</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+        </div>
+
+        <canvas id="graphCanvas" width="1000" height="280" aria-label="Newton's laws force, velocity and acceleration graphs"></canvas>
+
+        <div class="results" aria-label="Force and motion outputs">
+          <div class="metric">
+            <div class="label">Net force on A</div>
+            <div class="value" id="netForceOut">14 N</div>
+            <div class="small">Sum of forces</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Acceleration of A</div>
+            <div class="value" id="accelAOut">3.50 m/s²</div>
+            <div class="small">a = Fnet ÷ m</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Velocity of A</div>
+            <div class="value" id="velAOut">0.0 m/s</div>
+            <div class="small">Changes with acceleration</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Force pair</div>
+            <div class="value" id="forcePairOut">Equal</div>
+            <div class="small">Third law</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Current law evidence</div>
+            <div class="value" id="lawEvidenceOut">F = ma</div>
+            <div class="small">Main idea</div>
+          </div>
+        </div>
+
+        <div class="law-strip" aria-label="Newton law cards">
+          <div class="law-card" id="law1Card">
+            <h3>First law</h3>
+            <p>If net force is zero, velocity stays constant. Objects do not need a continuing force to keep moving.</p>
+          </div>
+
+          <div class="law-card" id="law2Card">
+            <h3>Second law</h3>
+            <p>Acceleration depends on net force and mass: a = Fnet ÷ m. Bigger force gives bigger acceleration.</p>
+          </div>
+
+          <div class="law-card" id="law3Card">
+            <h3>Third law</h3>
+            <p>Interactions come in equal-sized, opposite-direction force pairs acting on different objects.</p>
+          </div>
+        </div>
+
+        <div class="feedback-grid">
+          <div class="feedback-card">
+            <h3 id="feedbackHeading">What to watch for</h3>
+            <p id="predictionFeedback">In explainer mode, watch the force arrows and motion before making a prediction.</p>
+          </div>
+
+          <div class="feedback-card">
+            <h3>Evidence explanation</h3>
+            <p id="evidenceText">The explainer animation shows one law at a time before students begin testing.</p>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Explainer mode is ready. Press play to start the animation, then move to prediction mode.</div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="hint-list">
+          <li>Watch each explainer animation and identify the force evidence.</li>
+          <li>In prediction mode, set friction to zero and give the cart an initial velocity. What happens when the net force is zero?</li>
+          <li>Keep force the same and increase mass. What happens to acceleration?</li>
+          <li>In third-law mode, make one cart heavier. Which cart has the bigger acceleration?</li>
+          <li>Explain why equal and opposite forces do not cancel if they act on different objects.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim begins with explicit instruction before moving to prediction. Use Explainer mode for modelling, then Prediction mode for student reasoning.</p>
+        <ul class="hint-list">
+          <li>First law prompt: Does a moving object need a continuing force?</li>
+          <li>Second law prompt: What changes acceleration more: force or mass?</li>
+          <li>Third law prompt: If the forces are equal, why can the accelerations be different?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The model uses straight-line force and motion relationships.</p>
+
+        <div class="equation-box">First law:
+If Fnet = 0, velocity stays constant.
+
+Second law:
+Fnet = ma
+a = Fnet ÷ m
+
+Third law:
+Force of A on B = − Force of B on A
+
+Important distinction:
+The forces in a third-law pair are equal in size,
+but they act on different objects.
+They do not cancel each other on one object.</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="hint-list">
+          <li><strong>Force</strong> is a push or pull.</li>
+          <li><strong>Net force</strong> is the total force on one object.</li>
+          <li><strong>Acceleration</strong> means a change in velocity.</li>
+          <li><strong>Mass</strong> resists changes in motion.</li>
+          <li><strong>Third-law pairs</strong> act on different objects, so they do not cancel each other.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initNewtonLawsExplorer(){
+      const motionCanvas = document.getElementById("motionCanvas");
+      const graphCanvas = document.getElementById("graphCanvas");
+      const mctx = motionCanvas.getContext("2d");
+      const gctx = graphCanvas.getContext("2d");
+
+      const ui = {
+        learningMode:document.getElementById("learningMode"),
+        modeBadge:document.getElementById("modeBadge"),
+        explainerLaw:document.getElementById("explainerLaw"),
+        playExplainerBtn:document.getElementById("playExplainerBtn"),
+        pauseExplainerBtn:document.getElementById("pauseExplainerBtn"),
+        restartExplainerBtn:document.getElementById("restartExplainerBtn"),
+        nextExplainerBtn:document.getElementById("nextExplainerBtn"),
+        beginPredictionBtn:document.getElementById("beginPredictionBtn"),
+        panelPlayExplainerBtn:document.getElementById("panelPlayExplainerBtn"),
+        panelBeginPredictionBtn:document.getElementById("panelBeginPredictionBtn"),
+        explainerTitle:document.getElementById("explainerTitle"),
+        explainerText:document.getElementById("explainerText"),
+        modelIntro:document.getElementById("modelIntro"),
+        lawMode:document.getElementById("lawMode"),
+        massA:document.getElementById("massA"),
+        appliedForce:document.getElementById("appliedForce"),
+        friction:document.getElementById("friction"),
+        initialVelocity:document.getElementById("initialVelocity"),
+        massB:document.getElementById("massB"),
+        interactionForce:document.getElementById("interactionForce"),
+        massAVal:document.getElementById("massAVal"),
+        appliedForceVal:document.getElementById("appliedForceVal"),
+        frictionVal:document.getElementById("frictionVal"),
+        initialVelocityVal:document.getElementById("initialVelocityVal"),
+        massBVal:document.getElementById("massBVal"),
+        interactionForceVal:document.getElementById("interactionForceVal"),
+        predictionSelect:document.getElementById("predictionSelect"),
+        predictionReason:document.getElementById("predictionReason"),
+        runBtn:document.getElementById("runBtn"),
+        pauseBtn:document.getElementById("pauseBtn"),
+        resetBtn:document.getElementById("resetBtn"),
+        netForceOut:document.getElementById("netForceOut"),
+        accelAOut:document.getElementById("accelAOut"),
+        velAOut:document.getElementById("velAOut"),
+        forcePairOut:document.getElementById("forcePairOut"),
+        lawEvidenceOut:document.getElementById("lawEvidenceOut"),
+        law1Card:document.getElementById("law1Card"),
+        law2Card:document.getElementById("law2Card"),
+        law3Card:document.getElementById("law3Card"),
+        feedbackHeading:document.getElementById("feedbackHeading"),
+        predictionFeedback:document.getElementById("predictionFeedback"),
+        evidenceText:document.getElementById("evidenceText"),
+        statusBox:document.getElementById("statusBox")
+      };
+
+      const state = {
+        running:false,
+        explainerRunning:false,
+        lastTimestamp:null,
+        t:0,
+        explainT:0,
+        xA:-180,
+        vA:0,
+        xB:180,
+        vB:0,
+        history:[]
+      };
+
+      function fmt(value, places){
+        if(!Number.isFinite(value)){
+          return "—";
+        }
+
+        return Number(value).toFixed(places);
+      }
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getSettings(){
+        return {
+          mode:ui.lawMode.value,
+          massA:Number(ui.massA.value),
+          appliedForce:Number(ui.appliedForce.value),
+          friction:Number(ui.friction.value),
+          initialVelocity:Number(ui.initialVelocity.value),
+          massB:Number(ui.massB.value),
+          interactionForce:Number(ui.interactionForce.value)
+        };
+      }
+
+      function isExplainer(){
+        return ui.learningMode.value === "explainer";
+      }
+
+      function frictionForce(v, applied, friction){
+        if(Math.abs(v) > 0.05){
+          return -Math.sign(v) * friction;
+        }
+
+        if(Math.abs(applied) <= friction){
+          return -applied;
+        }
+
+        return -Math.sign(applied) * friction;
+      }
+
+      function calculateForces(){
+        const s = getSettings();
+
+        if(s.mode === "law3"){
+          const forceOnA = -s.interactionForce;
+          const forceOnB = s.interactionForce;
+
+          return {
+            forceOnA,
+            forceOnB,
+            frictionA:0,
+            netA:forceOnA,
+            netB:forceOnB,
+            accelA:forceOnA / s.massA,
+            accelB:forceOnB / s.massB
+          };
+        }
+
+        const fFric = frictionForce(state.vA, s.appliedForce, s.friction);
+        const netA = s.appliedForce + fFric;
+
+        return {
+          forceOnA:s.appliedForce,
+          forceOnB:0,
+          frictionA:fFric,
+          netA,
+          netB:0,
+          accelA:netA / s.massA,
+          accelB:0
+        };
+      }
+
+      function getExplainerValues(){
+        const law = ui.explainerLaw.value;
+        const t = state.explainT;
+
+        if(law === "law1"){
+          return {
+            law,
+            netA:0,
+            accelA:0,
+            velA:5,
+            forcePair:"Not the focus",
+            evidence:"Fnet = 0",
+            xA:-300 + (t * 90)
+          };
+        }
+
+        if(law === "law2"){
+          const mass = 4;
+          const force = 16;
+          const accel = force / mass;
+          const vel = accel * t;
+
+          return {
+            law,
+            netA:force,
+            accelA:accel,
+            velA:vel,
+            forcePair:"Not the focus",
+            evidence:"F = ma",
+            xA:-330 + 0.5 * accel * t * t * 24
+          };
+        }
+
+        const force = 24;
+        const massA = 4;
+        const massB = 12;
+        const accelA = -force / massA;
+        const accelB = force / massB;
+
+        return {
+          law,
+          netA:-force,
+          accelA,
+          accelB,
+          velA:accelA * t,
+          velB:accelB * t,
+          forcePair:"24 N = 24 N",
+          evidence:"Force pair",
+          xA:-50 + 0.5 * accelA * t * t * 18,
+          xB:50 + 0.5 * accelB * t * t * 18
+        };
+      }
+
+      function updateModeVisibility(){
+        const explainer = isExplainer();
+
+        document.querySelectorAll(".view-explainer").forEach(function(el){
+          el.classList.toggle("hidden", !explainer);
+        });
+
+        document.querySelectorAll(".view-prediction").forEach(function(el){
+          el.classList.toggle("hidden", explainer);
+        });
+
+        ui.modeBadge.textContent = explainer ? "Explainer mode" : "Prediction mode";
+        ui.modelIntro.textContent = explainer
+          ? "Watch a guided animation first. Then switch to prediction mode to test the laws."
+          : "Change the setup, make a prediction, then run the model. The evidence panel shows how the laws explain the motion.";
+
+        state.running = false;
+        state.explainerRunning = false;
+        state.lastTimestamp = null;
+
+        if(explainer){
+          state.explainT = 0;
+          updateExplainerText();
+          ui.statusBox.textContent = "Explainer mode is ready. Press play to start the animation, then move to prediction mode.";
+        }else{
+          resetPrediction();
+          ui.statusBox.textContent = "Prediction mode is ready. Choose a setup, make a prediction, then run the test.";
+        }
+
+        updateReadouts();
+      }
+
+      function updateLabels(){
+        const s = getSettings();
+
+        ui.massAVal.textContent = fmt(s.massA,1) + " kg";
+        ui.appliedForceVal.textContent = fmt(s.appliedForce,0) + " N";
+        ui.frictionVal.textContent = fmt(s.friction,0) + " N";
+        ui.initialVelocityVal.textContent = fmt(s.initialVelocity,1) + " m/s";
+        ui.massBVal.textContent = fmt(s.massB,1) + " kg";
+        ui.interactionForceVal.textContent = fmt(s.interactionForce,0) + " N";
+      }
+
+      function updateLawCards(){
+        const active = isExplainer() ? ui.explainerLaw.value : ui.lawMode.value;
+
+        ui.law1Card.classList.toggle("active", active === "law1");
+        ui.law2Card.classList.toggle("active", active === "law2");
+        ui.law3Card.classList.toggle("active", active === "law3");
+      }
+
+      function updateExplainerText(){
+        const law = ui.explainerLaw.value;
+
+        if(law === "law1"){
+          ui.explainerTitle.textContent = "Explainer: Newton's First Law";
+          ui.explainerText.textContent = "With no net force, the cart keeps moving at constant velocity. Motion does not require a continuing pushing force.";
+          ui.predictionFeedback.textContent = "Watch for the missing net-force arrow. The cart keeps moving because no net force acts on it.";
+          ui.evidenceText.textContent = "First law evidence: zero net force means no acceleration, so velocity remains constant.";
+        }
+
+        if(law === "law2"){
+          ui.explainerTitle.textContent = "Explainer: Newton's Second Law";
+          ui.explainerText.textContent = "A net force produces acceleration. For the same mass, a larger net force gives a larger acceleration.";
+          ui.predictionFeedback.textContent = "Watch the net force arrow. The cart speeds up because the net force is not zero.";
+          ui.evidenceText.textContent = "Second law evidence: acceleration is calculated from net force divided by mass.";
+        }
+
+        if(law === "law3"){
+          ui.explainerTitle.textContent = "Explainer: Newton's Third Law";
+          ui.explainerText.textContent = "The two carts push on each other with equal-sized, opposite-direction forces. Their accelerations can differ because their masses differ.";
+          ui.predictionFeedback.textContent = "Watch the equal force arrows. Equal force does not mean equal acceleration if the masses are different.";
+          ui.evidenceText.textContent = "Third law evidence: the force pair is equal and opposite, but each force acts on a different object.";
+        }
+      }
+
+      function updateReadouts(){
+        updateLabels();
+        updateLawCards();
+
+        if(isExplainer()){
+          const e = getExplainerValues();
+
+          ui.netForceOut.textContent = fmt(e.netA,1) + " N";
+          ui.accelAOut.textContent = fmt(e.accelA,2) + " m/s²";
+          ui.velAOut.textContent = fmt(e.velA,2) + " m/s";
+          ui.forcePairOut.textContent = e.forcePair;
+          ui.lawEvidenceOut.textContent = e.evidence;
+          return;
+        }
+
+        const s = getSettings();
+        const f = calculateForces();
+
+        ui.netForceOut.textContent = fmt(f.netA,1) + " N";
+        ui.accelAOut.textContent = fmt(f.accelA,2) + " m/s²";
+        ui.velAOut.textContent = fmt(state.vA,2) + " m/s";
+
+        if(s.mode === "law3"){
+          ui.forcePairOut.textContent = fmt(Math.abs(f.forceOnA),0) + " N = " + fmt(Math.abs(f.forceOnB),0) + " N";
+          ui.lawEvidenceOut.textContent = "Force pair";
+        }else if(Math.abs(f.netA) < 0.01){
+          ui.forcePairOut.textContent = "No pair focus";
+          ui.lawEvidenceOut.textContent = "Fnet = 0";
+        }else{
+          ui.forcePairOut.textContent = "No pair focus";
+          ui.lawEvidenceOut.textContent = "F = ma";
+        }
+
+        if(s.mode === "law1"){
+          ui.evidenceText.textContent =
+            "First law evidence: when the net force is zero, the cart keeps its velocity. If friction acts, the net force is not zero and the cart slows.";
+        }else if(s.mode === "law2"){
+          ui.evidenceText.textContent =
+            "Second law evidence: acceleration is calculated from net force divided by mass. The same force causes less acceleration when mass is larger.";
+        }else{
+          ui.evidenceText.textContent =
+            "Third law evidence: each cart feels the same-sized force in the opposite direction, but their accelerations can differ because their masses differ.";
+        }
+      }
+
+      function resetPrediction(){
+        const s = getSettings();
+
+        state.running = false;
+        state.lastTimestamp = null;
+        state.t = 0;
+        state.xA = s.mode === "law3" ? -60 : -180;
+        state.vA = s.mode === "law3" ? 0 : s.initialVelocity;
+        state.xB = 60;
+        state.vB = 0;
+        state.history = [];
+
+        updateReadouts();
+      }
+
+      function checkPrediction(){
+        const s = getSettings();
+        const f = calculateForces();
+        const p = ui.predictionSelect.value;
+
+        let correct = false;
+        let explanation = "";
+
+        if(s.mode === "law3"){
+          correct = p === "sameForce";
+
+          explanation = correct
+            ? "Correct: the force on each cart is equal in size and opposite in direction."
+            : "Check this: in a third-law pair, the forces are equal in size even when the masses are different. The accelerations can differ.";
+        }else{
+          const startSpeed = Math.abs(s.initialVelocity);
+          const currentSpeed = Math.abs(state.vA);
+
+          if(p === "speedup"){
+            correct = currentSpeed > startSpeed + 0.1;
+          }
+
+          if(p === "slowdown"){
+            correct = currentSpeed < startSpeed - 0.1;
+          }
+
+          if(p === "constant"){
+            correct = Math.abs(f.netA) < 0.05;
+          }
+
+          explanation = correct
+            ? "Your prediction matches the evidence from the motion and net force."
+            : "Compare your prediction with the net force. A non-zero net force changes velocity; zero net force keeps velocity constant.";
+        }
+
+        ui.predictionFeedback.textContent = explanation;
+      }
+
+      function stepPrediction(dt){
+        const s = getSettings();
+        const f = calculateForces();
+
+        if(s.mode === "law3"){
+          state.vA += f.accelA * dt;
+          state.vB += f.accelB * dt;
+          state.xA += state.vA * dt * 28;
+          state.xB += state.vB * dt * 28;
+        }else{
+          state.vA += f.accelA * dt;
+          state.xA += state.vA * dt * 24;
+        }
+
+        state.t += dt;
+
+        state.history.push({
+          t:state.t,
+          vA:state.vA,
+          aA:f.accelA,
+          netA:f.netA
+        });
+
+        if(state.history.length > 240){
+          state.history.shift();
+        }
+
+        if(Math.abs(state.xA) > 520 || Math.abs(state.xB) > 520 || state.t >= 12){
+          state.running = false;
+          checkPrediction();
+          ui.statusBox.textContent = "Run complete. Use the evidence to explain which Newton law was shown.";
+        }
+      }
+
+      function clearCanvas(ctx, canvas){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+        gradient.addColorStop(0,"#f8fafc");
+        gradient.addColorStop(1,"#eef6ff");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.22)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= canvas.width; x += 60){
+          ctx.beginPath();
+          ctx.moveTo(x,0);
+          ctx.lineTo(x,canvas.height);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= canvas.height; y += 60){
+          ctx.beginPath();
+          ctx.moveTo(0,y);
+          ctx.lineTo(canvas.width,y);
+          ctx.stroke();
+        }
+      }
+
+      function drawArrow(ctx, x1, y1, x2, y2, colour, label){
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const size = 10;
+
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - size * Math.cos(angle - Math.PI / 6), y2 - size * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+
+        if(label){
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(label, (x1 + x2) / 2, y1 - 10);
+        }
+
+        ctx.restore();
+      }
+
+      function drawCart(ctx, x, y, width, colour, label){
+        ctx.save();
+        ctx.translate(x, y);
+
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.roundRect(-width / 2, -24, width, 36, 8);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.fillRect(-width / 2 + 8, -18, width - 16, 9);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.arc(-width * 0.28, 16, 8, 0, Math.PI * 2);
+        ctx.arc(width * 0.28, 16, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(label, 0, -36);
+
+        ctx.restore();
+      }
+
+      function drawMotion(){
+        clearCanvas(mctx, motionCanvas);
+
+        const originX = motionCanvas.width / 2;
+        const trackY = 230;
+
+        mctx.fillStyle = "#475569";
+        mctx.fillRect(70, trackY, 860, 12);
+
+        mctx.strokeStyle = "#cbd5e1";
+        mctx.lineWidth = 2;
+
+        for(let i = 0; i <= 10; i++){
+          const x = 70 + i * 86;
+          mctx.beginPath();
+          mctx.moveTo(x, trackY - 10);
+          mctx.lineTo(x, trackY + 24);
+          mctx.stroke();
+        }
+
+        mctx.fillStyle = "rgba(15,23,42,0.84)";
+        mctx.strokeStyle = "rgba(203,213,225,0.8)";
+        mctx.lineWidth = 1.5;
+        mctx.beginPath();
+        mctx.roundRect(24, 20, 380, 74, 14);
+        mctx.fill();
+        mctx.stroke();
+
+        mctx.fillStyle = "#e2e8f0";
+        mctx.font = "900 14px system-ui, sans-serif";
+        mctx.textAlign = "left";
+
+        if(isExplainer()){
+          const lawText = ui.explainerLaw.options[ui.explainerLaw.selectedIndex].text;
+          mctx.fillText("Explainer time: " + fmt(state.explainT,2) + " s", 42, 49);
+          mctx.fillStyle = "#cbd5e1";
+          mctx.font = "800 13px system-ui, sans-serif";
+          mctx.fillText(lawText, 42, 73);
+          drawExplainerMotion(originX, trackY);
+        }else{
+          const s = getSettings();
+          mctx.fillText("Time: " + fmt(state.t,2) + " s", 42, 49);
+          mctx.fillStyle = "#cbd5e1";
+          mctx.font = "800 13px system-ui, sans-serif";
+          mctx.fillText("Mode: " + ui.lawMode.options[ui.lawMode.selectedIndex].text, 42, 73);
+          drawPredictionMotion(originX, trackY, s);
+        }
+      }
+
+      function drawExplainerMotion(originX, trackY){
+        const e = getExplainerValues();
+        const law = ui.explainerLaw.value;
+
+        if(law === "law1"){
+          const x = originX + e.xA;
+          drawCart(mctx, x, trackY - 8, 80, "#2563eb", "Cart");
+
+          if(state.explainT > 0){
+            drawArrow(mctx, x - 80, trackY - 95, x + 80, trackY - 95, "#8b5cf6", "constant velocity");
+          }
+
+          mctx.fillStyle = "#334155";
+          mctx.font = "900 14px system-ui, sans-serif";
+          mctx.textAlign = "center";
+          mctx.fillText("No net force arrow: the cart keeps moving at constant velocity.", originX, 330);
+        }
+
+        if(law === "law2"){
+          const x = originX + clamp(e.xA, -350, 350);
+          drawCart(mctx, x, trackY - 8, 82, "#2563eb", "Cart");
+
+          if(state.explainT > 0){
+            drawArrow(mctx, x, trackY - 95, x + 135, trackY - 95, "#ef4444", "net force");
+            drawArrow(mctx, x, trackY - 130, x + clamp(e.velA * 10, 18, 160), trackY - 130, "#8b5cf6", "velocity increasing");
+          }
+
+          mctx.fillStyle = "#334155";
+          mctx.font = "900 14px system-ui, sans-serif";
+          mctx.textAlign = "center";
+          mctx.fillText("Net force causes acceleration: a = Fnet ÷ m.", originX, 330);
+        }
+
+        if(law === "law3"){
+          const xA = originX + clamp(e.xA, -360, 10);
+          const xB = originX + clamp(e.xB, -10, 360);
+
+          drawCart(mctx, xA, trackY - 8, 70, "#2563eb", "Cart A");
+          drawCart(mctx, xB, trackY - 8, 105, "#16a34a", "Cart B");
+
+          if(state.explainT > 0){
+            drawArrow(mctx, xA, trackY - 95, xA - 130, trackY - 95, "#ef4444", "force on A");
+            drawArrow(mctx, xB, trackY - 95, xB + 130, trackY - 95, "#ef4444", "force on B");
+          }
+
+          mctx.fillStyle = "#334155";
+          mctx.font = "900 14px system-ui, sans-serif";
+          mctx.textAlign = "center";
+          mctx.fillText("Equal-sized opposite forces act on different objects.", originX, 330);
+        }
+      }
+
+      function drawPredictionMotion(originX, trackY, s){
+        const f = calculateForces();
+
+        if(s.mode === "law3"){
+          const xA = originX + state.xA;
+          const xB = originX + state.xB;
+
+          drawCart(mctx, xA, trackY - 8, clamp(46 + s.massA * 3, 52, 110), "#2563eb", "Cart A");
+          drawCart(mctx, xB, trackY - 8, clamp(46 + s.massB * 3, 52, 110), "#16a34a", "Cart B");
+
+          drawArrow(mctx, xA, trackY - 82, xA - clamp(s.interactionForce * 3, 0, 140), trackY - 82, "#ef4444", "force on A");
+          drawArrow(mctx, xB, trackY - 82, xB + clamp(s.interactionForce * 3, 0, 140), trackY - 82, "#ef4444", "force on B");
+
+          mctx.fillStyle = "#334155";
+          mctx.font = "900 14px system-ui, sans-serif";
+          mctx.textAlign = "center";
+          mctx.fillText("Equal-sized opposite forces. Different masses can have different accelerations.", originX, 330);
+        }else{
+          const xA = originX + state.xA;
+
+          drawCart(mctx, xA, trackY - 8, clamp(50 + s.massA * 4, 56, 125), "#2563eb", "Cart A");
+
+          if(Math.abs(s.appliedForce) > 0.1){
+            const len = clamp(Math.abs(s.appliedForce) * 3, 20, 140);
+            const dir = Math.sign(s.appliedForce);
+            drawArrow(mctx, xA, trackY - 82, xA + dir * len, trackY - 82, "#2563eb", "applied force");
+          }
+
+          if(Math.abs(f.frictionA) > 0.1){
+            const len = clamp(Math.abs(f.frictionA) * 3.5, 18, 100);
+            const dir = Math.sign(f.frictionA);
+            drawArrow(mctx, xA, trackY - 112, xA + dir * len, trackY - 112, "#f59e0b", "friction");
+          }
+
+          if(Math.abs(f.netA) > 0.1){
+            const len = clamp(Math.abs(f.netA) * 3, 18, 140);
+            const dir = Math.sign(f.netA);
+            drawArrow(mctx, xA, trackY - 145, xA + dir * len, trackY - 145, "#ef4444", "net force");
+          }
+
+          mctx.fillStyle = "#334155";
+          mctx.font = "900 14px system-ui, sans-serif";
+          mctx.textAlign = "center";
+
+          if(Math.abs(f.netA) < 0.05){
+            mctx.fillText("Net force is zero: velocity stays constant.", originX, 330);
+          }else{
+            mctx.fillText("Net force is not zero: velocity changes.", originX, 330);
+          }
+        }
+      }
+
+      function drawGraphPanel(x, y, w, h, title, values, colour, unit){
+        gctx.save();
+
+        gctx.fillStyle = "rgba(255,255,255,0.78)";
+        gctx.strokeStyle = "rgba(203,213,225,0.95)";
+        gctx.lineWidth = 1.5;
+        gctx.beginPath();
+        gctx.roundRect(x, y, w, h, 12);
+        gctx.fill();
+        gctx.stroke();
+
+        gctx.fillStyle = "#0f172a";
+        gctx.font = "900 13px system-ui, sans-serif";
+        gctx.textAlign = "left";
+        gctx.fillText(title, x + 12, y + 20);
+
+        gctx.strokeStyle = "rgba(100,116,139,0.25)";
+        gctx.lineWidth = 1;
+
+        for(let i = 1; i < 4; i++){
+          const gy = y + h * i / 4;
+          gctx.beginPath();
+          gctx.moveTo(x + 8, gy);
+          gctx.lineTo(x + w - 8, gy);
+          gctx.stroke();
+        }
+
+        if(values.length < 2){
+          gctx.fillStyle = "#64748b";
+          gctx.font = "800 12px system-ui, sans-serif";
+          gctx.textAlign = "center";
+          gctx.fillText(isExplainer() ? "Press play to see evidence" : "Run model to collect data", x + w / 2, y + h / 2);
+          gctx.restore();
+          return;
+        }
+
+        let min = Math.min(...values, 0);
+        let max = Math.max(...values, 0);
+
+        if(Math.abs(max - min) < 0.01){
+          max += 1;
+          min -= 1;
+        }
+
+        const pad = (max - min) * 0.12;
+        max += pad;
+        min -= pad;
+
+        function mapX(index){
+          return x + 12 + index * (w - 24) / Math.max(1, values.length - 1);
+        }
+
+        function mapY(value){
+          return y + h - 20 - ((value - min) / (max - min)) * (h - 48);
+        }
+
+        if(min < 0 && max > 0){
+          const zeroY = mapY(0);
+          gctx.strokeStyle = "rgba(15,23,42,0.35)";
+          gctx.beginPath();
+          gctx.moveTo(x + 10, zeroY);
+          gctx.lineTo(x + w - 10, zeroY);
+          gctx.stroke();
+        }
+
+        gctx.strokeStyle = colour;
+        gctx.lineWidth = 2.4;
+        gctx.beginPath();
+
+        values.forEach(function(value, index){
+          const gx = mapX(index);
+          const gy = mapY(value);
+
+          if(index === 0){
+            gctx.moveTo(gx, gy);
+          }else{
+            gctx.lineTo(gx, gy);
+          }
+        });
+
+        gctx.stroke();
+
+        gctx.fillStyle = "#64748b";
+        gctx.font = "800 11px system-ui, sans-serif";
+        gctx.textAlign = "right";
+        gctx.fillText(unit, x + w - 12, y + 20);
+
+        gctx.restore();
+      }
+
+      function drawGraphs(){
+        clearCanvas(gctx, graphCanvas);
+
+        let netValues = [];
+        let velocityValues = [];
+        let accelValues = [];
+
+        if(isExplainer()){
+          if(state.explainT > 0){
+            const law = ui.explainerLaw.value;
+            const steps = Math.max(2, Math.floor(state.explainT * 24));
+
+            for(let i = 0; i <= steps; i++){
+              const t = i / 24;
+
+              if(law === "law1"){
+                netValues.push(0);
+                velocityValues.push(5);
+                accelValues.push(0);
+              }
+
+              if(law === "law2"){
+                netValues.push(16);
+                velocityValues.push(4 * t);
+                accelValues.push(4);
+              }
+
+              if(law === "law3"){
+                netValues.push(-24);
+                velocityValues.push(-6 * t);
+                accelValues.push(-6);
+              }
+            }
+          }
+        }else{
+          netValues = state.history.map(function(point){ return point.netA; });
+          velocityValues = state.history.map(function(point){ return point.vA; });
+          accelValues = state.history.map(function(point){ return point.aA; });
+        }
+
+        drawGraphPanel(42, 36, 285, 205, "Net force on A", netValues, "#ef4444", "N");
+        drawGraphPanel(358, 36, 285, 205, "Velocity of A", velocityValues, "#2563eb", "m/s");
+        drawGraphPanel(674, 36, 285, 205, "Acceleration of A", accelValues, "#16a34a", "m/s²");
+      }
+
+      function tick(timestamp){
+        if(state.lastTimestamp === null){
+          state.lastTimestamp = timestamp;
+        }
+
+        const dt = Math.min((timestamp - state.lastTimestamp) / 1000, 0.04);
+        state.lastTimestamp = timestamp;
+
+        if(isExplainer() && state.explainerRunning){
+          state.explainT += dt;
+
+          if(state.explainT > 6.5){
+            state.explainT = 0;
+            state.explainerRunning = false;
+            ui.statusBox.textContent = "Explainer complete. Replay it or move to prediction mode.";
+          }
+
+          updateReadouts();
+        }
+
+        if(!isExplainer() && state.running){
+          stepPrediction(dt);
+          updateReadouts();
+        }
+
+        drawMotion();
+        drawGraphs();
+        requestAnimationFrame(tick);
+      }
+
+      function setPreset(name){
+        if(name === "inertia"){
+          ui.lawMode.value = "law1";
+          ui.massA.value = 5;
+          ui.appliedForce.value = 0;
+          ui.friction.value = 0;
+          ui.initialVelocity.value = 6;
+          ui.predictionSelect.value = "constant";
+        }
+
+        if(name === "push"){
+          ui.lawMode.value = "law2";
+          ui.massA.value = 4;
+          ui.appliedForce.value = 16;
+          ui.friction.value = 2;
+          ui.initialVelocity.value = 0;
+          ui.predictionSelect.value = "speedup";
+        }
+
+        if(name === "heavy"){
+          ui.lawMode.value = "law2";
+          ui.massA.value = 16;
+          ui.appliedForce.value = 16;
+          ui.friction.value = 2;
+          ui.initialVelocity.value = 0;
+          ui.predictionSelect.value = "speedup";
+        }
+
+        if(name === "pair"){
+          ui.lawMode.value = "law3";
+          ui.massA.value = 4;
+          ui.massB.value = 12;
+          ui.interactionForce.value = 24;
+          ui.appliedForce.value = 0;
+          ui.friction.value = 0;
+          ui.initialVelocity.value = 0;
+          ui.predictionSelect.value = "sameForce";
+        }
+
+        resetPrediction();
+      }
+
+      function goToPredictionMode(){
+        ui.learningMode.value = "prediction";
+
+        const law = ui.explainerLaw.value;
+        ui.lawMode.value = law;
+
+        if(law === "law1"){
+          setPreset("inertia");
+        }else if(law === "law2"){
+          setPreset("push");
+        }else{
+          setPreset("pair");
+        }
+
+        updateModeVisibility();
+      }
+
+      function nextExplainerLaw(){
+        if(ui.explainerLaw.value === "law1"){
+          ui.explainerLaw.value = "law2";
+        }else if(ui.explainerLaw.value === "law2"){
+          ui.explainerLaw.value = "law3";
+        }else{
+          ui.explainerLaw.value = "law1";
+        }
+
+        state.explainT = 0;
+        state.explainerRunning = false;
+        updateExplainerText();
+        updateReadouts();
+        ui.statusBox.textContent = "Next law selected. Press play to start the explainer.";
+      }
+
+      ui.learningMode.addEventListener("change", updateModeVisibility);
+
+      ui.explainerLaw.addEventListener("change", function(){
+        state.explainT = 0;
+        state.explainerRunning = false;
+        updateExplainerText();
+        updateReadouts();
+        ui.statusBox.textContent = "Explainer focus changed. Press play to start.";
+      });
+
+      ui.playExplainerBtn.addEventListener("click", function(){
+        state.explainerRunning = true;
+        ui.statusBox.textContent = "Playing explainer animation.";
+      });
+
+      ui.panelPlayExplainerBtn.addEventListener("click", function(){
+        state.explainerRunning = true;
+        ui.statusBox.textContent = "Playing explainer animation.";
+      });
+
+      ui.pauseExplainerBtn.addEventListener("click", function(){
+        state.explainerRunning = false;
+        ui.statusBox.textContent = "Explainer paused.";
+      });
+
+      ui.restartExplainerBtn.addEventListener("click", function(){
+        state.explainT = 0;
+        state.explainerRunning = true;
+        ui.statusBox.textContent = "Explainer restarted.";
+      });
+
+      ui.nextExplainerBtn.addEventListener("click", nextExplainerLaw);
+      ui.beginPredictionBtn.addEventListener("click", goToPredictionMode);
+      ui.panelBeginPredictionBtn.addEventListener("click", goToPredictionMode);
+
+      [ui.lawMode, ui.massA, ui.appliedForce, ui.friction, ui.initialVelocity, ui.massB, ui.interactionForce].forEach(function(input){
+        input.addEventListener("input", resetPrediction);
+        input.addEventListener("change", resetPrediction);
+      });
+
+      ui.runBtn.addEventListener("click", function(){
+        state.running = true;
+        ui.feedbackHeading.textContent = "Prediction feedback";
+        ui.statusBox.textContent = "Running. Watch the arrows and graphs as evidence.";
+      });
+
+      ui.pauseBtn.addEventListener("click", function(){
+        state.running = false;
+        ui.statusBox.textContent = "Paused.";
+      });
+
+      ui.resetBtn.addEventListener("click", function(){
+        resetPrediction();
+        ui.statusBox.textContent = "Reset. Adjust variables or run the test again.";
+      });
+
+      document.querySelectorAll("[data-preset]").forEach(function(button){
+        button.addEventListener("click", function(){
+          setPreset(button.dataset.preset);
+        });
+      });
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      updateModeVisibility();
+      requestAnimationFrame(tick);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initNewtonLawsExplorer);
+    }else{
+      initNewtonLawsExplorer();
+    }
+  </script>
+</body>
+</html>
