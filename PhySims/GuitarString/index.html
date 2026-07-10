@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Guitar String Vibration</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --blue:#60a5fa;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#ef4444;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:370px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:10px;
+    }
+
+    .control-heading{
+      margin:0 0 10px;
+      font-size:0.86rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 5px;
+    }
+
+    input,
+    button{
+      font:inherit;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:12px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:5px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:9px 12px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    button.good{ background:#047857; }
+
+    .button-row,
+    .toggle-row,
+    .preset-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:9px 10px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+      cursor:crosshair;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.1rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-line{
+      width:24px;
+      height:4px;
+      border-radius:999px;
+      display:inline-block;
+      background:var(--blue);
+    }
+
+    .legend-line.green{ background:var(--green); }
+    .legend-line.yellow{ background:var(--yellow); }
+    .legend-line.red{ background:var(--red); }
+
+    .status-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .extra-controls-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:14px;
+      margin-top:14px;
+    }
+
+    .mini-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .mini-card h3{
+      margin:0 0 10px;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      font-size:0.95rem;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{ grid-template-columns:1fr; }
+      .side-controls{ position:static; }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid,
+      .extra-controls-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Guitar String Vibration</h1>
+      <p>Pluck a virtual guitar string and explore how frequency, pluck position, damping and harmonics change the shape, motion and sound of a vibrating string.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Sound</span>
+        <span class="pill">Waves</span>
+        <span class="pill">Frequency</span>
+        <span class="pill">Harmonics</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how a vibrating string produces sound and how frequency, damping and harmonics affect pitch and tone.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can describe how changing frequency changes pitch, how damping changes sustain, and how harmonics affect the shape and tone of the string vibration.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Guitar string vibration simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Pluck and motion</p>
+
+          <div class="slider-block">
+            <label for="freq">Frequency / pitch</label>
+            <div class="slider-readout">
+              <span>Low</span>
+              <strong id="freqVal">110 Hz</strong>
+              <span>High</span>
+            </div>
+            <input id="freq" type="range" min="55" max="660" value="110" step="1" />
+          </div>
+
+          <div class="slider-block">
+            <label for="pluckPos">Pluck position</label>
+            <div class="slider-readout">
+              <span>Near end</span>
+              <strong id="pluckPosVal">20%</strong>
+              <span>Near end</span>
+            </div>
+            <input id="pluckPos" type="range" min="5" max="95" value="20" step="1" />
+          </div>
+
+          <div class="slider-block">
+            <label for="pluckAmt">Pluck amount</label>
+            <div class="slider-readout">
+              <span>Gentle</span>
+              <strong id="pluckAmtVal">36 px</strong>
+              <span>Strong</span>
+            </div>
+            <input id="pluckAmt" type="range" min="4" max="100" value="36" step="1" />
+          </div>
+
+          <div class="slider-block">
+            <label for="damping">Damping</label>
+            <div class="slider-readout">
+              <span>Rings longer</span>
+              <strong id="dampingVal">0.42</strong>
+              <span>Stops faster</span>
+            </div>
+            <input id="damping" type="range" min="0.02" max="1.5" value="0.42" step="0.01" />
+          </div>
+
+          <div class="button-row">
+            <button id="pluckBtn" type="button">Pluck string</button>
+            <button id="stopBtn" class="secondary" type="button">Stop</button>
+            <button id="freezeBtn" class="good" type="button">Freeze</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Visual controls</p>
+
+          <div class="slider-block">
+            <label for="visualScale">Wave size</label>
+            <div class="slider-readout">
+              <span>Small</span>
+              <strong id="visualScaleVal">2.80×</strong>
+              <span>Large</span>
+            </div>
+            <input id="visualScale" type="range" min="1" max="5" value="2.8" step="0.05" />
+          </div>
+
+          <div class="slider-block">
+            <label for="speed">Animation speed</label>
+            <div class="slider-readout">
+              <span>Slow</span>
+              <strong id="speedVal">1.00×</strong>
+              <span>Fast</span>
+            </div>
+            <input id="speed" type="range" min="0.1" max="2" value="1" step="0.01" />
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="showEnvelope" checked> Initial shape</label>
+            <label class="toggle-label"><input type="checkbox" id="showNodes"> Reference nodes</label>
+            <label class="toggle-label"><input type="checkbox" id="showTrace" checked> Midpoint trace</label>
+            <label class="toggle-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>The sound uses the selected frequency. The visual vibration is slowed so students can see the pattern rather than a blur.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Guitar string model">
+        <h2>String vibration model</h2>
+        <p>Click or drag on the string to set the pluck point. Sound triggers once when the pluck begins, while dragging reshapes the model without rapidly retriggering audio.</p>
+
+        <canvas id="sim" width="1000" height="580" aria-label="Animated guitar string vibration model"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-line"></span>Current string shape</span>
+          <span class="legend-item"><span class="legend-line yellow"></span>Initial pluck shape</span>
+          <span class="legend-item"><span class="legend-line green"></span>Pluck point</span>
+          <span class="legend-item"><span class="legend-line red"></span>Reference nodes</span>
+        </div>
+
+        <div class="results" aria-label="Current string outputs">
+          <div class="metric">
+            <div class="label">Sound frequency</div>
+            <div class="value" id="freqOut">110 Hz</div>
+            <div class="small">Main pitch setting</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Visual rate</div>
+            <div class="value" id="visualRateOut">Slowed</div>
+            <div class="small">For learning, not real-time</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Sustain</div>
+            <div class="value" id="sustainOut">Medium</div>
+            <div class="small">Based on damping and decay</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Pluck position</div>
+            <div class="value" id="pluckOut">20%</div>
+            <div class="small">Changes harmonic mix</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Harmonics</div>
+            <div class="value" id="harmonicsOut">14</div>
+            <div class="small">Standing-wave modes</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Tone</div>
+            <div class="value" id="toneOut">Balanced</div>
+            <div class="small">Brightness setting</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Ready. Click or drag on the string to pluck it.</div>
+
+        <section class="extra-controls-grid" aria-label="Sound and tone controls">
+          <div class="mini-card">
+            <h3>Sound</h3>
+
+            <div class="slider-block">
+              <label for="volume">Volume</label>
+              <div class="slider-readout">
+                <span>Silent</span>
+                <strong id="volumeVal">35%</strong>
+                <span>Loud</span>
+              </div>
+              <input id="volume" type="range" min="0" max="100" value="35" step="1" />
+            </div>
+
+            <div class="slider-block">
+              <label for="decay">Sound decay</label>
+              <div class="slider-readout">
+                <span>Short</span>
+                <strong id="decayVal">2.30 s</strong>
+                <span>Long</span>
+              </div>
+              <input id="decay" type="range" min="0.5" max="6" value="2.3" step="0.1" />
+            </div>
+
+            <div class="toggle-row">
+              <label class="toggle-label"><input type="checkbox" id="soundOn" checked> Sound on pluck</label>
+            </div>
+          </div>
+
+          <div class="mini-card">
+            <h3>String tone</h3>
+
+            <div class="slider-block">
+              <label for="harmonics">Number of harmonics</label>
+              <div class="slider-readout">
+                <span>Simple</span>
+                <strong id="harmonicsVal">14</strong>
+                <span>Complex</span>
+              </div>
+              <input id="harmonics" type="range" min="1" max="24" value="14" step="1" />
+            </div>
+
+            <div class="slider-block">
+              <label for="brightness">Brightness</label>
+              <div class="slider-readout">
+                <span>Mellow</span>
+                <strong id="brightnessVal">0.85</strong>
+                <span>Bright</span>
+              </div>
+              <input id="brightness" type="range" min="0.2" max="1.8" value="0.85" step="0.01" />
+            </div>
+          </div>
+
+          <div class="mini-card">
+            <h3>Quick string presets</h3>
+
+            <div class="preset-row">
+              <button class="ghost" data-f="82" type="button">Low E</button>
+              <button class="ghost" data-f="110" type="button">A</button>
+              <button class="ghost" data-f="147" type="button">D</button>
+              <button class="ghost" data-f="196" type="button">G</button>
+              <button class="ghost" data-f="247" type="button">B</button>
+              <button class="ghost" data-f="330" type="button">High E</button>
+            </div>
+
+            <p style="margin:10px 0 0;color:#64748b;font-size:0.9rem;">Approximate open-string frequencies for standard guitar tuning.</p>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Change the frequency. What happens to the pitch of the sound?</li>
+          <li>Move the pluck position towards the middle. How does the tone change?</li>
+          <li>Move the pluck position near one end. What happens to the shape and brightness?</li>
+          <li>Increase damping. Does it mainly affect pitch or sustain?</li>
+          <li>Turn on reference node markers and explain why the fixed ends are always nodes.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim links sound, pitch, frequency, resonance, standing waves and harmonics. It also helps students distinguish pitch, loudness, sustain and tone quality.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: What changes when pitch changes?</li>
+          <li>Good prompt: Why does the same frequency not always sound exactly the same?</li>
+          <li>Extension: Compare a centre pluck with an end pluck using the harmonic controls.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The string shape is built by adding standing-wave modes together.</p>
+
+        <div class="equation-box">Core idea:
+a plucked string can be modelled as a sum of standing waves
+
+Fundamental frequency:
+f₁ = main pitch of the string
+
+Harmonics:
+f₂ = 2f₁
+f₃ = 3f₁
+f₄ = 4f₁
+
+Standing-wave pattern:
+fixed ends are nodes
+some points move more than others
+
+In this sim:
+sound uses the selected frequency
+visual motion is slowed for learning
+more harmonics = more complex shape and tone
+greater damping = vibration fades faster
+higher frequency = higher pitch</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Frequency</strong> controls pitch.</li>
+          <li><strong>Amplitude</strong> controls how far the string moves.</li>
+          <li><strong>Damping</strong> controls how quickly the vibration dies away.</li>
+          <li><strong>Harmonics</strong> add detail to the string shape and tone.</li>
+          <li><strong>Reference nodes</strong> mark possible fixed points in standing-wave patterns.</li>
+          <li><strong>Pluck position</strong> changes which harmonics are strongest.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initGuitarStringSim(){
+      const canvas = document.getElementById("sim");
+      const ctx = canvas.getContext("2d");
+
+      const controls = {
+        freq:document.getElementById("freq"),
+        pluckPos:document.getElementById("pluckPos"),
+        pluckAmt:document.getElementById("pluckAmt"),
+        visualScale:document.getElementById("visualScale"),
+        damping:document.getElementById("damping"),
+        speed:document.getElementById("speed"),
+        volume:document.getElementById("volume"),
+        decay:document.getElementById("decay"),
+        harmonics:document.getElementById("harmonics"),
+        brightness:document.getElementById("brightness"),
+        soundOn:document.getElementById("soundOn"),
+        showEnvelope:document.getElementById("showEnvelope"),
+        showNodes:document.getElementById("showNodes"),
+        showTrace:document.getElementById("showTrace"),
+        showLabels:document.getElementById("showLabels")
+      };
+
+      const vals = {
+        freq:document.getElementById("freqVal"),
+        pluckPos:document.getElementById("pluckPosVal"),
+        pluckAmt:document.getElementById("pluckAmtVal"),
+        visualScale:document.getElementById("visualScaleVal"),
+        damping:document.getElementById("dampingVal"),
+        speed:document.getElementById("speedVal"),
+        volume:document.getElementById("volumeVal"),
+        decay:document.getElementById("decayVal"),
+        harmonics:document.getElementById("harmonicsVal"),
+        brightness:document.getElementById("brightnessVal")
+      };
+
+      const freqOut = document.getElementById("freqOut");
+      const visualRateOut = document.getElementById("visualRateOut");
+      const sustainOut = document.getElementById("sustainOut");
+      const pluckOut = document.getElementById("pluckOut");
+      const harmonicsOut = document.getElementById("harmonicsOut");
+      const toneOut = document.getElementById("toneOut");
+      const statusBox = document.getElementById("statusBox");
+
+      const pluckBtn = document.getElementById("pluckBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const freezeBtn = document.getElementById("freezeBtn");
+
+      const state = {
+        t:0,
+        running:true,
+        frozen:false,
+        trace:[],
+        lastTime:performance.now(),
+        dragActive:false
+      };
+
+      const margin = {
+        left:78,
+        right:78,
+        top:74,
+        bottom:112
+      };
+
+      let audioCtx = null;
+      let masterGain = null;
+      let activeNodes = [];
+
+      function setupAudio(){
+        if(audioCtx){
+          return;
+        }
+
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+        if(!AudioContextClass){
+          return;
+        }
+
+        audioCtx = new AudioContextClass();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = Number(controls.volume.value) / 100;
+        masterGain.connect(audioCtx.destination);
+      }
+
+      async function ensureAudioReady(){
+        setupAudio();
+
+        if(!audioCtx){
+          return false;
+        }
+
+        if(audioCtx.state === "suspended"){
+          try{
+            await audioCtx.resume();
+          }catch(error){
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function visualBaseFrequency(){
+        const f = Number(controls.freq.value);
+        const normalised = (f - 55) / (660 - 55);
+        return 1.6 + normalised * 3.4;
+      }
+
+      function toneLabel(){
+        const brightness = Number(controls.brightness.value);
+        const harmonics = Number(controls.harmonics.value);
+
+        if(brightness < 0.55 || harmonics <= 5){
+          return "Mellow";
+        }
+
+        if(brightness > 1.2 && harmonics >= 12){
+          return "Bright";
+        }
+
+        return "Balanced";
+      }
+
+      function sustainLabel(){
+        const damping = Number(controls.damping.value);
+        const decay = Number(controls.decay.value);
+
+        if(damping <= 0.25 && decay >= 3){
+          return "Long";
+        }
+
+        if(damping >= 0.85 || decay <= 1.2){
+          return "Short";
+        }
+
+        return "Medium";
+      }
+
+      function updateLabels(){
+        vals.freq.textContent = controls.freq.value + " Hz";
+        vals.pluckPos.textContent = controls.pluckPos.value + "%";
+        vals.pluckAmt.textContent = controls.pluckAmt.value + " px";
+        vals.visualScale.textContent = Number(controls.visualScale.value).toFixed(2) + "×";
+        vals.damping.textContent = Number(controls.damping.value).toFixed(2);
+        vals.speed.textContent = Number(controls.speed.value).toFixed(2) + "×";
+        vals.volume.textContent = controls.volume.value + "%";
+        vals.decay.textContent = Number(controls.decay.value).toFixed(2) + " s";
+        vals.harmonics.textContent = controls.harmonics.value;
+        vals.brightness.textContent = Number(controls.brightness.value).toFixed(2);
+
+        freqOut.textContent = controls.freq.value + " Hz";
+        visualRateOut.textContent = visualBaseFrequency().toFixed(1) + "×";
+        sustainOut.textContent = sustainLabel();
+        pluckOut.textContent = controls.pluckPos.value + "%";
+        harmonicsOut.textContent = controls.harmonics.value;
+        toneOut.textContent = toneLabel();
+
+        if(masterGain && audioCtx){
+          masterGain.gain.setTargetAtTime(Number(controls.volume.value) / 100, audioCtx.currentTime, 0.02);
+        }
+
+        statusBox.textContent =
+          "Sound uses the selected frequency. The animation is slowed so the standing-wave pattern remains visible. Damping mainly changes sustain, not pitch.";
+      }
+
+      function initialEnvelope(xNorm){
+        const p = Number(controls.pluckPos.value) / 100;
+        const H = Number(controls.pluckAmt.value);
+
+        if(xNorm <= p){
+          return (H / p) * xNorm;
+        }
+
+        return H * (1 - (xNorm - p) / (1 - p));
+      }
+
+      function modeCoefficient(n, H, p){
+        return (2 * H / (Math.PI * Math.PI * n * n * p * (1 - p))) * Math.sin(Math.PI * n * p);
+      }
+
+      function stringShapeNorm(xNorm, t){
+        const p = Number(controls.pluckPos.value) / 100;
+        const H = Number(controls.pluckAmt.value);
+        const N = Number(controls.harmonics.value);
+        const brightness = Number(controls.brightness.value);
+        const damping = Number(controls.damping.value);
+        const visualBase = visualBaseFrequency();
+
+        let y = 0;
+
+        for(let n = 1; n <= N; n++){
+          const bn = modeCoefficient(n, H, p);
+          const brightnessFactor = 1 / Math.pow(n, brightness - 0.2);
+          const modeDecay = Math.exp(-damping * n * 0.22 * t);
+          const visualModeFrequency = Math.min(n * visualBase, 16);
+
+          y += bn *
+            brightnessFactor *
+            modeDecay *
+            Math.sin(Math.PI * n * xNorm) *
+            Math.cos(2 * Math.PI * visualModeFrequency * t);
+        }
+
+        return y;
+      }
+
+      function stopAllAudio(){
+        activeNodes.forEach(function(node){
+          try{ node.osc.stop(); }catch(error){}
+          try{ node.gain.disconnect(); }catch(error){}
+          try{ node.osc.disconnect(); }catch(error){}
+        });
+
+        activeNodes = [];
+      }
+
+      function trackAudioNode(item){
+        activeNodes.push(item);
+
+        item.osc.addEventListener("ended", function(){
+          activeNodes = activeNodes.filter(function(active){
+            return active !== item;
+          });
+        });
+      }
+
+      async function playPluckSound(){
+        if(!controls.soundOn.checked){
+          return;
+        }
+
+        const ok = await ensureAudioReady();
+
+        if(!ok){
+          return;
+        }
+
+        stopAllAudio();
+
+        const now = audioCtx.currentTime;
+        const freq = Number(controls.freq.value);
+        const p = Number(controls.pluckPos.value) / 100;
+        const H = Number(controls.pluckAmt.value) / 40;
+        const N = Math.min(18, Number(controls.harmonics.value));
+        const brightness = Number(controls.brightness.value);
+        const volume = Number(controls.volume.value) / 100;
+        const decay = Number(controls.decay.value);
+
+        for(let n = 1; n <= N; n++){
+          const partialFreq = freq * n;
+
+          if(partialFreq > 12000){
+            break;
+          }
+
+          const bn = Math.abs(modeCoefficient(n, H, p));
+          const spectral = 1 / Math.pow(n, brightness + 0.15);
+          const amp = Math.min(0.18, bn * spectral * volume * 0.42);
+
+          if(amp < 0.0008){
+            continue;
+          }
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(partialFreq, now);
+
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.linearRampToValueAtTime(amp, now + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + decay / Math.sqrt(n));
+
+          osc.connect(gain);
+          gain.connect(masterGain);
+
+          osc.start(now);
+          osc.stop(now + Math.max(0.1, decay / Math.sqrt(n) + 0.05));
+
+          trackAudioNode({ osc, gain });
+        }
+      }
+
+      function pluck(withSound){
+        state.t = 0;
+        state.running = true;
+        state.trace = [];
+
+        if(withSound){
+          playPluckSound();
+        }
+      }
+
+      function reshapeWithoutSound(){
+        state.t = 0;
+        state.running = true;
+        state.trace = [];
+      }
+
+      function stopString(){
+        state.running = false;
+        state.t = 0;
+        state.trace = [];
+        stopAllAudio();
+      }
+
+      function drawRoundedPanel(x, y, width, height, radius){
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, radius);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      function drawBackground(w, h){
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, "#f8fafc");
+        gradient.addColorStop(1, "#eef6ff");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.22)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= w; x += 70){
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= h; y += 70){
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+      }
+
+      function draw(){
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        drawBackground(w, h);
+
+        const left = margin.left;
+        const right = w - margin.right;
+        const top = margin.top;
+        const bottom = h - margin.bottom;
+        const cy = (top + bottom) / 2;
+        const stringW = right - left;
+        const visualScale = Number(controls.visualScale.value);
+        const freq = Number(controls.freq.value);
+        const p = Number(controls.pluckPos.value) / 100;
+
+        const showEnvelope = controls.showEnvelope.checked;
+        const showNodes = controls.showNodes.checked;
+        const showTrace = controls.showTrace.checked;
+        const showLabels = controls.showLabels.checked;
+
+        ctx.fillStyle = "#64748b";
+        ctx.fillRect(left - 16, cy - 54, 12, 108);
+        ctx.fillRect(right + 4, cy - 54, 12, 108);
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(left - 28, cy - 72, 18, 144);
+        ctx.fillRect(right + 10, cy - 72, 18, 144);
+
+        ctx.strokeStyle = "rgba(71,85,105,0.45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(left, cy);
+        ctx.lineTo(right, cy);
+        ctx.stroke();
+
+        if(showEnvelope){
+          ctx.strokeStyle = "rgba(251,191,36,0.72)";
+          ctx.lineWidth = 2.2;
+          ctx.setLineDash([8, 6]);
+          ctx.beginPath();
+
+          for(let i = 0; i <= 450; i++){
+            const xn = i / 450;
+            const x = left + xn * stringW;
+            const y = cy - initialEnvelope(xn) * visualScale;
+
+            if(i === 0){
+              ctx.moveTo(x, y);
+            }else{
+              ctx.lineTo(x, y);
+            }
+          }
+
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        const centreY = stringShapeNorm(0.5, state.t) * visualScale;
+
+        if(showTrace && state.running && !state.frozen){
+          state.trace.push(centreY);
+
+          if(state.trace.length > 260){
+            state.trace.shift();
+          }
+        }
+
+        const traceX0 = left + 18;
+        const traceY0 = bottom + 58;
+        const traceW = 260;
+        const traceH = 72;
+
+        if(showTrace){
+          ctx.fillStyle = "rgba(255,255,255,0.70)";
+          ctx.strokeStyle = "rgba(71,85,105,0.26)";
+          ctx.lineWidth = 1.5;
+          drawRoundedPanel(traceX0, traceY0 - traceH / 2, traceW, traceH, 12);
+
+          ctx.strokeStyle = "rgba(148,163,184,0.32)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(traceX0 + 10, traceY0);
+          ctx.lineTo(traceX0 + traceW - 10, traceY0);
+          ctx.stroke();
+
+          if(state.trace.length > 1){
+            ctx.strokeStyle = "#2563eb";
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+
+            for(let i = 0; i < state.trace.length; i++){
+              const x = traceX0 + 12 + (i / Math.max(1, state.trace.length - 1)) * (traceW - 24);
+              const y = traceY0 - state.trace[i] * 0.35;
+
+              if(i === 0){
+                ctx.moveTo(x, y);
+              }else{
+                ctx.lineTo(x, y);
+              }
+            }
+
+            ctx.stroke();
+          }
+
+          if(showLabels){
+            ctx.fillStyle = "#334155";
+            ctx.font = "800 12px system-ui, sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("midpoint motion", traceX0, traceY0 - traceH / 2 - 7);
+          }
+        }
+
+        ctx.strokeStyle = "rgba(96,165,250,0.45)";
+        ctx.lineWidth = 9;
+        ctx.beginPath();
+
+        for(let i = 0; i <= 1000; i++){
+          const xn = i / 1000;
+          const x = left + xn * stringW;
+          const y = cy - stringShapeNorm(xn, state.t) * visualScale;
+
+          if(i === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        for(let i = 0; i <= 1000; i++){
+          const xn = i / 1000;
+          const x = left + xn * stringW;
+          const y = cy - stringShapeNorm(xn, state.t) * visualScale;
+
+          if(i === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        const px = left + p * stringW;
+        const py = cy - stringShapeNorm(p, state.t) * visualScale;
+
+        ctx.fillStyle = "#16a34a";
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        if(showNodes){
+          ctx.fillStyle = "#ef4444";
+          ctx.strokeStyle = "rgba(239,68,68,0.40)";
+          ctx.lineWidth = 1;
+
+          for(let i = 0; i <= 10; i++){
+            const x = left + (i / 10) * stringW;
+
+            ctx.beginPath();
+            ctx.moveTo(x, cy - 24);
+            ctx.lineTo(x, cy + 24);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(x, cy, 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        if(showLabels){
+          ctx.fillStyle = "#0f172a";
+          ctx.font = "900 14px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("fixed end", left - 8, cy - 78);
+          ctx.fillText("fixed end", right + 8, cy - 78);
+          ctx.fillText("string", left + 42, top - 25);
+          ctx.fillText("sound f = " + freq + " Hz", right - 74, top - 25);
+          ctx.fillText("visual slowed for learning", right - 86, top - 4);
+          ctx.fillText("Click or drag to set pluck", left + 86, bottom + 96);
+
+          ctx.strokeStyle = "rgba(22,163,74,0.82)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(px, py - 18);
+          ctx.lineTo(px, py - 45);
+          ctx.stroke();
+
+          ctx.fillStyle = "#166534";
+          ctx.fillText("pluck point", px, py - 52);
+        }
+
+        ctx.fillStyle = "rgba(15,23,42,0.84)";
+        ctx.strokeStyle = "rgba(203,213,225,0.8)";
+        ctx.lineWidth = 1.5;
+        drawRoundedPanel(26, 22, 340, 66, 14);
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Click or drag on the string to set the pluck.", 44, 49);
+        ctx.fillStyle = "#cbd5e1";
+        ctx.font = "800 13px system-ui, sans-serif";
+        ctx.fillText("Audio triggers once; visual reshapes while dragging.", 44, 72);
+      }
+
+      function animate(now){
+        const dt = Math.min(0.033, (now - state.lastTime) / 1000);
+        state.lastTime = now;
+
+        if(state.running && !state.frozen){
+          state.t += dt * Number(controls.speed.value);
+        }
+
+        draw();
+        requestAnimationFrame(animate);
+      }
+
+      function setPluckFromPointer(clientX, clientY, withSound){
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const x = (clientX - rect.left) * scaleX;
+        const y = (clientY - rect.top) * scaleY;
+
+        const left = margin.left;
+        const right = canvas.width - margin.right;
+        const top = margin.top;
+        const bottom = canvas.height - margin.bottom;
+        const cy = (top + bottom) / 2;
+
+        const clampedX = Math.max(left, Math.min(right, x));
+        const normX = (clampedX - left) / (right - left);
+        const amount = Math.max(4, Math.min(100, Math.abs(cy - y) / Number(controls.visualScale.value)));
+
+        controls.pluckPos.value = Math.round(normX * 100);
+        controls.pluckAmt.value = Math.round(amount);
+
+        updateLabels();
+
+        if(withSound){
+          pluck(true);
+        }else{
+          reshapeWithoutSound();
+        }
+      }
+
+      Object.values(controls).forEach(function(element){
+        element.addEventListener("input", function(){
+          updateLabels();
+
+          if(
+            element === controls.pluckPos ||
+            element === controls.pluckAmt ||
+            element === controls.harmonics ||
+            element === controls.brightness
+          ){
+            pluck(false);
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-f]").forEach(function(button){
+        button.addEventListener("click", function(){
+          controls.freq.value = button.dataset.f;
+          updateLabels();
+          pluck(true);
+        });
+      });
+
+      pluckBtn.addEventListener("click", async function(){
+        await ensureAudioReady();
+        pluck(true);
+      });
+
+      stopBtn.addEventListener("click", stopString);
+
+      freezeBtn.addEventListener("click", function(){
+        state.frozen = !state.frozen;
+        freezeBtn.textContent = state.frozen ? "Resume" : "Freeze";
+      });
+
+      canvas.addEventListener("pointerdown", async function(event){
+        state.dragActive = true;
+        await ensureAudioReady();
+        setPluckFromPointer(event.clientX, event.clientY, true);
+      });
+
+      canvas.addEventListener("pointermove", function(event){
+        if(!state.dragActive){
+          return;
+        }
+
+        setPluckFromPointer(event.clientX, event.clientY, false);
+      });
+
+      window.addEventListener("pointerup", function(){
+        state.dragActive = false;
+      });
+
+      window.addEventListener("pointerdown", function(){
+        ensureAudioReady();
+      }, { once:true });
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      updateLabels();
+      pluck(false);
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initGuitarStringSim);
+    }else{
+      initGuitarStringSim();
+    }
+  </script>
+</body>
+</html>
