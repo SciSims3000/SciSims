@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Path of Light Through the Eye</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --cyan:#06b6d4;
+      --blue:#60a5fa;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#ef4444;
+      --purple:#8b5cf6;
+      --pink:#ec4899;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    input,
+    select,
+    button{
+      font:inherit;
+    }
+
+    input[type="range"],
+    select{
+      width:100%;
+    }
+
+    select{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    input[type="range"]{
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    .field-block + .field-block,
+    .slider-block + .slider-block{
+      margin-top:16px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.1rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-line{
+      width:24px;
+      height:4px;
+      border-radius:999px;
+      display:inline-block;
+      background:var(--yellow);
+    }
+
+    .legend-line.blue{ background:var(--blue); }
+    .legend-line.green{ background:var(--green); }
+    .legend-line.red{ background:var(--red); }
+    .legend-line.purple{ background:var(--purple); }
+
+    .status-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{ grid-template-columns:1fr; }
+      .side-controls{ position:static; }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Path of Light Through the Eye</h1>
+      <p>Trace light rays as they enter the eye, refract through the cornea and lens, and focus on the retina. Compare normal vision, myopia, hyperopia, accommodation and corrective lenses.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Biology</span>
+        <span class="pill">Human eye</span>
+        <span class="pill">Light</span>
+        <span class="pill">Refraction</span>
+        <span class="pill">Vision</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how the eye uses refraction to focus light onto the retina.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can describe the role of the cornea, pupil, lens and retina, and explain how myopia, hyperopia and corrective lenses affect the focal point.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Path of light through the eye simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Eye setup</p>
+
+          <div class="field-block">
+            <label for="mode">Vision type</label>
+            <select id="mode">
+              <option value="normal" selected>Normal vision</option>
+              <option value="myopia">Myopia / short-sightedness</option>
+              <option value="hyperopia">Hyperopia / long-sightedness</option>
+            </select>
+          </div>
+
+          <div class="slider-block">
+            <label for="focus">Lens power / accommodation</label>
+            <div class="slider-readout">
+              <span>Weaker</span>
+              <strong id="focusVal">1.00×</strong>
+              <span>Stronger</span>
+            </div>
+            <input id="focus" type="range" min="0.70" max="1.35" value="1.00" step="0.01">
+          </div>
+
+          <div class="slider-block">
+            <label for="object">Object distance</label>
+            <div class="slider-readout">
+              <span>Near</span>
+              <strong id="objectVal">Far</strong>
+              <span>Far</span>
+            </div>
+            <input id="object" type="range" min="0" max="100" value="85" step="1">
+          </div>
+
+          <div class="slider-block">
+            <label for="pupil">Pupil size</label>
+            <div class="slider-readout">
+              <span>Small</span>
+              <strong id="pupilVal">6.0 mm</strong>
+              <span>Large</span>
+            </div>
+            <input id="pupil" type="range" min="2" max="8" value="6" step="0.1">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Corrections</p>
+
+          <div class="field-block">
+            <label for="correction">Correction lens</label>
+            <select id="correction">
+              <option value="none" selected>None</option>
+              <option value="concave">Concave lens</option>
+              <option value="convex">Convex lens</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button id="normalBtn" class="ghost" type="button">Normal</button>
+            <button id="myopiaBtn" class="ghost" type="button">Myopia</button>
+            <button id="hyperopiaBtn" class="ghost" type="button">Hyperopia</button>
+            <button id="nearBtn" class="ghost" type="button">Near object</button>
+            <button id="accommodateBtn" class="ghost" type="button">Accommodate</button>
+            <button id="correctBtn" class="ghost" type="button">Apply suitable correction</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Simulation controls</p>
+
+          <div class="button-row">
+            <button id="animateBtn" type="button">Animate rays</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+            <label class="toggle-label"><input type="checkbox" id="showPrincipal" checked> Principal axis</label>
+            <label class="toggle-label"><input type="checkbox" id="showRetinaGlow" checked> Focus spot</label>
+            <label class="toggle-label"><input type="checkbox" id="showExtraRays" checked> Extra rays</label>
+            <label class="toggle-label"><input type="checkbox" id="showFocusLine" checked> Focal guide</label>
+            <label class="toggle-label"><input type="checkbox" id="showPupilShade" checked> Blocked rays</label>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a simplified ray model. It shows focal position relative to the retina. It does not model every optical surface or exact anatomical scale.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Eye ray model">
+        <h2>Eye ray model</h2>
+        <p>Sharp vision occurs when light rays focus on the retina. If they focus before or behind the retina, the image is blurred unless accommodation or a correction lens shifts the focal point.</p>
+
+        <canvas id="sim" width="1000" height="560" aria-label="Ray diagram showing light passing through the eye"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-line"></span>Incoming light</span>
+          <span class="legend-item"><span class="legend-line blue"></span>Refracted light</span>
+          <span class="legend-item"><span class="legend-line green"></span>Retina / sharp focus</span>
+          <span class="legend-item"><span class="legend-line red"></span>Blurred focus</span>
+          <span class="legend-item"><span class="legend-line purple"></span>Correction lens</span>
+        </div>
+
+        <div class="results" aria-label="Current model outputs">
+          <div class="metric">
+            <div class="label">Vision type</div>
+            <div class="value" id="modeOut">Normal</div>
+            <div class="small">Eye shape / baseline focus</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Correction</div>
+            <div class="value" id="correctionOut">None</div>
+            <div class="small">External lens setting</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Focal result</div>
+            <div class="value" id="focusResultOut">On retina</div>
+            <div class="small">Compared with retina position</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Retinal blur</div>
+            <div class="value" id="blurOut">Low</div>
+            <div class="small">Ray spread at retina</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Object distance</div>
+            <div class="value" id="distanceOut">Far</div>
+            <div class="small">Near objects need more lens power</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Pupil effect</div>
+            <div class="value" id="pupilEffectOut">Wide bundle</div>
+            <div class="small">Controls ray bundle width</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Lens power</div>
+            <div class="value" id="powerOut">1.00×</div>
+            <div class="small">Combined model power</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Ray count</div>
+            <div class="value" id="rayCountOut">7</div>
+            <div class="small">Depends on pupil and display</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Ready. Change the vision type or correction lens to compare how the focal point moves.</div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Set the eye to normal vision. Where do the rays focus?</li>
+          <li>Move the object closer without changing lens power. What happens to the focus?</li>
+          <li>Use accommodation to bring a near object back into focus.</li>
+          <li>Set the eye to myopia. Does the focus form before or behind the retina?</li>
+          <li>Set the eye to hyperopia. Does the focus form before or behind the retina?</li>
+          <li>Change pupil size. What happens to the width and number of rays entering the eye?</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim links the biology of the eye with the physics of refraction. Students should focus on the location of the focal point relative to the retina.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: What does a correction lens need to do to light before it enters the eye?</li>
+          <li>Good prompt: Why does myopia need a concave lens?</li>
+          <li>Good prompt: Why does hyperopia need a convex lens?</li>
+          <li>Extension: Compare correction lenses with accommodation by the eye’s own lens.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Ideas used in the model</h2>
+        <p>The model uses ray diagrams and relative lens power to show focusing.</p>
+
+        <div class="equation-box">Core idea:
+light changes direction when it refracts
+
+Sharp image:
+rays focus on the retina
+
+Object distance:
+far object + normal lens = focus on retina
+near object + unchanged lens = focus tends to shift behind the retina
+near object + stronger lens = focus returns to the retina
+
+Myopia / short-sightedness:
+rays focus before the retina
+a concave lens spreads rays slightly before they enter the eye
+
+Hyperopia / long-sightedness:
+rays focus behind the retina
+a convex lens brings rays together before they enter the eye
+
+Accommodation:
+changing lens shape changes lens power
+stronger lens power moves the focal point closer
+weaker lens power moves the focal point further away
+
+Pupil size:
+larger pupil = wider ray bundle
+smaller pupil = narrower ray bundle</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Cornea:</strong> does much of the bending of incoming light.</li>
+          <li><strong>Pupil:</strong> controls how much light enters the eye.</li>
+          <li><strong>Lens:</strong> fine-tunes the focus by changing shape.</li>
+          <li><strong>Retina:</strong> contains cells that detect light and start nerve signals.</li>
+          <li><strong>Myopia:</strong> the focal point is too far forward.</li>
+          <li><strong>Hyperopia:</strong> the focal point is too far back.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initEyeSim(){
+      const canvas = document.getElementById("sim");
+      const ctx = canvas.getContext("2d");
+
+      const ui = {
+        mode:document.getElementById("mode"),
+        focus:document.getElementById("focus"),
+        object:document.getElementById("object"),
+        pupil:document.getElementById("pupil"),
+        correction:document.getElementById("correction"),
+        showLabels:document.getElementById("showLabels"),
+        showPrincipal:document.getElementById("showPrincipal"),
+        showRetinaGlow:document.getElementById("showRetinaGlow"),
+        showExtraRays:document.getElementById("showExtraRays"),
+        showFocusLine:document.getElementById("showFocusLine"),
+        showPupilShade:document.getElementById("showPupilShade")
+      };
+
+      const out = {
+        focusVal:document.getElementById("focusVal"),
+        objectVal:document.getElementById("objectVal"),
+        pupilVal:document.getElementById("pupilVal"),
+        modeOut:document.getElementById("modeOut"),
+        correctionOut:document.getElementById("correctionOut"),
+        focusResultOut:document.getElementById("focusResultOut"),
+        blurOut:document.getElementById("blurOut"),
+        distanceOut:document.getElementById("distanceOut"),
+        pupilEffectOut:document.getElementById("pupilEffectOut"),
+        powerOut:document.getElementById("powerOut"),
+        rayCountOut:document.getElementById("rayCountOut"),
+        statusBox:document.getElementById("statusBox")
+      };
+
+      const geom = {
+        axisY:280,
+        corneaX:360,
+        lensX:470,
+        retinaX:740,
+        eyeCx:560,
+        eyeCy:280,
+        eyeRx:210,
+        eyeRy:160
+      };
+
+      let animPhase = 1;
+      let animating = false;
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getSettings(){
+        const mode = ui.mode.value;
+        const focus = Number(ui.focus.value);
+        const object = Number(ui.object.value);
+        const pupil = Number(ui.pupil.value);
+        const correction = ui.correction.value;
+
+        let modeFactor = 1.0;
+        if(mode === "myopia"){ modeFactor = 1.18; }
+        if(mode === "hyperopia"){ modeFactor = 0.86; }
+
+        let correctionFactor = 1.0;
+        if(correction === "concave"){ correctionFactor = 0.847; }
+        if(correction === "convex"){ correctionFactor = 1.163; }
+
+        /*
+          Object-distance model:
+          Far object around 85 gives objectFactor ≈ 1.00.
+          Near object lowers effective focusing unless the student increases lens power.
+          This makes accommodation easier to teach.
+        */
+        const objectFactor = 0.86 + (object / 100) * 0.165;
+
+        const totalLensPower = focus * modeFactor * correctionFactor * objectFactor;
+        const focusX = geom.lensX + 270 / totalLensPower;
+        const focusOffset = focusX - geom.retinaX;
+
+        const pupilFactor = 0.65 + ((pupil - 2) / 6) * 0.65;
+        const blur = Math.abs(focusOffset) * pupilFactor;
+
+        return {
+          mode,
+          focus,
+          object,
+          pupil,
+          correction,
+          modeFactor,
+          correctionFactor,
+          objectFactor,
+          totalLensPower,
+          focusX,
+          focusOffset,
+          pupilFactor,
+          blur
+        };
+      }
+
+      function visionLabel(mode){
+        if(mode === "myopia"){ return "Myopia"; }
+        if(mode === "hyperopia"){ return "Hyperopia"; }
+        return "Normal";
+      }
+
+      function correctionLabel(correction){
+        if(correction === "concave"){ return "Concave"; }
+        if(correction === "convex"){ return "Convex"; }
+        return "None";
+      }
+
+      function objectLabel(value){
+        if(value > 66){ return "Far"; }
+        if(value > 33){ return "Middle"; }
+        return "Near";
+      }
+
+      function pupilEffectLabel(pupil){
+        if(pupil < 3.5){ return "Narrow bundle"; }
+        if(pupil < 5.8){ return "Medium bundle"; }
+        return "Wide bundle";
+      }
+
+      function focusResult(set){
+        if(Math.abs(set.focusOffset) < 18){ return "On retina"; }
+        if(set.focusX < geom.retinaX){ return "Before retina"; }
+        return "Behind retina";
+      }
+
+      function blurLabel(set){
+        if(set.blur < 18){ return "Low"; }
+        if(set.blur < 65){ return "Moderate"; }
+        return "High";
+      }
+
+      function generateRayOffsets(set){
+        const maxOffset = 18 + ((set.pupil - 2) / 6) * 72;
+        let count = 3;
+
+        if(set.pupil >= 3.5){ count = 5; }
+        if(set.pupil >= 5.8 && ui.showExtraRays.checked){ count = 7; }
+        if(set.pupil >= 7.2 && ui.showExtraRays.checked){ count = 9; }
+
+        if(!ui.showExtraRays.checked){
+          count = Math.min(count, 5);
+        }
+
+        const offsets = [];
+
+        if(count === 1){
+          return [0];
+        }
+
+        for(let i = 0; i < count; i++){
+          const fraction = count === 1 ? 0 : i / (count - 1);
+          offsets.push(-maxOffset + fraction * maxOffset * 2);
+        }
+
+        return offsets;
+      }
+
+      function updateReadouts(){
+        const set = getSettings();
+        const rayCount = generateRayOffsets(set).length;
+
+        out.focusVal.textContent = set.focus.toFixed(2) + "×";
+        out.objectVal.textContent = objectLabel(set.object);
+        out.pupilVal.textContent = set.pupil.toFixed(1) + " mm";
+
+        out.modeOut.textContent = visionLabel(set.mode);
+        out.correctionOut.textContent = correctionLabel(set.correction);
+        out.focusResultOut.textContent = focusResult(set);
+        out.blurOut.textContent = blurLabel(set);
+        out.distanceOut.textContent = objectLabel(set.object);
+        out.pupilEffectOut.textContent = pupilEffectLabel(set.pupil);
+        out.powerOut.textContent = set.totalLensPower.toFixed(2) + "×";
+        out.rayCountOut.textContent = String(rayCount);
+
+        let message = "Rays are focusing " + focusResult(set).toLowerCase() + ".";
+
+        if(set.object < 35 && set.focus < 1.10){
+          message += " A near object needs stronger lens power, so use accommodation to bring the focus back to the retina.";
+        }else if(set.mode === "myopia" && set.correction === "concave"){
+          message += " The concave lens is spreading incoming rays, moving the focal point towards the retina.";
+        }else if(set.mode === "hyperopia" && set.correction === "convex"){
+          message += " The convex lens is bringing incoming rays together, moving the focal point towards the retina.";
+        }else if(set.mode === "myopia" && set.correction !== "concave"){
+          message += " Myopia is usually corrected with a concave lens.";
+        }else if(set.mode === "hyperopia" && set.correction !== "convex"){
+          message += " Hyperopia is usually corrected with a convex lens.";
+        }else{
+          message += " Adjust lens power, object distance, pupil size or correction lens to test the model.";
+        }
+
+        out.statusBox.textContent = message;
+      }
+
+      function drawBackground(){
+        const gradient = ctx.createLinearGradient(0, 0, 1000, 560);
+        gradient.addColorStop(0, "#f8fafc");
+        gradient.addColorStop(1, "#eef6ff");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.25)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= canvas.width; x += 50){
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= canvas.height; y += 50){
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+      }
+
+      function label(text, x, y, colour){
+        if(!ui.showLabels.checked){ return; }
+
+        ctx.save();
+        ctx.fillStyle = colour || "#334155";
+        ctx.font = "800 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      }
+
+      function drawEye(set){
+        const g = geom;
+
+        ctx.save();
+
+        ctx.fillStyle = "rgba(219,234,254,0.45)";
+        ctx.strokeStyle = "rgba(30,64,175,0.78)";
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.ellipse(g.eyeCx, g.eyeCy, g.eyeRx, g.eyeRy, 0, 0.22 * Math.PI, 1.78 * Math.PI);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(191,219,254,0.16)";
+        ctx.beginPath();
+        ctx.ellipse(g.eyeCx, g.eyeCy, g.eyeRx, g.eyeRy, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(96,165,250,0.98)";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(g.corneaX - 2, g.eyeCy - 78);
+        ctx.quadraticCurveTo(g.corneaX - 34, g.eyeCy, g.corneaX - 2, g.eyeCy + 78);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(34,197,94,0.95)";
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.moveTo(g.retinaX, g.eyeCy - 105);
+        ctx.quadraticCurveTo(g.retinaX + 12, g.eyeCy, g.retinaX, g.eyeCy + 105);
+        ctx.stroke();
+
+        const lensHeight = clamp(88 + (set.totalLensPower - 1) * 45, 64, 125);
+        const lensWidth = clamp(16 + (set.totalLensPower - 1) * 12, 10, 28);
+
+        ctx.fillStyle = "rgba(96,165,250,0.20)";
+        ctx.strokeStyle = "rgba(37,99,235,0.95)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(g.lensX, g.eyeCy, lensWidth, lensHeight, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        const irisOuter = 48;
+
+        /*
+          Fixed behaviour:
+          a larger pupil slider value now produces a larger black opening.
+        */
+        const irisInner = clamp(8 + (set.pupil - 2) * 4.0, 8, 32);
+
+        ctx.fillStyle = "rgba(30,64,175,0.60)";
+        ctx.beginPath();
+        ctx.arc(g.corneaX + 28, g.eyeCy, irisOuter, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#020617";
+        ctx.beginPath();
+        ctx.arc(g.corneaX + 28, g.eyeCy, irisInner, 0, Math.PI * 2);
+        ctx.fill();
+
+        if(ui.showPupilShade.checked){
+          const apertureY = 16 + ((set.pupil - 2) / 6) * 54;
+
+          ctx.fillStyle = "rgba(15,23,42,0.20)";
+          ctx.beginPath();
+          ctx.roundRect(g.corneaX - 20, g.eyeCy - 92, 72, 76 - apertureY, 12);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.roundRect(g.corneaX - 20, g.eyeCy + apertureY + 16, 72, 76 - apertureY, 12);
+          ctx.fill();
+        }
+
+        if(set.correction !== "none"){
+          ctx.strokeStyle = set.correction === "concave" ? "rgba(236,72,153,0.95)" : "rgba(139,92,246,0.95)";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+
+          if(set.correction === "concave"){
+            ctx.moveTo(g.corneaX - 86, g.eyeCy - 64);
+            ctx.quadraticCurveTo(g.corneaX - 104, g.eyeCy, g.corneaX - 86, g.eyeCy + 64);
+            ctx.moveTo(g.corneaX - 66, g.eyeCy - 64);
+            ctx.quadraticCurveTo(g.corneaX - 48, g.eyeCy, g.corneaX - 66, g.eyeCy + 64);
+          }else{
+            ctx.moveTo(g.corneaX - 84, g.eyeCy - 64);
+            ctx.quadraticCurveTo(g.corneaX - 64, g.eyeCy, g.corneaX - 84, g.eyeCy + 64);
+            ctx.moveTo(g.corneaX - 56, g.eyeCy - 64);
+            ctx.quadraticCurveTo(g.corneaX - 76, g.eyeCy, g.corneaX - 56, g.eyeCy + 64);
+          }
+
+          ctx.stroke();
+          label(set.correction === "concave" ? "Concave correction" : "Convex correction", g.corneaX - 75, g.eyeCy + 98, set.correction === "concave" ? "#be185d" : "#6d28d9");
+        }
+
+        if(ui.showPrincipal.checked){
+          ctx.strokeStyle = "rgba(71,85,105,0.45)";
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([8, 7]);
+          ctx.beginPath();
+          ctx.moveTo(80, g.axisY);
+          ctx.lineTo(900, g.axisY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        label("Cornea", g.corneaX - 34, g.eyeCy - 98, "#1d4ed8");
+        label("Iris / pupil", g.corneaX + 30, g.eyeCy - 62, "#1e3a8a");
+        label("Lens", g.lensX, g.eyeCy - 112, "#1d4ed8");
+        label("Retina", g.retinaX + 18, g.eyeCy - 122, "#166534");
+        label("Optic nerve", g.eyeCx + 150, g.eyeCy + 138, "#475569");
+
+        ctx.restore();
+      }
+
+      function drawOpticNerve(){
+        ctx.save();
+        ctx.strokeStyle = "rgba(100,116,139,0.55)";
+        ctx.lineWidth = 18;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(692, 366);
+        ctx.quadraticCurveTo(760, 405, 840, 438);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function clipToEllipse(x1, y1, x2, y2, cx, cy, rx, ry){
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const A = (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry);
+        const B = 2 * (((x1 - cx) * dx) / (rx * rx) + ((y1 - cy) * dy) / (ry * ry));
+        const C = ((x1 - cx) * (x1 - cx)) / (rx * rx) + ((y1 - cy) * (y1 - cy)) / (ry * ry) - 1;
+        const disc = B * B - 4 * A * C;
+
+        if(disc < 0){
+          return null;
+        }
+
+        const sqrt = Math.sqrt(disc);
+        const t1 = (-B - sqrt) / (2 * A);
+        const t2 = (-B + sqrt) / (2 * A);
+        const candidates = [t1, t2].filter(function(t){
+          return t >= 0 && t <= 1;
+        }).sort(function(a, b){
+          return a - b;
+        });
+
+        if(!candidates.length){
+          return null;
+        }
+
+        const t = candidates[candidates.length - 1];
+        return { x:x1 + dx * t, y:y1 + dy * t };
+      }
+
+      function partialPoint(xA, yA, xB, yB, p){
+        return {
+          x:xA + (xB - xA) * p,
+          y:yA + (yB - yA) * p
+        };
+      }
+
+      function drawRayPath(yStart, set, alpha){
+        const xStart = 70;
+        const corneaX = geom.corneaX - 3;
+        const lensX = geom.lensX;
+        const retinaX = geom.retinaX;
+        const axisY = geom.axisY;
+
+        let yAtCornea = yStart;
+
+        if(set.correction === "concave"){
+          yAtCornea += (yStart - axisY) * 0.10;
+        }
+
+        if(set.correction === "convex"){
+          yAtCornea -= (yStart - axisY) * 0.10;
+        }
+
+        const slope = (axisY - yAtCornea) / (set.focusX - corneaX);
+        const yAtLens = yAtCornea + slope * (lensX - corneaX);
+        const afterLensSlope = (axisY - yAtLens) / (set.focusX - lensX);
+        const yAtRetinaLine = yAtLens + afterLensSlope * (retinaX - lensX);
+
+        const exit = clipToEllipse(
+          lensX,
+          yAtLens,
+          retinaX,
+          yAtRetinaLine,
+          geom.eyeCx,
+          geom.eyeCy,
+          geom.eyeRx,
+          geom.eyeRy
+        ) || { x:retinaX, y:yAtRetinaLine };
+
+        const progress = animating ? animPhase : 1;
+
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+
+        ctx.strokeStyle = "rgba(251,191,36," + (0.95 * alpha) + ")";
+        ctx.beginPath();
+        ctx.moveTo(xStart, yStart);
+
+        const p1 = partialPoint(xStart, yStart, corneaX, yAtCornea, Math.min(1, progress * 1.35));
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+
+        if(progress > 0.25){
+          ctx.strokeStyle = "rgba(96,165,250," + (0.95 * alpha) + ")";
+          ctx.beginPath();
+          ctx.moveTo(corneaX, yAtCornea);
+
+          const p2 = partialPoint(corneaX, yAtCornea, lensX, yAtLens, Math.min(1, (progress - 0.20) / 0.45));
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+
+        if(progress > 0.55){
+          ctx.strokeStyle = "rgba(96,165,250," + (0.95 * alpha) + ")";
+          ctx.beginPath();
+          ctx.moveTo(lensX, yAtLens);
+
+          const p3 = partialPoint(lensX, yAtLens, exit.x, exit.y, Math.min(1, (progress - 0.50) / 0.50));
+          ctx.lineTo(p3.x, p3.y);
+          ctx.stroke();
+        }
+
+        return {
+          endY:yAtRetinaLine,
+          yAtLens,
+          exit
+        };
+      }
+
+      function drawFocusGlow(set, endYs){
+        if(!ui.showRetinaGlow.checked){
+          return;
+        }
+
+        const avgY = endYs.reduce(function(a, b){
+          return a + b;
+        }, 0) / endYs.length;
+
+        const spread = Math.max.apply(null, endYs) - Math.min.apply(null, endYs);
+        const focusOnRetina = Math.abs(set.focusX - geom.retinaX) < 18;
+        const glowRadius = 28 + spread * 0.16;
+
+        const glow = ctx.createRadialGradient(geom.retinaX, avgY, 4, geom.retinaX, avgY, glowRadius);
+        glow.addColorStop(0, focusOnRetina ? "rgba(34,197,94,0.85)" : "rgba(239,68,68,0.75)");
+        glow.addColorStop(1, "rgba(34,197,94,0)");
+
+        ctx.save();
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(geom.retinaX, avgY, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawFocalGuide(set){
+        if(!ui.showFocusLine.checked){
+          return;
+        }
+
+        ctx.save();
+
+        const x = clamp(set.focusX, 40, 930);
+        const onRetina = Math.abs(set.focusX - geom.retinaX) < 18;
+
+        ctx.strokeStyle = onRetina ? "rgba(34,197,94,0.85)" : "rgba(239,68,68,0.78)";
+        ctx.fillStyle = onRetina ? "#166534" : "#991b1b";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 5]);
+
+        ctx.beginPath();
+        ctx.moveTo(x, 122);
+        ctx.lineTo(x, 440);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.arc(x, geom.axisY, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Focal point", x, 112);
+        ctx.fillText(focusResult(set), x, 462);
+
+        ctx.restore();
+      }
+
+      function drawLabels(){
+        if(!ui.showLabels.checked){
+          return;
+        }
+
+        ctx.save();
+
+        ctx.strokeStyle = "rgba(71,85,105,0.55)";
+        ctx.lineWidth = 1.5;
+
+        ctx.beginPath();
+        ctx.moveTo(120, 124);
+        ctx.lineTo(200, 148);
+
+        ctx.moveTo(geom.corneaX - 6, geom.eyeCy - 92);
+        ctx.lineTo(geom.corneaX - 2, geom.eyeCy - 74);
+
+        ctx.moveTo(geom.lensX, geom.eyeCy - 108);
+        ctx.lineTo(geom.lensX, geom.eyeCy - 90);
+
+        ctx.moveTo(geom.retinaX + 8, geom.eyeCy - 118);
+        ctx.lineTo(geom.retinaX + 3, geom.eyeCy - 100);
+
+        ctx.stroke();
+
+        label("Incoming light", 104, 118, "#92400e");
+
+        ctx.restore();
+      }
+
+      function drawScene(){
+        const set = getSettings();
+
+        drawBackground();
+        drawEye(set);
+        drawOpticNerve();
+
+        const offsets = generateRayOffsets(set);
+        const endYs = [];
+
+        offsets.forEach(function(offset, index){
+          const isOuter = Math.abs(offset) > 70;
+          const info = drawRayPath(geom.axisY + offset, set, isOuter ? 0.55 : 1);
+          endYs.push(info.endY);
+        });
+
+        drawFocusGlow(set, endYs);
+        drawFocalGuide(set);
+        drawLabels();
+        updateReadouts();
+      }
+
+      function tick(){
+        if(animating){
+          animPhase += 0.022;
+
+          if(animPhase >= 1){
+            animPhase = 1;
+            animating = false;
+          }
+        }
+
+        drawScene();
+        requestAnimationFrame(tick);
+      }
+
+      function reset(){
+        ui.mode.value = "normal";
+        ui.focus.value = "1.00";
+        ui.object.value = "85";
+        ui.pupil.value = "6";
+        ui.correction.value = "none";
+        ui.showLabels.checked = true;
+        ui.showPrincipal.checked = true;
+        ui.showRetinaGlow.checked = true;
+        ui.showExtraRays.checked = true;
+        ui.showFocusLine.checked = true;
+        ui.showPupilShade.checked = true;
+        animPhase = 1;
+        animating = false;
+        drawScene();
+      }
+
+      function applyVisionPreset(mode){
+        ui.mode.value = mode;
+        ui.correction.value = "none";
+        ui.focus.value = "1.00";
+        ui.object.value = "85";
+        ui.pupil.value = "6";
+
+        animPhase = 0;
+        animating = true;
+        drawScene();
+      }
+
+      function applyNearObjectPreset(){
+        ui.mode.value = "normal";
+        ui.correction.value = "none";
+        ui.focus.value = "1.00";
+        ui.object.value = "15";
+        ui.pupil.value = "5";
+
+        animPhase = 0;
+        animating = true;
+        drawScene();
+      }
+
+      function applyAccommodation(){
+        const set = getSettings();
+
+        /*
+          To focus on the retina, totalLensPower should be close to 1.00.
+          focus = 1 / (modeFactor × correctionFactor × objectFactor)
+        */
+        const neededFocus = 1 / (set.modeFactor * set.correctionFactor * set.objectFactor);
+        ui.focus.value = String(clamp(neededFocus, 0.70, 1.35).toFixed(2));
+
+        animPhase = 0;
+        animating = true;
+        drawScene();
+      }
+
+      function applySuitableCorrection(){
+        if(ui.mode.value === "myopia"){
+          ui.correction.value = "concave";
+        }else if(ui.mode.value === "hyperopia"){
+          ui.correction.value = "convex";
+        }else{
+          ui.correction.value = "none";
+        }
+
+        const set = getSettings();
+        const neededFocus = 1 / (set.modeFactor * set.correctionFactor * set.objectFactor);
+        ui.focus.value = String(clamp(neededFocus, 0.70, 1.35).toFixed(2));
+
+        animPhase = 0;
+        animating = true;
+        drawScene();
+      }
+
+      [
+        ui.mode,
+        ui.focus,
+        ui.object,
+        ui.pupil,
+        ui.correction,
+        ui.showLabels,
+        ui.showPrincipal,
+        ui.showRetinaGlow,
+        ui.showExtraRays,
+        ui.showFocusLine,
+        ui.showPupilShade
+      ].forEach(function(element){
+        element.addEventListener("input", drawScene);
+        element.addEventListener("change", drawScene);
+      });
+
+      document.getElementById("animateBtn").addEventListener("click", function(){
+        animPhase = 0;
+        animating = true;
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", reset);
+
+      document.getElementById("normalBtn").addEventListener("click", function(){
+        applyVisionPreset("normal");
+      });
+
+      document.getElementById("myopiaBtn").addEventListener("click", function(){
+        applyVisionPreset("myopia");
+      });
+
+      document.getElementById("hyperopiaBtn").addEventListener("click", function(){
+        applyVisionPreset("hyperopia");
+      });
+
+      document.getElementById("nearBtn").addEventListener("click", applyNearObjectPreset);
+      document.getElementById("accommodateBtn").addEventListener("click", applyAccommodation);
+      document.getElementById("correctBtn").addEventListener("click", applySuitableCorrection);
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      reset();
+      requestAnimationFrame(tick);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initEyeSim);
+    }else{
+      initEyeSim();
+    }
+  </script>
+</body>
+</html>
