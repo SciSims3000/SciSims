@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Sound Through the Ear</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --cyan:#06b6d4;
+      --yellow:#facc15;
+      --orange:#fb923c;
+      --green:#22c55e;
+      --red:#ef4444;
+      --purple:#8b5cf6;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1220px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:930px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:14px;
+    }
+
+    .control-heading{
+      margin:0 0 12px;
+      font-size:0.9rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 7px;
+    }
+
+    input,
+    button{
+      font:inherit;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:18px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:8px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:#ffffff;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.12rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+      background:var(--cyan);
+    }
+
+    .legend-dot.yellow{ background:var(--yellow); }
+    .legend-dot.orange{ background:var(--orange); }
+    .legend-dot.green{ background:var(--green); }
+    .legend-dot.red{ background:var(--red); }
+    .legend-dot.grey{ background:#9ca3af; }
+
+    .status-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{ grid-template-columns:1fr; }
+      .side-controls{ position:static; }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Sound Through the Ear</h1>
+      <p>Follow a sound wave as it is collected by the outer ear, vibrates the eardrum, moves the ossicles, stimulates the cochlea and becomes nerve signals travelling to the brain.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Biology</span>
+        <span class="pill">Sound</span>
+        <span class="pill">Hearing</span>
+        <span class="pill">Human body</span>
+        <span class="pill">Waves</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand the pathway sound takes through the ear and how vibrations are converted into nerve signals.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can identify the outer ear, ear canal, eardrum, ossicles, cochlea and auditory nerve, and describe their roles in hearing and noise damage.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Sound through the ear simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Sound controls</p>
+
+          <div class="slider-block">
+            <label for="freq">Frequency / pitch</label>
+            <div class="slider-readout">
+              <span>Lower pitch</span>
+              <strong id="freqVal">5</strong>
+              <span>Higher pitch</span>
+            </div>
+            <input type="range" id="freq" min="1" max="20" value="5">
+          </div>
+
+          <div class="slider-block">
+            <label for="amp">Amplitude / loudness</label>
+            <div class="slider-readout">
+              <span>Quieter</span>
+              <strong id="ampVal">20</strong>
+              <span>Louder</span>
+            </div>
+            <input type="range" id="amp" min="5" max="40" value="20">
+          </div>
+
+          <div class="slider-block">
+            <label for="speed">Animation speed</label>
+            <div class="slider-readout">
+              <span>Slow</span>
+              <strong id="speedVal">1.0×</strong>
+              <span>Fast</span>
+            </div>
+            <input type="range" id="speed" min="2" max="30" value="10">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Simulation controls</p>
+
+          <div class="button-row">
+            <button id="pauseBtn" type="button">Pause</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+            <button id="nextStageBtn" class="ghost" type="button">Next pathway step</button>
+            <button id="resetDamageBtn" class="ghost" type="button">Reset hair cells</button>
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input id="showLabels" type="checkbox" checked> Labels</label>
+            <label class="toggle-label"><input id="showParticles" type="checkbox" checked> Air particles</label>
+            <label class="toggle-label"><input id="showHairCells" type="checkbox" checked> Hair cells</label>
+            <label class="toggle-label"><input id="showNerve" type="checkbox" checked> Nerve signals</label>
+            <label class="toggle-label"><input id="autoPathway" type="checkbox" checked> Auto pathway</label>
+            <label class="toggle-label"><input id="showDamageRisk" type="checkbox" checked> Damage risk</label>
+            <label class="toggle-label"><input id="hearingProtection" type="checkbox"> Hearing protection</label>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a simplified classroom model. The damage-risk layer shows relative risk from loudness and exposure time. It is not a medical or workplace safety calculator.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Ear model">
+        <h2>Pathway model</h2>
+        <p>Sound begins as pressure vibrations in air. The ear changes those vibrations into mechanical movement, then into signals that can travel along a nerve.</p>
+
+        <canvas id="earSim" width="1000" height="560" aria-label="Animated model of sound travelling through the ear"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-dot"></span>Sound wave in air</span>
+          <span class="legend-item"><span class="legend-dot yellow"></span>Eardrum vibration</span>
+          <span class="legend-item"><span class="legend-dot orange"></span>Ossicle movement</span>
+          <span class="legend-item"><span class="legend-dot green"></span>Healthy hair cells</span>
+          <span class="legend-item"><span class="legend-dot red"></span>Nerve impulses / high risk</span>
+          <span class="legend-item"><span class="legend-dot grey"></span>Damaged hair cells in the model</span>
+        </div>
+
+        <div class="results" aria-label="Current sound settings">
+          <div class="metric">
+            <div class="label">Pitch setting</div>
+            <div class="value" id="pitchOut">Low-mid</div>
+            <div class="small">Controlled by frequency</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Loudness setting</div>
+            <div class="value" id="loudnessOut">Medium</div>
+            <div class="small">Controlled by amplitude</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Cochlea region</div>
+            <div class="value" id="cochleaOut">Middle</div>
+            <div class="small">Simplified place response</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Current stage</div>
+            <div class="value" id="stageOut">Air wave</div>
+            <div class="small">Follow the highlighted pathway</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Model sound level</div>
+            <div class="value" id="soundLevelOut">—</div>
+            <div class="small">Relative classroom dBA scale</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Exposure above risk level</div>
+            <div class="value" id="exposureOut">0.0 s</div>
+            <div class="small">Accumulated while loud</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Damage risk</div>
+            <div class="value" id="riskOut">Low</div>
+            <div class="small">Depends on loudness and time</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Hair-cell health</div>
+            <div class="value" id="healthOut">100%</div>
+            <div class="small">Model only</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Ready. Adjust frequency and amplitude to see how pitch and loudness change the model.</div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Increase the amplitude. What changes in the eardrum, ossicles and damage-risk meter?</li>
+          <li>Increase the frequency. What changes in the sound wave and vibration speed?</li>
+          <li>Use the pathway step button to describe the order of structures involved in hearing.</li>
+          <li>Turn on damage risk. Why is the damage shown in the cochlea rather than the outer ear?</li>
+          <li>Turn on hearing protection. What changes in the risk model?</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim links wave behaviour to human hearing. It also introduces noise-induced hearing loss as a health-literacy extension without presenting the model as a real decibel meter.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Does the sound wave itself travel to the brain?</li>
+          <li>Good prompt: Which parts vibrate mechanically?</li>
+          <li>Good prompt: Why does exposure time matter as well as loudness?</li>
+          <li>Extension: Compare hearing with seeing as sensory receptors converting stimuli into nerve signals.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Ideas used in the model</h2>
+        <p>The sim uses wave properties to show how different sounds affect the ear.</p>
+
+        <div class="equation-box">Sound wave:
+frequency controls pitch
+amplitude controls loudness
+
+Frequency in the model:
+higher frequency = faster vibration
+lower frequency = slower vibration
+
+Sound pathway:
+outer ear collects sound
+ear canal guides sound
+eardrum vibrates
+ossicles transfer and amplify vibration
+cochlea detects vibration
+auditory nerve carries signals
+
+Damage-risk model:
+risk increases with loudness
+risk increases with exposure time
+hearing protection reduces the model dose
+damage is shown at the cochlear hair cells
+
+Important idea:
+The brain does not receive the sound wave directly.
+The ear converts vibration into nerve impulses.</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Outer ear:</strong> collects and funnels sound.</li>
+          <li><strong>Ear canal:</strong> carries the sound wave to the eardrum.</li>
+          <li><strong>Eardrum:</strong> vibrates when pressure waves reach it.</li>
+          <li><strong>Ossicles:</strong> small bones that transfer vibration to the cochlea.</li>
+          <li><strong>Cochlea:</strong> detects vibration using hair cells.</li>
+          <li><strong>Auditory nerve:</strong> carries information to the brain.</li>
+          <li><strong>Damage point:</strong> loud sounds can damage cochlear hair cells, so the model places damage there.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initEarSim(){
+      const canvas = document.getElementById("earSim");
+      const ctx = canvas.getContext("2d");
+
+      const freqSlider = document.getElementById("freq");
+      const ampSlider = document.getElementById("amp");
+      const speedSlider = document.getElementById("speed");
+
+      const freqVal = document.getElementById("freqVal");
+      const ampVal = document.getElementById("ampVal");
+      const speedVal = document.getElementById("speedVal");
+
+      const showLabels = document.getElementById("showLabels");
+      const showParticles = document.getElementById("showParticles");
+      const showHairCells = document.getElementById("showHairCells");
+      const showNerve = document.getElementById("showNerve");
+      const autoPathway = document.getElementById("autoPathway");
+      const showDamageRisk = document.getElementById("showDamageRisk");
+      const hearingProtection = document.getElementById("hearingProtection");
+
+      const pauseBtn = document.getElementById("pauseBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const nextStageBtn = document.getElementById("nextStageBtn");
+      const resetDamageBtn = document.getElementById("resetDamageBtn");
+
+      const pitchOut = document.getElementById("pitchOut");
+      const loudnessOut = document.getElementById("loudnessOut");
+      const cochleaOut = document.getElementById("cochleaOut");
+      const stageOut = document.getElementById("stageOut");
+      const soundLevelOut = document.getElementById("soundLevelOut");
+      const exposureOut = document.getElementById("exposureOut");
+      const riskOut = document.getElementById("riskOut");
+      const healthOut = document.getElementById("healthOut");
+      const statusBox = document.getElementById("statusBox");
+
+      let t = 0;
+      let running = true;
+      let lastTimestamp = null;
+      let manualStage = 0;
+      let exposureSeconds = 0;
+      let damageDose = 0;
+      let hairCellHealth = 100;
+
+      const STAGES = [
+        "Air wave",
+        "Ear canal",
+        "Eardrum",
+        "Ossicles",
+        "Cochlea",
+        "Nerve signal"
+      ];
+
+      function value(id){
+        return Number(document.getElementById(id).value);
+      }
+
+      function modelDb(amp){
+        return Math.round(50 + ((amp - 5) / 35) * 70);
+      }
+
+      function riskLevel(db, health){
+        if(health <= 70){
+          return "Damage shown";
+        }
+
+        if(db < 70){
+          return "Low";
+        }
+
+        if(db < 85){
+          return "Caution";
+        }
+
+        if(db < 100){
+          return "Risk over time";
+        }
+
+        if(db < 115){
+          return "High risk";
+        }
+
+        return "Danger";
+      }
+
+      function currentStageIndex(){
+        if(autoPathway.checked){
+          return Math.floor((t / 75) % STAGES.length);
+        }
+
+        return manualStage;
+      }
+
+      function currentStage(){
+        return STAGES[currentStageIndex()];
+      }
+
+      function updateDamageModel(dt){
+        const amp = value("amp");
+        const db = modelDb(amp);
+
+        if(!showDamageRisk.checked || !running){
+          return;
+        }
+
+        const protectionFactor = hearingProtection.checked ? 0.25 : 1;
+
+        if(db >= 85){
+          exposureSeconds += dt;
+
+          const intensityFactor = Math.pow(2, (db - 85) / 10);
+          damageDose += dt * intensityFactor * protectionFactor;
+
+          if(db >= 100){
+            const damageRate = ((db - 95) / 5) * protectionFactor;
+            hairCellHealth -= dt * damageRate;
+          }
+        }else{
+          damageDose = Math.max(0, damageDose - dt * 0.6);
+
+          if(db < 70){
+            exposureSeconds = Math.max(0, exposureSeconds - dt * 0.25);
+          }
+        }
+
+        hairCellHealth = Math.max(0, Math.min(100, hairCellHealth));
+      }
+
+      function updateReadouts(){
+        const freq = value("freq");
+        const amp = value("amp");
+        const speed = value("speed") / 10;
+        const db = modelDb(amp);
+        const risk = riskLevel(db, hairCellHealth);
+
+        freqVal.textContent = freq;
+        ampVal.textContent = amp;
+        speedVal.textContent = speed.toFixed(1) + "×";
+
+        if(freq <= 6){
+          pitchOut.textContent = "Lower";
+          cochleaOut.textContent = "Further in";
+        }else if(freq <= 13){
+          pitchOut.textContent = "Middle";
+          cochleaOut.textContent = "Middle";
+        }else{
+          pitchOut.textContent = "Higher";
+          cochleaOut.textContent = "Near base";
+        }
+
+        if(amp <= 14){
+          loudnessOut.textContent = "Quiet";
+        }else if(amp <= 28){
+          loudnessOut.textContent = "Medium";
+        }else{
+          loudnessOut.textContent = "Loud";
+        }
+
+        stageOut.textContent = currentStage();
+
+        soundLevelOut.textContent = db + " dBA";
+        exposureOut.textContent = exposureSeconds.toFixed(1) + " s";
+        riskOut.textContent = showDamageRisk.checked ? risk : "Hidden";
+        healthOut.textContent = Math.round(hairCellHealth) + "%";
+
+        let message =
+          "Frequency controls pitch and vibration speed. Amplitude controls loudness and vibration size.";
+
+        if(showDamageRisk.checked){
+          message += " Damage risk is modelled at the cochlear hair cells because loud sounds can damage sensory cells in the inner ear.";
+
+          if(hearingProtection.checked){
+            message += " Hearing protection is reducing the model sound dose.";
+          }
+
+          if(db >= 85){
+            message += " The current sound level is in the model's risk range, so exposure time is accumulating.";
+          }
+        }
+
+        statusBox.textContent = message;
+      }
+
+      function label(text, x, y, colour){
+        if(!showLabels.checked){ return; }
+
+        ctx.save();
+        ctx.fillStyle = colour || "#334155";
+        ctx.font = "800 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      }
+
+      function drawArrow(x1, y1, x2, y2, colour){
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const size = 10;
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - size * Math.cos(angle - Math.PI / 6), y2 - size * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawFocus(x, y, r, colour, text){
+        const stage = currentStage();
+
+        if(text !== stage){
+          return;
+        }
+
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = 4;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath();
+        ctx.arc(x, y, r + Math.sin(t * 0.08) * 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 0.12;
+        ctx.beginPath();
+        ctx.arc(x, y, r + 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawWave(xStart, xEnd, y, amp, freq, colour){
+        ctx.save();
+        ctx.beginPath();
+
+        for(let x = xStart; x <= xEnd; x++){
+          const yPos = y + Math.sin((x * 0.035 * freq) - t * 0.16 * freq) * amp;
+
+          if(x === xStart){
+            ctx.moveTo(x, yPos);
+          }else{
+            ctx.lineTo(x, yPos);
+          }
+        }
+
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = colour;
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawOuterEar(){
+        ctx.save();
+        ctx.strokeStyle = "#475569";
+        ctx.fillStyle = "#fef3c7";
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.moveTo(110, 150);
+        ctx.bezierCurveTo(55, 115, 52, 260, 110, 255);
+        ctx.bezierCurveTo(150, 250, 158, 214, 138, 198);
+        ctx.bezierCurveTo(112, 175, 155, 152, 110, 150);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = "#b45309";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(112, 173);
+        ctx.bezierCurveTo(82, 180, 82, 225, 112, 230);
+        ctx.stroke();
+
+        label("Outer ear", 98, 290, "#92400e");
+        drawFocus(105, 205, 74, "#06b6d4", "Air wave");
+
+        ctx.restore();
+      }
+
+      function drawEarCanal(){
+        ctx.save();
+
+        ctx.fillStyle = "#fff7ed";
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.roundRect(150, 187, 165, 56, 28);
+        ctx.fill();
+        ctx.stroke();
+
+        label("Ear canal", 230, 270, "#334155");
+        drawFocus(230, 215, 62, "#06b6d4", "Ear canal");
+
+        ctx.restore();
+      }
+
+      function drawEardrum(amp, phase){
+        const drumOffset = Math.sin(phase) * (amp / 8);
+
+        ctx.save();
+        ctx.strokeStyle = "#facc15";
+        ctx.fillStyle = "rgba(250,204,21,0.18)";
+        ctx.lineWidth = 5;
+
+        ctx.beginPath();
+        ctx.ellipse(335 + drumOffset, 215, 12, 38, 0.12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        label("Eardrum", 340, 164, "#854d0e");
+        drawFocus(335, 215, 48, "#facc15", "Eardrum");
+
+        ctx.restore();
+
+        return drumOffset;
+      }
+
+      function drawOssicles(drumOffset, amp, phase){
+        const oscMove = Math.sin(phase) * (amp / 10);
+
+        const hammer = { x:372 + oscMove, y:208 };
+        const anvil = { x:410 + oscMove, y:195 };
+        const stirrup = { x:450 + oscMove, y:216 };
+
+        ctx.save();
+        ctx.strokeStyle = "#fb923c";
+        ctx.fillStyle = "#fed7aa";
+        ctx.lineWidth = 6;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(350 + drumOffset, 215);
+        ctx.lineTo(hammer.x, hammer.y);
+        ctx.lineTo(anvil.x, anvil.y);
+        ctx.lineTo(stirrup.x, stirrup.y);
+        ctx.stroke();
+
+        [hammer, anvil, stirrup].forEach(function(p){
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        });
+
+        label("Ossicles", 415, 164, "#9a3412");
+        drawFocus(410, 207, 62, "#fb923c", "Ossicles");
+
+        ctx.restore();
+
+        return stirrup;
+      }
+
+      function hairCellColour(index, total, db){
+        const damageFraction = 1 - hairCellHealth / 100;
+        const damagedCount = Math.floor(damageFraction * total);
+
+        if(index < damagedCount){
+          return "#9ca3af";
+        }
+
+        if(showDamageRisk.checked && db >= 115){
+          return "#ef4444";
+        }
+
+        if(showDamageRisk.checked && db >= 100){
+          return "#fb923c";
+        }
+
+        if(showDamageRisk.checked && db >= 85){
+          return "#facc15";
+        }
+
+        return "#16a34a";
+      }
+
+      function drawCochlea(freq, amp, phase){
+        const cx = 585;
+        const cy = 225;
+        const maxTheta = Math.PI * 4.6;
+        const db = modelDb(amp);
+
+        ctx.save();
+
+        ctx.strokeStyle = "#16a34a";
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+
+        for(let i = 0; i <= 220; i++){
+          const theta = (i / 220) * maxTheta;
+          const r = 82 - theta * 4.5;
+          const x = cx + r * Math.cos(theta);
+          const y = cy + r * Math.sin(theta);
+
+          if(i === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        const responseTheta = (1 - (freq - 1) / 19) * (maxTheta * 0.82) + maxTheta * 0.08;
+        const responseR = 82 - responseTheta * 4.5;
+        const responseX = cx + responseR * Math.cos(responseTheta);
+        const responseY = cy + responseR * Math.sin(responseTheta);
+        const pulseSize = 7 + Math.sin(phase) * (amp / 12);
+
+        ctx.fillStyle = "rgba(34,197,94,0.24)";
+        ctx.beginPath();
+        ctx.arc(responseX, responseY, 22 + pulseSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#22c55e";
+        ctx.beginPath();
+        ctx.arc(responseX, responseY, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        if(showHairCells.checked){
+          ctx.lineWidth = 3;
+
+          const cellCount = 16;
+
+          for(let i = 0; i < cellCount; i++){
+            const theta = (i / (cellCount - 1)) * maxTheta * 0.85 + 0.3;
+            const r = 82 - theta * 4.5;
+            const x = cx + r * Math.cos(theta);
+            const y = cy + r * Math.sin(theta);
+            const wiggle = Math.sin(phase + i * 0.7) * 5;
+            const colour = hairCellColour(i, cellCount, db);
+
+            ctx.strokeStyle = colour;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + wiggle, y - 13);
+            ctx.stroke();
+
+            ctx.fillStyle = colour;
+            ctx.beginPath();
+            ctx.arc(x + wiggle, y - 14, 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        if(showDamageRisk.checked){
+          const risk = riskLevel(db, hairCellHealth);
+
+          if(db >= 85 || hairCellHealth < 100){
+            ctx.save();
+            ctx.strokeStyle = db >= 100 ? "#ef4444" : "#f59e0b";
+            ctx.fillStyle = db >= 100 ? "rgba(239,68,68,0.12)" : "rgba(245,158,11,0.14)";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([7, 5]);
+
+            ctx.beginPath();
+            ctx.arc(responseX, responseY, 38, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+            ctx.fillStyle = db >= 100 ? "#991b1b" : "#92400e";
+            ctx.font = "900 13px system-ui, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("damage risk point", responseX, responseY - 46);
+            ctx.fillText(risk, responseX, responseY + 54);
+            ctx.restore();
+          }
+        }
+
+        label("Cochlea", 585, 338, "#166534");
+        drawFocus(585, 225, 102, "#22c55e", "Cochlea");
+
+        ctx.restore();
+
+        return { x:responseX, y:responseY };
+      }
+
+      function drawNerveSignals(amp, phase){
+        if(!showNerve.checked){ return; }
+
+        ctx.save();
+
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(665, 226);
+        ctx.bezierCurveTo(730, 160, 815, 160, 920, 115);
+        ctx.stroke();
+
+        const pulseCount = Math.max(3, Math.round(amp / 7));
+
+        for(let i = 0; i < pulseCount; i++){
+          const p = ((phase * 0.08) + i / pulseCount) % 1;
+          const x = 665 + p * 255;
+          const y = 226 - Math.sin(p * Math.PI * 0.85) * 100 - p * 12;
+
+          ctx.beginPath();
+          ctx.fillStyle = "#ef4444";
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        label("Auditory nerve", 790, 112, "#991b1b");
+        drawFocus(785, 155, 86, "#ef4444", "Nerve signal");
+
+        ctx.restore();
+      }
+
+      function drawParticles(freq, amp, phase){
+        if(!showParticles.checked){ return; }
+
+        ctx.save();
+
+        for(let i = 0; i < 20; i++){
+          const x = 18 + i * 15 + ((t * 1.5) % 15);
+          const squeeze = Math.sin(i * 0.9 - phase) * amp * 0.25;
+          const y = 215 + squeeze;
+
+          ctx.fillStyle = "rgba(6,182,212,0.45)";
+          ctx.beginPath();
+          ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      function drawPathArrows(){
+        drawArrow(125, 215, 170, 215, "#06b6d4");
+        drawArrow(300, 215, 326, 215, "#facc15");
+        drawArrow(455, 216, 500, 220, "#fb923c");
+        drawArrow(635, 225, 678, 210, "#22c55e");
+      }
+
+      function drawRiskMeter(){
+        if(!showDamageRisk.checked){
+          return;
+        }
+
+        const amp = value("amp");
+        const db = modelDb(amp);
+        const risk = riskLevel(db, hairCellHealth);
+        const x = 56;
+        const y = 430;
+        const w = 360;
+        const h = 70;
+
+        let colour = "#16a34a";
+
+        if(db >= 70){ colour = "#facc15"; }
+        if(db >= 85){ colour = "#f59e0b"; }
+        if(db >= 100){ colour = "#fb923c"; }
+        if(db >= 115 || hairCellHealth < 80){ colour = "#ef4444"; }
+
+        ctx.save();
+
+        ctx.fillStyle = "rgba(255,255,255,0.88)";
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#334155";
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Hearing damage-risk model", x + 16, y + 24);
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.beginPath();
+        ctx.roundRect(x + 16, y + 38, w - 32, 14, 7);
+        ctx.fill();
+
+        const fillW = Math.max(0, Math.min(w - 32, ((db - 50) / 70) * (w - 32)));
+
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.roundRect(x + 16, y + 38, fillW, 14, 7);
+        ctx.fill();
+
+        ctx.fillStyle = "#334155";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.fillText(db + " dBA model level | " + risk + " | health " + Math.round(hairCellHealth) + "%", x + 16, y + 63);
+
+        ctx.restore();
+      }
+
+      function drawBackground(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const gradient = ctx.createLinearGradient(0, 0, 1000, 560);
+        gradient.addColorStop(0, "#f8fafc");
+        gradient.addColorStop(1, "#eef6ff");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.28)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= canvas.width; x += 50){
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= canvas.height; y += 50){
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "rgba(15,23,42,0.05)";
+        ctx.beginPath();
+        ctx.roundRect(35, 80, 910, 330, 28);
+        ctx.fill();
+      }
+
+      function draw(){
+        const freq = value("freq");
+        const amp = value("amp");
+        const phase = t * 0.045 * freq;
+
+        drawBackground();
+        drawWave(18, 150, 215, amp, freq, "#06b6d4");
+        drawParticles(freq, amp, phase);
+        drawOuterEar();
+        drawEarCanal();
+        drawWave(150, 318, 215, amp * 0.55, freq, "#06b6d4");
+        const drumOffset = drawEardrum(amp, phase);
+        drawOssicles(drumOffset, amp, phase);
+        drawCochlea(freq, amp, phase);
+        drawNerveSignals(amp, phase);
+        drawPathArrows();
+        drawRiskMeter();
+
+        label("Sound pressure wave", 82, 134, "#0369a1");
+        label("Vibration", 388, 292, "#9a3412");
+        label("Signal to brain", 838, 170, "#991b1b");
+
+        updateReadouts();
+      }
+
+      function animate(timestamp){
+        if(lastTimestamp === null){
+          lastTimestamp = timestamp;
+        }
+
+        const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.05);
+        lastTimestamp = timestamp;
+
+        if(running){
+          t += value("speed") / 10;
+          updateDamageModel(dt);
+        }
+
+        draw();
+        requestAnimationFrame(animate);
+      }
+
+      pauseBtn.addEventListener("click", function(){
+        running = !running;
+        pauseBtn.textContent = running ? "Pause" : "Run";
+      });
+
+      nextStageBtn.addEventListener("click", function(){
+        autoPathway.checked = false;
+        manualStage = (manualStage + 1) % STAGES.length;
+        updateReadouts();
+      });
+
+      resetDamageBtn.addEventListener("click", function(){
+        exposureSeconds = 0;
+        damageDose = 0;
+        hairCellHealth = 100;
+        updateReadouts();
+      });
+
+      resetBtn.addEventListener("click", function(){
+        t = 0;
+        exposureSeconds = 0;
+        damageDose = 0;
+        hairCellHealth = 100;
+        manualStage = 0;
+
+        freqSlider.value = 5;
+        ampSlider.value = 20;
+        speedSlider.value = 10;
+
+        showLabels.checked = true;
+        showParticles.checked = true;
+        showHairCells.checked = true;
+        showNerve.checked = true;
+        autoPathway.checked = true;
+        showDamageRisk.checked = true;
+        hearingProtection.checked = false;
+
+        running = true;
+        pauseBtn.textContent = "Pause";
+        updateReadouts();
+      });
+
+      [
+        freqSlider,
+        ampSlider,
+        speedSlider,
+        showLabels,
+        showParticles,
+        showHairCells,
+        showNerve,
+        autoPathway,
+        showDamageRisk,
+        hearingProtection
+      ].forEach(function(input){
+        input.addEventListener("input", updateReadouts);
+        input.addEventListener("change", updateReadouts);
+      });
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      updateReadouts();
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initEarSim);
+    }else{
+      initEarSim();
+    }
+  </script>
+</body>
+</html>
