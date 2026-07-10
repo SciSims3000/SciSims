@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Compare Drum Sizes</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --blue:#60a5fa;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --orange:#fb923c;
+      --red:#ef4444;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.15rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:370px minmax(0, 1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:10px;
+    }
+
+    .control-heading{
+      margin:0 0 10px;
+      font-size:0.86rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 5px;
+    }
+
+    input,
+    button{
+      font:inherit;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    .slider-block + .slider-block{
+      margin-top:12px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:5px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:9px 12px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{ background:var(--button-hover); }
+
+    button.secondary{ background:var(--secondary); }
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{
+      background:#cbd5e1;
+    }
+
+    button.warn{
+      background:#f59e0b;
+      color:#111827;
+    }
+
+    button.good{
+      background:#047857;
+    }
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:0;
+      padding:9px 10px;
+      border-radius:12px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+      cursor:pointer;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      font-weight:750;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.1rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:5px;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      color:#475569;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .legend-item{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f8fafc;
+    }
+
+    .legend-line{
+      width:24px;
+      height:4px;
+      border-radius:999px;
+      display:inline-block;
+      background:var(--blue);
+    }
+
+    .legend-line.green{ background:var(--green); }
+    .legend-line.yellow{ background:var(--yellow); }
+    .legend-line.grey{ background:#94a3b8; }
+
+    .status-box{
+      margin-top:14px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      font-size:0.92rem;
+      font-weight:700;
+    }
+
+    .drum-controls-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+      margin-top:14px;
+    }
+
+    .drum-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .drum-card h2{
+      margin:0 0 10px;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      color:#334155;
+      font-size:1.05rem;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.95rem;
+      overflow:auto;
+      line-height:1.75;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .challenge-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .challenge-list li{ margin:7px 0; }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{ grid-template-columns:1fr; }
+      .side-controls{ position:static; }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid,
+      .drum-controls-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{ padding:22px; }
+      .results{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Compare Drum Sizes</h1>
+      <p>Compare two drums side by side. Change diameter, membrane tension, damping and strike position to see how drum size and vibration affect pitch and sound.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Sound</span>
+        <span class="pill">Vibration</span>
+        <span class="pill">Frequency</span>
+        <span class="pill">Pitch</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand how drum size and membrane tension affect vibration frequency and pitch.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can compare two drums, identify which has the higher or lower pitch, and explain how diameter and tension change vibration frequency.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Compare drum sizes simulation">
+      <aside class="panel side-controls" aria-label="Main controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">Run controls</p>
+
+          <div class="button-row">
+            <button id="hitBoth" type="button">Strike both drums</button>
+            <button id="stopAll" class="secondary" type="button">Stop</button>
+            <button id="freezeBtn" class="good" type="button">Freeze</button>
+          </div>
+
+          <div class="button-row">
+            <button id="leftHit" class="warn" type="button">Strike left</button>
+            <button id="rightHit" class="warn" type="button">Strike right</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Global sound controls</p>
+
+          <div class="slider-block">
+            <label for="waveSize">Wave size</label>
+            <div class="slider-readout">
+              <span>Small</span>
+              <strong id="waveSizeVal">3.80×</strong>
+              <span>Large</span>
+            </div>
+            <input id="waveSize" type="range" min="1" max="6" step="0.01" value="3.8">
+          </div>
+
+          <div class="slider-block">
+            <label for="masterVol">Volume</label>
+            <div class="slider-readout">
+              <span>Silent</span>
+              <strong id="masterVolVal">35%</strong>
+              <span>Loud</span>
+            </div>
+            <input id="masterVol" type="range" min="0" max="100" step="1" value="35">
+          </div>
+
+          <div class="slider-block">
+            <label for="soundDecay">Sound decay</label>
+            <div class="slider-readout">
+              <span>Longer</span>
+              <strong id="soundDecayVal">1.40</strong>
+              <span>Shorter</span>
+            </div>
+            <input id="soundDecay" type="range" min="0.4" max="3" step="0.01" value="1.4">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Display options</p>
+
+          <div class="toggle-row">
+            <label class="toggle-label"><input type="checkbox" id="showRings" checked> Wave rings</label>
+            <label class="toggle-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+            <label class="toggle-label"><input type="checkbox" id="showReadout" checked> Frequency readout</label>
+            <label class="toggle-label"><input type="checkbox" id="linkedHits"> Linked hits</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">Quick presets</p>
+
+          <div class="button-row">
+            <button class="ghost" data-preset="snare" type="button">Small vs large</button>
+            <button class="ghost" data-preset="tom" type="button">Tom pair</button>
+            <button class="ghost" data-preset="floor" type="button">Floor tom vs kick</button>
+            <button class="ghost" data-preset="equal" type="button">Equal size</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a simplified classroom model. Real drums also depend on shell depth, head type, material, room acoustics and playing technique.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Drum comparison model">
+        <h2>Drum comparison model</h2>
+        <p>Click either drum to strike it. Larger drums usually vibrate more slowly and produce a lower pitch. Tighter membranes vibrate faster and produce a higher pitch.</p>
+
+        <canvas id="sim" width="1000" height="600" aria-label="Two animated drums showing vibration and pitch comparison"></canvas>
+
+        <div class="legend-row" aria-label="Visual key">
+          <span class="legend-item"><span class="legend-line"></span>Left drum trace</span>
+          <span class="legend-item"><span class="legend-line green"></span>Right drum trace</span>
+          <span class="legend-item"><span class="legend-line yellow"></span>Strike point</span>
+          <span class="legend-item"><span class="legend-line grey"></span>Membrane vibration</span>
+        </div>
+
+        <div class="results" aria-label="Current comparison outputs">
+          <div class="metric">
+            <div class="label">Left estimated pitch</div>
+            <div class="value" id="leftPitchReadout">220 Hz</div>
+            <div class="small">From diameter and tension</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Right estimated pitch</div>
+            <div class="value" id="rightPitchReadout">110 Hz</div>
+            <div class="small">From diameter and tension</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Higher pitch</div>
+            <div class="value" id="higherPitch">Left drum</div>
+            <div class="small">Faster vibration</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Lower pitch</div>
+            <div class="value" id="lowerPitch">Right drum</div>
+            <div class="small">Slower vibration</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Ready. Strike the drums or change diameter and tension to compare pitch.</div>
+
+        <section class="drum-controls-grid" aria-label="Detailed drum controls">
+          <div class="drum-card">
+            <h2>Left drum</h2>
+
+            <div class="slider-block">
+              <label for="leftDiameter">Diameter</label>
+              <div class="slider-readout">
+                <span>Small</span>
+                <strong id="leftDiameterVal">30 cm</strong>
+                <span>Large</span>
+              </div>
+              <input id="leftDiameter" type="range" min="20" max="80" step="1" value="30">
+            </div>
+
+            <div class="slider-block">
+              <label for="leftTension">Tension</label>
+              <div class="slider-readout">
+                <span>Loose</span>
+                <strong id="leftTensionVal">1.20×</strong>
+                <span>Tight</span>
+              </div>
+              <input id="leftTension" type="range" min="0.6" max="1.8" step="0.01" value="1.2">
+            </div>
+
+            <div class="slider-block">
+              <label for="leftDamping">Damping</label>
+              <div class="slider-readout">
+                <span>Rings longer</span>
+                <strong id="leftDampingVal">0.80</strong>
+                <span>Stops faster</span>
+              </div>
+              <input id="leftDamping" type="range" min="0.2" max="2" step="0.01" value="0.8">
+            </div>
+
+            <div class="slider-block">
+              <label for="leftStrike">Strike position</label>
+              <div class="slider-readout">
+                <span>Left edge</span>
+                <strong id="leftStrikeVal">55%</strong>
+                <span>Right edge</span>
+              </div>
+              <input id="leftStrike" type="range" min="5" max="95" step="1" value="55">
+            </div>
+          </div>
+
+          <div class="drum-card">
+            <h2>Right drum</h2>
+
+            <div class="slider-block">
+              <label for="rightDiameter">Diameter</label>
+              <div class="slider-readout">
+                <span>Small</span>
+                <strong id="rightDiameterVal">60 cm</strong>
+                <span>Large</span>
+              </div>
+              <input id="rightDiameter" type="range" min="20" max="80" step="1" value="60">
+            </div>
+
+            <div class="slider-block">
+              <label for="rightTension">Tension</label>
+              <div class="slider-readout">
+                <span>Loose</span>
+                <strong id="rightTensionVal">1.00×</strong>
+                <span>Tight</span>
+              </div>
+              <input id="rightTension" type="range" min="0.6" max="1.8" step="0.01" value="1.0">
+            </div>
+
+            <div class="slider-block">
+              <label for="rightDamping">Damping</label>
+              <div class="slider-readout">
+                <span>Rings longer</span>
+                <strong id="rightDampingVal">0.80</strong>
+                <span>Stops faster</span>
+              </div>
+              <input id="rightDamping" type="range" min="0.2" max="2" step="0.01" value="0.8">
+            </div>
+
+            <div class="slider-block">
+              <label for="rightStrike">Strike position</label>
+              <div class="slider-readout">
+                <span>Left edge</span>
+                <strong id="rightStrikeVal">55%</strong>
+                <span>Right edge</span>
+              </div>
+              <input id="rightStrike" type="range" min="5" max="95" step="1" value="55">
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="challenge-list">
+          <li>Keep tension the same and increase drum diameter. What happens to the estimated pitch?</li>
+          <li>Keep diameter the same and increase tension. What happens to the estimated pitch?</li>
+          <li>Set both drums to equal size and equal tension. What happens?</li>
+          <li>Change damping. Does it mainly affect pitch or how long the sound lasts?</li>
+          <li>Explain why a large drum usually sounds lower than a small drum.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim is useful for linking sound, frequency, pitch and vibration. It also works as a controlled-variable investigation: change one factor while keeping the others constant.</p>
+        <ul class="challenge-list">
+          <li>Good prompt: Which variable changes pitch more in this model: diameter or tension?</li>
+          <li>Good prompt: What is the difference between pitch and volume?</li>
+          <li>Extension: Ask students to collect pitch estimates and graph pitch against diameter.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The model estimates pitch using a simplified relationship between membrane tension and drum diameter.</p>
+
+        <div class="equation-box">Simplified model:
+estimated pitch ∝ √tension ÷ diameter
+
+In this sim:
+estimated pitch = 5200 × √tension ÷ diameter
+
+Where:
+pitch is measured in hertz
+tension is a relative multiplier
+diameter is measured in centimetres
+
+Main pattern:
+larger diameter = lower pitch
+greater tension = higher pitch
+greater damping = shorter sound</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="challenge-list">
+          <li><strong>Pitch</strong> depends on vibration frequency.</li>
+          <li><strong>Higher frequency</strong> means higher pitch.</li>
+          <li><strong>Lower frequency</strong> means lower pitch.</li>
+          <li><strong>Larger diameter</strong> usually lowers the pitch because the membrane vibrates more slowly.</li>
+          <li><strong>Greater tension</strong> usually raises the pitch because the membrane vibrates faster.</li>
+          <li><strong>Damping</strong> affects how quickly the vibration dies away.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initDrumSim(){
+      const canvas = document.getElementById("sim");
+      const ctx = canvas.getContext("2d");
+
+      const ids = [
+        "waveSize",
+        "masterVol",
+        "soundDecay",
+        "leftDiameter",
+        "leftTension",
+        "leftDamping",
+        "leftStrike",
+        "rightDiameter",
+        "rightTension",
+        "rightDamping",
+        "rightStrike"
+      ];
+
+      const controls = {};
+      ids.forEach(function(id){
+        controls[id] = document.getElementById(id);
+      });
+
+      const checks = {
+        showRings:document.getElementById("showRings"),
+        showLabels:document.getElementById("showLabels"),
+        showReadout:document.getElementById("showReadout"),
+        linkedHits:document.getElementById("linkedHits")
+      };
+
+      const vals = {};
+      ids.forEach(function(id){
+        vals[id] = document.getElementById(id + "Val");
+      });
+
+      const leftPitchReadout = document.getElementById("leftPitchReadout");
+      const rightPitchReadout = document.getElementById("rightPitchReadout");
+      const higherPitch = document.getElementById("higherPitch");
+      const lowerPitch = document.getElementById("lowerPitch");
+      const statusBox = document.getElementById("statusBox");
+      const freezeBtn = document.getElementById("freezeBtn");
+
+      const state = {
+        frozen:false,
+        lastTime:performance.now(),
+        audioCtx:null,
+        masterGain:null,
+        activeNodes:[],
+        drums:{
+          left:{ t:10, strikePulse:0, waveTrace:[], lastFreq:0 },
+          right:{ t:10, strikePulse:0, waveTrace:[], lastFreq:0 }
+        }
+      };
+
+      function makeAudio(){
+        if(state.audioCtx){
+          return;
+        }
+
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        state.audioCtx = new AudioContextClass();
+        state.masterGain = state.audioCtx.createGain();
+        state.masterGain.gain.value = Number(controls.masterVol.value) / 100;
+        state.masterGain.connect(state.audioCtx.destination);
+      }
+
+      function formatHz(frequency){
+        return frequency.toFixed(0) + " Hz";
+      }
+
+      function estimatedPitch(side){
+        const diameter = Number(controls[side + "Diameter"].value);
+        const tension = Number(controls[side + "Tension"].value);
+
+        return 5200 * Math.sqrt(tension) / diameter;
+      }
+
+      function updateLabels(){
+        vals.waveSize.textContent = Number(controls.waveSize.value).toFixed(2) + "×";
+        vals.masterVol.textContent = controls.masterVol.value + "%";
+        vals.soundDecay.textContent = Number(controls.soundDecay.value).toFixed(2);
+
+        vals.leftDiameter.textContent = controls.leftDiameter.value + " cm";
+        vals.leftTension.textContent = Number(controls.leftTension.value).toFixed(2) + "×";
+        vals.leftDamping.textContent = Number(controls.leftDamping.value).toFixed(2);
+        vals.leftStrike.textContent = controls.leftStrike.value + "%";
+
+        vals.rightDiameter.textContent = controls.rightDiameter.value + " cm";
+        vals.rightTension.textContent = Number(controls.rightTension.value).toFixed(2) + "×";
+        vals.rightDamping.textContent = Number(controls.rightDamping.value).toFixed(2);
+        vals.rightStrike.textContent = controls.rightStrike.value + "%";
+
+        if(state.masterGain){
+          state.masterGain.gain.value = Number(controls.masterVol.value) / 100;
+        }
+
+        const leftFreq = estimatedPitch("left");
+        const rightFreq = estimatedPitch("right");
+
+        leftPitchReadout.textContent = formatHz(leftFreq);
+        rightPitchReadout.textContent = formatHz(rightFreq);
+
+        if(Math.abs(leftFreq - rightFreq) < 1){
+          higherPitch.textContent = "Same";
+          lowerPitch.textContent = "Same";
+          statusBox.textContent = "Both drums have approximately the same estimated pitch.";
+        }else{
+          higherPitch.textContent = leftFreq > rightFreq ? "Left drum" : "Right drum";
+          lowerPitch.textContent = leftFreq < rightFreq ? "Left drum" : "Right drum";
+          statusBox.textContent = (leftFreq > rightFreq ? "The left drum" : "The right drum") +
+            " has the higher estimated pitch. Higher pitch means a faster vibration frequency.";
+        }
+      }
+
+      function trackNode(node){
+        state.activeNodes.push(node);
+
+        node.addEventListener("ended", function(){
+          state.activeNodes = state.activeNodes.filter(function(item){
+            return item !== node;
+          });
+        });
+      }
+
+      function strike(side){
+        makeAudio();
+
+        if(state.audioCtx.state === "suspended"){
+          state.audioCtx.resume();
+        }
+
+        const drum = state.drums[side];
+        const f0 = estimatedPitch(side);
+
+        drum.t = 0;
+        drum.strikePulse = 1;
+        drum.lastFreq = f0;
+
+        const now = state.audioCtx.currentTime;
+        const decay = Number(controls.soundDecay.value);
+        const localDamping = Number(controls[side + "Damping"].value);
+        const strikePos = Number(controls[side + "Strike"].value) / 100;
+        const totalDuration = Math.max(0.18, 1.8 / (0.55 * decay + 0.55 * localDamping));
+
+        const env = state.audioCtx.createGain();
+        env.gain.setValueAtTime(0.0001, now);
+        env.gain.exponentialRampToValueAtTime(0.85, now + 0.005);
+        env.gain.exponentialRampToValueAtTime(0.0001, now + totalDuration);
+
+        const modeRatios = [1, 1.59, 2.14, 2.30, 2.65];
+        const ampsBase = [1.0, 0.55, 0.35, 0.22, 0.15];
+
+        modeRatios.forEach(function(ratio, index){
+          const osc = state.audioCtx.createOscillator();
+          const gain = state.audioCtx.createGain();
+          const offCentre = Math.abs(strikePos - 0.5);
+          const modeAmp = ampsBase[index] * (0.65 + 0.7 * offCentre + (index === 0 ? 0 : 0.15 * index));
+
+          osc.type = index === 0 ? "triangle" : "sine";
+          osc.frequency.setValueAtTime(f0 * ratio, now);
+
+          gain.gain.setValueAtTime(modeAmp * 0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + totalDuration * Math.max(0.35, 0.85 - index * 0.08));
+
+          osc.connect(gain);
+          gain.connect(env);
+
+          osc.start(now);
+          osc.stop(now + totalDuration + 0.05);
+          trackNode(osc);
+        });
+
+        const noiseBuffer = state.audioCtx.createBuffer(
+          1,
+          Math.floor(state.audioCtx.sampleRate * 0.025),
+          state.audioCtx.sampleRate
+        );
+
+        const data = noiseBuffer.getChannelData(0);
+
+        for(let i = 0; i < data.length; i++){
+          data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+        }
+
+        const noise = state.audioCtx.createBufferSource();
+        const noiseGain = state.audioCtx.createGain();
+
+        noise.buffer = noiseBuffer;
+        noiseGain.gain.setValueAtTime(0.12, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+
+        noise.connect(noiseGain);
+        noiseGain.connect(env);
+
+        env.connect(state.masterGain);
+        noise.start(now);
+        noise.stop(now + 0.035);
+        trackNode(noise);
+
+        updateLabels();
+      }
+
+      function strikeBoth(){
+        strike("left");
+        strike("right");
+      }
+
+      function stopAll(){
+        state.drums.left.t = 999;
+        state.drums.right.t = 999;
+        state.drums.left.waveTrace = [];
+        state.drums.right.waveTrace = [];
+        state.drums.left.strikePulse = 0;
+        state.drums.right.strikePulse = 0;
+
+        state.activeNodes.forEach(function(node){
+          try{
+            node.stop();
+          }catch(error){
+            // Node may already have stopped.
+          }
+        });
+
+        state.activeNodes = [];
+      }
+
+      function setPreset(preset){
+        if(preset === "snare"){
+          controls.leftDiameter.value = 30;
+          controls.leftTension.value = 1.35;
+          controls.rightDiameter.value = 60;
+          controls.rightTension.value = 1.00;
+        }
+
+        if(preset === "tom"){
+          controls.leftDiameter.value = 35;
+          controls.leftTension.value = 1.10;
+          controls.rightDiameter.value = 45;
+          controls.rightTension.value = 1.00;
+        }
+
+        if(preset === "floor"){
+          controls.leftDiameter.value = 45;
+          controls.leftTension.value = 1.00;
+          controls.rightDiameter.value = 70;
+          controls.rightTension.value = 0.92;
+        }
+
+        if(preset === "equal"){
+          controls.leftDiameter.value = 40;
+          controls.leftTension.value = 1.00;
+          controls.rightDiameter.value = 40;
+          controls.rightTension.value = 1.00;
+        }
+
+        updateLabels();
+        strikeBoth();
+      }
+
+      function drawRoundedPanel(x, y, width, height, radius){
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, radius);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      function drawDrum(cx, cy, radiusPx, side, accentColour, traceCentreY){
+        const drum = state.drums[side];
+        const diameter = Number(controls[side + "Diameter"].value);
+        const tension = Number(controls[side + "Tension"].value);
+        const damping = Number(controls[side + "Damping"].value);
+        const strikePos = Number(controls[side + "Strike"].value) / 100;
+        const waveScale = Number(controls.waveSize.value);
+        const baseFreq = estimatedPitch(side);
+
+        drum.lastFreq = baseFreq;
+
+        const time = drum.t;
+        const amp = Math.exp(-damping * time) * (0.92 + 0.25 * Math.sqrt(tension));
+        const wobble = amp * waveScale;
+
+        ctx.save();
+
+        ctx.fillStyle = "rgba(15,23,42,0.22)";
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + radiusPx * 0.95, radiusPx * 0.95, radiusPx * 0.22, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        const shellGrad = ctx.createLinearGradient(cx - radiusPx, cy - radiusPx, cx + radiusPx, cy + radiusPx);
+        shellGrad.addColorStop(0, "#64748b");
+        shellGrad.addColorStop(0.5, "#cbd5e1");
+        shellGrad.addColorStop(1, "#334155");
+
+        ctx.fillStyle = shellGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx + 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        const headGrad = ctx.createRadialGradient(
+          cx - radiusPx * 0.22,
+          cy - radiusPx * 0.22,
+          radiusPx * 0.15,
+          cx,
+          cy,
+          radiusPx
+        );
+
+        headGrad.addColorStop(0, "rgba(255,255,255,0.98)");
+        headGrad.addColorStop(0.65, "rgba(226,232,240,0.98)");
+        headGrad.addColorStop(1, "rgba(148,163,184,0.98)");
+
+        ctx.fillStyle = headGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+        ctx.fill();
+
+        const innerR = radiusPx * (0.50 + 0.02 * Math.sin(time * 12));
+        const bulge = wobble * Math.sin(2 * Math.PI * baseFreq * 0.015 * time);
+
+        const memGrad = ctx.createRadialGradient(cx, cy - bulge * 3.2, innerR * 0.2, cx, cy, radiusPx);
+        memGrad.addColorStop(0, "rgba(96,165,250," + (0.12 + 0.05 * amp) + ")");
+        memGrad.addColorStop(0.5, "rgba(255,255,255," + (0.03 + 0.04 * amp) + ")");
+        memGrad.addColorStop(1, "rgba(15,23,42," + (0.05 + 0.04 * amp) + ")");
+
+        ctx.fillStyle = memGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+        ctx.fill();
+
+        if(checks.showRings.checked){
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+          ctx.clip();
+
+          for(let i = 0; i < 5; i++){
+            const ringBase = radiusPx * (0.18 + i * 0.16);
+            const ringShift = Math.sin(time * 14 + i * 0.9) * wobble * (5 - i) * 0.55;
+            const ringR = Math.max(8, ringBase + ringShift);
+
+            ctx.strokeStyle = i % 2 === 0
+              ? "rgba(96,165,250," + (0.22 + amp * 0.16) + ")"
+              : "rgba(34,197,94," + (0.16 + amp * 0.12) + ")";
+
+            ctx.lineWidth = 2.6 - i * 0.28;
+            ctx.beginPath();
+            ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          ctx.strokeStyle = "rgba(255,255,255," + (0.05 + 0.08 * amp) + ")";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(cx - radiusPx, cy);
+          ctx.lineTo(cx + radiusPx, cy);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        const sx = cx + (strikePos * 2 - 1) * radiusPx * 0.62;
+        const sy = cy;
+
+        if(drum.strikePulse > 0.001){
+          const pulseR = 8 + drum.strikePulse * 18;
+
+          ctx.strokeStyle = "rgba(251,191,36," + (drum.strikePulse * 0.8) + ")";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(sx, sy, pulseR, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,0.78)";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+        ctx.stroke();
+
+        if(checks.showLabels.checked){
+          ctx.fillStyle = "#0f172a";
+          ctx.font = "900 16px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(side === "left" ? "Left drum" : "Right drum", cx, cy - radiusPx - 26);
+
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.fillText("strike point", sx, sy - 14);
+        }
+
+        if(checks.showReadout.checked){
+          ctx.fillStyle = accentColour;
+          ctx.font = "900 15px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(formatHz(baseFreq), cx, cy + 6);
+        }
+
+        drum.waveTrace.push(Math.sin(time * baseFreq * 2 * Math.PI * 0.04) * amp * 38);
+
+        if(drum.waveTrace.length > 140){
+          drum.waveTrace.shift();
+        }
+
+        const traceWidth = 230;
+        const traceHeight = 84;
+        const traceX = cx - traceWidth / 2;
+        const traceY = traceCentreY - traceHeight / 2;
+
+        ctx.strokeStyle = "rgba(71,85,105,0.26)";
+        ctx.fillStyle = "rgba(255,255,255,0.70)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(traceX, traceY, traceWidth, traceHeight, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(148,163,184,0.30)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(traceX + 10, traceCentreY);
+        ctx.lineTo(traceX + traceWidth - 10, traceCentreY);
+        ctx.stroke();
+
+        ctx.strokeStyle = accentColour;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+
+        drum.waveTrace.forEach(function(v, index){
+          const x = traceX + 12 + (index / Math.max(1, drum.waveTrace.length - 1)) * (traceWidth - 24);
+          const y = traceCentreY - v * 1.15;
+
+          if(index === 0){
+            ctx.moveTo(x, y);
+          }else{
+            ctx.lineTo(x, y);
+          }
+        });
+
+        ctx.stroke();
+
+        if(checks.showLabels.checked){
+          ctx.fillStyle = "#334155";
+          ctx.font = "800 12px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("membrane motion trace", cx, traceY - 7);
+          ctx.fillText(diameter + " cm | tension " + tension.toFixed(2) + "×", cx, traceY + traceHeight + 18);
+        }
+
+        ctx.restore();
+      }
+
+      function drawScene(){
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, "#f8fafc");
+        gradient.addColorStop(1, "#eef6ff");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.22)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= w; x += 70){
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= h; y += 70){
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+
+        const leftDiameter = Number(controls.leftDiameter.value);
+        const rightDiameter = Number(controls.rightDiameter.value);
+        const maxDisplayRadius = 145;
+
+        const leftR = (leftDiameter / 80) * maxDisplayRadius + 25;
+        const rightR = (rightDiameter / 80) * maxDisplayRadius + 25;
+
+        const leftCx = w * 0.28;
+        const rightCx = w * 0.72;
+        const cy = h * 0.39;
+        const traceCentreY = h * 0.78;
+
+        drawDrum(leftCx, cy, leftR, "left", "#2563eb", traceCentreY);
+        drawDrum(rightCx, cy, rightR, "right", "#16a34a", traceCentreY);
+
+        ctx.save();
+
+        ctx.fillStyle = "rgba(15,23,42,0.84)";
+        ctx.strokeStyle = "rgba(203,213,225,0.8)";
+        ctx.lineWidth = 1.5;
+        drawRoundedPanel(24, 22, 310, 66, 14);
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Click a drum to strike it.", 42, 49);
+        ctx.fillStyle = "#cbd5e1";
+        ctx.font = "800 13px system-ui, sans-serif";
+        ctx.fillText("Larger diameter generally lowers pitch.", 42, 72);
+
+        const leftFreq = estimatedPitch("left");
+        const rightFreq = estimatedPitch("right");
+
+        ctx.strokeStyle = "rgba(71,85,105,0.38)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(leftCx + leftR + 24, cy);
+        ctx.lineTo(rightCx - rightR - 24, cy);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(15,23,42,0.78)";
+        ctx.font = "900 14px system-ui, sans-serif";
+        ctx.textAlign = "center";
+
+        if(Math.abs(leftFreq - rightFreq) < 1){
+          ctx.fillText("same estimated pitch", w / 2, cy - 12);
+        }else{
+          ctx.fillText(leftFreq > rightFreq ? "left is higher" : "right is higher", w / 2, cy - 12);
+        }
+
+        ctx.restore();
+      }
+
+      function animate(now){
+        const dt = Math.min(0.033, (now - state.lastTime) / 1000);
+        state.lastTime = now;
+
+        if(!state.frozen){
+          state.drums.left.t += dt;
+          state.drums.right.t += dt;
+          state.drums.left.strikePulse *= Math.exp(-4.5 * dt);
+          state.drums.right.strikePulse *= Math.exp(-4.5 * dt);
+        }
+
+        drawScene();
+        requestAnimationFrame(animate);
+      }
+
+      ids.forEach(function(id){
+        controls[id].addEventListener("input", updateLabels);
+      });
+
+      Object.values(checks).forEach(function(control){
+        control.addEventListener("change", updateLabels);
+      });
+
+      document.getElementById("leftHit").addEventListener("click", function(){
+        strike("left");
+      });
+
+      document.getElementById("rightHit").addEventListener("click", function(){
+        strike("right");
+      });
+
+      document.getElementById("hitBoth").addEventListener("click", strikeBoth);
+      document.getElementById("stopAll").addEventListener("click", stopAll);
+
+      freezeBtn.addEventListener("click", function(){
+        state.frozen = !state.frozen;
+        freezeBtn.textContent = state.frozen ? "Resume" : "Freeze";
+      });
+
+      document.querySelectorAll("[data-preset]").forEach(function(button){
+        button.addEventListener("click", function(){
+          setPreset(button.dataset.preset);
+        });
+      });
+
+      canvas.addEventListener("pointerdown", function(event){
+        const rect = canvas.getBoundingClientRect();
+        const x = (event.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+
+        const leftDiameter = Number(controls.leftDiameter.value);
+        const rightDiameter = Number(controls.rightDiameter.value);
+        const maxDisplayRadius = 145;
+
+        const leftR = (leftDiameter / 80) * maxDisplayRadius + 25;
+        const rightR = (rightDiameter / 80) * maxDisplayRadius + 25;
+
+        const leftCx = canvas.width * 0.28;
+        const rightCx = canvas.width * 0.72;
+        const cy = canvas.height * 0.39;
+
+        const dLeft = Math.hypot(x - leftCx, y - cy);
+        const dRight = Math.hypot(x - rightCx, y - cy);
+
+        if(dLeft <= leftR){
+          if(checks.linkedHits.checked){
+            strikeBoth();
+          }else{
+            strike("left");
+          }
+        }else if(dRight <= rightR){
+          if(checks.linkedHits.checked){
+            strikeBoth();
+          }else{
+            strike("right");
+          }
+        }
+      });
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      updateLabels();
+      requestAnimationFrame(animate);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initDrumSim);
+    }else{
+      initDrumSim();
+    }
+  </script>
+</body>
+</html>
