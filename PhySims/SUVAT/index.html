@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: SUVAT Prediction Explorer</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --green:#22c55e;
+      --red:#ef4444;
+      --purple:#8b5cf6;
+      --orange:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #172554, #2563eb 58%, #f59e0b);
+      color:white;
+      border-radius:28px;
+      padding:28px 30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1{
+      margin:0 0 8px;
+      font-size:clamp(2rem, 5vw, 3.8rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.12rem;
+      color:rgba(255,255,255,0.93);
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:7px 11px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:700;
+      font-size:0.92rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+      margin:16px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 7px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:360px minmax(0,1fr);
+      gap:16px;
+      align-items:start;
+      margin-top:16px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:12px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:8px;
+    }
+
+    .control-heading{
+      margin:0 0 8px;
+      font-size:0.82rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 4px;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+      font:inherit;
+    }
+
+    select,
+    input[type="number"],
+    textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:11px;
+      padding:8px 9px;
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    textarea{
+      min-height:54px;
+      resize:vertical;
+      font-weight:650;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="checkbox"]{
+      accent-color:var(--button);
+    }
+
+    input:disabled,
+    select:disabled,
+    textarea:disabled{
+      background:#e2e8f0;
+      color:#64748b;
+      cursor:not-allowed;
+    }
+
+    .slider-block + .slider-block,
+    .field-block + .field-block,
+    .field-block + .slider-block,
+    .slider-block + .field-block{
+      margin-top:9px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      color:var(--muted);
+      font-size:0.86rem;
+      margin-bottom:3px;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:8px;
+    }
+
+    .number-grid + .number-grid{
+      margin-top:8px;
+    }
+
+    button{
+      border:0;
+      border-radius:11px;
+      padding:8px 11px;
+      background:var(--button);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:hover{background:var(--button-hover);}
+
+    button:disabled{
+      opacity:0.45;
+      cursor:not-allowed;
+    }
+
+    button.secondary{background:var(--secondary);}
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{background:#cbd5e1;}
+
+    button.good{background:#047857;}
+
+    .button-row,
+    .toggle-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:7px;
+    }
+
+    .toggle-label{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin:0;
+      padding:8px 9px;
+      border-radius:11px;
+      background:#e2e8f0;
+      color:#0f172a;
+      font-weight:850;
+      cursor:pointer;
+      font-size:0.92rem;
+    }
+
+    .prediction-state{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#fff7ed;
+      color:#9a3412;
+      border:1px solid #fed7aa;
+      font-weight:900;
+      margin-bottom:8px;
+      font-size:0.92rem;
+    }
+
+    .prediction-state.locked{
+      background:#f0fdf4;
+      color:#166534;
+      border-color:#bbf7d0;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border-radius:14px;
+      border:1px solid var(--line);
+    }
+
+    .run-panel{
+      margin:10px 0;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) auto;
+      gap:12px;
+      align-items:center;
+    }
+
+    .run-panel h3{
+      margin:0 0 4px;
+      font-size:1rem;
+    }
+
+    .run-panel p{
+      margin:0;
+      color:var(--muted);
+      font-size:0.88rem;
+    }
+
+    .run-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:7px;
+    }
+
+    .run-toggles{
+      grid-column:1 / -1;
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      border-top:1px solid #e2e8f0;
+      padding-top:9px;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0, 1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+    }
+
+    .metric.locked{
+      background:#f1f5f9;
+      color:#64748b;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.8rem;
+      font-weight:750;
+      margin-bottom:3px;
+    }
+
+    .metric .value{
+      font-size:1.05rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.76rem;
+      margin-top:4px;
+    }
+
+    .comparison-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .compare-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+    }
+
+    .compare-card h3{
+      margin:0 0 6px;
+      font-size:0.96rem;
+    }
+
+    .compare-line{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:8px;
+      border-top:1px solid #e2e8f0;
+      padding-top:6px;
+      margin-top:6px;
+      color:#475569;
+      font-size:0.86rem;
+    }
+
+    .compare-line strong{
+      color:#0f172a;
+      text-align:right;
+      max-width:360px;
+    }
+
+    .equation-strip{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0, 1fr));
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .eq-card{
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#f8fafc;
+      padding:9px;
+      font-weight:900;
+      color:#0f172a;
+      min-height:64px;
+      opacity:0.65;
+    }
+
+    .eq-card.chosen{
+      border-color:#2563eb;
+      background:#eff6ff;
+      box-shadow:0 0 0 3px rgba(37,99,235,0.14);
+      opacity:1;
+    }
+
+    .eq-card.recommended{
+      border-color:#22c55e;
+      background:#f0fdf4;
+      box-shadow:0 0 0 3px rgba(34,197,94,0.14);
+      opacity:1;
+    }
+
+    .eq-card .eq{
+      font-size:0.95rem;
+      margin-bottom:3px;
+    }
+
+    .eq-card .missing{
+      color:#64748b;
+      font-size:0.72rem;
+      font-weight:800;
+      line-height:1.25;
+    }
+
+    .status-box{
+      margin-top:10px;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:11px;
+      min-height:48px;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .hint-list{
+      margin:8px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .hint-list li{margin:6px 0;}
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:14px 16px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.92rem;
+      overflow:auto;
+      line-height:1.65;
+      margin-top:10px;
+      white-space:pre-wrap;
+    }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid,
+      .comparison-grid,
+      .run-panel{
+        grid-template-columns:1fr;
+      }
+
+      .run-actions{
+        justify-content:flex-start;
+      }
+
+      .results,
+      .equation-strip{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{padding:22px;}
+      .results,
+      .equation-strip,
+      .number-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>SUVAT Prediction Explorer</h1>
+      <p>Set up a constant-acceleration motion, predict the final velocity and displacement, then run the model to compare your prediction with the SUVAT result.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Physics</span>
+        <span class="pill">Motion</span>
+        <span class="pill">Kinematics</span>
+        <span class="pill">SUVAT</span>
+        <span class="pill">Prediction</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will use SUVAT equations to predict motion before seeing the model result.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can predict final velocity and displacement, choose suitable SUVAT equations, compare their prediction with the result, and explain any difference.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="SUVAT prediction simulation">
+      <aside class="panel side-controls" aria-label="Motion and prediction controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">1. Set up the motion</p>
+
+          <div class="field-block">
+            <label for="motionView">Motion view</label>
+            <select id="motionView">
+              <option value="horizontal" selected>Horizontal track</option>
+              <option value="vertical">Vertical motion</option>
+            </select>
+          </div>
+
+          <div class="slider-block">
+            <label for="uSlider">Initial velocity, u</label>
+            <div class="slider-readout">
+              <span>Negative</span>
+              <strong id="uVal">8.0 m/s</strong>
+              <span>Positive</span>
+            </div>
+            <input id="uSlider" type="range" min="-30" max="30" step="0.5" value="8">
+          </div>
+
+          <div class="slider-block">
+            <label for="aSlider">Acceleration, a</label>
+            <div class="slider-readout">
+              <span>Negative</span>
+              <strong id="aVal">2.00 m/s²</strong>
+              <span>Positive</span>
+            </div>
+            <input id="aSlider" type="range" min="-12" max="12" step="0.25" value="2">
+          </div>
+
+          <div class="slider-block">
+            <label for="tSlider">Time, t</label>
+            <div class="slider-readout">
+              <span>Short</span>
+              <strong id="tVal">5.0 s</strong>
+              <span>Long</span>
+            </div>
+            <input id="tSlider" type="range" min="0.5" max="12" step="0.1" value="5">
+          </div>
+
+          <div class="button-row">
+            <button class="ghost" data-preset="accelerate" type="button">Speeding up</button>
+            <button class="ghost" data-preset="brake" type="button">Braking</button>
+            <button class="ghost" data-preset="drop" type="button">Falling object</button>
+            <button class="ghost" data-preset="throw" type="button">Thrown upward</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">2. Predict before running</p>
+
+          <div id="predictionState" class="prediction-state">Prediction not locked</div>
+
+          <div class="number-grid">
+            <div>
+              <label for="predV">Predicted v / m/s</label>
+              <input id="predV" type="number" step="0.1" value="">
+            </div>
+
+            <div>
+              <label for="predS">Predicted s / m</label>
+              <input id="predS" type="number" step="0.1" value="">
+            </div>
+          </div>
+
+          <div class="field-block">
+            <label for="predGraph">Predicted graph pattern</label>
+            <select id="predGraph">
+              <option value="increasing">Velocity increases; s-t curve bends upward</option>
+              <option value="decreasing">Velocity decreases; s-t curve bends downward</option>
+              <option value="constant">Velocity is constant; s-t graph is straight</option>
+              <option value="turning">Object changes direction</option>
+              <option value="unsure">Not sure yet</option>
+            </select>
+          </div>
+
+          <div class="number-grid">
+            <div>
+              <label for="predEqV">Equation for v</label>
+              <select id="predEqV">
+                <option value="eq1">v = u + at</option>
+                <option value="eq2">s = ut + ½at²</option>
+                <option value="eq3">s = vt − ½at²</option>
+                <option value="eq4">v² = u² + 2as</option>
+                <option value="eq5">s = ½(u + v)t</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="predEqS">Equation for s</label>
+              <select id="predEqS">
+                <option value="eq1">v = u + at</option>
+                <option value="eq2" selected>s = ut + ½at²</option>
+                <option value="eq3">s = vt − ½at²</option>
+                <option value="eq4">v² = u² + 2as</option>
+                <option value="eq5">s = ½(u + v)t</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <label for="predReason">Reasoning</label>
+            <textarea id="predReason" placeholder="I predict this because..."></textarea>
+          </div>
+
+          <div class="button-row">
+            <button id="lockPredictionBtn" class="good" type="button">Lock prediction</button>
+            <button id="editPredictionBtn" class="ghost" type="button">Edit</button>
+            <button id="clearPredictionBtn" class="secondary" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>SUVAT applies to straight-line motion with constant acceleration and consistent units.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Motion model and prediction comparison">
+        <h2>Prediction-first motion model</h2>
+        <p>Set up the motion, lock your prediction, then run the model. The answer is hidden until after you commit.</p>
+
+        <canvas id="motionCanvas" width="1000" height="255" aria-label="SUVAT prediction motion animation"></canvas>
+
+        <div class="run-panel" aria-label="Run and compare controls">
+          <div>
+            <h3>3. Run and compare</h3>
+            <p>Run the model after locking a prediction. Graphs and actual results remain hidden until the model is run.</p>
+          </div>
+
+          <div class="run-actions">
+            <button id="playBtn" type="button">Run model</button>
+            <button id="pauseBtn" class="ghost" type="button">Pause</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+
+          <div class="run-toggles">
+            <label class="toggle-label"><input id="showGraphs" type="checkbox" checked> Graphs</label>
+            <label class="toggle-label"><input id="showVectors" type="checkbox" checked> Vectors</label>
+            <label class="toggle-label"><input id="fixedScale" type="checkbox"> Fixed scale</label>
+          </div>
+        </div>
+
+        <canvas id="graphsCanvas" width="1000" height="315" aria-label="SUVAT displacement, velocity and acceleration graphs"></canvas>
+
+        <div class="results" aria-label="SUVAT values">
+          <div class="metric" id="metricS">
+            <div class="label">s displacement</div>
+            <div class="value" id="sOut">Locked</div>
+            <div class="small" id="sSmall">Predict first</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">u initial velocity</div>
+            <div class="value" id="uOut">8.0 m/s</div>
+            <div class="small">Given value</div>
+          </div>
+
+          <div class="metric" id="metricV">
+            <div class="label">v final velocity</div>
+            <div class="value" id="vOut">Locked</div>
+            <div class="small" id="vSmall">Predict first</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">a acceleration</div>
+            <div class="value" id="aOut">2.00 m/s²</div>
+            <div class="small">Given value</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">t time</div>
+            <div class="value" id="timeOut">5.0 s</div>
+            <div class="small">Given value</div>
+          </div>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="compare-card">
+            <h3>Prediction comparison</h3>
+            <div class="compare-line"><span>Predicted v</span><strong id="compPredV">—</strong></div>
+            <div class="compare-line"><span>Actual v</span><strong id="compActualV">Locked</strong></div>
+            <div class="compare-line"><span>Difference</span><strong id="compDiffV">—</strong></div>
+            <div class="compare-line"><span>Predicted s</span><strong id="compPredS">—</strong></div>
+            <div class="compare-line"><span>Actual s</span><strong id="compActualS">Locked</strong></div>
+            <div class="compare-line"><span>Difference</span><strong id="compDiffS">—</strong></div>
+          </div>
+
+          <div class="compare-card">
+            <h3>Prediction feedback</h3>
+            <div class="compare-line"><span>Graph prediction</span><strong id="graphFeedback">Locked</strong></div>
+            <div class="compare-line"><span>Equation for v</span><strong id="eqVFeedback">Locked</strong></div>
+            <div class="compare-line"><span>Equation for s</span><strong id="eqSFeedback">Locked</strong></div>
+            <div class="compare-line"><span>Reasoning</span><strong id="reasonFeedback">Waiting</strong></div>
+          </div>
+        </div>
+
+        <div class="equation-strip" aria-label="SUVAT equation summary">
+          <div class="eq-card" data-eq-card="eq1">
+            <div class="eq">v = u + at</div>
+            <div class="missing">Useful for v when u, a and t are known</div>
+          </div>
+
+          <div class="eq-card" data-eq-card="eq2">
+            <div class="eq">s = ut + ½at²</div>
+            <div class="missing">Useful for s when u, a and t are known</div>
+          </div>
+
+          <div class="eq-card" data-eq-card="eq3">
+            <div class="eq">s = vt − ½at²</div>
+            <div class="missing">Leaves out u</div>
+          </div>
+
+          <div class="eq-card" data-eq-card="eq4">
+            <div class="eq">v² = u² + 2as</div>
+            <div class="missing">Leaves out t</div>
+          </div>
+
+          <div class="eq-card" data-eq-card="eq5">
+            <div class="eq">s = ½(u + v)t</div>
+            <div class="missing">Leaves out a</div>
+          </div>
+        </div>
+
+        <div class="status-box" id="statusBox">Set up the motion, enter your prediction, then lock it before running the model.</div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="hint-list">
+          <li>Use the given values of u, a and t to predict v and s before running the model.</li>
+          <li>Choose the equation you used for v and the equation you used for s.</li>
+          <li>After the run, compare your prediction with the actual result.</li>
+          <li>Explain whether your graph prediction matched the actual motion.</li>
+          <li>Try a braking case and predict whether the object changes direction.</li>
+        </ul>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This version hides the answer until students make a prediction. It is best used as a Predict → Run → Compare → Explain activity rather than a calculator.</p>
+        <ul class="hint-list">
+          <li>Good prompt: Which values are given before the run?</li>
+          <li>Good prompt: Which equation lets you calculate final velocity first?</li>
+          <li>Good prompt: Why might a prediction be close but not exact?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The model uses constant-acceleration equations.</p>
+
+        <div class="equation-box">SUVAT variables:
+s = displacement
+u = initial velocity
+v = final velocity
+a = acceleration
+t = time
+
+Prediction equations used most often here:
+v = u + at
+s = ut + ½at²
+
+The full SUVAT set:
+v = u + at
+s = ut + ½at²
+s = vt − ½at²
+v² = u² + 2as
+s = ½(u + v)t
+
+Graph links:
+gradient of displacement-time graph = velocity
+gradient of velocity-time graph = acceleration
+area under velocity-time graph = displacement</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="hint-list">
+          <li><strong>s</strong> means displacement, not speed.</li>
+          <li><strong>u</strong> is the starting velocity.</li>
+          <li><strong>v</strong> is the final velocity.</li>
+          <li><strong>a</strong> is constant acceleration.</li>
+          <li><strong>t</strong> is the time interval.</li>
+          <li>Students should predict first, then compare their prediction with the model result.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initSUVATPredictionExplorer(){
+      const motionCanvas = document.getElementById("motionCanvas");
+      const graphsCanvas = document.getElementById("graphsCanvas");
+      const mctx = motionCanvas.getContext("2d");
+      const gctx = graphsCanvas.getContext("2d");
+
+      const ui = {
+        motionView:document.getElementById("motionView"),
+        uSlider:document.getElementById("uSlider"),
+        aSlider:document.getElementById("aSlider"),
+        tSlider:document.getElementById("tSlider"),
+        uVal:document.getElementById("uVal"),
+        aVal:document.getElementById("aVal"),
+        tVal:document.getElementById("tVal"),
+        sOut:document.getElementById("sOut"),
+        uOut:document.getElementById("uOut"),
+        vOut:document.getElementById("vOut"),
+        aOut:document.getElementById("aOut"),
+        timeOut:document.getElementById("timeOut"),
+        metricS:document.getElementById("metricS"),
+        metricV:document.getElementById("metricV"),
+        sSmall:document.getElementById("sSmall"),
+        vSmall:document.getElementById("vSmall"),
+        predV:document.getElementById("predV"),
+        predS:document.getElementById("predS"),
+        predGraph:document.getElementById("predGraph"),
+        predEqV:document.getElementById("predEqV"),
+        predEqS:document.getElementById("predEqS"),
+        predReason:document.getElementById("predReason"),
+        predictionState:document.getElementById("predictionState"),
+        lockPredictionBtn:document.getElementById("lockPredictionBtn"),
+        editPredictionBtn:document.getElementById("editPredictionBtn"),
+        clearPredictionBtn:document.getElementById("clearPredictionBtn"),
+        playBtn:document.getElementById("playBtn"),
+        pauseBtn:document.getElementById("pauseBtn"),
+        resetBtn:document.getElementById("resetBtn"),
+        showGraphs:document.getElementById("showGraphs"),
+        showVectors:document.getElementById("showVectors"),
+        fixedScale:document.getElementById("fixedScale"),
+        compPredV:document.getElementById("compPredV"),
+        compActualV:document.getElementById("compActualV"),
+        compDiffV:document.getElementById("compDiffV"),
+        compPredS:document.getElementById("compPredS"),
+        compActualS:document.getElementById("compActualS"),
+        compDiffS:document.getElementById("compDiffS"),
+        graphFeedback:document.getElementById("graphFeedback"),
+        eqVFeedback:document.getElementById("eqVFeedback"),
+        eqSFeedback:document.getElementById("eqSFeedback"),
+        reasonFeedback:document.getElementById("reasonFeedback"),
+        statusBox:document.getElementById("statusBox")
+      };
+
+      const state = {
+        running:false,
+        currentTime:0,
+        lastTimestamp:null,
+        predictionLocked:false,
+        resultRevealed:false,
+        prediction:null
+      };
+
+      const EQUATIONS = {
+        eq1:"v = u + at",
+        eq2:"s = ut + ½at²",
+        eq3:"s = vt − ½at²",
+        eq4:"v² = u² + 2as",
+        eq5:"s = ½(u + v)t"
+      };
+
+      function fmt(value, places){
+        if(!Number.isFinite(value)){
+          return "—";
+        }
+        return Number(value).toFixed(places);
+      }
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getMotion(){
+        const u = Number(ui.uSlider.value);
+        const a = Number(ui.aSlider.value);
+        const t = Number(ui.tSlider.value);
+        const v = u + a * t;
+        const s = u * t + 0.5 * a * t * t;
+        return {s,u,v,a,t};
+      }
+
+      function xAt(time, motion){
+        return motion.u * time + 0.5 * motion.a * time * time;
+      }
+
+      function vAt(time, motion){
+        return motion.u + motion.a * time;
+      }
+
+      function canRevealGraphs(){
+        return state.predictionLocked && (state.running || state.currentTime > 0 || state.resultRevealed);
+      }
+
+      function actualGraphPattern(motion){
+        const turns = motion.a !== 0 && Math.sign(motion.u) !== Math.sign(motion.v) && motion.u !== 0 && motion.v !== 0;
+
+        if(turns){
+          return "turning";
+        }
+
+        if(Math.abs(motion.a) < 0.0001){
+          return "constant";
+        }
+
+        if(motion.a > 0){
+          return "increasing";
+        }
+
+        return "decreasing";
+      }
+
+      function graphPatternLabel(value){
+        const labels = {
+          increasing:"Velocity increases; s-t curve bends upward",
+          decreasing:"Velocity decreases; s-t curve bends downward",
+          constant:"Velocity is constant; s-t graph is straight",
+          turning:"Object changes direction",
+          unsure:"Not sure yet"
+        };
+
+        return labels[value] || "—";
+      }
+
+      function setPredictionInputsDisabled(disabled){
+        [
+          ui.predV,
+          ui.predS,
+          ui.predGraph,
+          ui.predEqV,
+          ui.predEqS,
+          ui.predReason
+        ].forEach(function(input){
+          input.disabled = disabled;
+        });
+      }
+
+      function clearPredictionOnly(){
+        state.predictionLocked = false;
+        state.resultRevealed = false;
+        state.prediction = null;
+        state.running = false;
+        state.currentTime = 0;
+        state.lastTimestamp = null;
+
+        setPredictionInputsDisabled(false);
+        ui.predictionState.textContent = "Prediction not locked";
+        ui.predictionState.classList.remove("locked");
+      }
+
+      function clearPrediction(){
+        clearPredictionOnly();
+        ui.predV.value = "";
+        ui.predS.value = "";
+        ui.predGraph.value = "increasing";
+        ui.predEqV.value = "eq1";
+        ui.predEqS.value = "eq2";
+        ui.predReason.value = "";
+        updateReadouts();
+      }
+
+      function lockPrediction(){
+        const predictedV = Number(ui.predV.value);
+        const predictedS = Number(ui.predS.value);
+
+        if(!Number.isFinite(predictedV) || !Number.isFinite(predictedS)){
+          ui.statusBox.textContent = "Enter a numerical prediction for both final velocity and displacement before locking.";
+          return;
+        }
+
+        state.prediction = {
+          v:predictedV,
+          s:predictedS,
+          graph:ui.predGraph.value,
+          eqV:ui.predEqV.value,
+          eqS:ui.predEqS.value,
+          reason:ui.predReason.value.trim()
+        };
+
+        state.predictionLocked = true;
+        state.resultRevealed = false;
+        state.running = false;
+        state.currentTime = 0;
+        state.lastTimestamp = null;
+
+        setPredictionInputsDisabled(true);
+        ui.predictionState.textContent = "Prediction locked";
+        ui.predictionState.classList.add("locked");
+
+        updateReadouts();
+        ui.statusBox.textContent = "Prediction locked. Now run the model to reveal the actual motion and compare results.";
+      }
+
+      function editPrediction(){
+        state.predictionLocked = false;
+        state.resultRevealed = false;
+        state.running = false;
+        state.currentTime = 0;
+        state.lastTimestamp = null;
+
+        setPredictionInputsDisabled(false);
+        ui.predictionState.textContent = "Prediction being edited";
+        ui.predictionState.classList.remove("locked");
+
+        updateReadouts();
+      }
+
+      function updateReadouts(){
+        const m = getMotion();
+
+        ui.uVal.textContent = fmt(m.u,1) + " m/s";
+        ui.aVal.textContent = fmt(m.a,2) + " m/s²";
+        ui.tVal.textContent = fmt(m.t,1) + " s";
+
+        ui.uOut.textContent = fmt(m.u,1) + " m/s";
+        ui.aOut.textContent = fmt(m.a,2) + " m/s²";
+        ui.timeOut.textContent = fmt(m.t,1) + " s";
+
+        if(state.resultRevealed){
+          ui.sOut.textContent = fmt(m.s,1) + " m";
+          ui.vOut.textContent = fmt(m.v,1) + " m/s";
+          ui.sSmall.textContent = "Actual result";
+          ui.vSmall.textContent = "Actual result";
+          ui.metricS.classList.remove("locked");
+          ui.metricV.classList.remove("locked");
+        }else{
+          ui.sOut.textContent = "Locked";
+          ui.vOut.textContent = "Locked";
+          ui.sSmall.textContent = state.predictionLocked ? "Run model" : "Predict first";
+          ui.vSmall.textContent = state.predictionLocked ? "Run model" : "Predict first";
+          ui.metricS.classList.add("locked");
+          ui.metricV.classList.add("locked");
+        }
+
+        updateComparison();
+        updateEquationCards();
+      }
+
+      function updateComparison(){
+        const m = getMotion();
+
+        if(!state.prediction){
+          ui.compPredV.textContent = "—";
+          ui.compPredS.textContent = "—";
+          ui.compActualV.textContent = "Locked";
+          ui.compActualS.textContent = "Locked";
+          ui.compDiffV.textContent = "—";
+          ui.compDiffS.textContent = "—";
+          ui.graphFeedback.textContent = "Locked";
+          ui.eqVFeedback.textContent = "Locked";
+          ui.eqSFeedback.textContent = "Locked";
+          ui.reasonFeedback.textContent = "Waiting";
+          return;
+        }
+
+        ui.compPredV.textContent = fmt(state.prediction.v,1) + " m/s";
+        ui.compPredS.textContent = fmt(state.prediction.s,1) + " m";
+
+        if(!state.resultRevealed){
+          ui.compActualV.textContent = "Locked";
+          ui.compActualS.textContent = "Locked";
+          ui.compDiffV.textContent = "Run model";
+          ui.compDiffS.textContent = "Run model";
+          ui.graphFeedback.textContent = "Prediction locked";
+          ui.eqVFeedback.textContent = EQUATIONS[state.prediction.eqV];
+          ui.eqSFeedback.textContent = EQUATIONS[state.prediction.eqS];
+          ui.reasonFeedback.textContent = state.prediction.reason ? "Saved" : "No reason entered";
+          return;
+        }
+
+        const diffV = Math.abs(state.prediction.v - m.v);
+        const diffS = Math.abs(state.prediction.s - m.s);
+        const actualPattern = actualGraphPattern(m);
+
+        ui.compActualV.textContent = fmt(m.v,1) + " m/s";
+        ui.compActualS.textContent = fmt(m.s,1) + " m";
+        ui.compDiffV.textContent = fmt(diffV,2) + " m/s";
+        ui.compDiffS.textContent = fmt(diffS,2) + " m";
+
+        if(state.prediction.graph === actualPattern){
+          ui.graphFeedback.textContent = "Matched";
+        }else{
+          ui.graphFeedback.textContent = "Predicted: " + graphPatternLabel(state.prediction.graph) + " | Actual: " + graphPatternLabel(actualPattern);
+        }
+
+        ui.eqVFeedback.textContent = state.prediction.eqV === "eq1" ? "Good choice" : "Check: v = u + at is direct";
+        ui.eqSFeedback.textContent = state.prediction.eqS === "eq2" ? "Good choice" : "Check: s = ut + ½at² is direct";
+        ui.reasonFeedback.textContent = state.prediction.reason ? state.prediction.reason : "No reason entered";
+      }
+
+      function updateEquationCards(){
+        document.querySelectorAll("[data-eq-card]").forEach(function(card){
+          const eq = card.dataset.eqCard;
+          card.classList.remove("chosen", "recommended");
+
+          if(state.predictionLocked && state.prediction && (eq === state.prediction.eqV || eq === state.prediction.eqS)){
+            card.classList.add("chosen");
+          }
+
+          if(state.resultRevealed && (eq === "eq1" || eq === "eq2")){
+            card.classList.add("recommended");
+          }
+        });
+      }
+
+      function changeSetup(){
+        clearPredictionOnly();
+        updateReadouts();
+        ui.statusBox.textContent = "Motion setup changed. Make a new prediction before running.";
+      }
+
+      function clearCanvas(ctx, canvas){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+        gradient.addColorStop(0,"#f8fafc");
+        gradient.addColorStop(1,"#eef6ff");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.strokeStyle = "rgba(148,163,184,0.22)";
+        ctx.lineWidth = 1;
+
+        for(let x = 0; x <= canvas.width; x += 60){
+          ctx.beginPath();
+          ctx.moveTo(x,0);
+          ctx.lineTo(x,canvas.height);
+          ctx.stroke();
+        }
+
+        for(let y = 0; y <= canvas.height; y += 60){
+          ctx.beginPath();
+          ctx.moveTo(0,y);
+          ctx.lineTo(canvas.width,y);
+          ctx.stroke();
+        }
+      }
+
+      function drawArrow(ctx, x1, y1, x2, y2, colour){
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const size = 10;
+
+        ctx.save();
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = colour;
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - size * Math.cos(angle - Math.PI / 6), y2 - size * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawCar(ctx, x, y, colour){
+        ctx.save();
+        ctx.translate(x, y);
+
+        ctx.fillStyle = colour;
+        ctx.beginPath();
+        ctx.roundRect(-30, -16, 60, 22, 8);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(-16, -16);
+        ctx.lineTo(-3, -32);
+        ctx.lineTo(16, -32);
+        ctx.lineTo(28, -16);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#bfdbfe";
+        ctx.beginPath();
+        ctx.moveTo(-2, -27);
+        ctx.lineTo(13, -27);
+        ctx.lineTo(21, -17);
+        ctx.lineTo(2, -17);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#111827";
+        ctx.beginPath();
+        ctx.arc(-18, 9, 7, 0, Math.PI * 2);
+        ctx.arc(18, 9, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawBall(ctx, x, y){
+        const grad = ctx.createRadialGradient(x - 8, y - 8, 3, x, y, 24);
+        grad.addColorStop(0, "#bfdbfe");
+        grad.addColorStop(0.6, "#2563eb");
+        grad.addColorStop(1, "#1e3a8a");
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, 21, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      function getPositionScale(motion){
+        if(!state.predictionLocked || ui.fixedScale.checked){
+          return {min:-100,max:100,mode:"fixed"};
+        }
+
+        const samples = [];
+
+        for(let i = 0; i <= 80; i++){
+          samples.push(xAt(motion.t * i / 80, motion));
+        }
+
+        const min = Math.min(0, ...samples);
+        const max = Math.max(0, ...samples);
+        const range = Math.max(1, max - min);
+        const pad = range * 0.12;
+
+        return {min:min - pad,max:max + pad,mode:"auto"};
+      }
+
+      function drawHorizontalMotion(m, currentT, currentX, currentV){
+        const trackX = 82;
+        const trackY = 130;
+        const trackW = 840;
+        const scaleInfo = getPositionScale(m);
+        const range = Math.max(1, scaleInfo.max - scaleInfo.min);
+
+        function mapPosition(s){
+          const unclamped = trackX + (s - scaleInfo.min) * trackW / range;
+          return clamp(unclamped, trackX, trackX + trackW);
+        }
+
+        const startX = mapPosition(0);
+        const carX = mapPosition(currentX);
+        const finalX = mapPosition(m.s);
+
+        mctx.fillStyle = "#475569";
+        mctx.fillRect(trackX, trackY, trackW, 12);
+
+        mctx.strokeStyle = "#cbd5e1";
+        mctx.lineWidth = 2;
+
+        for(let i = 0; i <= 10; i++){
+          const x = trackX + (trackW / 10) * i;
+          mctx.beginPath();
+          mctx.moveTo(x, trackY - 9);
+          mctx.lineTo(x, trackY + 25);
+          mctx.stroke();
+        }
+
+        mctx.strokeStyle = "#22c55e";
+        mctx.lineWidth = 3;
+        mctx.beginPath();
+        mctx.moveTo(startX, trackY - 42);
+        mctx.lineTo(startX, trackY + 42);
+        mctx.stroke();
+
+        if(state.resultRevealed){
+          mctx.strokeStyle = "#ef4444";
+          mctx.beginPath();
+          mctx.moveTo(finalX, trackY - 42);
+          mctx.lineTo(finalX, trackY + 42);
+          mctx.stroke();
+        }
+
+        drawCar(mctx, carX, trackY - 8, "#2563eb");
+
+        mctx.fillStyle = "#0f172a";
+        mctx.font = "900 14px system-ui, sans-serif";
+        mctx.textAlign = "center";
+        mctx.fillText("object", carX, trackY - 50);
+
+        mctx.fillStyle = "#166534";
+        mctx.fillText("start", startX, trackY + 58);
+
+        if(state.resultRevealed){
+          mctx.fillStyle = "#991b1b";
+          mctx.fillText("actual final s", finalX, trackY + 58);
+        }
+
+        if(ui.showVectors.checked && canRevealGraphs()){
+          const vLength = clamp(currentV * 5, -110, 110);
+          const aLength = clamp(m.a * 8, -90, 90);
+
+          if(Math.abs(vLength) > 4){
+            drawArrow(mctx, carX, trackY - 72, carX + vLength, trackY - 72, "#8b5cf6");
+            mctx.fillStyle = "#6d28d9";
+            mctx.font = "800 12px system-ui, sans-serif";
+            mctx.fillText("velocity", carX + vLength / 2, trackY - 84);
+          }
+
+          if(Math.abs(aLength) > 4){
+            drawArrow(mctx, carX, trackY - 98, carX + aLength, trackY - 98, "#f59e0b");
+            mctx.fillStyle = "#92400e";
+            mctx.font = "800 12px system-ui, sans-serif";
+            mctx.fillText("acceleration", carX + aLength / 2, trackY - 110);
+          }
+        }
+
+        mctx.fillStyle = "#334155";
+        mctx.font = "800 12px system-ui, sans-serif";
+        mctx.textAlign = "left";
+        mctx.fillText("Display scale: " + scaleInfo.mode + " | actual final marker appears after the run", 82, 220);
+      }
+
+      function drawVerticalMotion(m, currentT, currentX, currentV){
+        const trackX = 210;
+        const trackY = 35;
+        const trackH = 180;
+        const scaleInfo = getPositionScale(m);
+        const range = Math.max(1, scaleInfo.max - scaleInfo.min);
+
+        function mapPosition(s){
+          const unclamped = trackY + (s - scaleInfo.min) * trackH / range;
+          return clamp(unclamped, trackY, trackY + trackH);
+        }
+
+        const startY = mapPosition(0);
+        const ballY = mapPosition(currentX);
+        const finalY = mapPosition(m.s);
+
+        mctx.strokeStyle = "#475569";
+        mctx.lineWidth = 7;
+        mctx.beginPath();
+        mctx.moveTo(trackX, trackY);
+        mctx.lineTo(trackX, trackY + trackH);
+        mctx.stroke();
+
+        mctx.strokeStyle = "#cbd5e1";
+        mctx.lineWidth = 2;
+
+        for(let i = 0; i <= 10; i++){
+          const y = trackY + (trackH / 10) * i;
+          mctx.beginPath();
+          mctx.moveTo(trackX - 18, y);
+          mctx.lineTo(trackX + 18, y);
+          mctx.stroke();
+        }
+
+        mctx.strokeStyle = "#22c55e";
+        mctx.lineWidth = 3;
+        mctx.beginPath();
+        mctx.moveTo(trackX - 65, startY);
+        mctx.lineTo(trackX + 65, startY);
+        mctx.stroke();
+
+        if(state.resultRevealed){
+          mctx.strokeStyle = "#ef4444";
+          mctx.beginPath();
+          mctx.moveTo(trackX - 65, finalY);
+          mctx.lineTo(trackX + 65, finalY);
+          mctx.stroke();
+        }
+
+        drawBall(mctx, trackX, ballY);
+
+        mctx.fillStyle = "#0f172a";
+        mctx.font = "900 14px system-ui, sans-serif";
+        mctx.textAlign = "center";
+        mctx.fillText("object", trackX + 78, ballY + 4);
+
+        mctx.fillStyle = "#166534";
+        mctx.fillText("start", trackX + 90, startY + 4);
+
+        if(state.resultRevealed){
+          mctx.fillStyle = "#991b1b";
+          mctx.fillText("actual final s", trackX + 112, finalY + 4);
+        }
+
+        if(ui.showVectors.checked && canRevealGraphs()){
+          const vLength = clamp(currentV * 3.5, -80, 80);
+          const aLength = clamp(m.a * 6, -70, 70);
+
+          if(Math.abs(vLength) > 4){
+            drawArrow(mctx, trackX + 120, ballY, trackX + 120, ballY + vLength, "#8b5cf6");
+            mctx.fillStyle = "#6d28d9";
+            mctx.font = "800 12px system-ui, sans-serif";
+            mctx.fillText("velocity", trackX + 172, ballY + vLength / 2);
+          }
+
+          if(Math.abs(aLength) > 4){
+            drawArrow(mctx, trackX + 195, ballY, trackX + 195, ballY + aLength, "#f59e0b");
+            mctx.fillStyle = "#92400e";
+            mctx.font = "800 12px system-ui, sans-serif";
+            mctx.fillText("acceleration", trackX + 260, ballY + aLength / 2);
+          }
+        }
+
+        mctx.fillStyle = "#334155";
+        mctx.font = "800 12px system-ui, sans-serif";
+        mctx.textAlign = "left";
+        mctx.fillText("Vertical view: positive displacement is downward.", 390, 76);
+        mctx.fillText("Actual final marker appears after the run.", 390, 100);
+      }
+
+      function graphValues(func, motion){
+        const values = [];
+
+        for(let i = 0; i <= 80; i++){
+          const t = motion.t * i / 80;
+          values.push(func(t, motion));
+        }
+
+        return values;
+      }
+
+      function drawLockedGraph(x, y, w, h, title, yLabel){
+        gctx.save();
+
+        gctx.fillStyle = "rgba(255,255,255,0.74)";
+        gctx.strokeStyle = "rgba(203,213,225,0.95)";
+        gctx.lineWidth = 1.5;
+        gctx.beginPath();
+        gctx.roundRect(x, y, w, h, 12);
+        gctx.fill();
+        gctx.stroke();
+
+        gctx.strokeStyle = "rgba(100,116,139,0.20)";
+        gctx.lineWidth = 1;
+
+        for(let i = 1; i < 4; i++){
+          const gy = y + (h / 4) * i;
+          gctx.beginPath();
+          gctx.moveTo(x + 8, gy);
+          gctx.lineTo(x + w - 8, gy);
+          gctx.stroke();
+        }
+
+        gctx.fillStyle = "#0f172a";
+        gctx.font = "900 13px system-ui, sans-serif";
+        gctx.textAlign = "left";
+        gctx.fillText(title, x + 12, y + 20);
+
+        gctx.fillStyle = "#64748b";
+        gctx.font = "800 11px system-ui, sans-serif";
+        gctx.fillText("y: " + yLabel, x + 12, y + 38);
+        gctx.fillText("x: time / s", x + 12, y + h - 12);
+
+        gctx.fillStyle = "#334155";
+        gctx.font = "900 14px system-ui, sans-serif";
+        gctx.textAlign = "center";
+        gctx.fillText("Run model", x + w / 2, y + h / 2 - 4);
+        gctx.font = "800 12px system-ui, sans-serif";
+        gctx.fillText("Graph locked", x + w / 2, y + h / 2 + 18);
+
+        gctx.restore();
+      }
+
+      function drawGraph(x, y, w, h, title, yLabel, func, motion, currentT, colour){
+        if(!canRevealGraphs()){
+          drawLockedGraph(x, y, w, h, title, yLabel);
+          return;
+        }
+
+        const values = graphValues(func, motion);
+        let min = Math.min.apply(null, values);
+        let max = Math.max.apply(null, values);
+
+        if(Math.abs(max - min) < 0.001){
+          max += 1;
+          min -= 1;
+        }
+
+        const pad = (max - min) * 0.12;
+        max += pad;
+        min -= pad;
+
+        function mapX(t){
+          return x + (t / motion.t) * w;
+        }
+
+        function mapY(value){
+          return y + h - ((value - min) / (max - min)) * h;
+        }
+
+        gctx.save();
+
+        gctx.fillStyle = "rgba(255,255,255,0.78)";
+        gctx.strokeStyle = "rgba(203,213,225,0.95)";
+        gctx.lineWidth = 1.5;
+        gctx.beginPath();
+        gctx.roundRect(x, y, w, h, 12);
+        gctx.fill();
+        gctx.stroke();
+
+        gctx.strokeStyle = "rgba(100,116,139,0.25)";
+        gctx.lineWidth = 1;
+
+        for(let i = 1; i < 4; i++){
+          const gy = y + (h / 4) * i;
+          gctx.beginPath();
+          gctx.moveTo(x + 8, gy);
+          gctx.lineTo(x + w - 8, gy);
+          gctx.stroke();
+        }
+
+        if(min < 0 && max > 0){
+          gctx.strokeStyle = "rgba(15,23,42,0.40)";
+          const zeroY = mapY(0);
+          gctx.beginPath();
+          gctx.moveTo(x + 8, zeroY);
+          gctx.lineTo(x + w - 8, zeroY);
+          gctx.stroke();
+        }
+
+        gctx.strokeStyle = colour;
+        gctx.lineWidth = 2.6;
+        gctx.beginPath();
+
+        for(let i = 0; i <= 100; i++){
+          const t = motion.t * i / 100;
+          const gx = mapX(t);
+          const gy = mapY(func(t, motion));
+
+          if(i === 0){
+            gctx.moveTo(gx, gy);
+          }else{
+            gctx.lineTo(gx, gy);
+          }
+        }
+
+        gctx.stroke();
+
+        const markerX = mapX(currentT);
+        gctx.strokeStyle = "rgba(239,68,68,0.85)";
+        gctx.setLineDash([6, 4]);
+        gctx.beginPath();
+        gctx.moveTo(markerX, y + 8);
+        gctx.lineTo(markerX, y + h - 8);
+        gctx.stroke();
+        gctx.setLineDash([]);
+
+        gctx.fillStyle = "#0f172a";
+        gctx.font = "900 13px system-ui, sans-serif";
+        gctx.textAlign = "left";
+        gctx.fillText(title, x + 12, y + 20);
+
+        gctx.fillStyle = "#64748b";
+        gctx.font = "800 11px system-ui, sans-serif";
+        gctx.fillText("y: " + yLabel, x + 12, y + 38);
+        gctx.fillText("x: time / s", x + 12, y + h - 12);
+
+        gctx.textAlign = "right";
+        gctx.fillText("max " + fmt(max - pad,1), x + w - 12, y + 38);
+        gctx.fillText("min " + fmt(min + pad,1), x + w - 12, y + h - 12);
+
+        gctx.restore();
+      }
+
+      function drawMotionScene(){
+        const m = getMotion();
+        const currentT = Math.min(state.currentTime, m.t);
+        const currentX = state.predictionLocked ? xAt(currentT, m) : 0;
+        const currentV = state.predictionLocked ? vAt(currentT, m) : m.u;
+
+        clearCanvas(mctx, motionCanvas);
+
+        mctx.fillStyle = "rgba(15,23,42,0.84)";
+        mctx.strokeStyle = "rgba(203,213,225,0.8)";
+        mctx.lineWidth = 1.5;
+        mctx.beginPath();
+        mctx.roundRect(26, 20, 390, 76, 14);
+        mctx.fill();
+        mctx.stroke();
+
+        mctx.fillStyle = "#e2e8f0";
+        mctx.font = "900 14px system-ui, sans-serif";
+        mctx.textAlign = "left";
+
+        if(state.predictionLocked){
+          mctx.fillText("Current time: " + fmt(currentT,2) + " s", 44, 48);
+          mctx.fillStyle = "#cbd5e1";
+          mctx.font = "800 13px system-ui, sans-serif";
+          mctx.fillText("motion revealed after prediction lock", 44, 72);
+        }else{
+          mctx.fillText("Prediction mode: answers hidden", 44, 48);
+          mctx.fillStyle = "#cbd5e1";
+          mctx.font = "800 13px system-ui, sans-serif";
+          mctx.fillText("Use u, a and t to predict v and s.", 44, 72);
+        }
+
+        if(ui.motionView.value === "vertical"){
+          drawVerticalMotion(m, currentT, currentX, currentV);
+        }else{
+          drawHorizontalMotion(m, currentT, currentX, currentV);
+        }
+      }
+
+      function drawGraphsScene(){
+        const m = getMotion();
+        const currentT = Math.min(state.currentTime, m.t);
+
+        clearCanvas(gctx, graphsCanvas);
+
+        if(ui.showGraphs.checked){
+          drawGraph(42, 38, 285, 230, "Displacement-time", "s / m", xAt, m, currentT, "#2563eb");
+          drawGraph(358, 38, 285, 230, "Velocity-time", "v / m/s", vAt, m, currentT, "#16a34a");
+          drawGraph(674, 38, 285, 230, "Acceleration-time", "a / m/s²", function(time, motion){ return motion.a; }, m, currentT, "#f59e0b");
+        }else{
+          gctx.fillStyle = "#334155";
+          gctx.font = "900 22px system-ui, sans-serif";
+          gctx.textAlign = "center";
+          gctx.fillText("Graphs hidden. Turn on Graphs to compare s-t, v-t and a-t.", graphsCanvas.width / 2, graphsCanvas.height / 2);
+        }
+      }
+
+      function tick(timestamp){
+        const m = getMotion();
+
+        if(state.running){
+          if(state.lastTimestamp === null){
+            state.lastTimestamp = timestamp;
+          }
+
+          const dt = Math.min((timestamp - state.lastTimestamp) / 1000, 0.05);
+          state.lastTimestamp = timestamp;
+          state.currentTime += dt;
+
+          if(state.currentTime >= m.t){
+            state.currentTime = m.t;
+            state.running = false;
+            state.lastTimestamp = null;
+            state.resultRevealed = true;
+            updateReadouts();
+            ui.statusBox.textContent = "Run complete. Compare your prediction with the actual result and explain any difference.";
+          }
+        }else{
+          state.lastTimestamp = null;
+        }
+
+        drawMotionScene();
+        drawGraphsScene();
+        requestAnimationFrame(tick);
+      }
+
+      function play(){
+        if(!state.predictionLocked){
+          ui.statusBox.textContent = "Lock a prediction before running the model.";
+          return;
+        }
+
+        const m = getMotion();
+
+        if(state.currentTime >= m.t){
+          state.currentTime = 0;
+          state.resultRevealed = false;
+          updateReadouts();
+        }
+
+        state.running = true;
+      }
+
+      function pause(){
+        state.running = false;
+        state.lastTimestamp = null;
+      }
+
+      function resetTime(){
+        state.currentTime = 0;
+        state.running = false;
+        state.lastTimestamp = null;
+
+        if(state.predictionLocked){
+          state.resultRevealed = false;
+        }
+
+        updateReadouts();
+      }
+
+      function setPreset(name){
+        if(name === "accelerate"){
+          ui.motionView.value = "horizontal";
+          ui.uSlider.value = 6;
+          ui.aSlider.value = 2.5;
+          ui.tSlider.value = 6;
+          ui.predGraph.value = "increasing";
+        }
+
+        if(name === "brake"){
+          ui.motionView.value = "horizontal";
+          ui.uSlider.value = 24;
+          ui.aSlider.value = -3;
+          ui.tSlider.value = 7;
+          ui.predGraph.value = "decreasing";
+        }
+
+        if(name === "drop"){
+          ui.motionView.value = "vertical";
+          ui.uSlider.value = 0;
+          ui.aSlider.value = 9.8;
+          ui.tSlider.value = 4;
+          ui.predGraph.value = "increasing";
+        }
+
+        if(name === "throw"){
+          ui.motionView.value = "vertical";
+          ui.uSlider.value = -24;
+          ui.aSlider.value = 9.8;
+          ui.tSlider.value = 5;
+          ui.predGraph.value = "turning";
+        }
+
+        clearPredictionOnly();
+        updateReadouts();
+        ui.statusBox.textContent = "Preset loaded. Make a prediction before running.";
+      }
+
+      [ui.motionView, ui.uSlider, ui.aSlider, ui.tSlider].forEach(function(element){
+        element.addEventListener("input", changeSetup);
+        element.addEventListener("change", changeSetup);
+      });
+
+      [ui.showGraphs, ui.showVectors, ui.fixedScale].forEach(function(element){
+        element.addEventListener("input", updateReadouts);
+        element.addEventListener("change", updateReadouts);
+      });
+
+      ui.lockPredictionBtn.addEventListener("click", lockPrediction);
+      ui.editPredictionBtn.addEventListener("click", editPrediction);
+      ui.clearPredictionBtn.addEventListener("click", clearPrediction);
+      ui.playBtn.addEventListener("click", play);
+      ui.pauseBtn.addEventListener("click", pause);
+      ui.resetBtn.addEventListener("click", resetTime);
+
+      document.querySelectorAll("[data-preset]").forEach(function(button){
+        button.addEventListener("click", function(){
+          setPreset(button.dataset.preset);
+        });
+      });
+
+      if(!CanvasRenderingContext2D.prototype.roundRect){
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius){
+          const r = Math.min(radius, width / 2, height / 2);
+          this.beginPath();
+          this.moveTo(x + r, y);
+          this.arcTo(x + width, y, x + width, y + height, r);
+          this.arcTo(x + width, y + height, x, y + height, r);
+          this.arcTo(x, y + height, x, y, r);
+          this.arcTo(x, y, x + width, y, r);
+          this.closePath();
+          return this;
+        };
+      }
+
+      updateReadouts();
+      requestAnimationFrame(tick);
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initSUVATPredictionExplorer);
+    }else{
+      initSUVATPredictionExplorer();
+    }
+  </script>
+</body>
+</html>
