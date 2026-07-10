@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims: Optical Instrument Technology Builder</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --secondary:#334155;
+      --green:#16a34a;
+      --orange:#f59e0b;
+      --red:#dc2626;
+      --purple:#7c3aed;
+      --cyan:#06b6d4;
+      --shadow:0 12px 30px rgba(15,23,42,0.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .page{
+      width:min(1240px, 94vw);
+      margin:0 auto;
+      padding:22px 0 42px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      margin:0 0 14px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:#1d4ed8;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #0f172a, #2563eb 56%, #06b6d4);
+      color:white;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-90px;
+      width:280px;
+      height:280px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.14);
+    }
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 5vw, 3.8rem);
+      line-height:1.02;
+      letter-spacing:-0.05em;
+      position:relative;
+      z-index:1;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      font-size:1.12rem;
+      color:rgba(255,255,255,0.93);
+      position:relative;
+      z-index:1;
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+      position:relative;
+      z-index:1;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.17);
+      border:1px solid rgba(255,255,255,0.28);
+      font-weight:750;
+      font-size:0.94rem;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .info-card,
+    .panel,
+    .canvas-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,
+    .info-card h3,
+    .panel h2,
+    .canvas-card h2{
+      margin:0 0 8px;
+      line-height:1.18;
+    }
+
+    .info-card p,
+    .canvas-card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .sim-area{
+      display:grid;
+      grid-template-columns:370px minmax(0,1fr);
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side-controls{
+      position:sticky;
+      top:14px;
+    }
+
+    .control-group{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+    }
+
+    .control-group + .control-group{
+      margin-top:10px;
+    }
+
+    .control-heading{
+      margin:0 0 10px;
+      font-size:0.84rem;
+      font-weight:900;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin:0 0 5px;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+      font:inherit;
+    }
+
+    select,
+    textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:9px 10px;
+      background:white;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    textarea{
+      min-height:86px;
+      resize:vertical;
+      font-weight:650;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    .field-block + .field-block,
+    .field-block + .slider-block,
+    .slider-block + .slider-block{
+      margin-top:12px;
+    }
+
+    .slider-readout{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      color:var(--muted);
+      font-size:0.86rem;
+      margin-bottom:4px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:9px 12px;
+      background:var(--button);
+      color:white;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    button:hover{background:var(--button-hover);}
+    button.secondary{background:var(--secondary);}
+
+    button.ghost{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    button.ghost:hover{background:#cbd5e1;}
+
+    button.warning{
+      background:var(--orange);
+    }
+
+    button.warning:hover{
+      background:#d97706;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    canvas{
+      width:100%;
+      display:block;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .metric{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .metric .label{
+      color:var(--muted);
+      font-size:0.8rem;
+      font-weight:760;
+      margin-bottom:4px;
+    }
+
+    .metric .value{
+      font-size:1.04rem;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .metric .small{
+      color:var(--muted);
+      font-size:0.76rem;
+      margin-top:5px;
+    }
+
+    .evidence-grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .evidence-card{
+      border:1px solid var(--line);
+      background:#f8fafc;
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .evidence-card h3{
+      margin:0 0 7px;
+      font-size:1rem;
+    }
+
+    .evidence-card p{
+      margin:0;
+      color:#475569;
+      font-size:0.92rem;
+    }
+
+    .impact-card{
+      background:#ecfdf5;
+      border-color:#bbf7d0;
+    }
+
+    .impact-card.mismatch{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .impact-card p{
+      color:#14532d;
+    }
+
+    .impact-card.mismatch p{
+      color:#7c2d12;
+    }
+
+    .calculation-card{
+      background:#0f172a;
+      color:#e2e8f0;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space:pre-wrap;
+      line-height:1.55;
+    }
+
+    .graph-data-grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) minmax(300px, 0.95fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .table-wrap{
+      max-height:250px;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.84rem;
+    }
+
+    th,
+    td{
+      border-bottom:1px solid var(--line);
+      padding:8px 7px;
+      text-align:left;
+      vertical-align:top;
+    }
+
+    th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .cer-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+      margin-top:14px;
+    }
+
+    .notes-grid,
+    .formula-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .hint-list{
+      margin:10px 0 0;
+      padding-left:22px;
+      color:var(--muted);
+    }
+
+    .hint-list li{margin:7px 0;}
+
+    .formula-card{
+      background:#eef6ff;
+      border-color:#bfdbfe;
+    }
+
+    .formula-card p,
+    .formula-card li{
+      color:#1e3a8a;
+    }
+
+    .teacher-note{
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .teacher-note p,
+    .teacher-note li{
+      color:#7c2d12;
+    }
+
+    .equation-box{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px 18px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:0.92rem;
+      overflow:auto;
+      line-height:1.65;
+      margin-top:12px;
+      white-space:pre-wrap;
+    }
+
+    .warning-note{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      box-shadow:none;
+    }
+
+    .warning-note p{
+      color:#1e3a8a;
+    }
+
+    .small-note{
+      color:#64748b;
+      font-size:0.84rem;
+      margin-top:8px;
+    }
+
+    @media (max-width:1080px){
+      .sim-area{
+        grid-template-columns:1fr;
+      }
+
+      .side-controls{
+        position:static;
+      }
+    }
+
+    @media (max-width:980px){
+      .li-sc,
+      .notes-grid,
+      .formula-grid,
+      .evidence-grid,
+      .graph-data-grid,
+      .cer-grid{
+        grid-template-columns:1fr;
+      }
+
+      .results{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width:620px){
+      .hero{padding:22px;}
+      .results{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">&larr; Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Optical Instrument Technology Builder</h1>
+      <p>Use reflection, refraction, lens models and mirror models to design optical technologies such as microscopes, refracting telescopes, reflecting telescopes and optical fibres.</p>
+      <div class="meta-row" aria-label="Simulation tags">
+        <span class="pill">Investigating Science</span>
+        <span class="pill">Module 6: Technologies</span>
+        <span class="pill">Optics</span>
+        <span class="pill">Reflection</span>
+        <span class="pill">Refraction</span>
+      </div>
+    </section>
+
+    <section class="li-sc">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand that scientific laws about light made it possible to design optical technologies that magnify, focus and transmit images beyond normal human vision.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can link reflection and refraction laws to optical design, adjust design variables, collect evidence and assess the impact of these laws on microscopes and telescopes.</p>
+      </div>
+    </section>
+
+    <section class="sim-area" aria-label="Optical instrument technology simulation">
+      <aside class="panel side-controls" aria-label="Optical technology controls">
+        <h2>Main controls</h2>
+
+        <div class="control-group">
+          <p class="control-heading">1. Choose the technology</p>
+
+          <div class="field-block">
+            <label for="instrumentSelect">Technology mode</label>
+            <select id="instrumentSelect">
+              <option value="microscope">Microscope</option>
+              <option value="refracting">Refracting telescope</option>
+              <option value="reflecting">Reflecting telescope</option>
+              <option value="fibre">Extension: optical fibre</option>
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="lawSelect">Main law or model used</label>
+            <select id="lawSelect">
+              <option value="refraction">Law of refraction</option>
+              <option value="reflection">Law of reflection</option>
+              <option value="lens">Lens focusing model</option>
+              <option value="mirror">Mirror focusing model</option>
+              <option value="tir">Total internal reflection</option>
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="graphSelect">Graph view</label>
+            <select id="graphSelect">
+              <option value="magnification">Design vs magnification</option>
+              <option value="brightness">Aperture vs brightness</option>
+              <option value="quality">Alignment vs image quality</option>
+              <option value="impact">Law-to-technology link</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">2. Adjust the design</p>
+
+          <div class="slider-block">
+            <label for="objectiveSlider">Objective or primary focal length</label>
+            <div class="slider-readout">
+              <span>Short</span>
+              <strong id="objectiveValue">20 mm</strong>
+              <span>Long</span>
+            </div>
+            <input id="objectiveSlider" type="range" min="5" max="120" step="1" value="20">
+          </div>
+
+          <div class="slider-block">
+            <label for="eyepieceSlider">Eyepiece focal length</label>
+            <div class="slider-readout">
+              <span>Short</span>
+              <strong id="eyepieceValue">10 mm</strong>
+              <span>Long</span>
+            </div>
+            <input id="eyepieceSlider" type="range" min="5" max="50" step="1" value="10">
+          </div>
+
+          <div class="slider-block">
+            <label for="apertureSlider">Aperture size</label>
+            <div class="slider-readout">
+              <span>Small</span>
+              <strong id="apertureValue">80 mm</strong>
+              <span>Large</span>
+            </div>
+            <input id="apertureSlider" type="range" min="20" max="180" step="5" value="80">
+          </div>
+
+          <div class="slider-block">
+            <label for="alignmentSlider">Lens or mirror alignment</label>
+            <div class="slider-readout">
+              <span>Poor</span>
+              <strong id="alignmentValue">88%</strong>
+              <span>Good</span>
+            </div>
+            <input id="alignmentSlider" type="range" min="40" max="100" step="1" value="88">
+          </div>
+
+          <div class="slider-block">
+            <label for="surfaceSlider">Surface or lens quality</label>
+            <div class="slider-readout">
+              <span>Poor</span>
+              <strong id="surfaceValue">86%</strong>
+              <span>Good</span>
+            </div>
+            <input id="surfaceSlider" type="range" min="40" max="100" step="1" value="86">
+          </div>
+
+          <div class="slider-block">
+            <label for="indexSlider">Refractive index</label>
+            <div class="slider-readout">
+              <span>1.20</span>
+              <strong id="indexValue">1.50</strong>
+              <span>1.80</span>
+            </div>
+            <input id="indexSlider" type="range" min="120" max="180" step="1" value="150">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-heading">3. Collect data</p>
+          <div class="button-row">
+            <button id="recordBtn" type="button">Record trial</button>
+            <button id="autoBtn" class="warning" type="button">Auto series</button>
+            <button id="resetBtn" class="secondary" type="button">Reset data</button>
+            <button id="exportBtn" class="ghost" type="button">Export CSV</button>
+          </div>
+          <p class="small-note" id="controlNote">Change a design variable, then record how the optical law affects magnification, brightness or image quality.</p>
+        </div>
+
+        <div class="control-group warning-note">
+          <h3>Model note</h3>
+          <p>This is a simplified classroom model. It shows how scientific laws guide technology design, not a full professional optical design calculation.</p>
+        </div>
+      </aside>
+
+      <section class="canvas-card" aria-label="Optical technology model">
+        <h2>Optical technology model</h2>
+        <p>Trace how a scientific law or model predicts a ray path, then use design variables to evaluate technology performance.</p>
+
+        <canvas id="simCanvas" width="1000" height="500" aria-label="Optical instrument ray model"></canvas>
+
+        <div class="results" aria-label="Optical design metrics">
+          <div class="metric">
+            <div class="label">Instrument</div>
+            <div class="value" id="instrumentMetric">Microscope</div>
+            <div class="small">Technology mode</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Magnification</div>
+            <div class="value" id="magnificationMetric">125×</div>
+            <div class="small">Simplified estimate</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Brightness</div>
+            <div class="value" id="brightnessMetric">72%</div>
+            <div class="small">Relative light level</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Image quality</div>
+            <div class="value" id="qualityMetric">Good</div>
+            <div class="small">Alignment + surface quality</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Law match</div>
+            <div class="value" id="lawMatchMetric">Strong</div>
+            <div class="small">Technology link</div>
+          </div>
+        </div>
+
+        <div class="evidence-grid">
+          <div class="evidence-card impact-card" id="impactCard">
+            <h3 id="impactTitle">Law → technology impact</h3>
+            <p id="impactStatement">Refraction laws allow lens designers to predict how light bends and where images form.</p>
+          </div>
+
+          <div class="evidence-card calculation-card" id="calculationText">Objective focal length = 20 mm
+Eyepiece focal length = 10 mm
+Estimated magnification = 125×</div>
+        </div>
+
+        <div class="evidence-card" style="margin-top:12px;">
+          <h3>Design interpretation</h3>
+          <p id="resultText">Shorter focal length lenses increase magnification, but image brightness and quality can become limiting factors.</p>
+        </div>
+
+        <div class="graph-data-grid">
+          <div>
+            <canvas id="graphCanvas" width="620" height="310" aria-label="Optical instrument design graph"></canvas>
+          </div>
+
+          <div class="table-wrap" aria-label="Recorded design trial table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trial</th>
+                  <th>Instrument</th>
+                  <th>Law used</th>
+                  <th>Design change</th>
+                  <th>Magnification</th>
+                  <th>Quality</th>
+                </tr>
+              </thead>
+              <tbody id="dataBody">
+                <tr>
+                  <td colspan="6">Record a design trial or run an auto design series to collect data.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="notes-grid">
+      <div class="info-card">
+        <h2>Student challenge</h2>
+        <ul class="hint-list">
+          <li>Use microscope mode. Reduce objective focal length and explain how magnification changes.</li>
+          <li>Use refracting telescope mode. Increase aperture and explain how brightness changes.</li>
+          <li>Use reflecting telescope mode. Compare the mirror with the lens in a refracting telescope.</li>
+          <li>Use optical fibre mode to explain how total internal reflection supports communication technology.</li>
+          <li>Reduce alignment and surface quality. Explain why accurate science is not enough if the technology is poorly made.</li>
+          <li>Assess how the laws of reflection and refraction contributed to microscopes and telescopes.</li>
+        </ul>
+
+        <h2 style="margin-top:18px;">CER response</h2>
+        <div class="cer-grid">
+          <div>
+            <label for="claimBox">Claim</label>
+            <textarea id="claimBox" placeholder="How did a scientific law or model lead to a useful optical technology?"></textarea>
+          </div>
+          <div>
+            <label for="evidenceBox">Evidence and reasoning</label>
+            <textarea id="evidenceBox" placeholder="Use design results, magnification, brightness, image quality and ray behaviour to support your claim."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card teacher-note">
+        <h2>Teacher notes</h2>
+        <p>This sim is best used for Investigating Science Module 6: Technologies, with a strong link to theories, laws and models. The central reasoning chain is: understand light behaviour → predict ray paths → design useful optical technology.</p>
+        <ul class="hint-list">
+          <li>Good prompt: Which law or model is doing the design work?</li>
+          <li>Good prompt: What does the sim simplify compared with a real instrument?</li>
+          <li>Good prompt: How does technology turn a scientific law into a useful tool?</li>
+          <li>Law mismatch mode is intentional: students can see when a selected law does not strongly support the chosen technology.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="formula-grid">
+      <div class="info-card formula-card">
+        <h2>Formula used in the model</h2>
+        <p>The calculations are simplified estimates designed for classroom reasoning.</p>
+
+        <div class="equation-box">Microscope:
+magnification ≈ (tube length ÷ objective focal length) × (250 ÷ eyepiece focal length)
+
+Refracting telescope:
+magnification ≈ objective focal length ÷ eyepiece focal length
+
+Reflecting telescope:
+magnification ≈ primary mirror focal length ÷ eyepiece focal length
+
+Brightness model:
+brightness depends on aperture², magnification penalty, surface quality and alignment
+
+Image quality model:
+image quality depends on alignment, surface quality, brightness and design penalties
+
+Optical fibre:
+signal transmission depends on refractive index, alignment and surface quality</div>
+      </div>
+
+      <div class="info-card formula-card">
+        <h2>How to explain it to students</h2>
+        <ul class="hint-list">
+          <li><strong>Refraction</strong> lets lenses bend rays predictably.</li>
+          <li><strong>Reflection</strong> lets mirrors redirect and focus rays predictably.</li>
+          <li><strong>Total internal reflection</strong> can trap light inside optical fibres.</li>
+          <li><strong>Technology design</strong> uses laws and models to predict what will happen before the device is built.</li>
+          <li><strong>Precision matters:</strong> poor alignment or poor surface quality can limit performance even when the science is correct.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function initOpticalTechnologyBuilder(){
+      const simCanvas = document.getElementById("simCanvas");
+      const ctx = simCanvas.getContext("2d");
+      const graphCanvas = document.getElementById("graphCanvas");
+      const gtx = graphCanvas.getContext("2d");
+
+      const ui = {
+        instrumentSelect:document.getElementById("instrumentSelect"),
+        lawSelect:document.getElementById("lawSelect"),
+        graphSelect:document.getElementById("graphSelect"),
+        objectiveSlider:document.getElementById("objectiveSlider"),
+        eyepieceSlider:document.getElementById("eyepieceSlider"),
+        apertureSlider:document.getElementById("apertureSlider"),
+        alignmentSlider:document.getElementById("alignmentSlider"),
+        surfaceSlider:document.getElementById("surfaceSlider"),
+        indexSlider:document.getElementById("indexSlider"),
+        objectiveValue:document.getElementById("objectiveValue"),
+        eyepieceValue:document.getElementById("eyepieceValue"),
+        apertureValue:document.getElementById("apertureValue"),
+        alignmentValue:document.getElementById("alignmentValue"),
+        surfaceValue:document.getElementById("surfaceValue"),
+        indexValue:document.getElementById("indexValue"),
+        instrumentMetric:document.getElementById("instrumentMetric"),
+        magnificationMetric:document.getElementById("magnificationMetric"),
+        brightnessMetric:document.getElementById("brightnessMetric"),
+        qualityMetric:document.getElementById("qualityMetric"),
+        lawMatchMetric:document.getElementById("lawMatchMetric"),
+        impactCard:document.getElementById("impactCard"),
+        impactTitle:document.getElementById("impactTitle"),
+        impactStatement:document.getElementById("impactStatement"),
+        calculationText:document.getElementById("calculationText"),
+        resultText:document.getElementById("resultText"),
+        controlNote:document.getElementById("controlNote"),
+        dataBody:document.getElementById("dataBody"),
+        recordBtn:document.getElementById("recordBtn"),
+        autoBtn:document.getElementById("autoBtn"),
+        resetBtn:document.getElementById("resetBtn"),
+        exportBtn:document.getElementById("exportBtn")
+      };
+
+      const instrumentLabels = {
+        microscope:"Microscope",
+        refracting:"Refracting telescope",
+        reflecting:"Reflecting telescope",
+        fibre:"Optical fibre"
+      };
+
+      const lawLabels = {
+        refraction:"Law of refraction",
+        reflection:"Law of reflection",
+        lens:"Lens focusing model",
+        mirror:"Mirror focusing model",
+        tir:"Total internal reflection"
+      };
+
+      let trials = [];
+
+      function clamp(value, min, max){
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function rounded(value, digits){
+        return Number(value).toFixed(digits || 0);
+      }
+
+      function instrument(){
+        return ui.instrumentSelect.value;
+      }
+
+      function objectiveF(){
+        return Number(ui.objectiveSlider.value);
+      }
+
+      function eyepieceF(){
+        return Number(ui.eyepieceSlider.value);
+      }
+
+      function aperture(){
+        return Number(ui.apertureSlider.value);
+      }
+
+      function alignment(){
+        return Number(ui.alignmentSlider.value) / 100;
+      }
+
+      function surfaceQuality(){
+        return Number(ui.surfaceSlider.value) / 100;
+      }
+
+      function refractiveIndex(){
+        return Number(ui.indexSlider.value) / 100;
+      }
+
+      function tubeLength(){
+        return 160;
+      }
+
+      function effectiveFocalLength(){
+        const nFactor = 1.5 / refractiveIndex();
+        return objectiveF() * nFactor;
+      }
+
+      function magnification(){
+        if(instrument() === "microscope"){
+          return clamp((tubeLength() / objectiveF()) * (250 / eyepieceF()), 5, 1200);
+        }
+
+        if(instrument() === "refracting" || instrument() === "reflecting"){
+          return clamp(objectiveF() / eyepieceF(), 1, 80);
+        }
+
+        return 1;
+      }
+
+      function brightness(){
+        const apertureFactor = Math.pow(aperture() / 180, 2);
+        const magPenalty = instrument() === "microscope"
+          ? clamp(220 / magnification(), 0.18, 1)
+          : clamp(18 / magnification(), 0.35, 1);
+
+        if(instrument() === "fibre"){
+          return clamp(100 * alignment() * surfaceQuality() * (refractiveIndex() > 1.42 ? 0.95 : 0.6), 0, 100);
+        }
+
+        return clamp(100 * apertureFactor * magPenalty * surfaceQuality() * alignment() * 2.4, 0, 100);
+      }
+
+      function imageQuality(){
+        const align = alignment() * 100;
+        const surface = surfaceQuality() * 100;
+        let penalty = 0;
+
+        if(instrument() === "refracting" && refractiveIndex() > 1.65){
+          penalty += 10;
+        }
+
+        if(instrument() === "microscope" && magnification() > 600){
+          penalty += 12;
+        }
+
+        if(!lawIsStrongMatch()){
+          penalty += 18;
+        }
+
+        return clamp((align * 0.45 + surface * 0.45 + brightness() * 0.10) - penalty, 0, 100);
+      }
+
+      function qualityLabel(value){
+        const q = Number.isFinite(value) ? value : imageQuality();
+
+        if(q >= 82) return "Excellent";
+        if(q >= 65) return "Good";
+        if(q >= 45) return "Fair";
+        if(q >= 25) return "Poor";
+        return "Very poor";
+      }
+
+      function lawIsStrongMatch(){
+        const law = ui.lawSelect.value;
+
+        if(instrument() === "microscope") return law === "refraction" || law === "lens";
+        if(instrument() === "refracting") return law === "refraction" || law === "lens";
+        if(instrument() === "reflecting") return law === "reflection" || law === "mirror";
+        if(instrument() === "fibre") return law === "tir";
+
+        return false;
+      }
+
+      function defaultLawForInstrument(){
+        if(instrument() === "microscope") return "refraction";
+        if(instrument() === "refracting") return "refraction";
+        if(instrument() === "reflecting") return "reflection";
+        return "tir";
+      }
+
+      function impactScore(){
+        let score = 35;
+
+        if(lawIsStrongMatch()){
+          score += 42;
+        }else{
+          score += 8;
+        }
+
+        score += imageQuality() * 0.20;
+        return clamp(score, 0, 100);
+      }
+
+      function updateReadouts(){
+        ui.objectiveValue.textContent = objectiveF() + " mm";
+        ui.eyepieceValue.textContent = eyepieceF() + " mm";
+        ui.apertureValue.textContent = aperture() + " mm";
+        ui.alignmentValue.textContent = rounded(alignment() * 100, 0) + "%";
+        ui.surfaceValue.textContent = rounded(surfaceQuality() * 100, 0) + "%";
+        ui.indexValue.textContent = refractiveIndex().toFixed(2);
+
+        ui.instrumentMetric.textContent = instrumentLabels[instrument()];
+        ui.magnificationMetric.textContent = instrument() === "fibre" ? "N/A" : rounded(magnification(), 0) + "×";
+        ui.brightnessMetric.textContent = rounded(brightness(), 0) + "%";
+        ui.qualityMetric.textContent = qualityLabel();
+        ui.lawMatchMetric.textContent = lawIsStrongMatch() ? "Strong" : "Weak";
+      }
+
+      function updateImpactPanel(){
+        const mag = magnification();
+        const bright = brightness();
+        const mismatch = !lawIsStrongMatch();
+
+        ui.impactCard.classList.toggle("mismatch", mismatch);
+
+        if(mismatch){
+          ui.impactTitle.textContent = "Law mismatch: weak technology link";
+          ui.impactStatement.textContent =
+            "The selected law or model is not the strongest match for this technology. This is useful evidence: not every scientific law explains every technology equally well.";
+        }else if(instrument() === "microscope"){
+          ui.impactTitle.textContent = "Refraction → microscope technology";
+          ui.impactStatement.textContent = "The law of refraction allows lenses to bend light predictably, letting a microscope form a magnified image of a small nearby object.";
+        }else if(instrument() === "refracting"){
+          ui.impactTitle.textContent = "Refraction → refracting telescope technology";
+          ui.impactStatement.textContent = "The law of refraction allows objective and eyepiece lenses to focus and magnify light from distant objects.";
+        }else if(instrument() === "reflecting"){
+          ui.impactTitle.textContent = "Reflection → reflecting telescope technology";
+          ui.impactStatement.textContent = "The law of reflection allows curved mirrors to focus light. This made large reflecting telescopes possible without relying on very large lenses.";
+        }else{
+          ui.impactTitle.textContent = "Total internal reflection → optical fibre technology";
+          ui.impactStatement.textContent = "The model of total internal reflection explains how light can remain trapped inside a fibre and carry signals over long distances.";
+        }
+
+        if(instrument() === "microscope"){
+          ui.calculationText.textContent =
+            "Objective focal length = " + objectiveF() + " mm\n" +
+            "Eyepiece focal length = " + eyepieceF() + " mm\n" +
+            "Refractive index = " + refractiveIndex().toFixed(2) + "\n" +
+            "Approx. magnification = (160 ÷ " + objectiveF() + ") × (250 ÷ " + eyepieceF() + ") = " + rounded(mag,0) + "×";
+          ui.resultText.textContent = mag > 500
+            ? "Very high magnification is possible, but brightness and image quality may become limiting factors. The ray model also shows a shorter effective focal path."
+            : "Shorter focal length lenses increase magnification. Higher refractive index bends rays more strongly in the model.";
+        }
+
+        if(instrument() === "refracting"){
+          ui.calculationText.textContent =
+            "Objective focal length = " + objectiveF() + " mm\n" +
+            "Eyepiece focal length = " + eyepieceF() + " mm\n" +
+            "Refractive index = " + refractiveIndex().toFixed(2) + "\n" +
+            "Approx. magnification = " + objectiveF() + " ÷ " + eyepieceF() + " = " + rounded(mag,1) + "×";
+          ui.resultText.textContent = aperture() > 120
+            ? "A larger objective lens collects more light. The focal point shifts when focal length or refractive index changes."
+            : "Longer objective focal length or shorter eyepiece focal length increases magnification.";
+        }
+
+        if(instrument() === "reflecting"){
+          ui.calculationText.textContent =
+            "Primary mirror focal length = " + objectiveF() + " mm\n" +
+            "Eyepiece focal length = " + eyepieceF() + " mm\n" +
+            "Approx. magnification = " + objectiveF() + " ÷ " + eyepieceF() + " = " + rounded(mag,1) + "×";
+          ui.resultText.textContent = aperture() > 120
+            ? "A larger mirror aperture collects more light. Reflection-based design is useful for large telescopes."
+            : "Changing mirror focal length shifts the focus point in the ray model.";
+        }
+
+        if(instrument() === "fibre"){
+          const tirGood = refractiveIndex() > 1.42 && alignment() > 0.65;
+          ui.calculationText.textContent =
+            "Core refractive index = " + refractiveIndex().toFixed(2) + "\n" +
+            "Alignment = " + rounded(alignment() * 100, 0) + "%\n" +
+            "Signal transmission model = " + rounded(bright,0) + "%";
+          ui.resultText.textContent = tirGood
+            ? "The fibre model is working well because refractive index and alignment support repeated internal reflection."
+            : "Signal quality is limited. Some rays leak from the fibre because the model conditions do not strongly support total internal reflection.";
+        }
+
+        if(mismatch){
+          ui.resultText.textContent += " The law mismatch reduces the impact score because the chosen law does not explain the design strongly.";
+        }
+
+        ui.controlNote.innerHTML =
+          "Current design gives " +
+          (instrument() === "fibre" ? "signal transmission " + rounded(brightness(),0) + "%" : "magnification " + rounded(magnification(),0) + "×") +
+          ", brightness " + rounded(brightness(),0) + "%, image quality " + qualityLabel(imageQuality()).toLowerCase() +
+          " and a " + (lawIsStrongMatch() ? "strong" : "weak") + " law-to-technology match.";
+      }
+
+      function designDescription(){
+        if(instrument() === "microscope") return "Objective " + objectiveF() + " mm, eyepiece " + eyepieceF() + " mm";
+        if(instrument() === "refracting") return "Lens aperture " + aperture() + " mm, objective " + objectiveF() + " mm";
+        if(instrument() === "reflecting") return "Mirror aperture " + aperture() + " mm, focal length " + objectiveF() + " mm";
+        return "Index " + refractiveIndex().toFixed(2) + ", alignment " + rounded(alignment() * 100,0) + "%";
+      }
+
+      function currentGraphValues(){
+        return {
+          magnificationValue:instrument() === "fibre" ? 0 : magnification(),
+          brightnessValue:brightness(),
+          qualityValue:imageQuality(),
+          impactValue:impactScore()
+        };
+      }
+
+      function recordTrial(){
+        const values = currentGraphValues();
+
+        trials.push({
+          id:trials.length + 1,
+          instrument:instrumentLabels[instrument()],
+          law:lawLabels[ui.lawSelect.value],
+          design:designDescription(),
+          magnification:instrument() === "fibre" ? "N/A" : rounded(magnification(),0) + "×",
+          brightness:rounded(brightness(),0) + "%",
+          quality:qualityLabel(),
+          impact:rounded(impactScore(),0),
+          magnificationValue:values.magnificationValue,
+          brightnessValue:values.brightnessValue,
+          qualityValue:values.qualityValue,
+          impactValue:values.impactValue
+        });
+
+        updateAll();
+      }
+
+      async function autoSeries(){
+        const originalObjective = ui.objectiveSlider.value;
+        const originalAperture = ui.apertureSlider.value;
+        const originalAlignment = ui.alignmentSlider.value;
+
+        if(ui.graphSelect.value === "magnification"){
+          for(const value of [10,15,20,30,45,60,80]){
+            ui.objectiveSlider.value = value;
+            updateAll();
+            recordTrial();
+            await new Promise(resolve => setTimeout(resolve, 90));
+          }
+        }else if(ui.graphSelect.value === "brightness"){
+          for(const value of [30,50,70,90,120,150,180]){
+            ui.apertureSlider.value = value;
+            updateAll();
+            recordTrial();
+            await new Promise(resolve => setTimeout(resolve, 90));
+          }
+        }else{
+          for(const value of [45,55,65,75,85,95,100]){
+            ui.alignmentSlider.value = value;
+            updateAll();
+            recordTrial();
+            await new Promise(resolve => setTimeout(resolve, 90));
+          }
+        }
+
+        ui.objectiveSlider.value = originalObjective;
+        ui.apertureSlider.value = originalAperture;
+        ui.alignmentSlider.value = originalAlignment;
+        updateAll();
+      }
+
+      function updateTable(){
+        ui.dataBody.innerHTML = "";
+
+        if(trials.length === 0){
+          const row = document.createElement("tr");
+          row.innerHTML = '<td colspan="6">Record a design trial or run an auto design series to collect data.</td>';
+          ui.dataBody.appendChild(row);
+          return;
+        }
+
+        trials.slice().reverse().forEach(function(trial){
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td>" + trial.id + "</td>" +
+            "<td>" + trial.instrument + "</td>" +
+            "<td>" + trial.law + "</td>" +
+            "<td>" + trial.design + "</td>" +
+            "<td>" + trial.magnification + "</td>" +
+            "<td>" + trial.quality + "</td>";
+          ui.dataBody.appendChild(row);
+        });
+      }
+
+      function resetData(){
+        trials = [];
+        updateAll();
+      }
+
+      function exportCSV(){
+        const headers = ["trial","instrument","law_used","design_change","magnification","brightness","image_quality","impact_score"];
+        const rows = trials.map(function(trial){
+          return [
+            trial.id,
+            '"' + trial.instrument + '"',
+            '"' + trial.law + '"',
+            '"' + trial.design + '"',
+            '"' + trial.magnification + '"',
+            '"' + trial.brightness + '"',
+            '"' + trial.quality + '"',
+            trial.impact
+          ];
+        });
+
+        const csv = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+        const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "optical-instrument-technology-builder.csv";
+        link.click();
+
+        URL.revokeObjectURL(url);
+      }
+
+      function roundRect(context, x, y, width, height, radius){
+        const r = Math.min(radius, width / 2, height / 2);
+        context.beginPath();
+        context.moveTo(x + r, y);
+        context.arcTo(x + width, y, x + width, y + height, r);
+        context.arcTo(x + width, y + height, x, y + height, r);
+        context.arcTo(x, y + height, x, y, r);
+        context.arcTo(x, y, x + width, y, r);
+        context.closePath();
+      }
+
+      function drawRay(context, x1, y1, x2, y2, colour, width, dashed){
+        const c = colour || "#f59e0b";
+        const lineWidth = width || 3;
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+
+        context.save();
+        context.strokeStyle = c;
+        context.fillStyle = c;
+        context.lineWidth = lineWidth;
+        context.lineCap = "round";
+
+        if(dashed){
+          context.setLineDash([7,5]);
+        }
+
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.stroke();
+
+        context.setLineDash([]);
+
+        const arrowX = x2 - Math.cos(angle) * 17;
+        const arrowY = y2 - Math.sin(angle) * 17;
+
+        context.beginPath();
+        context.moveTo(x2, y2);
+        context.lineTo(arrowX - Math.cos(angle - Math.PI / 2) * 6, arrowY - Math.sin(angle - Math.PI / 2) * 6);
+        context.lineTo(arrowX - Math.cos(angle + Math.PI / 2) * 6, arrowY - Math.sin(angle + Math.PI / 2) * 6);
+        context.closePath();
+        context.fill();
+
+        context.restore();
+      }
+
+      function drawLens(x, y, height, colour){
+        const widthScale = clamp((refractiveIndex() - 1.1) * 45, 12, 34);
+
+        ctx.save();
+        ctx.fillStyle = "rgba(56,189,248,0.22)";
+        ctx.strokeStyle = colour || "#38bdf8";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x, y - height / 2);
+        ctx.quadraticCurveTo(x + widthScale, y, x, y + height / 2);
+        ctx.quadraticCurveTo(x - widthScale, y, x, y - height / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawMirror(x, y, height){
+        ctx.save();
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.moveTo(x, y - height / 2);
+        ctx.quadraticCurveTo(x - 34, y, x, y + height / 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(15,23,42,0.35)";
+        ctx.lineWidth = 1.5;
+
+        for(let i = -height / 2; i < height / 2; i += 18){
+          ctx.beginPath();
+          ctx.moveTo(x + 8, y + i);
+          ctx.lineTo(x + 24, y + i + 10);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      function drawLabelBox(x, y, title, text, colour){
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.90)";
+        ctx.strokeStyle = "rgba(203,213,225,0.95)";
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, x, y, 315, 58, 13);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = colour || "#1d4ed8";
+        ctx.font = "900 13px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(title, x + 14, y + 23);
+
+        ctx.fillStyle = "#334155";
+        ctx.font = "800 11px system-ui, sans-serif";
+        ctx.fillText(text, x + 14, y + 43);
+        ctx.restore();
+      }
+
+      function drawPerformanceBox(){
+        ctx.save();
+
+        ctx.fillStyle = "rgba(255,255,255,0.90)";
+        ctx.strokeStyle = "rgba(203,213,225,0.95)";
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, 36, 82, 250, 116, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 13px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Technology performance", 52, 108);
+
+        ctx.font = "800 11.5px system-ui, sans-serif";
+        ctx.fillText("Magnification: " + (instrument() === "fibre" ? "N/A" : rounded(magnification(),0) + "×"), 52, 131);
+        ctx.fillText("Brightness: " + rounded(brightness(),0) + "%", 52, 151);
+        ctx.fillText("Image quality: " + qualityLabel(), 52, 171);
+        ctx.fillText("Law match: " + (lawIsStrongMatch() ? "strong" : "weak"), 52, 191);
+
+        ctx.restore();
+      }
+
+      function drawDesignLegend(){
+        ctx.save();
+
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.strokeStyle = "rgba(203,213,225,0.95)";
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, 710, 80, 230, 48, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 12px system-ui, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Science → technology", 728, 102);
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "800 10.5px system-ui, sans-serif";
+        ctx.fillText("laws predict useful ray paths", 728, 119);
+
+        ctx.restore();
+      }
+
+      function drawSimulation(){
+        const w = simCanvas.width;
+        const h = simCanvas.height;
+
+        ctx.clearRect(0,0,w,h);
+
+        const bg = ctx.createLinearGradient(0,0,0,h);
+        bg.addColorStop(0,"#dbeafe");
+        bg.addColorStop(0.58,"#ffffff");
+        bg.addColorStop(1,"#e0f2fe");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0,0,w,h);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 22px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Optical instrument design model", w / 2, 40);
+
+        ctx.fillStyle = "rgba(15,23,42,0.72)";
+        ctx.font = "800 13px system-ui, sans-serif";
+        ctx.fillText("law/model → predictable ray path → useful technology", w / 2, 62);
+
+        drawPerformanceBox();
+        drawDesignLegend();
+
+        if(instrument() === "microscope") drawMicroscope();
+        if(instrument() === "refracting") drawRefractingTelescope();
+        if(instrument() === "reflecting") drawReflectingTelescope();
+        if(instrument() === "fibre") drawOpticalFibre();
+
+        ctx.save();
+        ctx.fillStyle = "rgba(255,251,235,0.94)";
+        ctx.strokeStyle = "#fde68a";
+        roundRect(ctx, 730, 430, 220, 48, 13);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#78350f";
+        ctx.font = "800 11px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Simplified classroom model", 840, 450);
+        ctx.fillText("not a full optical design tool", 840, 466);
+        ctx.restore();
+      }
+
+      function drawMicroscope(){
+        const y = 285;
+        const objX = 145;
+        const objectiveX = 330;
+        const effectiveF = effectiveFocalLength();
+        const intermediateX = objectiveX + clamp(effectiveF * 4.1, 95, 305);
+        const eyepieceX = 735;
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 15px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Compound microscope: refraction through objective and eyepiece lenses", 500, 220);
+
+        ctx.fillStyle = "#16a34a";
+        ctx.fillRect(objX - 6, y - 34, 12, 68);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.fillText("small object", objX, y + 56);
+
+        drawLens(objectiveX, y, 180);
+        drawLens(eyepieceX, y, 160, "#2563eb");
+
+        ctx.fillText("objective", objectiveX, y + 112);
+        ctx.fillText("eyepiece", eyepieceX, y + 102);
+
+        drawRay(ctx, objX, y - 28, objectiveX, y - 58, "#f59e0b");
+        drawRay(ctx, objectiveX, y - 58, intermediateX, y + 42, "#f59e0b");
+        drawRay(ctx, objX, y + 28, objectiveX, y + 58, "#f59e0b");
+        drawRay(ctx, objectiveX, y + 58, intermediateX, y - 42, "#f59e0b");
+
+        ctx.strokeStyle = "#64748b";
+        ctx.setLineDash([6,6]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(intermediateX, y - 64);
+        ctx.lineTo(intermediateX, y + 64);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#7c3aed";
+        ctx.fillRect(intermediateX - 5, y - 48, 10, 96);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.fillText("intermediate image", intermediateX, y + 86);
+
+        drawRay(ctx, intermediateX, y - 42, eyepieceX, y - 58, "#2563eb");
+        drawRay(ctx, eyepieceX, y - 58, 900, y - 72, "#2563eb");
+        drawRay(ctx, intermediateX, y + 42, eyepieceX, y + 58, "#2563eb");
+        drawRay(ctx, eyepieceX, y + 58, 900, y + 72, "#2563eb");
+
+        drawLabelBox(335, 420, "Refraction law", "higher refractive index bends rays more strongly", "#1d4ed8");
+      }
+
+      function drawRefractingTelescope(){
+        const y = 285;
+        const objectiveX = 300;
+        const eyepieceX = 740;
+        const effectiveF = effectiveFocalLength();
+        const focusX = objectiveX + clamp(effectiveF * 3.3, 115, 390);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 15px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Refracting telescope: objective lens collects and focuses distant light", 500, 220);
+
+        drawLens(objectiveX, y, clamp(aperture() * 1.15, 90, 220));
+        drawLens(eyepieceX, y, 140, "#2563eb");
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.fillText("large objective lens", objectiveX, y + 134);
+        ctx.fillText("eyepiece", eyepieceX, y + 92);
+
+        for(let i = -2; i <= 2; i++){
+          const yy = y + i * 32;
+          drawRay(ctx, 90, yy, objectiveX, yy, "#f59e0b");
+          drawRay(ctx, objectiveX, yy, focusX, y + i * 4, "#f59e0b");
+          drawRay(ctx, focusX, y + i * 4, eyepieceX, y + i * 22, "#2563eb");
+          drawRay(ctx, eyepieceX, y + i * 22, 900, y + i * 34, "#2563eb");
+        }
+
+        ctx.fillStyle = "#7c3aed";
+        ctx.beginPath();
+        ctx.arc(focusX, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.fillText("focus shifts with focal length and refractive index", focusX, y + 30);
+
+        drawLabelBox(335, 420, "Refraction law", "focal point shifts as lens design changes", "#1d4ed8");
+      }
+
+      function drawReflectingTelescope(){
+        const y = 285;
+        const mirrorX = 790;
+        const focusX = mirrorX - clamp(objectiveF() * 3.2, 155, 430);
+        const secondaryX = focusX + 100;
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 15px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Reflecting telescope: curved mirror focuses distant light by reflection", 500, 220);
+
+        drawMirror(mirrorX, y, clamp(aperture() * 1.25, 100, 230));
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.fillText("primary mirror", mirrorX, y + 144);
+
+        for(let i = -2; i <= 2; i++){
+          const yy = y + i * 34;
+          drawRay(ctx, 105, yy, mirrorX - 12, yy, "#f59e0b");
+          drawRay(ctx, mirrorX - 12, yy, focusX, y + i * 4, "#f59e0b");
+        }
+
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(secondaryX - 28, y - 28);
+        ctx.lineTo(secondaryX + 28, y + 28);
+        ctx.stroke();
+
+        drawRay(ctx, focusX, y, secondaryX, y, "#2563eb");
+        drawRay(ctx, secondaryX, y, secondaryX, y - 110, "#2563eb");
+
+        ctx.fillStyle = "#7c3aed";
+        ctx.beginPath();
+        ctx.arc(focusX, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.fillText("focus shifts with mirror focal length", focusX, y + 30);
+        ctx.fillText("secondary mirror", secondaryX + 72, y - 18);
+
+        drawLabelBox(335, 420, "Reflection law", "curved mirrors reflect rays towards a focus", "#1d4ed8");
+      }
+
+      function drawOpticalFibre(){
+        const startX = 110;
+        const endX = 890;
+        const y = 285;
+        const tirGood = refractiveIndex() > 1.42 && alignment() > 0.65;
+        const bounceHeight = clamp(24 + (refractiveIndex() - 1.2) * 95, 26, 62);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 15px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Optical fibre: total internal reflection keeps light inside the fibre", 500, 220);
+
+        ctx.fillStyle = "rgba(14,165,233,0.20)";
+        ctx.strokeStyle = "#0284c7";
+        ctx.lineWidth = 4;
+        roundRect(ctx, startX, y - 62, endX - startX, 124, 52);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255,255,255,0.50)";
+        roundRect(ctx, startX + 20, y - 34, endX - startX - 40, 68, 32);
+        ctx.fill();
+
+        let x = startX + 30;
+        let yy = y;
+        let direction = -1;
+
+        for(let i = 0; i < 9; i++){
+          const nx = x + 82;
+          const ny = y + direction * bounceHeight;
+          drawRay(ctx, x, yy, nx, ny, tirGood ? "#f59e0b" : "#f97316", 4);
+          x = nx;
+          yy = ny;
+          direction *= -1;
+        }
+
+        if(!tirGood){
+          drawRay(ctx, 330, y - bounceHeight, 380, y - 105, "#dc2626", 3, true);
+          drawRay(ctx, 560, y + bounceHeight, 610, y + 105, "#dc2626", 3, true);
+        }
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "800 12px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(tirGood ? "light stays trapped by repeated total internal reflection" : "weak conditions allow some signal to leak", 500, y + 104);
+
+        drawLabelBox(335, 420, "Total internal reflection", "refractive index and alignment affect signal trapping", "#1d4ed8");
+      }
+
+      function graphValueFromTrial(trial, key){
+        if(key === "magnification") return trial.magnificationValue;
+        if(key === "brightness") return trial.brightnessValue;
+        if(key === "quality") return trial.qualityValue;
+        return trial.impactValue;
+      }
+
+      function currentGraphValue(key){
+        const values = currentGraphValues();
+
+        if(key === "magnification") return values.magnificationValue;
+        if(key === "brightness") return values.brightnessValue;
+        if(key === "quality") return values.qualityValue;
+        return values.impactValue;
+      }
+
+      function drawGraph(){
+        const w = graphCanvas.width;
+        const h = graphCanvas.height;
+        const margin = {left:52, right:18, top:36, bottom:42};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+        const key = ui.graphSelect.value;
+        const currentValue = currentGraphValue(key);
+        const allValues = trials.map(t => graphValueFromTrial(t, key)).concat([currentValue]);
+        const maxY = key === "magnification" ? Math.max(100, ...allValues) : 100;
+        const colour = key === "magnification" ? "#2563eb" :
+                       key === "brightness" ? "#f59e0b" :
+                       key === "quality" ? "#16a34a" : "#7c3aed";
+
+        gtx.clearRect(0,0,w,h);
+        gtx.fillStyle = "#ffffff";
+        gtx.fillRect(0,0,w,h);
+
+        gtx.strokeStyle = "#cbd5e1";
+        gtx.lineWidth = 1;
+
+        for(let i = 0; i <= 4; i++){
+          const y = margin.top + i * plotH / 4;
+          gtx.beginPath();
+          gtx.moveTo(margin.left, y);
+          gtx.lineTo(margin.left + plotW, y);
+          gtx.stroke();
+
+          const labelValue = maxY - (i * maxY / 4);
+          gtx.fillStyle = "#64748b";
+          gtx.font = "800 10px system-ui, sans-serif";
+          gtx.textAlign = "right";
+          gtx.fillText(rounded(labelValue,0), margin.left - 8, y + 4);
+        }
+
+        gtx.strokeStyle = "#334155";
+        gtx.lineWidth = 1.5;
+        gtx.beginPath();
+        gtx.moveTo(margin.left, margin.top);
+        gtx.lineTo(margin.left, margin.top + plotH);
+        gtx.lineTo(margin.left + plotW, margin.top + plotH);
+        gtx.stroke();
+
+        const graphTitle = {
+          magnification:"Design vs magnification",
+          brightness:"Aperture vs brightness",
+          quality:"Alignment vs image quality",
+          impact:"Law-to-technology link"
+        }[key];
+
+        gtx.fillStyle = "#0f172a";
+        gtx.font = "900 14px system-ui, sans-serif";
+        gtx.textAlign = "left";
+        gtx.fillText(graphTitle, 14, 20);
+
+        function mapX(index, total){
+          return margin.left + ((index + 1) / Math.max(2, total + 1)) * plotW;
+        }
+
+        function mapY(value){
+          return margin.top + plotH - (value / maxY) * plotH;
+        }
+
+        const totalPoints = trials.length + 1;
+
+        trials.forEach(function(trial, index){
+          const x = mapX(index, totalPoints);
+          const y = mapY(graphValueFromTrial(trial, key));
+
+          gtx.fillStyle = colour;
+          gtx.beginPath();
+          gtx.arc(x, y, 5, 0, Math.PI * 2);
+          gtx.fill();
+
+          gtx.fillStyle = "#64748b";
+          gtx.font = "800 10px system-ui, sans-serif";
+          gtx.textAlign = "center";
+          gtx.fillText(String(trial.id), x, margin.top + plotH + 18);
+        });
+
+        const currentX = mapX(trials.length, totalPoints);
+        const currentY = mapY(currentValue);
+
+        gtx.save();
+        gtx.strokeStyle = "#0f172a";
+        gtx.fillStyle = "rgba(255,255,255,0.94)";
+        gtx.lineWidth = 2.5;
+        gtx.beginPath();
+        gtx.arc(currentX, currentY, 7, 0, Math.PI * 2);
+        gtx.fill();
+        gtx.stroke();
+
+        gtx.fillStyle = colour;
+        gtx.beginPath();
+        gtx.arc(currentX, currentY, 3.8, 0, Math.PI * 2);
+        gtx.fill();
+
+        gtx.fillStyle = "#0f172a";
+        gtx.font = "900 10.5px system-ui, sans-serif";
+        gtx.textAlign = "center";
+        gtx.fillText("current", currentX, currentY - 13);
+        gtx.restore();
+
+        if(trials.length === 0){
+          gtx.fillStyle = "#64748b";
+          gtx.font = "800 12px system-ui, sans-serif";
+          gtx.textAlign = "center";
+          gtx.fillText("Current design marker shown. Record trials to compare designs.", w / 2, h - 18);
+        }else{
+          gtx.fillStyle = "#64748b";
+          gtx.font = "800 11px system-ui, sans-serif";
+          gtx.textAlign = "center";
+          gtx.fillText("trial number plus current design", margin.left + plotW / 2, h - 10);
+        }
+
+        gtx.save();
+        gtx.translate(15, margin.top + plotH / 2);
+        gtx.rotate(-Math.PI / 2);
+        gtx.textAlign = "center";
+        gtx.fillStyle = "#64748b";
+        gtx.font = "800 11px system-ui, sans-serif";
+        gtx.fillText(key === "magnification" ? "magnification" : "relative value / %", 0, 0);
+        gtx.restore();
+      }
+
+      function updateAll(){
+        updateReadouts();
+        updateImpactPanel();
+        updateTable();
+        drawSimulation();
+        drawGraph();
+      }
+
+      ui.instrumentSelect.addEventListener("change", function(){
+        ui.lawSelect.value = defaultLawForInstrument();
+        updateAll();
+      });
+
+      [
+        ui.lawSelect,
+        ui.graphSelect,
+        ui.objectiveSlider,
+        ui.eyepieceSlider,
+        ui.apertureSlider,
+        ui.alignmentSlider,
+        ui.surfaceSlider,
+        ui.indexSlider
+      ].forEach(function(control){
+        control.addEventListener("input", updateAll);
+        control.addEventListener("change", updateAll);
+      });
+
+      ui.recordBtn.addEventListener("click", recordTrial);
+      ui.autoBtn.addEventListener("click", autoSeries);
+      ui.resetBtn.addEventListener("click", resetData);
+      ui.exportBtn.addEventListener("click", exportCSV);
+
+      updateAll();
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initOpticalTechnologyBuilder);
+    }else{
+      initOpticalTechnologyBuilder();
+    }
+  </script>
+</body>
+</html>
