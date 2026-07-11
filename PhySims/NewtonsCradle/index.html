@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newton's Cradle Momentum Transfer Sim</title>
+  <style>
+    :root{
+      --bg:#eef7ff;
+      --card:#ffffff;
+      --ink:#17324d;
+      --muted:#5e7187;
+      --blue:#2563eb;
+      --blue2:#38bdf8;
+      --deep:#0f3f78;
+      --soft:#dbeafe;
+      --line:#cfe1f5;
+      --good:#15803d;
+      --warn:#b45309;
+      --bad:#b91c1c;
+      --shadow:0 16px 36px rgba(31,83,132,.12);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:radial-gradient(circle at top left, #ffffff 0, var(--bg) 34%, #eaf4ff 100%);
+      color:var(--ink);
+    }
+    .page{width:min(1180px, calc(100% - 28px)); margin:0 auto 40px;}
+    .topbar{display:flex; justify-content:space-between; align-items:center; padding:18px 0 12px; gap:12px;}
+    .back{
+      border:0; border-radius:999px; padding:10px 16px; background:#fff; color:var(--deep);
+      box-shadow:0 8px 20px rgba(47,103,166,.12); font-weight:800; cursor:pointer;
+    }
+    .badge{font-weight:800; color:var(--muted); font-size:.92rem;}
+    .hero{
+      border-radius:30px; overflow:hidden; padding:30px;
+      background:linear-gradient(135deg, #0f3f78 0%, #2563eb 52%, #38bdf8 100%);
+      color:#fff; box-shadow:var(--shadow); position:relative;
+    }
+    .hero:after{
+      content:""; position:absolute; inset:auto -70px -120px auto; width:320px; height:320px;
+      background:rgba(255,255,255,.18); border-radius:50%;
+    }
+    .hero h1{margin:0 0 8px; font-size:clamp(2rem, 5vw, 4rem); line-height:1; letter-spacing:-.04em;}
+    .hero p{margin:0; max-width:850px; font-size:1.08rem; line-height:1.5; opacity:.94;}
+    .layout{display:grid; grid-template-columns:330px 1fr; gap:18px; margin-top:18px; align-items:start;}
+    .card{
+      background:rgba(255,255,255,.94); border:1px solid rgba(207,225,245,.95); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px;
+    }
+    .card h2,.card h3{margin:0 0 12px; color:var(--deep);}
+    .card h2{font-size:1.25rem}.card h3{font-size:1.04rem}
+    .small{font-size:.9rem; color:var(--muted); line-height:1.45;}
+    .control-intro{margin:0 0 14px;}
+    .side-panel{position:static;}
+    .controls{position:static;}
+    .controls-wide{margin-top:18px;}
+    .model-card{margin-top:18px;}
+    .control-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px 18px; align-items:start;}
+    .control-grid .control{margin:0; min-height:104px;}
+    .control{margin:15px 0; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+    .control:last-child{border-bottom:0; padding-bottom:0;}
+    label{display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:.93rem; gap:8px;}
+    input[type="range"]{width:100%; accent-color:var(--blue); margin-top:8px;}
+    select{
+      width:100%; margin-top:8px; padding:10px 12px; border-radius:14px; border:1px solid var(--line);
+      background:#f8fbff; color:var(--ink); font-weight:700;
+    }
+    .seg{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:9px;}
+    .seg button,.preset button,.action-btn{
+      border:0; border-radius:14px; padding:10px 10px; font-weight:900; cursor:pointer;
+      background:#eaf2ff; color:#1d4ed8; transition:transform .12s ease, background .12s ease;
+    }
+    .seg button:hover,.preset button:hover,.action-btn:hover,.back:hover{transform:translateY(-1px)}
+    .seg button.active{background:linear-gradient(135deg,var(--blue),var(--blue2)); color:#fff;}
+    .preset{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:9px;}
+    .graph-note{margin-top:10px; padding:10px 12px; border-radius:14px; background:#f8fbff; border:1px solid var(--line);}
+    .actions{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px;}
+    .controls-wide .actions{grid-template-columns:repeat(6,minmax(0,1fr)); margin:4px 0 14px;}
+    .action-btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue2)); color:#fff;}
+    .action-btn.warning{background:#fff7ed; color:var(--warn);}
+    .action-btn.ghost{background:#f3f8ff; color:var(--deep);}
+    .sim-card{padding:14px;}
+    .canvas-wrap{position:relative; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:linear-gradient(#f8fcff,#eaf6ff); min-height:430px;}
+    canvas{display:block; width:100%;}
+    #cradleCanvas{height:430px;}
+    .overlay-pill{
+      position:absolute; left:16px; top:14px; background:rgba(255,255,255,.9); border:1px solid rgba(207,225,245,.9);
+      border-radius:999px; padding:8px 12px; font-weight:900; color:var(--deep); box-shadow:0 8px 22px rgba(29,78,216,.1);
+    }
+    .readouts{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:12px;}
+    .readout{background:#f8fbff; border:1px solid var(--line); border-radius:18px; padding:12px; min-height:86px;}
+    .readout .num{font-size:1.38rem; font-weight:950; color:var(--deep); line-height:1.1;}
+    .readout .lab{font-size:.78rem; font-weight:850; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-top:6px;}
+    .main-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:18px; margin-top:18px; align-items:start;}
+    .graph-card canvas{height:245px; border:1px solid var(--line); border-radius:18px; background:#fff;}
+    .legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:9px; font-size:.86rem; font-weight:800; color:var(--muted);}
+    .dot{width:11px; height:11px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:-1px;}
+    .dot.total{background:#2563eb}.dot.pe{background:#7c3aed}.dot.ke{background:#f97316}
+    .evidence-list{display:grid; gap:10px;}
+    .model-card .evidence-list{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .evidence-item{padding:12px; border-radius:16px; border:1px solid var(--line); background:#f8fbff;}
+    .evidence-item strong{color:var(--deep)}
+    .challenge{border-left:5px solid var(--blue); padding:12px 14px; background:#f4f9ff; border-radius:16px; margin-top:10px;}
+    .bottom-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;}
+    ol,ul{padding-left:20px; margin:8px 0 0;} li{margin:6px 0;}
+    .test-box{border:1px solid var(--line); border-radius:16px; padding:12px; background:#f8fbff; margin-top:10px;}
+    .test-options{display:grid; gap:8px; margin-top:8px;}
+    .test-options button{text-align:left; border:1px solid var(--line); border-radius:13px; padding:10px 12px; background:#fff; cursor:pointer; font-weight:750; color:var(--ink);}
+    .test-options button.correct{border-color:#86efac; background:#f0fdf4; color:var(--good)}
+    .test-options button.wrong{border-color:#fecaca; background:#fef2f2; color:var(--bad)}
+    .feedback{min-height:24px; font-weight:800; margin-top:8px;}
+    .note{background:#fffbeb; border:1px solid #fde68a; color:#7c4a03; border-radius:16px; padding:12px; margin-top:10px; font-size:.92rem; line-height:1.45;}
+    @media(max-width:930px){
+      .layout,.main-grid,.bottom-grid,.control-grid,.model-card .evidence-list{grid-template-columns:1fr}.side-panel{position:static}.readouts{grid-template-columns:repeat(2,1fr)}
+      .controls-wide .actions{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:560px){.hero{padding:22px}.readouts{grid-template-columns:1fr}.actions,.controls-wide .actions{grid-template-columns:1fr}.seg{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <button class="back" onclick="window.location.href='../index.html'">← Back to main SciSims page</button>
+      <div class="badge">PhysSims · Forces and motion</div>
+    </div>
+
+    <section class="hero">
+      <h1>Newton's Cradle</h1>
+      <p>Model how momentum and energy are transferred through a line of colliding balls. Change the number of balls released, the starting angle and the collision efficiency to test what makes the cradle keep moving.</p>
+    </section>
+
+    <div class="layout">
+      <aside class="card graph-card side-panel">
+        <h2>Energy evidence</h2>
+        <p class="small">Use this graph to compare total energy, gravitational potential energy and kinetic energy across the whole trial.</p>
+        <canvas id="graphCanvas" aria-label="Energy graph"></canvas>
+        <div class="legend">
+          <span><span class="dot total"></span>Total energy</span>
+          <span><span class="dot pe"></span>Potential energy</span>
+          <span><span class="dot ke"></span>Kinetic energy</span>
+        </div>
+        <div class="graph-note small">Graph shows the current trial from release to now. Press Reset to start a new trial.</div>
+      </aside>
+
+      <main>
+        <section class="card sim-card">
+          <div class="canvas-wrap">
+            <div id="statusPill" class="overlay-pill">Ready: pull back and release</div>
+            <canvas id="cradleCanvas" aria-label="Newton's cradle animation"></canvas>
+          </div>
+          <div class="readouts">
+            <div class="readout"><div id="inputBalls" class="num">1</div><div class="lab">Input balls</div></div>
+            <div class="readout"><div id="outputBalls" class="num">1</div><div class="lab">Output balls</div></div>
+            <div class="readout"><div id="ampRead" class="num">35°</div><div class="lab">Current swing</div></div>
+            <div class="readout"><div id="energyRead" class="num">100%</div><div class="lab">Energy remaining</div></div>
+            <div class="readout"><div id="collisionRead" class="num">0</div><div class="lab">Collisions</div></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <section class="card controls controls-wide">
+      <h2>Controls</h2>
+      <div class="actions">
+        <button id="releaseBtn" class="action-btn primary">Release</button>
+        <button id="pauseBtn" class="action-btn ghost">Pause</button>
+        <button id="resetBtn" class="action-btn warning">Reset</button>
+        <button id="stepBtn" class="action-btn ghost">Step collision</button>
+        <button id="csvBtn" class="action-btn ghost">Download CSV data</button>
+        <button id="soundBtn" class="action-btn ghost" aria-pressed="true">Sound on</button>
+      </div>
+      <p class="small control-intro">Start simple: release one ball, then compare it with two or three balls. Watch whether the same number of balls moves out the other side.</p>
+
+      <div class="control-grid">
+        <div class="control">
+          <label>Challenge mode</label>
+          <select id="challengeSelect">
+            <option value="pattern">1. Find the pattern</option>
+            <option value="energy">2. Track the energy</option>
+            <option value="losses">3. Test energy losses</option>
+          </select>
+          <div id="challengeText" class="challenge small"></div>
+        </div>
+
+        <div class="control">
+          <label>Number of balls released <span id="ballsVal">1</span></label>
+          <div class="seg" role="group" aria-label="Number of balls released">
+            <button class="active" data-balls="1">1 ball</button>
+            <button data-balls="2">2 balls</button>
+            <button data-balls="3">3 balls</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <label for="angleRange">Starting angle <span id="angleVal">35°</span></label>
+          <input id="angleRange" type="range" min="10" max="55" value="35" step="1" />
+        </div>
+
+        <div class="control">
+          <label for="elasticRange">Collision efficiency <span id="elasticVal">96%</span></label>
+          <input id="elasticRange" type="range" min="55" max="100" value="96" step="1" />
+        </div>
+
+        <div class="control">
+          <label for="dragRange">Air and support loss <span id="dragVal">3%</span></label>
+          <input id="dragRange" type="range" min="0" max="20" value="3" step="1" />
+        </div>
+
+        <div class="control">
+          <label for="speedRange">Simulation speed <span id="speedVal">1.0×</span></label>
+          <input id="speedRange" type="range" min="50" max="180" value="100" step="10" />
+        </div>
+
+        <div class="control">
+          <label>Presets</label>
+          <div class="preset">
+            <button onclick="applyPreset(1)">Ideal steel collision</button>
+            <button onclick="applyPreset(2)">Real classroom cradle</button>
+            <button onclick="applyPreset(3)">Soft / lossy collision</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card model-card">
+      <h3>What the model shows</h3>
+      <div class="evidence-list">
+        <div class="evidence-item"><strong>Momentum pattern:</strong> when 1, 2 or 3 balls are released, the same number should move out the other side.</div>
+        <div class="evidence-item"><strong>Energy transfer:</strong> a higher collision efficiency keeps the cradle moving for longer.</div>
+        <div class="evidence-item"><strong>Energy loss:</strong> as sound, heat and air resistance increase, the swing angle gets smaller.</div>
+      </div>
+      <div class="note"><strong>Model limit:</strong> this is a simplified teaching model. A real Newton's cradle transfers momentum and kinetic energy while also losing some energy to sound, heat, tiny deformations and support movement. The sim represents those losses using the collision efficiency and air/support loss sliders.</div>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="card">
+        <h3>How to use</h3>
+        <ol>
+          <li>Choose how many balls to release.</li>
+          <li>Set the starting angle and collision efficiency.</li>
+          <li>Press <strong>Release</strong> and watch which balls move after the collision.</li>
+          <li>Compare the animation with the energy graph and readouts.</li>
+          <li>Use the CSV button to collect evidence for a short investigation.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3>Self-test</h3>
+        <div class="test-box">
+          <strong>Question 1</strong>
+          <p class="small">If two balls are pulled back and released in an ideal Newton's cradle, what should happen on the other side?</p>
+          <div class="test-options" data-answer="1">
+            <button>Only one ball should move out.</button>
+            <button>Two balls should move out.</button>
+            <button>All five balls should move together.</button>
+            <button>No balls should move because energy is lost.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="test-box">
+          <strong>Question 2</strong>
+          <p class="small">Why does a real Newton's cradle eventually stop?</p>
+          <div class="test-options" data-answer="2">
+            <button>Momentum disappears after each collision.</button>
+            <button>Gravity stops acting on the balls.</button>
+            <button>Energy is transferred to sound, heat and air movement.</button>
+            <button>The balls become heavier after each swing.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  const cradle = document.getElementById('cradleCanvas');
+  const graph = document.getElementById('graphCanvas');
+  const ctx = cradle.getContext('2d');
+  const gctx = graph.getContext('2d');
+
+  const ui = {
+    ballsVal: document.getElementById('ballsVal'),
+    angleVal: document.getElementById('angleVal'),
+    elasticVal: document.getElementById('elasticVal'),
+    dragVal: document.getElementById('dragVal'),
+    speedVal: document.getElementById('speedVal'),
+    angleRange: document.getElementById('angleRange'),
+    elasticRange: document.getElementById('elasticRange'),
+    dragRange: document.getElementById('dragRange'),
+    speedRange: document.getElementById('speedRange'),
+    releaseBtn: document.getElementById('releaseBtn'),
+    pauseBtn: document.getElementById('pauseBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    stepBtn: document.getElementById('stepBtn'),
+    csvBtn: document.getElementById('csvBtn'),
+    soundBtn: document.getElementById('soundBtn'),
+    statusPill: document.getElementById('statusPill'),
+    inputBalls: document.getElementById('inputBalls'),
+    outputBalls: document.getElementById('outputBalls'),
+    ampRead: document.getElementById('ampRead'),
+    energyRead: document.getElementById('energyRead'),
+    collisionRead: document.getElementById('collisionRead'),
+    challengeSelect: document.getElementById('challengeSelect'),
+    challengeText: document.getElementById('challengeText')
+  };
+
+  const challenges = {
+    pattern: 'Test the rule: the number of balls that leave should match the number released. Try 1, then 2, then 3 balls.',
+    energy: 'Increase the starting angle. Does more starting energy change the ball-out pattern, or just the size of the swing?',
+    losses: 'Lower the collision efficiency and increase air/support loss. Use the graph to explain why the cradle stops.'
+  };
+
+  const state = {
+    totalBalls: 5,
+    releasedBalls: 1,
+    initialAngleDeg: 35,
+    amplitude: degToRad(35),
+    initialAmplitude: degToRad(35),
+    elasticity: 0.96,
+    dragLoss: 0.03,
+    speed: 1,
+    phase: 'ready',
+    phaseT: 0,
+    running: false,
+    paused: false,
+    time: 0,
+    collisions: 0,
+    lastFrame: performance.now(),
+    graphData: [],
+    csvRows: [],
+    flash: '',
+    flashTimer: 0,
+    soundOn: true,
+    audioContext: null
+  };
+
+
+  function ensureAudio(){
+    if(!state.audioContext){
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(AudioCtx) state.audioContext = new AudioCtx();
+    }
+    if(state.audioContext && state.audioContext.state === 'suspended') state.audioContext.resume();
+  }
+  function playCollisionClick(strength=1){
+    if(!state.soundOn) return;
+    ensureAudio();
+    const audio = state.audioContext;
+    if(!audio) return;
+    const now = audio.currentTime;
+    const gain = audio.createGain();
+    const osc = audio.createOscillator();
+    const filter = audio.createBiquadFilter();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(860 + 80 * clamp(strength, 0, 1), now);
+    filter.type = 'highpass';
+    filter.frequency.setValueAtTime(420, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.13 * clamp(strength, 0.25, 1), now + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
+  function degToRad(deg){ return deg * Math.PI / 180; }
+  function radToDeg(rad){ return rad * 180 / Math.PI; }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+  function period(){ return 2 * Math.PI * Math.sqrt(0.9 / 9.8); }
+  function energyFraction(){
+    const ratio = state.initialAmplitude > 0 ? state.amplitude / state.initialAmplitude : 0;
+    return clamp(ratio * ratio, 0, 1);
+  }
+  function currentAngle(){
+    const T = period();
+    if(state.phase === 'ready') return -state.amplitude;
+    if(state.phase === 'leftRelease'){
+      const p = clamp(state.phaseT / (T/4), 0, 1);
+      return -state.amplitude * Math.cos(p * Math.PI / 2);
+    }
+    if(state.phase === 'rightSwing'){
+      const p = clamp(state.phaseT / (T/2), 0, 1);
+      return state.amplitude * Math.sin(p * Math.PI);
+    }
+    if(state.phase === 'leftSwing'){
+      const p = clamp(state.phaseT / (T/2), 0, 1);
+      return -state.amplitude * Math.sin(p * Math.PI);
+    }
+    return 0;
+  }
+  function activeIndices(){
+    const n = state.releasedBalls;
+    if(state.phase === 'ready' || state.phase === 'leftRelease' || state.phase === 'leftSwing'){
+      return Array.from({length:n}, (_,i)=>i);
+    }
+    if(state.phase === 'rightSwing'){
+      return Array.from({length:n}, (_,i)=>state.totalBalls - n + i);
+    }
+    return [];
+  }
+  function phaseName(){
+    if(state.phase === 'ready') return 'Ready';
+    if(state.phase === 'leftRelease') return 'Input side moving towards collision';
+    if(state.phase === 'rightSwing') return 'Output side swinging';
+    if(state.phase === 'leftSwing') return 'Energy has transferred back';
+    if(state.phase === 'stopped') return 'Stopped';
+    return 'Running';
+  }
+  function potentialFraction(theta){
+    const denom = Math.max(0.0001, 1 - Math.cos(state.initialAmplitude));
+    return clamp((1 - Math.cos(Math.abs(theta))) / denom, 0, 1) * energyFraction();
+  }
+  function kineticFraction(theta){
+    return clamp(energyFraction() - potentialFraction(theta), 0, 1);
+  }
+  function updateReadouts(){
+    const angle = Math.abs(radToDeg(currentAngle()));
+    const e = energyFraction() * 100;
+    ui.inputBalls.textContent = state.releasedBalls;
+    ui.outputBalls.textContent = state.releasedBalls;
+    ui.ampRead.textContent = `${Math.round(angle)}°`;
+    ui.energyRead.textContent = `${Math.round(e)}%`;
+    ui.collisionRead.textContent = state.collisions;
+    ui.statusPill.textContent = state.flash || `${phaseName()} · ${Math.round(e)}% energy`;
+    ui.ballsVal.textContent = state.releasedBalls;
+    ui.angleVal.textContent = `${state.initialAngleDeg}°`;
+    ui.elasticVal.textContent = `${Math.round(state.elasticity * 100)}%`;
+    ui.dragVal.textContent = `${Math.round(state.dragLoss * 100)}%`;
+    ui.speedVal.textContent = `${state.speed.toFixed(1)}×`;
+  }
+  function resizeCanvas(canvasEl){
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvasEl.getBoundingClientRect();
+    const height = canvasEl === cradle ? 430 : 245;
+    canvasEl.width = Math.max(320, Math.floor(rect.width * dpr));
+    canvasEl.height = Math.floor(height * dpr);
+    const c = canvasEl.getContext('2d');
+    c.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function drawCradle(){
+    resizeCanvas(cradle);
+    const w = cradle.getBoundingClientRect().width;
+    const h = 430;
+    ctx.clearRect(0,0,w,h);
+
+    const pivotY = 64;
+    const L = Math.min(235, h * 0.56);
+    const spacing = Math.min(68, w / 9.2);
+    const radius = Math.min(29, spacing * 0.43);
+    const startX = w/2 - spacing * (state.totalBalls - 1) / 2;
+    const active = new Set(activeIndices());
+    const theta = currentAngle();
+
+    // background grid
+    ctx.save();
+    ctx.strokeStyle = 'rgba(37,99,235,.08)';
+    ctx.lineWidth = 1;
+    for(let x = 20; x < w; x += 36){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+    for(let y = 20; y < h; y += 36){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+    ctx.restore();
+
+    // top frame
+    ctx.strokeStyle = '#143d66';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(startX - spacing*1.2, pivotY - 20);
+    ctx.lineTo(startX + spacing*5.2, pivotY - 20);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(20,61,102,.38)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX - spacing*1.05, pivotY - 20);
+    ctx.lineTo(startX - spacing*.75, h-30);
+    ctx.moveTo(startX + spacing*5.05, pivotY - 20);
+    ctx.lineTo(startX + spacing*4.75, h-30);
+    ctx.stroke();
+
+    const balls = [];
+    for(let i=0;i<state.totalBalls;i++){
+      const pivotX = startX + i * spacing;
+      const a = active.has(i) ? theta : 0;
+      const x = pivotX + L * Math.sin(a);
+      const y = pivotY + L * Math.cos(a);
+      balls.push({i,pivotX,x,y,a});
+    }
+
+    // strings behind balls
+    balls.forEach(b => {
+      ctx.strokeStyle = active.has(b.i) ? 'rgba(37,99,235,.72)' : 'rgba(45,70,95,.55)';
+      ctx.lineWidth = active.has(b.i) ? 2.6 : 2;
+      ctx.beginPath();
+      ctx.moveTo(b.pivotX, pivotY);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+      ctx.fillStyle = '#143d66';
+      ctx.beginPath();
+      ctx.arc(b.pivotX, pivotY, 4, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // reference line
+    ctx.save();
+    ctx.strokeStyle = 'rgba(14,80,142,.18)';
+    ctx.setLineDash([5,7]);
+    ctx.beginPath();
+    ctx.moveTo(startX - spacing, pivotY + L);
+    ctx.lineTo(startX + spacing * 5, pivotY + L);
+    ctx.stroke();
+    ctx.restore();
+
+    // balls
+    balls.forEach(b => {
+      const grad = ctx.createRadialGradient(b.x - radius*.35, b.y - radius*.45, 4, b.x, b.y, radius*1.15);
+      if(active.has(b.i)){
+        grad.addColorStop(0, '#f8fbff');
+        grad.addColorStop(.35, '#93c5fd');
+        grad.addColorStop(1, '#1d4ed8');
+      }else{
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(.42, '#dbeafe');
+        grad.addColorStop(1, '#7898ba');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,radius,0,Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(18,55,88,.45)';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+      ctx.fillStyle = active.has(b.i) ? '#ffffff' : '#17324d';
+      ctx.font = '900 13px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(b.i+1), b.x, b.y);
+    });
+
+    // momentum arrows
+    const drawArrow = (x1,y1,x2,y2,label) => {
+      ctx.save();
+      ctx.strokeStyle = '#0f766e';
+      ctx.fillStyle = '#0f766e';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      const angle = Math.atan2(y2-y1, x2-x1);
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-12*Math.cos(angle-.45), y2-12*Math.sin(angle-.45));
+      ctx.lineTo(x2-12*Math.cos(angle+.45), y2-12*Math.sin(angle+.45));
+      ctx.closePath(); ctx.fill();
+      ctx.font = '800 13px system-ui, sans-serif';
+      ctx.fillText(label, (x1+x2)/2, y1-10);
+      ctx.restore();
+    };
+    if(state.phase === 'leftRelease') drawArrow(startX - spacing*.8, h-82, startX + spacing*.55, h-82, 'momentum in');
+    if(state.phase === 'rightSwing') drawArrow(startX + spacing*3.55, h-82, startX + spacing*5.0, h-82, 'momentum out');
+    if(state.phase === 'leftSwing') drawArrow(startX + spacing*1.2, h-82, startX - spacing*.3, h-82, 'transfer back');
+
+    // collision flash
+    if(state.flashTimer > 0){
+      ctx.save();
+      ctx.globalAlpha = clamp(state.flashTimer / 0.55, 0, 1);
+      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      ctx.strokeStyle = 'rgba(37,99,235,.35)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(w/2 - 145, 92, 290, 46, 18);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#0f3f78';
+      ctx.font = '900 15px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(state.flash, w/2, 120);
+      ctx.restore();
+    }
+  }
+  function drawGraph(){
+    resizeCanvas(graph);
+    const w = graph.getBoundingClientRect().width;
+    const h = 245;
+    gctx.clearRect(0,0,w,h);
+    const padL = 42, padR = 16, padT = 18, padB = 32;
+    const gw = w - padL - padR, gh = h - padT - padB;
+    gctx.fillStyle = '#ffffff';
+    gctx.fillRect(0,0,w,h);
+    gctx.strokeStyle = '#e6eef8';
+    gctx.lineWidth = 1;
+    for(let i=0;i<=4;i++){
+      const y = padT + gh * i/4;
+      gctx.beginPath(); gctx.moveTo(padL,y); gctx.lineTo(w-padR,y); gctx.stroke();
+      gctx.fillStyle = '#6b7f94';
+      gctx.font = '11px system-ui, sans-serif';
+      gctx.textAlign = 'right';
+      gctx.fillText(`${100 - i*25}`, padL-8, y+4);
+    }
+    gctx.strokeStyle = '#cfe1f5';
+    gctx.beginPath(); gctx.moveTo(padL,padT); gctx.lineTo(padL,padT+gh); gctx.lineTo(w-padR,padT+gh); gctx.stroke();
+
+    const data = state.graphData;
+    const startTime = data.length ? data[0].time : 0;
+    const endTime = data.length ? data[data.length - 1].time : 0;
+    const duration = Math.max(0.01, endTime - startTime);
+
+    // x-axis time markers for the whole run, not just the most recent samples
+    gctx.fillStyle = '#6b7f94';
+    gctx.font = '10px system-ui, sans-serif';
+    gctx.textAlign = 'center';
+    [0, .25, .5, .75, 1].forEach(frac => {
+      const x = padL + gw * frac;
+      const t = startTime + duration * frac;
+      gctx.strokeStyle = 'rgba(207,225,245,.65)';
+      gctx.beginPath(); gctx.moveTo(x, padT); gctx.lineTo(x, padT + gh); gctx.stroke();
+      gctx.fillText(`${t.toFixed(1)} s`, x, padT + gh + 17);
+    });
+
+    const plot = (key, colour) => {
+      if(data.length < 2) return;
+      gctx.strokeStyle = colour;
+      gctx.lineWidth = 2.4;
+      gctx.beginPath();
+      data.forEach((d,i) => {
+        const frac = duration > 0.01 ? (d.time - startTime) / duration : (i / Math.max(1, data.length - 1));
+        const x = padL + clamp(frac, 0, 1) * gw;
+        const y = padT + gh * (1 - clamp(d[key], 0, 100)/100);
+        if(i===0) gctx.moveTo(x,y); else gctx.lineTo(x,y);
+      });
+      gctx.stroke();
+    };
+    plot('total','#2563eb');
+    plot('pe','#7c3aed');
+    plot('ke','#f97316');
+    gctx.fillStyle = '#6b7f94';
+    gctx.font = '11px system-ui, sans-serif';
+    gctx.textAlign = 'center';
+    gctx.fillText('Time since release / s →', padL + gw/2, h-6);
+  }
+  function logData(force=false){
+    const theta = currentAngle();
+    const total = energyFraction() * 100;
+    const pe = potentialFraction(theta) * 100;
+    const ke = kineticFraction(theta) * 100;
+    const row = {
+      time: state.time.toFixed(2),
+      phase: phaseName(),
+      ballsReleased: state.releasedBalls,
+      angleDeg: Math.abs(radToDeg(theta)).toFixed(1),
+      totalEnergyPercent: total.toFixed(1),
+      potentialEnergyPercent: pe.toFixed(1),
+      kineticEnergyPercent: ke.toFixed(1),
+      collisions: state.collisions
+    };
+    state.graphData.push({time: state.time, total, pe, ke});
+    if(state.graphData.length > 2400) state.graphData.shift();
+    if(force || state.csvRows.length === 0 || state.time - Number(state.csvRows[state.csvRows.length-1].time) >= 0.18){
+      state.csvRows.push(row);
+    }
+    // Keep the full graph history for the current trial so the graph shows the whole running time.
+    if(state.csvRows.length > 2000) state.csvRows.shift();
+  }
+  function startRun(){
+    state.running = true;
+    state.paused = false;
+    state.phase = 'leftRelease';
+    state.phaseT = 0;
+    state.time = 0;
+    state.collisions = 0;
+    state.amplitude = degToRad(state.initialAngleDeg);
+    state.initialAmplitude = degToRad(state.initialAngleDeg);
+    state.graphData = [];
+    state.csvRows = [];
+    state.flash = '';
+    state.flashTimer = 0;
+    ui.pauseBtn.textContent = 'Pause';
+    logData(true);
+  }
+  function resetRun(){
+    state.running = false;
+    state.paused = false;
+    state.phase = 'ready';
+    state.phaseT = 0;
+    state.time = 0;
+    state.collisions = 0;
+    state.amplitude = degToRad(state.initialAngleDeg);
+    state.initialAmplitude = degToRad(state.initialAngleDeg);
+    state.graphData = [];
+    state.csvRows = [];
+    state.flash = '';
+    state.flashTimer = 0;
+    ui.pauseBtn.textContent = 'Pause';
+    logData(true);
+    updateReadouts(); drawCradle(); drawGraph();
+  }
+  function collisionTransfer(nextPhase){
+    state.collisions++;
+    playCollisionClick(energyFraction());
+    state.amplitude *= state.elasticity * (1 - state.dragLoss);
+    state.phase = nextPhase;
+    state.phaseT = 0;
+    state.flash = `${state.releasedBalls} in → ${state.releasedBalls} out`;
+    state.flashTimer = 0.55;
+    logData(true);
+    if(radToDeg(state.amplitude) < 1.6){
+      state.phase = 'stopped';
+      state.running = false;
+      state.flash = 'Energy too low: cradle stopped';
+      state.flashTimer = 1.0;
+    }
+  }
+  function stepCollision(){
+    if(state.phase === 'ready') startRun();
+    const T = period();
+    if(state.phase === 'leftRelease'){
+      state.phaseT = T/4;
+      collisionTransfer('rightSwing');
+    }else if(state.phase === 'rightSwing'){
+      state.phaseT = T/2;
+      collisionTransfer('leftSwing');
+    }else if(state.phase === 'leftSwing'){
+      state.phaseT = T/2;
+      collisionTransfer('rightSwing');
+    }
+    drawCradle(); drawGraph(); updateReadouts();
+  }
+  function tick(now){
+    const rawDt = Math.min(0.05, (now - state.lastFrame)/1000);
+    state.lastFrame = now;
+    const dt = rawDt * state.speed;
+
+    if(state.running && !state.paused){
+      state.time += dt;
+      state.phaseT += dt;
+      if(state.flashTimer > 0){
+        state.flashTimer -= rawDt;
+        if(state.flashTimer <= 0) state.flash = '';
+      }
+      const T = period();
+      if(state.phase === 'leftRelease' && state.phaseT >= T/4){
+        collisionTransfer('rightSwing');
+      }else if(state.phase === 'rightSwing' && state.phaseT >= T/2){
+        collisionTransfer('leftSwing');
+      }else if(state.phase === 'leftSwing' && state.phaseT >= T/2){
+        collisionTransfer('rightSwing');
+      }
+      logData();
+    }else if(state.flashTimer > 0){
+      state.flashTimer -= rawDt;
+      if(state.flashTimer <= 0) state.flash = '';
+    }
+    updateReadouts();
+    drawCradle();
+    drawGraph();
+    requestAnimationFrame(tick);
+  }
+
+  function setReleasedBalls(n){
+    state.releasedBalls = n;
+    document.querySelectorAll('.seg button').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.balls) === n));
+    resetRun();
+  }
+  function syncSliders(){
+    state.initialAngleDeg = Number(ui.angleRange.value);
+    state.elasticity = Number(ui.elasticRange.value) / 100;
+    state.dragLoss = Number(ui.dragRange.value) / 100;
+    state.speed = Number(ui.speedRange.value) / 100;
+    if(!state.running){
+      state.amplitude = degToRad(state.initialAngleDeg);
+      state.initialAmplitude = degToRad(state.initialAngleDeg);
+      state.phase = 'ready';
+      state.phaseT = 0;
+      state.graphData = [];
+      state.csvRows = [];
+      logData(true);
+    }
+    updateReadouts(); drawCradle(); drawGraph();
+  }
+  window.applyPreset = function(which){
+    if(which === 1){ ui.elasticRange.value = 100; ui.dragRange.value = 0; ui.angleRange.value = 35; }
+    if(which === 2){ ui.elasticRange.value = 96; ui.dragRange.value = 3; ui.angleRange.value = 35; }
+    if(which === 3){ ui.elasticRange.value = 72; ui.dragRange.value = 12; ui.angleRange.value = 35; }
+    syncSliders();
+  };
+  function updateChallenge(){ ui.challengeText.textContent = challenges[ui.challengeSelect.value]; }
+  function downloadCSV(){
+    const header = ['time_s','phase','balls_released','angle_deg','total_energy_percent','potential_energy_percent','kinetic_energy_percent','collisions'];
+    const rows = state.csvRows.map(r => [r.time, r.phase, r.ballsReleased, r.angleDeg, r.totalEnergyPercent, r.potentialEnergyPercent, r.kineticEnergyPercent, r.collisions]);
+    const csv = [header, ...rows].map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'newtons-cradle-data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  document.querySelectorAll('.seg button').forEach(btn => btn.addEventListener('click', () => setReleasedBalls(Number(btn.dataset.balls))));
+  [ui.angleRange, ui.elasticRange, ui.dragRange, ui.speedRange].forEach(input => input.addEventListener('input', syncSliders));
+  ui.challengeSelect.addEventListener('change', updateChallenge);
+  ui.releaseBtn.addEventListener('click', () => { ensureAudio(); startRun(); });
+  ui.pauseBtn.addEventListener('click', () => {
+    if(!state.running) return;
+    state.paused = !state.paused;
+    ui.pauseBtn.textContent = state.paused ? 'Resume' : 'Pause';
+  });
+  ui.resetBtn.addEventListener('click', resetRun);
+  ui.stepBtn.addEventListener('click', () => { ensureAudio(); stepCollision(); });
+  ui.soundBtn.addEventListener('click', () => {
+    state.soundOn = !state.soundOn;
+    ui.soundBtn.textContent = state.soundOn ? 'Sound on' : 'Sound off';
+    ui.soundBtn.setAttribute('aria-pressed', String(state.soundOn));
+    if(state.soundOn) playCollisionClick(0.35);
+  });
+  ui.csvBtn.addEventListener('click', downloadCSV);
+  window.addEventListener('resize', () => { drawCradle(); drawGraph(); });
+
+  document.querySelectorAll('.test-options').forEach(group => {
+    const correct = Number(group.dataset.answer);
+    const feedback = group.parentElement.querySelector('.feedback');
+    Array.from(group.children).forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        Array.from(group.children).forEach(b => b.classList.remove('correct','wrong'));
+        if(index === correct){
+          btn.classList.add('correct');
+          feedback.textContent = 'Correct. That is the momentum-transfer pattern.';
+          feedback.style.color = 'var(--good)';
+        }else{
+          btn.classList.add('wrong');
+          group.children[correct].classList.add('correct');
+          feedback.textContent = 'Not quite. Compare the number of balls released with the number that leaves.';
+          feedback.style.color = 'var(--bad)';
+        }
+      });
+    });
+  });
+
+  updateChallenge();
+  logData(true);
+  syncSliders();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
