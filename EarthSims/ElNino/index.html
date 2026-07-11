@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>El Niño and La Niña Climate Driver Sim</title>
+
+<style>
+:root{
+  --bg:#eaf6fb;
+  --card:#ffffff;
+  --ink:#183247;
+  --muted:#5d7280;
+  --blue:#1d74d8;
+  --blue2:#38bdf8;
+  --deep:#0f4c81;
+  --soft:#dff3ff;
+  --line:#c8ddea;
+  --green:#1e9b68;
+  --orange:#f59e0b;
+  --red:#ef4444;
+  --purple:#7c3aed;
+  --shadow:0 10px 26px rgba(20,60,90,0.14);
+  --radius:22px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(56,189,248,0.22), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(34,197,94,0.12), transparent 26%),
+    linear-gradient(180deg,#eaf6fb 0%,#f7fbff 100%);
+}
+
+.page{
+  width:min(1400px,96vw);
+  margin:0 auto;
+  padding:18px 0 40px;
+}
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:999px;
+  background:#ffffffcc;
+  border:1px solid var(--line);
+  color:var(--deep);
+  text-decoration:none;
+  font-weight:700;
+  box-shadow:0 4px 12px rgba(20,60,90,0.09);
+  margin-bottom:14px;
+}
+
+.hero{
+  border-radius:30px;
+  padding:28px 32px;
+  color:white;
+  background:
+    linear-gradient(135deg,rgba(11,80,146,0.96),rgba(34,150,210,0.96)),
+    radial-gradient(circle at 85% 25%, rgba(255,255,255,0.22), transparent 22%);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:360px;
+  height:360px;
+  right:-130px;
+  top:-140px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.12);
+}
+
+.hero h1{
+  margin:4px 0 8px;
+  font-size:clamp(2rem,4vw,4rem);
+  letter-spacing:-0.04em;
+}
+
+.hero p{
+  margin:0;
+  max-width:920px;
+  font-size:1.08rem;
+  line-height:1.5;
+}
+
+.brand{
+  text-transform:uppercase;
+  letter-spacing:0.16em;
+  font-weight:800;
+  opacity:0.86;
+  font-size:0.82rem !important;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(350px,0.65fr);
+  gap:18px;
+  margin-top:18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.card-header{
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#fff,#f7fbff);
+}
+
+.card-header h2{
+  margin:0;
+  font-size:1.18rem;
+}
+
+.card-header p{
+  margin:5px 0 0;
+  color:var(--muted);
+  line-height:1.35;
+  font-size:0.94rem;
+}
+
+.card-body{
+  padding:16px 18px 18px;
+}
+
+.model-wrap{
+  position:relative;
+}
+
+#modelCanvas{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:18px;
+  background:#dff3ff;
+  border:1px solid var(--line);
+}
+
+.cause-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+
+.cause-step{
+  padding:10px 8px;
+  border-radius:14px;
+  background:#f4fbff;
+  border:1px solid #d1e9f7;
+  text-align:center;
+  font-weight:800;
+  color:#31566d;
+  font-size:0.88rem;
+  position:relative;
+}
+
+.cause-step.active{
+  background:#dcfce7;
+  border-color:#86efac;
+  color:#14532d;
+}
+
+.cause-step.warning{
+  background:#fff7ed;
+  border-color:#fed7aa;
+  color:#9a3412;
+}
+
+.badge-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
+.badge{
+  padding:8px 10px;
+  border-radius:999px;
+  background:#eff8ff;
+  border:1px solid #cbe6f7;
+  color:#24516c;
+  font-weight:700;
+  font-size:0.84rem;
+}
+
+.badge.primary{
+  background:#e0f2fe;
+  border-color:#7dd3fc;
+  color:#0c4a6e;
+  font-size:0.95rem;
+}
+
+.phase-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+
+button,
+select{
+  font:inherit;
+}
+
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:11px 12px;
+  font-weight:800;
+  color:white;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  cursor:pointer;
+  box-shadow:0 5px 12px rgba(29,116,216,0.24);
+  transition:transform 0.12s ease, filter 0.12s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.03);
+}
+
+.btn.secondary{
+  color:var(--deep);
+  background:#eff8ff;
+  border:1px solid #cbe6f7;
+  box-shadow:none;
+}
+
+.btn.warning{
+  background:linear-gradient(135deg,#f97316,#f59e0b);
+}
+
+.btn.active-neutral{
+  background:linear-gradient(135deg,#2563eb,#38bdf8);
+}
+
+.btn.active-el-nino{
+  background:linear-gradient(135deg,#dc2626,#f97316);
+}
+
+.btn.active-la-nina{
+  background:linear-gradient(135deg,#059669,#22c55e);
+}
+
+.control-group{
+  margin-top:16px;
+  padding:14px;
+  background:#f8fcff;
+  border:1px solid var(--line);
+  border-radius:18px;
+}
+
+.control-group h3{
+  margin:0 0 10px;
+  font-size:0.98rem;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+.range-labels{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:0.82rem;
+  margin-top:2px;
+}
+
+.toggle-list{
+  display:grid;
+  gap:9px;
+}
+
+.toggle{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:650;
+  color:#24485e;
+}
+
+.toggle input{
+  width:18px;
+  height:18px;
+}
+
+select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+  color:var(--ink);
+  font-weight:700;
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.metric{
+  padding:12px;
+  border-radius:16px;
+  background:#f4fbff;
+  border:1px solid #d1e9f7;
+}
+
+.metric .value{
+  display:block;
+  margin-top:4px;
+  font-size:1.35rem;
+  font-weight:900;
+  color:var(--deep);
+}
+
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:18px;
+}
+
+#graphCanvas{
+  width:100%;
+  height:auto;
+  border-radius:18px;
+  background:#ffffff;
+  border:1px solid var(--line);
+}
+
+.explain-box{
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:#f8fcff;
+  padding:14px;
+  line-height:1.48;
+}
+
+.explain-box h3{
+  margin:0 0 8px;
+}
+
+.explain-box p{
+  margin:0 0 10px;
+}
+
+.model-warning{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#7c2d12;
+  font-weight:700;
+}
+
+.challenge-output{
+  margin-top:12px;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid #d1e9f7;
+  background:#eff8ff;
+  line-height:1.45;
+}
+
+.self-test{
+  display:grid;
+  gap:10px;
+}
+
+.question{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  background:#f8fcff;
+}
+
+.question p{
+  margin:0 0 8px;
+  font-weight:750;
+}
+
+.answer-btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.answer{
+  color:var(--deep);
+  background:white;
+  border:1px solid #cbe6f7;
+  border-radius:12px;
+  padding:9px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.answer.correct{
+  background:#dcfce7;
+  border-color:#86efac;
+}
+
+.answer.incorrect{
+  background:#fee2e2;
+  border-color:#fecaca;
+}
+
+.footer-note{
+  margin-top:18px;
+  color:var(--muted);
+  font-size:0.86rem;
+  line-height:1.45;
+}
+
+.small-note{
+  color:var(--muted);
+  font-size:0.88rem;
+  line-height:1.4;
+  margin-top:8px;
+}
+
+.graph-note{
+  display:inline-block;
+  margin-bottom:10px;
+  padding:8px 10px;
+  border-radius:999px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  font-weight:800;
+  font-size:0.86rem;
+}
+
+@media (max-width:1000px){
+  .main-grid,
+  .bottom-grid{
+    grid-template-columns:1fr;
+  }
+
+  .phase-buttons{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:720px){
+  .cause-strip{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width:620px){
+  .hero{
+    padding:22px;
+  }
+
+  .metrics{
+    grid-template-columns:1fr;
+  }
+
+  .answer-btns{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <a class="back-link" href="index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <p class="brand">EarthSciSims</p>
+    <h1>El Niño and La Niña</h1>
+    <p>
+      Model how trade winds, ocean temperatures, upwelling and rainfall patterns shift across the Pacific Ocean.
+      Use the controls to compare neutral, El Niño-like and La Niña-like conditions.
+    </p>
+  </header>
+
+  <section class="main-grid">
+
+    <article class="card">
+      <div class="card-header">
+        <h2>Pacific Ocean model</h2>
+        <p>Australia and Indonesia are on the left. South America is on the right. Watch how warm water, wind, rainfall and upwelling change.</p>
+      </div>
+
+      <div class="card-body model-wrap">
+        <canvas id="modelCanvas" width="920" height="520"></canvas>
+
+        <div class="cause-strip">
+          <div class="cause-step" id="causeWind">1. Trade winds change</div>
+          <div class="cause-step" id="causeWater">2. Warm water shifts</div>
+          <div class="cause-step" id="causeUpwelling">3. Upwelling changes</div>
+          <div class="cause-step" id="causeRain">4. Rainfall shifts</div>
+        </div>
+
+        <div class="badge-row">
+          <span class="badge primary" id="phaseBadge">ENSO pattern: Neutral-like</span>
+          <span class="badge" id="windBadge">Trade winds: Normal</span>
+          <span class="badge" id="rainBadge">Rainfall zone: Western Pacific</span>
+        </div>
+      </div>
+    </article>
+
+    <aside class="card">
+      <div class="card-header">
+        <h2>Controls</h2>
+        <p>Choose a pattern, then adjust wind strength to test the ocean–atmosphere link.</p>
+      </div>
+
+      <div class="card-body">
+
+        <div class="phase-buttons">
+          <button class="btn active-neutral" id="neutralBtn">Neutral</button>
+          <button class="btn secondary" id="elNinoBtn">El Niño</button>
+          <button class="btn secondary" id="laNinaBtn">La Niña</button>
+        </div>
+
+        <div class="control-group">
+          <h3>Run controls</h3>
+          <div class="phase-buttons">
+            <button class="btn" id="playPauseBtn">Start</button>
+            <button class="btn secondary" id="resetBtn">Reset</button>
+            <button class="btn warning" id="csvBtn">Download CSV</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h3>Trade wind strength</h3>
+          <label for="windSlider">Weak ← → Strong</label>
+          <input type="range" id="windSlider" min="0" max="100" value="50" />
+          <div class="range-labels">
+            <span>El Niño-like</span>
+            <span>Neutral-like</span>
+            <span>La Niña-like</span>
+          </div>
+          <p class="small-note">
+            In this simplified model, wind strength is used as the main driver. Real ENSO classification uses more evidence, including ocean temperatures and atmospheric patterns.
+          </p>
+        </div>
+
+        <div class="control-group">
+          <h3>Model overlays</h3>
+          <div class="toggle-list">
+            <label class="toggle"><input type="checkbox" id="showThermocline" checked /> Show thermocline</label>
+            <label class="toggle"><input type="checkbox" id="showUpwelling" checked /> Show upwelling</label>
+            <label class="toggle"><input type="checkbox" id="showRainfall" checked /> Show rainfall zone</label>
+            <label class="toggle"><input type="checkbox" id="showAustralia" checked /> Show Australian impact</label>
+            <label class="toggle"><input type="checkbox" id="showLabels" checked /> Show labels</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h3>Challenge mode</h3>
+          <select id="challengeSelect">
+            <option value="identify">Identify the pattern</option>
+            <option value="predict">Predict Australian impact</option>
+            <option value="compare">Compare El Niño and La Niña</option>
+            <option value="model">Explain the model limitation</option>
+          </select>
+          <div class="challenge-output" id="challengeOutput"></div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            Wind index
+            <span class="value" id="windMetric">50</span>
+          </div>
+          <div class="metric">
+            East Pacific SST
+            <span class="value" id="sstMetric">50</span>
+          </div>
+          <div class="metric">
+            Australia rainfall
+            <span class="value" id="rainMetric">50</span>
+          </div>
+          <div class="metric">
+            Model time
+            <span class="value" id="timeMetric">0 s</span>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </section>
+
+  <section class="bottom-grid">
+
+    <article class="card">
+      <div class="card-header">
+        <h2>Relative ENSO indicators over time</h2>
+        <p>The graph shows the whole running time, so students can compare changes within the same trial.</p>
+      </div>
+      <div class="card-body">
+        <div class="graph-note">0–100 model scale, not real climate measurements</div>
+        <canvas id="graphCanvas" width="720" height="380"></canvas>
+        <p class="small-note">
+          This is a teaching model using relative values. It is not live Bureau of Meteorology or NOAA data.
+        </p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-header">
+        <h2>What the model shows</h2>
+        <p>The explanation changes as students alter the ENSO pattern.</p>
+      </div>
+      <div class="card-body">
+        <div class="explain-box" id="explainBox"></div>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="card" style="margin-top:18px;">
+    <div class="card-header">
+      <h2>Self-test</h2>
+      <p>Use the model first, then check whether the main ENSO patterns make sense.</p>
+    </div>
+
+    <div class="card-body self-test">
+
+      <div class="question">
+        <p>1. During El Niño, what usually happens to the trade winds across the tropical Pacific?</p>
+        <div class="answer-btns">
+          <button class="answer" data-correct="false">They become much stronger</button>
+          <button class="answer" data-correct="true">They weaken or may reverse</button>
+          <button class="answer" data-correct="false">They stop the ocean from moving</button>
+          <button class="answer" data-correct="false">They only affect Antarctica</button>
+        </div>
+      </div>
+
+      <div class="question">
+        <p>2. In La Niña, where does more warm surface water build up?</p>
+        <div class="answer-btns">
+          <button class="answer" data-correct="true">Western Pacific near Australia and Indonesia</button>
+          <button class="answer" data-correct="false">Eastern Pacific near South America</button>
+          <button class="answer" data-correct="false">The Arctic Ocean</button>
+          <button class="answer" data-correct="false">Only in the Southern Ocean</button>
+        </div>
+      </div>
+
+      <div class="question">
+        <p>3. What does upwelling mean in this model?</p>
+        <div class="answer-btns">
+          <button class="answer" data-correct="false">Rain falling from clouds</button>
+          <button class="answer" data-correct="false">Warm air rising over land</button>
+          <button class="answer" data-correct="true">Cooler deep water rising towards the surface</button>
+          <button class="answer" data-correct="false">Trade winds disappearing</button>
+        </div>
+      </div>
+
+      <div class="question">
+        <p>4. Neutral conditions mean:</p>
+        <div class="answer-btns">
+          <button class="answer" data-correct="false">There are no winds, rainfall or ocean currents</button>
+          <button class="answer" data-correct="true">The Pacific is behaving close to its usual pattern</button>
+          <button class="answer" data-correct="false">Australia must have average rainfall everywhere</button>
+          <button class="answer" data-correct="false">The ocean has stopped transferring heat</button>
+        </div>
+      </div>
+
+      <div class="question">
+        <p>5. Why is this sim a model rather than a weather forecast?</p>
+        <div class="answer-btns">
+          <button class="answer" data-correct="false">It shows every real weather event exactly</button>
+          <button class="answer" data-correct="true">It simplifies a complex climate system to show key relationships</button>
+          <button class="answer" data-correct="false">It ignores the ocean completely</button>
+          <button class="answer" data-correct="false">It only works at night</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Suggested science sources for teacher notes: Australian Bureau of Meteorology climate knowledge centre; NOAA Ocean Service; NOAA Climate.gov ENSO overview.
+    This classroom model represents broad ENSO patterns and should not be used as a prediction of exact weather for a specific place or date.
+  </p>
+
+</div>
+
+<script>
+const modelCanvas = document.getElementById("modelCanvas");
+const ctx = modelCanvas.getContext("2d");
+
+const graphCanvas = document.getElementById("graphCanvas");
+const gctx = graphCanvas.getContext("2d");
+
+const neutralBtn = document.getElementById("neutralBtn");
+const elNinoBtn = document.getElementById("elNinoBtn");
+const laNinaBtn = document.getElementById("laNinaBtn");
+const windSlider = document.getElementById("windSlider");
+
+const showThermocline = document.getElementById("showThermocline");
+const showUpwelling = document.getElementById("showUpwelling");
+const showRainfall = document.getElementById("showRainfall");
+const showAustralia = document.getElementById("showAustralia");
+const showLabels = document.getElementById("showLabels");
+
+const phaseBadge = document.getElementById("phaseBadge");
+const windBadge = document.getElementById("windBadge");
+const rainBadge = document.getElementById("rainBadge");
+
+const windMetric = document.getElementById("windMetric");
+const sstMetric = document.getElementById("sstMetric");
+const rainMetric = document.getElementById("rainMetric");
+const timeMetric = document.getElementById("timeMetric");
+
+const explainBox = document.getElementById("explainBox");
+const challengeSelect = document.getElementById("challengeSelect");
+const challengeOutput = document.getElementById("challengeOutput");
+
+const playPauseBtn = document.getElementById("playPauseBtn");
+const resetBtn = document.getElementById("resetBtn");
+const csvBtn = document.getElementById("csvBtn");
+
+const causeWind = document.getElementById("causeWind");
+const causeWater = document.getElementById("causeWater");
+const causeUpwelling = document.getElementById("causeUpwelling");
+const causeRain = document.getElementById("causeRain");
+
+let running = false;
+let selectedPattern = "Neutral";
+let t = 0;
+let lastFrame = 0;
+let history = [];
+
+const phases = {
+  "Neutral": {
+    wind: 50,
+    label: "Neutral",
+    className: "active-neutral"
+  },
+  "El Niño": {
+    wind: 20,
+    label: "El Niño",
+    className: "active-el-nino"
+  },
+  "La Niña": {
+    wind: 82,
+    label: "La Niña",
+    className: "active-la-nina"
+  }
+};
+
+function clamp(value, min, max){
+  return Math.max(min, Math.min(max, value));
+}
+
+function lerp(a,b,n){
+  return a + (b-a)*n;
+}
+
+function getState(){
+  const wind = Number(windSlider.value);
+
+  let pattern = "Neutral-like";
+  if(wind <= 35) pattern = "El Niño-like";
+  if(wind >= 66) pattern = "La Niña-like";
+
+  const elNinoAmount = clamp((50 - wind) / 50, 0, 1);
+  const laNinaAmount = clamp((wind - 50) / 50, 0, 1);
+
+  const eastSST = Math.round(clamp(50 + elNinoAmount * 38 - laNinaAmount * 28, 0, 100));
+  const australiaRain = Math.round(clamp(50 - elNinoAmount * 28 + laNinaAmount * 34, 0, 100));
+  const upwelling = Math.round(clamp(50 - elNinoAmount * 34 + laNinaAmount * 28, 0, 100));
+  const thermoclineSlope = clamp((wind - 50) / 50, -1, 1);
+
+  let rainfallZone = "Western Pacific";
+  if(wind <= 35) rainfallZone = "Central/eastern Pacific";
+  else if(wind >= 66) rainfallZone = "Strong western Pacific";
+
+  return {
+    wind,
+    pattern,
+    elNinoAmount,
+    laNinaAmount,
+    eastSST,
+    australiaRain,
+    upwelling,
+    thermoclineSlope,
+    rainfallZone
+  };
+}
+
+function setPhase(newPattern){
+  selectedPattern = newPattern;
+  windSlider.value = phases[newPattern].wind;
+  updateButtons();
+  updateReadouts();
+  drawModel();
+  drawGraph();
+}
+
+function updateButtons(){
+  [neutralBtn, elNinoBtn, laNinaBtn].forEach(btn => {
+    btn.className = "btn secondary";
+  });
+
+  const state = getState();
+
+  if(state.pattern === "Neutral-like") neutralBtn.className = "btn active-neutral";
+  if(state.pattern === "El Niño-like") elNinoBtn.className = "btn active-el-nino";
+  if(state.pattern === "La Niña-like") laNinaBtn.className = "btn active-la-nina";
+}
+
+function updatePatternFromSlider(){
+  const state = getState();
+  selectedPattern = state.pattern.replace("-like","");
+  updateButtons();
+}
+
+function updateCauseStrip(state){
+  [causeWind, causeWater, causeUpwelling, causeRain].forEach(step => {
+    step.className = "cause-step";
+  });
+
+  if(state.pattern === "Neutral-like"){
+    causeWind.classList.add("active");
+    causeWater.classList.add("active");
+    causeUpwelling.classList.add("active");
+    causeRain.classList.add("active");
+  }
+
+  if(state.pattern === "El Niño-like"){
+    causeWind.classList.add("warning");
+    causeWater.classList.add("warning");
+    causeUpwelling.classList.add("warning");
+    causeRain.classList.add("warning");
+  }
+
+  if(state.pattern === "La Niña-like"){
+    causeWind.classList.add("active");
+    causeWater.classList.add("active");
+    causeUpwelling.classList.add("active");
+    causeRain.classList.add("active");
+  }
+}
+
+function updateReadouts(){
+  const state = getState();
+
+  phaseBadge.textContent = `ENSO pattern: ${state.pattern}`;
+  windBadge.textContent = `Trade winds: ${getWindText(state.wind)}`;
+  rainBadge.textContent = `Rainfall zone: ${state.rainfallZone}`;
+
+  windMetric.textContent = Math.round(state.wind);
+  sstMetric.textContent = state.eastSST;
+  rainMetric.textContent = state.australiaRain;
+  timeMetric.textContent = `${Math.round(t)} s`;
+
+  updateCauseStrip(state);
+  updateExplanation(state);
+  updateChallenge(state);
+}
+
+function getWindText(wind){
+  if(wind <= 35) return "Weak";
+  if(wind >= 66) return "Strong";
+  return "Normal";
+}
+
+function drawModel(){
+  const state = getState();
+  const w = modelCanvas.width;
+  const h = modelCanvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  drawSky(ctx,w,h,state);
+  drawOcean(ctx,w,h,state);
+  drawLand(ctx,w,h,state);
+  drawSST(ctx,w,h,state);
+  drawWaves(ctx,w,h,state);
+
+  if(showThermocline.checked) drawThermocline(ctx,w,h,state);
+  if(showUpwelling.checked) drawUpwelling(ctx,w,h,state);
+  drawTradeWinds(ctx,w,h,state);
+  if(showRainfall.checked) drawRainfall(ctx,w,h,state);
+  if(showAustralia.checked) drawAustraliaImpact(ctx,w,h,state);
+
+  if(showLabels.checked) drawLabels(ctx,w,h,state);
+
+  drawScaleNote(ctx,w,h);
+}
+
+function drawSky(ctx,w,h,state){
+  const sky = ctx.createLinearGradient(0,0,0,h*0.45);
+  sky.addColorStop(0,"#dff7ff");
+  sky.addColorStop(1,"#f8fdff");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,w,h);
+}
+
+function drawOcean(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const oceanH = h*0.56;
+
+  const ocean = ctx.createLinearGradient(0,oceanY,0,oceanY+oceanH);
+  ocean.addColorStop(0,"#4fc3f7");
+  ocean.addColorStop(0.55,"#1e88e5");
+  ocean.addColorStop(1,"#0f4c81");
+
+  ctx.fillStyle = ocean;
+  ctx.fillRect(0,oceanY,w,oceanH);
+
+  ctx.fillStyle = "#eef8ff";
+  ctx.fillRect(0,oceanY+oceanH,w,h-(oceanY+oceanH));
+}
+
+function drawLand(ctx,w,h,state){
+  const oceanY = h*0.31;
+
+  ctx.fillStyle = "#55b983";
+  roundRect(ctx,20,oceanY-60,120,110,26,true,false);
+  ctx.fillStyle = "#317a58";
+  ctx.font = "bold 18px system-ui";
+  ctx.fillText("Australia",35,oceanY-24);
+  ctx.font = "bold 15px system-ui";
+  ctx.fillText("+ Indonesia",35,oceanY-2);
+
+  ctx.fillStyle = "#c29f65";
+  roundRect(ctx,w-130,oceanY-70,110,150,30,true,false);
+  ctx.fillStyle = "#7c5f30";
+  ctx.font = "bold 18px system-ui";
+  ctx.fillText("South",w-105,oceanY-30);
+  ctx.fillText("America",w-112,oceanY-8);
+}
+
+function drawSST(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const oceanH = h*0.56;
+
+  const warmWest = clamp(0.72 + state.laNinaAmount*0.22 - state.elNinoAmount*0.24, 0.35, 0.95);
+  const warmEast = clamp(0.24 + state.elNinoAmount*0.52 - state.laNinaAmount*0.16, 0.1, 0.85);
+
+  const grd = ctx.createLinearGradient(0,0,w,0);
+  grd.addColorStop(0, `rgba(239,68,68,${warmWest})`);
+  grd.addColorStop(0.28, `rgba(249,115,22,${0.48 + state.laNinaAmount*0.15})`);
+  grd.addColorStop(0.52, `rgba(250,204,21,${0.36 + state.elNinoAmount*0.16})`);
+  grd.addColorStop(0.78, `rgba(249,115,22,${warmEast})`);
+  grd.addColorStop(1, `rgba(239,68,68,${warmEast})`);
+
+  ctx.fillStyle = grd;
+  ctx.fillRect(0,oceanY,w,oceanH*0.22);
+
+  if(showLabels.checked){
+    ctx.fillStyle = "rgba(255,255,255,0.82)";
+    ctx.font = "bold 14px system-ui";
+    ctx.fillText("warm surface water", 34, oceanY + 28);
+    ctx.fillText("eastern Pacific SST index: " + state.eastSST, w - 280, oceanY + 28);
+  }
+}
+
+function drawWaves(ctx,w,h,state){
+  const oceanY = h*0.31;
+  ctx.strokeStyle = "rgba(255,255,255,0.42)";
+  ctx.lineWidth = 2;
+
+  for(let i=0;i<6;i++){
+    const y = oceanY + 22 + i*24;
+    ctx.beginPath();
+    for(let x=0;x<=w;x+=18){
+      const wave = Math.sin((x*0.03) + t*1.5 + i) * 3;
+      if(x===0) ctx.moveTo(x,y+wave);
+      else ctx.lineTo(x,y+wave);
+    }
+    ctx.stroke();
+  }
+}
+
+function drawThermocline(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const startY = oceanY + 175 + state.thermoclineSlope*42;
+  const endY = oceanY + 175 - state.thermoclineSlope*42;
+
+  ctx.strokeStyle = "#fff176";
+  ctx.lineWidth = 5;
+  ctx.setLineDash([12,9]);
+  ctx.beginPath();
+  ctx.moveTo(110,startY);
+  ctx.bezierCurveTo(w*0.35,startY+20,w*0.65,endY-20,w-110,endY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  if(showLabels.checked){
+    ctx.fillStyle = "#fffde7";
+    ctx.font = "bold 15px system-ui";
+    ctx.fillText("thermocline", w*0.47, lerp(startY,endY,0.5)-14);
+  }
+}
+
+function drawUpwelling(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const baseX = w - 205;
+  const strength = state.upwelling / 100;
+
+  for(let i=0;i<3;i++){
+    const x = baseX + i*26;
+    const y1 = oceanY + 210 - strength*45;
+    const y2 = oceanY + 110 - strength*55;
+    drawArrow(ctx,x,y1,x,y2,"#b3e5fc",3 + strength*4);
+  }
+
+  if(showLabels.checked){
+    ctx.fillStyle = "#e1f5fe";
+    ctx.font = "bold 14px system-ui";
+    ctx.fillText("cool upwelling", w-280, oceanY+245);
+  }
+}
+
+function drawTradeWinds(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const wind = state.wind;
+  const arrowCount = wind < 35 ? 3 : wind > 65 ? 7 : 5;
+  const speedOffset = (t * (0.45 + wind/90) * 42) % 90;
+
+  if(showLabels.checked){
+    ctx.font = "bold 15px system-ui";
+    ctx.fillStyle = "#24485e";
+    ctx.fillText("trade winds", w*0.42, oceanY-112);
+  }
+
+  for(let i=0;i<arrowCount;i++){
+    const spacing = w*0.72 / arrowCount;
+    const startX = w - 180 - i*spacing - speedOffset;
+    const y = oceanY - 88 + Math.sin(t+i)*5;
+
+    let x1 = startX;
+    let x2 = startX - 70;
+
+    if(wind <= 18){
+      x2 = startX + 36;
+    }
+
+    drawArrow(ctx,x1,y,x2,y,"#1d74d8",3 + wind/28);
+  }
+
+  if(showLabels.checked && wind <= 35){
+    ctx.fillStyle = "rgba(239,68,68,0.9)";
+    ctx.font = "bold 15px system-ui";
+    ctx.fillText("weakened winds", w*0.41, oceanY-64);
+  }
+
+  if(showLabels.checked && wind >= 66){
+    ctx.fillStyle = "rgba(5,150,105,0.95)";
+    ctx.font = "bold 15px system-ui";
+    ctx.fillText("stronger winds", w*0.41, oceanY-64);
+  }
+}
+
+function drawRainfall(ctx,w,h,state){
+  const oceanY = h*0.31;
+
+  let cloudX = w*0.28;
+  let intensity = 0.55;
+
+  if(state.pattern === "El Niño-like"){
+    cloudX = w*0.66;
+    intensity = 0.52;
+  }
+
+  if(state.pattern === "La Niña-like"){
+    cloudX = w*0.24;
+    intensity = 0.9;
+  }
+
+  drawCloud(ctx,cloudX,oceanY-155,110,`rgba(75,85,99,${0.22+intensity*0.22})`);
+
+  const rainDrops = Math.floor(6 + intensity*14);
+  ctx.strokeStyle = `rgba(29,78,216,${0.35+intensity*0.45})`;
+  ctx.lineWidth = 2;
+
+  for(let i=0;i<rainDrops;i++){
+    const x = cloudX - 45 + i*(90/rainDrops) + Math.sin(t*2+i)*3;
+    const y = oceanY - 110 + (i%3)*10;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x-6,y+20);
+    ctx.stroke();
+  }
+
+  if(showLabels.checked){
+    ctx.fillStyle = "#24485e";
+    ctx.font = "bold 14px system-ui";
+    ctx.fillText("rainfall zone", cloudX-47, oceanY-178);
+  }
+}
+
+function drawAustraliaImpact(ctx,w,h,state){
+  const oceanY = h*0.31;
+  const x = 28;
+  const y = oceanY + 70;
+  let text = "Variable conditions";
+  let colour = "#2563eb";
+  let icon = "≈";
+
+  if(state.pattern === "El Niño-like"){
+    text = "Higher chance of hotter/drier conditions";
+    colour = "#dc2626";
+    icon = "☀";
+  }
+
+  if(state.pattern === "La Niña-like"){
+    text = "Higher chance of wetter conditions";
+    colour = "#059669";
+    icon = "☔";
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.88)";
+  roundRect(ctx,x,y,270,82,18,true,false);
+
+  ctx.fillStyle = colour;
+  ctx.font = "bold 28px system-ui";
+  ctx.fillText(icon,x+14,y+44);
+
+  ctx.fillStyle = "#17384d";
+  ctx.font = "bold 14px system-ui";
+  wrapText(ctx,text,x+50,y+28,200,18);
+}
+
+function drawLabels(ctx,w,h,state){
+  const oceanY = h*0.31;
+
+  ctx.fillStyle = "#183247";
+  ctx.font = "bold 16px system-ui";
+  ctx.fillText("Western Pacific", 165, oceanY + 305);
+  ctx.fillText("Central Pacific", w*0.44, oceanY + 305);
+  ctx.fillText("Eastern Pacific", w-285, oceanY + 305);
+}
+
+function drawScaleNote(ctx,w,h){
+  ctx.fillStyle = "#5d7280";
+  ctx.font = "13px system-ui";
+  ctx.fillText("Simplified classroom model — not to scale", w-315, h-18);
+}
+
+function drawArrow(ctx,x1,y1,x2,y2,colour,width){
+  const headLength = 13;
+  const angle = Math.atan2(y2-y1,x2-x1);
+
+  ctx.strokeStyle = colour;
+  ctx.fillStyle = colour;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2 - headLength*Math.cos(angle - Math.PI/6), y2 - headLength*Math.sin(angle - Math.PI/6));
+  ctx.lineTo(x2 - headLength*Math.cos(angle + Math.PI/6), y2 - headLength*Math.sin(angle + Math.PI/6));
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawCloud(ctx,x,y,size,colour){
+  ctx.fillStyle = colour;
+  ctx.beginPath();
+  ctx.arc(x-size*0.28,y,size*0.26,0,Math.PI*2);
+  ctx.arc(x,y-size*0.1,size*0.33,0,Math.PI*2);
+  ctx.arc(x+size*0.32,y,size*0.24,0,Math.PI*2);
+  ctx.arc(x+size*0.05,y+size*0.18,size*0.31,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(255,255,255,0.58)";
+  ctx.beginPath();
+  ctx.arc(x-size*0.18,y-size*0.08,size*0.13,0,Math.PI*2);
+  ctx.arc(x+size*0.12,y-size*0.17,size*0.12,0,Math.PI*2);
+  ctx.fill();
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  if(w < 2*r) r = w/2;
+  if(h < 2*r) r = h/2;
+
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  const words = text.split(" ");
+  let line = "";
+
+  for(let n=0;n<words.length;n++){
+    const testLine = line + words[n] + " ";
+    const metrics = ctx.measureText(testLine);
+    const testWidth = metrics.width;
+
+    if(testWidth > maxWidth && n > 0){
+      ctx.fillText(line,x,y);
+      line = words[n] + " ";
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line,x,y);
+}
+
+function drawGraph(){
+  const w = graphCanvas.width;
+  const h = graphCanvas.height;
+  const padL = 54;
+  const padR = 22;
+  const padT = 28;
+  const padB = 45;
+
+  gctx.clearRect(0,0,w,h);
+  gctx.fillStyle = "#ffffff";
+  gctx.fillRect(0,0,w,h);
+
+  gctx.strokeStyle = "#d7e7f0";
+  gctx.lineWidth = 1;
+
+  for(let i=0;i<=5;i++){
+    const y = padT + i*(h-padT-padB)/5;
+    gctx.beginPath();
+    gctx.moveTo(padL,y);
+    gctx.lineTo(w-padR,y);
+    gctx.stroke();
+
+    gctx.fillStyle = "#5d7280";
+    gctx.font = "12px system-ui";
+    gctx.fillText(String(100 - i*20), 18, y+4);
+  }
+
+  gctx.strokeStyle = "#183247";
+  gctx.lineWidth = 2;
+  gctx.beginPath();
+  gctx.moveTo(padL,padT);
+  gctx.lineTo(padL,h-padB);
+  gctx.lineTo(w-padR,h-padB);
+  gctx.stroke();
+
+  gctx.fillStyle = "#183247";
+  gctx.font = "bold 14px system-ui";
+  gctx.fillText("Relative index", 14, 18);
+  gctx.fillText("Whole running time", w/2 - 64, h - 12);
+
+  const currentState = getState();
+  const displayHistory = history.length ? history : [{
+    time:0,
+    wind:currentState.wind,
+    eastSST:currentState.eastSST,
+    australiaRain:currentState.australiaRain,
+    pattern:currentState.pattern
+  }];
+
+  const maxTime = Math.max(20, displayHistory[displayHistory.length-1].time);
+
+  function xScale(time){
+    return padL + (time/maxTime)*(w-padL-padR);
+  }
+
+  function yScale(value){
+    return padT + (1-value/100)*(h-padT-padB);
+  }
+
+  drawLine(displayHistory,"wind","#2563eb",xScale,yScale);
+  drawLine(displayHistory,"eastSST","#f97316",xScale,yScale);
+  drawLine(displayHistory,"australiaRain","#059669",xScale,yScale);
+
+  drawLegend(w);
+}
+
+function drawLine(data,key,colour,xScale,yScale){
+  if(data.length < 1) return;
+
+  gctx.strokeStyle = colour;
+  gctx.lineWidth = 3;
+  gctx.beginPath();
+
+  data.forEach((d,i) => {
+    const x = xScale(d.time);
+    const y = yScale(d[key]);
+    if(i === 0) gctx.moveTo(x,y);
+    else gctx.lineTo(x,y);
+  });
+
+  gctx.stroke();
+}
+
+function drawLegend(w){
+  const items = [
+    ["Trade wind strength","#2563eb"],
+    ["Eastern Pacific temperature","#f97316"],
+    ["Australian rainfall tendency","#059669"]
+  ];
+
+  let x = 72;
+  let y = 340;
+
+  items.forEach(item => {
+    gctx.fillStyle = item[1];
+    gctx.fillRect(x,y-10,18,5);
+    gctx.fillStyle = "#183247";
+    gctx.font = "bold 12px system-ui";
+    gctx.fillText(item[0],x+25,y-5);
+    x += item[0].length * 7 + 60;
+  });
+}
+
+function updateExplanation(state){
+  let heading = "Neutral-like conditions";
+  let body = `
+    <p>In neutral conditions, trade winds push warm surface water towards the western Pacific.
+    Warm water builds near Australia and Indonesia, while cooler deep water rises near South America through upwelling.</p>
+    <p><strong>Misconception check:</strong> neutral does not mean no winds, no rainfall or no ocean currents. It means the Pacific is behaving close to its usual pattern.</p>
+  `;
+
+  if(state.pattern === "El Niño-like"){
+    heading = "El Niño-like conditions";
+    body = `
+      <p>During El Niño, the trade winds weaken or may reverse. Warm surface water spreads towards the central and eastern Pacific.</p>
+      <p>Upwelling near South America is reduced, rainfall shifts away from the western Pacific, and Australia often has a higher chance of hotter and drier conditions, especially across eastern Australia. Local weather can still vary.</p>
+    `;
+  }
+
+  if(state.pattern === "La Niña-like"){
+    heading = "La Niña-like conditions";
+    body = `
+      <p>During La Niña, the trade winds strengthen. More warm surface water is pushed towards the western Pacific near Australia and Indonesia.</p>
+      <p>Cooler water rises more strongly in the eastern Pacific, and the warmer western Pacific can increase cloud formation and rainfall. Australia often has a higher chance of wetter conditions, especially across eastern and northern Australia, but flooding is not guaranteed everywhere.</p>
+    `;
+  }
+
+  explainBox.innerHTML = `
+    <h3>${heading}</h3>
+    ${body}
+    <p><strong>Key idea:</strong> ENSO is a linked ocean–atmosphere pattern. A change in wind affects ocean temperature, and ocean temperature affects rainfall patterns.</p>
+    <div class="model-warning">
+      Model limitation: the Pacific Ocean, thermocline and rainfall zones are simplified and not drawn to scale. This sim shows relationships, not exact weather predictions.
+    </div>
+  `;
+}
+
+function updateChallenge(state){
+  const mode = challengeSelect.value;
+  let text = "";
+
+  if(mode === "identify"){
+    text = `Current challenge: Use the wind arrows, rainfall zone and warm-water pattern to justify why this model is showing <strong>${state.pattern}</strong>.`;
+  }
+
+  if(mode === "predict"){
+    text = `Current challenge: Predict the likely Australian impact. The model suggests an Australian rainfall tendency of <strong>${state.australiaRain}/100</strong>. Explain why this does not guarantee exact weather for one town.`;
+  }
+
+  if(mode === "compare"){
+    text = `Current challenge: Compare El Niño-like and La Niña-like conditions. Focus on trade wind strength, position of warm water, upwelling near South America and rainfall location.`;
+  }
+
+  if(mode === "model"){
+    text = `Current challenge: Identify one strength and one limitation of this model. Strength: it shows key cause–effect links. Limitation: it simplifies a complex climate system into only a few variables.`;
+  }
+
+  challengeOutput.innerHTML = text;
+}
+
+function addDataPoint(){
+  const state = getState();
+
+  history.push({
+    time: Number(t.toFixed(1)),
+    pattern: state.pattern,
+    wind: Math.round(state.wind),
+    eastSST: state.eastSST,
+    australiaRain: state.australiaRain,
+    upwelling: state.upwelling
+  });
+
+  if(history.length > 1400){
+    history.shift();
+  }
+}
+
+function animate(timestamp){
+  if(!lastFrame) lastFrame = timestamp;
+  const delta = (timestamp - lastFrame) / 1000;
+  lastFrame = timestamp;
+
+  if(running){
+    t += delta;
+
+    if(Math.floor(t*2) !== Math.floor((t-delta)*2)){
+      addDataPoint();
+    }
+  }
+
+  drawModel();
+  drawGraph();
+  updateReadouts();
+
+  requestAnimationFrame(animate);
+}
+
+function resetSim(){
+  running = false;
+  t = 0;
+  lastFrame = 0;
+  history = [];
+  playPauseBtn.textContent = "Start";
+  setPhase("Neutral");
+}
+
+function downloadCSV(){
+  const rows = [
+    ["time_s","enso_pattern","wind_index","east_pacific_sst_index","australian_rainfall_tendency","upwelling_index"]
+  ];
+
+  if(history.length === 0){
+    const state = getState();
+    rows.push([0,state.pattern,state.wind,state.eastSST,state.australiaRain,state.upwelling]);
+  } else {
+    history.forEach(d => {
+      rows.push([
+        d.time,
+        d.pattern,
+        d.wind,
+        d.eastSST,
+        d.australiaRain,
+        d.upwelling
+      ]);
+    });
+  }
+
+  const csv = rows.map(row => row.join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "enso-sim-data.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+neutralBtn.addEventListener("click", () => setPhase("Neutral"));
+elNinoBtn.addEventListener("click", () => setPhase("El Niño"));
+laNinaBtn.addEventListener("click", () => setPhase("La Niña"));
+
+windSlider.addEventListener("input", () => {
+  updatePatternFromSlider();
+  updateReadouts();
+  drawModel();
+  drawGraph();
+});
+
+[
+  showThermocline,
+  showUpwelling,
+  showRainfall,
+  showAustralia,
+  showLabels
+].forEach(toggle => {
+  toggle.addEventListener("change", () => {
+    drawModel();
+  });
+});
+
+challengeSelect.addEventListener("change", () => {
+  updateChallenge(getState());
+});
+
+playPauseBtn.addEventListener("click", () => {
+  running = !running;
+  playPauseBtn.textContent = running ? "Pause" : "Start";
+});
+
+resetBtn.addEventListener("click", resetSim);
+csvBtn.addEventListener("click", downloadCSV);
+
+document.querySelectorAll(".answer").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const parent = btn.closest(".answer-btns");
+    parent.querySelectorAll(".answer").forEach(b => {
+      b.classList.remove("correct","incorrect");
+    });
+
+    if(btn.dataset.correct === "true"){
+      btn.classList.add("correct");
+    } else {
+      btn.classList.add("incorrect");
+      parent.querySelectorAll('[data-correct="true"]').forEach(b => b.classList.add("correct"));
+    }
+  });
+});
+
+resetSim();
+requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>
