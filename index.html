@@ -113,6 +113,30 @@
       margin-top:16px;
     }
 
+    .worksheet-link-wrap{
+      margin-top:12px;
+    }
+
+    .worksheet-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 15px;
+      border-radius:10px;
+      background:#0f766e;
+      color:#ffffff;
+      text-decoration:none;
+      font-weight:900;
+      box-shadow:0 4px 10px rgba(15,118,110,.18);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    .worksheet-link:hover{
+      background:#115e59;
+      transform:translateY(-1px);
+      box-shadow:0 7px 16px rgba(15,118,110,.24);
+    }
+
     .hsc-index-panel{
       display:flex;
       justify-content:space-between;
@@ -423,6 +447,11 @@
       <img src="mainbanner.png" alt="Science simulations banner" class="hero-image" />
     </div>
     <p class="fullscreen-tip"><strong>Fullscreen tip:</strong> In Chrome, press <strong>F11</strong> on Windows/Linux, <strong>Control + Command + F</strong> on Mac, or the <strong>Full screen</strong> key on a Chromebook. Press the same shortcut again to exit fullscreen.</p>
+    <div class="worksheet-link-wrap">
+      <a class="worksheet-link" href="Worksheets/SciSims_Generic_Student_Worksheet.docx" download>
+        Download the generic SciSims student worksheet
+      </a>
+    </div>
   </header>
 
   <section class="hsc-index-panel" aria-labelledby="hscIndexTitle">
