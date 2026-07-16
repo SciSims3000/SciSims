@@ -22,6 +22,7 @@
       --soft-teal:#ccfbf1;
       --soft-pink:#fce7f3;
       --soft-yellow:#fef9c3;
+      --soft-stage6:#e0f2fe;
       --shadow:0 4px 14px rgba(0,0,0,0.08);
       --radius:16px;
     }
@@ -371,6 +372,7 @@
     .tag.math{background:var(--soft-yellow);border-color:#fde68a;color:#854d0e;}
     .tag.working{background:#fef3c7;border-color:#fde68a;color:#92400e;}
     .tag.invsci{background:var(--soft-teal);border-color:#99f6e4;color:#115e59;}
+    .tag.stage6{background:var(--soft-stage6);border-color:#7dd3fc;color:#075985;}
     .tag.interesting{background:#e2e8f0;border-color:#cbd5e1;color:#334155;}
     .tag.brainbreak{background:var(--soft-pink);border-color:#fbcfe8;color:#9d174d;}
 
@@ -480,7 +482,7 @@
 
   <div id="emptyMessage" class="empty-message">No simulations matched your search. Try a broader keyword such as genetics, forces, data, claims, fair test, reaction, disease or light.</div>
 
-  <p class="footer-note"><strong>Adding a new sim:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. The page will automatically place it in the correct section and make it searchable.</p>
+  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new sim:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. The page will automatically place it in the correct section and make it searchable.</p>
 
 <script>
   'use strict';
@@ -499,6 +501,13 @@
       intro:'HSC Investigating Science simulations for evidence, claims, data analysis, modelling, validity, reliability and scientific argumentation.',
       banner:'invsci.png',
       tagClass:'invsci'
+    },
+    {
+      id:'stage6games',
+      title:'Stage 6 Revision Games',
+      intro:'Course-specific Connections, Word Match and Chain Reaction games for HSC Biology, Chemistry, Earth and Environmental Science, Investigating Science, Physics and Science Extension.',
+      banner:'invsci.png',
+      tagClass:'stage6'
     },
     {
       id:'biosims',
@@ -552,860 +561,2051 @@
   ];
 
     const SIMS = [
-    {
-      section:'workingscientifically',
-      group:'Variables and Fair Testing',
-      title:'Experimental Variables Sorter',
-      description:'Identify independent variables, dependent variables, controlled variables and irrelevant factors using a drag-and-drop fair testing activity.',
-      path:'WorkingScientifically/Variables/',
-      tags:['Variables', 'Fair testing', 'Drag and drop']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Accuracy, Reliability and Validity Lab',
-      description:'Generate experimental datasets by adjusting sample size, equipment precision, random error, systematic error and controlled variables, then interpret graphs and data tables to judge accuracy, reliability and validity.',
-      path:'InvSci/VAR/',
-      tags:['Accuracy', 'Reliability', 'Validity', 'Experimental design', 'Data analysis', 'Scientific investigations']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Doppler Effect Simulator',
-      description:'Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.',
-      path:'PhySims/Doppler/',
-      tags:['Doppler effect', 'Waves', 'Frequency', 'Wavelength', 'Relative motion', 'Scientific models']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Eratosthenes Experiment Simulator',
-      description:'Model Eratosthenes’ method for estimating Earth’s circumference by comparing shadow angles and distance between locations, including NSW town examples and measurement uncertainty.',
-      path:'InvSci/Eratosthenes/',
-      tags:['Eratosthenes', 'Earth circumference', 'Scientific models', 'Measurement uncertainty', 'Angles', 'Data analysis']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Fair Test Builder',
-      description:'Build valid investigations by identifying independent, dependent and controlled variables across plant growth, pendulum motion, friction, reaction time and dissolving rate scenarios.',
-      path:'InvSci/FairTest/',
-      tags:['Fair testing', 'Variables', 'Validity', 'Reliability', 'Experimental design']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Marshall and Warren: Peptic Ulcer Evidence Simulator',
-      description:'Investigate how evidence changed the scientific explanation for peptic ulcers by comparing stress and acid explanations with evidence for H. pylori infection, NSAID use, treatment outcomes and scientific consensus.',
-      path:'InvSci/Helicobacter/',
-      tags:['Marshall and Warren', 'H. pylori', 'Helicobacter pylori', 'Peptic ulcers', 'Scientific evidence', 'Scientific models', 'Scientific consensus', 'Medical science', 'Australian science', 'Confounding variables']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Priestley’s Air Experiments Simulator',
-      description:'Explore Priestley’s candle, plant, animal and mercuric oxide experiments to compare historical interpretations of “air” with the modern oxygen model.',
-      path:'InvSci/Priestley/',
-      tags:['Investigating Science', 'Module 5', 'Scientific investigations', 'Priestley', 'Oxygen', 'Combustion', 'Respiration', 'Plants', 'Phlogiston theory', 'Scientific models', 'Changing theories', 'Evidence']
-    },
-    {
-      section:'invsci',
-      group:'Module 5: Scientific Investigations',
-      title:'Van Helmont Willow Tree Experiment Simulator',
-      description:'Recreate Van Helmont’s willow tree experiment, compare plant and soil mass changes, and evaluate how historical interpretations differed from modern explanations of plant growth.',
-      path:'InvSci/VanH/',
-      tags:['Van Helmont', 'Willow tree experiment', 'Historical science', 'Observations', 'Inferences', 'Plant growth', 'Mass balance', 'Water', 'Carbon dioxide', 'Photosynthesis', 'Validity', 'Scientific investigations']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'DNA X-ray Diffraction Evidence Builder',
-      description:'Test DNA structure models against evidence from chemical composition, Chargaff’s ratios, X-ray diffraction, Photograph 51-style patterns, model building and ethical acknowledgement.',
-      path:'InvSci/DNAXRay/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'DNA', 'X-ray diffraction', 'Photograph 51', 'Rosalind Franklin', 'Chargaff’s ratios', 'Double helix', 'Model building', 'Evidence', 'Scientific models', 'Ethics']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Earth History Evidence Builder',
-      description:'Build a model of Earth’s geological history by adding technology-based evidence layers, including fossils, seafloor mapping, magnetic striping, radiometric dating, GPS, computer reconstruction, tomography and palaeoclimate data.',
-      path:'InvSci/EarthEvidence/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Earth history', 'Geological models', 'Plate tectonics', 'Continental drift', 'Seafloor spreading', 'Computer models', 'Evidence', 'Radiometric dating', 'GPS', 'Seismic tomography', 'Palaeoclimate', 'Scientific models']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Gas Laws Technology Simulator',
-      description:'Use a virtual syringe, pressure sensor and temperature control to investigate Boyle’s Law, Charles’ Law and the Combined Gas Law, including graphing, data collection and sensor uncertainty.',
-      path:'InvSci/GasLaws/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Gas laws', 'Boyle’s Law', 'Charles’ Law', 'Combined Gas Law', 'Pressure', 'Volume', 'Temperature', 'Sensors', 'Graphing', 'Experimental uncertainty', 'Scientific models']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Large Hadron Collider Model Simulator',
-      description:'Model how counter-rotating particle beams are steered by magnets, collide inside detectors, and produce event data selected by a trigger system.',
-      path:'InvSci/LHC/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Large Hadron Collider', 'Particle accelerator', 'Particle physics', 'Magnetic fields', 'Detectors', 'Trigger systems', 'Event data', 'Scientific models', 'Data selection', 'Experimental uncertainty']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Medical Imaging Comparison Simulator',
-      description:'Compare X-ray, CT, MRI and ultrasound in different medical scenarios, weighing image detail, cost, risk, radiation exposure, accessibility and ethical considerations.',
-      path:'InvSci/MedScan/',
-      tags:['Medical imaging', 'X-ray', 'CT', 'MRI', 'Ultrasound', 'Radiation', 'Technology', 'Risk-benefit', 'Ethics', 'Health', 'Scientific investigations']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Optical Instrument Technology Builder',
-      description:'Use reflection, refraction, lens models and mirror models to design and compare microscopes, refracting telescopes, reflecting telescopes and optical fibres. Includes ray models, law matching, performance metrics, trial data, graphing, CSV export and CER response prompts.',
-      path:'InvSci/OpticalTech/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Optics', 'Optical instruments', 'Reflection', 'Refraction', 'Lenses', 'Mirrors', 'Microscopes', 'Telescopes', 'Optical fibres', 'Total internal reflection', 'Scientific models', 'CER']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Radioactivity Detector Evidence Builder',
-      description:'Explore how radiation detection technologies made invisible radiation measurable, allowing scientists to classify radiation types and develop models of atomic structure, decay and the nuclear atom.',
-      path:'InvSci/RadioactivityEvidence/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Radioactivity', 'Radiation detection', 'Atomic theory', 'Nuclear atom', 'Alpha radiation', 'Beta radiation', 'Gamma radiation', 'Geiger counter', 'Cloud chamber', 'Scintillation screen', 'Rutherford model', 'Evidence', 'Scientific models']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Speed vs Distance Investigation Simulator',
-      description:'Design a practical investigation using available technologies to measure speed and distance travelled, collect quantitative data, repeat trials, calculate means and evaluate measurement uncertainty.',
-      path:'InvSci/SpeedVDist/',
-      tags:['Speed', 'Distance travelled', 'Quantitative data', 'Independent variable', 'Dependent variable', 'Photogate', 'Motion sensor', 'Technology', 'Practical investigation', 'Physics', 'Scientific investigations']
-    },
-    {
-      section:'invsci',
-      group:'Module 6: Technologies',
-      title:'Temperature and Reaction Rate Simulator',
-      description:'Investigate how temperature affects reaction rate using a virtual reaction vessel, particle collisions, graphing, data collection and model evaluation.',
-      path:'InvSci/TempRate/',
-      tags:['Investigating Science', 'Module 6', 'Technologies', 'Reaction rate', 'Temperature', 'Collision theory', 'Particle model', 'Successful collisions', 'Activation energy', 'Catalyst', 'Concentration', 'Graphing', 'Experimental uncertainty', 'Scientific models']
-    },
-    {
-      section:'biosims',
-      group:'Cells and Classification',
-      title:'Build-a-Cell Sorter',
-      description:'Sort cell structures into plant, animal, fungal and bacterial cells. Includes an easy Plant vs Animal mode and a standard four-cell classification challenge.',
-      path:'BioSims/CellSorter/',
-      tags:['Cells', 'Classification', 'Cell structure', 'Organelles', 'Plant cells', 'Animal cells', 'Fungal cells', 'Bacterial cells', 'Prokaryotes', 'Eukaryotes']
-    },
-    {
-      section:'biosims',
-      group:'Cells and Classification',
-      title:'Characteristics of Living Things',
-      description:'Use MRS GREN evidence to classify examples as living, once-living or non-living.',
-      path:'BioSims/CharacteristicsLivingThings/',
-      tags:['Classification', 'Living things', 'MRS GREN', 'Life processes', 'Evidence', 'Year 7', 'Cells and classification']
-    },
-    {
-      section:'biosims',
-      group:'Cells and Classification',
-      title:'Organising the Diversity of Life on Earth',
-      description:'Use observable characteristics to classify organisms into major groups such as animals, plants, fungi, protists and bacteria.',
-      path:'BioSims/OrganisingDiversity/',
-      tags:['Classification', 'Diversity of life', 'Animals', 'Plants', 'Fungi', 'Protists', 'Bacteria', 'Shared characteristics', 'Year 7', 'Cells and classification']
-    },
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Cell Siege',
-      description:'Defend the body in a Space Invaders-style immune system game by using antibodies, macrophages, killer T cells, complement, fever and immune memory against pathogens and infected cells.',
-      path:'BioSims/CellSiege/',
-      tags:['Biology', 'Immune system', 'Pathogens', 'Antibodies', 'White blood cells', 'Vaccines', 'Disease', 'Infected cells', 'Scientific models', 'Data collection', 'Science games']
-    },
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Marshall and Warren: Peptic Ulcer Evidence Simulator',
-      description:'Investigate how H. pylori evidence, treatment outcomes and confounding factors changed the scientific explanation for many peptic ulcers.',
-      path:'InvSci/Helicobacter/',
-      tags:['Biology', 'Disease', 'Microbes', 'H. pylori', 'Helicobacter pylori', 'Peptic ulcers', 'Marshall and Warren', 'Australian science']
-    }, 
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Pandemic Simulation',
-      description:'Model how an infectious disease can spread through a population.',
-      path:'BioSims/Pandemic/',
-      tags:['Disease', 'Pandemic', 'Biosecurity', 'Population model']
-    },
-    {
-      section:'biosims',
-      group:'Biosecurity and Ecosystems',
-      title:'Biosecurity Outbreak Simulator',
-      description:'Respond to an invasive species or agricultural disease outbreak. Choose monitoring, quarantine, treatment, culling, public communication and research strategies while balancing uncertainty, economic impacts, ecological effects and public trust.',
-      path:'BioSims/BiosecurityOutbreak/',
-      tags:['Biology', 'Biosecurity', 'Invasive species', 'Agricultural disease', 'Disease control', 'Quarantine', 'Monitoring', 'Evidence', 'Uncertainty', 'Ecosystems', 'Agriculture', 'Systems thinking']
-    },
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Petri Dish Bacterial Growth Simulator',
-      description:'Explore how bacteria grow in a petri dish under different conditions.',
-      path:'BioSims/PetriBacteria/',
-      tags:['Bacteria', 'Growth', 'Microbes']
-    },
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Sneeze: Infection Spread Game',
-      description:'Run an archived Flash-based disease transmission game using Ruffle. Students explore how an infection can spread through a population depending on movement, timing, contact and transmission.',
-      path:'BioSims/Sneeze/',
-      tags:['Biology', 'Disease', 'Infection', 'Transmission', 'Virus', 'Sneeze', 'Population spread', 'Outbreaks', 'Flash', 'Ruffle', 'Archived resource', 'Routes', 'Channel 4', 'Wellcome Trust']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Inheritance',
-      title:'DNA Profiling Gel Electrophoresis Simulator',
-      description:'Compare DNA banding patterns from a mother, child and possible fathers to identify the biological father.',
-      path:'BioSims/DNAProfiling/',
-      tags:['DNA', 'Gel electrophoresis', 'Genetics']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Inheritance',
-      title:'Drag-and-Drop Punnett Square',
-      description:'Build simple genetic crosses and compare predicted genotype and phenotype ratios with simulated offspring data.',
-      path:'BioSims/PunnettSq/',
-      tags:['Genetics', 'Punnett squares', 'Inheritance']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Inheritance',
-      title:'Ginger Dawn: Genetics Game',
-      description:'Run an archived Flash-based genetics game using Ruffle. Students explore inheritance, variation, recessive traits and population genetics through a simple arcade-style model.',
-      path:'BioSims/GingerDawn/',
-      tags:['Biology', 'Genetics', 'Inheritance', 'Recessive traits', 'Variation', 'Population genetics', 'Ginger Dawn', 'Routes', 'Flash', 'Ruffle', 'Archived resource']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Inheritance',
-      title:'Pedigree Simulator',
-      description:'Explore family pedigrees to identify affected individuals, carriers and likely inheritance patterns.',
-      path:'BioSims/Pedigree/',
-      tags:['Genetics', 'Pedigree', 'Inheritance']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Inheritance',
-      title:'Punnett Square Simulator',
-      description:'Practise completing Punnett squares by dragging allele tiles into the correct offspring boxes.',
-      path:'BioSims/PunnettSq2/',
-      tags:['Genetics', 'Alleles', 'Inheritance']
-    },
-    {
-      section:'biosims',
-      group:'Genetics and Evolution',
-      title:'Lick Your Rats',
-      description:'Explore how maternal licking and grooming in rats can affect gene expression, brain development and stress responses through epigenetic changes.',
-      path:'BioSims/Rats/',
-      tags:['Epigenetics', 'Gene expression', 'Inheritance', 'Environment', 'Stress response', 'Rats', 'Maternal care', 'Biology', 'Genetics']
-    },
-    {
-      section:'biosims',
-      group:'Evolution and Populations',
-      title:'Evolution Timeline Table',
-      description:'Complete a table showing how life on Earth has changed in complexity and diversity over geological time.',
-      path:'BioSims/EvolutionTimeline/',
-      tags:['Evolution', 'Geological time', 'Timeline']
-    },
-    {
-      section:'biosims',
-      group:'Evolution and Populations',
-      title:'Measuring Abundance Simulator',
-      description:'Compare quadrat sampling and capture-mark-recapture methods for estimating population size.',
-      path:'BioSims/Abundance/',
-      tags:['Ecology', 'Abundance', 'Sampling']
-    },
-    {
-      section:'biosims',
-      group:'Evolution and Populations',
-      title:'Peppered Moth Evolution Simulator',
-      description:'Model natural selection as the environment changes from clean to polluted, and back again.',
-      path:'BioSims/Moths/',
-      tags:['Evolution', 'Natural selection', 'Data']
-    },
-    {
-      section:'biosims',
-      group:'Evolution and Populations',
-      title:'Who Wants to Live a Million Years?',
-      description:'Run the original Flash-based natural selection game using Ruffle. Students investigate variation, selection pressures, survival and how populations can change over long periods of time.',
-      path:'BioSims/Darwin/',
-      tags:['Biology', 'Evolution', 'Natural selection', 'Variation', 'Selection pressure', 'Adaptation', 'Populations', 'Flash', 'Ruffle']
-    },
-    {
-      section:'biosims',
-      group:'Human Body and Homeostasis',
-      title:'Negative Feedback System Challenge',
-      description:'Respond to random events and maintain homeostasis in temperature, glucose and water balance systems.',
-      path:'BioSims/NegativeFeedback/',
-      tags:['Homeostasis', 'Negative feedback', 'Human body']
-    },
-    {
-      section:'biosims',
-      group:'Human Body and Homeostasis',
-      title:'Reaction Time Challenge',
-      description:'Measure and compare student reaction times across repeated trials, including false starts, mean reaction time, best time, range and CSV export.',
-      path:'BioSims/ReactionTime/',
-      tags:['Reaction time', 'Nervous system', 'Data']
-    },
-    {
-      section:'biosims',
-      group:'Human Body and Homeostasis',
-      title:'Reproduction Race: Fertilisation Simulation',
-      description:'Run an archived Flash-based educational game about fertilisation using Ruffle. Students explore specialised reproductive cells, survival challenges and the biological process leading to fertilisation.',
-      path:'BioSims/GreatSpermRace/',
-      tags:['Biology', 'Reproduction', 'Fertilisation', 'Specialised cells', 'Human body', 'Flash', 'Ruffle', 'Archived resource']
-    },
-    {
-      section:'chemsims',
-      group:'Elements and Atomic Structure',
-      title:'Cations and Anions Simulator',
-      description:'Model how atoms gain or lose electrons to form positive and negative ions.',
-      path:'ChemSims/CationsAnions/',
-      tags:['Ions', 'Electrons', 'Cations', 'Anions']
-    },
-    {
-      section:'chemsims',
-      group:'Elements and Atomic Structure',
-      title:'Element Symbol and Name Matching Game',
-      description:'Match chemical symbols to their correct element names.',
-      path:'ChemSims/Element_Game/',
-      tags:['Elements', 'Symbols', 'Matching']
-    },
-    {
-      section:'chemsims',
-      group:'Chemical Bonding',
-      title:'Bonding Simulator',
-      description:'Explore how atoms interact through ionic and covalent bonding.',
-      path:'ChemSims/Bonding/',
-      tags:['Bonding', 'Ionic', 'Covalent']
-    },
-    {
-      section:'chemsims',
-      group:'Chemical Bonding',
-      title:'Chemical Bonding: Structure & Property Test Lab',
-      description:'Build bonding models, test unknown materials and use evidence from conductivity, melting point, solubility and molten-state tests to identify ionic, covalent molecular, covalent network and metallic bonding models.',
-      path:'ChemSims/BondTestLab/',
-      tags:['Chemical bonding', 'Ionic bonding', 'Covalent bonding', 'Metallic bonding', 'Conductivity', 'Melting point', 'Solubility', 'Properties', 'Chemistry']
-    },
-    {
-      section:'chemsims',
-      group:'Chemical Equilibrium',
-      title:'Equilibrium Explorer: Open and Closed Systems',
-      description:'Model dynamic equilibrium using a reversible A ⇌ B particle system. Compare open and closed systems, concentration changes, reaction events and product loss.',
-      path:'ChemSims/EquilibriumExplorer/',
-      tags:['Chemical equilibrium', 'Dynamic equilibrium', 'Open system', 'Closed system', 'Reversible reactions', 'Concentration', 'Reaction rates', 'Chemistry models']
-    },
-    {
-      section:'chemsims',
-      group:'Organic Chemistry',
-      title:'Alkane Formula Builder',
-      description:'Build straight-chain alkane models from methane to octane, identify carbon counts, predict molecular formulas and complete condensed structural formulas using the CnH2n+2 pattern.',
-      path:'ChemSims/AlkaneFormulaBuilder/',
-      tags:['Alkanes', 'Organic chemistry', 'Hydrocarbons', 'Molecular formula', 'Condensed structural formula', 'Methane', 'Ethane', 'Propane', 'Butane']
-    },
-    {
-      section:'chemsims',
-      group:'Organic Chemistry',
-      title:'Fractional Distillation Simulator',
-      description:'Heat crude oil and observe how different fractions vaporise, move through a cooler fractionating column, and collect according to boiling point range. Includes a prediction check and live collection data.',
-      path:'ChemSims/FracDist/',
-      tags:['Fractional distillation', 'Crude oil', 'Hydrocarbons', 'Boiling point', 'Separation techniques', 'Organic chemistry', 'Fuels', 'Refinery']
-    },
-    {
-      section:'chemsims',
-      group:'Organic Chemistry',
-      title:'Organic Pattern Builder',
-      description:'Build and compare straight-chain organic molecules up to ten carbons, including alkanes, alkenes, alkynes and common functional groups. Students connect structure, bonding, molecular formulae, condensed structural formulae, locants and IUPAC-style names.',
-      path:'ChemSims/OrganicPatternBuilder/',
-      tags:['Organic chemistry', 'Hydrocarbons', 'Alkanes', 'Alkenes', 'Alkynes', 'Functional groups', 'Alcohols', 'Haloalkanes', 'Aldehydes', 'Ketones', 'Carboxylic acids', 'Amines', 'Amides', 'Esters', 'IUPAC nomenclature', 'Structural formulae', 'Molecular formula', 'Isomers']
-    },
-    {
-      section:'earthsims',
-      group:'Climate and Energy Balance',
-      title:'El Niño and La Niña Simulator',
-      description:'Explore how trade winds, warm surface water, ocean upwelling, rainfall and atmospheric circulation change during neutral, El Niño and La Niña conditions across the tropical Pacific.',
-      path:'EarthSims/ElNino/',
-      tags:['Earth science', 'Climate', 'El Niño', 'La Niña', 'ENSO', 'Trade winds', 'Ocean currents', 'Upwelling', 'Rainfall', 'Pacific Ocean', 'Climate systems']
-    },
-    {
-      section:'earthsims',
-      group:'Climate and Energy Balance',
-      title:'Greenhouse Effect Energy Balance Simulator',
-      description:'Model how incoming sunlight, reflected energy, outgoing infrared radiation and greenhouse gases affect Earth’s surface temperature.',
-      path:'EarthSims/GreenHouse/',
-      tags:['Climate', 'Greenhouse effect', 'Energy balance']
-    },
-      {
-  section:'earthsims',
-  group:'Earthquakes and Geology',
-  title:'Seismograph Simulator',
-  description:'Model how a seismograph records earthquake waves. Compare P-wave and S-wave arrival times, read the S–P interval, and estimate distance to the epicentre.',
-  path:'EarthSims/Seismograph/',
-  tags:['Earth science', 'Earthquakes', 'Seismograph', 'Seismogram', 'P-waves', 'S-waves', 'Epicentre', 'Geology']
-},
-    {
-      section:'earthsims',
-      group:'Energy and Sustainability',
-      title:'Renewable Energy Grid Simulator',
-      description:'Balance electricity demand with solar, wind, battery storage and backup power. Explore renewable variability, storage limits, cost, emissions, reliability, grid faults and trade-offs in a continuously running electricity grid model.',
-      path:'EarthSims/RenewableGrid/',
-      tags:['Earth science', 'Energy', 'Electricity', 'Renewable energy', 'Solar', 'Wind', 'Battery storage', 'Fossil fuels', 'Electricity grid', 'Emissions', 'Reliability', 'Cost', 'Sustainability', 'Trade-offs']
-    },
-      {
-  section:'earthsims',
-  group:'Earthquakes and Geology',
-  title:'Earthquake Building Protection Simulator',
-  description:'Test engineering devices designed to reduce earthquake damage. Compare base isolation, cross bracing, dampers, shear walls and tuned mass dampers using roof sway, acceleration, damage risk and collapse behaviour.',
-  path:'EarthSims/QuakeForces/',
-  tags:['Earth science', 'Earthquakes', 'Engineering', 'Buildings', 'Base isolation', 'Dampers', 'Shear walls', 'Resonance', 'Forces']
-},
-      {
-  section:'earthsims',
-  group:'Water and Climate',
-  title:'Water Management Simulator',
-  description:'Manage a Sydney NSW-style water system week by week across multiple years. Balance reservoir storage, rainfall, demand, restrictions, recycling, environmental flow, flood risk, cost and long-term resilience.',
-  path:'EarthSims/WaterManage/',
-  tags:['Earth science', 'Water management', 'Sydney', 'Climate', 'Drought', 'Floods', 'Catchments', 'Reservoirs', 'Sustainability', 'Environmental flows']
-},
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Air Flow Around Objects Simulator',
-      description:'Explore how object shape, size, angle and flow speed affect particle paths, wake patterns and visible flow disruption.',
-      path:'PhySims/AirFlow/',
-      tags:['Forces', 'Motion', 'Air flow']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Changing the Magnitude of Force',
-      description:'Investigate how changing a lever or pulley setup affects the effort force needed to lift the same load. Students run repeated trials, calculate averages, compare range and graph the average force for each setup.',
-      path:'PhySims/MagForce2/',
-      tags:['Physics', 'Forces', 'Simple Machines', 'Levers', 'Pulleys', 'Mechanical Advantage', 'Scientific Investigation']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Lift the Load: Simple Machines Challenge',
-      description:'Compare levers, pulleys, ramps, wheels and axles, wedges and screws by lifting the same load. Students explore effort force, load force, distance, work, efficiency and mechanical advantage.',
-      path:'PhySims/SimpleMachines/',
-      tags:['Physics', 'Forces', 'Simple Machines', 'Mechanical Advantage', 'Work', 'Energy']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Newton’s Cradle Simulator',
-      description:'Investigate momentum and energy transfer through a virtual Newton’s cradle. Change the number of released balls, observe collisions and compare motion and energy graphs over the full running time.',
-      path:'PhySims/NewtonsCradle/',
-      tags:['Physics', 'Forces', 'Motion', 'Newton’s cradle', 'Momentum', 'Kinetic energy', 'Collisions', 'Conservation of momentum', 'Energy transfer', 'Graphs']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Newton\'s Laws Explorer',
-      description:'Start with guided explainer animations, then switch to prediction mode to test inertia, F = ma and action-reaction force pairs using carts, forces, mass, friction and graphs.',
-      path:'PhySims/NewtonsLaws/',
-      tags:['Physics', 'Forces', 'Motion', 'Newton’s laws', 'Inertia', 'F = ma', 'Action-reaction', 'Net force', 'Mass', 'Acceleration', 'Prediction', 'Graphs']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'SUVAT Prediction Explorer',
-      description:'Predict final velocity and displacement for constant-acceleration motion, then run the model to compare the prediction with SUVAT equations, graphs and actual results.',
-      path:'PhySims/SUVAT/',
-      tags:['Physics', 'Motion', 'Kinematics', 'SUVAT', 'Constant acceleration', 'Prediction', 'Displacement', 'Velocity', 'Acceleration', 'Graphs']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Newton\'s Angry Apples',
-      description:'Launch apples using angle, launch power, gravity, wind and air resistance to solve projectile-motion puzzles, complete guided missions and collect modelled science data.',
-      path:'PhySims/NewtonsApples/',
-      tags:['Science games', 'Physics', 'Projectile motion', 'Forces', 'Gravity', 'Energy', 'Motion', 'Air resistance', 'Wind', 'Data collection', 'Scientific models', 'Brain break']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Parachute Drop Parameter Simulator',
-      description:'Change mass, drop height, parachute size, air density and gravity to investigate drag force, terminal velocity and impact speed.',
-      path:'PhySims/Parachute/',
-      tags:['Forces', 'Motion', 'Drag']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Projectile Panic',
-      description:'A projectile motion challenge where students adjust launch angle, initial velocity, gravity and target distance, then launch to test their calculations. Results and data appear only after landing to encourage prediction before trial-and-error.',
-      path:'PhySims/ProjectilePanic/',
-      tags:['Physics', 'Projectile motion', 'Kinematics', 'Motion', 'Gravity', 'Data']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Fields',
-      title:'Magnetic Field Visualiser',
-      description:'Visualise the magnetic field around a bar magnet using compass needles, field lines, an iron filings view and a movable field probe.',
-      path:'PhySims/MagField/',
-      tags:['Magnets', 'Fields', 'Forces', 'Compass']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Fields',
-      title:'Magnetic Force Visualiser',
-      description:'Explore attraction, repulsion and how magnetic force changes with distance by adjusting magnet strength, pole arrangement and the gap between magnets.',
-      path:'PhySims/MagForce/',
-      tags:['Magnets', 'Forces', 'Fields', 'Distance']
-    },
-    {
-      section:'physicssims',
-      group:'Electricity',
-      title:'Ohm’s Law Simulator',
-      description:'Investigate voltage, current and resistance by comparing ohmic and non-ohmic components, including resistors, filament lamps, diodes, thermistors, LEDs and unknown challenge components.',
-      path:'PhySims/Ohm/',
-      tags:['Electricity', 'Ohm’s law', 'Circuits']
-    },
-    {
-      section:'physicssims',
-      group:'Electricity and Magnetism',
-      title:'Electromagnet Simulator',
-      description:'Investigate how current, coil turns and core material affect the strength, polarity and magnetic field pattern of an electromagnet.',
-      path:'PhySims/Electromag/',
-      tags:['Magnetism', 'Electromagnets', 'Fields', 'Circuits']
-    },
-      
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Al’s Relativistic Adventures',
-      description:'Run the original Flash-based relativity adventure using Ruffle. Students explore ideas linked to special relativity through an interactive story-based simulation.',
-      path:'PhySims/Al/',
-      tags:['Physics', 'Relativity', 'Special relativity', 'Light', 'Time dilation', 'Modern physics', 'Flash', 'Ruffle']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Doppler Effect Simulator',
-      description:'Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.',
-      path:'PhySims/Doppler/',
-      tags:['Physics', 'Doppler effect', 'Waves', 'Frequency', 'Wavelength', 'Relative motion', 'Scientific models']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Einstein Train Thought Experiment Simulator',
-      description:'Explore the relativity of simultaneity using a moving train, two lightning strikes, observer frames, wavefronts and an event timeline.',
-      path:'PhySims/RelTrain/',
-      tags:['Relativity', 'Simultaneity', 'Modern physics', 'Light']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Optics Ray Diagram Simulator',
-      description:'Explore convex, concave and bifocal lenses by moving an object, changing focal length, tracing ray diagrams and identifying real, virtual, upright, inverted, enlarged and reduced images.',
-      path:'PhySims/Optics/',
-      tags:['Optics', 'Lenses', 'Ray diagrams']
-    },
-      {
-  section:'physicssims',
-  group:'Light and Waves',
-  title:'Microscope Focus and Magnification Explorer',
-  description:'Explore how a compound light microscope uses lenses, light, focus and magnification. Practise centring a specimen, adjusting focus and comparing field of view at different magnifications.',
-  path:'PhySims/Microscope/',
-  tags:['Physics', 'Light', 'Lenses', 'Microscopes', 'Magnification', 'Focus', 'Field of view', 'Cells', 'Scientific equipment']
-},
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Photoelectric Effect Simulator',
-      description:'Change metal threshold frequency, light intensity and stopping potential to investigate photoelectron emission.',
-      path:'PhySims/PhotoElectric/',
-      tags:['Light', 'Photoelectric effect', 'Modern physics']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Reflection and Refraction Law Simulator',
-      description:'Investigate the law of reflection, Snell’s law and total internal reflection by changing angles, materials, refractive indices and measurement uncertainty.',
-      path:'PhySims/LightLaws/',
-      tags:['Physics', 'Light', 'Waves', 'Reflection', 'Refraction', 'Snell’s law', 'Total internal reflection', 'Critical angle', 'Refractive index', 'Ray diagrams', 'Optics']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Special Relativity Light Clock Simulator',
-      description:'Explore time dilation using a moving light clock by comparing the traveller frame with a stationary observer frame and graphing the Lorentz factor.',
-      path:'PhySims/SpecRel/',
-      tags:['Light', 'Relativity', 'Time dilation', 'Modern physics']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Spectrometer Simulator',
-      description:'Explore continuous, emission and absorption spectra by measuring wavelengths, comparing spectral lines and identifying unknown elements.',
-      path:'PhySims/Spectrometer/',
-      tags:['Light', 'Spectra', 'Waves']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Telescope Light Path Explorer',
-      description:'Explore how refracting and reflecting telescopes collect, focus and magnify light. Compare aperture, eyepiece focal length, focus, brightness and image quality.',
-      path:'PhySims/Telescope/',
-      tags:['Physics', 'Light', 'Waves', 'Telescopes', 'Optics', 'Reflection', 'Refraction', 'Concave mirrors', 'Lenses', 'Focal length', 'Magnification', 'Aperture']
-    },
-      {
-  section:'physicssims',
-  group:'Nuclear and Atomic Physics',
-  title:'Nuclear Reactor Simulator',
-  description:'Model a controlled nuclear fission reactor. Adjust control rods, coolant flow and turbine load to manage neutron activity, core temperature, electrical output, safety margin and random fault events.',
-  path:'PhySims/NuclearReactor/',
-  tags:['Physics', 'Nuclear', 'Fission', 'Chain reaction', 'Control rods', 'Coolant', 'Reactor', 'Energy transfer', 'Electricity']
-},
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Gravity Slingshot Challenge',
-      description:'Launch a probe past a planet and collect data on launch angle, speed, gravity strength, trajectory and closest distance to a target.',
-      path:'BrainBreak/GravitySlingshot/',
-      tags:['Gravity', 'Forces', 'Motion', 'Trajectory', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Immune Defender: Pathogen Chase',
-      description:'Control a white blood cell, remove pathogens and avoid toxins while comparing how immune protection mode affects response data.',
-      path:'BrainBreak/ImmuneDefender/',
-      tags:['Immune system', 'Pathogens', 'Vaccination', 'White blood cells', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Mystery Science Word',
-      description:'Guess hidden Years 7–10 science vocabulary using clues before the mystery meter fills. Choose individual modules, complete Year Review banks, or attempt the bright-pink Mega Mix containing words from every available module.',
-      path:'Games/MysteryScienceWord/',
-      tags:['Science vocabulary', 'Years 7–10', 'Brain break', 'Word game', 'Module revision', 'Year review', 'Mega Mix', 'Definitions', 'Science keywords']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Science Word Match',
-      description:'Match Years 7–10 science terms with their meanings or descriptions. Choose individual modules, Year Review banks or the Mega Mix, then play rounds of four, six or eight vocabulary pairs.',
-      path:'Games/ScienceWordMatch/',
-      tags:['Science vocabulary', 'Years 7–10', 'Matching game', 'Brain break', 'Module revision', 'Year review', 'Mega Mix', 'Definitions', 'Science keywords']
-    },
   {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Element Connections',
-      description:'Sort 16 science terms into four connected groups of four. Choose individual modules, Year Review banks or the Mega Mix, then identify the scientific relationship linking each group.',
-      path:'SciSims/ChemSims/ElementConnections/',
-      tags:['Science vocabulary', 'Years 7–10', 'Connections game', 'Elements', 'Concept relationships', 'Module revision', 'Year review', 'Mega Mix', 'Science keywords', 'Periodic Table']
-    },
-
-
-      
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Science Connections',
-      description:'Sort 16 science terms into four connected groups of four. Choose individual modules, Year Review banks or the Mega Mix, then identify the scientific relationship linking each group.',
-      path:'Games/ScienceConnections/',
-      tags:['Science vocabulary', 'Years 7–10', 'Connections game', 'Classification', 'Concept relationships', 'Module revision', 'Year review', 'Mega Mix', 'Science keywords']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Science Odd One Out',
-      description:'Choose the science term that does not belong with the other three, then review the shared connection and the meaning of every term. Includes module, Year Review and Mega Mix modes.',
-      path:'Games/OddOneOut/',
-      tags:['Science vocabulary', 'Years 7–10', 'Odd one out', 'Classification', 'Scientific reasoning', 'Module revision', 'Year review', 'Mega Mix', 'Definitions']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Chain Reactions',
-      description:'Use two connected science reasoning modes: arrange vocabulary into valid scientific sequences, or build the longest possible chain by linking terms through accepted scientific relationships.',
-      path:'Games/ChainReactions/',
-      tags:['Science vocabulary', 'Years 7–10', 'Science sequence', 'Chain reaction', 'Systems thinking', 'Cause and effect', 'Module revision', 'Year review', 'Mega Mix']
-    },
-    {
-      section:'brainbreak',
-      group:'Science Games',
-      title:'Particle Panic: Kinetic Energy Challenge',
-      description:'Control a particle, collect tokens and avoid high-energy particles while investigating how temperature affects particle motion, collisions and survival time.',
-      path:'BrainBreak/ParticlePanic/',
-      tags:['Particles', 'Kinetic energy', 'Temperature', 'Collisions', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Reaction and Focus Games',
-      title:'Classic Pong Focus Challenge',
-      description:'Play classic Pong against the computer and collect repeated trial data on score, best rally, difficulty and performance.',
-      path:'BrainBreak/Pong/',
-      tags:['Pong', 'Reaction time', 'Focus', 'Practice', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Reaction and Focus Games',
-      title:'Colour-Word Interference Challenge',
-      description:'Name the ink colour rather than the written word, then collect data on accuracy, errors and mean response time.',
-      path:'BrainBreak/Stroop/',
-      tags:['Stroop effect', 'Reaction time', 'Focus', 'Interference', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Reaction and Focus Games',
-      title:'Reaction and Accuracy Target Lab',
-      description:'Click targets under timed conditions, collect repeated trial data and compare scores, hits per second, best score and mean performance.',
-      path:'BrainBreak/Target/',
-      tags:['Reaction time', 'Accuracy', 'Focus', 'Data']
-    },
-    {
-      section:'brainbreak',
-      group:'Reaction and Focus Games',
-      title:'Snake Decision-Time Challenge',
-      description:'Guide the snake, collect food and record score and survival time to investigate practice, attention, decision-making and repeated trial data.',
-      path:'BrainBreak/Snake/',
-      tags:['Decision-making', 'Reaction time', 'Practice', 'Data']
-    },
-    {
-      section:'interestingsims',
-      group:'Mathematical and Cross-topic Models',
-      title:'Fractal Infinite Zoom Simulator',
-      description:'Explore the Mandelbrot set using guided zoom, infinite zoom, preset fractal regions, colour palettes and live coordinate data.',
-      path:'InterestingSims/Fractal/',
-      tags:['Fractals', 'Mathematics', 'Patterns', 'Visual model']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Car Motion and Ticker Tape Simulator',
-      description:'Model car motion and generate matching ticker-timer tape. Compare constant speed, acceleration, braking, delayed starts and two-car motion using measurable dot patterns.',
-      path:'PhySims/Cars/',
-      tags:['Physics', 'Motion', 'Speed', 'Acceleration', 'Ticker tape', 'Average speed', 'Data analysis']
-    },
-    {
-      section:'physicssims',
-      group:'Forces and Motion',
-      title:'Ticker Timer Simulator',
-      description:'Generate ticker-timer tapes at 50 Hz and analyse the spacing between dots. Compare constant speed, acceleration and slowing-down motion using one or two virtual tapes.',
-      path:'PhySims/TickerTimer/',
-      tags:['Physics', 'Motion', 'Ticker timer', 'Speed', 'Acceleration', 'Data analysis', 'CSV export']
-    },
-    {
-      section:'physicssims',
-      group:'Electricity and Magnetism',
-      title:'Magnetic Field Around a Wire',
-      description:'Explore the circular magnetic field produced by a straight current-carrying wire. Change current and wire position, then use a probe to compare distance, direction and relative field strength.',
-      path:'PhySims/StaticWire/',
-      tags:['Physics', 'Magnetism', 'Current', 'Magnetic field', 'Right-hand rule', 'Field strength']
-    },
-    {
-      section:'physicssims',
-      group:'Electricity and Magnetism',
-      title:'Magnetic Field Around Two Wires',
-      description:'Explore how magnetic fields from two current-carrying wires combine. Compare same-direction and opposite-direction currents using resultant field arrows and a probe point.',
-      path:'PhySims/TwoWire/',
-      tags:['Physics', 'Magnetism', 'Current', 'Magnetic fields', 'Superposition', 'Vector addition']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Cathode Ray Oscilloscope and Audio Oscillator',
-      description:'Generate audio tones and view their waveform on a simulated oscilloscope. Adjust frequency, volume and presets, then compare wave period, pitch and signal shape.',
-      path:'PhySims/CRO/',
-      tags:['Physics', 'Waves', 'Sound', 'Frequency', 'Oscilloscope', 'Waveform', 'Period']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Longitudinal Wave Simulator',
-      description:'Model a longitudinal wave by showing particles moving left and right as compressions and rarefactions travel through the medium.',
-      path:'PhySims/LongWave/',
-      tags:['Physics', 'Waves', 'Longitudinal waves', 'Compression', 'Rarefaction', 'Sound']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Sound Wave Generator',
-      description:'Generate sine, square, sawtooth and triangle waves in the browser. Adjust frequency and volume, use preset tones and compare waveform shape on a live scope.',
-      path:'PhySims/SoundGen/',
-      tags:['Physics', 'Sound', 'Waves', 'Frequency', 'Pitch', 'Waveform', 'Oscillator']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Transverse Wave Simulator',
-      description:'Model a transverse wave by changing amplitude, wavelength, frequency and wave speed. Toggle labels and vectors to compare crests, troughs and particle motion.',
-      path:'PhySims/TransWave/',
-      tags:['Physics', 'Waves', 'Transverse waves', 'Amplitude', 'Wavelength', 'Frequency']
-    },
-    {
-      section:'biosims',
-      group:'Disease and Microbes',
-      title:'Zombie Outbreak Model',
-      description:'Use a fictional outbreak model to explore how contact rate, infection rate, response rate, safe zones and removal affect the spread of an infection-like population system.',
-      path:'BioSims/Zombie/',
-      tags:['Biology', 'Disease modelling', 'Population model', 'Outbreak', 'Infection spread', 'Compartment model', 'Data']
-    },
-    {
-      section:'mathsims',
-      group:'Probability and Statistics',
-      title:'Galton Board Simulator',
-      description:'Drop balls through a Galton board to model random pathways, binomial distributions, variation, repeated trials and the emergence of a bell-shaped pattern.',
-      path:'Math/Galton/',
-      tags:['Maths', 'Probability', 'Statistics', 'Galton board', 'Binomial distribution', 'Randomness', 'Data']
-    },
-    {
-      section:'mathsims',
-      group:'Probability and Statistics',
-      title:'Lottery Probability Simulator',
-      description:'Model lottery-style random draws to compare combinations, odds, rare events and the difference between possible outcomes and likely outcomes.',
-      path:'Math/Lottery/',
-      tags:['Maths', 'Probability', 'Combinations', 'Randomness', 'Odds', 'Statistics']
-    },
-    {
-      section:'biosims',
-      group:'Human Body and Homeostasis',
-      title:'Path of Light Through the Eye',
-      description:'Trace light rays through the cornea, pupil, lens and retina. Compare normal vision, myopia, hyperopia, accommodation, pupil size and corrective lenses.',
-      path:'BioSims/Eye/',
-      tags:['Biology', 'Human body', 'Eye', 'Vision', 'Light', 'Refraction', 'Lens', 'Retina', 'Myopia', 'Hyperopia', 'Correction lenses']
-    },
-    {
-      section:'biosims',
-      group:'Human Body and Homeostasis',
-      title:'Sound Through the Ear',
-      description:'Follow sound as it travels through the outer ear, ear canal, eardrum, ossicles and cochlea, then becomes nerve signals. Includes frequency, amplitude, pathway steps and a cochlear hair-cell damage-risk model.',
-      path:'BioSims/Ear/',
-      tags:['Biology', 'Human body', 'Ear', 'Hearing', 'Sound', 'Waves', 'Cochlea', 'Eardrum', 'Ossicles', 'Auditory nerve', 'Hair cells']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Compare Drum Sizes',
-      description:'Compare two drums by changing diameter, membrane tension, damping and strike position. Strike the drums to see vibration patterns, wave traces and estimated pitch.',
-      path:'PhySims/DrumSizes/',
-      tags:['Physics', 'Sound', 'Vibration', 'Frequency', 'Pitch', 'Drums', 'Damping', 'Tension', 'Waves']
-    },
-    {
-      section:'physicssims',
-      group:'Light and Waves',
-      title:'Guitar String Vibration',
-      description:'Pluck a virtual guitar string and explore how frequency, pluck position, damping, harmonics and brightness affect string shape, sustain, tone and sound.',
-      path:'PhySims/GuitarString/',
-      tags:['Physics', 'Sound', 'Waves', 'Guitar', 'String vibration', 'Frequency', 'Pitch', 'Harmonics', 'Standing waves', 'Nodes', 'Damping']
-    }
-
-  ];
+    "section": "workingscientifically",
+    "group": "Variables and Fair Testing",
+    "title": "Experimental Variables Sorter",
+    "description": "Identify independent variables, dependent variables, controlled variables and irrelevant factors using a drag-and-drop fair testing activity.",
+    "path": "WorkingScientifically/Variables/",
+    "tags": [
+      "Variables",
+      "Fair testing",
+      "Drag and drop"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Accuracy, Reliability and Validity Lab",
+    "description": "Generate experimental datasets by adjusting sample size, equipment precision, random error, systematic error and controlled variables, then interpret graphs and data tables to judge accuracy, reliability and validity.",
+    "path": "InvSci/VAR/",
+    "tags": [
+      "Accuracy",
+      "Reliability",
+      "Validity",
+      "Experimental design",
+      "Data analysis",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Doppler Effect Simulator",
+    "description": "Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.",
+    "path": "PhySims/Doppler/",
+    "tags": [
+      "Doppler effect",
+      "Waves",
+      "Frequency",
+      "Wavelength",
+      "Relative motion",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Eratosthenes Experiment Simulator",
+    "description": "Model Eratosthenes’ method for estimating Earth’s circumference by comparing shadow angles and distance between locations, including NSW town examples and measurement uncertainty.",
+    "path": "InvSci/Eratosthenes/",
+    "tags": [
+      "Eratosthenes",
+      "Earth circumference",
+      "Scientific models",
+      "Measurement uncertainty",
+      "Angles",
+      "Data analysis"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Fair Test Builder",
+    "description": "Build valid investigations by identifying independent, dependent and controlled variables across plant growth, pendulum motion, friction, reaction time and dissolving rate scenarios.",
+    "path": "InvSci/FairTest/",
+    "tags": [
+      "Fair testing",
+      "Variables",
+      "Validity",
+      "Reliability",
+      "Experimental design"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Marshall and Warren: Peptic Ulcer Evidence Simulator",
+    "description": "Investigate how evidence changed the scientific explanation for peptic ulcers by comparing stress and acid explanations with evidence for H. pylori infection, NSAID use, treatment outcomes and scientific consensus.",
+    "path": "InvSci/Helicobacter/",
+    "tags": [
+      "Marshall and Warren",
+      "H. pylori",
+      "Helicobacter pylori",
+      "Peptic ulcers",
+      "Scientific evidence",
+      "Scientific models",
+      "Scientific consensus",
+      "Medical science",
+      "Australian science",
+      "Confounding variables"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Priestley’s Air Experiments Simulator",
+    "description": "Explore Priestley’s candle, plant, animal and mercuric oxide experiments to compare historical interpretations of “air” with the modern oxygen model.",
+    "path": "InvSci/Priestley/",
+    "tags": [
+      "Investigating Science",
+      "Module 5",
+      "Scientific investigations",
+      "Priestley",
+      "Oxygen",
+      "Combustion",
+      "Respiration",
+      "Plants",
+      "Phlogiston theory",
+      "Scientific models",
+      "Changing theories",
+      "Evidence"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Van Helmont Willow Tree Experiment Simulator",
+    "description": "Recreate Van Helmont’s willow tree experiment, compare plant and soil mass changes, and evaluate how historical interpretations differed from modern explanations of plant growth.",
+    "path": "InvSci/VanH/",
+    "tags": [
+      "Van Helmont",
+      "Willow tree experiment",
+      "Historical science",
+      "Observations",
+      "Inferences",
+      "Plant growth",
+      "Mass balance",
+      "Water",
+      "Carbon dioxide",
+      "Photosynthesis",
+      "Validity",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "DNA X-ray Diffraction Evidence Builder",
+    "description": "Test DNA structure models against evidence from chemical composition, Chargaff’s ratios, X-ray diffraction, Photograph 51-style patterns, model building and ethical acknowledgement.",
+    "path": "InvSci/DNAXRay/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "DNA",
+      "X-ray diffraction",
+      "Photograph 51",
+      "Rosalind Franklin",
+      "Chargaff’s ratios",
+      "Double helix",
+      "Model building",
+      "Evidence",
+      "Scientific models",
+      "Ethics"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Earth History Evidence Builder",
+    "description": "Build a model of Earth’s geological history by adding technology-based evidence layers, including fossils, seafloor mapping, magnetic striping, radiometric dating, GPS, computer reconstruction, tomography and palaeoclimate data.",
+    "path": "InvSci/EarthEvidence/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Earth history",
+      "Geological models",
+      "Plate tectonics",
+      "Continental drift",
+      "Seafloor spreading",
+      "Computer models",
+      "Evidence",
+      "Radiometric dating",
+      "GPS",
+      "Seismic tomography",
+      "Palaeoclimate",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Gas Laws Technology Simulator",
+    "description": "Use a virtual syringe, pressure sensor and temperature control to investigate Boyle’s Law, Charles’ Law and the Combined Gas Law, including graphing, data collection and sensor uncertainty.",
+    "path": "InvSci/GasLaws/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Gas laws",
+      "Boyle’s Law",
+      "Charles’ Law",
+      "Combined Gas Law",
+      "Pressure",
+      "Volume",
+      "Temperature",
+      "Sensors",
+      "Graphing",
+      "Experimental uncertainty",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Large Hadron Collider Model Simulator",
+    "description": "Model how counter-rotating particle beams are steered by magnets, collide inside detectors, and produce event data selected by a trigger system.",
+    "path": "InvSci/LHC/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Large Hadron Collider",
+      "Particle accelerator",
+      "Particle physics",
+      "Magnetic fields",
+      "Detectors",
+      "Trigger systems",
+      "Event data",
+      "Scientific models",
+      "Data selection",
+      "Experimental uncertainty"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Medical Imaging Comparison Simulator",
+    "description": "Compare X-ray, CT, MRI and ultrasound in different medical scenarios, weighing image detail, cost, risk, radiation exposure, accessibility and ethical considerations.",
+    "path": "InvSci/MedScan/",
+    "tags": [
+      "Medical imaging",
+      "X-ray",
+      "CT",
+      "MRI",
+      "Ultrasound",
+      "Radiation",
+      "Technology",
+      "Risk-benefit",
+      "Ethics",
+      "Health",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Optical Instrument Technology Builder",
+    "description": "Use reflection, refraction, lens models and mirror models to design and compare microscopes, refracting telescopes, reflecting telescopes and optical fibres. Includes ray models, law matching, performance metrics, trial data, graphing, CSV export and CER response prompts.",
+    "path": "InvSci/OpticalTech/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Optics",
+      "Optical instruments",
+      "Reflection",
+      "Refraction",
+      "Lenses",
+      "Mirrors",
+      "Microscopes",
+      "Telescopes",
+      "Optical fibres",
+      "Total internal reflection",
+      "Scientific models",
+      "CER"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Radioactivity Detector Evidence Builder",
+    "description": "Explore how radiation detection technologies made invisible radiation measurable, allowing scientists to classify radiation types and develop models of atomic structure, decay and the nuclear atom.",
+    "path": "InvSci/RadioactivityEvidence/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Radioactivity",
+      "Radiation detection",
+      "Atomic theory",
+      "Nuclear atom",
+      "Alpha radiation",
+      "Beta radiation",
+      "Gamma radiation",
+      "Geiger counter",
+      "Cloud chamber",
+      "Scintillation screen",
+      "Rutherford model",
+      "Evidence",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Speed vs Distance Investigation Simulator",
+    "description": "Design a practical investigation using available technologies to measure speed and distance travelled, collect quantitative data, repeat trials, calculate means and evaluate measurement uncertainty.",
+    "path": "InvSci/SpeedVDist/",
+    "tags": [
+      "Speed",
+      "Distance travelled",
+      "Quantitative data",
+      "Independent variable",
+      "Dependent variable",
+      "Photogate",
+      "Motion sensor",
+      "Technology",
+      "Practical investigation",
+      "Physics",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Temperature and Reaction Rate Simulator",
+    "description": "Investigate how temperature affects reaction rate using a virtual reaction vessel, particle collisions, graphing, data collection and model evaluation.",
+    "path": "InvSci/TempRate/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Reaction rate",
+      "Temperature",
+      "Collision theory",
+      "Particle model",
+      "Successful collisions",
+      "Activation energy",
+      "Catalyst",
+      "Concentration",
+      "Graphing",
+      "Experimental uncertainty",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Build-a-Cell Sorter",
+    "description": "Sort cell structures into plant, animal, fungal and bacterial cells. Includes an easy Plant vs Animal mode and a standard four-cell classification challenge.",
+    "path": "BioSims/CellSorter/",
+    "tags": [
+      "Cells",
+      "Classification",
+      "Cell structure",
+      "Organelles",
+      "Plant cells",
+      "Animal cells",
+      "Fungal cells",
+      "Bacterial cells",
+      "Prokaryotes",
+      "Eukaryotes"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Characteristics of Living Things",
+    "description": "Use MRS GREN evidence to classify examples as living, once-living or non-living.",
+    "path": "BioSims/CharacteristicsLivingThings/",
+    "tags": [
+      "Classification",
+      "Living things",
+      "MRS GREN",
+      "Life processes",
+      "Evidence",
+      "Year 7",
+      "Cells and classification"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Organising the Diversity of Life on Earth",
+    "description": "Use observable characteristics to classify organisms into major groups such as animals, plants, fungi, protists and bacteria.",
+    "path": "BioSims/OrganisingDiversity/",
+    "tags": [
+      "Classification",
+      "Diversity of life",
+      "Animals",
+      "Plants",
+      "Fungi",
+      "Protists",
+      "Bacteria",
+      "Shared characteristics",
+      "Year 7",
+      "Cells and classification"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Cell Siege",
+    "description": "Defend the body in a Space Invaders-style immune system game by using antibodies, macrophages, killer T cells, complement, fever and immune memory against pathogens and infected cells.",
+    "path": "BioSims/CellSiege/",
+    "tags": [
+      "Biology",
+      "Immune system",
+      "Pathogens",
+      "Antibodies",
+      "White blood cells",
+      "Vaccines",
+      "Disease",
+      "Infected cells",
+      "Scientific models",
+      "Data collection",
+      "Science games"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Marshall and Warren: Peptic Ulcer Evidence Simulator",
+    "description": "Investigate how H. pylori evidence, treatment outcomes and confounding factors changed the scientific explanation for many peptic ulcers.",
+    "path": "InvSci/Helicobacter/",
+    "tags": [
+      "Biology",
+      "Disease",
+      "Microbes",
+      "H. pylori",
+      "Helicobacter pylori",
+      "Peptic ulcers",
+      "Marshall and Warren",
+      "Australian science"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Pandemic Simulation",
+    "description": "Model how an infectious disease can spread through a population.",
+    "path": "BioSims/Pandemic/",
+    "tags": [
+      "Disease",
+      "Pandemic",
+      "Biosecurity",
+      "Population model"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Biosecurity and Ecosystems",
+    "title": "Biosecurity Outbreak Simulator",
+    "description": "Respond to an invasive species or agricultural disease outbreak. Choose monitoring, quarantine, treatment, culling, public communication and research strategies while balancing uncertainty, economic impacts, ecological effects and public trust.",
+    "path": "BioSims/BiosecurityOutbreak/",
+    "tags": [
+      "Biology",
+      "Biosecurity",
+      "Invasive species",
+      "Agricultural disease",
+      "Disease control",
+      "Quarantine",
+      "Monitoring",
+      "Evidence",
+      "Uncertainty",
+      "Ecosystems",
+      "Agriculture",
+      "Systems thinking"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Petri Dish Bacterial Growth Simulator",
+    "description": "Explore how bacteria grow in a petri dish under different conditions.",
+    "path": "BioSims/PetriBacteria/",
+    "tags": [
+      "Bacteria",
+      "Growth",
+      "Microbes"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Sneeze: Infection Spread Game",
+    "description": "Run an archived Flash-based disease transmission game using Ruffle. Students explore how an infection can spread through a population depending on movement, timing, contact and transmission.",
+    "path": "BioSims/Sneeze/",
+    "tags": [
+      "Biology",
+      "Disease",
+      "Infection",
+      "Transmission",
+      "Virus",
+      "Sneeze",
+      "Population spread",
+      "Outbreaks",
+      "Flash",
+      "Ruffle",
+      "Archived resource",
+      "Routes",
+      "Channel 4",
+      "Wellcome Trust"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "DNA Profiling Gel Electrophoresis Simulator",
+    "description": "Compare DNA banding patterns from a mother, child and possible fathers to identify the biological father.",
+    "path": "BioSims/DNAProfiling/",
+    "tags": [
+      "DNA",
+      "Gel electrophoresis",
+      "Genetics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Drag-and-Drop Punnett Square",
+    "description": "Build simple genetic crosses and compare predicted genotype and phenotype ratios with simulated offspring data.",
+    "path": "BioSims/PunnettSq/",
+    "tags": [
+      "Genetics",
+      "Punnett squares",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Ginger Dawn: Genetics Game",
+    "description": "Run an archived Flash-based genetics game using Ruffle. Students explore inheritance, variation, recessive traits and population genetics through a simple arcade-style model.",
+    "path": "BioSims/GingerDawn/",
+    "tags": [
+      "Biology",
+      "Genetics",
+      "Inheritance",
+      "Recessive traits",
+      "Variation",
+      "Population genetics",
+      "Ginger Dawn",
+      "Routes",
+      "Flash",
+      "Ruffle",
+      "Archived resource"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Pedigree Simulator",
+    "description": "Explore family pedigrees to identify affected individuals, carriers and likely inheritance patterns.",
+    "path": "BioSims/Pedigree/",
+    "tags": [
+      "Genetics",
+      "Pedigree",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Punnett Square Simulator",
+    "description": "Practise completing Punnett squares by dragging allele tiles into the correct offspring boxes.",
+    "path": "BioSims/PunnettSq2/",
+    "tags": [
+      "Genetics",
+      "Alleles",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Evolution",
+    "title": "Lick Your Rats",
+    "description": "Explore how maternal licking and grooming in rats can affect gene expression, brain development and stress responses through epigenetic changes.",
+    "path": "BioSims/Rats/",
+    "tags": [
+      "Epigenetics",
+      "Gene expression",
+      "Inheritance",
+      "Environment",
+      "Stress response",
+      "Rats",
+      "Maternal care",
+      "Biology",
+      "Genetics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Evolution Timeline Table",
+    "description": "Complete a table showing how life on Earth has changed in complexity and diversity over geological time.",
+    "path": "BioSims/EvolutionTimeline/",
+    "tags": [
+      "Evolution",
+      "Geological time",
+      "Timeline"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Measuring Abundance Simulator",
+    "description": "Compare quadrat sampling and capture-mark-recapture methods for estimating population size.",
+    "path": "BioSims/Abundance/",
+    "tags": [
+      "Ecology",
+      "Abundance",
+      "Sampling"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Peppered Moth Evolution Simulator",
+    "description": "Model natural selection as the environment changes from clean to polluted, and back again.",
+    "path": "BioSims/Moths/",
+    "tags": [
+      "Evolution",
+      "Natural selection",
+      "Data"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Who Wants to Live a Million Years?",
+    "description": "Run the original Flash-based natural selection game using Ruffle. Students investigate variation, selection pressures, survival and how populations can change over long periods of time.",
+    "path": "BioSims/Darwin/",
+    "tags": [
+      "Biology",
+      "Evolution",
+      "Natural selection",
+      "Variation",
+      "Selection pressure",
+      "Adaptation",
+      "Populations",
+      "Flash",
+      "Ruffle"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Negative Feedback System Challenge",
+    "description": "Respond to random events and maintain homeostasis in temperature, glucose and water balance systems.",
+    "path": "BioSims/NegativeFeedback/",
+    "tags": [
+      "Homeostasis",
+      "Negative feedback",
+      "Human body"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Reaction Time Challenge",
+    "description": "Measure and compare student reaction times across repeated trials, including false starts, mean reaction time, best time, range and CSV export.",
+    "path": "BioSims/ReactionTime/",
+    "tags": [
+      "Reaction time",
+      "Nervous system",
+      "Data"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Reproduction Race: Fertilisation Simulation",
+    "description": "Run an archived Flash-based educational game about fertilisation using Ruffle. Students explore specialised reproductive cells, survival challenges and the biological process leading to fertilisation.",
+    "path": "BioSims/GreatSpermRace/",
+    "tags": [
+      "Biology",
+      "Reproduction",
+      "Fertilisation",
+      "Specialised cells",
+      "Human body",
+      "Flash",
+      "Ruffle",
+      "Archived resource"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Elements and Atomic Structure",
+    "title": "Cations and Anions Simulator",
+    "description": "Model how atoms gain or lose electrons to form positive and negative ions.",
+    "path": "ChemSims/CationsAnions/",
+    "tags": [
+      "Ions",
+      "Electrons",
+      "Cations",
+      "Anions"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Elements and Atomic Structure",
+    "title": "Element Symbol and Name Matching Game",
+    "description": "Match chemical symbols to their correct element names.",
+    "path": "ChemSims/Element_Game/",
+    "tags": [
+      "Elements",
+      "Symbols",
+      "Matching"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Bonding Simulator",
+    "description": "Explore how atoms interact through ionic and covalent bonding.",
+    "path": "ChemSims/Bonding/",
+    "tags": [
+      "Bonding",
+      "Ionic",
+      "Covalent"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Chemical Bonding: Structure & Property Test Lab",
+    "description": "Build bonding models, test unknown materials and use evidence from conductivity, melting point, solubility and molten-state tests to identify ionic, covalent molecular, covalent network and metallic bonding models.",
+    "path": "ChemSims/BondTestLab/",
+    "tags": [
+      "Chemical bonding",
+      "Ionic bonding",
+      "Covalent bonding",
+      "Metallic bonding",
+      "Conductivity",
+      "Melting point",
+      "Solubility",
+      "Properties",
+      "Chemistry"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Equilibrium",
+    "title": "Equilibrium Explorer: Open and Closed Systems",
+    "description": "Model dynamic equilibrium using a reversible A ⇌ B particle system. Compare open and closed systems, concentration changes, reaction events and product loss.",
+    "path": "ChemSims/EquilibriumExplorer/",
+    "tags": [
+      "Chemical equilibrium",
+      "Dynamic equilibrium",
+      "Open system",
+      "Closed system",
+      "Reversible reactions",
+      "Concentration",
+      "Reaction rates",
+      "Chemistry models"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Alkane Formula Builder",
+    "description": "Build straight-chain alkane models from methane to octane, identify carbon counts, predict molecular formulas and complete condensed structural formulas using the CnH2n+2 pattern.",
+    "path": "ChemSims/AlkaneFormulaBuilder/",
+    "tags": [
+      "Alkanes",
+      "Organic chemistry",
+      "Hydrocarbons",
+      "Molecular formula",
+      "Condensed structural formula",
+      "Methane",
+      "Ethane",
+      "Propane",
+      "Butane"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Fractional Distillation Simulator",
+    "description": "Heat crude oil and observe how different fractions vaporise, move through a cooler fractionating column, and collect according to boiling point range. Includes a prediction check and live collection data.",
+    "path": "ChemSims/FracDist/",
+    "tags": [
+      "Fractional distillation",
+      "Crude oil",
+      "Hydrocarbons",
+      "Boiling point",
+      "Separation techniques",
+      "Organic chemistry",
+      "Fuels",
+      "Refinery"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Organic Pattern Builder",
+    "description": "Build and compare straight-chain organic molecules up to ten carbons, including alkanes, alkenes, alkynes and common functional groups. Students connect structure, bonding, molecular formulae, condensed structural formulae, locants and IUPAC-style names.",
+    "path": "ChemSims/OrganicPatternBuilder/",
+    "tags": [
+      "Organic chemistry",
+      "Hydrocarbons",
+      "Alkanes",
+      "Alkenes",
+      "Alkynes",
+      "Functional groups",
+      "Alcohols",
+      "Haloalkanes",
+      "Aldehydes",
+      "Ketones",
+      "Carboxylic acids",
+      "Amines",
+      "Amides",
+      "Esters",
+      "IUPAC nomenclature",
+      "Structural formulae",
+      "Molecular formula",
+      "Isomers"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Climate and Energy Balance",
+    "title": "El Niño and La Niña Simulator",
+    "description": "Explore how trade winds, warm surface water, ocean upwelling, rainfall and atmospheric circulation change during neutral, El Niño and La Niña conditions across the tropical Pacific.",
+    "path": "EarthSims/ElNino/",
+    "tags": [
+      "Earth science",
+      "Climate",
+      "El Niño",
+      "La Niña",
+      "ENSO",
+      "Trade winds",
+      "Ocean currents",
+      "Upwelling",
+      "Rainfall",
+      "Pacific Ocean",
+      "Climate systems"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Climate and Energy Balance",
+    "title": "Greenhouse Effect Energy Balance Simulator",
+    "description": "Model how incoming sunlight, reflected energy, outgoing infrared radiation and greenhouse gases affect Earth’s surface temperature.",
+    "path": "EarthSims/GreenHouse/",
+    "tags": [
+      "Climate",
+      "Greenhouse effect",
+      "Energy balance"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Earthquakes and Geology",
+    "title": "Seismograph Simulator",
+    "description": "Model how a seismograph records earthquake waves. Compare P-wave and S-wave arrival times, read the S–P interval, and estimate distance to the epicentre.",
+    "path": "EarthSims/Seismograph/",
+    "tags": [
+      "Earth science",
+      "Earthquakes",
+      "Seismograph",
+      "Seismogram",
+      "P-waves",
+      "S-waves",
+      "Epicentre",
+      "Geology"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Energy and Sustainability",
+    "title": "Renewable Energy Grid Simulator",
+    "description": "Balance electricity demand with solar, wind, battery storage and backup power. Explore renewable variability, storage limits, cost, emissions, reliability, grid faults and trade-offs in a continuously running electricity grid model.",
+    "path": "EarthSims/RenewableGrid/",
+    "tags": [
+      "Earth science",
+      "Energy",
+      "Electricity",
+      "Renewable energy",
+      "Solar",
+      "Wind",
+      "Battery storage",
+      "Fossil fuels",
+      "Electricity grid",
+      "Emissions",
+      "Reliability",
+      "Cost",
+      "Sustainability",
+      "Trade-offs"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Earthquakes and Geology",
+    "title": "Earthquake Building Protection Simulator",
+    "description": "Test engineering devices designed to reduce earthquake damage. Compare base isolation, cross bracing, dampers, shear walls and tuned mass dampers using roof sway, acceleration, damage risk and collapse behaviour.",
+    "path": "EarthSims/QuakeForces/",
+    "tags": [
+      "Earth science",
+      "Earthquakes",
+      "Engineering",
+      "Buildings",
+      "Base isolation",
+      "Dampers",
+      "Shear walls",
+      "Resonance",
+      "Forces"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Water and Climate",
+    "title": "Water Management Simulator",
+    "description": "Manage a Sydney NSW-style water system week by week across multiple years. Balance reservoir storage, rainfall, demand, restrictions, recycling, environmental flow, flood risk, cost and long-term resilience.",
+    "path": "EarthSims/WaterManage/",
+    "tags": [
+      "Earth science",
+      "Water management",
+      "Sydney",
+      "Climate",
+      "Drought",
+      "Floods",
+      "Catchments",
+      "Reservoirs",
+      "Sustainability",
+      "Environmental flows"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Air Flow Around Objects Simulator",
+    "description": "Explore how object shape, size, angle and flow speed affect particle paths, wake patterns and visible flow disruption.",
+    "path": "PhySims/AirFlow/",
+    "tags": [
+      "Forces",
+      "Motion",
+      "Air flow"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Changing the Magnitude of Force",
+    "description": "Investigate how changing a lever or pulley setup affects the effort force needed to lift the same load. Students run repeated trials, calculate averages, compare range and graph the average force for each setup.",
+    "path": "PhySims/MagForce2/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Simple Machines",
+      "Levers",
+      "Pulleys",
+      "Mechanical Advantage",
+      "Scientific Investigation"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Lift the Load: Simple Machines Challenge",
+    "description": "Compare levers, pulleys, ramps, wheels and axles, wedges and screws by lifting the same load. Students explore effort force, load force, distance, work, efficiency and mechanical advantage.",
+    "path": "PhySims/SimpleMachines/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Simple Machines",
+      "Mechanical Advantage",
+      "Work",
+      "Energy"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton’s Cradle Simulator",
+    "description": "Investigate momentum and energy transfer through a virtual Newton’s cradle. Change the number of released balls, observe collisions and compare motion and energy graphs over the full running time.",
+    "path": "PhySims/NewtonsCradle/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Motion",
+      "Newton’s cradle",
+      "Momentum",
+      "Kinetic energy",
+      "Collisions",
+      "Conservation of momentum",
+      "Energy transfer",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton's Laws Explorer",
+    "description": "Start with guided explainer animations, then switch to prediction mode to test inertia, F = ma and action-reaction force pairs using carts, forces, mass, friction and graphs.",
+    "path": "PhySims/NewtonsLaws/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Motion",
+      "Newton’s laws",
+      "Inertia",
+      "F = ma",
+      "Action-reaction",
+      "Net force",
+      "Mass",
+      "Acceleration",
+      "Prediction",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "SUVAT Prediction Explorer",
+    "description": "Predict final velocity and displacement for constant-acceleration motion, then run the model to compare the prediction with SUVAT equations, graphs and actual results.",
+    "path": "PhySims/SUVAT/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Kinematics",
+      "SUVAT",
+      "Constant acceleration",
+      "Prediction",
+      "Displacement",
+      "Velocity",
+      "Acceleration",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton's Angry Apples",
+    "description": "Launch apples using angle, launch power, gravity, wind and air resistance to solve projectile-motion puzzles, complete guided missions and collect modelled science data.",
+    "path": "PhySims/NewtonsApples/",
+    "tags": [
+      "Science games",
+      "Physics",
+      "Projectile motion",
+      "Forces",
+      "Gravity",
+      "Energy",
+      "Motion",
+      "Air resistance",
+      "Wind",
+      "Data collection",
+      "Scientific models",
+      "Brain break"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Parachute Drop Parameter Simulator",
+    "description": "Change mass, drop height, parachute size, air density and gravity to investigate drag force, terminal velocity and impact speed.",
+    "path": "PhySims/Parachute/",
+    "tags": [
+      "Forces",
+      "Motion",
+      "Drag"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Projectile Panic",
+    "description": "A projectile motion challenge where students adjust launch angle, initial velocity, gravity and target distance, then launch to test their calculations. Results and data appear only after landing to encourage prediction before trial-and-error.",
+    "path": "PhySims/ProjectilePanic/",
+    "tags": [
+      "Physics",
+      "Projectile motion",
+      "Kinematics",
+      "Motion",
+      "Gravity",
+      "Data"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Fields",
+    "title": "Magnetic Field Visualiser",
+    "description": "Visualise the magnetic field around a bar magnet using compass needles, field lines, an iron filings view and a movable field probe.",
+    "path": "PhySims/MagField/",
+    "tags": [
+      "Magnets",
+      "Fields",
+      "Forces",
+      "Compass"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Fields",
+    "title": "Magnetic Force Visualiser",
+    "description": "Explore attraction, repulsion and how magnetic force changes with distance by adjusting magnet strength, pole arrangement and the gap between magnets.",
+    "path": "PhySims/MagForce/",
+    "tags": [
+      "Magnets",
+      "Forces",
+      "Fields",
+      "Distance"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity",
+    "title": "Ohm’s Law Simulator",
+    "description": "Investigate voltage, current and resistance by comparing ohmic and non-ohmic components, including resistors, filament lamps, diodes, thermistors, LEDs and unknown challenge components.",
+    "path": "PhySims/Ohm/",
+    "tags": [
+      "Electricity",
+      "Ohm’s law",
+      "Circuits"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Electromagnet Simulator",
+    "description": "Investigate how current, coil turns and core material affect the strength, polarity and magnetic field pattern of an electromagnet.",
+    "path": "PhySims/Electromag/",
+    "tags": [
+      "Magnetism",
+      "Electromagnets",
+      "Fields",
+      "Circuits"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Al’s Relativistic Adventures",
+    "description": "Run the original Flash-based relativity adventure using Ruffle. Students explore ideas linked to special relativity through an interactive story-based simulation.",
+    "path": "PhySims/Al/",
+    "tags": [
+      "Physics",
+      "Relativity",
+      "Special relativity",
+      "Light",
+      "Time dilation",
+      "Modern physics",
+      "Flash",
+      "Ruffle"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Doppler Effect Simulator",
+    "description": "Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.",
+    "path": "PhySims/Doppler/",
+    "tags": [
+      "Physics",
+      "Doppler effect",
+      "Waves",
+      "Frequency",
+      "Wavelength",
+      "Relative motion",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Einstein Train Thought Experiment Simulator",
+    "description": "Explore the relativity of simultaneity using a moving train, two lightning strikes, observer frames, wavefronts and an event timeline.",
+    "path": "PhySims/RelTrain/",
+    "tags": [
+      "Relativity",
+      "Simultaneity",
+      "Modern physics",
+      "Light"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Optics Ray Diagram Simulator",
+    "description": "Explore convex, concave and bifocal lenses by moving an object, changing focal length, tracing ray diagrams and identifying real, virtual, upright, inverted, enlarged and reduced images.",
+    "path": "PhySims/Optics/",
+    "tags": [
+      "Optics",
+      "Lenses",
+      "Ray diagrams"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Microscope Focus and Magnification Explorer",
+    "description": "Explore how a compound light microscope uses lenses, light, focus and magnification. Practise centring a specimen, adjusting focus and comparing field of view at different magnifications.",
+    "path": "PhySims/Microscope/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Lenses",
+      "Microscopes",
+      "Magnification",
+      "Focus",
+      "Field of view",
+      "Cells",
+      "Scientific equipment"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Photoelectric Effect Simulator",
+    "description": "Change metal threshold frequency, light intensity and stopping potential to investigate photoelectron emission.",
+    "path": "PhySims/PhotoElectric/",
+    "tags": [
+      "Light",
+      "Photoelectric effect",
+      "Modern physics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Reflection and Refraction Law Simulator",
+    "description": "Investigate the law of reflection, Snell’s law and total internal reflection by changing angles, materials, refractive indices and measurement uncertainty.",
+    "path": "PhySims/LightLaws/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Waves",
+      "Reflection",
+      "Refraction",
+      "Snell’s law",
+      "Total internal reflection",
+      "Critical angle",
+      "Refractive index",
+      "Ray diagrams",
+      "Optics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Special Relativity Light Clock Simulator",
+    "description": "Explore time dilation using a moving light clock by comparing the traveller frame with a stationary observer frame and graphing the Lorentz factor.",
+    "path": "PhySims/SpecRel/",
+    "tags": [
+      "Light",
+      "Relativity",
+      "Time dilation",
+      "Modern physics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Spectrometer Simulator",
+    "description": "Explore continuous, emission and absorption spectra by measuring wavelengths, comparing spectral lines and identifying unknown elements.",
+    "path": "PhySims/Spectrometer/",
+    "tags": [
+      "Light",
+      "Spectra",
+      "Waves"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Telescope Light Path Explorer",
+    "description": "Explore how refracting and reflecting telescopes collect, focus and magnify light. Compare aperture, eyepiece focal length, focus, brightness and image quality.",
+    "path": "PhySims/Telescope/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Waves",
+      "Telescopes",
+      "Optics",
+      "Reflection",
+      "Refraction",
+      "Concave mirrors",
+      "Lenses",
+      "Focal length",
+      "Magnification",
+      "Aperture"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Nuclear and Atomic Physics",
+    "title": "Nuclear Reactor Simulator",
+    "description": "Model a controlled nuclear fission reactor. Adjust control rods, coolant flow and turbine load to manage neutron activity, core temperature, electrical output, safety margin and random fault events.",
+    "path": "PhySims/NuclearReactor/",
+    "tags": [
+      "Physics",
+      "Nuclear",
+      "Fission",
+      "Chain reaction",
+      "Control rods",
+      "Coolant",
+      "Reactor",
+      "Energy transfer",
+      "Electricity"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Gravity Slingshot Challenge",
+    "description": "Launch a probe past a planet and collect data on launch angle, speed, gravity strength, trajectory and closest distance to a target.",
+    "path": "BrainBreak/GravitySlingshot/",
+    "tags": [
+      "Gravity",
+      "Forces",
+      "Motion",
+      "Trajectory",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Immune Defender: Pathogen Chase",
+    "description": "Control a white blood cell, remove pathogens and avoid toxins while comparing how immune protection mode affects response data.",
+    "path": "BrainBreak/ImmuneDefender/",
+    "tags": [
+      "Immune system",
+      "Pathogens",
+      "Vaccination",
+      "White blood cells",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Mystery Science Word",
+    "description": "Guess hidden Years 7–10 science vocabulary using clues before the mystery meter fills. Choose individual modules, complete Year Review banks, or attempt the bright-pink Mega Mix containing words from every available module.",
+    "path": "Games/MysteryScienceWord/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Brain break",
+      "Word game",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Word Match",
+    "description": "Match Years 7–10 science terms with their meanings or descriptions. Choose individual modules, Year Review banks or the Mega Mix, then play rounds of four, six or eight vocabulary pairs.",
+    "path": "Games/ScienceWordMatch/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Matching game",
+      "Brain break",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Element Connections",
+    "description": "Sort 16 element-related terms into four connected groups. Use available information and complexity settings to explore periodic-table categories, properties and relationships.",
+    "path": "ChemSims/ElementConnections/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Connections game",
+      "Elements",
+      "Concept relationships",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Science keywords",
+      "Periodic Table"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Connections",
+    "description": "Sort 16 science terms into four connected groups of four. Choose individual modules, Year Review banks or the Mega Mix, then identify the scientific relationship linking each group.",
+    "path": "Games/ScienceConnections/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Connections game",
+      "Classification",
+      "Concept relationships",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Odd One Out",
+    "description": "Choose the science term that does not belong with the other three, then review the shared connection and the meaning of every term. Includes module, Year Review and Mega Mix modes.",
+    "path": "Games/OddOneOut/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Odd one out",
+      "Classification",
+      "Scientific reasoning",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Chain Reactions",
+    "description": "Use two connected science reasoning modes: arrange vocabulary into valid scientific sequences, or build the longest possible chain by linking terms through accepted scientific relationships.",
+    "path": "Games/ChainReactions/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Cause and effect",
+      "Module revision",
+      "Year review",
+      "Mega Mix"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Particle Panic: Kinetic Energy Challenge",
+    "description": "Control a particle, collect tokens and avoid high-energy particles while investigating how temperature affects particle motion, collisions and survival time.",
+    "path": "BrainBreak/ParticlePanic/",
+    "tags": [
+      "Particles",
+      "Kinetic energy",
+      "Temperature",
+      "Collisions",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Classic Pong Focus Challenge",
+    "description": "Play classic Pong against the computer and collect repeated trial data on score, best rally, difficulty and performance.",
+    "path": "BrainBreak/Pong/",
+    "tags": [
+      "Pong",
+      "Reaction time",
+      "Focus",
+      "Practice",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Colour-Word Interference Challenge",
+    "description": "Name the ink colour rather than the written word, then collect data on accuracy, errors and mean response time.",
+    "path": "BrainBreak/Stroop/",
+    "tags": [
+      "Stroop effect",
+      "Reaction time",
+      "Focus",
+      "Interference",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Reaction and Accuracy Target Lab",
+    "description": "Click targets under timed conditions, collect repeated trial data and compare scores, hits per second, best score and mean performance.",
+    "path": "BrainBreak/Target/",
+    "tags": [
+      "Reaction time",
+      "Accuracy",
+      "Focus",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Snake Decision-Time Challenge",
+    "description": "Guide the snake, collect food and record score and survival time to investigate practice, attention, decision-making and repeated trial data.",
+    "path": "BrainBreak/Snake/",
+    "tags": [
+      "Decision-making",
+      "Reaction time",
+      "Practice",
+      "Data"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Mathematical and Cross-topic Models",
+    "title": "Fractal Infinite Zoom Simulator",
+    "description": "Explore the Mandelbrot set using guided zoom, infinite zoom, preset fractal regions, colour palettes and live coordinate data.",
+    "path": "InterestingSims/Fractal/",
+    "tags": [
+      "Fractals",
+      "Mathematics",
+      "Patterns",
+      "Visual model"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Car Motion and Ticker Tape Simulator",
+    "description": "Model car motion and generate matching ticker-timer tape. Compare constant speed, acceleration, braking, delayed starts and two-car motion using measurable dot patterns.",
+    "path": "PhySims/Cars/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Speed",
+      "Acceleration",
+      "Ticker tape",
+      "Average speed",
+      "Data analysis"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Ticker Timer Simulator",
+    "description": "Generate ticker-timer tapes at 50 Hz and analyse the spacing between dots. Compare constant speed, acceleration and slowing-down motion using one or two virtual tapes.",
+    "path": "PhySims/TickerTimer/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Ticker timer",
+      "Speed",
+      "Acceleration",
+      "Data analysis",
+      "CSV export"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Magnetic Field Around a Wire",
+    "description": "Explore the circular magnetic field produced by a straight current-carrying wire. Change current and wire position, then use a probe to compare distance, direction and relative field strength.",
+    "path": "PhySims/StaticWire/",
+    "tags": [
+      "Physics",
+      "Magnetism",
+      "Current",
+      "Magnetic field",
+      "Right-hand rule",
+      "Field strength"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Magnetic Field Around Two Wires",
+    "description": "Explore how magnetic fields from two current-carrying wires combine. Compare same-direction and opposite-direction currents using resultant field arrows and a probe point.",
+    "path": "PhySims/TwoWire/",
+    "tags": [
+      "Physics",
+      "Magnetism",
+      "Current",
+      "Magnetic fields",
+      "Superposition",
+      "Vector addition"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Cathode Ray Oscilloscope and Audio Oscillator",
+    "description": "Generate audio tones and view their waveform on a simulated oscilloscope. Adjust frequency, volume and presets, then compare wave period, pitch and signal shape.",
+    "path": "PhySims/CRO/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Sound",
+      "Frequency",
+      "Oscilloscope",
+      "Waveform",
+      "Period"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Longitudinal Wave Simulator",
+    "description": "Model a longitudinal wave by showing particles moving left and right as compressions and rarefactions travel through the medium.",
+    "path": "PhySims/LongWave/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Longitudinal waves",
+      "Compression",
+      "Rarefaction",
+      "Sound"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Sound Wave Generator",
+    "description": "Generate sine, square, sawtooth and triangle waves in the browser. Adjust frequency and volume, use preset tones and compare waveform shape on a live scope.",
+    "path": "PhySims/SoundGen/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Waves",
+      "Frequency",
+      "Pitch",
+      "Waveform",
+      "Oscillator"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Transverse Wave Simulator",
+    "description": "Model a transverse wave by changing amplitude, wavelength, frequency and wave speed. Toggle labels and vectors to compare crests, troughs and particle motion.",
+    "path": "PhySims/TransWave/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Transverse waves",
+      "Amplitude",
+      "Wavelength",
+      "Frequency"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Zombie Outbreak Model",
+    "description": "Use a fictional outbreak model to explore how contact rate, infection rate, response rate, safe zones and removal affect the spread of an infection-like population system.",
+    "path": "BioSims/Zombie/",
+    "tags": [
+      "Biology",
+      "Disease modelling",
+      "Population model",
+      "Outbreak",
+      "Infection spread",
+      "Compartment model",
+      "Data"
+    ]
+  },
+  {
+    "section": "mathsims",
+    "group": "Probability and Statistics",
+    "title": "Galton Board Simulator",
+    "description": "Drop balls through a Galton board to model random pathways, binomial distributions, variation, repeated trials and the emergence of a bell-shaped pattern.",
+    "path": "Math/Galton/",
+    "tags": [
+      "Maths",
+      "Probability",
+      "Statistics",
+      "Galton board",
+      "Binomial distribution",
+      "Randomness",
+      "Data"
+    ]
+  },
+  {
+    "section": "mathsims",
+    "group": "Probability and Statistics",
+    "title": "Lottery Probability Simulator",
+    "description": "Model lottery-style random draws to compare combinations, odds, rare events and the difference between possible outcomes and likely outcomes.",
+    "path": "Math/Lottery/",
+    "tags": [
+      "Maths",
+      "Probability",
+      "Combinations",
+      "Randomness",
+      "Odds",
+      "Statistics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Path of Light Through the Eye",
+    "description": "Trace light rays through the cornea, pupil, lens and retina. Compare normal vision, myopia, hyperopia, accommodation, pupil size and corrective lenses.",
+    "path": "BioSims/Eye/",
+    "tags": [
+      "Biology",
+      "Human body",
+      "Eye",
+      "Vision",
+      "Light",
+      "Refraction",
+      "Lens",
+      "Retina",
+      "Myopia",
+      "Hyperopia",
+      "Correction lenses"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Sound Through the Ear",
+    "description": "Follow sound as it travels through the outer ear, ear canal, eardrum, ossicles and cochlea, then becomes nerve signals. Includes frequency, amplitude, pathway steps and a cochlear hair-cell damage-risk model.",
+    "path": "BioSims/Ear/",
+    "tags": [
+      "Biology",
+      "Human body",
+      "Ear",
+      "Hearing",
+      "Sound",
+      "Waves",
+      "Cochlea",
+      "Eardrum",
+      "Ossicles",
+      "Auditory nerve",
+      "Hair cells"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Compare Drum Sizes",
+    "description": "Compare two drums by changing diameter, membrane tension, damping and strike position. Strike the drums to see vibration patterns, wave traces and estimated pitch.",
+    "path": "PhySims/DrumSizes/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Vibration",
+      "Frequency",
+      "Pitch",
+      "Drums",
+      "Damping",
+      "Tension",
+      "Waves"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Guitar String Vibration",
+    "description": "Pluck a virtual guitar string and explore how frequency, pluck position, damping, harmonics and brightness affect string shape, sustain, tone and sound.",
+    "path": "PhySims/GuitarString/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Waves",
+      "Guitar",
+      "String vibration",
+      "Frequency",
+      "Pitch",
+      "Harmonics",
+      "Standing waves",
+      "Nodes",
+      "Damping"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Virtual Molecular Model Kit",
+    "description": "Build and inspect molecular models using a virtual molymod-style kit. Join atoms, check common molecules and rotate a larger three-dimensional model automatically.",
+    "path": "ChemSims/VMolyMod/",
+    "tags": [
+      "Molecular models",
+      "Covalent bonding",
+      "Molecular shape",
+      "3D model",
+      "Atoms",
+      "Molymod"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/ScienceExtension/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/ScienceExtension/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/SciX/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  }
+];
 
   const catalogue = document.getElementById('catalogue');
   const contentsLinks = document.getElementById('contentsLinks');
@@ -1421,6 +2621,7 @@
   const GROUP_ORDER = {
     workingscientifically:['Variables and Fair Testing'],
     invsci:['Module 5: Scientific Investigations','Module 6: Technologies'],
+    stage6games:['Biology','Chemistry','Earth and Environmental Science','Investigating Science','Physics','Science Extension'],
     biosims:['Cells and Classification','Disease and Microbes','Biosecurity and Ecosystems','Genetics and Inheritance','Genetics and Evolution','Evolution and Populations','Human Body and Homeostasis'],
     chemsims:['Elements and Atomic Structure','Chemical Bonding','Chemical Equilibrium','Organic Chemistry'],
     earthsims:['Climate and Energy Balance','Energy and Sustainability','Earthquakes and Geology','Water and Climate'],
