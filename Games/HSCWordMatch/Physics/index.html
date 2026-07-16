@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Science Word Match — Earth and Environmental Science</title>
+<style>
+:root{
+  --bg:#eaf4ff;--card:#fff;--ink:#15324b;--muted:#567087;--line:#cbddec;
+  --blue:#0c67b5;--blue2:#1591d8;--green:#1c8a5b;--red:#c43b4d;--gold:#d88b14;
+  --shadow:0 10px 28px rgba(27,74,111,.13);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#e9f5ff,#f8fbff);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.page{width:min(1500px,calc(100% - 28px));margin:18px auto 34px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:#075c9e;text-decoration:none;font-weight:800;border:1px solid #bcd5e8;box-shadow:0 5px 14px rgba(31,81,120,.10)}
+.hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,#075eac,#1599d7);color:#fff;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero p{margin:7px 0 0;max-width:980px;font-size:1.04rem;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(270px,340px) 1fr;gap:18px;margin-top:18px;align-items:start}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+h2{margin:0 0 12px;font-size:1.25rem} h3{margin:0 0 8px}
+label{display:block;font-weight:800;margin:12px 0 6px}
+select,button{font:inherit}
+select{width:100%;padding:11px 12px;border:1px solid #a9c5db;border-radius:12px;background:#fff;color:var(--ink)}
+button{border:0;border-radius:12px;padding:11px 14px;font-weight:850;cursor:pointer}
+button:focus-visible,.tile:focus-visible{outline:4px solid rgba(15,118,189,.28);outline-offset:2px}
+.primary{background:linear-gradient(135deg,#0c67b5,#1591d8);color:#fff}
+.secondary{background:#edf5fb;color:#15537f;border:1px solid #c4d9e9}
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.help{background:#f2f8fd;border-left:5px solid #2a91cf;padding:12px;border-radius:12px;margin-top:14px;font-size:.94rem;line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.stat{background:#f4f9fd;border:1px solid #d2e3ef;border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.45rem;color:#075eac}
+.board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.board-head p{margin:3px 0 0;color:var(--muted)}
+.progress{height:12px;background:#e4edf4;border-radius:999px;overflow:hidden;margin:12px 0 16px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#18a36b,#66c98f);transition:width .25s}
+.match-board{display:grid;grid-template-columns:minmax(230px,.82fr) minmax(420px,1.7fr);gap:14px;align-items:start}
+.match-column{min-width:0;border:1px solid #d4e4ef;border-radius:18px;background:#f8fbfe;padding:12px}
+.column-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:8px 10px;border-radius:12px;font-weight:900;letter-spacing:.02em}
+.term-column .column-heading{background:#e7f5ff;color:#075eac}
+.definition-column .column-heading{background:#fff4da;color:#765314}
+.column-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.tile{width:100%;min-height:86px;padding:13px;border-radius:15px;border:2px solid #c4d9e8;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:760;line-height:1.28;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s}
+.tile.term{background:linear-gradient(180deg,#eef8ff,#fff);color:#0a5f9f;font-size:1rem}
+.tile.definition{font-size:.92rem;font-weight:650;background:linear-gradient(180deg,#fffaf0,#fff);color:#5e471e;text-align:left;justify-content:flex-start}
+.tile:hover:not(.matched){transform:translateY(-2px);border-color:#4e9bcd;box-shadow:0 8px 16px rgba(31,81,120,.12)}
+.tile.selected{border-color:#075eac;box-shadow:0 0 0 4px rgba(14,111,180,.16);transform:translateY(-2px)}
+.tile.wrong{border-color:var(--red);background:#fff0f2;animation:shake .32s}
+.tile.matched{border-color:#35a46f;background:#e9f9f0;color:#17633f;cursor:default;opacity:.78}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.message{min-height:52px;margin-top:14px;padding:12px 14px;border-radius:14px;background:#f4f9fd;border:1px solid #d2e3ef;font-weight:750}
+.message.good{background:#e9f8f0;border-color:#8acaa9;color:#17633f}
+.message.bad{background:#fff0f2;border-color:#e1a2ab;color:#8d2332}
+.review{margin-top:16px;display:none}
+.review.show{display:block}
+.review-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.review-item{padding:11px 12px;border-radius:12px;background:#f7fbfe;border:1px solid #d6e5ef}
+.review-item strong{color:#075eac}
+.footer{margin-top:18px;color:#60788c;font-size:.88rem;text-align:center}
+.footer a{color:#075eac}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.match-board{grid-template-columns:minmax(200px,.8fr) minmax(360px,1.55fr)}}
+@media(max-width:760px){.match-board{grid-template-columns:minmax(145px,.72fr) minmax(235px,1.35fr);gap:8px}.match-column{padding:8px}.tile{min-height:82px;padding:9px}.tile.term{font-size:.9rem}.tile.definition{font-size:.82rem}.review-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.page{width:min(100% - 12px,1500px)}.hero{padding:18px}.match-board{grid-template-columns:minmax(115px,.68fr) minmax(190px,1.32fr)}.column-heading{font-size:.85rem;padding:7px}.tile{min-height:76px;padding:7px}.tile.term{font-size:.8rem}.tile.definition{font-size:.74rem;line-height:1.22}}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>HSC Science Word Match</h1>
+    <p>Earth and Environmental Science HSC course: match scientific terms with accurate meanings from Modules 5–8 and the syllabus glossary.</p>
+  </header>
+  <main class="layout">
+    <aside class="card">
+      <h2>Game setup</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Earth and Environmental Science</option></select>
+      <label for="bank">Content bank</label>
+      <select id="bank">
+        <option value="module5">Module 5 — Earth’s Processes</option>
+        <option value="module6">Module 6 — Hazards</option>
+        <option value="module7">Module 7 — Climate Science</option>
+        <option value="module8">Module 8 — Resource Management</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+      <label for="pairs">Pairs in each round</label>
+      <select id="pairs">
+        <option value="4">4 pairs</option>
+        <option value="6" selected>6 pairs</option>
+        <option value="8">8 pairs</option>
+      </select>
+      <div class="controls-row">
+        <button id="newRound" class="primary">New round</button>
+        <button id="resetRound" class="secondary">Reset round</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="matchedStat">0</strong>Matched</div>
+        <div class="stat"><strong id="attemptStat">0</strong>Attempts</div>
+        <div class="stat"><strong id="streakStat">0</strong>Best streak</div>
+        <div class="stat"><strong id="accuracyStat">—</strong>Accuracy</div>
+      </div>
+      <div class="help"><strong>How to play:</strong> select one blue term and one cream meaning. Correct pairs stay green. Incorrect choices return to the board so you can try again.</div>
+    </aside>
+    <section class="card">
+      <div class="board-head">
+        <div><h2 id="roundTitle">Module 5 — Earth’s Processes</h2><p id="roundSubtitle">Select a term and its matching meaning.</p></div>
+        <button id="shuffleBtn" class="secondary">Shuffle columns</button>
+      </div>
+      <div class="progress" aria-label="Round progress"><div id="progressBar"></div></div>
+      <div class="match-board" aria-live="polite">
+        <section class="match-column term-column">
+          <div class="column-heading"><span>Scientific terms</span><span id="termCount"></span></div>
+          <div id="termsColumn" class="column-grid"></div>
+        </section>
+        <section class="match-column definition-column">
+          <div class="column-heading"><span>Meanings</span><span id="definitionCount"></span></div>
+          <div id="definitionsColumn" class="column-grid"></div>
+        </section>
+      </div>
+      <div id="message" class="message">Choose one term card and one meaning card.</div>
+      <div id="review" class="review">
+        <h3>Round review</h3>
+        <div id="reviewGrid" class="review-grid"></div>
+      </div>
+    </section>
+  </main>
+  <div class="footer">Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/earth-and-environmental-science-stage-6-2017" target="_blank" rel="noopener">NSW Earth and Environmental Science Stage 6 Syllabus (2017)</a>. Definitions are concise classroom paraphrases.</div>
+</div>
+<script>
+"use strict";
+const BANKS = {"module5":{"label":"Module 5 — Earth’s Processes","short":"M5","items":[["Biosphere","All regions of Earth in which living organisms occur."],["Geosphere","The solid Earth, including rocks, minerals, landforms and Earth’s interior."],["Atmosphere","The layers of gases surrounding Earth."],["Hydrosphere","All liquid water on, beneath and above Earth’s surface."],["Origin of life","The development of the first self-replicating living systems from non-living chemistry."],["Organic molecule","A carbon-based molecule associated with living systems or their chemical building blocks."],["Abiogenesis","The proposed natural origin of life from non-living matter."],["Miller–Urey experiment","An experiment showing that organic molecules can form under simulated early-Earth conditions."],["Reducing atmosphere","An atmosphere with little free oxygen and gases capable of donating electrons in chemical reactions."],["Electrical discharge","The simulated lightning energy source used in the Miller–Urey experiment."],["Primordial soup","A proposed early-Earth mixture of water and organic molecules from which life may have developed."],["Hydrothermal vent","A seafloor opening that releases geothermally heated, mineral-rich water."],["Black smoker","A high-temperature hydrothermal vent producing dark mineral-rich plumes."],["Chemosynthesis","Production of organic matter using energy released from inorganic chemical reactions."],["Extremophile","An organism adapted to conditions that are extreme for most life."],["Panspermia","The hypothesis that life or its chemical precursors arrived on Earth from space."],["Meteorite","A fragment of extraterrestrial material that survives passage through the atmosphere and reaches Earth’s surface."],["Cyanobacteria","Photosynthetic prokaryotes that contributed to increasing atmospheric oxygen."],["Stromatolite","A layered structure formed by microbial communities, especially cyanobacteria."],["Photosynthesis","A process using light energy to produce organic molecules, commonly releasing oxygen."],["Great Oxidation Event","The major increase in atmospheric oxygen caused largely by photosynthetic microorganisms."],["Banded iron formation","Layered iron-rich rock formed when dissolved iron reacted with oxygen in ancient oceans."],["Ozone layer","A stratospheric region rich in ozone that absorbs much ultraviolet radiation."],["Aerobic respiration","Energy-releasing cellular respiration that uses oxygen as the final electron acceptor."],["Multicellular organism","An organism made of many specialised, interdependent cells."],["Ediacaran biota","Soft-bodied multicellular organisms known from late Precambrian fossils."],["Cambrian explosion","A geologically rapid diversification of many animal body plans early in the Cambrian Period."],["Cambrian fauna","Organisms represented in the diverse fossil record of the Cambrian Period."],["Conquest of land","The evolutionary expansion of plants and animals from aquatic environments onto land."],["Vascular plant","A plant possessing specialised tissues that transport water and nutrients."],["Tetrapod","A vertebrate with four limbs, or descended from four-limbed ancestors."],["Plate tectonic supercycle","The repeated assembly and breakup of supercontinents through plate movement."],["Supercontinent","A landmass formed when most or all continents join together."],["Continental collision","Convergence of continental plates that thickens crust and forms mountain ranges."],["Continental rifting","Stretching and splitting of continental lithosphere."],["Seafloor spreading","Creation of new oceanic crust at a divergent plate boundary."],["Subduction","Movement of one tectonic plate beneath another into the mantle."],["Wilson cycle","A model describing opening and closing of ocean basins through plate tectonics."],["Mountain building","Formation of mountains through processes such as collision, folding, faulting and volcanism."],["Weathering","Breakdown of rock at or near Earth’s surface without transport."],["Erosion","Removal and transport of weathered material by water, wind, ice or gravity."],["Sedimentation","Deposition and accumulation of transported particles."],["Carbon cycle","Movement and transformation of carbon among Earth’s spheres."],["Silicate weathering","Chemical breakdown of silicate rocks that can remove carbon dioxide over long timescales."],["Fossil","Preserved remains, impressions or evidence of past life."],["Body fossil","Preserved part of an organism, such as bone, shell or leaf material."],["Trace fossil","Evidence of organism activity, such as a footprint, burrow or coprolite."],["Mould fossil","A hollow impression left when an organism or body part dissolves from sedimentary rock."],["Cast fossil","A three-dimensional copy formed when minerals or sediment fill a fossil mould."],["Permineralisation","Fossilisation in which minerals fill pores or spaces in biological material."],["Carbon film","A thin carbon residue outlining a compressed organism."],["Index fossil","A widespread, distinctive fossil from a short time range used to correlate rock layers."],["Stratigraphy","The study of rock layers, their sequence and relationships."],["Stratum","A single distinguishable layer of sedimentary rock."],["Superposition","The principle that lower undisturbed sedimentary layers are older than layers above them."],["Uniformitarianism","The principle that present geological processes help explain Earth’s past."],["Relative dating","Determining whether a rock or event is older or younger than another without assigning a numerical age."],["Absolute dating","Determining a numerical age for a rock, fossil or geological event."],["Radiometric dating","Calculating age using predictable radioactive decay of isotopes."],["Parent isotope","The unstable radioactive isotope present at the beginning of a decay process."],["Daughter isotope","The isotope produced by radioactive decay of a parent isotope."],["Half-life","The time required for half the radioactive parent atoms in a sample to decay."],["Geological timescale","A chronological framework dividing Earth’s history using rock and fossil evidence."],["Mass extinction","A geologically brief interval in which a large proportion of species becomes extinct globally."],["Background extinction","The usual ongoing rate of species extinction between mass-extinction events."],["Biostratigraphy","Correlation and relative dating of rocks using their fossil content."],["Correlation","Matching rock layers or geological events from different locations using shared evidence."],["Unconformity","A surface representing missing geological time due to erosion or non-deposition."],["Precambrian","The vast interval of Earth history before the Cambrian Period."],["Phanerozoic Eon","The eon characterised by abundant visible fossil life, extending from the Cambrian to the present."]]},"module6":{"label":"Module 6 — Hazards","short":"M6","items":[["Natural hazard","A naturally occurring process or event capable of causing harm."],["Natural disaster","A hazardous event that causes serious disruption and exceeds a community’s capacity to cope."],["Risk","The likelihood and potential consequence of harm from a hazard."],["Exposure","The people, infrastructure or ecosystems located where a hazard may occur."],["Vulnerability","The degree to which exposed people, systems or environments are susceptible to harm."],["Resilience","The capacity to prepare for, withstand, recover from and adapt to a hazardous event."],["Mitigation","Action taken to reduce the probability or consequences of a hazard."],["Preparedness","Planning and capacity-building undertaken before a hazard occurs."],["Response","Immediate actions taken during and shortly after a disaster."],["Recovery","Longer-term restoration and rebuilding after a disaster."],["Earthquake","Sudden ground movement caused by rapid release of stored elastic energy."],["Focus","The point within Earth where an earthquake rupture begins."],["Epicentre","The point on Earth’s surface directly above an earthquake focus."],["Fault","A fracture in rock along which movement has occurred."],["Elastic rebound","Release of accumulated strain when rocks rupture and move along a fault."],["Seismic wave","An energy wave produced by an earthquake or other ground disturbance."],["Primary wave","A compressional seismic body wave that travels fastest through solids and fluids."],["Secondary wave","A transverse seismic body wave that travels through solids but not liquids."],["Surface wave","A seismic wave travelling along Earth’s surface and commonly producing strong damaging motion."],["Seismometer","An instrument that detects and records ground motion."],["Seismogram","The recorded trace of seismic motion over time."],["Earthquake magnitude","A measure of the energy released by an earthquake."],["Earthquake intensity","A measure of observed shaking and damage at a location."],["Moment magnitude scale","A logarithmic scale based on seismic moment and total earthquake energy release."],["Modified Mercalli scale","An intensity scale based on observed earthquake effects and damage."],["Aftershock","A smaller earthquake following the main shock in the same region."],["Foreshock","A smaller earthquake that precedes a larger main shock."],["Tsunami","A series of long ocean waves generated by sudden displacement of a large volume of water."],["Convergent boundary","A plate boundary where plates move towards one another."],["Divergent boundary","A plate boundary where plates move apart."],["Transform boundary","A plate boundary where plates slide horizontally past one another."],["Benioff zone","An inclined zone of earthquake foci tracing a subducting plate."],["Volcano","An opening or landform through which magma, gases and fragmented material reach the surface."],["Magma","Molten or partly molten rock beneath Earth’s surface."],["Lava","Magma that has reached Earth’s surface."],["Viscosity","Resistance of a fluid to flow."],["Silica content","The proportion of silica in magma, strongly influencing viscosity and eruption style."],["Dissolved gas","Volatile material within magma that can expand and drive eruptions."],["Effusive eruption","A relatively gentle eruption dominated by flowing low-viscosity lava."],["Explosive eruption","A violent eruption driven by gas-rich, viscous magma and fragmentation."],["Shield volcano","A broad volcano built mainly from fluid basaltic lava flows."],["Stratovolcano","A steep-sided composite volcano formed from alternating lava and pyroclastic deposits."],["Caldera","A large volcanic depression formed when the ground collapses after magma withdrawal."],["Ash fall","Deposition of fine volcanic fragments from an eruption plume."],["Pyroclastic flow","A fast, hot, ground-hugging current of gas, ash and volcanic fragments."],["Lahar","A rapidly moving volcanic mudflow containing water, ash and rock debris."],["Volcanic gas","Gas released from magma, including water vapour, carbon dioxide and sulfur dioxide."],["Lava flow","Movement of molten rock across the ground after eruption."],["Mount Pinatubo","A volcano whose 1991 eruption caused major regional impacts and short-term global cooling."],["Volcanic aerosol","Fine particles or droplets in the atmosphere produced by volcanic emissions."],["Sulfur dioxide","A volcanic gas that can form sulfate aerosols and contribute to short-term cooling."],["Hailstorm","A storm producing balls or irregular lumps of ice."],["East coast low","An intense low-pressure system near Australia’s east coast capable of heavy rain, strong wind and coastal impacts."],["Drought","A prolonged period of substantially below-average water availability."],["Flood","Overflow of water onto land that is usually dry."],["Bushfire","An uncontrolled fire burning through vegetation."],["Landslide","Downslope movement of rock, soil or debris under gravity."],["Fuel load","The amount and arrangement of combustible vegetation available to a fire."],["Land clearing","Removal of vegetation, which can alter runoff, erosion, slope stability and fire behaviour."],["Urbanisation","Expansion of built environments that can increase runoff and exposure to hazards."],["Seismic monitoring","Continuous measurement and analysis of ground vibrations."],["Ground deformation","Change in the shape or position of Earth’s surface due to tectonic or volcanic processes."],["Global Positioning System","Satellite-based positioning used to measure crustal or volcanic ground movement."],["Tiltmeter","An instrument measuring small changes in ground slope."],["Strain meter","An instrument measuring deformation within rock or across a fault."],["Gas monitoring","Measurement of volcanic gas composition or output to detect changes in activity."],["Thermal imaging","Detection of surface-temperature patterns that may reveal volcanic or fire activity."],["Three-dimensional imaging","Construction of subsurface or volcanic models using data such as seismic measurements."],["Early-warning system","A system that detects a developing hazard and rapidly communicates warnings."],["Meteorology","The scientific study of the atmosphere and weather."],["Weather radar","Remote sensing used to locate and track precipitation and storm structure."],["Satellite imagery","Images from orbit used to monitor clouds, fires, storms and environmental change."],["Numerical weather prediction","Computer modelling of future atmospheric conditions using physical equations and observations."],["Building code","A regulated construction standard designed to reduce structural failure and injury."],["Base isolation","A building technique that reduces transfer of earthquake motion into a structure."],["Cross-bracing","Structural reinforcement using diagonal members to resist lateral forces."],["Land-use zoning","Planning controls that restrict development in areas of high hazard."],["Evacuation plan","A planned process for moving people away from danger."],["Public education","Communication that improves community understanding and preparedness for hazards."],["Hazard map","A spatial representation of the expected location or severity of a hazard."],["Disaster warning system","A coordinated process for detecting danger and alerting affected communities."]]},"module7":{"label":"Module 7 — Climate Science","short":"M7","items":[["Weather","Short-term atmospheric conditions at a particular place and time."],["Climate","Long-term patterns and averages of weather conditions for a region or the globe."],["Climate variation","Change in climate conditions over timescales from years to geological intervals."],["Climate proxy","Indirect evidence used to reconstruct past climate conditions."],["Natural greenhouse effect","Natural atmospheric warming caused by greenhouse gases absorbing and re-emitting infrared radiation."],["Enhanced greenhouse effect","Additional warming caused by increased greenhouse-gas concentrations, largely from human activity."],["Greenhouse gas","An atmospheric gas that absorbs and emits infrared radiation."],["Carbon dioxide","A greenhouse gas released naturally and through activities such as fossil-fuel combustion and land clearing."],["Methane","A potent greenhouse gas emitted from wetlands, agriculture, fossil fuels and decomposition."],["Nitrous oxide","A long-lived greenhouse gas associated with soils, fertilisers and combustion."],["Water vapour","The most abundant greenhouse gas and an important climate feedback."],["Infrared radiation","Long-wave electromagnetic radiation emitted by Earth’s surface and atmosphere."],["Short-wave radiation","Solar energy reaching Earth mainly as visible, ultraviolet and near-infrared radiation."],["Radiative balance","The balance between incoming solar energy and outgoing energy from Earth."],["Albedo","The proportion of incoming radiation reflected by a surface."],["Positive feedback","A process that amplifies an initial climate change."],["Negative feedback","A process that reduces an initial climate change."],["Ice–albedo feedback","Warming reduces reflective ice, increasing absorption and causing further warming."],["Carbon sink","A reservoir that absorbs more carbon than it releases over a stated period."],["Carbon source","A reservoir or activity that releases more carbon than it absorbs."],["Plate tectonic supercycle","Long-term assembly and breakup of continents that alters ocean circulation, weathering and climate."],["Large igneous province","A vast region formed by unusually large volcanic outpourings."],["Deccan Traps","A large igneous province in India linked to major volcanic climate effects."],["Siberian Traps","A vast volcanic province associated with severe environmental change and the end-Permian extinction."],["Volcanic cooling","Short-term climate cooling caused when sulfate aerosols reflect incoming solar radiation."],["Volcanic warming","Potential longer-term warming associated with volcanic greenhouse-gas release."],["Orbital eccentricity","Variation in the shape of Earth’s orbit around the Sun."],["Axial tilt","The angle between Earth’s rotational axis and the perpendicular to its orbital plane."],["Precession","Slow change in the direction of Earth’s rotational axis."],["Milankovitch cycles","Long-term orbital variations that alter the distribution of solar energy received by Earth."],["Solar variation","Change in the energy output or activity of the Sun."],["Ocean current","A persistent movement of seawater that transports heat and materials."],["Thermohaline circulation","Global deep-ocean circulation driven by differences in water temperature and salinity."],["El Niño","A Pacific Ocean–atmosphere pattern associated with weakened trade winds and altered rainfall."],["La Niña","A Pacific Ocean–atmosphere pattern associated with strengthened trade winds and altered rainfall."],["Pollen record","Fossilised pollen used to infer past vegetation and climate."],["Rock-type evidence","Climate information inferred from rocks formed under particular environmental conditions."],["Fossil evidence","Past-climate information inferred from organisms adapted to particular conditions."],["Microfossil","A microscopic fossil used to reconstruct past environments and climate."],["Stable isotope","A non-radioactive isotope whose ratios can record environmental conditions."],["Oxygen-isotope ratio","A ratio used to infer past temperature, ice volume or water source."],["Deep-sea sediment","Layered ocean-floor material preserving long-term climate and environmental records."],["Ice core","A cylinder of ice containing layered chemical, isotopic and atmospheric records."],["Gas bubble","A sample of past atmosphere trapped within glacial ice."],["Dendrochronology","Use of annual tree rings to date and reconstruct past environmental conditions."],["Tree ring","An annual growth layer whose width or chemistry may record climate conditions."],["Stalagmite","A mineral deposit growing upward from a cave floor and preserving chemical climate records."],["Stalactite","A mineral deposit hanging from a cave roof and preserving chemical climate records."],["Coral record","Growth bands and isotope chemistry in coral skeletons used to reconstruct ocean conditions."],["Aboriginal art site","A cultural record that may provide evidence of past species, landscapes or environments."],["Instrumental record","Climate measurements collected directly using instruments."],["Industrial Revolution","The period of rapid industrialisation associated with greatly increased fossil-fuel use."],["Anthropogenic climate variation","Climate variation caused or influenced by human activities."],["Fossil-fuel combustion","Burning coal, oil or gas, releasing carbon dioxide and other substances."],["Land-use change","Alteration of land cover or management that affects carbon storage, albedo and ecosystems."],["Deforestation","Removal of forest cover, commonly reducing carbon storage and altering water and energy cycles."],["Ocean acidification","Decrease in ocean pH as seawater absorbs atmospheric carbon dioxide."],["Carbonic acid","A weak acid formed when carbon dioxide reacts with water."],["Glacier","A persistent mass of land ice moving under its own weight."],["Sea ice","Frozen seawater floating on the ocean surface."],["Ice sheet","A very large land-based mass of glacial ice."],["Sea-level rise","Increase in mean sea level caused mainly by ocean warming and melting land ice."],["Thermal expansion","Increase in seawater volume as it warms."],["Species-range shift","Movement of a species’ geographical distribution in response to changing conditions."],["Climate mitigation","Action that reduces greenhouse-gas emissions or increases removal of greenhouse gases."],["Climate adaptation","Adjustment to actual or expected climate effects to reduce harm or use opportunities."],["Renewable energy","Energy from sources replenished naturally on human timescales."],["Energy efficiency","Providing the same service using less energy."],["Carbon sequestration","Capture and long-term storage of carbon dioxide or carbon."],["Reforestation","Re-establishment of forest cover on previously forested land."],["Urban heat island","Higher temperatures in built areas compared with surrounding rural areas."],["Green infrastructure","Vegetation and natural systems incorporated into urban design to provide environmental benefits."],["Geo-engineering","Large-scale deliberate intervention in Earth’s climate system."],["Carbon dioxide removal","Techniques that remove carbon dioxide from the atmosphere and store it."],["Solar radiation management","Proposed techniques that reflect a small proportion of incoming sunlight."],["Climate model","A mathematical representation used to simulate interactions within the climate system."],["Climate scenario","A plausible description of future climate based on stated assumptions."],["Uncertainty","The quantified or described range of possible values or outcomes due to limited knowledge or variability."]]},"module8":{"label":"Module 8 — Resource Management","short":"M8","items":[["Natural resource","A material, organism or energy source obtained from the environment for human use."],["Renewable resource","A resource replenished naturally on a timescale comparable with its use."],["Non-renewable resource","A finite resource formed or replenished much more slowly than it is consumed."],["Agricultural resource","A biological, soil or water resource used to produce food, fibre or other products."],["Terrestrial agriculture","Food or fibre production based on land ecosystems."],["Aquaculture","Farming of aquatic organisms such as fish, shellfish or algae."],["Water resource","Surface water, groundwater or captured water available for ecological or human use."],["Energy resource","A natural source that can be converted into useful energy."],["Mineral resource","A concentration of naturally occurring material with potential economic value."],["Ore","Rock containing a valuable material at a concentration that may be economically extracted."],["Ore grade","The concentration of a valuable component within an ore."],["Reserve","A known resource that can be economically extracted under current conditions."],["Resource exploration","Search for deposits using geological, geophysical and geochemical evidence."],["Remote sensing","Collection of information about Earth without direct contact, commonly from aircraft or satellites."],["Open-pit mining","Extraction from a large surface excavation."],["Underground mining","Extraction through shafts, tunnels or other workings beneath the surface."],["Onshore drilling","Drilling for fluids or geological information from a land-based site."],["Offshore drilling","Drilling beneath the seabed from a marine platform or vessel."],["Overburden","Soil and rock removed to expose an underlying resource."],["Tailings","Fine waste material remaining after valuable minerals are separated from ore."],["Waste rock","Excavated rock that does not contain an economically recoverable concentration of the target material."],["Acid mine drainage","Acidic water produced when sulfide minerals react with oxygen and water."],["Leachate","Contaminated liquid that drains through waste or disturbed material."],["Heavy-metal contamination","Pollution by metals that can be toxic at elevated concentrations."],["Sediment pollution","Excess soil or particles entering waterways and affecting water quality or habitat."],["Habitat fragmentation","Division of habitat into smaller, isolated patches."],["Aboriginal cultural site","A place with cultural, spiritual, historical or archaeological significance to Aboriginal Peoples."],["Traditional owner","An Aboriginal or Torres Strait Islander person or group with recognised cultural connection and responsibility for Country or Place."],["Environmental impact assessment","A structured evaluation of likely environmental consequences before a project proceeds."],["Mine rehabilitation","Repair and stabilisation of land affected by mining."],["Reclamation","Returning disturbed land to a stable and productive use after extraction."],["Remediation","Removal, treatment or containment of contamination."],["Revegetation","Re-establishment of plant cover on disturbed land."],["Topsoil replacement","Returning stored surface soil to support ecosystem recovery."],["Progressive rehabilitation","Repairing completed areas of a site while extraction continues elsewhere."],["Biodiversity offset","A conservation action intended to compensate for unavoidable biodiversity loss."],["Closure plan","A strategy for environmental, social and financial management when a resource operation ends."],["Waste","Material discarded because it is unwanted or no longer useful in its current form."],["Solid waste","Discarded material that is predominantly solid."],["Municipal waste","Waste collected from households and similar community sources."],["Commercial waste","Waste produced by businesses, offices and retail activities."],["Industrial waste","Waste generated by manufacturing, mining or other industrial processes."],["Hazardous waste","Waste posing substantial risk because of toxicity, reactivity, flammability or other dangerous properties."],["Electronic waste","Discarded electrical and electronic devices and components."],["Organic waste","Biodegradable material originating from living organisms."],["Waste audit","Systematic measurement and classification of waste generated by an organisation or household."],["Waste hierarchy","A priority order favouring avoidance, reduction, reuse and recycling over disposal."],["Waste avoidance","Preventing material from becoming waste."],["Waste reduction","Decreasing the amount or harmfulness of waste produced."],["Reuse","Using a product or material again without major reprocessing."],["Recycling","Processing discarded material into raw material or new products."],["Resource recovery","Obtaining useful materials or energy from waste."],["Composting","Controlled biological decomposition of organic material into a soil-like product."],["Anaerobic digestion","Breakdown of organic matter without oxygen, producing biogas and digestate."],["Incineration","Controlled high-temperature combustion of waste."],["Waste-to-energy","Recovery of usable energy from waste treatment."],["Landfill","An engineered site for controlled burial of waste."],["Landfill gas","Gas, mainly methane and carbon dioxide, produced by decomposition in landfill."],["Circular economy","A system designed to keep products and materials in use and minimise waste."],["Life-cycle assessment","Evaluation of environmental impacts across extraction, manufacture, use and disposal."],["Ecological footprint","An estimate of the biologically productive area needed to support resource use and absorb wastes."],["Sustainability","Meeting present needs while maintaining environmental, social and economic capacity for the future."],["Intergenerational equity","Fairness between present and future generations in access to resources and environmental quality."],["Triple bottom line","Evaluation of environmental, social and economic outcomes together."],["Carrying capacity","The maximum population or level of use an environment can support over time."],["Sustainable yield","A rate of resource use that does not exceed long-term replacement or regeneration."],["Overharvesting","Removal of organisms or resources faster than they can recover."],["Water pollution","Introduction of substances or energy that degrades water quality."],["Habitat destruction","Removal or severe degradation of habitat required by organisms."],["Cultural burning","Planned, knowledge-based use of fire by Aboriginal Peoples to care for Country."],["Seasonal harvesting","Collecting resources according to seasonal availability and ecological knowledge."],["Caring for Country","Aboriginal approaches to maintaining relationships among people, culture, land, water and living things."],["Land council","An organisation representing Aboriginal interests in land, culture and resource management."],["Protected area","A geographically defined area managed to conserve environmental or cultural values."],["Environmental legislation","Laws regulating environmental protection and resource use."],["Community sustainability initiative","A local project intended to improve long-term environmental, social or resource outcomes."],["Water-sensitive urban design","Urban planning that integrates water supply, stormwater and ecosystem management."],["Sustainable agriculture","Food and fibre production that maintains environmental resources and long-term productivity."],["Fisheries management","Regulation and stewardship of aquatic harvesting to maintain populations and ecosystems."],["Adaptive management","A management approach that treats actions as learning opportunities and changes them in response to evidence."]]},"glossary":{"label":"Syllabus Glossary","short":"Glossary","items":[["Aboriginal and Torres Strait Islander Peoples","Australia’s Indigenous peoples, comprising diverse Aboriginal language groups and Torres Strait Islander cultural groups."],["Abiotic","The non-living components of an environment."],["Anthropogenic climate variation","Variation in climate caused or influenced by human activity."],["Biota (biotic)","All living organisms in a specific region or area."],["Conclusion","A judgement based on evidence."],["Controlled variable","A factor kept constant, or changed consistently, during an investigation."],["Country","An area traditionally owned and cared for by an Aboriginal language group or community, including cultural and spiritual relationships."],["Cryosphere","The frozen-water component of Earth’s system."],["Dendrochronology","Use of annual tree rings to date and investigate past events or environmental conditions."],["Dependent variable","The factor that changes in response to the independent variable."],["Digital technologies","Hardware and software systems that handle digital data for specific purposes."],["Environment","All living and non-living surroundings."],["Geo-engineering","Large-scale deliberate manipulation of climate systems using carbon dioxide removal or solar-radiation management."],["Hypothesis","A precise, testable proposed explanation that can be supported or refuted by investigation."],["Independent variable","The factor deliberately changed to observe its effect on the dependent variable."],["Inquiry question","The driving question for an investigation."],["Investigation","A planned scientific process for answering a question, exploring an idea or solving a problem using evidence."],["Model","A representation used to describe, simplify, explain or predict an object, system or idea."],["Place","A space recognised by Torres Strait Islander Peoples through physical, cultural and spiritual relationships."],["Practical investigations","Systematic scientific inquiries using equipment and hands-on methods, including laboratory work and fieldwork."],["Primary sources/primary data","Information produced by people directly involved in a study or observation."],["Reliability","The extent to which repeated observations under the same conditions give similar results."],["Secondary-sourced investigation/data","A planned inquiry using data or information produced by other people."],["Superposition","The principle that the lowest undisturbed sedimentary layer was deposited first."],["Technology","A human-made tool, system, machine or process used to solve problems or meet needs."],["Theory","A broad, testable explanatory framework supported by reproducible evidence and capable of prediction."],["Uniformitarianism","The principle that geological processes operating today also operated in the past."],["Validity","The extent to which a test measures what was intended and supports accurate inferences."],["Variable","A factor in an investigation that can be changed, maintained or measured."]]}};
+const bankEl=document.getElementById("bank"), pairsEl=document.getElementById("pairs");
+const termsColumn=document.getElementById("termsColumn"), definitionsColumn=document.getElementById("definitionsColumn");
+const message=document.getElementById("message"), review=document.getElementById("review"), reviewGrid=document.getElementById("reviewGrid");
+let roundItems=[], selectedTerm=null, selectedDefinition=null, attempts=0, matched=0, currentStreak=0, bestStreak=0, locked=false;
+
+function shuffle(array){ const a=[...array]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function uniqueByTerm(items){const seen=new Set();return items.filter(x=>{const k=x.term.toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});}
+function normaliseBank(key){
+  if(BANKS[key]) return BANKS[key].items.map(([term,definition],i)=>({id:key+"-"+i,term,definition,source:BANKS[key].short}));
+  const moduleKeys=["module5","module6","module7","module8"];
+  let pool=[];
+  if(key==="review"){
+    moduleKeys.forEach(k=>pool.push(...shuffle(normaliseBank(k)).slice(0,10)));
+    pool.push(...shuffle(normaliseBank("glossary")).slice(0,8));
+  }else{
+    moduleKeys.concat("glossary").forEach(k=>pool.push(...normaliseBank(k)));
+  }
+  return uniqueByTerm(pool);
+}
+function bankLabel(key){
+  if(BANKS[key]) return BANKS[key].label;
+  return key==="review" ? "Whole HSC Course Review" : "Mixed Expert Challenge";
+}
+function createRound(){
+  const key=bankEl.value, count=Number(pairsEl.value);
+  const pool=normaliseBank(key);
+  roundItems=shuffle(pool).slice(0,Math.min(count,pool.length));
+  attempts=matched=currentStreak=bestStreak=0; selectedTerm=selectedDefinition=null; locked=false;
+  document.getElementById("roundTitle").textContent=bankLabel(key);
+  document.getElementById("roundSubtitle").textContent=`Match ${roundItems.length} terms with their meanings.`;
+  renderCards(); updateStats(); review.classList.remove("show"); reviewGrid.innerHTML="";
+  setMessage("Choose one term card and one meaning card.","");
+}
+function renderCards(){
+  const termCards=shuffle(roundItems.map(item=>({cardId:item.id+"-t",pairId:item.id,type:"term",text:item.term})));
+  const definitionCards=shuffle(roundItems.map(item=>({cardId:item.id+"-d",pairId:item.id,type:"definition",text:item.definition})));
+  termsColumn.innerHTML="";
+  definitionsColumn.innerHTML="";
+  termCards.forEach(card=>createCard(card,termsColumn));
+  definitionCards.forEach(card=>createCard(card,definitionsColumn));
+  document.getElementById("termCount").textContent=roundItems.length;
+  document.getElementById("definitionCount").textContent=roundItems.length;
+}
+function createCard(card,column){
+  const b=document.createElement("button");
+  b.type="button";
+  b.className=`tile ${card.type}`;
+  b.dataset.cardId=card.cardId;
+  b.dataset.pairId=card.pairId;
+  b.dataset.type=card.type;
+  b.textContent=card.text;
+  b.addEventListener("click",()=>selectCard(b));
+  column.appendChild(b);
+}
+function selectCard(tile){
+  if(locked||tile.classList.contains("matched"))return;
+  const type=tile.dataset.type;
+  const current=type==="term"?selectedTerm:selectedDefinition;
+  if(current===tile){tile.classList.remove("selected"); if(type==="term")selectedTerm=null;else selectedDefinition=null;return;}
+  if(current)current.classList.remove("selected");
+  tile.classList.add("selected"); if(type==="term")selectedTerm=tile;else selectedDefinition=tile;
+  if(selectedTerm&&selectedDefinition)checkPair();
+}
+function checkPair(){
+  attempts++;
+  if(selectedTerm.dataset.pairId===selectedDefinition.dataset.pairId){
+    selectedTerm.classList.remove("selected");selectedDefinition.classList.remove("selected");
+    selectedTerm.classList.add("matched");selectedDefinition.classList.add("matched");
+    selectedTerm.disabled=true;selectedDefinition.disabled=true;
+    matched++;currentStreak++;bestStreak=Math.max(bestStreak,currentStreak);
+    setMessage("Correct match.","good");selectedTerm=selectedDefinition=null;updateStats();
+    if(matched===roundItems.length)finishRound();
+  }else{
+    locked=true;currentStreak=0;selectedTerm.classList.add("wrong");selectedDefinition.classList.add("wrong");
+    setMessage("Not a match. Compare the scientific meaning carefully and try again.","bad");updateStats();
+    setTimeout(()=>{
+      [selectedTerm,selectedDefinition].forEach(x=>x&&x.classList.remove("selected","wrong"));
+      selectedTerm=selectedDefinition=null;locked=false;
+    },650);
+  }
+}
+function finishRound(){
+  setMessage(`Round complete — ${matched} pairs matched in ${attempts} attempts.`,"good");
+  reviewGrid.innerHTML=roundItems.map(x=>`<div class="review-item"><strong>${escapeHtml(x.term)}</strong><br>${escapeHtml(x.definition)}</div>`).join("");
+  review.classList.add("show");
+}
+function updateStats(){
+  document.getElementById("matchedStat").textContent=matched;
+  document.getElementById("attemptStat").textContent=attempts;
+  document.getElementById("streakStat").textContent=bestStreak;
+  document.getElementById("accuracyStat").textContent=attempts?Math.round((matched/attempts)*100)+"%":"—";
+  document.getElementById("progressBar").style.width=(roundItems.length?matched/roundItems.length*100:0)+"%";
+}
+function setMessage(text,kind){message.textContent=text;message.className="message"+(kind?" "+kind:"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+document.getElementById("newRound").addEventListener("click",createRound);
+document.getElementById("resetRound").addEventListener("click",()=>{attempts=matched=currentStreak=bestStreak=0;selectedTerm=selectedDefinition=null;renderCards();updateStats();review.classList.remove("show");setMessage("Round reset. Choose one term and one meaning.","");});
+document.getElementById("shuffleBtn").addEventListener("click",()=>{
+  if(locked)return;
+  [termsColumn,definitionsColumn].forEach(column=>{
+    const unmatched=[...column.children].filter(x=>!x.classList.contains("matched"));
+    shuffle(unmatched).forEach(x=>column.appendChild(x));
+  });
+});
+bankEl.addEventListener("change",createRound);pairsEl.addEventListener("change",createRound);
+createRound();
+</script>
+</body>
+</html>
