@@ -770,7 +770,7 @@
         <h2 id="hscGamesHeading">HSC Revision Games</h2>
         <p>Open a course-specific Word Match, Connections or Chain Reaction game directly.</p>
       </div>
-      <span class="hsc-games-count">18 course games</span>
+      <span class="hsc-games-count">18 course games + Science Web</span>
     </div>
 
     <div class="hsc-games-table-wrap">
@@ -800,7 +800,7 @@
   </div>
 
   <p class="footer-note">
-    <strong>Maintaining this page:</strong> each resource and its HSC mappings are stored in the <code>HSC_SIMS</code> array near the bottom of this single file. Add a new resource object or add another mapping to an existing object; the course counts, filters and cards update automatically. Last reviewed: 16/07/2026.
+    <strong>Maintaining this page:</strong> each resource and its HSC mappings are stored in the <code>HSC_SIMS</code> array near the bottom of this single file. Add a new resource object or add another mapping to an existing object; the course counts, filters and cards update automatically. Last reviewed: 16/07/2026. Science Web added.
   </p>
 
 <script>
@@ -8332,6 +8332,52 @@
   }
 ];
 
+  const SCIENCE_WEB_MAPPINGS = Array.from(
+    new Map(
+      HSC_SIMS.flatMap(sim => sim.mappings || []).map(mapping => [
+        `${mapping.course}|${mapping.year}|${mapping.module}`,
+        {
+          course:mapping.course,
+          year:mapping.year,
+          module:mapping.module,
+          relevance:"Supporting",
+          uses:[
+            "Concept mapping",
+            "Systems thinking",
+            "Revision",
+            "Student explanation",
+            "Formative assessment"
+          ],
+          note:"Students build and justify their own network of course concepts, then export or import an editable JSON web.",
+          focus:[
+            "Concept learning",
+            "Evidence and scientific reasoning",
+            "Revision and formative assessment"
+          ],
+          syllabus:mapping.syllabus || "2017"
+        }
+      ])
+    ).values()
+  );
+
+  HSC_SIMS.push({
+    id:"science-web-years-7-12",
+    title:"Science Web — Years 7–12",
+    path:"Games/ScienceWeb/",
+    area:"Cross-course revision",
+    type:"Revision game",
+    description:"Build and share free-form science concept maps using all Years 7–10 modules and every Stage 6 science course. Students label relationships, explain links, add examples and exchange editable JSON webs.",
+    tags:[
+      "Science Web",
+      "Concept mapping",
+      "Systems thinking",
+      "Revision",
+      "Stage 6",
+      "JSON sharing"
+    ],
+    mappings:SCIENCE_WEB_MAPPINGS
+  });
+
   const COURSE_COLOURS = {
     "Biology":"#15803d",
     "Chemistry":"#7e22ce",
@@ -8443,7 +8489,7 @@
       if(type&&course)lookup.set(`${course}|${type}`,sim);
     });
 
-    elements.hscGamesTableBody.innerHTML=COURSE_ORDER.map(course=>{
+    const courseRows=COURSE_ORDER.map(course=>{
       const cells=HSC_GAME_COLUMNS.map(column=>{
         const game=lookup.get(`${course}|${column.key}`);
         if(!game){
@@ -8468,6 +8514,23 @@
         </tr>
       `;
     }).join("");
+
+    const scienceWeb=HSC_SIMS.find(sim=>sim.id==="science-web-years-7-12");
+    const scienceWebRow=scienceWeb ? `
+      <tr>
+        <th class="hsc-course-cell" scope="row" style="--course-colour:#0f766e">
+          Science Web
+        </th>
+        <td class="hsc-game-cell" colspan="3">
+          <a class="hsc-game-link connections" href="${escapeHTML(scienceWeb.path)}"
+            aria-label="Open Science Web for all Stage 6 science courses">
+            Open Science Web — all Stage 6 courses
+          </a>
+        </td>
+      </tr>
+    ` : "";
+
+    elements.hscGamesTableBody.innerHTML=courseRows+scienceWebRow;
   }
 
   function mappingMatchesSelectors(mapping,includeModule=true){
