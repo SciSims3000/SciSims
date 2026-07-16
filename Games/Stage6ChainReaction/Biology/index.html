@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage 6 Chain Reaction — Biology</title>
+<style>
+
+:root{
+  --page:#eaf5ff;--page2:#f9fcff;--card:#fff;--ink:#17324a;--muted:#60778b;
+  --line:#cbddea;--accent:#0878bd;--accent2:#18a2d8;--soft:#edf7fd;
+  --good:#18875b;--goodSoft:#e8f8ef;--bad:#bd3e4e;--badSoft:#fff0f2;
+  --warn:#b97708;--warnSoft:#fff6dd;--shadow:0 11px 30px rgba(36,78,108,.13);
+}
+body[data-level="medium"]{
+  --page:#fff4dd;--page2:#fffdf8;--line:#ead4a8;--accent:#d47b0d;--accent2:#efa83c;--soft:#fff7e8;
+}
+body[data-level="hard"]{
+  --page:#ffe9eb;--page2:#fffafa;--line:#ebc1c7;--accent:#c63e51;--accent2:#e56876;--soft:#fff0f2;
+}
+*{box-sizing:border-box}
+html{scroll-behaviour:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  background:linear-gradient(180deg,var(--page),var(--page2));
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:background .25s;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+.page{width:min(1540px,calc(100% - 28px));margin:18px auto 34px}
+.back{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+  background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);
+  box-shadow:0 5px 14px rgba(31,81,120,.1)
+}
+.hero{
+  margin-top:14px;padding:25px 29px;border-radius:29px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)
+}
+.hero h1{margin:0 0 7px;font-size:clamp(2rem,4vw,3.65rem);line-height:1}
+.hero p{margin:0;max-width:1050px;font-size:1.05rem;line-height:1.5}
+.intentions{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.mini-card,.card{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:var(--shadow)}
+.mini-card{border-radius:18px;padding:15px 17px}
+.mini-card h2{font-size:1rem;margin:0 0 5px;color:var(--accent)}
+.mini-card p{margin:0;line-height:1.45}
+.layout{display:grid;grid-template-columns:minmax(300px,365px) 1fr;gap:18px;align-items:start;margin-top:18px}
+.card{border-radius:22px;padding:18px}
+h2{margin:0 0 12px;font-size:1.26rem}
+h3{margin:0 0 8px}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+button{
+  border:0;border-radius:12px;padding:11px 13px;font-weight:850;color:var(--ink);
+  background:var(--soft);border:1px solid var(--line)
+}
+button.primary{color:#fff;border:0;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+button.danger{color:#8e2836;background:var(--badSoft);border-color:#e2abb2}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,.term-card:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;color:var(--accent);font-size:1.45rem}
+.help{margin-top:14px;padding:12px 13px;background:var(--soft);border:1px solid var(--line);border-radius:13px;line-height:1.45;font-size:.94rem}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
+.status-box{padding:10px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line)}
+.status-box span{display:block;color:var(--muted);font-size:.79rem;font-weight:780;text-transform:uppercase;letter-spacing:.04em}
+.status-box strong{display:block;margin-top:3px}
+.board-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
+.board-head p{margin:4px 0 0;color:var(--muted);line-height:1.4}
+.mode-badge{white-space:nowrap;padding:7px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:900;color:var(--accent)}
+.progress-shell{height:12px;border-radius:999px;background:#e4edf3;overflow:hidden;margin:11px 0 16px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760;line-height:1.42}
+.message.good{background:var(--goodSoft);border-color:#90ceb0;color:#17623f}
+.message.bad{background:var(--badSoft);border-color:#e1a4ad;color:#8d2635}
+.message.warn{background:var(--warnSoft);border-color:#dec36b;color:#70530a}
+.sequence-list{display:grid;gap:9px}
+.sequence-item{
+  display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;
+  border:2px solid var(--line);border-radius:14px;background:#fff;padding:9px 10px;
+  transition:border-color .12s,transform .12s,background .12s
+}
+.sequence-item[draggable="true"]{cursor:grab}
+.sequence-item.dragging{opacity:.48}
+.sequence-item.correct-position{border-color:#36a66f;background:#eefaf3}
+.sequence-item.wrong-position{border-color:#d8a34d;background:#fff8e8}
+.position{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--soft);color:var(--accent);font-weight:900
+}
+.sequence-term{font-weight:850}
+.move-buttons{display:flex;gap:5px}
+.move-buttons button{padding:6px 9px;border-radius:9px}
+.chain-path{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding:8px 2px 12px;min-height:84px}
+.chain-node{
+  min-width:145px;max-width:205px;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:11px;border-radius:13px;background:linear-gradient(180deg,var(--soft),#fff);
+  border:2px solid var(--line);font-weight:850;line-height:1.25
+}
+.chain-arrow{display:flex;align-items:center;font-size:1.7rem;color:var(--accent);font-weight:900}
+.relationships{display:grid;gap:7px;margin:0 0 13px}
+.relationship{
+  padding:9px 11px;border-left:5px solid var(--accent);border-radius:10px;background:var(--soft);
+  font-size:.91rem;line-height:1.35
+}
+.candidate-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:5px 0 9px}
+.candidate-title p{margin:0;color:var(--muted);font-size:.91rem}
+.term-grid{display:grid;grid-template-columns:repeat(4,minmax(125px,1fr));gap:9px}
+.term-card{
+  min-height:76px;border:2px solid var(--line);border-radius:13px;background:#fff;padding:10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;font-weight:830;line-height:1.2
+}
+.term-card:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+.term-card.used{opacity:.42;text-decoration:line-through}
+.term-card.invalid-flash{animation:shake .28s;border-color:var(--bad);background:var(--badSoft)}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.explanation{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:15px;background:#fbfdff;display:none}
+.explanation.show{display:block}
+.solution-list{display:grid;gap:8px;margin-top:10px}
+.solution-step{display:grid;grid-template-columns:34px 1fr;gap:9px;padding:9px;border-radius:11px;background:var(--soft)}
+.solution-step strong{color:var(--accent)}
+.definition-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.definition-item{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:.9rem;line-height:1.35}
+.definition-item strong{color:var(--accent)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px}
+.notes ul,.notes ol{margin:8px 0 0;padding-left:22px}
+.notes li{margin:6px 0;line-height:1.4}
+.footer{text-align:center;color:var(--muted);font-size:.87rem;margin-top:18px}
+.footer a{color:var(--accent)}
+@media(max-width:1120px){.layout{grid-template-columns:1fr}}
+@media(max-width:820px){
+  .intentions,.notes{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .term-grid{grid-template-columns:repeat(2,1fr)}
+  .definition-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .page{width:min(100% - 16px,1540px)}.hero{padding:21px}
+  .button-grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}
+  .sequence-item{grid-template-columns:35px 1fr}.move-buttons{grid-column:2}
+}
+
+</style>
+</head>
+<body data-level="medium">
+
+<main class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Stage 6 Chain Reaction</h1>
+    <p>Biology: arrange course concepts into valid sequences or build the longest defensible chain of connected ideas.</p>
+  </header>
+
+  <section class="intentions">
+    <article class="mini-card">
+      <h2>Learning Intention</h2>
+      <p>Connect heredity, genetic change, infectious disease and non-infectious disease through ordered biological processes.</p>
+    </article>
+    <article class="mini-card">
+      <h2>Success Criteria</h2>
+      <p>Arrange biological events in a defensible order and justify each link using mechanisms, evidence and course terminology.</p>
+    </article>
+  </section>
+
+  <section class="layout">
+    <aside class="card">
+      <h2>Game Controls</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Biology</option></select>
+
+      <label for="bank">Content bank</label>
+      <select id="bank">
+                <option value="module5">Module 5 — Heredity</option>
+        <option value="module6">Module 6 — Genetic Change</option>
+        <option value="module7">Module 7 — Infectious Disease</option>
+        <option value="module8">Module 8 — Non-infectious Disease and Disorders</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+
+      <label for="mode">Game mode</label>
+      <select id="mode">
+        <option value="sequence">Science Sequence</option>
+        <option value="chain">Chain Reaction</option>
+      </select>
+
+      <label for="level">Challenge level</label>
+      <select id="level">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <div class="button-grid">
+        <button id="newBtn" class="primary">New Challenge</button>
+        <button id="checkBtn" class="primary">Check Sequence</button>
+        <button id="undoBtn">Undo Last Link</button>
+        <button id="hintBtn">Hint</button>
+        <button id="revealBtn">Reveal Answer</button>
+        <button id="resetScoreBtn" class="danger">Reset Score</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="scoreStat">0</strong>Session score</div>
+        <div class="stat"><strong id="streakStat">0</strong>Current streak</div>
+        <div class="stat"><strong id="solvedStat">0</strong>Challenges solved</div>
+        <div class="stat"><strong id="attemptStat">0</strong>Session attempts</div>
+      </div>
+
+      <div class="help" id="modeHelp">
+        Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="status-grid">
+        <div class="status-box"><span>Module</span><strong id="moduleStatus">Module 5</strong></div>
+        <div class="status-box"><span>Mode</span><strong id="modeStatus">Science Sequence</strong></div>
+        <div class="status-box"><span>Challenge level</span><strong id="levelStatus">Medium</strong></div>
+        <div class="status-box"><span>Round status</span><strong id="roundStatus">Ready</strong></div>
+      </div>
+
+      <div class="board-head">
+        <div>
+          <h2 id="challengeTitle">Select New Challenge</h2>
+          <p id="challengeInstruction">Choose a content bank, mode and challenge level.</p>
+        </div>
+        <div id="modeBadge" class="mode-badge">SCIENCE SEQUENCE</div>
+      </div>
+
+      <div class="progress-shell" aria-label="Challenge progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="sequenceBoard" class="sequence-list"></div>
+
+      <div id="chainBoard" hidden>
+        <div id="chainPath" class="chain-path"></div>
+        <div id="relationships" class="relationships"></div>
+        <div class="candidate-title">
+          <h3>Available terms</h3>
+          <p id="chainTarget">Target: longest valid chain</p>
+        </div>
+        <div id="candidateGrid" class="term-grid"></div>
+      </div>
+
+      <div id="message" class="message">Choose New Challenge to begin.</div>
+
+      <section id="explanation" class="explanation">
+        <h3>Explanation</h3>
+        <p id="summaryText"></p>
+        <div id="solutionList" class="solution-list"></div>
+        <h3 style="margin-top:14px">Term definitions</h3>
+        <div id="definitionGrid" class="definition-grid"></div>
+      </section>
+    </section>
+  </section>
+
+  <section class="notes">
+    <article class="card">
+      <h2>Student Challenge</h2>
+      <ol>
+        <li>In Science Sequence mode, drag terms or use the arrow buttons to place them in order.</li>
+        <li>Explain why each step follows the previous step before checking.</li>
+        <li>In Chain Reaction mode, begin with the supplied term and build the longest valid chain.</li>
+        <li>Use Undo Last Link when a valid branch leads to a shorter route.</li>
+        <li>Review the accepted relationships and definitions after each challenge.</li>
+      </ol>
+    </article>
+    <article class="card">
+      <h2>Teacher Notes</h2>
+      <ul>
+        <li>Easy sequence rounds use four terms; Medium uses six; Hard uses the complete curated sequence.</li>
+        <li>Easy chain rounds use a direct five-term pathway. Medium includes the full branching network. Hard adds plausible distractors.</li>
+        <li>Chain links are deliberately curated: conceptual similarity alone is not automatically accepted.</li>
+        <li>Whole-course review combines Modules 5–8. Mixed Expert integrates genetics, evolution, immunity and disease.</li>
+      </ul>
+    </article>
+  </section>
+
+  <p class="footer">
+    Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/biology-stage-6-2017" target="_blank" rel="noopener">NSW Biology Stage 6 Syllabus (2017)</a>.
+    Definitions and relationship explanations are concise classroom paraphrases.
+  </p>
+</main>
+
+<script>
+
+"use strict";
+const SEQUENCES=[{"id":"bio-m5-dna-replication","bank":"module5","title":"DNA Replication","hint":"Begin with the double helix before separating strands.","summary":"DNA replication is semi-conservative: each daughter molecule contains one original strand and one newly synthesised strand.","steps":[["DNA double helix","The original molecule is prepared for copying."],["Helicase","Hydrogen bonds are broken and the strands separate."],["Replication fork","Exposed templates become available for copying."],["Complementary base pairing","Free nucleotides align with exposed bases."],["DNA polymerase","New nucleotides are joined into growing strands."],["DNA ligase","Fragments on the lagging strand are joined."],["Two DNA molecules","Two equivalent DNA molecules are produced."],["Semi-conservative replication","Each product retains one parental strand."]]},{"id":"bio-m5-protein-synthesis","bank":"module5","title":"From Gene to Polypeptide","hint":"Transcription occurs before translation.","summary":"Gene expression converts DNA information into an amino-acid sequence.","steps":[["Gene","A DNA sequence contains instructions for a polypeptide."],["Transcription","RNA polymerase copies the template strand."],["Messenger RNA","The RNA transcript carries codons from the nucleus."],["Ribosome","The mRNA binds to the translation machinery."],["Transfer RNA","tRNA molecules deliver specific amino acids."],["Codon–anticodon pairing","Complementary triplets position amino acids correctly."],["Peptide bond","Amino acids are joined together."],["Polypeptide","The amino-acid chain is completed and folds."]]},{"id":"bio-m5-meiosis","bank":"module5","title":"Meiosis and Genetic Variation","hint":"DNA is copied once, but the cell divides twice.","summary":"Meiosis reduces chromosome number and generates genetically varied gametes.","steps":[["Diploid germ cell","A cell begins with homologous chromosome pairs."],["DNA replication","Each chromosome is copied before meiosis."],["Homologous pairing","Matching chromosomes align during prophase I."],["Crossing over","Chromatids exchange corresponding DNA segments."],["Independent assortment","Homologous pairs orient randomly at metaphase I."],["Meiosis I","Homologous chromosomes separate."],["Meiosis II","Sister chromatids separate."],["Haploid gametes","Four genetically varied cells are produced."]]},{"id":"bio-m6-natural-selection","bank":"module6","title":"Natural Selection","hint":"Variation must exist before the environment can select among individuals.","summary":"Natural selection changes allele frequencies across generations.","steps":[["Genetic variation","Individuals differ in inherited characteristics."],["Selection pressure","Environmental conditions favour some phenotypes."],["Differential survival","Some individuals survive more successfully."],["Differential reproduction","Survivors contribute different numbers of offspring."],["Inheritance","Advantageous alleles pass to descendants."],["Allele frequency change","Favoured alleles become more common."],["Adaptation","The population becomes better suited to its environment."],["Evolution","Heritable population change accumulates through generations."]]},{"id":"bio-m6-genetic-engineering","bank":"module6","title":"Recombinant DNA Technology","hint":"The target gene and vector must be prepared before transformation.","summary":"Recombinant DNA technology inserts a selected gene into a vector for cloning or expression.","steps":[["Target gene","A DNA sequence with a desired function is identified."],["Restriction enzyme","The gene and plasmid are cut at specific sequences."],["Sticky ends","Complementary overhangs allow fragments to pair."],["Plasmid vector","The target gene is placed into bacterial DNA."],["DNA ligase","The sugar-phosphate backbone is sealed."],["Transformation","Bacteria take up the recombinant plasmid."],["Selection marker","Cells containing the plasmid are identified."],["Gene expression","The inserted gene may produce the desired product."]]},{"id":"bio-m6-mutation","bank":"module6","title":"From Mutation to Phenotype","hint":"A DNA change only affects phenotype if it alters expression or protein function.","summary":"Mutations can alter proteins and phenotypes, creating variation on which selection may act.","steps":[["Mutagen","Radiation or chemicals increase mutation probability."],["DNA mutation","The nucleotide sequence changes."],["Altered codon","The mRNA sequence may be changed."],["Changed amino acid","Translation may insert a different amino acid."],["Altered protein","Protein structure or function may change."],["Phenotypic variation","The organism may show a different characteristic."],["Selection pressure","The environment affects reproductive success."],["Allele frequency change","The mutation may become more or less common."]]},{"id":"bio-m7-infection","bank":"module7","title":"Chain of Infection","hint":"A pathogen must leave a reservoir before entering a new host.","summary":"Interrupting any link in the chain of infection can reduce disease transmission.","steps":[["Pathogen","A disease-causing agent exists."],["Reservoir","The pathogen persists in a host or environment."],["Portal of exit","The pathogen leaves the reservoir."],["Mode of transmission","It travels by contact, droplets, vectors or another route."],["Portal of entry","It enters a susceptible host."],["Colonisation","The pathogen establishes and multiplies."],["Disease symptoms","Tissue damage or immune responses produce illness."],["New reservoir","The infected host can transmit the pathogen onward."]]},{"id":"bio-m7-immune-response","bank":"module7","title":"Innate to Adaptive Immunity","hint":"Non-specific responses occur before clonal selection.","summary":"Innate defences contain infection while adaptive cells develop specific memory.","steps":[["Barrier breach","A pathogen passes physical or chemical barriers."],["Inflammation","Local signals increase blood flow and immune-cell access."],["Phagocytosis","Innate cells engulf and digest pathogens."],["Antigen presentation","Pathogen antigens are displayed to lymphocytes."],["Helper T cell activation","Specific T cells coordinate the response."],["B cell clonal selection","A matching B cell proliferates."],["Antibody production","Plasma cells release specific antibodies."],["Memory cells","Long-lived cells enable a faster later response."]]},{"id":"bio-m7-vaccination","bank":"module7","title":"Vaccination and Immune Memory","hint":"Vaccination creates memory before natural exposure.","summary":"Vaccines stimulate a primary response that protects against later infection.","steps":[["Vaccine antigen","A safe form or component of a pathogen is administered."],["Antigen recognition","Specific lymphocytes bind the antigen."],["Clonal selection","Matching lymphocytes proliferate."],["Primary immune response","Antibodies and effector cells are produced."],["Memory cells","Long-lived specific cells remain."],["Later exposure","The actual pathogen enters the body."],["Secondary immune response","Antibodies are produced rapidly and strongly."],["Reduced disease","Infection is prevented or severity is decreased."]]},{"id":"bio-m8-homeostasis","bank":"module8","title":"Negative Feedback","hint":"The response must oppose the original deviation.","summary":"Negative feedback maintains internal conditions near a set point.","steps":[["Stimulus","An internal condition moves away from its normal range."],["Receptor","A sensor detects the change."],["Control centre","Information is compared with a set point."],["Effector signal","Nervous or hormonal instructions are sent."],["Effector","A muscle or gland produces a response."],["Corrective response","The original change is opposed."],["Negative feedback","The response reduces further signalling."],["Homeostasis restored","The variable returns towards its normal range."]]},{"id":"bio-m8-cancer","bank":"module8","title":"Development of Metastatic Cancer","hint":"Loss of cell-cycle control precedes invasion and spread.","summary":"Cancer develops through accumulated mutations that alter growth, repair and cell death.","steps":[["DNA mutation","Genes controlling division or repair are altered."],["Cell-cycle control failure","Checkpoints no longer regulate mitosis normally."],["Uncontrolled cell division","Abnormal cells proliferate."],["Primary tumour","A mass of abnormal cells forms."],["Angiogenesis","New blood vessels supply the tumour."],["Local invasion","Cancer cells enter surrounding tissue."],["Metastasis","Cells spread through blood or lymph."],["Secondary tumour","Cancer establishes at another site."]]},{"id":"bio-glossary-evidence","bank":"glossary","title":"Biological Investigation Pathway","hint":"A biological conclusion depends on valid variables and reliable evidence.","summary":"Core syllabus terms connect planning, data quality and evidence-based judgement.","steps":[["Investigation","A scientific question is examined systematically."],["Hypothesis","A testable biological explanation is proposed."],["Independent variable","The factor changed or compared is identified."],["Dependent variable","The biological response is measured."],["Controlled variable","Alternative influences are held consistent."],["Primary data","Observations or measurements are collected directly."],["Reliability","Consistency of repeated evidence is assessed."],["Validity","The method is judged against the intended question."],["Conclusion","A biological judgement is supported by evidence."]]},{"id":"bio-review-synthesis","bank":"review","title":"Whole-course Biological Change","hint":"Information is inherited, expressed and filtered by environments and health processes.","summary":"The HSC course links heredity, genetic change, infectious disease and non-infectious disease.","steps":[["DNA","Hereditary information is stored in nucleotide sequences."],["Gene expression","Information is converted into functional products."],["Phenotype","Genotype and environment produce observable characteristics."],["Variation","Individuals differ within populations."],["Selection pressure","Environmental conditions alter reproductive success."],["Population change","Allele frequencies shift through generations."],["Disease susceptibility","Genes and environment influence health risk."],["Management strategy","Biological evidence informs prevention or treatment."]]},{"id":"bio-expert-genotype-health","bank":"expert","title":"Expert: Gene, Environment and Disease","hint":"A risk allele is not automatically a diagnosis.","summary":"Complex disease commonly develops through interactions among genotype, regulation, exposure and physiology.","steps":[["Risk allele","An inherited variant changes susceptibility."],["Gene expression","Regulation determines when and where genes act."],["Protein function","Expression influences cellular processes."],["Environmental exposure","Diet, pathogens or toxins alter biological conditions."],["Physiological response","Body systems respond to combined influences."],["Disease risk","Probability changes rather than becoming certain."],["Epidemiological evidence","Population data estimate associations."],["Prevention strategy","Modifiable risks are targeted."]]}];
+const CHAINS=[{"id":"bio-chain-heredity","bank":"module5","title":"Heredity Information Chain","start":"DNA","bestPath":["DNA","Gene","Transcription","Messenger RNA","Translation","Polypeptide","Protein function","Phenotype"],"nodes":["DNA","Gene","Chromosome","Transcription","Messenger RNA","Ribosome","Translation","Polypeptide","Protein function","Phenotype","Environment"],"edges":[["DNA","Gene","Genes are functional regions within DNA."],["DNA","Chromosome","DNA is packaged into chromosomes."],["Gene","Transcription","A gene can be copied into RNA."],["Transcription","Messenger RNA","Transcription produces an mRNA transcript."],["Messenger RNA","Translation","Ribosomes translate the codon sequence."],["Messenger RNA","Ribosome","mRNA binds to a ribosome."],["Ribosome","Translation","The ribosome coordinates protein synthesis."],["Translation","Polypeptide","Translation joins amino acids into a chain."],["Polypeptide","Protein function","Folding produces a functional protein."],["Protein function","Phenotype","Protein activity contributes to observable traits."],["Environment","Phenotype","Environmental conditions also influence phenotype."]],"distractors":["Antibiotic resistance","Plate tectonics","Keq"],"summary":"Genetic information flows from DNA through RNA and protein to phenotype."},{"id":"bio-chain-meiosis","bank":"module5","title":"Meiosis Variation Chain","start":"Diploid cell","bestPath":["Diploid cell","DNA replication","Homologous pairing","Crossing over","Independent assortment","Meiosis I","Meiosis II","Haploid gamete"],"nodes":["Diploid cell","DNA replication","Homologous pairing","Crossing over","Independent assortment","Meiosis I","Meiosis II","Haploid gamete","Fertilisation","Zygote"],"edges":[["Diploid cell","DNA replication","Chromosomes are copied before division."],["DNA replication","Homologous pairing","Replicated homologous chromosomes align."],["Homologous pairing","Crossing over","Paired chromosomes exchange DNA."],["Crossing over","Independent assortment","Both processes contribute to variation."],["Independent assortment","Meiosis I","Randomly oriented homologues separate."],["Meiosis I","Meiosis II","A second division separates sister chromatids."],["Meiosis II","Haploid gamete","Chromosome number is halved in gametes."],["Haploid gamete","Fertilisation","Two gametes may fuse."],["Fertilisation","Zygote","Fusion restores diploid chromosome number."]],"distractors":["Homeostasis","Antibody","Carbon cycle"],"summary":"Meiosis creates haploid, genetically varied gametes."},{"id":"bio-chain-selection","bank":"module6","title":"Evolution by Natural Selection","start":"Variation","bestPath":["Variation","Selection pressure","Differential survival","Differential reproduction","Inheritance","Allele frequency","Adaptation","Evolution"],"nodes":["Variation","Mutation","Selection pressure","Differential survival","Differential reproduction","Inheritance","Allele frequency","Adaptation","Evolution","Genetic drift"],"edges":[["Mutation","Variation","Mutation creates new alleles."],["Variation","Selection pressure","Environmental conditions act on existing differences."],["Selection pressure","Differential survival","Some phenotypes survive better."],["Differential survival","Differential reproduction","Survival affects reproductive output."],["Differential reproduction","Inheritance","Successful individuals pass alleles onward."],["Inheritance","Allele frequency","Repeated inheritance changes population frequencies."],["Allele frequency","Adaptation","Favoured traits become common."],["Adaptation","Evolution","Accumulated heritable change is evolution."],["Genetic drift","Allele frequency","Chance events can also alter allele frequencies."]],"distractors":["Titration","Orbital velocity","Diffraction"],"summary":"Natural selection links heritable variation with population change."},{"id":"bio-chain-engineering","bank":"module6","title":"Recombinant DNA Chain","start":"Target gene","bestPath":["Target gene","Restriction enzyme","Sticky ends","Plasmid","DNA ligase","Transformation","Selection marker","Gene expression"],"nodes":["Target gene","Restriction enzyme","Sticky ends","Plasmid","DNA ligase","Transformation","Selection marker","Gene expression","Protein product"],"edges":[["Target gene","Restriction enzyme","Specific DNA sequences are cut."],["Restriction enzyme","Sticky ends","Staggered cuts can create complementary overhangs."],["Sticky ends","Plasmid","Matching ends allow insertion into a vector."],["Plasmid","DNA ligase","Ligase seals the recombinant molecule."],["DNA ligase","Transformation","The recombinant plasmid is introduced into cells."],["Transformation","Selection marker","Markers identify cells that received the plasmid."],["Selection marker","Gene expression","Selected cells can express the inserted gene."],["Gene expression","Protein product","Expression may produce a useful protein."]],"distractors":["Herd immunity","Stromatolite","Torque"],"summary":"Genetic engineering requires cutting, joining, transferring and expressing DNA."},{"id":"bio-chain-immunity","bank":"module7","title":"Adaptive Immune Response","start":"Antigen","bestPath":["Antigen","Antigen-presenting cell","Helper T cell","B cell","Clonal expansion","Plasma cell","Antibody","Memory cell"],"nodes":["Antigen","Phagocyte","Antigen-presenting cell","Helper T cell","B cell","Clonal expansion","Plasma cell","Antibody","Memory cell","Pathogen clearance"],"edges":[["Antigen","Phagocyte","Phagocytes engulf antigen-bearing material."],["Phagocyte","Antigen-presenting cell","Processed antigens are displayed."],["Antigen","Antigen-presenting cell","Antigens can be presented to lymphocytes."],["Antigen-presenting cell","Helper T cell","Specific helper T cells are activated."],["Helper T cell","B cell","Helper signals activate matching B cells."],["B cell","Clonal expansion","Selected B cells proliferate."],["Clonal expansion","Plasma cell","Some clones differentiate into plasma cells."],["Plasma cell","Antibody","Plasma cells secrete antibodies."],["Antibody","Pathogen clearance","Antibodies neutralise or mark pathogens."],["Clonal expansion","Memory cell","Some clones become long-lived memory cells."],["Antibody","Memory cell","Within this pathway, Antibody leads directly to Memory cell."]],"distractors":["Metastasis","Photosynthesis","Ksp"],"summary":"Specific antigen recognition drives clonal expansion, antibodies and memory."},{"id":"bio-chain-disease","bank":"module7","title":"Infectious Disease Transmission","start":"Reservoir","bestPath":["Reservoir","Portal of exit","Transmission","Portal of entry","Susceptible host","Colonisation","Symptoms","New reservoir"],"nodes":["Pathogen","Reservoir","Portal of exit","Transmission","Vector","Portal of entry","Susceptible host","Colonisation","Symptoms","New reservoir"],"edges":[["Pathogen","Reservoir","A pathogen persists in a host or environment."],["Reservoir","Portal of exit","It must leave the reservoir."],["Portal of exit","Transmission","It travels by a transmission route."],["Transmission","Vector","Some pathogens are carried by vectors."],["Transmission","Portal of entry","Transmission brings the pathogen to an entry site."],["Vector","Portal of entry","A vector may introduce the pathogen through skin."],["Portal of entry","Susceptible host","The pathogen reaches a host lacking effective protection."],["Susceptible host","Colonisation","The pathogen establishes and multiplies."],["Colonisation","Symptoms","Damage and immune responses may produce symptoms."],["Symptoms","New reservoir","The infected host may transmit the pathogen."]],"distractors":["Mutation rate","Equilibrium","Muon"],"summary":"Disease spreads through connected reservoirs, routes and susceptible hosts."},{"id":"bio-chain-homeostasis","bank":"module8","title":"Homeostasis Feedback Chain","start":"Stimulus","bestPath":["Stimulus","Receptor","Control centre","Effector signal","Effector","Corrective response","Negative feedback","Set point restored"],"nodes":["Stimulus","Receptor","Control centre","Nervous signal","Hormonal signal","Effector","Corrective response","Negative feedback","Set point restored","Effector signal"],"edges":[["Stimulus","Receptor","A receptor detects a change."],["Receptor","Control centre","Information is sent for comparison with a set point."],["Control centre","Nervous signal","A rapid neural instruction may be sent."],["Control centre","Hormonal signal","A chemical message may be released."],["Control centre","Effector signal","The control centre directs an effector."],["Effector signal","Effector","The target tissue receives the instruction."],["Nervous signal","Effector","Neural output activates an effector."],["Hormonal signal","Effector","Hormones alter target-cell activity."],["Effector","Corrective response","The effector opposes the deviation."],["Corrective response","Negative feedback","Reduced deviation decreases the original signal."],["Negative feedback","Set point restored","The variable returns towards its normal range."]],"distractors":["Translation","Volcanic ash","Photoelectric effect"],"summary":"Negative feedback links detection, control and correction."},{"id":"bio-chain-cancer","bank":"module8","title":"Cancer Progression Chain","start":"Mutation","bestPath":["Mutation","Oncogene activation","Checkpoint failure","Uncontrolled mitosis","Tumour","Angiogenesis","Invasion","Metastasis"],"nodes":["Mutation","Proto-oncogene","Oncogene activation","Tumour suppressor loss","Checkpoint failure","Uncontrolled mitosis","Tumour","Angiogenesis","Invasion","Metastasis"],"edges":[["Mutation","Proto-oncogene","A mutation may affect a growth-promoting gene."],["Proto-oncogene","Oncogene activation","Activation can drive excessive growth signalling."],["Mutation","Tumour suppressor loss","Mutation may disable growth inhibition or repair."],["Oncogene activation","Checkpoint failure","Growth signals contribute to failed cell-cycle control."],["Tumour suppressor loss","Checkpoint failure","Loss of inhibition weakens checkpoints."],["Checkpoint failure","Uncontrolled mitosis","Cells divide despite damage or abnormal signals."],["Uncontrolled mitosis","Tumour","A mass of abnormal cells forms."],["Tumour","Angiogenesis","The tumour stimulates blood-vessel growth."],["Angiogenesis","Invasion","Increased growth supports spread into nearby tissue."],["Invasion","Metastasis","Cells enter circulation and establish elsewhere."],["Mutation","Oncogene activation","Within this pathway, Mutation leads directly to Oncogene activation."]],"distractors":["Antibody","Meiosis I","Orbital period"],"summary":"Cancer progresses through accumulated genetic and cellular changes."},{"id":"biology-glossary-derived-chain","bank":"glossary","title":"Biological Investigation Pathway — Connected Chain","start":"Investigation","bestPath":["Investigation","Hypothesis","Independent variable","Dependent variable","Controlled variable","Primary data","Reliability","Validity","Conclusion"],"nodes":["Investigation","Hypothesis","Independent variable","Dependent variable","Controlled variable","Primary data","Reliability","Validity","Conclusion"],"edges":[["Investigation","Hypothesis","A testable biological explanation is proposed."],["Hypothesis","Independent variable","The factor changed or compared is identified."],["Independent variable","Dependent variable","The biological response is measured."],["Dependent variable","Controlled variable","Alternative influences are held consistent."],["Controlled variable","Primary data","Observations or measurements are collected directly."],["Primary data","Reliability","Consistency of repeated evidence is assessed."],["Reliability","Validity","The method is judged against the intended question."],["Validity","Conclusion","A biological judgement is supported by evidence."]],"distractors":["DNA double helix","Helicase","Replication fork"],"summary":"Core syllabus terms connect planning, data quality and evidence-based judgement."},{"id":"biology-review-derived-chain","bank":"review","title":"Whole-course Biological Change — Connected Chain","start":"DNA","bestPath":["DNA","Gene expression","Phenotype","Variation","Selection pressure","Population change","Disease susceptibility","Management strategy"],"nodes":["DNA","Gene expression","Phenotype","Variation","Selection pressure","Population change","Disease susceptibility","Management strategy"],"edges":[["DNA","Gene expression","Information is converted into functional products."],["Gene expression","Phenotype","Genotype and environment produce observable characteristics."],["Phenotype","Variation","Individuals differ within populations."],["Variation","Selection pressure","Environmental conditions alter reproductive success."],["Selection pressure","Population change","Allele frequencies shift through generations."],["Population change","Disease susceptibility","Genes and environment influence health risk."],["Disease susceptibility","Management strategy","Biological evidence informs prevention or treatment."]],"distractors":["DNA double helix","Helicase","Replication fork"],"summary":"The HSC course links heredity, genetic change, infectious disease and non-infectious disease."},{"id":"biology-expert-derived-chain","bank":"expert","title":"Expert: Gene, Environment and Disease — Connected Chain","start":"Risk allele","bestPath":["Risk allele","Gene expression","Protein function","Environmental exposure","Physiological response","Disease risk","Epidemiological evidence","Prevention strategy"],"nodes":["Risk allele","Gene expression","Protein function","Environmental exposure","Physiological response","Disease risk","Epidemiological evidence","Prevention strategy"],"edges":[["Risk allele","Gene expression","Regulation determines when and where genes act."],["Gene expression","Protein function","Expression influences cellular processes."],["Protein function","Environmental exposure","Diet, pathogens or toxins alter biological conditions."],["Environmental exposure","Physiological response","Body systems respond to combined influences."],["Physiological response","Disease risk","Probability changes rather than becoming certain."],["Disease risk","Epidemiological evidence","Population data estimate associations."],["Epidemiological evidence","Prevention strategy","Modifiable risks are targeted."]],"distractors":["DNA double helix","Helicase","Replication fork"],"summary":"Complex disease commonly develops through interactions among genotype, regulation, exposure and physiology."}];
+const DEFINITIONS={"Asexual reproduction":"Reproduction involving one parent and no fusion of gametes, usually producing genetically similar offspring.","Sexual reproduction":"Reproduction involving the fusion of gametes, producing offspring with new combinations of alleles.","External fertilisation":"Fusion of gametes outside the body of the female, usually in an aquatic environment.","Internal fertilisation":"Fusion of gametes within the reproductive tract of the female.","Binary fission":"Asexual reproduction in which one cell replicates its DNA and divides into two cells.","Budding":"Asexual reproduction in which a new organism develops as an outgrowth of the parent.","Spore formation":"Asexual reproduction involving resistant reproductive cells that can disperse and develop into new organisms.","Vegetative propagation":"Asexual reproduction in plants from non-reproductive structures such as stems, roots or leaves.","Pollination":"Transfer of pollen from an anther to a compatible stigma.","Fertilisation":"Fusion of haploid gametes to form a diploid zygote.","Implantation":"Attachment and embedding of the early embryo in the uterine lining.","Placenta":"An organ that allows exchange of materials between maternal and fetal blood without the blood directly mixing.","Progesterone":"A hormone that helps maintain the uterine lining during pregnancy.","Oestrogen":"A hormone involved in the menstrual cycle, pregnancy and development of female reproductive characteristics.","Oxytocin":"A hormone that stimulates uterine contractions during labour and milk ejection after birth.","Artificial insemination":"Placement of sperm into the female reproductive tract without sexual intercourse.","Artificial pollination":"Human transfer of pollen to control fertilisation and plant breeding.","Mitosis":"Nuclear division producing two genetically similar daughter nuclei with the same chromosome number.","Meiosis":"Cell division producing four genetically different haploid cells from one diploid cell.","Interphase":"The stage of the cell cycle in which the cell grows and DNA is replicated before division.","Homologous chromosomes":"A chromosome pair carrying the same genes at corresponding loci, with one chromosome inherited from each parent.","Sister chromatids":"Identical copies of a replicated chromosome joined at the centromere.","Crossing over":"Exchange of DNA between homologous chromosomes during meiosis, producing new allele combinations.","Independent assortment":"Random orientation and separation of homologous chromosome pairs during meiosis.","DNA replication":"The semi-conservative process that produces two DNA molecules from one original molecule.","Semi-conservative replication":"DNA replication in which each new molecule contains one original strand and one newly synthesised strand.","Nucleotide":"The monomer of nucleic acids, consisting of a sugar, phosphate group and nitrogenous base.","Complementary base pairing":"Specific pairing of adenine with thymine and cytosine with guanine in DNA.","Hydrogen bond":"A weak attraction joining complementary nitrogenous bases across the DNA double helix.","DNA helicase":"An enzyme that unwinds DNA and separates its strands during replication.","DNA polymerase":"An enzyme that adds complementary nucleotides to a growing DNA strand.","Gene":"A section of DNA that contributes to a functional RNA or polypeptide product.","Chromosome":"A DNA molecule associated with proteins and carrying many genes.","Prokaryotic DNA":"Usually circular DNA located in the cytoplasm, often accompanied by plasmids.","Eukaryotic DNA":"Linear DNA associated with histone proteins and organised into chromosomes within a nucleus.","Transcription":"Synthesis of an RNA molecule using one strand of DNA as a template.","Translation":"Assembly of amino acids into a polypeptide according to the codon sequence of mRNA.","Messenger RNA":"RNA that carries a copied genetic message from DNA to a ribosome.","Transfer RNA":"RNA that transports a specific amino acid to a ribosome and pairs its anticodon with an mRNA codon.","Ribosome":"A cellular structure where mRNA is read and amino acids are joined into a polypeptide.","Codon":"A three-base sequence on mRNA that specifies an amino acid or a start or stop signal.","Anticodon":"A three-base sequence on tRNA that is complementary to an mRNA codon.","Polypeptide":"A chain of amino acids linked by peptide bonds.","Protein":"One or more folded polypeptides that perform structural, transport, signalling, catalytic or defensive functions.","Genotype":"The allele combination carried by an organism for one or more genes.","Phenotype":"An observable characteristic produced through interaction between genotype and environment.","Allele":"A variant form of a gene.","Autosomal inheritance":"Inheritance of a gene located on a chromosome other than a sex chromosome.","Sex-linked inheritance":"Inheritance of a gene located on a sex chromosome, commonly the X chromosome.","Codominance":"An inheritance pattern in which both alleles are fully expressed in a heterozygote.","Incomplete dominance":"An inheritance pattern in which the heterozygote has an intermediate phenotype.","Multiple alleles":"More than two allele forms of a gene exist within a population.","Punnett square":"A diagram used to predict possible offspring genotypes from parental gametes.","Pedigree":"A diagram showing the inheritance of a characteristic through several generations of a family.","Single nucleotide polymorphism":"A common variation involving one nucleotide at a particular position in the genome.","DNA sequencing":"Determining the order of nucleotides in a DNA molecule.","DNA profiling":"Comparing variable regions of DNA to help identify individuals or biological relationships.","Population genetics":"The study of allele frequencies and genetic variation within and between populations.","Gene–environment interaction":"The combined influence of genetic information and environmental conditions on phenotype.","Mutation":"A permanent change in the nucleotide sequence or chromosome structure of genetic material.","Mutagen":"A physical, chemical or biological agent that increases the rate of mutation.","Ionising radiation":"High-energy radiation capable of removing electrons and damaging DNA.","Ultraviolet radiation":"Electromagnetic radiation that can cause DNA damage such as thymine dimers.","Chemical mutagen":"A chemical that alters DNA bases, replication or chromosome structure.","Naturally occurring mutagen":"A mutation-causing factor produced by natural processes, including reactive molecules or some biological agents.","Point mutation":"A mutation affecting one nucleotide or a small number of nucleotides.","Substitution":"A mutation in which one nucleotide is replaced by another.","Insertion":"A mutation in which one or more nucleotides are added to a DNA sequence.","Deletion mutation":"A mutation in which one or more nucleotides are removed from a DNA sequence.","Frameshift mutation":"A reading-frame change caused by insertion or deletion of nucleotides not in multiples of three.","Silent mutation":"A nucleotide change that does not alter the amino acid specified.","Missense mutation":"A nucleotide change that results in a different amino acid.","Nonsense mutation":"A nucleotide change that produces a premature stop codon.","Chromosomal mutation":"A large-scale change to chromosome structure or number.","Chromosomal deletion":"Loss of a section of a chromosome.","Chromosomal duplication":"Repetition of a section of a chromosome.","Chromosomal inversion":"Reversal of a chromosome segment within the same chromosome.","Chromosomal translocation":"Movement of a chromosome segment to a different position, often on another chromosome.","Aneuploidy":"Presence of an abnormal number of particular chromosomes.","Somatic mutation":"A mutation in a body cell that can affect the individual but is not normally inherited by offspring.","Germ-line mutation":"A mutation in a cell that forms gametes and can be inherited by offspring.","Coding DNA":"DNA sequences whose information contributes directly to a polypeptide product.","Non-coding DNA":"DNA that does not code for a polypeptide but may have regulatory, structural or other functions.","Genetic variation":"Differences in genetic information among individuals within a population.","Gene flow":"Movement of alleles between populations through migration and reproduction.","Genetic drift":"Random change in allele frequencies, with strongest effects in small populations.","Founder effect":"Genetic drift occurring when a new population is established by a small number of individuals.","Bottleneck effect":"Loss of genetic variation after a population is sharply reduced in size.","Gene pool":"All alleles present in an interbreeding population.","Allele frequency":"The proportion of a particular allele within a population's gene pool.","Natural selection":"Differential survival and reproduction associated with inherited variation.","Biotechnology":"Use of organisms, cells or biological processes to produce useful products or outcomes.","Selective breeding":"Human selection of parents with desired characteristics to increase those characteristics in offspring.","Reproductive cloning":"Production of a new organism genetically almost identical to a donor organism.","Therapeutic cloning":"Production of genetically matched cells or tissues for research or possible treatment.","Whole-organism cloning":"Creation of a genetically similar multicellular organism from donor genetic material.","Gene cloning":"Production of many identical copies of a selected DNA sequence.","Somatic cell nuclear transfer":"Transfer of a donor body-cell nucleus into an enucleated egg cell.","Recombinant DNA":"DNA formed by joining genetic material from different sources.","Restriction enzyme":"An enzyme that cuts DNA at a specific recognition sequence.","DNA ligase":"An enzyme that joins DNA fragments by forming bonds in the sugar–phosphate backbone.","Plasmid":"A small circular DNA molecule commonly used as a vector in genetic engineering.","Vector":"A DNA carrier used to transfer genetic material into a host cell.","Transformation":"Uptake and expression of introduced genetic material by a cell.","Transgenic organism":"An organism containing genetic material introduced from another source using genetic technology.","Polymerase chain reaction":"A technique that rapidly amplifies a selected DNA region.","Gel electrophoresis":"A method that separates DNA fragments according to size using an electric field.","CRISPR-Cas9":"A gene-editing system using guide RNA and a Cas enzyme to target a specific DNA sequence.","Guide RNA":"RNA designed to direct a CRISPR-associated enzyme to a complementary DNA target.","Genetically modified crop":"A crop whose genome has been deliberately changed using genetic technology.","Bt crop":"A genetically modified crop that produces an insecticidal protein derived from Bacillus thuringiensis.","Recombinant insulin":"Human insulin produced by genetically modified microorganisms.","Bioremediation":"Use of organisms or biological processes to reduce environmental pollutants.","Gene therapy":"Introduction, removal or alteration of genetic material to treat or prevent disease.","Genetic screening":"Testing genetic material to identify variants associated with a condition or inherited risk.","Bioethics":"Ethical analysis of biological research, technologies and their consequences.","Biodiversity":"The variety of life at genetic, species and ecosystem levels.","Gene escape":"Movement of an introduced gene from a modified organism into another population.","Non-target effect":"An unintended effect of a biotechnology on organisms other than the intended target.","Reduced genetic diversity":"A decrease in the range of alleles or genotypes within a population.","Infectious disease":"A disease caused by a pathogen that can be transmitted directly or indirectly between hosts.","Pathogen":"A biological or non-cellular agent capable of causing disease.","Bacterium":"A prokaryotic microorganism, some species of which cause disease.","Virus":"A non-cellular infectious agent containing genetic material within a protein coat and requiring a host cell to reproduce.","Fungus":"A eukaryotic organism that may cause disease through spores, tissue invasion or toxins.","Protozoan":"A single-celled eukaryotic organism, some species of which are parasitic pathogens.","Macroparasite":"A multicellular parasite, such as a worm or arthropod, that can cause disease.","Prion":"An infectious misfolded protein capable of inducing abnormal folding in other proteins.","Host":"An organism that supports the survival or reproduction of a pathogen or parasite.","Reservoir":"A population or environment in which a pathogen normally lives and multiplies.","Direct contact":"Transmission through physical contact between an infected source and a susceptible host.","Indirect contact":"Transmission through contaminated objects, food, water, air or surfaces.","Vector transmission":"Transmission by a living carrier such as a mosquito, tick or other animal.","Droplet transmission":"Spread in relatively large respiratory droplets over a short distance.","Airborne transmission":"Spread through small particles that remain suspended in air.","Fomite":"A contaminated non-living object that can transfer a pathogen.","Epidemic":"Occurrence of disease cases above the expected level within a population or region.","Pandemic":"An epidemic spreading across multiple countries or continents.","Koch's postulates":"Criteria developed to link a particular microorganism with a particular disease.","Pure culture":"A laboratory culture containing one identified microorganism.","Pasteur's swan-neck flask experiment":"An experiment showing that microbial growth came from environmental contamination rather than spontaneous generation.","Germ theory":"The theory that many diseases are caused by microorganisms entering and multiplying in a host.","Virulence":"The degree of harm or disease severity caused by a pathogen.","Toxin":"A harmful substance produced by a living organism.","Capsule":"An outer bacterial layer that can aid attachment and reduce destruction by host defences.","Antigenic variation":"Change in pathogen surface antigens that helps evade existing immune responses.","Plant pathogen":"A pathogen that infects plants and may reduce growth, reproduction or agricultural yield.","Animal pathogen":"A pathogen that infects animals, including humans and agricultural species.","Innate immunity":"Rapid, non-specific defence mechanisms present before exposure to a particular pathogen.","Adaptive immunity":"Specific immune defence that develops after exposure and produces immunological memory.","Physical barrier":"A structure such as skin, mucus or a plant cuticle that prevents pathogen entry.","Chemical barrier":"A chemical condition or substance that inhibits pathogens, such as low pH or antimicrobial compounds.","Inflammation":"A local innate response involving increased blood flow, vessel permeability and immune-cell recruitment.","Phagocytosis":"Engulfment and digestion of pathogens or particles by a cell.","Phagocyte":"An immune cell capable of engulfing and digesting pathogens.","Antigen":"A molecule recognised as foreign or abnormal by the adaptive immune system.","Antibody":"A specific protein produced by plasma cells that binds to an antigen.","B lymphocyte":"An adaptive immune cell that can form plasma cells and memory B cells.","T lymphocyte":"An adaptive immune cell involved in coordinating responses or destroying infected cells.","Helper T cell":"A T cell that releases signals activating other immune cells.","Cytotoxic T cell":"A T cell that destroys infected or abnormal body cells.","Plasma cell":"An activated B cell specialised for rapid antibody secretion.","Memory cell":"A long-lived lymphocyte that supports a faster secondary immune response.","Clonal selection":"Activation and multiplication of lymphocytes whose receptors match a particular antigen.","Primary immune response":"The slower adaptive response occurring after first exposure to an antigen.","Secondary immune response":"A faster and stronger response after later exposure to the same antigen.","Active immunity":"Immunity produced when a person's own immune system responds to an antigen.","Passive immunity":"Short-term immunity produced by receiving antibodies made by another organism.","Vaccination":"Administration of antigenic material to stimulate protective immune memory without causing the full disease.","Herd immunity":"Reduced disease spread when a sufficiently high proportion of a population is immune.","Hygiene":"Practices that reduce contamination and transmission of pathogens.","Quarantine":"Separation or restriction of potentially exposed organisms to reduce disease spread.","Public health campaign":"Organised communication and action intended to reduce disease risk across a population.","Antibiotic":"A substance used to kill bacteria or inhibit their growth.","Antiviral":"A drug that interferes with a stage of viral infection or replication.","Antimicrobial resistance":"The ability of microorganisms to survive exposure to a drug that previously controlled them.","Pesticide":"A chemical or biological agent used to control organisms that damage crops or spread disease.","Disease surveillance":"Systematic collection and analysis of disease data to guide public-health action.","Incidence":"The number or rate of new cases occurring in a population during a stated time.","Prevalence":"The total number or proportion of existing cases in a population at a particular time or over a period.","Mortality rate":"The rate of death in a population during a stated period.","Case fatality rate":"The proportion of diagnosed cases of a disease that result in death.","Endemic disease":"A disease consistently present at an expected level within a population or region.","Bush medicine":"Medicinal knowledge and practices developed by Aboriginal and Torres Strait Islander Peoples.","Smoke bush":"A Western Australian plant associated with Indigenous knowledge and research into bioactive compounds.","Indigenous cultural and intellectual property":"Cultural knowledge and expressions belonging to Indigenous peoples and requiring recognition and protection.","Plant hypersensitive response":"Rapid localised plant-cell death that restricts the spread of some pathogens.","Systemic acquired resistance":"A whole-plant defensive state activated after a localised infection.","Antimicrobial compound":"A substance produced by a host that kills microorganisms or inhibits their growth.","Non-infectious disease":"A disease that is not caused by a transmissible pathogen.","Disorder":"A disturbance of normal structure or function that may not fit the usual definition of disease.","Homeostasis":"Maintenance of a relatively stable internal environment within tolerance limits.","Negative feedback":"A regulatory process in which a change triggers responses that oppose the original change.","Stimulus":"A detectable change in the internal or external environment.","Receptor":"A structure that detects a change in a regulated condition.","Control centre":"A coordinating structure that compares information with a set range and sends corrective signals.","Effector":"A tissue, organ or cell that carries out a response to restore a regulated condition.","Set point":"The target value or narrow range around which a regulated condition is maintained.","Thermoregulation":"Control of internal body temperature within a suitable range.","Vasodilation":"Widening of skin blood vessels, increasing heat transfer to the environment.","Vasoconstriction":"Narrowing of skin blood vessels, reducing heat loss to the environment.","Sweating":"Secretion of fluid onto the skin so evaporation removes heat.","Shivering":"Rapid involuntary muscle contractions that increase heat production.","Piloerection":"Raising body hairs, which can trap an insulating layer of air.","Endotherm":"An animal that generates substantial metabolic heat to regulate body temperature.","Behavioural adaptation":"An action that improves survival or helps maintain internal conditions.","Structural adaptation":"A physical feature that improves survival or assists homeostasis.","Physiological adaptation":"An internal functional process that improves survival or assists homeostasis.","Blood glucose regulation":"Homeostatic control of glucose concentration in the blood.","Insulin":"A pancreatic hormone that lowers blood glucose by promoting uptake and storage of glucose.","Glucagon":"A pancreatic hormone that raises blood glucose by promoting release of glucose from stored glycogen.","Glycogenesis":"Formation of glycogen from glucose for storage.","Glycogenolysis":"Breakdown of glycogen to release glucose.","Neural pathway":"A route through which electrical signals travel between receptors, coordinating centres and effectors.","Hormone":"A chemical messenger transported to target cells where it alters activity.","Water balance":"Regulation of water gain, loss and distribution within an organism.","Transpiration":"Loss of water vapour from plant surfaces, mainly through stomata.","Stoma":"A pore in the leaf epidermis that permits gas exchange and water-vapour loss.","Guard cell":"A specialised epidermal cell that changes shape to regulate stomatal opening.","Abscisic acid":"A plant hormone that promotes stomatal closure during water stress.","Genetic disease":"A disease caused wholly or partly by changes in genes or chromosomes.","Environmental disease":"A disease associated with exposure to harmful environmental factors.","Nutritional disease":"A disease caused or influenced by inadequate, excessive or imbalanced nutrient intake.","Cancer":"A group of diseases involving uncontrolled cell division and possible invasion of other tissues.","Carcinogen":"An agent capable of increasing the risk of cancer.","Risk factor":"A characteristic or exposure associated with an increased probability of disease.","Morbidity":"Illness, disability or reduced health within an individual or population.","Epidemiology":"The study of the distribution, patterns and determinants of health conditions in populations.","Cohort study":"An observational study following groups with different exposures to compare later outcomes.","Case-control study":"A study comparing previous exposures in people with a condition and similar people without it.","Cross-sectional study":"A study measuring exposure and health status in a population at one point in time.","Longitudinal study":"A study that collects information from the same participants over an extended period.","Correlation":"A statistical association between variables that does not by itself demonstrate causation.","Causation":"A relationship in which a factor contributes directly to producing an outcome.","Confounding variable":"A factor associated with both an exposure and outcome that may distort their apparent relationship.","Relative risk":"The ratio of disease risk in an exposed group to disease risk in an unexposed group.","Prevention strategy":"An action intended to reduce the occurrence or impact of a disease or disorder.","Health education campaign":"A coordinated program designed to improve knowledge and encourage healthier behaviour.","Conductive hearing loss":"Hearing loss caused by reduced transmission of sound through the outer or middle ear.","Sensorineural hearing loss":"Hearing loss caused by damage to the cochlea, hair cells or auditory nerve.","Hearing aid":"A device that amplifies and processes sound for a person with hearing loss.","Cochlear implant":"An electronic device that directly stimulates the auditory nerve through electrodes in the cochlea.","Bone conduction implant":"A device that transmits vibrations through the skull to the inner ear.","Myopia":"A visual disorder in which distant images are focused in front of the retina.","Hyperopia":"A visual disorder in which near images tend to focus behind the retina.","Astigmatism":"Blurred vision caused by uneven curvature of the cornea or lens.","Spectacles":"Corrective lenses worn to alter the path of light entering the eye.","Laser eye surgery":"Surgery that reshapes the cornea to correct selected refractive errors.","Kidney failure":"Loss of sufficient kidney function to maintain fluid, electrolyte and waste balance.","Dialysis":"Artificial removal of wastes and excess water from the blood when kidneys cannot do so adequately.","Haemodialysis":"Dialysis in which blood passes through an external filter before returning to the body.","Peritoneal dialysis":"Dialysis using the peritoneal membrane in the abdomen as the exchange surface.","Kidney transplant":"Surgical placement of a functioning donor kidney into a recipient.","Abiotic":"The non-living components of an environment.","Aboriginal and Torres Strait Islander Peoples":"Australia's Indigenous peoples, comprising diverse Aboriginal language groups and Torres Strait Islander cultural groups.","Biota (biotic)":"All living organisms in a particular region or area.","Conclusion":"A judgement based on evidence.","Controlled variable":"A factor kept constant, or changed consistently, during an investigation.","Country":"Land, waters and relationships traditionally cared for by an Aboriginal language group or community, including cultural and spiritual connections.","Dependent variable":"The factor that changes in response to the independent variable.","Digital technologies":"Hardware and software systems that handle digital data for specific purposes.","Environment":"All living and non-living surroundings.","Hypothesis":"A precise and testable proposed explanation that can be supported or refuted by investigation.","Independent variable":"The factor deliberately changed to observe its effect on the dependent variable.","Investigation":"A planned scientific process for answering a question, exploring an idea or solving a problem using evidence.","Microevolution":"A change in gene or allele frequency within a population over a relatively short period.","Model":"A representation used to describe, simplify, explain or predict an object, system or idea.","Niche":"The position and functional role of a species in its habitat, including its resource requirements.","Place":"A space recognised by Torres Strait Islander Peoples through physical, cultural and spiritual relationships.","Plan":"To decide on a course of action and make arrangements before carrying it out.","Practical investigation":"A systematic scientific inquiry using equipment and hands-on methods to collect data or information.","Primary sources/primary data":"Information produced by people directly involved in a study or observation.","Protocol":"Appropriate and respectful ways of behaving, communicating and working with culturally diverse communities.","Reliability":"The extent to which repeated observations under the same conditions give similar results.","Secondary-sourced investigation":"A planned inquiry using data and information produced by other people.","Symbiosis":"A close association between different species, including mutualism, commensalism and parasitism.","Technology":"A human-made tool, system, machine or process used to solve problems or meet needs.","Theory":"A testable explanatory framework supported by evidence and capable of explaining and predicting related phenomena.","Validity":"The extent to which a test measures what was intended and supports accurate inferences.","Variable":"A factor in an investigation that can be changed, controlled or measured.","DNA double helix":"The original molecule is prepared for copying.","Helicase":"Hydrogen bonds are broken and the strands separate.","Replication fork":"Exposed templates become available for copying.","Two DNA molecules":"Two equivalent DNA molecules are produced.","Codon–anticodon pairing":"Complementary triplets position amino acids correctly.","Peptide bond":"Amino acids are joined together.","Diploid germ cell":"A cell begins with homologous chromosome pairs.","Homologous pairing":"Matching chromosomes align during prophase I.","Meiosis I":"Homologous chromosomes separate.","Meiosis II":"Sister chromatids separate.","Haploid gametes":"Four genetically varied cells are produced.","Selection pressure":"Environmental conditions favour some phenotypes.","Differential survival":"Some individuals survive more successfully.","Differential reproduction":"Survivors contribute different numbers of offspring.","Inheritance":"Advantageous alleles pass to descendants.","Allele frequency change":"Favoured alleles become more common.","Adaptation":"The population becomes better suited to its environment.","Evolution":"Heritable population change accumulates through generations.","Target gene":"A DNA sequence with a desired function is identified.","Sticky ends":"Complementary overhangs allow fragments to pair.","Plasmid vector":"The target gene is placed into bacterial DNA.","Selection marker":"Cells containing the plasmid are identified.","Gene expression":"The inserted gene may produce the desired product.","DNA mutation":"The nucleotide sequence changes.","Altered codon":"The mRNA sequence may be changed.","Changed amino acid":"Translation may insert a different amino acid.","Altered protein":"Protein structure or function may change.","Phenotypic variation":"The organism may show a different characteristic.","Portal of exit":"The pathogen leaves the reservoir.","Mode of transmission":"It travels by contact, droplets, vectors or another route.","Portal of entry":"It enters a susceptible host.","Colonisation":"The pathogen establishes and multiplies.","Disease symptoms":"Tissue damage or immune responses produce illness.","New reservoir":"The infected host can transmit the pathogen onward.","Barrier breach":"A pathogen passes physical or chemical barriers.","Antigen presentation":"Pathogen antigens are displayed to lymphocytes.","Helper T cell activation":"Specific T cells coordinate the response.","B cell clonal selection":"A matching B cell proliferates.","Antibody production":"Plasma cells release specific antibodies.","Memory cells":"Long-lived cells enable a faster later response.","Vaccine antigen":"A safe form or component of a pathogen is administered.","Antigen recognition":"Specific lymphocytes bind the antigen.","Later exposure":"The actual pathogen enters the body.","Reduced disease":"Infection is prevented or severity is decreased.","Effector signal":"Nervous or hormonal instructions are sent.","Corrective response":"The original change is opposed.","Homeostasis restored":"The variable returns towards its normal range.","Cell-cycle control failure":"Checkpoints no longer regulate mitosis normally.","Uncontrolled cell division":"Abnormal cells proliferate.","Primary tumour":"A mass of abnormal cells forms.","Angiogenesis":"New blood vessels supply the tumour.","Local invasion":"Cancer cells enter surrounding tissue.","Metastasis":"Cells spread through blood or lymph.","Secondary tumour":"Cancer establishes at another site.","Primary data":"Observations or measurements are collected directly.","DNA":"Hereditary information is stored in nucleotide sequences.","Variation":"Individuals differ within populations.","Population change":"Allele frequencies shift through generations.","Disease susceptibility":"Genes and environment influence health risk.","Management strategy":"Biological evidence informs prevention or treatment.","Risk allele":"An inherited variant changes susceptibility.","Protein function":"Expression influences cellular processes.","Environmental exposure":"Diet, pathogens or toxins alter biological conditions.","Physiological response":"Body systems respond to combined influences.","Disease risk":"Probability changes rather than becoming certain.","Epidemiological evidence":"Population data estimate associations.","Antibiotic resistance":"A course concept used in the Heredity Information Chain challenge.","Plate tectonics":"A course concept used in the Heredity Information Chain challenge.","Keq":"A course concept used in the Heredity Information Chain challenge.","Diploid cell":"A course concept used in the Meiosis Variation Chain challenge.","Haploid gamete":"A course concept used in the Meiosis Variation Chain challenge.","Zygote":"A course concept used in the Meiosis Variation Chain challenge.","Carbon cycle":"A course concept used in the Meiosis Variation Chain challenge.","Titration":"A course concept used in the Evolution by Natural Selection challenge.","Orbital velocity":"A course concept used in the Evolution by Natural Selection challenge.","Diffraction":"A course concept used in the Evolution by Natural Selection challenge.","Protein product":"A course concept used in the Recombinant DNA Chain challenge.","Stromatolite":"A course concept used in the Recombinant DNA Chain challenge.","Torque":"A course concept used in the Recombinant DNA Chain challenge.","Antigen-presenting cell":"A course concept used in the Adaptive Immune Response challenge.","B cell":"A course concept used in the Adaptive Immune Response challenge.","Clonal expansion":"A course concept used in the Adaptive Immune Response challenge.","Pathogen clearance":"A course concept used in the Adaptive Immune Response challenge.","Photosynthesis":"A course concept used in the Adaptive Immune Response challenge.","Ksp":"A course concept used in the Adaptive Immune Response challenge.","Transmission":"A course concept used in the Infectious Disease Transmission challenge.","Susceptible host":"A course concept used in the Infectious Disease Transmission challenge.","Symptoms":"A course concept used in the Infectious Disease Transmission challenge.","Mutation rate":"A course concept used in the Infectious Disease Transmission challenge.","Equilibrium":"A course concept used in the Infectious Disease Transmission challenge.","Muon":"A course concept used in the Infectious Disease Transmission challenge.","Nervous signal":"A course concept used in the Homeostasis Feedback Chain challenge.","Hormonal signal":"A course concept used in the Homeostasis Feedback Chain challenge.","Set point restored":"A course concept used in the Homeostasis Feedback Chain challenge.","Volcanic ash":"A course concept used in the Homeostasis Feedback Chain challenge.","Photoelectric effect":"A course concept used in the Homeostasis Feedback Chain challenge.","Proto-oncogene":"A course concept used in the Cancer Progression Chain challenge.","Oncogene activation":"A course concept used in the Cancer Progression Chain challenge.","Tumour suppressor loss":"A course concept used in the Cancer Progression Chain challenge.","Checkpoint failure":"A course concept used in the Cancer Progression Chain challenge.","Uncontrolled mitosis":"A course concept used in the Cancer Progression Chain challenge.","Tumour":"A course concept used in the Cancer Progression Chain challenge.","Invasion":"A course concept used in the Cancer Progression Chain challenge.","Orbital period":"A course concept used in the Cancer Progression Chain challenge."};
+
+const bankEl=document.getElementById("bank");
+const modeEl=document.getElementById("mode");
+const levelEl=document.getElementById("level");
+const sequenceBoard=document.getElementById("sequenceBoard");
+const chainBoard=document.getElementById("chainBoard");
+const chainPathEl=document.getElementById("chainPath");
+const relationshipEl=document.getElementById("relationships");
+const candidateGrid=document.getElementById("candidateGrid");
+const messageEl=document.getElementById("message");
+const explanationEl=document.getElementById("explanation");
+const solutionList=document.getElementById("solutionList");
+const definitionGrid=document.getElementById("definitionGrid");
+
+let current=null;
+let sequenceOrder=[];
+let chainPath=[];
+let chainRelationships=[];
+let candidatePool=[];
+let roundAttempts=0;
+let hinted=false;
+let completed=false;
+let draggedIndex=null;
+let lastChallengeId="";
+let stats={score:0,streak:0,solved:0,attempts:0};
+
+const bankNames={"module5":"Module 5 — Heredity","module6":"Module 6 — Genetic Change","module7":"Module 7 — Infectious Disease","module8":"Module 8 — Non-infectious Disease and Disorders","glossary":"Syllabus Glossary","review":"Whole HSC Course Review","expert":"Mixed Expert Challenge"};
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[ch]));
+}
+
+function sequenceLength(){
+  if(levelEl.value==="easy")return 4;
+  if(levelEl.value==="medium")return Math.min(6,current.steps.length);
+  return current.steps.length;
+}
+
+function chainTargetLength(){
+  return levelEl.value==="easy" ? Math.min(5,current.bestPath.length) : current.bestPath.length;
+}
+
+function setMessage(text,type=""){
+  messageEl.textContent=text;
+  messageEl.className="message"+(type?" "+type:"");
+}
+
+function updateStats(){
+  document.getElementById("scoreStat").textContent=stats.score;
+  document.getElementById("streakStat").textContent=stats.streak;
+  document.getElementById("solvedStat").textContent=stats.solved;
+  document.getElementById("attemptStat").textContent=stats.attempts;
+}
+
+function updateControls(){
+  const chainMode=modeEl.value==="chain";
+  document.getElementById("checkBtn").textContent=chainMode?"Check Chain":"Check Sequence";
+  document.getElementById("undoBtn").disabled=!chainMode||chainPath.length<=1||completed;
+  document.getElementById("modeHelp").textContent=chainMode
+    ?"Chain Reaction mode accepts only the curated directed links. Valid branches may lead to shorter routes, so use Undo Last Link strategically."
+    :"Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.";
+}
+
+function pickChallenge(){
+  const data=modeEl.value==="sequence"?SEQUENCES:CHAINS;
+  let choices=data.filter(item=>item.bank===bankEl.value);
+  if(!choices.length)throw new Error("No challenges available for this selection.");
+  if(choices.length>1){
+    const alternatives=choices.filter(item=>item.id!==lastChallengeId);
+    if(alternatives.length)choices=alternatives;
+  }
+  current=choices[Math.floor(Math.random()*choices.length)];
+  lastChallengeId=current.id;
+}
+
+function newChallenge(){
+  document.body.dataset.level=levelEl.value;
+  pickChallenge();
+  roundAttempts=0;
+  hinted=false;
+  completed=false;
+  explanationEl.classList.remove("show");
+  sequenceBoard.innerHTML="";
+  candidateGrid.innerHTML="";
+  chainPath=[];
+  chainRelationships=[];
+
+  document.getElementById("moduleStatus").textContent=bankNames[bankEl.value];
+  document.getElementById("modeStatus").textContent=modeEl.options[modeEl.selectedIndex].text;
+  document.getElementById("levelStatus").textContent=levelEl.options[levelEl.selectedIndex].text;
+  document.getElementById("roundStatus").textContent="In progress";
+  document.getElementById("challengeTitle").textContent=current.title;
+  document.getElementById("modeBadge").textContent=
+    modeEl.value==="sequence"?"SCIENCE SEQUENCE":"CHAIN REACTION";
+
+  if(modeEl.value==="sequence"){
+    sequenceBoard.hidden=false;
+    chainBoard.hidden=true;
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    sequenceOrder=shuffle(target);
+    if(sequenceOrder.length>1 && sequenceOrder.every((term,index)=>term===target[index])){
+      [sequenceOrder[0],sequenceOrder[1]]=[sequenceOrder[1],sequenceOrder[0]];
+    }
+    document.getElementById("challengeInstruction").textContent=
+      `Arrange ${target.length} terms into the scientifically defensible order.`;
+    renderSequence();
+    setMessage("Drag the cards or use the arrow buttons, then check your sequence.");
+  }else{
+    sequenceBoard.hidden=true;
+    chainBoard.hidden=false;
+    const target=current.bestPath.slice(0,chainTargetLength());
+    chainPath=[current.start];
+    candidatePool=levelEl.value==="easy"
+      ?shuffle(target.slice(1))
+      :shuffle(
+          current.nodes
+            .filter(term=>term!==current.start)
+            .concat(levelEl.value==="hard"?current.distractors:[])
+        );
+    document.getElementById("challengeInstruction").textContent=
+      `Begin with ${current.start} and build the longest accepted chain.`;
+    document.getElementById("chainTarget").textContent=`Target length: ${target.length} terms`;
+    renderChain();
+    setMessage("Choose a term that has an accepted relationship with the current end of the chain.");
+  }
+  updateControls();
+  updateProgress();
+}
+
+function renderSequence(){
+  sequenceBoard.innerHTML="";
+  sequenceOrder.forEach((term,index)=>{
+    const item=document.createElement("div");
+    item.className="sequence-item";
+    item.draggable=!completed;
+    item.dataset.index=String(index);
+
+    item.addEventListener("dragstart",()=>{
+      if(completed)return;
+      draggedIndex=index;
+      item.classList.add("dragging");
+    });
+    item.addEventListener("dragend",()=>{
+      draggedIndex=null;
+      item.classList.remove("dragging");
+    });
+    item.addEventListener("dragover",event=>event.preventDefault());
+    item.addEventListener("drop",event=>{
+      event.preventDefault();
+      if(draggedIndex===null||draggedIndex===index||completed)return;
+      const [moved]=sequenceOrder.splice(draggedIndex,1);
+      sequenceOrder.splice(index,0,moved);
+      clearPositionFeedback();
+      renderSequence();
+      updateProgress();
+    });
+
+    const pos=document.createElement("div");
+    pos.className="position";
+    pos.textContent=String(index+1);
+
+    const termEl=document.createElement("div");
+    termEl.className="sequence-term";
+    termEl.textContent=term;
+
+    const moves=document.createElement("div");
+    moves.className="move-buttons";
+
+    const up=document.createElement("button");
+    up.type="button";
+    up.textContent="↑";
+    up.title="Move up";
+    up.disabled=index===0||completed;
+    up.addEventListener("click",()=>moveSequence(index,-1));
+
+    const down=document.createElement("button");
+    down.type="button";
+    down.textContent="↓";
+    down.title="Move down";
+    down.disabled=index===sequenceOrder.length-1||completed;
+    down.addEventListener("click",()=>moveSequence(index,1));
+
+    moves.append(up,down);
+    item.append(pos,termEl,moves);
+    sequenceBoard.appendChild(item);
+  });
+}
+
+function moveSequence(index,direction){
+  const target=index+direction;
+  if(target<0||target>=sequenceOrder.length||completed)return;
+  [sequenceOrder[index],sequenceOrder[target]]=[sequenceOrder[target],sequenceOrder[index]];
+  clearPositionFeedback();
+  renderSequence();
+  updateProgress();
+}
+
+function clearPositionFeedback(){
+  [...sequenceBoard.children].forEach(item=>{
+    item.classList.remove("correct-position","wrong-position");
+  });
+}
+
+function checkSequence(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+  const correct=sequenceOrder.every((term,index)=>term===target[index]);
+
+  if(correct){
+    completeRound("sequence");
+    return;
+  }
+
+  const correctPositions=sequenceOrder.filter((term,index)=>term===target[index]).length;
+  [...sequenceBoard.children].forEach((item,index)=>{
+    item.classList.add(
+      sequenceOrder[index]===target[index]?"correct-position":"wrong-position"
+    );
+  });
+  stats.streak=0;
+  setMessage(`${correctPositions} of ${target.length} terms are currently in the correct position.`,"warn");
+  updateStats();
+  updateProgress();
+}
+
+function edgeFromTo(from,to){
+  return current.edges.find(edge=>edge[0]===from&&edge[1]===to);
+}
+
+function renderChain(){
+  chainPathEl.innerHTML="";
+  chainPath.forEach((term,index)=>{
+    const node=document.createElement("div");
+    node.className="chain-node";
+    node.textContent=term;
+    chainPathEl.appendChild(node);
+
+    if(index<chainPath.length-1){
+      const arrow=document.createElement("div");
+      arrow.className="chain-arrow";
+      arrow.textContent="→";
+      chainPathEl.appendChild(arrow);
+    }
+  });
+
+  relationshipEl.innerHTML=chainRelationships.map((rel,index)=>
+    `<div class="relationship"><strong>${index+1}. ${escapeHtml(chainPath[index])} → ${escapeHtml(chainPath[index+1])}</strong><br>${escapeHtml(rel)}</div>`
+  ).join("");
+
+  candidateGrid.innerHTML="";
+  candidatePool.forEach(term=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="term-card";
+    button.textContent=term;
+    const used=chainPath.includes(term);
+    button.disabled=used||completed;
+    if(used)button.classList.add("used");
+    button.addEventListener("click",()=>tryChainTerm(term,button));
+    candidateGrid.appendChild(button);
+  });
+
+  updateControls();
+  updateProgress();
+}
+
+function tryChainTerm(term,button){
+  if(completed)return;
+  const from=chainPath[chainPath.length-1];
+  const edge=edgeFromTo(from,term);
+  stats.attempts++;
+  roundAttempts++;
+
+  if(!edge||chainPath.includes(term)){
+    stats.streak=0;
+    button.classList.add("invalid-flash");
+    setTimeout(()=>button.classList.remove("invalid-flash"),320);
+    setMessage(`No accepted link from “${from}” to “${term}”.`,"bad");
+    updateStats();
+    return;
+  }
+
+  chainPath.push(term);
+  chainRelationships.push(edge[2]);
+  setMessage(`Valid link: ${edge[2]}`,"good");
+  renderChain();
+
+  if(chainPath.length>=chainTargetLength()){
+    completeRound("chain");
+  }else{
+    const possible=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(possible.length<=1){
+      setMessage(
+        `This branch is valid but ends at ${chainPath.length} terms. Undo the last link and try another route.`,
+        "warn"
+      );
+    }
+  }
+}
+
+function undoChain(){
+  if(modeEl.value!=="chain"||chainPath.length<=1||completed)return;
+  chainPath.pop();
+  chainRelationships.pop();
+  setMessage("Last valid link removed.");
+  renderChain();
+}
+
+function outgoing(term,used){
+  return current.edges
+    .filter(edge=>
+      edge[0]===term &&
+      !used.has(edge[1]) &&
+      candidatePool.includes(edge[1])
+    )
+    .map(edge=>edge[1]);
+}
+
+function longestRemainingPath(term,used,memo=new Map()){
+  const key=term+"|"+[...used].sort().join("~");
+  if(memo.has(key))return memo.get(key);
+
+  let best=[term];
+  for(const next of outgoing(term,used)){
+    const nextUsed=new Set(used);
+    nextUsed.add(next);
+    const candidate=[term,...longestRemainingPath(next,nextUsed,memo)];
+    if(candidate.length>best.length)best=candidate;
+  }
+  memo.set(key,best);
+  return best;
+}
+
+function checkChain(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=chainTargetLength();
+
+  if(chainPath.length>=target){
+    completeRound("chain");
+    return;
+  }
+
+  const possible=longestRemainingPath(
+    chainPath[chainPath.length-1],
+    new Set(chainPath)
+  );
+
+  if(possible.length>1){
+    setMessage(
+      `Your chain is valid but can still be extended. Current length: ${chainPath.length} / ${target}.`,
+      "warn"
+    );
+  }else{
+    stats.streak=0;
+    setMessage(
+      `This valid branch ends at ${chainPath.length} terms. Undo links and try another route to reach ${target}.`,
+      "warn"
+    );
+  }
+  updateStats();
+}
+
+function giveHint(){
+  if(!current||completed)return;
+  hinted=true;
+  stats.score=Math.max(0,stats.score-5);
+
+  if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const wrongIndex=sequenceOrder.findIndex((term,index)=>term!==target[index]);
+    if(wrongIndex===-1){
+      setMessage("The sequence is already correct. Check it to score.","good");
+    }else{
+      setMessage(`Hint: position ${wrongIndex+1} should be “${target[wrongIndex]}”.`,"warn");
+    }
+  }else{
+    const continuation=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(continuation.length>1){
+      const next=continuation[1];
+      const edge=edgeFromTo(chainPath[chainPath.length-1],next);
+      setMessage(`Hint: try “${next}” next. ${edge?edge[2]:""}`,"warn");
+    }else{
+      setMessage("This branch has ended. Undo the last link and choose another valid route.","warn");
+    }
+  }
+  updateStats();
+}
+
+function revealAnswer(){
+  if(!current)return;
+  completed=true;
+  stats.streak=0;
+  document.getElementById("roundStatus").textContent="Answer revealed";
+
+  if(modeEl.value==="sequence"){
+    sequenceOrder=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    renderSequence();
+  }else{
+    chainPath=current.bestPath.slice(0,chainTargetLength());
+    chainRelationships=[];
+    for(let i=0;i<chainPath.length-1;i++){
+      const edge=edgeFromTo(chainPath[i],chainPath[i+1]);
+      chainRelationships.push(edge?edge[2]:"Accepted relationship.");
+    }
+    renderChain();
+  }
+
+  showExplanation();
+  setMessage("Answer revealed. Review why each step or link is accepted.","warn");
+  updateStats();
+  updateControls();
+  updateProgress();
+}
+
+function completeRound(mode){
+  if(completed)return;
+  completed=true;
+  const base=mode==="sequence"?100:120;
+  const penalty=Math.min(60,Math.max(0,roundAttempts-1)*10)+(hinted?5:0);
+  const earned=Math.max(40,base-penalty);
+
+  stats.score+=earned;
+  stats.streak++;
+  stats.solved++;
+  document.getElementById("roundStatus").textContent="Solved";
+  setMessage(`Challenge solved. +${earned} points.`,"good");
+  showExplanation();
+  updateStats();
+  updateControls();
+  updateProgress();
+
+  if(mode==="sequence")renderSequence();
+  else renderChain();
+}
+
+function showExplanation(){
+  explanationEl.classList.add("show");
+  document.getElementById("summaryText").textContent=
+    current.summary||"Review the accepted order and relationships.";
+
+  let terms=[];
+  if(modeEl.value==="sequence"){
+    const steps=current.steps.slice(0,sequenceLength());
+    solutionList.innerHTML=steps.map((step,index)=>{
+      const rel=index===0?"Starting point.":step[1];
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(step[0])}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=steps.map(step=>step[0]);
+  }else{
+    const path=current.bestPath.slice(0,chainTargetLength());
+    solutionList.innerHTML=path.map((term,index)=>{
+      let rel="Starting term.";
+      if(index>0){
+        const edge=edgeFromTo(path[index-1],term);
+        rel=edge?edge[2]:"Accepted relationship.";
+      }
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(term)}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=[...new Set(path)];
+  }
+
+  definitionGrid.innerHTML=terms.map(term=>
+    `<div class="definition-item"><strong>${escapeHtml(term)}</strong><br>${escapeHtml(DEFINITIONS[term]||"Scientific concept used in this challenge.")}</div>`
+  ).join("");
+}
+
+function updateProgress(){
+  let percent=0;
+  if(!current){
+    percent=0;
+  }else if(completed){
+    percent=100;
+  }else if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const correct=sequenceOrder.filter((term,index)=>term===target[index]).length;
+    percent=target.length?correct/target.length*100:0;
+  }else{
+    percent=chainTargetLength()?chainPath.length/chainTargetLength()*100:0;
+  }
+  document.getElementById("progressBar").style.width=Math.min(100,percent)+"%";
+}
+
+function resetScore(){
+  stats={score:0,streak:0,solved:0,attempts:0};
+  updateStats();
+  setMessage("Session score reset. The current challenge remains available.");
+}
+
+document.getElementById("newBtn").addEventListener("click",newChallenge);
+document.getElementById("checkBtn").addEventListener("click",()=>{
+  if(!current)return;
+  modeEl.value==="sequence"?checkSequence():checkChain();
+});
+document.getElementById("undoBtn").addEventListener("click",undoChain);
+document.getElementById("hintBtn").addEventListener("click",giveHint);
+document.getElementById("revealBtn").addEventListener("click",revealAnswer);
+document.getElementById("resetScoreBtn").addEventListener("click",resetScore);
+
+[bankEl,modeEl,levelEl].forEach(control=>{
+  control.addEventListener("change",()=>{
+    document.body.dataset.level=levelEl.value;
+    newChallenge();
+  });
+});
+
+updateStats();
+newChallenge();
+
+</script>
+</body>
+</html>
