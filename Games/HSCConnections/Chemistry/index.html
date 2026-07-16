@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Connections — Chemistry</title>
+<style>
+:root{
+  --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
+  --accent:#178452;--accent2:#49ad78;--soft:#eaf8f0;--shadow:0 10px 28px rgba(32,88,65,.13);
+}
+body[data-complexity="hard"]{--bg:#fff3dc;--ink:#543810;--muted:#776143;--line:#ead2a4;--accent:#d27b0e;--accent2:#eda83f;--soft:#fff6e8;--shadow:0 10px 28px rgba(130,82,13,.14)}
+body[data-complexity="insane"]{--bg:#ffe8e9;--ink:#541f26;--muted:#785057;--line:#e9bfc4;--accent:#c53d4e;--accent2:#e26673;--soft:#fff0f2;--shadow:0 10px 28px rgba(120,30,42,.15)}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#fbfdff);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;transition:background .25s,color .25s}
+.page{width:min(1500px,calc(100% - 28px));margin:18px auto 34px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,81,120,.10)}
+.hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero p{margin:7px 0 0;max-width:980px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:18px;margin-top:18px;align-items:start}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+h2{margin:0 0 12px;font-size:1.25rem} h3{margin:0}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select,button{font:inherit}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+button{border:0;border-radius:12px;padding:11px 14px;font-weight:850;cursor:pointer}
+button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.45rem;color:var(--accent)}
+.help,.info-bank{padding:12px;border-radius:13px;background:var(--soft);border:1px solid var(--line);line-height:1.45;margin-top:14px}
+.info-bank ul{margin:8px 0 0;padding-left:20px}
+.board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.board-head p{margin:4px 0 0;color:var(--muted)}
+.life-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+.life{width:28px;height:28px;border-radius:50%;background:var(--accent);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.life.lost{background:#d5dadd;opacity:.6}
+.groups-found{display:grid;gap:9px;margin-bottom:10px}
+.found{border-radius:14px;padding:12px 14px;color:#173129}
+.found:nth-child(1){background:#f2dc72}.found:nth-child(2){background:#9fd7a6}.found:nth-child(3){background:#8fc9ed}.found:nth-child(4){background:#c6a9e8}
+.found strong{display:block;font-size:1.04rem}.found small{display:block;margin-top:4px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px}
+.term{min-height:86px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px;text-align:center;color:var(--ink);font-weight:820;line-height:1.2;transition:transform .12s,border-color .12s,background .12s}
+.term:hover{transform:translateY(-2px);border-color:var(--accent)}
+.term.selected{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.term.one-away{animation:pulse .45s}
+@keyframes pulse{50%{transform:scale(1.035)}}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.action-row button{min-width:120px}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760}
+.message.good{background:#e8f8ef;border-color:#89c9a6;color:#17623e}
+.message.bad{background:#fff0f2;border-color:#e0a1aa;color:#8b2533}
+.message.near{background:#fff7dc;border-color:#e0c76e;color:#67500d}
+.reveal{margin-top:14px;display:none}
+.reveal.show{display:block}
+.reveal-grid{display:grid;gap:9px}
+.reveal-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px}
+.reveal-item strong{color:var(--accent)}
+.footer{margin-top:18px;color:var(--muted);font-size:.88rem;text-align:center}
+.footer a{color:var(--accent)}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.page{width:min(100% - 16px,1500px)}.hero{padding:20px}.term{min-height:76px;font-size:.9rem}}
+</style>
+</head>
+<body data-complexity="easy">
+<div class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>HSC Connections</h1>
+    <p>Chemistry HSC course: sort 16 terms into four scientifically connected groups of four.</p>
+  </header>
+  <main class="layout">
+    <aside class="card">
+      <h2>Game setup</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Chemistry</option></select>
+      <label for="bank">Content bank</label>
+      <select id="bank">
+        <option value="module5">Module 5 — Equilibrium and Acid Reactions</option>
+        <option value="module6">Module 6 — Acid/Base Reactions</option>
+        <option value="module7">Module 7 — Organic Chemistry</option>
+        <option value="module8">Module 8 — Applying Chemical Ideas</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+      <label for="info">Available Info</label>
+      <select id="info">
+        <option value="full">Full support</option>
+        <option value="bank" selected>Connection bank</option>
+        <option value="terms">Terms only</option>
+      </select>
+      <label for="complexity">Complexity</label>
+      <select id="complexity">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+        <option value="insane">Insane</option>
+      </select>
+      <div class="controls-row">
+        <button id="newPuzzle" class="primary">New puzzle</button>
+        <button id="resetPuzzle" class="secondary">Reset puzzle</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="foundStat">0</strong>Groups found</div>
+        <div class="stat"><strong id="guessStat">0</strong>Guesses</div>
+      </div>
+      <div id="infoBank" class="info-bank"></div>
+      <div class="help"><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. An incorrect selection may receive a “one away” message if three terms belong together.</div>
+    </aside>
+    <section class="card">
+      <div class="board-head">
+        <div><h2 id="puzzleTitle">Equilibrium Foundations</h2><p id="puzzleSubtitle">Find four connected groups.</p></div>
+        <button id="shuffleBtn" class="secondary">Shuffle</button>
+      </div>
+      <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
+      <div id="groupsFound" class="groups-found"></div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="action-row">
+        <button id="submitBtn" class="primary">Submit group</button>
+        <button id="deselectBtn" class="secondary">Deselect</button>
+        <button id="hintBtn" class="secondary">Hint</button>
+        <button id="revealBtn" class="secondary">Reveal groups</button>
+      </div>
+      <div id="message" class="message">Select four terms that share a precise scientific connection.</div>
+      <div id="reveal" class="reveal"><h3>Complete solution</h3><div id="revealGrid" class="reveal-grid"></div></div>
+    </section>
+  </main>
+  <div class="footer">Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/chemistry-stage-6-2017" target="_blank" rel="noopener">NSW Chemistry Stage 6 Syllabus (2017)</a>. Connections include syllabus concepts and closely related scientific terminology.</div>
+</div>
+<script>
+"use strict";
+const PUZZLES=[{"id":"m5-easy-1","bank":"module5","complexity":"easy","title":"Equilibrium Foundations","groups":[{"connection":"Disturbances in Le Chatelier’s principle","explanation":"These changes can disturb an equilibrium system and alter its position.","terms":["Temperature","Concentration","Pressure","Volume"]},{"connection":"Features of dynamic equilibrium","explanation":"At dynamic equilibrium, both reactions continue at equal rates in a closed system while bulk properties remain constant.","terms":["Closed system","Forward reaction","Reverse reaction","Constant macroscopic properties"]},{"connection":"Solution-equilibrium terms","explanation":"These describe dissolution and precipitation of sparingly soluble ionic compounds.","terms":["Saturated solution","Ksp","Ion product","Precipitate"]},{"connection":"Named equilibrium systems","explanation":"These are syllabus examples used to investigate reversible reactions and equilibrium shifts.","terms":["Cobalt chloride","Iron thiocyanate","Nitrogen dioxide","Dinitrogen tetroxide"]}]},{"id":"m5-hard-1","bank":"module5","complexity":"hard","title":"Predicting Equilibrium","groups":[{"connection":"Information used in a Keq calculation","explanation":"These features are required to construct and use an equilibrium expression.","terms":["Balanced equation","Stoichiometric coefficients","Equilibrium concentrations","Specified temperature"]},{"connection":"Reaction-quotient predictions","explanation":"Comparing Q with Keq predicts the direction of net reaction.","terms":["Q < Keq","Forward favoured","Q > Keq","Reverse favoured"]},{"connection":"Collision-theory concepts","explanation":"These determine whether collisions produce reaction and how often they occur.","terms":["Collision frequency","Activation energy","Orientation","Effective collision"]},{"connection":"Processes in a solubility equilibrium","explanation":"These opposing processes and species coexist at equilibrium.","terms":["Dissolution","Crystallisation","Hydrated ions","Undissolved solid"]}]},{"id":"m5-insane-1","bank":"module5","complexity":"insane","title":"Equilibrium Fine Distinctions","groups":[{"connection":"Catalyst effects","explanation":"A catalyst changes kinetics but not thermodynamic equilibrium values or composition.","terms":["Lower activation energy","Faster forward reaction","Faster reverse reaction","Unchanged Keq"]},{"connection":"Temperature and equilibrium","explanation":"These are linked because heat behaves as a reactant or product and only temperature changes Keq.","terms":["Endothermic direction","Exothermic direction","Equilibrium shift","Keq changes"]},{"connection":"Precipitation prediction","explanation":"These are used sequentially to decide whether mixing ionic solutions forms a solid.","terms":["Calculate ion concentrations","Write Ksp expression","Calculate Qsp","Compare Qsp with Ksp"]},{"connection":"Equilibrium calculation structure","explanation":"These are the standard stages represented in an ICE-table approach.","terms":["Initial concentration","Stoichiometric change","Equilibrium concentration","Substitute into Keq"]}]},{"id":"m6-easy-1","bank":"module6","complexity":"easy","title":"Acid–Base Foundations","groups":[{"connection":"Brønsted–Lowry roles","explanation":"These terms describe proton transfer and the species produced.","terms":["Proton donor","Proton acceptor","Conjugate acid","Conjugate base"]},{"connection":"Common acid reactions","explanation":"These reactants produce characteristic products when treated with acids.","terms":["Metal","Base","Carbonate","Hydrogen carbonate"]},{"connection":"Titration glassware","explanation":"These are standard pieces of volumetric equipment used in acid–base analysis.","terms":["Burette","Volumetric pipette","Conical flask","Volumetric flask"]},{"connection":"Quantities related by water equilibrium","explanation":"These are linked through logarithms and the ionic product of water.","terms":["pH","pOH","[H⁺]","[OH⁻]"]}]},{"id":"m6-hard-1","bank":"module6","complexity":"hard","title":"Strength, Concentration and Analysis","groups":[{"connection":"Acid or base strength","explanation":"These terms concern extent of ionisation or proton transfer, not amount per volume.","terms":["Strong acid","Weak acid","Strong base","Weak base"]},{"connection":"Solution concentration","explanation":"These terms and operations concern the amount of solute per unit volume.","terms":["Concentrated","Dilute","Dilution","Molar concentration"]},{"connection":"Titration reference points","explanation":"These define measurements and chemically significant points in a titration.","terms":["Aliquot","Titre","Endpoint","Equivalence point"]},{"connection":"Weak-acid equilibrium quantities","explanation":"These describe the equilibrium and logarithmic strength scale of a weak acid.","terms":["Ka","pKa","Partial ionisation","Conjugate base"]}]},{"id":"m6-insane-1","bank":"module6","complexity":"insane","title":"Acid–Base Profiles","groups":[{"connection":"Strong acid–strong base titration","explanation":"These are expected characteristics at 25 °C.","terms":["Very low initial pH","Steep equivalence region","Equivalence near pH 7","Broad indicator choice"]},{"connection":"Weak acid–strong base titration","explanation":"These features arise from partial ionisation and formation of a conjugate base.","terms":["Higher initial pH","Buffer region","Half-equivalence pH = pKa","Equivalence above pH 7"]},{"connection":"Preparing a standard solution","explanation":"These steps produce an accurately known concentration from a solid standard.","terms":["Accurately weigh solute","Dissolve completely","Quantitatively transfer","Make to calibration mark"]},{"connection":"Buffer action","explanation":"A conjugate pair removes small additions of acid or base and resists pH change.","terms":["Weak acid","Conjugate base","Consumes added H⁺","Consumes added OH⁻"]}]},{"id":"m7-easy-1","bank":"module7","complexity":"easy","title":"Organic Families","groups":[{"connection":"Hydrocarbon homologous series","explanation":"These classify hydrocarbons according to carbon–carbon bonding.","terms":["Alkanes","Alkenes","Alkynes","Arenes"]},{"connection":"Oxygen-containing functional groups","explanation":"These classes contain oxygen-based functional groups.","terms":["Alcohol","Aldehyde","Ketone","Carboxylic acid"]},{"connection":"Structural isomer types","explanation":"These compounds share a molecular formula but differ in atom connectivity.","terms":["Chain isomer","Position isomer","Functional-group isomer","Structural isomer"]},{"connection":"Addition-polymer examples","explanation":"These are polymers formed from alkene-related monomers.","terms":["Polyethylene","PVC","Polystyrene","PTFE"]}]},{"id":"m7-hard-1","bank":"module7","complexity":"hard","title":"Organic Reactions","groups":[{"connection":"Addition to an alkene","explanation":"These reagents add across a carbon–carbon double bond.","terms":["Hydrogen","Halogen","Hydrogen halide","Water"]},{"connection":"Alcohol reactions","explanation":"These are major reaction types of alcohols in the syllabus.","terms":["Combustion","Dehydration","Oxidation","Substitution with HX"]},{"connection":"Products of primary-alcohol oxidation","explanation":"Controlled oxidation can move through these organic classes.","terms":["Primary alcohol","Aldehyde","Carboxylic acid","Oxidising agent"]},{"connection":"Soap and detergent structure","explanation":"These features explain surfactant action in water and grease.","terms":["Hydrophilic head","Hydrophobic tail","Micelle","Surfactant"]}]},{"id":"m7-insane-1","bank":"module7","complexity":"insane","title":"Structure, Shape and Synthesis","groups":[{"connection":"Carbon bonding geometry","explanation":"These pair carbon–carbon bond types with their molecular geometry.","terms":["Single bond","Tetrahedral","Double bond","Trigonal planar"]},{"connection":"Condensation-polymer features","explanation":"These describe how condensation polymers form and the links they may contain.","terms":["Bifunctional monomers","Small molecule eliminated","Ester linkage","Amide linkage"]},{"connection":"IUPAC naming decisions","explanation":"These are core steps used when constructing a systematic organic name.","terms":["Choose parent chain","Number for lowest locants","Identify substituents","Name functional group"]},{"connection":"Multi-step synthesis planning","explanation":"These are considered when designing a viable reaction pathway.","terms":["Starting material","Intermediate","Reaction condition","Target product"]}]},{"id":"m8-easy-1","bank":"module8","complexity":"easy","title":"Chemical Analysis","groups":[{"connection":"Instrumental concentration methods","explanation":"These techniques use light or atomic absorption to quantify coloured species or metal ions.","terms":["Colourimetry","UV–visible spectroscopy","Atomic absorption spectroscopy","Calibration curve"]},{"connection":"Organic structure techniques","explanation":"These provide complementary evidence about molecular mass, bonds and atom environments.","terms":["Proton NMR","Carbon-13 NMR","Mass spectrometry","Infrared spectroscopy"]},{"connection":"Qualitative ion tests","explanation":"These reactions or observations help identify ions in aqueous solution.","terms":["Flame test","Precipitation","Complexation","Gas evolution"]},{"connection":"Chemical-process design factors","explanation":"These affect whether a synthesis is practical and responsible.","terms":["Reagent availability","Reaction conditions","Yield","Purity"]}]},{"id":"m8-hard-1","bank":"module8","complexity":"hard","title":"Spectral Evidence","groups":[{"connection":"Proton NMR information","explanation":"These features reveal hydrogen environments, proportions and neighbours.","terms":["Chemical shift","Integration","Splitting","Equivalent hydrogens"]},{"connection":"Mass-spectrum features","explanation":"These terms describe key ions and axes in a mass spectrum.","terms":["Molecular ion","Base peak","Fragment ion","Mass-to-charge ratio"]},{"connection":"Infrared-spectrum interpretation","explanation":"These features are used to identify bonds and functional groups.","terms":["Wavenumber","Absorption band","Bond vibration","Functional group"]},{"connection":"Calibration-based analysis","explanation":"These steps convert instrument response into an unknown concentration.","terms":["Prepare standards","Measure absorbance","Plot calibration curve","Interpolate unknown"]}]},{"id":"m8-insane-1","bank":"module8","complexity":"insane","title":"Analytical Identification","groups":[{"connection":"Silver-halide precipitates","explanation":"These connect halide ions with characteristic silver-halide colours.","terms":["Chloride—white","Bromide—cream","Iodide—yellow","Silver nitrate"]},{"connection":"Gravimetric-analysis sequence","explanation":"These are the core stages used to determine amount from precipitate mass.","terms":["Form precipitate","Filter and wash","Dry to constant mass","Calculate analyte amount"]},{"connection":"Organic functional-group tests","explanation":"These observations provide evidence for alkene, alcohol or carboxylic-acid groups.","terms":["Bromine decolourisation","Oxidation colour change","Carbon dioxide effervescence","Characteristic IR band"]},{"connection":"Green synthesis considerations","explanation":"These improve resource efficiency and reduce adverse effects.","terms":["Atom economy","Energy demand","Waste minimisation","Safer reagents"]}]},{"id":"glossary-easy-1","bank":"glossary","complexity":"easy","title":"Chemistry Glossary Foundations","groups":[{"connection":"Roles of variables","explanation":"These terms identify a factor and its changed, measured or maintained role.","terms":["Variable","Independent variable","Dependent variable","Controlled variable"]},{"connection":"Scientific investigation and evidence","explanation":"These describe inquiry, hands-on investigation and information sources.","terms":["Investigation","Practical investigation","Primary data","Secondary-sourced investigation"]},{"connection":"Chemistry thermodynamic or reaction terms","explanation":"These terms concern heat content, energy dispersal, mass per mole and electron-transfer reactions.","terms":["Enthalpy","Entropy","Molar mass","Redox"]},{"connection":"Judging scientific work","explanation":"These terms concern consistency, appropriateness and evidence-based judgement.","terms":["Reliability","Validity","Hypothesis","Conclusion"]}]},{"id":"glossary-hard-1","bank":"glossary","complexity":"hard","title":"Glossary Relationships","groups":[{"connection":"Scientific knowledge structures","explanation":"These describe proposed explanations, broad frameworks, consistent relationships and representations.","terms":["Hypothesis","Theory","Law","Model"]},{"connection":"Information and measurement forms","explanation":"These distinguish descriptive and numerical information and the technologies used to handle it.","terms":["Qualitative","Quantitative","Primary data","Digital technologies"]},{"connection":"Indigenous peoples and relationships to land and sea","explanation":"These terms recognise Indigenous identity and physical, cultural and spiritual relationships.","terms":["Aboriginal and Torres Strait Islander Peoples","Country","Place","Environment"]},{"connection":"Planning and conducting inquiry","explanation":"These terms concern deciding on and carrying out scientific work.","terms":["Plan","Investigation","Practical investigation","Technology"]}]},{"id":"glossary-insane-1","bank":"glossary","complexity":"insane","title":"Glossary Fine Distinctions","groups":[{"connection":"Quantities and reaction concepts","explanation":"These are chemistry-specific glossary terms concerning thermal state, disorder, amount and oxidation–reduction.","terms":["Enthalpy","Entropy","Molar mass","Redox"]},{"connection":"Evidence source and quality","explanation":"These distinguish where evidence comes from and how dependable or appropriate it is.","terms":["Primary sources","Secondary-sourced investigation","Reliability","Validity"]},{"connection":"Scientific representation and explanation","explanation":"These differ in scope as tentative explanation, broad framework, fixed relationship and representation.","terms":["Hypothesis","Theory","Law","Model"]},{"connection":"Factors and directional quantities","explanation":"Three terms concern investigation factors; one is a quantity with magnitude and direction.","terms":["Independent variable","Dependent variable","Controlled variable","Vector"]}]},{"id":"review-easy-1","bank":"review","complexity":"easy","title":"Balanced Chemistry Review","groups":[{"connection":"Module 5 equilibrium disturbances","explanation":"These factors can shift an equilibrium position.","terms":["Temperature","Concentration","Pressure","Volume"]},{"connection":"Module 6 acid-analysis quantities","explanation":"These quantities are central to acid–base calculations and titration.","terms":["pH","Ka","Titre","Equivalence point"]},{"connection":"Module 7 functional groups","explanation":"These classify major organic compounds in the HSC course.","terms":["Hydroxyl","Carbonyl","Carboxyl","Amino"]},{"connection":"Module 8 analytical techniques","explanation":"These identify or quantify chemical species and structures.","terms":["Flame test","Colourimetry","NMR","Mass spectrometry"]}]},{"id":"review-hard-1","bank":"review","complexity":"hard","title":"Cross-module Chemistry","groups":[{"connection":"Equilibrium constants","explanation":"These constants describe different chemical equilibria.","terms":["Keq","Ksp","Ka","Kw"]},{"connection":"Graphs used in quantitative chemistry","explanation":"These graphs reveal equilibrium, titration or concentration information.","terms":["ICE table","Titration curve","Conductivity curve","Calibration curve"]},{"connection":"Organic reaction types","explanation":"These transform carbon compounds through characteristic mechanisms or functional-group changes.","terms":["Addition","Substitution","Oxidation","Esterification"]},{"connection":"Measures of synthesis performance","explanation":"These help evaluate efficiency and product quality.","terms":["Percentage yield","Purity","Atom economy","Waste produced"]}]},{"id":"review-insane-1","bank":"review","complexity":"insane","title":"Chemical Evidence and Prediction","groups":[{"connection":"Predicting net reaction direction","explanation":"These comparisons determine whether forward reaction, reverse reaction or precipitation is favoured.","terms":["Q versus Keq","Qsp versus Ksp","Le Chatelier’s principle","Titration stoichiometry"]},{"connection":"Proton-transfer species","explanation":"These identify the donor, acceptor and resulting conjugate partners.","terms":["Acid","Base","Conjugate acid","Conjugate base"]},{"connection":"Evidence for organic structure","explanation":"These provide molecular-mass, bond and atomic-environment evidence.","terms":["Molecular ion","IR absorption","Proton integration","Carbon environments"]},{"connection":"Industrial synthesis constraints","explanation":"These determine whether a process is technically, economically and socially viable.","terms":["Reagent supply","Reaction conditions","Process safety","Environmental impact"]}]},{"id":"expert-hard-1","bank":"expert","complexity":"hard","title":"Mixed Chemistry Expert Challenge","groups":[{"connection":"Ways concentration is determined","explanation":"These are quantitative approaches used across equilibrium, titration and instrumental analysis.","terms":["Equilibrium calculation","Acid–base titration","Calibration curve","Gravimetric analysis"]},{"connection":"Chemical equilibria","explanation":"These systems establish opposing processes and have associated equilibrium constants.","terms":["Weak acid ionisation","Water autoionisation","Salt dissolution","Reversible reaction"]},{"connection":"Organic oxygen-containing classes","explanation":"These contain hydroxyl, carbonyl, carboxyl or ester functionality.","terms":["Alcohol","Aldehyde","Carboxylic acid","Ester"]},{"connection":"Quality criteria for a chemical process","explanation":"These judge how effectively and responsibly a synthesis produces its target.","terms":["Yield","Purity","Atom economy","Safety"]}]},{"id":"expert-insane-1","bank":"expert","complexity":"insane","title":"Mixed Chemistry Expert Challenge II","groups":[{"connection":"Logarithmic chemistry quantities","explanation":"These are negative base-10 logarithms of chemical concentrations or equilibrium constants.","terms":["pH","pOH","pKa","Absorbance"]},{"connection":"Spectroscopic reference or scale terms","explanation":"These locate or compare signals within different spectra.","terms":["Chemical shift","TMS","Wavenumber","m/z"]},{"connection":"Processes producing a solid","explanation":"These involve solid formation from solution or polymer-forming reactions.","terms":["Precipitation","Crystallisation","Addition polymerisation","Condensation polymerisation"]},{"connection":"Species omitted from selected expressions","explanation":"These may be present but are omitted from a simplified equilibrium or ionic representation.","terms":["Pure solid","Pure liquid","Spectator ion","Solvent water"]}]}];
+const bankEl=document.getElementById("bank"),infoEl=document.getElementById("info"),complexityEl=document.getElementById("complexity");
+const grid=document.getElementById("grid"),groupsFound=document.getElementById("groupsFound"),message=document.getElementById("message");
+let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,finished=false;
+const maxMistakes={easy:4,hard:3,insane:2};
+
+function shuffle(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function availablePuzzles(){
+  const bank=bankEl.value,c=complexityEl.value;
+  let list=PUZZLES.filter(p=>p.bank===bank&&p.complexity===c);
+  if(!list.length) list=PUZZLES.filter(p=>p.bank===bank);
+  return list;
+}
+function startPuzzle(){
+  const list=availablePuzzles();
+  puzzle=list[Math.floor(Math.random()*list.length)];
+  if(puzzle.complexity!==complexityEl.value) complexityEl.value=puzzle.complexity;
+  selected=[];solved=[];mistakes=0;guesses=0;finished=false;
+  remainingTerms=shuffle(puzzle.groups.flatMap(g=>g.terms));
+  document.body.dataset.complexity=puzzle.complexity;
+  document.getElementById("puzzleTitle").textContent=puzzle.title;
+  document.getElementById("puzzleSubtitle").textContent=bankEl.options[bankEl.selectedIndex].text+" · "+complexityEl.options[complexityEl.selectedIndex].text;
+  document.getElementById("reveal").classList.remove("show");
+  render();setMessage("Select four terms that share a precise scientific connection.","");
+}
+function render(){
+  grid.innerHTML="";
+  remainingTerms.forEach(term=>{
+    const b=document.createElement("button");b.type="button";b.className="term";b.textContent=term;
+    if(selected.includes(term))b.classList.add("selected");
+    b.addEventListener("click",()=>toggleTerm(term));grid.appendChild(b);
+  });
+  groupsFound.innerHTML=solved.map(g=>`<div class="found"><strong>${escapeHtml(g.connection)}</strong>${g.terms.map(escapeHtml).join(" · ")}<small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  renderLives();renderInfo();updateStats();
+}
+function toggleTerm(term){
+  if(finished)return;
+  if(selected.includes(term))selected=selected.filter(x=>x!==term);
+  else if(selected.length<4)selected.push(term);
+  render();
+}
+function submitGroup(){
+  if(finished)return;
+  if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
+  guesses++;
+  const target=puzzle.groups.find(g=>!solved.some(s=>s.connection===g.connection)&&selected.every(t=>g.terms.includes(t)));
+  if(target){
+    solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
+    setMessage("Correct connection: "+target.connection+".","good");render();
+    if(solved.length===4)finish(true);
+    return;
+  }
+  mistakes++;
+  let best=0;
+  puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection)).forEach(g=>{best=Math.max(best,selected.filter(t=>g.terms.includes(t)).length);});
+  const tiles=[...grid.children].filter(x=>selected.includes(x.textContent));tiles.forEach(x=>x.classList.add("one-away"));
+  if(best===3)setMessage("One away — three of your selected terms belong together.","near");
+  else setMessage("That group is not correct. Reconsider the most precise connection.","bad");
+  selected=[];render();
+  if(mistakes>=maxMistakes[complexityEl.value])finish(false);
+}
+function finish(won){
+  finished=true;
+  if(!won){setMessage("No mistakes remaining. The complete solution is shown below.","bad");showSolution();}
+  else{setMessage(`Puzzle complete in ${guesses} guesses.`,"good");showSolution();}
+}
+function showSolution(){
+  const reveal=document.getElementById("reveal"),box=document.getElementById("revealGrid");
+  box.innerHTML=puzzle.groups.map(g=>`<div class="reveal-item"><strong>${escapeHtml(g.connection)}</strong><br>${g.terms.map(escapeHtml).join(" · ")}<br><small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  reveal.classList.add("show");
+}
+function hint(){
+  if(finished)return;
+  const unsolved=puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection));
+  const g=unsolved[Math.floor(Math.random()*unsolved.length)];
+  if(infoEl.value==="terms")setMessage("Hint: one valid group includes “"+g.terms[Math.floor(Math.random()*4)]+"”.","near");
+  else setMessage("Hint: look for a group connected by “"+g.connection+"”.","near");
+}
+function renderLives(){
+  const box=document.getElementById("lives");box.innerHTML="";
+  for(let i=0;i<maxMistakes[complexityEl.value];i++){const d=document.createElement("span");d.className="life"+(i<mistakes?" lost":"");box.appendChild(d);}
+}
+function renderInfo(){
+  const box=document.getElementById("infoBank"),mode=infoEl.value;
+  if(mode==="terms"){box.style.display="none";return;}
+  box.style.display="block";
+  const titles=shuffle(puzzle.groups.map(g=>g.connection));
+  box.innerHTML="<strong>Connection bank</strong><ul>"+titles.map(x=>"<li>"+escapeHtml(x)+"</li>").join("")+"</ul>";
+  if(mode==="full")box.innerHTML+="<p><small>Full support is active: the Hint button identifies a connection category.</small></p>";
+}
+function updateStats(){document.getElementById("foundStat").textContent=solved.length;document.getElementById("guessStat").textContent=guesses;}
+function setMessage(text,kind){message.textContent=text;message.className="message"+(kind?" "+kind:"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+document.getElementById("newPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("resetPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("submitBtn").addEventListener("click",submitGroup);
+document.getElementById("deselectBtn").addEventListener("click",()=>{selected=[];render();});
+document.getElementById("shuffleBtn").addEventListener("click",()=>{remainingTerms=shuffle(remainingTerms);render();});
+document.getElementById("hintBtn").addEventListener("click",hint);
+document.getElementById("revealBtn").addEventListener("click",()=>{finished=true;showSolution();setMessage("Solution revealed.","near");});
+[bankEl,complexityEl].forEach(x=>x.addEventListener("change",startPuzzle));infoEl.addEventListener("change",render);
+startPuzzle();
+</script>
+</body>
+</html>
