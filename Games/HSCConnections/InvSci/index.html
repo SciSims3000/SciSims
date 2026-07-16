@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Connections — Investigating Science</title>
+<style>
+:root{
+  --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
+  --accent:#178452;--accent2:#49ad78;--soft:#eaf8f0;--shadow:0 10px 28px rgba(32,88,65,.13);
+}
+body[data-complexity="hard"]{--bg:#fff3dc;--ink:#543810;--muted:#776143;--line:#ead2a4;--accent:#d27b0e;--accent2:#eda83f;--soft:#fff6e8;--shadow:0 10px 28px rgba(130,82,13,.14)}
+body[data-complexity="insane"]{--bg:#ffe8e9;--ink:#541f26;--muted:#785057;--line:#e9bfc4;--accent:#c53d4e;--accent2:#e26673;--soft:#fff0f2;--shadow:0 10px 28px rgba(120,30,42,.15)}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#fbfdff);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;transition:background .25s,color .25s}
+.page{width:min(1500px,calc(100% - 28px));margin:18px auto 34px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,81,120,.10)}
+.hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero p{margin:7px 0 0;max-width:980px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:18px;margin-top:18px;align-items:start}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+h2{margin:0 0 12px;font-size:1.25rem} h3{margin:0}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select,button{font:inherit}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+button{border:0;border-radius:12px;padding:11px 14px;font-weight:850;cursor:pointer}
+button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.45rem;color:var(--accent)}
+.help,.info-bank{padding:12px;border-radius:13px;background:var(--soft);border:1px solid var(--line);line-height:1.45;margin-top:14px}
+.info-bank ul{margin:8px 0 0;padding-left:20px}
+.board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.board-head p{margin:4px 0 0;color:var(--muted)}
+.life-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+.life{width:28px;height:28px;border-radius:50%;background:var(--accent);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.life.lost{background:#d5dadd;opacity:.6}
+.groups-found{display:grid;gap:9px;margin-bottom:10px}
+.found{border-radius:14px;padding:12px 14px;color:#173129}
+.found:nth-child(1){background:#f2dc72}.found:nth-child(2){background:#9fd7a6}.found:nth-child(3){background:#8fc9ed}.found:nth-child(4){background:#c6a9e8}
+.found strong{display:block;font-size:1.04rem}.found small{display:block;margin-top:4px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px}
+.term{min-height:86px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px;text-align:center;color:var(--ink);font-weight:820;line-height:1.2;transition:transform .12s,border-color .12s,background .12s}
+.term:hover{transform:translateY(-2px);border-color:var(--accent)}
+.term.selected{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.term.one-away{animation:pulse .45s}
+@keyframes pulse{50%{transform:scale(1.035)}}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.action-row button{min-width:120px}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760}
+.message.good{background:#e8f8ef;border-color:#89c9a6;color:#17623e}
+.message.bad{background:#fff0f2;border-color:#e0a1aa;color:#8b2533}
+.message.near{background:#fff7dc;border-color:#e0c76e;color:#67500d}
+.reveal{margin-top:14px;display:none}
+.reveal.show{display:block}
+.reveal-grid{display:grid;gap:9px}
+.reveal-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px}
+.reveal-item strong{color:var(--accent)}
+.footer{margin-top:18px;color:var(--muted);font-size:.88rem;text-align:center}
+.footer a{color:var(--accent)}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.page{width:min(100% - 16px,1500px)}.hero{padding:20px}.term{min-height:76px;font-size:.9rem}}
+</style>
+</head>
+<body data-complexity="easy">
+<div class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>HSC Connections</h1>
+    <p>Investigating Science HSC course: sort 16 terms into four scientifically connected groups of four.</p>
+  </header>
+  <main class="layout">
+    <aside class="card">
+      <h2>Game setup</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Investigating Science</option></select>
+      <label for="bank">Content bank</label>
+      <select id="bank">
+        <option value="module5">Module 5 — Scientific Investigations</option>
+        <option value="module6">Module 6 — Technologies</option>
+        <option value="module7">Module 7 — Fact or Fallacy?</option>
+        <option value="module8">Module 8 — Science and Society</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+      <label for="info">Available Info</label>
+      <select id="info">
+        <option value="full">Full support</option>
+        <option value="bank" selected>Connection bank</option>
+        <option value="terms">Terms only</option>
+      </select>
+      <label for="complexity">Complexity</label>
+      <select id="complexity">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+        <option value="insane">Insane</option>
+      </select>
+      <div class="controls-row">
+        <button id="newPuzzle" class="primary">New puzzle</button>
+        <button id="resetPuzzle" class="secondary">Reset puzzle</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="foundStat">0</strong>Groups found</div>
+        <div class="stat"><strong id="guessStat">0</strong>Guesses</div>
+      </div>
+      <div id="infoBank" class="info-bank"></div>
+      <div class="help"><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. An incorrect selection may receive a “one away” message if three terms belong together.</div>
+    </aside>
+    <section class="card">
+      <div class="board-head">
+        <div><h2 id="puzzleTitle">Investigation Foundations</h2><p id="puzzleSubtitle">Find four connected groups.</p></div>
+        <button id="shuffleBtn" class="secondary">Shuffle</button>
+      </div>
+      <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
+      <div id="groupsFound" class="groups-found"></div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="action-row">
+        <button id="submitBtn" class="primary">Submit group</button>
+        <button id="deselectBtn" class="secondary">Deselect</button>
+        <button id="hintBtn" class="secondary">Hint</button>
+        <button id="revealBtn" class="secondary">Reveal groups</button>
+      </div>
+      <div id="message" class="message">Select four terms that share a precise scientific connection.</div>
+      <div id="reveal" class="reveal"><h3>Complete solution</h3><div id="revealGrid" class="reveal-grid"></div></div>
+    </section>
+  </main>
+  <div class="footer">Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/investigating-science-stage-6-2017" target="_blank" rel="noopener">NSW Investigating Science Stage 6 Syllabus (2017)</a>. Connections include syllabus concepts and closely related scientific terminology.</div>
+</div>
+<script>
+"use strict";
+const PUZZLES=[{"id": "m5-easy-1", "bank": "module5", "complexity": "easy", "title": "Investigation Foundations", "groups": [{"connection": "Types of variables", "explanation": "Variables are deliberately changed, measured, controlled or allowed to interfere with a test.", "terms": ["Independent variable", "Dependent variable", "Controlled variable", "Extraneous variable"]}, {"connection": "Investigation methodologies", "explanation": "These are recognised ways of collecting or generating scientific evidence.", "terms": ["Experimental testing", "Fieldwork", "Survey", "Modelling"]}, {"connection": "Measurement and investigation quality", "explanation": "These terms are used to judge the integrity of measurements and conclusions.", "terms": ["Accuracy", "Precision", "Reliability", "Validity"]}, {"connection": "Module 5 investigation case studies", "explanation": "These scientists or teams are named examples used to explore how investigations begin and develop.", "terms": ["Marshall and Warren", "Von Helmont", "Percy Spencer", "Eratosthenes"]}]}, {"id": "m5-hard-1", "bank": "module5", "complexity": "hard", "title": "Data, Error and Reporting", "groups": [{"connection": "Ways data can be classified", "explanation": "Scientific data may be primary or secondary, and qualitative or quantitative.", "terms": ["Primary data", "Secondary data", "Qualitative data", "Quantitative data"]}, {"connection": "Sampling and reproducibility", "explanation": "These decisions or processes influence whether findings are dependable and representative.", "terms": ["Sample selection", "Sample size", "Repeat trials", "Replication"]}, {"connection": "Common scientific report sections", "explanation": "These sections communicate why an investigation was done, what occurred and what the evidence means.", "terms": ["Aim", "Method", "Results", "Conclusion"]}, {"connection": "Measurement limitations and controls", "explanation": "These terms describe sources of measurement error or processes used to identify them.", "terms": ["Random error", "Systematic error", "Uncertainty", "Calibration"]}]}, {"id": "m5-insane-1", "bank": "module5", "complexity": "insane", "title": "Design and Evaluation", "groups": [{"connection": "Early stages of an investigation", "explanation": "These elements move an investigation from an initial observation towards evidence collection.", "terms": ["Observation", "Inquiry question", "Hypothesis", "Methodology"]}, {"connection": "Processes applied to collected data", "explanation": "Investigators move from obtaining evidence to making meaning from it.", "terms": ["Collect", "Record", "Analyse", "Interpret"]}, {"connection": "Ethical considerations in investigation design", "explanation": "These issues protect participants, animals and the integrity of research.", "terms": ["Confidentiality", "Humane treatment", "Animal welfare", "Informed consent"]}, {"connection": "Criteria for selecting materials or methods", "explanation": "A method or material should be justified against practical and scientific constraints.", "terms": ["Relevance", "Availability", "Cost", "Risk"]}]}, {"id": "m6-easy-1", "bank": "module6", "complexity": "easy", "title": "Technology Enables Evidence", "groups": [{"connection": "Technologies that improved scientific evidence", "explanation": "Each technology allowed scientists to observe or model evidence that was previously inaccessible.", "terms": ["X-ray diffraction", "Radioactivity detector", "Hadron collider", "Computer simulation"]}, {"connection": "Properties of measuring devices", "explanation": "These characteristics determine what an instrument can measure and how useful the measurement will be.", "terms": ["Resolution", "Measuring range", "Response time", "Accuracy"]}, {"connection": "Science applied to new technologies", "explanation": "These technologies were enabled by advances in scientific laws, theories or models.", "terms": ["Radiotherapy", "Genetic modification", "Earthquake engineering", "Telescope"]}, {"connection": "Safety and risk management", "explanation": "These are used to identify hazards and reduce risk when technologies are used.", "terms": ["Safety Data Sheet", "WHS guidelines", "Risk assessment", "Control measure"]}]}, {"id": "m6-hard-1", "bank": "module6", "complexity": "hard", "title": "Analogue, Digital and Cycles", "groups": [{"connection": "Typical features of analogue measurement", "explanation": "Analogue instruments represent a quantity continuously and commonly require visual scale reading.", "terms": ["Continuous scale", "Pointer", "Parallax", "Manual reading"]}, {"connection": "Typical features of digital measurement", "explanation": "Digital devices can display, store and sample numerical measurements automatically.", "terms": ["Numerical display", "Data logging", "Automatic sampling", "Digital storage"]}, {"connection": "Measurement quality processes", "explanation": "These processes help investigators understand or improve the quality of instrument readings.", "terms": ["Calibration", "Repetition", "Averaging", "Uncertainty estimate"]}, {"connection": "The science–technology cycle", "explanation": "Technology supplies new evidence, which refines science and drives further technology.", "terms": ["Scientific model", "New evidence", "Refined theory", "Technological development"]}]}, {"id": "m6-insane-1", "bank": "module6", "complexity": "insane", "title": "Landmark Technology–Science Links", "groups": [{"connection": "Evidence associated with DNA structure", "explanation": "X-ray evidence and molecular interpretation contributed to the double-helix model.", "terms": ["X-ray diffraction", "Diffraction pattern", "Double helix", "Rosalind Franklin"]}, {"connection": "Technology and atomic theory", "explanation": "Detecting ionising radiation helped reveal nuclear structure and radioactive behaviour.", "terms": ["Radioactivity", "Detector", "Nucleus", "Ionising radiation"]}, {"connection": "Evidence for the Higgs boson", "explanation": "High-energy proton collisions and detectors at the collider produced evidence for the particle.", "terms": ["Hadron collider", "Proton collision", "Particle detector", "Higgs boson"]}, {"connection": "Ethical bioharvesting partnerships", "explanation": "Research using biological resources and Indigenous knowledge should respect Country and share benefits.", "terms": ["Country", "Community partnership", "Indigenous knowledge", "Benefit-sharing"]}]}, {"id": "m7-easy-1", "bank": "module7", "complexity": "easy", "title": "Testing Claims", "groups": [{"connection": "Safeguards in controlled trials", "explanation": "These design features reduce bias and improve the validity of treatment comparisons.", "terms": ["Placebo", "Double-blind trial", "Control group", "Random allocation"]}, {"connection": "Terms used when interpreting association", "explanation": "These ideas help distinguish a genuine cause from a misleading relationship.", "terms": ["Correlation", "Causation", "Confounding variable", "Coincidence"]}, {"connection": "Examples of pseudoscience", "explanation": "These claim systems imitate science without reliable testing and self-correction.", "terms": ["Astrology", "Numerology", "Iridology", "Phrenology"]}, {"connection": "Scientific self-correction processes", "explanation": "These processes test findings and help identify error or unsupported claims.", "terms": ["Peer review", "Replication", "Validation", "Re-testing"]}]}, {"id": "m7-hard-1", "bank": "module7", "complexity": "hard", "title": "Media and Publication", "groups": [{"connection": "Terms often confused in media reporting", "explanation": "These words have different evidentiary meanings in science and everyday language.", "terms": ["Theory", "Hypothesis", "Belief", "Law"]}, {"connection": "Industries and conflicts of interest", "explanation": "These examples illustrate how commercial interests can suppress or distort evidence.", "terms": ["Tobacco and lung cancer", "Fossil fuels and climate", "Asbestos and lung cancer", "Product efficacy research"]}, {"connection": "Ways evidence can be misleadingly communicated", "explanation": "Each technique can make a weak claim appear stronger than the evidence supports.", "terms": ["Emotive language", "Cherry-picking", "Misleading graph", "False balance"]}, {"connection": "Problems in scientific publishing", "explanation": "These pressures and practices can weaken quality control and distort the published evidence base.", "terms": ["Publish or perish", "Publication bias", "Predatory journal", "Fake science journal"]}]}, {"id": "m7-insane-1", "bank": "module7", "complexity": "insane", "title": "Evidence Failure Modes", "groups": [{"connection": "Cases where association was overinterpreted", "explanation": "These examples show how an observed relationship can be mistaken for a broad causal effect.", "terms": ["Hawthorne effect", "HRT study", "Mozart effect", "Stork–birth correlation"]}, {"connection": "Cases exposing weak research or publication controls", "explanation": "These cases became prominent because claims failed replication or journals accepted implausible material.", "terms": ["Pons and Fleischmann", "Maggie Simpson paper", "Tom Spears submission", "Wakefield MMR paper"]}, {"connection": "Forms of evidence distortion", "explanation": "These processes interfere with honest interpretation and communication of results.", "terms": ["Suppression", "Misinterpretation", "Misrepresentation", "Falsification"]}, {"connection": "Checks when evaluating a source", "explanation": "These features help determine whether a source deserves scientific confidence.", "terms": ["Author expertise", "Publication venue", "Supporting references", "Conflict of interest"]}]}, {"id": "m8-easy-1", "bank": "module8", "complexity": "easy", "title": "Science in Society", "groups": [{"connection": "Major influences on scientific research", "explanation": "Research priorities and applications are shaped by values, communities, resources and governments.", "terms": ["Ethical", "Social", "Economic", "Political"]}, {"connection": "Areas commonly governed by research codes", "explanation": "These applications raise major ethical and social issues and are commonly regulated.", "terms": ["Cloning", "Stem cell research", "Surrogacy", "GM foods"]}, {"connection": "Scientific advances supporting public health", "explanation": "These developments prevent disease, treat illness or improve environmental health.", "terms": ["Vaccination", "Antimicrobial drugs", "Water purification", "Surgical devices"]}, {"connection": "Groups that can influence research", "explanation": "Each can fund, conduct, regulate, use or be affected by scientific work.", "terms": ["Governments", "Corporations", "Universities", "Communities"]}]}, {"id": "m8-hard-1", "bank": "module8", "complexity": "hard", "title": "Regulation and Perspectives", "groups": [{"connection": "Reasons scientific research is regulated", "explanation": "Oversight protects people, animals, communities and environments from unacceptable harm.", "terms": ["Safety", "Informed consent", "Animal welfare", "Environmental protection"]}, {"connection": "Events affecting the public image of science", "explanation": "Each is a syllabus case study with both scientific and societal consequences.", "terms": ["Reactor meltdown", "Smallpox vaccine", "Development of flight", "River damming"]}, {"connection": "Funding and institutional pressures", "explanation": "These factors can shape which research is supported and how quickly it is completed.", "terms": ["Market opportunity", "Research budget", "Funding priority", "Limited time"]}, {"connection": "Perspectives influencing research direction", "explanation": "Research questions and acceptance can be shaped by individual and community contexts.", "terms": ["Personal", "Cultural", "Socioeconomic", "Traditional knowledge"]}]}, {"id": "m8-insane-1", "bank": "module8", "complexity": "insane", "title": "Ethics, Ownership and Trade-offs", "groups": [{"connection": "Respectful use of Indigenous knowledge", "explanation": "Research partnerships should recognise cultural authority, relationships to place and fair returns.", "terms": ["Country", "Place", "Indigenous knowledge", "Benefit-sharing"]}, {"connection": "Technologies involving major social trade-offs", "explanation": "Each can deliver substantial benefits while creating environmental, ethical or security concerns.", "terms": ["Nuclear power", "GM foods", "Petroleum products", "Drones"]}, {"connection": "Internationally regulated biomedical practices", "explanation": "These areas commonly require codes, oversight and international ethical debate.", "terms": ["Cloning", "Stem cells", "Organ transplantation", "Surrogacy"]}, {"connection": "Elements of a policy trade-off", "explanation": "Decision-makers compare possible harm and gain while recognising resources used elsewhere.", "terms": ["Cost", "Benefit", "Risk", "Opportunity cost"]}]}, {"id": "glossary-easy-1", "bank": "glossary", "complexity": "easy", "title": "Core Syllabus Glossary", "groups": [{"connection": "Types and roles of variables", "explanation": "The independent variable is changed, the dependent variable is measured and controlled variables are maintained.", "terms": ["Variable", "Independent variable", "Dependent variable", "Controlled variable"]}, {"connection": "Forms of scientific investigation and evidence", "explanation": "Investigations may use hands-on work or information produced directly or by others.", "terms": ["Investigation", "Practical investigation", "Primary data", "Secondary-sourced investigation"]}, {"connection": "Scientific knowledge structures", "explanation": "These terms describe proposed explanations, broad explanations, relationships and representations.", "terms": ["Hypothesis", "Theory", "Law", "Model"]}, {"connection": "Judging and managing an investigation", "explanation": "These terms concern consistency, appropriateness, evidence-based judgement and safety.", "terms": ["Reliability", "Validity", "Conclusion", "Risk assessment"]}]}, {"id": "glossary-hard-1", "bank": "glossary", "complexity": "hard", "title": "Glossary Relationships", "groups": [{"connection": "Indigenous peoples, knowledge and relationships to land and sea", "explanation": "These terms express identity, cultural ownership and relationships with Country and Place.", "terms": ["Aboriginal and Torres Strait Islander Peoples", "Country", "Place", "Indigenous cultural and intellectual property"]}, {"connection": "Statements or representations used in science", "explanation": "These organise observations into testable explanations, relationships and evidence-based judgements.", "terms": ["Hypothesis", "Theory", "Law", "Conclusion"]}, {"connection": "Investigation quality and safety", "explanation": "These terms are used to judge consistency, appropriateness and risk.", "terms": ["Reliability", "Validity", "Risk assessment", "Controlled variable"]}, {"connection": "Processes and tools used to investigate", "explanation": "These terms refer to organised inquiry and human-made systems that support it.", "terms": ["Investigation", "Practical investigation", "Secondary-sourced investigation", "Technology"]}]}, {"id": "glossary-insane-1", "bank": "glossary", "complexity": "insane", "title": "Glossary Fine Distinctions", "groups": [{"connection": "Factors in an investigation", "explanation": "One is the general category; the others describe the changed, measured and maintained roles.", "terms": ["Variable", "Independent variable", "Dependent variable", "Controlled variable"]}, {"connection": "Ways evidence enters an investigation", "explanation": "Evidence may be collected directly, sourced from others or generated through practical inquiry.", "terms": ["Primary sources/primary data", "Secondary-sourced investigation", "Practical investigation", "Investigation"]}, {"connection": "Scientific explanation and representation", "explanation": "These differ in scope: tentative explanation, broad explanation, consistent relationship and simplified representation.", "terms": ["Hypothesis", "Theory", "Law", "Model"]}, {"connection": "Perception, surroundings and human-made systems", "explanation": "These terms distinguish a perceived pattern, the surrounding world, a broad tool system and its digital form.", "terms": ["Pareidolia", "Environment", "Technology", "Digital technologies"]}]}, {"id": "review-easy-1", "bank": "review", "complexity": "easy", "title": "Balanced HSC Review", "groups": [{"connection": "Module 5 investigation quality", "explanation": "These terms judge measurement and experimental integrity.", "terms": ["Accuracy", "Precision", "Reliability", "Validity"]}, {"connection": "Module 6 evidence technologies", "explanation": "These technologies enabled important scientific observations or models.", "terms": ["X-ray diffraction", "Radioactivity detector", "Hadron collider", "Computer simulation"]}, {"connection": "Module 7 trial safeguards", "explanation": "These features reduce bias when testing treatment claims.", "terms": ["Placebo", "Double-blind trial", "Control group", "Random allocation"]}, {"connection": "Module 8 influences on research", "explanation": "These forces shape scientific priorities, funding and acceptance.", "terms": ["Ethical", "Social", "Economic", "Political"]}]}, {"id": "review-hard-1", "bank": "review", "complexity": "hard", "title": "Cross-module Concepts", "groups": [{"connection": "Processes that strengthen scientific findings", "explanation": "These processes test, communicate and refine claims.", "terms": ["Peer review", "Replication", "Validation", "Scientific report"]}, {"connection": "Scientific knowledge enabling technologies", "explanation": "These applications depend on scientific laws, theories or structural knowledge.", "terms": ["Radiotherapy", "Genetic modification", "Earthquake engineering", "Telescope"]}, {"connection": "Ways public understanding can be distorted", "explanation": "These factors can make unsupported claims appear credible.", "terms": ["Halo effect", "Emotive advertising", "Conflict of interest", "Pseudoscience"]}, {"connection": "Biomedical practices requiring oversight", "explanation": "These applications raise major ethical, legal and social issues.", "terms": ["Cloning", "Stem cell research", "Organ transplantation", "Germline modification"]}]}, {"id": "review-insane-1", "bank": "review", "complexity": "insane", "title": "HSC Case-study Synthesis", "groups": [{"connection": "Module 5 named investigations", "explanation": "These are syllabus examples used to examine how scientific investigations originate and develop.", "terms": ["Marshall and Warren", "Von Helmont", "Percy Spencer", "Eratosthenes"]}, {"connection": "Module 6 particle and atomic evidence", "explanation": "These pair technologies and scientific ideas associated with atomic and particle research.", "terms": ["Radioactivity detector", "Atomic theory", "Hadron collider", "Higgs boson"]}, {"connection": "Module 7 publication and replication controversies", "explanation": "These examples exposed weaknesses in replication or editorial review.", "terms": ["Cold fusion", "Maggie Simpson paper", "Tom Spears submission", "Predatory journal"]}, {"connection": "Module 8 resource-allocation debate", "explanation": "These terms frame debate about expensive research and alternative social priorities.", "terms": ["Space exploration", "Poverty", "Global food supply", "Opportunity cost"]}]}, {"id": "expert-hard-1", "bank": "expert", "complexity": "hard", "title": "Mixed Expert Challenge", "groups": [{"connection": "Potential sources of bias", "explanation": "These can distort evidence collection, interpretation or communication.", "terms": ["Sample bias", "Conflict of interest", "Halo effect", "Publication bias"]}, {"connection": "Evidence-quality responses", "explanation": "These improve confidence by checking methods, findings or instruments.", "terms": ["Calibration", "Replication", "Peer review", "Validation"]}, {"connection": "Indigenous knowledge and research ethics", "explanation": "These concepts guide respectful partnerships and cultural ownership.", "terms": ["Country", "Place", "Benefit-sharing", "Indigenous cultural and intellectual property"]}, {"connection": "Science–technology landmark pairings", "explanation": "These are scientific ideas or findings linked to enabling technologies.", "terms": ["DNA structure", "X-ray diffraction", "Higgs boson", "Hadron collider"]}]}, {"id": "expert-insane-1", "bank": "expert", "complexity": "insane", "title": "Mixed Expert Challenge II", "groups": [{"connection": "Testing whether a treatment claim is causal", "explanation": "These elements reduce bias and provide a valid comparison.", "terms": ["Random allocation", "Double-blind trial", "Placebo", "Control group"]}, {"connection": "Scientific claims and knowledge categories", "explanation": "These have different levels and kinds of evidentiary meaning.", "terms": ["Claim", "Hypothesis", "Theory", "Law"]}, {"connection": "Research governance concepts", "explanation": "These support responsible decisions about harms, participation and conduct.", "terms": ["Informed consent", "Risk assessment", "Code of conduct", "Precautionary principle"]}, {"connection": "Data or message distortion", "explanation": "These practices can produce misleading public conclusions.", "terms": ["Cherry-picking", "False balance", "Misleading graph", "Misrepresentation"]}]}];
+const bankEl=document.getElementById("bank"),infoEl=document.getElementById("info"),complexityEl=document.getElementById("complexity");
+const grid=document.getElementById("grid"),groupsFound=document.getElementById("groupsFound"),message=document.getElementById("message");
+let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,finished=false;
+const maxMistakes={easy:4,hard:3,insane:2};
+
+function shuffle(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function availablePuzzles(){
+  const bank=bankEl.value,c=complexityEl.value;
+  let list=PUZZLES.filter(p=>p.bank===bank&&p.complexity===c);
+  if(!list.length) list=PUZZLES.filter(p=>p.bank===bank);
+  return list;
+}
+function startPuzzle(){
+  const list=availablePuzzles();
+  puzzle=list[Math.floor(Math.random()*list.length)];
+  if(puzzle.complexity!==complexityEl.value) complexityEl.value=puzzle.complexity;
+  selected=[];solved=[];mistakes=0;guesses=0;finished=false;
+  remainingTerms=shuffle(puzzle.groups.flatMap(g=>g.terms));
+  document.body.dataset.complexity=puzzle.complexity;
+  document.getElementById("puzzleTitle").textContent=puzzle.title;
+  document.getElementById("puzzleSubtitle").textContent=bankEl.options[bankEl.selectedIndex].text+" · "+complexityEl.options[complexityEl.selectedIndex].text;
+  document.getElementById("reveal").classList.remove("show");
+  render();setMessage("Select four terms that share a precise scientific connection.","");
+}
+function render(){
+  grid.innerHTML="";
+  remainingTerms.forEach(term=>{
+    const b=document.createElement("button");b.type="button";b.className="term";b.textContent=term;
+    if(selected.includes(term))b.classList.add("selected");
+    b.addEventListener("click",()=>toggleTerm(term));grid.appendChild(b);
+  });
+  groupsFound.innerHTML=solved.map(g=>`<div class="found"><strong>${escapeHtml(g.connection)}</strong>${g.terms.map(escapeHtml).join(" · ")}<small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  renderLives();renderInfo();updateStats();
+}
+function toggleTerm(term){
+  if(finished)return;
+  if(selected.includes(term))selected=selected.filter(x=>x!==term);
+  else if(selected.length<4)selected.push(term);
+  render();
+}
+function submitGroup(){
+  if(finished)return;
+  if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
+  guesses++;
+  const target=puzzle.groups.find(g=>!solved.some(s=>s.connection===g.connection)&&selected.every(t=>g.terms.includes(t)));
+  if(target){
+    solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
+    setMessage("Correct connection: "+target.connection+".","good");render();
+    if(solved.length===4)finish(true);
+    return;
+  }
+  mistakes++;
+  let best=0;
+  puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection)).forEach(g=>{best=Math.max(best,selected.filter(t=>g.terms.includes(t)).length);});
+  const tiles=[...grid.children].filter(x=>selected.includes(x.textContent));tiles.forEach(x=>x.classList.add("one-away"));
+  if(best===3)setMessage("One away — three of your selected terms belong together.","near");
+  else setMessage("That group is not correct. Reconsider the most precise connection.","bad");
+  selected=[];render();
+  if(mistakes>=maxMistakes[complexityEl.value])finish(false);
+}
+function finish(won){
+  finished=true;
+  if(!won){setMessage("No mistakes remaining. The complete solution is shown below.","bad");showSolution();}
+  else{setMessage(`Puzzle complete in ${guesses} guesses.`,"good");showSolution();}
+}
+function showSolution(){
+  const reveal=document.getElementById("reveal"),box=document.getElementById("revealGrid");
+  box.innerHTML=puzzle.groups.map(g=>`<div class="reveal-item"><strong>${escapeHtml(g.connection)}</strong><br>${g.terms.map(escapeHtml).join(" · ")}<br><small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  reveal.classList.add("show");
+}
+function hint(){
+  if(finished)return;
+  const unsolved=puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection));
+  const g=unsolved[Math.floor(Math.random()*unsolved.length)];
+  if(infoEl.value==="terms")setMessage("Hint: one valid group includes “"+g.terms[Math.floor(Math.random()*4)]+"”.","near");
+  else setMessage("Hint: look for a group connected by “"+g.connection+"”.","near");
+}
+function renderLives(){
+  const box=document.getElementById("lives");box.innerHTML="";
+  for(let i=0;i<maxMistakes[complexityEl.value];i++){const d=document.createElement("span");d.className="life"+(i<mistakes?" lost":"");box.appendChild(d);}
+}
+function renderInfo(){
+  const box=document.getElementById("infoBank"),mode=infoEl.value;
+  if(mode==="terms"){box.style.display="none";return;}
+  box.style.display="block";
+  const titles=shuffle(puzzle.groups.map(g=>g.connection));
+  box.innerHTML="<strong>Connection bank</strong><ul>"+titles.map(x=>"<li>"+escapeHtml(x)+"</li>").join("")+"</ul>";
+  if(mode==="full")box.innerHTML+="<p><small>Full support is active: the Hint button identifies a connection category.</small></p>";
+}
+function updateStats(){document.getElementById("foundStat").textContent=solved.length;document.getElementById("guessStat").textContent=guesses;}
+function setMessage(text,kind){message.textContent=text;message.className="message"+(kind?" "+kind:"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+document.getElementById("newPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("resetPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("submitBtn").addEventListener("click",submitGroup);
+document.getElementById("deselectBtn").addEventListener("click",()=>{selected=[];render();});
+document.getElementById("shuffleBtn").addEventListener("click",()=>{remainingTerms=shuffle(remainingTerms);render();});
+document.getElementById("hintBtn").addEventListener("click",hint);
+document.getElementById("revealBtn").addEventListener("click",()=>{finished=true;showSolution();setMessage("Solution revealed.","near");});
+[bankEl,complexityEl].forEach(x=>x.addEventListener("change",startPuzzle));infoEl.addEventListener("change",render);
+startPuzzle();
+</script>
+</body>
+</html>
