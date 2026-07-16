@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage 6 Chain Reaction — Earth and Environmental Science</title>
+<style>
+
+:root{
+  --page:#eaf5ff;--page2:#f9fcff;--card:#fff;--ink:#17324a;--muted:#60778b;
+  --line:#cbddea;--accent:#0878bd;--accent2:#18a2d8;--soft:#edf7fd;
+  --good:#18875b;--goodSoft:#e8f8ef;--bad:#bd3e4e;--badSoft:#fff0f2;
+  --warn:#b97708;--warnSoft:#fff6dd;--shadow:0 11px 30px rgba(36,78,108,.13);
+}
+body[data-level="medium"]{
+  --page:#fff4dd;--page2:#fffdf8;--line:#ead4a8;--accent:#d47b0d;--accent2:#efa83c;--soft:#fff7e8;
+}
+body[data-level="hard"]{
+  --page:#ffe9eb;--page2:#fffafa;--line:#ebc1c7;--accent:#c63e51;--accent2:#e56876;--soft:#fff0f2;
+}
+*{box-sizing:border-box}
+html{scroll-behaviour:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  background:linear-gradient(180deg,var(--page),var(--page2));
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:background .25s;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+.page{width:min(1540px,calc(100% - 28px));margin:18px auto 34px}
+.back{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+  background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);
+  box-shadow:0 5px 14px rgba(31,81,120,.1)
+}
+.hero{
+  margin-top:14px;padding:25px 29px;border-radius:29px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)
+}
+.hero h1{margin:0 0 7px;font-size:clamp(2rem,4vw,3.65rem);line-height:1}
+.hero p{margin:0;max-width:1050px;font-size:1.05rem;line-height:1.5}
+.intentions{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.mini-card,.card{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:var(--shadow)}
+.mini-card{border-radius:18px;padding:15px 17px}
+.mini-card h2{font-size:1rem;margin:0 0 5px;color:var(--accent)}
+.mini-card p{margin:0;line-height:1.45}
+.layout{display:grid;grid-template-columns:minmax(300px,365px) 1fr;gap:18px;align-items:start;margin-top:18px}
+.card{border-radius:22px;padding:18px}
+h2{margin:0 0 12px;font-size:1.26rem}
+h3{margin:0 0 8px}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+button{
+  border:0;border-radius:12px;padding:11px 13px;font-weight:850;color:var(--ink);
+  background:var(--soft);border:1px solid var(--line)
+}
+button.primary{color:#fff;border:0;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+button.danger{color:#8e2836;background:var(--badSoft);border-color:#e2abb2}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,.term-card:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;color:var(--accent);font-size:1.45rem}
+.help{margin-top:14px;padding:12px 13px;background:var(--soft);border:1px solid var(--line);border-radius:13px;line-height:1.45;font-size:.94rem}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
+.status-box{padding:10px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line)}
+.status-box span{display:block;color:var(--muted);font-size:.79rem;font-weight:780;text-transform:uppercase;letter-spacing:.04em}
+.status-box strong{display:block;margin-top:3px}
+.board-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
+.board-head p{margin:4px 0 0;color:var(--muted);line-height:1.4}
+.mode-badge{white-space:nowrap;padding:7px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:900;color:var(--accent)}
+.progress-shell{height:12px;border-radius:999px;background:#e4edf3;overflow:hidden;margin:11px 0 16px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760;line-height:1.42}
+.message.good{background:var(--goodSoft);border-color:#90ceb0;color:#17623f}
+.message.bad{background:var(--badSoft);border-color:#e1a4ad;color:#8d2635}
+.message.warn{background:var(--warnSoft);border-color:#dec36b;color:#70530a}
+.sequence-list{display:grid;gap:9px}
+.sequence-item{
+  display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;
+  border:2px solid var(--line);border-radius:14px;background:#fff;padding:9px 10px;
+  transition:border-color .12s,transform .12s,background .12s
+}
+.sequence-item[draggable="true"]{cursor:grab}
+.sequence-item.dragging{opacity:.48}
+.sequence-item.correct-position{border-color:#36a66f;background:#eefaf3}
+.sequence-item.wrong-position{border-color:#d8a34d;background:#fff8e8}
+.position{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--soft);color:var(--accent);font-weight:900
+}
+.sequence-term{font-weight:850}
+.move-buttons{display:flex;gap:5px}
+.move-buttons button{padding:6px 9px;border-radius:9px}
+.chain-path{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding:8px 2px 12px;min-height:84px}
+.chain-node{
+  min-width:145px;max-width:205px;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:11px;border-radius:13px;background:linear-gradient(180deg,var(--soft),#fff);
+  border:2px solid var(--line);font-weight:850;line-height:1.25
+}
+.chain-arrow{display:flex;align-items:center;font-size:1.7rem;color:var(--accent);font-weight:900}
+.relationships{display:grid;gap:7px;margin:0 0 13px}
+.relationship{
+  padding:9px 11px;border-left:5px solid var(--accent);border-radius:10px;background:var(--soft);
+  font-size:.91rem;line-height:1.35
+}
+.candidate-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:5px 0 9px}
+.candidate-title p{margin:0;color:var(--muted);font-size:.91rem}
+.term-grid{display:grid;grid-template-columns:repeat(4,minmax(125px,1fr));gap:9px}
+.term-card{
+  min-height:76px;border:2px solid var(--line);border-radius:13px;background:#fff;padding:10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;font-weight:830;line-height:1.2
+}
+.term-card:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+.term-card.used{opacity:.42;text-decoration:line-through}
+.term-card.invalid-flash{animation:shake .28s;border-color:var(--bad);background:var(--badSoft)}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.explanation{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:15px;background:#fbfdff;display:none}
+.explanation.show{display:block}
+.solution-list{display:grid;gap:8px;margin-top:10px}
+.solution-step{display:grid;grid-template-columns:34px 1fr;gap:9px;padding:9px;border-radius:11px;background:var(--soft)}
+.solution-step strong{color:var(--accent)}
+.definition-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.definition-item{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:.9rem;line-height:1.35}
+.definition-item strong{color:var(--accent)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px}
+.notes ul,.notes ol{margin:8px 0 0;padding-left:22px}
+.notes li{margin:6px 0;line-height:1.4}
+.footer{text-align:center;color:var(--muted);font-size:.87rem;margin-top:18px}
+.footer a{color:var(--accent)}
+@media(max-width:1120px){.layout{grid-template-columns:1fr}}
+@media(max-width:820px){
+  .intentions,.notes{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .term-grid{grid-template-columns:repeat(2,1fr)}
+  .definition-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .page{width:min(100% - 16px,1540px)}.hero{padding:21px}
+  .button-grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}
+  .sequence-item{grid-template-columns:35px 1fr}.move-buttons{grid-column:2}
+}
+
+</style>
+</head>
+<body data-level="medium">
+
+<main class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Stage 6 Chain Reaction</h1>
+    <p>Earth and Environmental Science: arrange course concepts into valid sequences or build the longest defensible chain of connected ideas.</p>
+  </header>
+
+  <section class="intentions">
+    <article class="mini-card">
+      <h2>Learning Intention</h2>
+      <p>Connect Earth history, natural hazards, climate processes and resource management through ordered system interactions.</p>
+    </article>
+    <article class="mini-card">
+      <h2>Success Criteria</h2>
+      <p>Arrange Earth and environmental processes in a defensible order and justify links using evidence, mechanisms and sustainability.</p>
+    </article>
+  </section>
+
+  <section class="layout">
+    <aside class="card">
+      <h2>Game Controls</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Earth and Environmental Science</option></select>
+
+      <label for="bank">Content bank</label>
+      <select id="bank">
+                <option value="module5">Module 5 — Earth’s Processes</option>
+        <option value="module6">Module 6 — Hazards</option>
+        <option value="module7">Module 7 — Climate Science</option>
+        <option value="module8">Module 8 — Resource Management</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+
+      <label for="mode">Game mode</label>
+      <select id="mode">
+        <option value="sequence">Science Sequence</option>
+        <option value="chain">Chain Reaction</option>
+      </select>
+
+      <label for="level">Challenge level</label>
+      <select id="level">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <div class="button-grid">
+        <button id="newBtn" class="primary">New Challenge</button>
+        <button id="checkBtn" class="primary">Check Sequence</button>
+        <button id="undoBtn">Undo Last Link</button>
+        <button id="hintBtn">Hint</button>
+        <button id="revealBtn">Reveal Answer</button>
+        <button id="resetScoreBtn" class="danger">Reset Score</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="scoreStat">0</strong>Session score</div>
+        <div class="stat"><strong id="streakStat">0</strong>Current streak</div>
+        <div class="stat"><strong id="solvedStat">0</strong>Challenges solved</div>
+        <div class="stat"><strong id="attemptStat">0</strong>Session attempts</div>
+      </div>
+
+      <div class="help" id="modeHelp">
+        Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="status-grid">
+        <div class="status-box"><span>Module</span><strong id="moduleStatus">Module 5</strong></div>
+        <div class="status-box"><span>Mode</span><strong id="modeStatus">Science Sequence</strong></div>
+        <div class="status-box"><span>Challenge level</span><strong id="levelStatus">Medium</strong></div>
+        <div class="status-box"><span>Round status</span><strong id="roundStatus">Ready</strong></div>
+      </div>
+
+      <div class="board-head">
+        <div>
+          <h2 id="challengeTitle">Select New Challenge</h2>
+          <p id="challengeInstruction">Choose a content bank, mode and challenge level.</p>
+        </div>
+        <div id="modeBadge" class="mode-badge">SCIENCE SEQUENCE</div>
+      </div>
+
+      <div class="progress-shell" aria-label="Challenge progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="sequenceBoard" class="sequence-list"></div>
+
+      <div id="chainBoard" hidden>
+        <div id="chainPath" class="chain-path"></div>
+        <div id="relationships" class="relationships"></div>
+        <div class="candidate-title">
+          <h3>Available terms</h3>
+          <p id="chainTarget">Target: longest valid chain</p>
+        </div>
+        <div id="candidateGrid" class="term-grid"></div>
+      </div>
+
+      <div id="message" class="message">Choose New Challenge to begin.</div>
+
+      <section id="explanation" class="explanation">
+        <h3>Explanation</h3>
+        <p id="summaryText"></p>
+        <div id="solutionList" class="solution-list"></div>
+        <h3 style="margin-top:14px">Term definitions</h3>
+        <div id="definitionGrid" class="definition-grid"></div>
+      </section>
+    </section>
+  </section>
+
+  <section class="notes">
+    <article class="card">
+      <h2>Student Challenge</h2>
+      <ol>
+        <li>In Science Sequence mode, drag terms or use the arrow buttons to place them in order.</li>
+        <li>Explain why each step follows the previous step before checking.</li>
+        <li>In Chain Reaction mode, begin with the supplied term and build the longest valid chain.</li>
+        <li>Use Undo Last Link when a valid branch leads to a shorter route.</li>
+        <li>Review the accepted relationships and definitions after each challenge.</li>
+      </ol>
+    </article>
+    <article class="card">
+      <h2>Teacher Notes</h2>
+      <ul>
+        <li>Easy sequence rounds use four terms; Medium uses six; Hard uses the complete curated sequence.</li>
+        <li>Easy chain rounds use a direct five-term pathway. Medium includes the full branching network. Hard adds plausible distractors.</li>
+        <li>Chain links are deliberately curated: conceptual similarity alone is not automatically accepted.</li>
+        <li>Whole-course review combines Modules 5–8. Mixed Expert integrates Earth systems, risk, climate evidence and sustainability.</li>
+      </ul>
+    </article>
+  </section>
+
+  <p class="footer">
+    Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/earth-and-environmental-science-stage-6-2017" target="_blank" rel="noopener">NSW Earth and Environmental Science Stage 6 Syllabus (2017)</a>.
+    Definitions and relationship explanations are concise classroom paraphrases.
+  </p>
+</main>
+
+<script>
+
+"use strict";
+const SEQUENCES=[{"id":"ees-m5-origin-life","bank":"module5","title":"From Early Earth Chemistry to Life","hint":"Simple organic molecules precede self-replicating systems.","summary":"Origin-of-life hypotheses connect early-Earth energy, organic chemistry, compartmentalisation and replication.","steps":[["Early Earth environment","Atmosphere, oceans and energy sources provide chemical conditions."],["Simple inorganic molecules","Water, carbon compounds and nitrogen compounds are present."],["Energy input","Lightning, ultraviolet radiation or geothermal energy drives reactions."],["Organic molecules","Amino acids and other carbon compounds form."],["Concentration and organisation","Molecules accumulate on surfaces or within compartments."],["Protocell","A membrane-bounded chemical system develops."],["Self-replication","Information-bearing molecules make copies."],["Natural selection","More stable and efficient systems become more common."]]},{"id":"ees-m5-oxygenation","bank":"module5","title":"Oxygenation of Earth","hint":"Photosynthetic microorganisms change oceans before the atmosphere becomes oxygen-rich.","summary":"Cyanobacterial photosynthesis transformed Earth systems and enabled complex aerobic life.","steps":[["Cyanobacteria","Photosynthetic microorganisms develop in aquatic environments."],["Stromatolites","Microbial communities form layered structures."],["Oxygenic photosynthesis","Water is used and oxygen is released."],["Dissolved iron oxidation","Oxygen reacts with iron in ancient oceans."],["Banded iron formations","Iron oxides accumulate in sedimentary layers."],["Atmospheric oxygen rises","Major oxygen sinks become increasingly saturated."],["Ozone layer forms","Stratospheric ozone absorbs ultraviolet radiation."],["Aerobic and multicellular life","Higher-energy respiration and complex organisms expand."]]},{"id":"ees-m5-radiometric","bank":"module5","title":"Radiometric Dating","hint":"The isotope system must remain closed after mineral formation.","summary":"Radiometric dating uses predictable decay and isotope ratios to calculate numerical age.","steps":[["Mineral crystallisation","Parent isotopes become locked into a mineral."],["Closed system","No parent or daughter isotope is later added or removed."],["Radioactive decay","Parent atoms transform at a predictable probability."],["Daughter isotope accumulates","Decay products increase through time."],["Half-life","The isotope's decay rate provides a time scale."],["Isotope ratio measured","Parent and daughter abundances are determined."],["Decay equation applied","The elapsed time is calculated."],["Absolute age","A numerical age is assigned to the rock or event."]]},{"id":"ees-m6-earthquake","bank":"module6","title":"From Fault Stress to Earthquake Damage","hint":"Elastic strain accumulates before sudden rupture.","summary":"Earthquakes release stored elastic energy that travels as seismic waves and affects exposed communities.","steps":[["Plate motion","Tectonic forces move crustal blocks."],["Fault locking","Friction prevents smooth movement."],["Elastic strain","Rock deforms and stores energy."],["Fault rupture","Stress exceeds rock strength."],["Seismic waves","Energy travels through Earth and along the surface."],["Ground shaking","Surface motion affects structures and slopes."],["Exposure and vulnerability","People and infrastructure experience different risks."],["Disaster impact","Damage depends on hazard intensity and community capacity."]]},{"id":"ees-m6-volcano-monitoring","bank":"module6","title":"Monitoring a Volcano","hint":"No single precursor is sufficient; multiple lines of evidence are combined.","summary":"Volcano monitoring compares seismic, deformation, gas and thermal evidence to assess changing activity.","steps":[["Magma movement","Magma rises or changes pressure below a volcano."],["Volcanic earthquakes","Rock fracture and fluid movement produce seismic signals."],["Ground deformation","The surface inflates, tilts or shifts."],["Gas emission change","Sulfur dioxide or carbon dioxide output changes."],["Thermal anomaly","Surface or vent temperatures change."],["Data integration","Multiple monitoring streams are compared."],["Hazard forecast","Scientists estimate likely scenarios and uncertainty."],["Warning and evacuation","Authorities communicate and act on the assessment."]]},{"id":"ees-m6-risk-cycle","bank":"module6","title":"Disaster Risk Management","hint":"Mitigation and preparedness occur before the event.","summary":"Hazard management is a continuing cycle of risk reduction, response, recovery and learning.","steps":[["Hazard assessment","Location, probability and severity are estimated."],["Risk mapping","Hazard, exposure and vulnerability are combined spatially."],["Mitigation","Engineering or land-use actions reduce likely consequences."],["Preparedness","Plans, training and warning systems are established."],["Hazard event","The natural process affects a community."],["Emergency response","Immediate protection, rescue and communication occur."],["Recovery","Services, infrastructure and livelihoods are restored."],["Review and adaptation","Lessons are used to improve future management."]]},{"id":"ees-m7-greenhouse","bank":"module7","title":"Enhanced Greenhouse Effect","hint":"Greenhouse gases absorb outgoing infrared radiation, not incoming visible light equally.","summary":"Human activities alter atmospheric composition and Earth’s radiative balance.","steps":[["Fossil-fuel combustion","Stored carbon is released as carbon dioxide."],["Greenhouse-gas concentration rises","The atmosphere contains more infrared-active molecules."],["Outgoing infrared absorption","More terrestrial radiation is absorbed."],["Re-emission","Radiation is emitted in all directions, including towards the surface."],["Positive energy imbalance","Incoming energy temporarily exceeds outgoing energy."],["Surface and ocean warming","Earth systems store additional energy."],["Climate feedbacks","Water vapour, ice and carbon-cycle responses amplify or modify change."],["Climate impacts","Temperature, rainfall, sea level and ecosystems change."]]},{"id":"ees-m7-proxy","bank":"module7","title":"Reconstructing Past Climate","hint":"A proxy must first be dated, then calibrated against an environmental variable.","summary":"Climate proxies convert preserved physical, chemical or biological records into past-climate estimates.","steps":[["Proxy archive","Ice, sediment, coral, cave deposit or tree growth is preserved."],["Chronology established","Layers, annual bands or radiometric ages provide dates."],["Proxy measured","Isotopes, pollen, chemistry or growth are quantified."],["Modern calibration","The proxy is related to observed climate conditions."],["Confounding influences assessed","Non-climate controls are considered."],["Past condition inferred","Temperature, rainfall or ice volume is reconstructed."],["Multiple proxies compared","Independent evidence tests consistency."],["Climate history","A defensible pattern of past variation is developed."]]},{"id":"ees-m7-ocean-acidification","bank":"module7","title":"Ocean Acidification","hint":"Dissolved carbon dioxide changes carbonate chemistry before affecting organisms.","summary":"Ocean uptake of atmospheric carbon dioxide lowers pH and reduces carbonate availability.","steps":[["Atmospheric carbon dioxide rises","Human emissions increase atmospheric concentration."],["Carbon dioxide dissolves","More gas enters surface seawater."],["Carbonic acid forms","Dissolved CO₂ reacts with water."],["Hydrogen ions increase","The acid dissociates."],["Ocean pH decreases","Seawater becomes less alkaline."],["Carbonate ions decrease","Hydrogen ions shift carbonate equilibria."],["Calcification becomes harder","Organisms have less carbonate for shells or skeletons."],["Ecosystem effects","Growth, survival and food webs may change."]]},{"id":"ees-m8-mining","bank":"module8","title":"Mining Resource Life Cycle","hint":"Exploration and assessment occur before extraction.","summary":"Resource development proceeds through discovery, extraction, processing, waste management and rehabilitation.","steps":[["Geological exploration","Mapping, geophysics and geochemistry locate a deposit."],["Resource estimate","Deposit size and grade are calculated."],["Environmental impact assessment","Potential ecological, cultural and social effects are evaluated."],["Mine development","Infrastructure and extraction systems are constructed."],["Ore extraction","Rock containing the target material is removed."],["Mineral processing","Valuable material is separated from waste."],["Tailings and waste management","Residual material is contained and monitored."],["Rehabilitation and closure","Landforms, soils and ecosystems are stabilised and restored."]]},{"id":"ees-m8-waste","bank":"module8","title":"Waste Hierarchy","hint":"Avoidance is preferred before treatment or disposal.","summary":"The waste hierarchy prioritises actions that retain value and reduce environmental burden.","steps":[["Resource demand","A product or service is considered."],["Avoid","Unnecessary consumption and packaging are prevented."],["Reduce","Less material and energy are used."],["Reuse","Products are used again without major processing."],["Repair or remanufacture","Product life is extended."],["Recycle","Materials are reprocessed into new feedstock."],["Recover energy","Residual waste may provide usable energy."],["Dispose","Remaining waste is managed in landfill as the last option."]]},{"id":"ees-m8-sustainable-yield","bank":"module8","title":"Managing a Renewable Resource","hint":"Harvest must be compared with regeneration and uncertainty.","summary":"Sustainable management keeps extraction within long-term ecological replacement capacity.","steps":[["Resource population assessed","Abundance, age structure and distribution are measured."],["Regeneration rate estimated","Recruitment and growth are modelled."],["Sustainable yield proposed","A precautionary harvest level is set."],["Extraction monitored","Actual catch or removal is recorded."],["Ecosystem indicators measured","Habitat and non-target effects are tracked."],["Data compared with targets","Evidence tests whether use remains sustainable."],["Adaptive management","Limits or methods are adjusted."],["Long-term resource maintained","Ecological function and future access are protected."]]},{"id":"ees-glossary-history","bank":"glossary","title":"Glossary: Reading Earth History","hint":"Rock layers and present-day processes provide complementary evidence.","summary":"Superposition, uniformitarianism and multiple data sources support interpretation of Earth history.","steps":[["Sedimentary deposition","Particles accumulate in layers."],["Superposition","Lower undisturbed layers are interpreted as older."],["Fossil succession","Changing fossil assemblages help correlate strata."],["Uniformitarianism","Present processes guide interpretation of past environments."],["Primary data","Field measurements and observations are collected."],["Secondary-sourced data","Published maps, dates and records are compared."],["Model","Evidence is organised into an Earth-history explanation."],["Conclusion","The sequence of events is inferred."]]},{"id":"ees-review-systems","bank":"review","title":"Whole-course Earth Systems","hint":"Changes in one sphere propagate through other spheres.","summary":"The course connects geological processes, hazards, climate and resource management as interacting Earth systems.","steps":[["Geological process","Plate movement, weathering or volcanism changes the geosphere."],["Atmospheric change","Gases, aerosols or energy balance are altered."],["Hydrosphere response","Water circulation, chemistry or level changes."],["Biosphere response","Organisms and ecosystems experience new conditions."],["Human exposure","Communities and resources are affected."],["Scientific monitoring","Data reveal rates, patterns and uncertainty."],["Management decision","Risk reduction or resource action is selected."],["Outcome evaluation","Environmental and social effects are reviewed."]]},{"id":"ees-expert-sustainability","bank":"expert","title":"Expert: Sustainability Decision","hint":"A technically possible project is not automatically sustainable.","summary":"Sustainable decisions integrate resource value, environmental limits, cultural responsibility and future generations.","steps":[["Resource proposal","A potential extraction or development is identified."],["Scientific baseline","Existing environmental conditions are measured."],["Impact prediction","Models estimate likely changes and uncertainty."],["Traditional owner consultation","Cultural values and authority are considered."],["Risk and benefit comparison","Environmental, social and economic outcomes are weighed."],["Mitigation hierarchy","Avoidance is considered before minimisation and offsetting."],["Adaptive monitoring","Indicators trigger changes during operation."],["Intergenerational judgement","Long-term fairness and ecological capacity are evaluated."]]}];
+const CHAINS=[{"id":"ees-chain-life","bank":"module5","title":"Early Life and Oxygen Chain","start":"Cyanobacteria","bestPath":["Cyanobacteria","Oxygenic photosynthesis","Dissolved oxygen","Iron oxidation","Banded iron formations","Atmospheric oxygen","Ozone layer","Complex life"],"nodes":["Cyanobacteria","Stromatolites","Oxygenic photosynthesis","Dissolved oxygen","Iron oxidation","Banded iron formations","Atmospheric oxygen","Ozone layer","Aerobic respiration","Complex life"],"edges":[["Cyanobacteria","Stromatolites","Cyanobacterial communities can build layered microbial structures."],["Cyanobacteria","Oxygenic photosynthesis","Cyanobacteria release oxygen during photosynthesis."],["Stromatolites","Oxygenic photosynthesis","Their microbial mats provide evidence of photosynthetic activity."],["Oxygenic photosynthesis","Dissolved oxygen","Oxygen first accumulates in aquatic environments."],["Dissolved oxygen","Iron oxidation","Oxygen reacts with dissolved iron."],["Iron oxidation","Banded iron formations","Iron oxides precipitate into layered deposits."],["Banded iron formations","Atmospheric oxygen","Declining oceanic iron sinks allow more oxygen to accumulate in air."],["Atmospheric oxygen","Ozone layer","Oxygen enables formation of stratospheric ozone."],["Atmospheric oxygen","Aerobic respiration","Oxygen supports high-yield respiration."],["Ozone layer","Complex life","Ultraviolet shielding supports expansion into new environments."],["Aerobic respiration","Complex life","Greater energy availability supports larger and more complex organisms."]],"distractors":["Titration","Motor effect","Antibody"],"summary":"Photosynthetic life transformed ocean chemistry, atmosphere and biological complexity."},{"id":"ees-chain-dating","bank":"module5","title":"Geological Dating Chain","start":"Rock layer","bestPath":["Rock layer","Superposition","Relative age","Index fossil","Correlation","Radiometric date","Absolute age"],"nodes":["Rock layer","Superposition","Cross-cutting relationship","Relative age","Index fossil","Correlation","Mineral crystal","Radiometric date","Absolute age","Geological timescale"],"edges":[["Rock layer","Superposition","Layer position provides a relative-age relationship."],["Superposition","Relative age","Lower undisturbed strata are older."],["Cross-cutting relationship","Relative age","A feature cutting another is younger."],["Relative age","Index fossil","Short-ranging fossils refine relative placement."],["Index fossil","Correlation","Matching fossils link strata across locations."],["Correlation","Mineral crystal","A correlated unit may contain datable minerals."],["Mineral crystal","Radiometric date","Isotope ratios provide numerical age evidence."],["Radiometric date","Absolute age","Decay calculations assign an age."],["Absolute age","Geological timescale","Many dated events calibrate geological history."],["Correlation","Radiometric date","Within this pathway, Correlation leads directly to Radiometric date."]],"distractors":["Herd immunity","Keq","Photon"],"summary":"Relative and absolute dating methods combine to construct geological time."},{"id":"ees-chain-earthquake","bank":"module6","title":"Earthquake Hazard Chain","start":"Plate motion","bestPath":["Plate motion","Fault locking","Elastic strain","Rupture","Seismic waves","Ground shaking","Structural damage","Disaster risk"],"nodes":["Plate motion","Fault locking","Elastic strain","Rupture","Focus","Seismic waves","Surface waves","Ground shaking","Liquefaction","Structural damage","Disaster risk"],"edges":[["Plate motion","Fault locking","Friction can prevent smooth fault movement."],["Fault locking","Elastic strain","Stress accumulates in deformed rock."],["Elastic strain","Rupture","Rock fails when stress exceeds strength."],["Rupture","Focus","The earthquake begins at a subsurface point."],["Focus","Seismic waves","Released energy propagates as waves."],["Seismic waves","Surface waves","Some energy travels along the surface."],["Surface waves","Ground shaking","Large-amplitude motion affects the ground."],["Ground shaking","Liquefaction","Water-saturated sediment may lose strength."],["Ground shaking","Structural damage","Buildings experience dynamic forces."],["Liquefaction","Structural damage","Foundation failure increases damage."],["Structural damage","Disaster risk","Consequences depend on exposure and vulnerability."],["Rupture","Seismic waves","Within this pathway, Rupture leads directly to Seismic waves."],["Seismic waves","Ground shaking","Within this pathway, Seismic waves leads directly to Ground shaking."]],"distractors":["DNA ligase","Buffer","Redshift"],"summary":"Earthquake impacts link tectonic energy release with local ground conditions and vulnerability."},{"id":"ees-chain-volcano","bank":"module6","title":"Volcano Monitoring Chain","start":"Magma movement","bestPath":["Magma movement","Volcanic earthquakes","Ground deformation","Gas change","Thermal anomaly","Data integration","Forecast","Warning"],"nodes":["Magma movement","Volcanic earthquakes","Ground deformation","Gas change","Sulfur dioxide","Thermal anomaly","Satellite imagery","Data integration","Forecast","Warning","Evacuation"],"edges":[["Magma movement","Volcanic earthquakes","Moving magma fractures rock and shifts fluids."],["Volcanic earthquakes","Ground deformation","Seismicity may accompany inflation or intrusion."],["Ground deformation","Gas change","Rising magma can alter degassing pathways."],["Gas change","Sulfur dioxide","SO₂ output is a useful monitoring signal."],["Sulfur dioxide","Thermal anomaly","Shallow magma or vents may also increase heat."],["Thermal anomaly","Satellite imagery","Remote sensing can detect temperature patterns."],["Satellite imagery","Data integration","Remote evidence is combined with ground instruments."],["Data integration","Forecast","Multiple indicators support scenario assessment."],["Forecast","Warning","Authorities communicate likely hazards and uncertainty."],["Warning","Evacuation","People may be moved from high-risk zones."],["Gas change","Thermal anomaly","Within this pathway, Gas change leads directly to Thermal anomaly."],["Thermal anomaly","Data integration","Within this pathway, Thermal anomaly leads directly to Data integration."]],"distractors":["Meiosis","Esterification","Time dilation"],"summary":"Volcano forecasts are strongest when multiple independent indicators converge."},{"id":"ees-chain-climate","bank":"module7","title":"Enhanced Greenhouse Chain","start":"Fossil-fuel combustion","bestPath":["Fossil-fuel combustion","Atmospheric carbon dioxide","Infrared absorption","Radiative imbalance","Ocean heat uptake","Global warming","Ice loss","Sea-level rise"],"nodes":["Fossil-fuel combustion","Atmospheric carbon dioxide","Infrared absorption","Downward re-emission","Radiative imbalance","Ocean heat uptake","Global warming","Water-vapour feedback","Ice loss","Sea-level rise"],"edges":[["Fossil-fuel combustion","Atmospheric carbon dioxide","Combustion transfers geological carbon to the atmosphere."],["Atmospheric carbon dioxide","Infrared absorption","CO₂ absorbs selected outgoing wavelengths."],["Infrared absorption","Downward re-emission","Absorbed energy is emitted in multiple directions."],["Downward re-emission","Radiative imbalance","Less energy escapes initially than enters."],["Radiative imbalance","Ocean heat uptake","Oceans store much of the excess energy."],["Ocean heat uptake","Global warming","The climate system's mean energy and temperature rise."],["Global warming","Water-vapour feedback","Warmer air can contain more water vapour."],["Global warming","Ice loss","Glaciers and ice sheets lose mass."],["Ice loss","Sea-level rise","Melting land ice adds water to oceans."],["Infrared absorption","Radiative imbalance","Within this pathway, Infrared absorption leads directly to Radiative imbalance."]],"distractors":["Ribosome","Ksp","Centripetal force"],"summary":"Anthropogenic carbon dioxide changes radiative balance and drives linked climate impacts."},{"id":"ees-chain-proxy","bank":"module7","title":"Climate Proxy Chain","start":"Proxy archive","bestPath":["Proxy archive","Dating","Proxy measurement","Calibration","Climate inference","Cross-checking","Climate reconstruction"],"nodes":["Proxy archive","Ice core","Tree ring","Dating","Proxy measurement","Stable isotope","Calibration","Confounding factor","Climate inference","Cross-checking","Climate reconstruction"],"edges":[["Proxy archive","Ice core","Ice preserves layers, gases and isotope chemistry."],["Proxy archive","Tree ring","Annual growth records environmental conditions."],["Ice core","Dating","Layer counting or age models establish chronology."],["Tree ring","Dating","Annual rings provide high-resolution dates."],["Dating","Proxy measurement","A dated sample can be linked to a past time."],["Proxy measurement","Stable isotope","Isotope ratios may encode temperature or water source."],["Stable isotope","Calibration","Modern relationships convert chemistry into climate estimates."],["Calibration","Confounding factor","Non-climate influences must be assessed."],["Confounding factor","Climate inference","Uncertainty is included in interpretation."],["Climate inference","Cross-checking","Independent archives test consistency."],["Cross-checking","Climate reconstruction","Converging evidence produces a stronger history."],["Proxy archive","Dating","Within this pathway, Proxy archive leads directly to Dating."],["Proxy measurement","Calibration","Within this pathway, Proxy measurement leads directly to Calibration."],["Calibration","Climate inference","Within this pathway, Calibration leads directly to Climate inference."]],"distractors":["Mutation","Transformer","Titrant"],"summary":"Past climate is reconstructed by dating, calibrating and comparing independent archives."},{"id":"ees-chain-resource","bank":"module8","title":"Resource Development Chain","start":"Exploration","bestPath":["Exploration","Resource estimate","Impact assessment","Approval","Extraction","Processing","Waste management","Rehabilitation"],"nodes":["Exploration","Remote sensing","Resource estimate","Ore grade","Impact assessment","Traditional owner consultation","Approval","Extraction","Processing","Tailings","Waste management","Rehabilitation","Closure monitoring"],"edges":[["Exploration","Remote sensing","Remote data help locate geological anomalies."],["Remote sensing","Resource estimate","Combined evidence supports deposit modelling."],["Resource estimate","Ore grade","Economic value depends partly on concentration."],["Ore grade","Impact assessment","Extraction intensity and waste can be estimated."],["Impact assessment","Traditional owner consultation","Cultural and environmental values must be considered."],["Traditional owner consultation","Approval","Consent processes and conditions influence decisions."],["Impact assessment","Approval","Regulators assess predicted impacts."],["Approval","Extraction","Mining proceeds under specified conditions."],["Extraction","Processing","Ore is treated to separate valuable material."],["Processing","Tailings","Fine residual waste is produced."],["Tailings","Waste management","Storage must control contamination and failure risk."],["Waste management","Rehabilitation","Disturbed land and ecosystems are repaired."],["Rehabilitation","Closure monitoring","Long-term stability and pollution are checked."],["Exploration","Resource estimate","Within this pathway, Exploration leads directly to Resource estimate."],["Resource estimate","Impact assessment","Within this pathway, Resource estimate leads directly to Impact assessment."],["Processing","Waste management","Within this pathway, Processing leads directly to Waste management."]],"distractors":["Antibody","Photon","pH"],"summary":"Responsible resource development links geological value with environmental, cultural and closure obligations."},{"id":"ees-chain-waste","bank":"module8","title":"Circular Waste Chain","start":"Product design","bestPath":["Product design","Material choice","Use","Reuse","Repair","Recycling","Recovered material","New product"],"nodes":["Product design","Material choice","Manufacture","Use","Reuse","Repair","Collection","Recycling","Recovered material","New product","Residual waste","Landfill"],"edges":[["Product design","Material choice","Design determines durability, toxicity and recyclability."],["Material choice","Manufacture","Selected materials enter production."],["Manufacture","Use","Products are distributed and used."],["Use","Reuse","A product may serve another user or purpose."],["Reuse","Repair","Maintenance can extend useful life."],["Repair","Collection","End-of-use products enter recovery systems."],["Collection","Recycling","Materials are sorted and reprocessed."],["Recycling","Recovered material","Processing creates secondary raw material."],["Recovered material","New product","Recovered feedstock returns to manufacturing."],["Use","Residual waste","Some material cannot be retained."],["Residual waste","Landfill","Final waste may require engineered disposal."],["Material choice","Use","Within this pathway, Material choice leads directly to Use."],["Repair","Recycling","Within this pathway, Repair leads directly to Recycling."]],"distractors":["Meiosis","Equilibrium constant","Muon"],"summary":"Circular systems retain products and materials before resorting to disposal."},{"id":"earthenvironmentalscience-glossary-derived-chain","bank":"glossary","title":"Glossary: Reading Earth History — Connected Chain","start":"Sedimentary deposition","bestPath":["Sedimentary deposition","Superposition","Fossil succession","Uniformitarianism","Primary data","Secondary-sourced data","Model","Conclusion"],"nodes":["Sedimentary deposition","Superposition","Fossil succession","Uniformitarianism","Primary data","Secondary-sourced data","Model","Conclusion"],"edges":[["Sedimentary deposition","Superposition","Lower undisturbed layers are interpreted as older."],["Superposition","Fossil succession","Changing fossil assemblages help correlate strata."],["Fossil succession","Uniformitarianism","Present processes guide interpretation of past environments."],["Uniformitarianism","Primary data","Field measurements and observations are collected."],["Primary data","Secondary-sourced data","Published maps, dates and records are compared."],["Secondary-sourced data","Model","Evidence is organised into an Earth-history explanation."],["Model","Conclusion","The sequence of events is inferred."]],"distractors":["Early Earth environment","Simple inorganic molecules","Energy input"],"summary":"Superposition, uniformitarianism and multiple data sources support interpretation of Earth history."},{"id":"earthenvironmentalscience-review-derived-chain","bank":"review","title":"Whole-course Earth Systems — Connected Chain","start":"Geological process","bestPath":["Geological process","Atmospheric change","Hydrosphere response","Biosphere response","Human exposure","Scientific monitoring","Management decision","Outcome evaluation"],"nodes":["Geological process","Atmospheric change","Hydrosphere response","Biosphere response","Human exposure","Scientific monitoring","Management decision","Outcome evaluation"],"edges":[["Geological process","Atmospheric change","Gases, aerosols or energy balance are altered."],["Atmospheric change","Hydrosphere response","Water circulation, chemistry or level changes."],["Hydrosphere response","Biosphere response","Organisms and ecosystems experience new conditions."],["Biosphere response","Human exposure","Communities and resources are affected."],["Human exposure","Scientific monitoring","Data reveal rates, patterns and uncertainty."],["Scientific monitoring","Management decision","Risk reduction or resource action is selected."],["Management decision","Outcome evaluation","Environmental and social effects are reviewed."]],"distractors":["Early Earth environment","Simple inorganic molecules","Energy input"],"summary":"The course connects geological processes, hazards, climate and resource management as interacting Earth systems."},{"id":"earthenvironmentalscience-expert-derived-chain","bank":"expert","title":"Expert: Sustainability Decision — Connected Chain","start":"Resource proposal","bestPath":["Resource proposal","Scientific baseline","Impact prediction","Traditional owner consultation","Risk and benefit comparison","Mitigation hierarchy","Adaptive monitoring","Intergenerational judgement"],"nodes":["Resource proposal","Scientific baseline","Impact prediction","Traditional owner consultation","Risk and benefit comparison","Mitigation hierarchy","Adaptive monitoring","Intergenerational judgement"],"edges":[["Resource proposal","Scientific baseline","Existing environmental conditions are measured."],["Scientific baseline","Impact prediction","Models estimate likely changes and uncertainty."],["Impact prediction","Traditional owner consultation","Cultural values and authority are considered."],["Traditional owner consultation","Risk and benefit comparison","Environmental, social and economic outcomes are weighed."],["Risk and benefit comparison","Mitigation hierarchy","Avoidance is considered before minimisation and offsetting."],["Mitigation hierarchy","Adaptive monitoring","Indicators trigger changes during operation."],["Adaptive monitoring","Intergenerational judgement","Long-term fairness and ecological capacity are evaluated."]],"distractors":["Early Earth environment","Simple inorganic molecules","Energy input"],"summary":"Sustainable decisions integrate resource value, environmental limits, cultural responsibility and future generations."}];
+const DEFINITIONS={"Biosphere":"All regions of Earth in which living organisms occur.","Geosphere":"The solid Earth, including rocks, minerals, landforms and Earth’s interior.","Atmosphere":"The layers of gases surrounding Earth.","Hydrosphere":"All liquid water on, beneath and above Earth’s surface.","Origin of life":"The development of the first self-replicating living systems from non-living chemistry.","Organic molecule":"A carbon-based molecule associated with living systems or their chemical building blocks.","Abiogenesis":"The proposed natural origin of life from non-living matter.","Miller–Urey experiment":"An experiment showing that organic molecules can form under simulated early-Earth conditions.","Reducing atmosphere":"An atmosphere with little free oxygen and gases capable of donating electrons in chemical reactions.","Electrical discharge":"The simulated lightning energy source used in the Miller–Urey experiment.","Primordial soup":"A proposed early-Earth mixture of water and organic molecules from which life may have developed.","Hydrothermal vent":"A seafloor opening that releases geothermally heated, mineral-rich water.","Black smoker":"A high-temperature hydrothermal vent producing dark mineral-rich plumes.","Chemosynthesis":"Production of organic matter using energy released from inorganic chemical reactions.","Extremophile":"An organism adapted to conditions that are extreme for most life.","Panspermia":"The hypothesis that life or its chemical precursors arrived on Earth from space.","Meteorite":"A fragment of extraterrestrial material that survives passage through the atmosphere and reaches Earth’s surface.","Cyanobacteria":"Photosynthetic prokaryotes that contributed to increasing atmospheric oxygen.","Stromatolite":"A layered structure formed by microbial communities, especially cyanobacteria.","Photosynthesis":"A process using light energy to produce organic molecules, commonly releasing oxygen.","Great Oxidation Event":"The major increase in atmospheric oxygen caused largely by photosynthetic microorganisms.","Banded iron formation":"Layered iron-rich rock formed when dissolved iron reacted with oxygen in ancient oceans.","Ozone layer":"A stratospheric region rich in ozone that absorbs much ultraviolet radiation.","Aerobic respiration":"Energy-releasing cellular respiration that uses oxygen as the final electron acceptor.","Multicellular organism":"An organism made of many specialised, interdependent cells.","Ediacaran biota":"Soft-bodied multicellular organisms known from late Precambrian fossils.","Cambrian explosion":"A geologically rapid diversification of many animal body plans early in the Cambrian Period.","Cambrian fauna":"Organisms represented in the diverse fossil record of the Cambrian Period.","Conquest of land":"The evolutionary expansion of plants and animals from aquatic environments onto land.","Vascular plant":"A plant possessing specialised tissues that transport water and nutrients.","Tetrapod":"A vertebrate with four limbs, or descended from four-limbed ancestors.","Plate tectonic supercycle":"The repeated assembly and breakup of supercontinents through plate movement.","Supercontinent":"A landmass formed when most or all continents join together.","Continental collision":"Convergence of continental plates that thickens crust and forms mountain ranges.","Continental rifting":"Stretching and splitting of continental lithosphere.","Seafloor spreading":"Creation of new oceanic crust at a divergent plate boundary.","Subduction":"Movement of one tectonic plate beneath another into the mantle.","Wilson cycle":"A model describing opening and closing of ocean basins through plate tectonics.","Mountain building":"Formation of mountains through processes such as collision, folding, faulting and volcanism.","Weathering":"Breakdown of rock at or near Earth’s surface without transport.","Erosion":"Removal and transport of weathered material by water, wind, ice or gravity.","Sedimentation":"Deposition and accumulation of transported particles.","Carbon cycle":"Movement and transformation of carbon among Earth’s spheres.","Silicate weathering":"Chemical breakdown of silicate rocks that can remove carbon dioxide over long timescales.","Fossil":"Preserved remains, impressions or evidence of past life.","Body fossil":"Preserved part of an organism, such as bone, shell or leaf material.","Trace fossil":"Evidence of organism activity, such as a footprint, burrow or coprolite.","Mould fossil":"A hollow impression left when an organism or body part dissolves from sedimentary rock.","Cast fossil":"A three-dimensional copy formed when minerals or sediment fill a fossil mould.","Permineralisation":"Fossilisation in which minerals fill pores or spaces in biological material.","Carbon film":"A thin carbon residue outlining a compressed organism.","Index fossil":"A widespread, distinctive fossil from a short time range used to correlate rock layers.","Stratigraphy":"The study of rock layers, their sequence and relationships.","Stratum":"A single distinguishable layer of sedimentary rock.","Superposition":"The principle that lower undisturbed sedimentary layers are older than layers above them.","Uniformitarianism":"The principle that present geological processes help explain Earth’s past.","Relative dating":"Determining whether a rock or event is older or younger than another without assigning a numerical age.","Absolute dating":"Determining a numerical age for a rock, fossil or geological event.","Radiometric dating":"Calculating age using predictable radioactive decay of isotopes.","Parent isotope":"The unstable radioactive isotope present at the beginning of a decay process.","Daughter isotope":"The isotope produced by radioactive decay of a parent isotope.","Half-life":"The time required for half the radioactive parent atoms in a sample to decay.","Geological timescale":"A chronological framework dividing Earth’s history using rock and fossil evidence.","Mass extinction":"A geologically brief interval in which a large proportion of species becomes extinct globally.","Background extinction":"The usual ongoing rate of species extinction between mass-extinction events.","Biostratigraphy":"Correlation and relative dating of rocks using their fossil content.","Correlation":"Matching rock layers or geological events from different locations using shared evidence.","Unconformity":"A surface representing missing geological time due to erosion or non-deposition.","Precambrian":"The vast interval of Earth history before the Cambrian Period.","Phanerozoic Eon":"The eon characterised by abundant visible fossil life, extending from the Cambrian to the present.","Natural hazard":"A naturally occurring process or event capable of causing harm.","Natural disaster":"A hazardous event that causes serious disruption and exceeds a community’s capacity to cope.","Risk":"The likelihood and potential consequence of harm from a hazard.","Exposure":"The people, infrastructure or ecosystems located where a hazard may occur.","Vulnerability":"The degree to which exposed people, systems or environments are susceptible to harm.","Resilience":"The capacity to prepare for, withstand, recover from and adapt to a hazardous event.","Mitigation":"Action taken to reduce the probability or consequences of a hazard.","Preparedness":"Planning and capacity-building undertaken before a hazard occurs.","Response":"Immediate actions taken during and shortly after a disaster.","Recovery":"Longer-term restoration and rebuilding after a disaster.","Earthquake":"Sudden ground movement caused by rapid release of stored elastic energy.","Focus":"The point within Earth where an earthquake rupture begins.","Epicentre":"The point on Earth’s surface directly above an earthquake focus.","Fault":"A fracture in rock along which movement has occurred.","Elastic rebound":"Release of accumulated strain when rocks rupture and move along a fault.","Seismic wave":"An energy wave produced by an earthquake or other ground disturbance.","Primary wave":"A compressional seismic body wave that travels fastest through solids and fluids.","Secondary wave":"A transverse seismic body wave that travels through solids but not liquids.","Surface wave":"A seismic wave travelling along Earth’s surface and commonly producing strong damaging motion.","Seismometer":"An instrument that detects and records ground motion.","Seismogram":"The recorded trace of seismic motion over time.","Earthquake magnitude":"A measure of the energy released by an earthquake.","Earthquake intensity":"A measure of observed shaking and damage at a location.","Moment magnitude scale":"A logarithmic scale based on seismic moment and total earthquake energy release.","Modified Mercalli scale":"An intensity scale based on observed earthquake effects and damage.","Aftershock":"A smaller earthquake following the main shock in the same region.","Foreshock":"A smaller earthquake that precedes a larger main shock.","Tsunami":"A series of long ocean waves generated by sudden displacement of a large volume of water.","Convergent boundary":"A plate boundary where plates move towards one another.","Divergent boundary":"A plate boundary where plates move apart.","Transform boundary":"A plate boundary where plates slide horizontally past one another.","Benioff zone":"An inclined zone of earthquake foci tracing a subducting plate.","Volcano":"An opening or landform through which magma, gases and fragmented material reach the surface.","Magma":"Molten or partly molten rock beneath Earth’s surface.","Lava":"Magma that has reached Earth’s surface.","Viscosity":"Resistance of a fluid to flow.","Silica content":"The proportion of silica in magma, strongly influencing viscosity and eruption style.","Dissolved gas":"Volatile material within magma that can expand and drive eruptions.","Effusive eruption":"A relatively gentle eruption dominated by flowing low-viscosity lava.","Explosive eruption":"A violent eruption driven by gas-rich, viscous magma and fragmentation.","Shield volcano":"A broad volcano built mainly from fluid basaltic lava flows.","Stratovolcano":"A steep-sided composite volcano formed from alternating lava and pyroclastic deposits.","Caldera":"A large volcanic depression formed when the ground collapses after magma withdrawal.","Ash fall":"Deposition of fine volcanic fragments from an eruption plume.","Pyroclastic flow":"A fast, hot, ground-hugging current of gas, ash and volcanic fragments.","Lahar":"A rapidly moving volcanic mudflow containing water, ash and rock debris.","Volcanic gas":"Gas released from magma, including water vapour, carbon dioxide and sulfur dioxide.","Lava flow":"Movement of molten rock across the ground after eruption.","Mount Pinatubo":"A volcano whose 1991 eruption caused major regional impacts and short-term global cooling.","Volcanic aerosol":"Fine particles or droplets in the atmosphere produced by volcanic emissions.","Sulfur dioxide":"A volcanic gas that can form sulfate aerosols and contribute to short-term cooling.","Hailstorm":"A storm producing balls or irregular lumps of ice.","East coast low":"An intense low-pressure system near Australia’s east coast capable of heavy rain, strong wind and coastal impacts.","Drought":"A prolonged period of substantially below-average water availability.","Flood":"Overflow of water onto land that is usually dry.","Bushfire":"An uncontrolled fire burning through vegetation.","Landslide":"Downslope movement of rock, soil or debris under gravity.","Fuel load":"The amount and arrangement of combustible vegetation available to a fire.","Land clearing":"Removal of vegetation, which can alter runoff, erosion, slope stability and fire behaviour.","Urbanisation":"Expansion of built environments that can increase runoff and exposure to hazards.","Seismic monitoring":"Continuous measurement and analysis of ground vibrations.","Ground deformation":"Change in the shape or position of Earth’s surface due to tectonic or volcanic processes.","Global Positioning System":"Satellite-based positioning used to measure crustal or volcanic ground movement.","Tiltmeter":"An instrument measuring small changes in ground slope.","Strain meter":"An instrument measuring deformation within rock or across a fault.","Gas monitoring":"Measurement of volcanic gas composition or output to detect changes in activity.","Thermal imaging":"Detection of surface-temperature patterns that may reveal volcanic or fire activity.","Three-dimensional imaging":"Construction of subsurface or volcanic models using data such as seismic measurements.","Early-warning system":"A system that detects a developing hazard and rapidly communicates warnings.","Meteorology":"The scientific study of the atmosphere and weather.","Weather radar":"Remote sensing used to locate and track precipitation and storm structure.","Satellite imagery":"Images from orbit used to monitor clouds, fires, storms and environmental change.","Numerical weather prediction":"Computer modelling of future atmospheric conditions using physical equations and observations.","Building code":"A regulated construction standard designed to reduce structural failure and injury.","Base isolation":"A building technique that reduces transfer of earthquake motion into a structure.","Cross-bracing":"Structural reinforcement using diagonal members to resist lateral forces.","Land-use zoning":"Planning controls that restrict development in areas of high hazard.","Evacuation plan":"A planned process for moving people away from danger.","Public education":"Communication that improves community understanding and preparedness for hazards.","Hazard map":"A spatial representation of the expected location or severity of a hazard.","Disaster warning system":"A coordinated process for detecting danger and alerting affected communities.","Weather":"Short-term atmospheric conditions at a particular place and time.","Climate":"Long-term patterns and averages of weather conditions for a region or the globe.","Climate variation":"Change in climate conditions over timescales from years to geological intervals.","Climate proxy":"Indirect evidence used to reconstruct past climate conditions.","Natural greenhouse effect":"Natural atmospheric warming caused by greenhouse gases absorbing and re-emitting infrared radiation.","Enhanced greenhouse effect":"Additional warming caused by increased greenhouse-gas concentrations, largely from human activity.","Greenhouse gas":"An atmospheric gas that absorbs and emits infrared radiation.","Carbon dioxide":"A greenhouse gas released naturally and through activities such as fossil-fuel combustion and land clearing.","Methane":"A potent greenhouse gas emitted from wetlands, agriculture, fossil fuels and decomposition.","Nitrous oxide":"A long-lived greenhouse gas associated with soils, fertilisers and combustion.","Water vapour":"The most abundant greenhouse gas and an important climate feedback.","Infrared radiation":"Long-wave electromagnetic radiation emitted by Earth’s surface and atmosphere.","Short-wave radiation":"Solar energy reaching Earth mainly as visible, ultraviolet and near-infrared radiation.","Radiative balance":"The balance between incoming solar energy and outgoing energy from Earth.","Albedo":"The proportion of incoming radiation reflected by a surface.","Positive feedback":"A process that amplifies an initial climate change.","Negative feedback":"A process that reduces an initial climate change.","Ice–albedo feedback":"Warming reduces reflective ice, increasing absorption and causing further warming.","Carbon sink":"A reservoir that absorbs more carbon than it releases over a stated period.","Carbon source":"A reservoir or activity that releases more carbon than it absorbs.","Large igneous province":"A vast region formed by unusually large volcanic outpourings.","Deccan Traps":"A large igneous province in India linked to major volcanic climate effects.","Siberian Traps":"A vast volcanic province associated with severe environmental change and the end-Permian extinction.","Volcanic cooling":"Short-term climate cooling caused when sulfate aerosols reflect incoming solar radiation.","Volcanic warming":"Potential longer-term warming associated with volcanic greenhouse-gas release.","Orbital eccentricity":"Variation in the shape of Earth’s orbit around the Sun.","Axial tilt":"The angle between Earth’s rotational axis and the perpendicular to its orbital plane.","Precession":"Slow change in the direction of Earth’s rotational axis.","Milankovitch cycles":"Long-term orbital variations that alter the distribution of solar energy received by Earth.","Solar variation":"Change in the energy output or activity of the Sun.","Ocean current":"A persistent movement of seawater that transports heat and materials.","Thermohaline circulation":"Global deep-ocean circulation driven by differences in water temperature and salinity.","El Niño":"A Pacific Ocean–atmosphere pattern associated with weakened trade winds and altered rainfall.","La Niña":"A Pacific Ocean–atmosphere pattern associated with strengthened trade winds and altered rainfall.","Pollen record":"Fossilised pollen used to infer past vegetation and climate.","Rock-type evidence":"Climate information inferred from rocks formed under particular environmental conditions.","Fossil evidence":"Past-climate information inferred from organisms adapted to particular conditions.","Microfossil":"A microscopic fossil used to reconstruct past environments and climate.","Stable isotope":"A non-radioactive isotope whose ratios can record environmental conditions.","Oxygen-isotope ratio":"A ratio used to infer past temperature, ice volume or water source.","Deep-sea sediment":"Layered ocean-floor material preserving long-term climate and environmental records.","Ice core":"A cylinder of ice containing layered chemical, isotopic and atmospheric records.","Gas bubble":"A sample of past atmosphere trapped within glacial ice.","Dendrochronology":"Use of annual tree rings to date and reconstruct past environmental conditions.","Tree ring":"An annual growth layer whose width or chemistry may record climate conditions.","Stalagmite":"A mineral deposit growing upward from a cave floor and preserving chemical climate records.","Stalactite":"A mineral deposit hanging from a cave roof and preserving chemical climate records.","Coral record":"Growth bands and isotope chemistry in coral skeletons used to reconstruct ocean conditions.","Aboriginal art site":"A cultural record that may provide evidence of past species, landscapes or environments.","Instrumental record":"Climate measurements collected directly using instruments.","Industrial Revolution":"The period of rapid industrialisation associated with greatly increased fossil-fuel use.","Anthropogenic climate variation":"Climate variation caused or influenced by human activities.","Fossil-fuel combustion":"Burning coal, oil or gas, releasing carbon dioxide and other substances.","Land-use change":"Alteration of land cover or management that affects carbon storage, albedo and ecosystems.","Deforestation":"Removal of forest cover, commonly reducing carbon storage and altering water and energy cycles.","Ocean acidification":"Decrease in ocean pH as seawater absorbs atmospheric carbon dioxide.","Carbonic acid":"A weak acid formed when carbon dioxide reacts with water.","Glacier":"A persistent mass of land ice moving under its own weight.","Sea ice":"Frozen seawater floating on the ocean surface.","Ice sheet":"A very large land-based mass of glacial ice.","Sea-level rise":"Increase in mean sea level caused mainly by ocean warming and melting land ice.","Thermal expansion":"Increase in seawater volume as it warms.","Species-range shift":"Movement of a species’ geographical distribution in response to changing conditions.","Climate mitigation":"Action that reduces greenhouse-gas emissions or increases removal of greenhouse gases.","Climate adaptation":"Adjustment to actual or expected climate effects to reduce harm or use opportunities.","Renewable energy":"Energy from sources replenished naturally on human timescales.","Energy efficiency":"Providing the same service using less energy.","Carbon sequestration":"Capture and long-term storage of carbon dioxide or carbon.","Reforestation":"Re-establishment of forest cover on previously forested land.","Urban heat island":"Higher temperatures in built areas compared with surrounding rural areas.","Green infrastructure":"Vegetation and natural systems incorporated into urban design to provide environmental benefits.","Geo-engineering":"Large-scale deliberate intervention in Earth’s climate system.","Carbon dioxide removal":"Techniques that remove carbon dioxide from the atmosphere and store it.","Solar radiation management":"Proposed techniques that reflect a small proportion of incoming sunlight.","Climate model":"A mathematical representation used to simulate interactions within the climate system.","Climate scenario":"A plausible description of future climate based on stated assumptions.","Uncertainty":"The quantified or described range of possible values or outcomes due to limited knowledge or variability.","Natural resource":"A material, organism or energy source obtained from the environment for human use.","Renewable resource":"A resource replenished naturally on a timescale comparable with its use.","Non-renewable resource":"A finite resource formed or replenished much more slowly than it is consumed.","Agricultural resource":"A biological, soil or water resource used to produce food, fibre or other products.","Terrestrial agriculture":"Food or fibre production based on land ecosystems.","Aquaculture":"Farming of aquatic organisms such as fish, shellfish or algae.","Water resource":"Surface water, groundwater or captured water available for ecological or human use.","Energy resource":"A natural source that can be converted into useful energy.","Mineral resource":"A concentration of naturally occurring material with potential economic value.","Ore":"Rock containing a valuable material at a concentration that may be economically extracted.","Ore grade":"The concentration of a valuable component within an ore.","Reserve":"A known resource that can be economically extracted under current conditions.","Resource exploration":"Search for deposits using geological, geophysical and geochemical evidence.","Remote sensing":"Collection of information about Earth without direct contact, commonly from aircraft or satellites.","Open-pit mining":"Extraction from a large surface excavation.","Underground mining":"Extraction through shafts, tunnels or other workings beneath the surface.","Onshore drilling":"Drilling for fluids or geological information from a land-based site.","Offshore drilling":"Drilling beneath the seabed from a marine platform or vessel.","Overburden":"Soil and rock removed to expose an underlying resource.","Tailings":"Fine waste material remaining after valuable minerals are separated from ore.","Waste rock":"Excavated rock that does not contain an economically recoverable concentration of the target material.","Acid mine drainage":"Acidic water produced when sulfide minerals react with oxygen and water.","Leachate":"Contaminated liquid that drains through waste or disturbed material.","Heavy-metal contamination":"Pollution by metals that can be toxic at elevated concentrations.","Sediment pollution":"Excess soil or particles entering waterways and affecting water quality or habitat.","Habitat fragmentation":"Division of habitat into smaller, isolated patches.","Aboriginal cultural site":"A place with cultural, spiritual, historical or archaeological significance to Aboriginal Peoples.","Traditional owner":"An Aboriginal or Torres Strait Islander person or group with recognised cultural connection and responsibility for Country or Place.","Environmental impact assessment":"A structured evaluation of likely environmental consequences before a project proceeds.","Mine rehabilitation":"Repair and stabilisation of land affected by mining.","Reclamation":"Returning disturbed land to a stable and productive use after extraction.","Remediation":"Removal, treatment or containment of contamination.","Revegetation":"Re-establishment of plant cover on disturbed land.","Topsoil replacement":"Returning stored surface soil to support ecosystem recovery.","Progressive rehabilitation":"Repairing completed areas of a site while extraction continues elsewhere.","Biodiversity offset":"A conservation action intended to compensate for unavoidable biodiversity loss.","Closure plan":"A strategy for environmental, social and financial management when a resource operation ends.","Waste":"Material discarded because it is unwanted or no longer useful in its current form.","Solid waste":"Discarded material that is predominantly solid.","Municipal waste":"Waste collected from households and similar community sources.","Commercial waste":"Waste produced by businesses, offices and retail activities.","Industrial waste":"Waste generated by manufacturing, mining or other industrial processes.","Hazardous waste":"Waste posing substantial risk because of toxicity, reactivity, flammability or other dangerous properties.","Electronic waste":"Discarded electrical and electronic devices and components.","Organic waste":"Biodegradable material originating from living organisms.","Waste audit":"Systematic measurement and classification of waste generated by an organisation or household.","Waste hierarchy":"A priority order favouring avoidance, reduction, reuse and recycling over disposal.","Waste avoidance":"Preventing material from becoming waste.","Waste reduction":"Decreasing the amount or harmfulness of waste produced.","Reuse":"Using a product or material again without major reprocessing.","Recycling":"Processing discarded material into raw material or new products.","Resource recovery":"Obtaining useful materials or energy from waste.","Composting":"Controlled biological decomposition of organic material into a soil-like product.","Anaerobic digestion":"Breakdown of organic matter without oxygen, producing biogas and digestate.","Incineration":"Controlled high-temperature combustion of waste.","Waste-to-energy":"Recovery of usable energy from waste treatment.","Landfill":"An engineered site for controlled burial of waste.","Landfill gas":"Gas, mainly methane and carbon dioxide, produced by decomposition in landfill.","Circular economy":"A system designed to keep products and materials in use and minimise waste.","Life-cycle assessment":"Evaluation of environmental impacts across extraction, manufacture, use and disposal.","Ecological footprint":"An estimate of the biologically productive area needed to support resource use and absorb wastes.","Sustainability":"Meeting present needs while maintaining environmental, social and economic capacity for the future.","Intergenerational equity":"Fairness between present and future generations in access to resources and environmental quality.","Triple bottom line":"Evaluation of environmental, social and economic outcomes together.","Carrying capacity":"The maximum population or level of use an environment can support over time.","Sustainable yield":"A rate of resource use that does not exceed long-term replacement or regeneration.","Overharvesting":"Removal of organisms or resources faster than they can recover.","Water pollution":"Introduction of substances or energy that degrades water quality.","Habitat destruction":"Removal or severe degradation of habitat required by organisms.","Cultural burning":"Planned, knowledge-based use of fire by Aboriginal Peoples to care for Country.","Seasonal harvesting":"Collecting resources according to seasonal availability and ecological knowledge.","Caring for Country":"Aboriginal approaches to maintaining relationships among people, culture, land, water and living things.","Land council":"An organisation representing Aboriginal interests in land, culture and resource management.","Protected area":"A geographically defined area managed to conserve environmental or cultural values.","Environmental legislation":"Laws regulating environmental protection and resource use.","Community sustainability initiative":"A local project intended to improve long-term environmental, social or resource outcomes.","Water-sensitive urban design":"Urban planning that integrates water supply, stormwater and ecosystem management.","Sustainable agriculture":"Food and fibre production that maintains environmental resources and long-term productivity.","Fisheries management":"Regulation and stewardship of aquatic harvesting to maintain populations and ecosystems.","Adaptive management":"A management approach that treats actions as learning opportunities and changes them in response to evidence.","Aboriginal and Torres Strait Islander Peoples":"Australia’s Indigenous peoples, comprising diverse Aboriginal language groups and Torres Strait Islander cultural groups.","Abiotic":"The non-living components of an environment.","Biota (biotic)":"All living organisms in a specific region or area.","Conclusion":"A judgement based on evidence.","Controlled variable":"A factor kept constant, or changed consistently, during an investigation.","Country":"An area traditionally owned and cared for by an Aboriginal language group or community, including cultural and spiritual relationships.","Cryosphere":"The frozen-water component of Earth’s system.","Dependent variable":"The factor that changes in response to the independent variable.","Digital technologies":"Hardware and software systems that handle digital data for specific purposes.","Environment":"All living and non-living surroundings.","Hypothesis":"A precise, testable proposed explanation that can be supported or refuted by investigation.","Independent variable":"The factor deliberately changed to observe its effect on the dependent variable.","Inquiry question":"The driving question for an investigation.","Investigation":"A planned scientific process for answering a question, exploring an idea or solving a problem using evidence.","Model":"A representation used to describe, simplify, explain or predict an object, system or idea.","Place":"A space recognised by Torres Strait Islander Peoples through physical, cultural and spiritual relationships.","Practical investigations":"Systematic scientific inquiries using equipment and hands-on methods, including laboratory work and fieldwork.","Primary sources/primary data":"Information produced by people directly involved in a study or observation.","Reliability":"The extent to which repeated observations under the same conditions give similar results.","Secondary-sourced investigation/data":"A planned inquiry using data or information produced by other people.","Technology":"A human-made tool, system, machine or process used to solve problems or meet needs.","Theory":"A broad, testable explanatory framework supported by reproducible evidence and capable of prediction.","Validity":"The extent to which a test measures what was intended and supports accurate inferences.","Variable":"A factor in an investigation that can be changed, maintained or measured.","Early Earth environment":"Atmosphere, oceans and energy sources provide chemical conditions.","Simple inorganic molecules":"Water, carbon compounds and nitrogen compounds are present.","Energy input":"Lightning, ultraviolet radiation or geothermal energy drives reactions.","Organic molecules":"Amino acids and other carbon compounds form.","Concentration and organisation":"Molecules accumulate on surfaces or within compartments.","Protocell":"A membrane-bounded chemical system develops.","Self-replication":"Information-bearing molecules make copies.","Natural selection":"More stable and efficient systems become more common.","Stromatolites":"Microbial communities form layered structures.","Oxygenic photosynthesis":"Water is used and oxygen is released.","Dissolved iron oxidation":"Oxygen reacts with iron in ancient oceans.","Banded iron formations":"Iron oxides accumulate in sedimentary layers.","Atmospheric oxygen rises":"Major oxygen sinks become increasingly saturated.","Ozone layer forms":"Stratospheric ozone absorbs ultraviolet radiation.","Aerobic and multicellular life":"Higher-energy respiration and complex organisms expand.","Mineral crystallisation":"Parent isotopes become locked into a mineral.","Closed system":"No parent or daughter isotope is later added or removed.","Radioactive decay":"Parent atoms transform at a predictable probability.","Daughter isotope accumulates":"Decay products increase through time.","Isotope ratio measured":"Parent and daughter abundances are determined.","Decay equation applied":"The elapsed time is calculated.","Absolute age":"A numerical age is assigned to the rock or event.","Plate motion":"Tectonic forces move crustal blocks.","Fault locking":"Friction prevents smooth movement.","Elastic strain":"Rock deforms and stores energy.","Fault rupture":"Stress exceeds rock strength.","Seismic waves":"Energy travels through Earth and along the surface.","Ground shaking":"Surface motion affects structures and slopes.","Exposure and vulnerability":"People and infrastructure experience different risks.","Disaster impact":"Damage depends on hazard intensity and community capacity.","Magma movement":"Magma rises or changes pressure below a volcano.","Volcanic earthquakes":"Rock fracture and fluid movement produce seismic signals.","Gas emission change":"Sulfur dioxide or carbon dioxide output changes.","Thermal anomaly":"Surface or vent temperatures change.","Data integration":"Multiple monitoring streams are compared.","Hazard forecast":"Scientists estimate likely scenarios and uncertainty.","Warning and evacuation":"Authorities communicate and act on the assessment.","Hazard assessment":"Location, probability and severity are estimated.","Risk mapping":"Hazard, exposure and vulnerability are combined spatially.","Hazard event":"The natural process affects a community.","Emergency response":"Immediate protection, rescue and communication occur.","Review and adaptation":"Lessons are used to improve future management.","Greenhouse-gas concentration rises":"The atmosphere contains more infrared-active molecules.","Outgoing infrared absorption":"More terrestrial radiation is absorbed.","Re-emission":"Radiation is emitted in all directions, including towards the surface.","Positive energy imbalance":"Incoming energy temporarily exceeds outgoing energy.","Surface and ocean warming":"Earth systems store additional energy.","Climate feedbacks":"Water vapour, ice and carbon-cycle responses amplify or modify change.","Climate impacts":"Temperature, rainfall, sea level and ecosystems change.","Proxy archive":"Ice, sediment, coral, cave deposit or tree growth is preserved.","Chronology established":"Layers, annual bands or radiometric ages provide dates.","Proxy measured":"Isotopes, pollen, chemistry or growth are quantified.","Modern calibration":"The proxy is related to observed climate conditions.","Confounding influences assessed":"Non-climate controls are considered.","Past condition inferred":"Temperature, rainfall or ice volume is reconstructed.","Multiple proxies compared":"Independent evidence tests consistency.","Climate history":"A defensible pattern of past variation is developed.","Atmospheric carbon dioxide rises":"Human emissions increase atmospheric concentration.","Carbon dioxide dissolves":"More gas enters surface seawater.","Carbonic acid forms":"Dissolved CO₂ reacts with water.","Hydrogen ions increase":"The acid dissociates.","Ocean pH decreases":"Seawater becomes less alkaline.","Carbonate ions decrease":"Hydrogen ions shift carbonate equilibria.","Calcification becomes harder":"Organisms have less carbonate for shells or skeletons.","Ecosystem effects":"Growth, survival and food webs may change.","Geological exploration":"Mapping, geophysics and geochemistry locate a deposit.","Resource estimate":"Deposit size and grade are calculated.","Mine development":"Infrastructure and extraction systems are constructed.","Ore extraction":"Rock containing the target material is removed.","Mineral processing":"Valuable material is separated from waste.","Tailings and waste management":"Residual material is contained and monitored.","Rehabilitation and closure":"Landforms, soils and ecosystems are stabilised and restored.","Resource demand":"A product or service is considered.","Avoid":"Unnecessary consumption and packaging are prevented.","Reduce":"Less material and energy are used.","Repair or remanufacture":"Product life is extended.","Recycle":"Materials are reprocessed into new feedstock.","Recover energy":"Residual waste may provide usable energy.","Dispose":"Remaining waste is managed in landfill as the last option.","Resource population assessed":"Abundance, age structure and distribution are measured.","Regeneration rate estimated":"Recruitment and growth are modelled.","Sustainable yield proposed":"A precautionary harvest level is set.","Extraction monitored":"Actual catch or removal is recorded.","Ecosystem indicators measured":"Habitat and non-target effects are tracked.","Data compared with targets":"Evidence tests whether use remains sustainable.","Long-term resource maintained":"Ecological function and future access are protected.","Sedimentary deposition":"Particles accumulate in layers.","Fossil succession":"Changing fossil assemblages help correlate strata.","Primary data":"Field measurements and observations are collected.","Secondary-sourced data":"Published maps, dates and records are compared.","Geological process":"Plate movement, weathering or volcanism changes the geosphere.","Atmospheric change":"Gases, aerosols or energy balance are altered.","Hydrosphere response":"Water circulation, chemistry or level changes.","Biosphere response":"Organisms and ecosystems experience new conditions.","Human exposure":"Communities and resources are affected.","Scientific monitoring":"Data reveal rates, patterns and uncertainty.","Management decision":"Risk reduction or resource action is selected.","Outcome evaluation":"Environmental and social effects are reviewed.","Resource proposal":"A potential extraction or development is identified.","Scientific baseline":"Existing environmental conditions are measured.","Impact prediction":"Models estimate likely changes and uncertainty.","Traditional owner consultation":"Cultural values and authority are considered.","Risk and benefit comparison":"Environmental, social and economic outcomes are weighed.","Mitigation hierarchy":"Avoidance is considered before minimisation and offsetting.","Adaptive monitoring":"Indicators trigger changes during operation.","Intergenerational judgement":"Long-term fairness and ecological capacity are evaluated.","Dissolved oxygen":"A course concept used in the Early Life and Oxygen Chain challenge.","Iron oxidation":"A course concept used in the Early Life and Oxygen Chain challenge.","Atmospheric oxygen":"A course concept used in the Early Life and Oxygen Chain challenge.","Complex life":"A course concept used in the Early Life and Oxygen Chain challenge.","Titration":"A course concept used in the Early Life and Oxygen Chain challenge.","Motor effect":"A course concept used in the Early Life and Oxygen Chain challenge.","Antibody":"A course concept used in the Early Life and Oxygen Chain challenge.","Rock layer":"A course concept used in the Geological Dating Chain challenge.","Cross-cutting relationship":"A course concept used in the Geological Dating Chain challenge.","Relative age":"A course concept used in the Geological Dating Chain challenge.","Mineral crystal":"A course concept used in the Geological Dating Chain challenge.","Radiometric date":"A course concept used in the Geological Dating Chain challenge.","Herd immunity":"A course concept used in the Geological Dating Chain challenge.","Keq":"A course concept used in the Geological Dating Chain challenge.","Photon":"A course concept used in the Geological Dating Chain challenge.","Rupture":"A course concept used in the Earthquake Hazard Chain challenge.","Surface waves":"A course concept used in the Earthquake Hazard Chain challenge.","Liquefaction":"A course concept used in the Earthquake Hazard Chain challenge.","Structural damage":"A course concept used in the Earthquake Hazard Chain challenge.","Disaster risk":"A course concept used in the Earthquake Hazard Chain challenge.","DNA ligase":"A course concept used in the Earthquake Hazard Chain challenge.","Buffer":"A course concept used in the Earthquake Hazard Chain challenge.","Redshift":"A course concept used in the Earthquake Hazard Chain challenge.","Gas change":"A course concept used in the Volcano Monitoring Chain challenge.","Forecast":"A course concept used in the Volcano Monitoring Chain challenge.","Warning":"A course concept used in the Volcano Monitoring Chain challenge.","Evacuation":"A course concept used in the Volcano Monitoring Chain challenge.","Meiosis":"A course concept used in the Volcano Monitoring Chain challenge.","Esterification":"A course concept used in the Volcano Monitoring Chain challenge.","Time dilation":"A course concept used in the Volcano Monitoring Chain challenge.","Atmospheric carbon dioxide":"A course concept used in the Enhanced Greenhouse Chain challenge.","Infrared absorption":"A course concept used in the Enhanced Greenhouse Chain challenge.","Downward re-emission":"A course concept used in the Enhanced Greenhouse Chain challenge.","Radiative imbalance":"A course concept used in the Enhanced Greenhouse Chain challenge.","Ocean heat uptake":"A course concept used in the Enhanced Greenhouse Chain challenge.","Global warming":"A course concept used in the Enhanced Greenhouse Chain challenge.","Water-vapour feedback":"A course concept used in the Enhanced Greenhouse Chain challenge.","Ice loss":"A course concept used in the Enhanced Greenhouse Chain challenge.","Ribosome":"A course concept used in the Enhanced Greenhouse Chain challenge.","Ksp":"A course concept used in the Enhanced Greenhouse Chain challenge.","Centripetal force":"A course concept used in the Enhanced Greenhouse Chain challenge.","Dating":"A course concept used in the Climate Proxy Chain challenge.","Proxy measurement":"A course concept used in the Climate Proxy Chain challenge.","Calibration":"A course concept used in the Climate Proxy Chain challenge.","Confounding factor":"A course concept used in the Climate Proxy Chain challenge.","Climate inference":"A course concept used in the Climate Proxy Chain challenge.","Cross-checking":"A course concept used in the Climate Proxy Chain challenge.","Climate reconstruction":"A course concept used in the Climate Proxy Chain challenge.","Mutation":"A course concept used in the Climate Proxy Chain challenge.","Transformer":"A course concept used in the Climate Proxy Chain challenge.","Titrant":"A course concept used in the Climate Proxy Chain challenge.","Exploration":"A course concept used in the Resource Development Chain challenge.","Impact assessment":"A course concept used in the Resource Development Chain challenge.","Approval":"A course concept used in the Resource Development Chain challenge.","Extraction":"A course concept used in the Resource Development Chain challenge.","Processing":"A course concept used in the Resource Development Chain challenge.","Waste management":"A course concept used in the Resource Development Chain challenge.","Rehabilitation":"A course concept used in the Resource Development Chain challenge.","Closure monitoring":"A course concept used in the Resource Development Chain challenge.","pH":"A course concept used in the Resource Development Chain challenge.","Product design":"A course concept used in the Circular Waste Chain challenge.","Material choice":"A course concept used in the Circular Waste Chain challenge.","Manufacture":"A course concept used in the Circular Waste Chain challenge.","Use":"A course concept used in the Circular Waste Chain challenge.","Repair":"A course concept used in the Circular Waste Chain challenge.","Collection":"A course concept used in the Circular Waste Chain challenge.","Recovered material":"A course concept used in the Circular Waste Chain challenge.","New product":"A course concept used in the Circular Waste Chain challenge.","Residual waste":"A course concept used in the Circular Waste Chain challenge.","Equilibrium constant":"A course concept used in the Circular Waste Chain challenge.","Muon":"A course concept used in the Circular Waste Chain challenge."};
+
+const bankEl=document.getElementById("bank");
+const modeEl=document.getElementById("mode");
+const levelEl=document.getElementById("level");
+const sequenceBoard=document.getElementById("sequenceBoard");
+const chainBoard=document.getElementById("chainBoard");
+const chainPathEl=document.getElementById("chainPath");
+const relationshipEl=document.getElementById("relationships");
+const candidateGrid=document.getElementById("candidateGrid");
+const messageEl=document.getElementById("message");
+const explanationEl=document.getElementById("explanation");
+const solutionList=document.getElementById("solutionList");
+const definitionGrid=document.getElementById("definitionGrid");
+
+let current=null;
+let sequenceOrder=[];
+let chainPath=[];
+let chainRelationships=[];
+let candidatePool=[];
+let roundAttempts=0;
+let hinted=false;
+let completed=false;
+let draggedIndex=null;
+let lastChallengeId="";
+let stats={score:0,streak:0,solved:0,attempts:0};
+
+const bankNames={"module5":"Module 5 — Earth’s Processes","module6":"Module 6 — Hazards","module7":"Module 7 — Climate Science","module8":"Module 8 — Resource Management","glossary":"Syllabus Glossary","review":"Whole HSC Course Review","expert":"Mixed Expert Challenge"};
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[ch]));
+}
+
+function sequenceLength(){
+  if(levelEl.value==="easy")return 4;
+  if(levelEl.value==="medium")return Math.min(6,current.steps.length);
+  return current.steps.length;
+}
+
+function chainTargetLength(){
+  return levelEl.value==="easy" ? Math.min(5,current.bestPath.length) : current.bestPath.length;
+}
+
+function setMessage(text,type=""){
+  messageEl.textContent=text;
+  messageEl.className="message"+(type?" "+type:"");
+}
+
+function updateStats(){
+  document.getElementById("scoreStat").textContent=stats.score;
+  document.getElementById("streakStat").textContent=stats.streak;
+  document.getElementById("solvedStat").textContent=stats.solved;
+  document.getElementById("attemptStat").textContent=stats.attempts;
+}
+
+function updateControls(){
+  const chainMode=modeEl.value==="chain";
+  document.getElementById("checkBtn").textContent=chainMode?"Check Chain":"Check Sequence";
+  document.getElementById("undoBtn").disabled=!chainMode||chainPath.length<=1||completed;
+  document.getElementById("modeHelp").textContent=chainMode
+    ?"Chain Reaction mode accepts only the curated directed links. Valid branches may lead to shorter routes, so use Undo Last Link strategically."
+    :"Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.";
+}
+
+function pickChallenge(){
+  const data=modeEl.value==="sequence"?SEQUENCES:CHAINS;
+  let choices=data.filter(item=>item.bank===bankEl.value);
+  if(!choices.length)throw new Error("No challenges available for this selection.");
+  if(choices.length>1){
+    const alternatives=choices.filter(item=>item.id!==lastChallengeId);
+    if(alternatives.length)choices=alternatives;
+  }
+  current=choices[Math.floor(Math.random()*choices.length)];
+  lastChallengeId=current.id;
+}
+
+function newChallenge(){
+  document.body.dataset.level=levelEl.value;
+  pickChallenge();
+  roundAttempts=0;
+  hinted=false;
+  completed=false;
+  explanationEl.classList.remove("show");
+  sequenceBoard.innerHTML="";
+  candidateGrid.innerHTML="";
+  chainPath=[];
+  chainRelationships=[];
+
+  document.getElementById("moduleStatus").textContent=bankNames[bankEl.value];
+  document.getElementById("modeStatus").textContent=modeEl.options[modeEl.selectedIndex].text;
+  document.getElementById("levelStatus").textContent=levelEl.options[levelEl.selectedIndex].text;
+  document.getElementById("roundStatus").textContent="In progress";
+  document.getElementById("challengeTitle").textContent=current.title;
+  document.getElementById("modeBadge").textContent=
+    modeEl.value==="sequence"?"SCIENCE SEQUENCE":"CHAIN REACTION";
+
+  if(modeEl.value==="sequence"){
+    sequenceBoard.hidden=false;
+    chainBoard.hidden=true;
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    sequenceOrder=shuffle(target);
+    if(sequenceOrder.length>1 && sequenceOrder.every((term,index)=>term===target[index])){
+      [sequenceOrder[0],sequenceOrder[1]]=[sequenceOrder[1],sequenceOrder[0]];
+    }
+    document.getElementById("challengeInstruction").textContent=
+      `Arrange ${target.length} terms into the scientifically defensible order.`;
+    renderSequence();
+    setMessage("Drag the cards or use the arrow buttons, then check your sequence.");
+  }else{
+    sequenceBoard.hidden=true;
+    chainBoard.hidden=false;
+    const target=current.bestPath.slice(0,chainTargetLength());
+    chainPath=[current.start];
+    candidatePool=levelEl.value==="easy"
+      ?shuffle(target.slice(1))
+      :shuffle(
+          current.nodes
+            .filter(term=>term!==current.start)
+            .concat(levelEl.value==="hard"?current.distractors:[])
+        );
+    document.getElementById("challengeInstruction").textContent=
+      `Begin with ${current.start} and build the longest accepted chain.`;
+    document.getElementById("chainTarget").textContent=`Target length: ${target.length} terms`;
+    renderChain();
+    setMessage("Choose a term that has an accepted relationship with the current end of the chain.");
+  }
+  updateControls();
+  updateProgress();
+}
+
+function renderSequence(){
+  sequenceBoard.innerHTML="";
+  sequenceOrder.forEach((term,index)=>{
+    const item=document.createElement("div");
+    item.className="sequence-item";
+    item.draggable=!completed;
+    item.dataset.index=String(index);
+
+    item.addEventListener("dragstart",()=>{
+      if(completed)return;
+      draggedIndex=index;
+      item.classList.add("dragging");
+    });
+    item.addEventListener("dragend",()=>{
+      draggedIndex=null;
+      item.classList.remove("dragging");
+    });
+    item.addEventListener("dragover",event=>event.preventDefault());
+    item.addEventListener("drop",event=>{
+      event.preventDefault();
+      if(draggedIndex===null||draggedIndex===index||completed)return;
+      const [moved]=sequenceOrder.splice(draggedIndex,1);
+      sequenceOrder.splice(index,0,moved);
+      clearPositionFeedback();
+      renderSequence();
+      updateProgress();
+    });
+
+    const pos=document.createElement("div");
+    pos.className="position";
+    pos.textContent=String(index+1);
+
+    const termEl=document.createElement("div");
+    termEl.className="sequence-term";
+    termEl.textContent=term;
+
+    const moves=document.createElement("div");
+    moves.className="move-buttons";
+
+    const up=document.createElement("button");
+    up.type="button";
+    up.textContent="↑";
+    up.title="Move up";
+    up.disabled=index===0||completed;
+    up.addEventListener("click",()=>moveSequence(index,-1));
+
+    const down=document.createElement("button");
+    down.type="button";
+    down.textContent="↓";
+    down.title="Move down";
+    down.disabled=index===sequenceOrder.length-1||completed;
+    down.addEventListener("click",()=>moveSequence(index,1));
+
+    moves.append(up,down);
+    item.append(pos,termEl,moves);
+    sequenceBoard.appendChild(item);
+  });
+}
+
+function moveSequence(index,direction){
+  const target=index+direction;
+  if(target<0||target>=sequenceOrder.length||completed)return;
+  [sequenceOrder[index],sequenceOrder[target]]=[sequenceOrder[target],sequenceOrder[index]];
+  clearPositionFeedback();
+  renderSequence();
+  updateProgress();
+}
+
+function clearPositionFeedback(){
+  [...sequenceBoard.children].forEach(item=>{
+    item.classList.remove("correct-position","wrong-position");
+  });
+}
+
+function checkSequence(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+  const correct=sequenceOrder.every((term,index)=>term===target[index]);
+
+  if(correct){
+    completeRound("sequence");
+    return;
+  }
+
+  const correctPositions=sequenceOrder.filter((term,index)=>term===target[index]).length;
+  [...sequenceBoard.children].forEach((item,index)=>{
+    item.classList.add(
+      sequenceOrder[index]===target[index]?"correct-position":"wrong-position"
+    );
+  });
+  stats.streak=0;
+  setMessage(`${correctPositions} of ${target.length} terms are currently in the correct position.`,"warn");
+  updateStats();
+  updateProgress();
+}
+
+function edgeFromTo(from,to){
+  return current.edges.find(edge=>edge[0]===from&&edge[1]===to);
+}
+
+function renderChain(){
+  chainPathEl.innerHTML="";
+  chainPath.forEach((term,index)=>{
+    const node=document.createElement("div");
+    node.className="chain-node";
+    node.textContent=term;
+    chainPathEl.appendChild(node);
+
+    if(index<chainPath.length-1){
+      const arrow=document.createElement("div");
+      arrow.className="chain-arrow";
+      arrow.textContent="→";
+      chainPathEl.appendChild(arrow);
+    }
+  });
+
+  relationshipEl.innerHTML=chainRelationships.map((rel,index)=>
+    `<div class="relationship"><strong>${index+1}. ${escapeHtml(chainPath[index])} → ${escapeHtml(chainPath[index+1])}</strong><br>${escapeHtml(rel)}</div>`
+  ).join("");
+
+  candidateGrid.innerHTML="";
+  candidatePool.forEach(term=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="term-card";
+    button.textContent=term;
+    const used=chainPath.includes(term);
+    button.disabled=used||completed;
+    if(used)button.classList.add("used");
+    button.addEventListener("click",()=>tryChainTerm(term,button));
+    candidateGrid.appendChild(button);
+  });
+
+  updateControls();
+  updateProgress();
+}
+
+function tryChainTerm(term,button){
+  if(completed)return;
+  const from=chainPath[chainPath.length-1];
+  const edge=edgeFromTo(from,term);
+  stats.attempts++;
+  roundAttempts++;
+
+  if(!edge||chainPath.includes(term)){
+    stats.streak=0;
+    button.classList.add("invalid-flash");
+    setTimeout(()=>button.classList.remove("invalid-flash"),320);
+    setMessage(`No accepted link from “${from}” to “${term}”.`,"bad");
+    updateStats();
+    return;
+  }
+
+  chainPath.push(term);
+  chainRelationships.push(edge[2]);
+  setMessage(`Valid link: ${edge[2]}`,"good");
+  renderChain();
+
+  if(chainPath.length>=chainTargetLength()){
+    completeRound("chain");
+  }else{
+    const possible=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(possible.length<=1){
+      setMessage(
+        `This branch is valid but ends at ${chainPath.length} terms. Undo the last link and try another route.`,
+        "warn"
+      );
+    }
+  }
+}
+
+function undoChain(){
+  if(modeEl.value!=="chain"||chainPath.length<=1||completed)return;
+  chainPath.pop();
+  chainRelationships.pop();
+  setMessage("Last valid link removed.");
+  renderChain();
+}
+
+function outgoing(term,used){
+  return current.edges
+    .filter(edge=>
+      edge[0]===term &&
+      !used.has(edge[1]) &&
+      candidatePool.includes(edge[1])
+    )
+    .map(edge=>edge[1]);
+}
+
+function longestRemainingPath(term,used,memo=new Map()){
+  const key=term+"|"+[...used].sort().join("~");
+  if(memo.has(key))return memo.get(key);
+
+  let best=[term];
+  for(const next of outgoing(term,used)){
+    const nextUsed=new Set(used);
+    nextUsed.add(next);
+    const candidate=[term,...longestRemainingPath(next,nextUsed,memo)];
+    if(candidate.length>best.length)best=candidate;
+  }
+  memo.set(key,best);
+  return best;
+}
+
+function checkChain(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=chainTargetLength();
+
+  if(chainPath.length>=target){
+    completeRound("chain");
+    return;
+  }
+
+  const possible=longestRemainingPath(
+    chainPath[chainPath.length-1],
+    new Set(chainPath)
+  );
+
+  if(possible.length>1){
+    setMessage(
+      `Your chain is valid but can still be extended. Current length: ${chainPath.length} / ${target}.`,
+      "warn"
+    );
+  }else{
+    stats.streak=0;
+    setMessage(
+      `This valid branch ends at ${chainPath.length} terms. Undo links and try another route to reach ${target}.`,
+      "warn"
+    );
+  }
+  updateStats();
+}
+
+function giveHint(){
+  if(!current||completed)return;
+  hinted=true;
+  stats.score=Math.max(0,stats.score-5);
+
+  if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const wrongIndex=sequenceOrder.findIndex((term,index)=>term!==target[index]);
+    if(wrongIndex===-1){
+      setMessage("The sequence is already correct. Check it to score.","good");
+    }else{
+      setMessage(`Hint: position ${wrongIndex+1} should be “${target[wrongIndex]}”.`,"warn");
+    }
+  }else{
+    const continuation=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(continuation.length>1){
+      const next=continuation[1];
+      const edge=edgeFromTo(chainPath[chainPath.length-1],next);
+      setMessage(`Hint: try “${next}” next. ${edge?edge[2]:""}`,"warn");
+    }else{
+      setMessage("This branch has ended. Undo the last link and choose another valid route.","warn");
+    }
+  }
+  updateStats();
+}
+
+function revealAnswer(){
+  if(!current)return;
+  completed=true;
+  stats.streak=0;
+  document.getElementById("roundStatus").textContent="Answer revealed";
+
+  if(modeEl.value==="sequence"){
+    sequenceOrder=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    renderSequence();
+  }else{
+    chainPath=current.bestPath.slice(0,chainTargetLength());
+    chainRelationships=[];
+    for(let i=0;i<chainPath.length-1;i++){
+      const edge=edgeFromTo(chainPath[i],chainPath[i+1]);
+      chainRelationships.push(edge?edge[2]:"Accepted relationship.");
+    }
+    renderChain();
+  }
+
+  showExplanation();
+  setMessage("Answer revealed. Review why each step or link is accepted.","warn");
+  updateStats();
+  updateControls();
+  updateProgress();
+}
+
+function completeRound(mode){
+  if(completed)return;
+  completed=true;
+  const base=mode==="sequence"?100:120;
+  const penalty=Math.min(60,Math.max(0,roundAttempts-1)*10)+(hinted?5:0);
+  const earned=Math.max(40,base-penalty);
+
+  stats.score+=earned;
+  stats.streak++;
+  stats.solved++;
+  document.getElementById("roundStatus").textContent="Solved";
+  setMessage(`Challenge solved. +${earned} points.`,"good");
+  showExplanation();
+  updateStats();
+  updateControls();
+  updateProgress();
+
+  if(mode==="sequence")renderSequence();
+  else renderChain();
+}
+
+function showExplanation(){
+  explanationEl.classList.add("show");
+  document.getElementById("summaryText").textContent=
+    current.summary||"Review the accepted order and relationships.";
+
+  let terms=[];
+  if(modeEl.value==="sequence"){
+    const steps=current.steps.slice(0,sequenceLength());
+    solutionList.innerHTML=steps.map((step,index)=>{
+      const rel=index===0?"Starting point.":step[1];
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(step[0])}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=steps.map(step=>step[0]);
+  }else{
+    const path=current.bestPath.slice(0,chainTargetLength());
+    solutionList.innerHTML=path.map((term,index)=>{
+      let rel="Starting term.";
+      if(index>0){
+        const edge=edgeFromTo(path[index-1],term);
+        rel=edge?edge[2]:"Accepted relationship.";
+      }
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(term)}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=[...new Set(path)];
+  }
+
+  definitionGrid.innerHTML=terms.map(term=>
+    `<div class="definition-item"><strong>${escapeHtml(term)}</strong><br>${escapeHtml(DEFINITIONS[term]||"Scientific concept used in this challenge.")}</div>`
+  ).join("");
+}
+
+function updateProgress(){
+  let percent=0;
+  if(!current){
+    percent=0;
+  }else if(completed){
+    percent=100;
+  }else if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const correct=sequenceOrder.filter((term,index)=>term===target[index]).length;
+    percent=target.length?correct/target.length*100:0;
+  }else{
+    percent=chainTargetLength()?chainPath.length/chainTargetLength()*100:0;
+  }
+  document.getElementById("progressBar").style.width=Math.min(100,percent)+"%";
+}
+
+function resetScore(){
+  stats={score:0,streak:0,solved:0,attempts:0};
+  updateStats();
+  setMessage("Session score reset. The current challenge remains available.");
+}
+
+document.getElementById("newBtn").addEventListener("click",newChallenge);
+document.getElementById("checkBtn").addEventListener("click",()=>{
+  if(!current)return;
+  modeEl.value==="sequence"?checkSequence():checkChain();
+});
+document.getElementById("undoBtn").addEventListener("click",undoChain);
+document.getElementById("hintBtn").addEventListener("click",giveHint);
+document.getElementById("revealBtn").addEventListener("click",revealAnswer);
+document.getElementById("resetScoreBtn").addEventListener("click",resetScore);
+
+[bankEl,modeEl,levelEl].forEach(control=>{
+  control.addEventListener("change",()=>{
+    document.body.dataset.level=levelEl.value;
+    newChallenge();
+  });
+});
+
+updateStats();
+newChallenge();
+
+</script>
+</body>
+</html>
