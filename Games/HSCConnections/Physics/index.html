@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Connections — Physics</title>
+<style>
+:root{
+  --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
+  --accent:#178452;--accent2:#49ad78;--soft:#eaf8f0;--shadow:0 10px 28px rgba(32,88,65,.13);
+}
+body[data-complexity="hard"]{--bg:#fff3dc;--ink:#543810;--muted:#776143;--line:#ead2a4;--accent:#d27b0e;--accent2:#eda83f;--soft:#fff6e8;--shadow:0 10px 28px rgba(130,82,13,.14)}
+body[data-complexity="insane"]{--bg:#ffe8e9;--ink:#541f26;--muted:#785057;--line:#e9bfc4;--accent:#c53d4e;--accent2:#e26673;--soft:#fff0f2;--shadow:0 10px 28px rgba(120,30,42,.15)}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#fbfdff);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;transition:background .25s,color .25s}
+.page{width:min(1500px,calc(100% - 28px));margin:18px auto 34px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,81,120,.10)}
+.hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero p{margin:7px 0 0;max-width:980px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:18px;margin-top:18px;align-items:start}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+h2{margin:0 0 12px;font-size:1.25rem} h3{margin:0}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select,button{font:inherit}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+button{border:0;border-radius:12px;padding:11px 14px;font-weight:850;cursor:pointer}
+button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.45rem;color:var(--accent)}
+.help,.info-bank{padding:12px;border-radius:13px;background:var(--soft);border:1px solid var(--line);line-height:1.45;margin-top:14px}
+.info-bank ul{margin:8px 0 0;padding-left:20px}
+.board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.board-head p{margin:4px 0 0;color:var(--muted)}
+.life-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+.life{width:28px;height:28px;border-radius:50%;background:var(--accent);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.life.lost{background:#d5dadd;opacity:.6}
+.groups-found{display:grid;gap:9px;margin-bottom:10px}
+.found{border-radius:14px;padding:12px 14px;color:#173129}
+.found:nth-child(1){background:#f2dc72}.found:nth-child(2){background:#9fd7a6}.found:nth-child(3){background:#8fc9ed}.found:nth-child(4){background:#c6a9e8}
+.found strong{display:block;font-size:1.04rem}.found small{display:block;margin-top:4px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px}
+.term{min-height:86px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px;text-align:center;color:var(--ink);font-weight:820;line-height:1.2;transition:transform .12s,border-color .12s,background .12s}
+.term:hover{transform:translateY(-2px);border-color:var(--accent)}
+.term.selected{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.term.one-away{animation:pulse .45s}
+@keyframes pulse{50%{transform:scale(1.035)}}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.action-row button{min-width:120px}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760}
+.message.good{background:#e8f8ef;border-color:#89c9a6;color:#17623e}
+.message.bad{background:#fff0f2;border-color:#e0a1aa;color:#8b2533}
+.message.near{background:#fff7dc;border-color:#e0c76e;color:#67500d}
+.reveal{margin-top:14px;display:none}
+.reveal.show{display:block}
+.reveal-grid{display:grid;gap:9px}
+.reveal-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px}
+.reveal-item strong{color:var(--accent)}
+.footer{margin-top:18px;color:var(--muted);font-size:.88rem;text-align:center}
+.footer a{color:var(--accent)}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.page{width:min(100% - 16px,1500px)}.hero{padding:20px}.term{min-height:76px;font-size:.9rem}}
+</style>
+</head>
+<body data-complexity="easy">
+<div class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>HSC Connections</h1>
+    <p>Physics HSC course: sort 16 terms into four scientifically connected groups of four.</p>
+  </header>
+  <main class="layout">
+    <aside class="card">
+      <h2>Game setup</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Physics</option></select>
+      <label for="bank">Content bank</label>
+      <select id="bank">
+        <option value="module5">Module 5 — Advanced Mechanics</option>
+        <option value="module6">Module 6 — Electromagnetism</option>
+        <option value="module7">Module 7 — The Nature of Light</option>
+        <option value="module8">Module 8 — From the Universe to the Atom</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+      <label for="info">Available Info</label>
+      <select id="info">
+        <option value="full">Full support</option>
+        <option value="bank" selected>Connection bank</option>
+        <option value="terms">Terms only</option>
+      </select>
+      <label for="complexity">Complexity</label>
+      <select id="complexity">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+        <option value="insane">Insane</option>
+      </select>
+      <div class="controls-row">
+        <button id="newPuzzle" class="primary">New puzzle</button>
+        <button id="resetPuzzle" class="secondary">Reset puzzle</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="foundStat">0</strong>Groups found</div>
+        <div class="stat"><strong id="guessStat">0</strong>Guesses</div>
+      </div>
+      <div id="infoBank" class="info-bank"></div>
+      <div class="help"><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. An incorrect selection may receive a “one away” message if three terms belong together.</div>
+    </aside>
+    <section class="card">
+      <div class="board-head">
+        <div><h2 id="puzzleTitle">Advanced Mechanics Foundations</h2><p id="puzzleSubtitle">Find four connected groups.</p></div>
+        <button id="shuffleBtn" class="secondary">Shuffle</button>
+      </div>
+      <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
+      <div id="groupsFound" class="groups-found"></div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="action-row">
+        <button id="submitBtn" class="primary">Submit group</button>
+        <button id="deselectBtn" class="secondary">Deselect</button>
+        <button id="hintBtn" class="secondary">Hint</button>
+        <button id="revealBtn" class="secondary">Reveal groups</button>
+      </div>
+      <div id="message" class="message">Select four terms that share a precise scientific connection.</div>
+      <div id="reveal" class="reveal"><h3>Complete solution</h3><div id="revealGrid" class="reveal-grid"></div></div>
+    </section>
+  </main>
+  <div class="footer">Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/physics-stage-6-2017" target="_blank" rel="noopener">NSW Physics Stage 6 Syllabus (2017)</a>. Connections include syllabus concepts and closely related scientific terminology.</div>
+</div>
+<script>
+"use strict";
+const PUZZLES=[{"id":"m5-easy-1","bank":"module5","complexity":"easy","title":"Advanced Mechanics Foundations","groups":[{"connection":"Projectile-motion quantities","explanation":"These are used to describe and predict a projectile’s flight.","terms":["Launch angle","Time of flight","Maximum height","Horizontal range"]},{"connection":"Uniform circular motion","explanation":"These quantities determine the inward acceleration and force in circular motion.","terms":["Speed","Radius","Centripetal acceleration","Centripetal force"]},{"connection":"Orbital quantities","explanation":"These describe the motion and energy of planets or satellites.","terms":["Orbital radius","Orbital velocity","Orbital period","Total orbital energy"]},{"connection":"Kepler’s orbital ideas","explanation":"These terms describe the geometry and timing of planetary orbits.","terms":["Ellipse","Focus","Equal areas","Period–radius relationship"]}]},{"id":"m5-hard-1","bank":"module5","complexity":"hard","title":"Forces and Orbits","groups":[{"connection":"Ideal projectile assumptions","explanation":"These assumptions allow horizontal and vertical motion to be analysed independently.","terms":["Uniform gravity","No air resistance","Constant horizontal velocity","Constant vertical acceleration"]},{"connection":"Forces that can provide centripetal force","explanation":"Each may act as the net inward force in a circular-motion situation.","terms":["Friction","Tension","Gravity","Normal force"]},{"connection":"Geostationary-orbit requirements","explanation":"These conditions keep a satellite above one point on Earth’s equator.","terms":["Circular orbit","Equatorial plane","West-to-east motion","24-hour period"]},{"connection":"Orbit-energy changes","explanation":"These change when a satellite transfers between circular or elliptical orbits.","terms":["Kinetic energy","Potential energy","Total energy","Engine work"]}]},{"id":"m5-insane-1","bank":"module5","complexity":"insane","title":"Mechanics Fine Distinctions","groups":[{"connection":"At the top of a projectile path","explanation":"These describe the instantaneous ideal conditions at maximum height.","terms":["Vertical velocity zero","Horizontal velocity non-zero","Acceleration downward","Net force downward"]},{"connection":"Uniform circular motion at constant speed","explanation":"These distinguish the changing vector quantities from constant scalar quantities.","terms":["Speed constant","Velocity changes","Acceleration inward","Centripetal force inward"]},{"connection":"Escape-velocity dependencies","explanation":"These determine or do not determine ideal escape speed from a spherical body.","terms":["Planet mass","Planet radius","Gravitational constant","Independent of projectile mass"]},{"connection":"Hohmann-transfer sequence","explanation":"These are the stages of an efficient transfer between circular orbits.","terms":["Initial circular orbit","First velocity change","Transfer ellipse","Second velocity change"]}]},{"id":"m6-easy-1","bank":"module6","complexity":"easy","title":"Electromagnetism Foundations","groups":[{"connection":"Charged particle in a uniform electric field","explanation":"These quantities determine force, acceleration and energy transfer.","terms":["Charge","Electric field","Electric force","Acceleration"]},{"connection":"Motor-effect variables","explanation":"These determine the force on a current-carrying conductor.","terms":["Current","Conductor length","Magnetic flux density","Angle"]},{"connection":"Electromagnetic-induction ideas","explanation":"These describe how changing flux produces an emf and opposing current.","terms":["Magnetic flux","Flux linkage","Faraday’s law","Lenz’s law"]},{"connection":"Transformer components","explanation":"These are essential parts or properties of a simple transformer.","terms":["Primary coil","Secondary coil","Iron core","Alternating current"]}]},{"id":"m6-hard-1","bank":"module6","complexity":"hard","title":"Fields, Motors and Generators","groups":[{"connection":"Motion of a positive charge in a magnetic field","explanation":"These describe the force and trajectory when velocity is perpendicular to the field.","terms":["Force perpendicular to velocity","Force perpendicular to field","Constant speed","Circular path"]},{"connection":"Simple DC motor components","explanation":"These provide current, magnetic interaction, rotation and current reversal.","terms":["Armature","Permanent magnets","Brushes","Split-ring commutator"]},{"connection":"AC generator components or outcomes","explanation":"These produce and transfer an alternating induced emf.","terms":["Rotating coil","Magnetic field","Slip rings","Alternating output"]},{"connection":"Transformer energy losses","explanation":"These prevent a real transformer from reaching ideal efficiency.","terms":["Resistive heating","Eddy currents","Incomplete flux linkage","Core heating"]}]},{"id":"m6-insane-1","bank":"module6","complexity":"insane","title":"Electromagnetic Energy Transfer","groups":[{"connection":"High-voltage transmission","explanation":"These explain why transformers reduce resistive loss in an electricity network.","terms":["Voltage stepped up","Current reduced","I²R loss reduced","Voltage stepped down"]},{"connection":"Lenz’s law and conservation of energy","explanation":"These connect an inducing change with an opposing response and required external work.","terms":["Changing magnetic flux","Induced emf","Opposing magnetic effect","External work"]},{"connection":"Back emf in a DC motor","explanation":"These explain why motor current falls as rotational speed rises.","terms":["Coil rotates","Flux changes","Opposing emf induced","Current decreases"]},{"connection":"Force between parallel currents","explanation":"These statements describe direction and Newton’s third-law relationship.","terms":["Same direction attracts","Opposite direction repels","Equal forces","Opposite forces"]}]},{"id":"m7-easy-1","bank":"module7","complexity":"easy","title":"Models of Light","groups":[{"connection":"Regions of the electromagnetic spectrum","explanation":"These are ordered parts of the electromagnetic spectrum.","terms":["Radio waves","Microwaves","Visible light","X-rays"]},{"connection":"Evidence for a wave model","explanation":"These phenomena are naturally explained using transverse waves.","terms":["Diffraction","Interference","Polarisation","Double-slit pattern"]},{"connection":"Photoelectric-effect quantities","explanation":"These are used to explain or calculate photoelectron emission.","terms":["Photon energy","Work function","Threshold frequency","Maximum kinetic energy"]},{"connection":"Special-relativity effects","explanation":"These are major consequences of Einstein’s postulates.","terms":["Time dilation","Length contraction","Relativity of simultaneity","Relativistic momentum"]}]},{"id":"m7-hard-1","bank":"module7","complexity":"hard","title":"Light Evidence and Measurement","groups":[{"connection":"Stellar-spectrum information","explanation":"Spectra can provide evidence for these stellar characteristics.","terms":["Surface temperature","Chemical composition","Rotational velocity","Radial velocity"]},{"connection":"Double-slit interference variables","explanation":"These determine fringe separation in a double-slit pattern.","terms":["Wavelength","Slit separation","Screen distance","Fringe spacing"]},{"connection":"Black-body and quantum development","explanation":"These observations or ideas drove the change from classical to quantum models.","terms":["Black-body spectrum","Ultraviolet catastrophe","Planck quantisation","Photon model"]},{"connection":"Experimental evidence for relativity","explanation":"These observations support relativistic time and momentum effects.","terms":["Cosmic muons","Atomic clocks","Particle accelerators","Cosmological observations"]}]},{"id":"m7-insane-1","bank":"module7","complexity":"insane","title":"Wave, Quantum and Relativistic Limits","groups":[{"connection":"Constructive interference conditions","explanation":"These describe waves reinforcing one another at a point.","terms":["In phase","Path difference nλ","Amplitude increases","Bright fringe"]},{"connection":"Photoelectric-effect observations inconsistent with a classical wave model","explanation":"These results require a photon-energy explanation.","terms":["Threshold frequency","Immediate emission","Energy depends on frequency","Rate depends on intensity"]},{"connection":"Lorentz-factor applications","explanation":"These quantities change from their proper values through the same relativistic factor.","terms":["Dilated time","Contracted length","Relativistic momentum","High-speed energy"]},{"connection":"Mass–energy conversion examples","explanation":"These involve measurable conversion between mass and other forms of energy.","terms":["Solar fusion","Electron–positron annihilation","Pair production","Nuclear decay"]}]},{"id":"m8-easy-1","bank":"module8","complexity":"easy","title":"Universe and Atom Foundations","groups":[{"connection":"Evidence for an expanding Universe","explanation":"These observations support the modern expanding-Universe model.","terms":["Galaxy redshift","Hubble’s law","Cosmic microwave background","Light-element abundance"]},{"connection":"Stellar classifications or stages","explanation":"These occupy distinct regions of a Hertzsprung–Russell diagram.","terms":["Main sequence","Red giant","White dwarf","Supergiant"]},{"connection":"Atomic-model experiments","explanation":"These provided evidence for electrons, nuclear structure and neutrons.","terms":["Cathode rays","Oil-drop experiment","Alpha scattering","Beryllium radiation"]},{"connection":"Nuclear radiation types","explanation":"These are major emissions from unstable nuclei.","terms":["Alpha","Beta minus","Beta plus","Gamma"]}]},{"id":"m8-hard-1","bank":"module8","complexity":"hard","title":"Atomic and Nuclear Evidence","groups":[{"connection":"Hydrogen-spectrum model development","explanation":"These connect observed lines with quantised atomic energy.","terms":["Balmer series","Discrete wavelengths","Energy levels","Photon emission"]},{"connection":"Evidence for quantum matter","explanation":"These support wave behaviour and probabilistic electron models.","terms":["de Broglie wavelength","Electron diffraction","Schrödinger equation","Probability distribution"]},{"connection":"Fission chain-reaction concepts","explanation":"These determine whether fission remains controlled, dies out or grows rapidly.","terms":["Fissile nucleus","Released neutrons","Critical mass","Control rods"]},{"connection":"Standard Model particle groups","explanation":"These classify fundamental particles and composite matter particles.","terms":["Quarks","Leptons","Baryons","Mesons"]}]},{"id":"m8-insane-1","bank":"module8","complexity":"insane","title":"Origins and Fundamental Matter","groups":[{"connection":"Main-sequence fusion","explanation":"These describe hydrogen fusion and the observable energy source of main-sequence stars.","terms":["Proton–proton chain","CNO cycle","Helium nucleus","Photon energy"]},{"connection":"High-mass stellar evolution","explanation":"These stages or outcomes occur in the evolution of a massive star.","terms":["Main sequence","Red supergiant","Supernova","Neutron star"]},{"connection":"Nuclear-energy calculations","explanation":"These quantities connect changes in nuclear mass with released energy.","terms":["Mass defect","Binding energy","E = mc²","Energy conservation"]},{"connection":"Quark composition","explanation":"These specify the constituent quarks of common nucleons.","terms":["Proton: uud","Neutron: udd","Up quark +2/3","Down quark −1/3"]}]},{"id":"glossary-easy-1","bank":"glossary","complexity":"easy","title":"Physics Glossary Foundations","groups":[{"connection":"Roles of variables","explanation":"These identify a factor and its changed, measured or maintained role.","terms":["Variable","Independent variable","Dependent variable","Controlled variable"]},{"connection":"Mechanical quantities","explanation":"These describe interactions, motion and energy transfer.","terms":["Force","Net force","Kinetic energy","Work"]},{"connection":"Electrical quantities or components","explanation":"These describe charge flow, potential difference, opposition and a component that provides it.","terms":["Electric current","Voltage","Electrical resistance","Resistor"]},{"connection":"Forms of investigation and evidence","explanation":"These distinguish organised inquiry, hands-on work and data sources.","terms":["Investigation","Practical investigation","Primary data","Secondary-sourced investigation"]}]},{"id":"glossary-hard-1","bank":"glossary","complexity":"hard","title":"Glossary Relationships","groups":[{"connection":"Electric and magnetic field terms","explanation":"These describe sources, field regions and field-producing devices.","terms":["Charge","Electric field","Magnet","Solenoid"]},{"connection":"Collision and momentum concepts","explanation":"These describe interactions and whether kinetic energy is conserved.","terms":["Collision","Elastic collision","Inelastic collision","Linear momentum"]},{"connection":"Scientific knowledge and representation","explanation":"These describe proposed explanations, broad explanations, relationships and representations.","terms":["Hypothesis","Theory","Law","Model"]},{"connection":"Data and quality terms","explanation":"These distinguish descriptive and numerical evidence and how it is judged.","terms":["Qualitative","Quantitative","Reliability","Validity"]}]},{"id":"glossary-insane-1","bank":"glossary","complexity":"insane","title":"Glossary Fine Distinctions","groups":[{"connection":"Physical-state descriptions","explanation":"These distinguish change with time, no change, balance and elastic recovery.","terms":["Dynamic","Static","Equilibrium","Elastic"]},{"connection":"Electrical behaviour terms","explanation":"These distinguish fields, equal-potential locations and current–voltage behaviour.","terms":["Electric field","Equipotential","Ohmic","Non-ohmic"]},{"connection":"Magnetic terms","explanation":"These distinguish an object, a responsive substance, an aligned substance and a current-carrying coil.","terms":["Magnet","Magnetic material","Magnetised material","Solenoid"]},{"connection":"Reference-frame and quantity terms","explanation":"These concern measurement context and quantities with direction.","terms":["Frame of reference","Inertial frame of reference","Vector","Linear momentum"]}]},{"id":"review-easy-1","bank":"review","complexity":"easy","title":"Balanced Physics Review","groups":[{"connection":"Module 5 orbital mechanics","explanation":"These quantities describe satellite motion and gravitational energy.","terms":["Orbital velocity","Orbital period","Orbital radius","Gravitational potential energy"]},{"connection":"Module 6 electromagnetic devices","explanation":"These apply forces or induction to convert or transfer energy.","terms":["DC motor","AC generator","Transformer","Induction motor"]},{"connection":"Module 7 evidence about light","explanation":"These experiments or phenomena establish wave and particle properties.","terms":["Diffraction","Interference","Polarisation","Photoelectric effect"]},{"connection":"Module 8 atomic experiments","explanation":"These experiments changed the accepted model of atomic structure.","terms":["Thomson experiment","Millikan experiment","Geiger–Marsden experiment","Chadwick experiment"]}]},{"id":"review-hard-1","bank":"review","complexity":"hard","title":"Cross-module Physics","groups":[{"connection":"Examples of circular motion","explanation":"These involve velocity changing direction under a net inward force.","terms":["Banked car","Orbiting satellite","Charge in magnetic field","Motor-coil rotation"]},{"connection":"Energy-conservation applications","explanation":"These require energy accounting across mechanical, electromagnetic, relativistic or nuclear systems.","terms":["Orbital transfer","Lenz’s law","Photoelectric equation","Nuclear mass defect"]},{"connection":"Wave evidence or behaviour","explanation":"These involve wave propagation, superposition or wavelength change.","terms":["Diffraction","Interference","Doppler shift","Matter waves"]},{"connection":"Technologies that test physical models","explanation":"These instruments produce evidence across scales from fields to fundamental particles.","terms":["Seismometer","Spectroscope","Atomic clock","Particle accelerator"]}]},{"id":"review-insane-1","bank":"review","complexity":"insane","title":"HSC Physics Synthesis","groups":[{"connection":"Quantities involving an inverse-square relationship","explanation":"These decrease with the square of separation from an ideal point or spherical source.","terms":["Gravitational force","Gravitational field strength","Light intensity","Electric field strength"]},{"connection":"Evidence that challenged classical physics","explanation":"These observations required quantum or relativistic models.","terms":["Black-body spectrum","Photoelectric effect","Constant light speed","Atomic line spectra"]},{"connection":"Induction and opposition","explanation":"These describe induced responses that resist the changes producing them.","terms":["Lenz’s law","Back emf","Eddy-current braking","Transformer loading"]},{"connection":"Mass–energy processes","explanation":"These involve measurable conversion between mass and other forms of energy.","terms":["Stellar fusion","Nuclear fission","Particle annihilation","Pair production"]}]},{"id":"expert-hard-1","bank":"expert","complexity":"hard","title":"Mixed Physics Expert Challenge","groups":[{"connection":"Forces perpendicular to velocity","explanation":"These can change direction without directly changing speed.","terms":["Centripetal force","Magnetic force","Normal force on banked track","Gravitational orbital force"]},{"connection":"Quantised physical systems","explanation":"These involve discrete packets, states or spectral transitions.","terms":["Photon","Atomic energy level","Line spectrum","Nuclear decay energy"]},{"connection":"Scientific models replaced or extended","explanation":"Each was useful but limited by later evidence.","terms":["Newtonian light particles","Classical black body","Rutherford atom","Bohr atom"]},{"connection":"Particle paths controlled by fields","explanation":"These use electric or magnetic fields to accelerate, curve or select charged particles.","terms":["Parallel plates","Velocity selector","Cyclotron path","Mass spectrometer"]}]},{"id":"expert-insane-1","bank":"expert","complexity":"insane","title":"Mixed Physics Expert Challenge II","groups":[{"connection":"Proper quantities","explanation":"These are measured in the frame where spatial or temporal separation is simplest.","terms":["Proper time","Proper length","Rest frame","Co-located events"]},{"connection":"Rates of change producing physical effects","explanation":"These generate acceleration, emf, power or radioactive activity.","terms":["Velocity change","Flux change","Energy transfer rate","Nuclear decay rate"]},{"connection":"Binding systems","explanation":"These require energy input to separate constituent parts completely.","terms":["Gravitational orbit","Atomic electron","Atomic nucleus","Hadron"]},{"connection":"Conservation laws used across HSC Physics","explanation":"These provide constraints for mechanical, electromagnetic and particle processes.","terms":["Energy","Momentum","Electric charge","Mass–energy"]}]}];
+const bankEl=document.getElementById("bank"),infoEl=document.getElementById("info"),complexityEl=document.getElementById("complexity");
+const grid=document.getElementById("grid"),groupsFound=document.getElementById("groupsFound"),message=document.getElementById("message");
+let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,finished=false;
+const maxMistakes={easy:4,hard:3,insane:2};
+
+function shuffle(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function availablePuzzles(){
+  const bank=bankEl.value,c=complexityEl.value;
+  let list=PUZZLES.filter(p=>p.bank===bank&&p.complexity===c);
+  if(!list.length) list=PUZZLES.filter(p=>p.bank===bank);
+  return list;
+}
+function startPuzzle(){
+  const list=availablePuzzles();
+  puzzle=list[Math.floor(Math.random()*list.length)];
+  if(puzzle.complexity!==complexityEl.value) complexityEl.value=puzzle.complexity;
+  selected=[];solved=[];mistakes=0;guesses=0;finished=false;
+  remainingTerms=shuffle(puzzle.groups.flatMap(g=>g.terms));
+  document.body.dataset.complexity=puzzle.complexity;
+  document.getElementById("puzzleTitle").textContent=puzzle.title;
+  document.getElementById("puzzleSubtitle").textContent=bankEl.options[bankEl.selectedIndex].text+" · "+complexityEl.options[complexityEl.selectedIndex].text;
+  document.getElementById("reveal").classList.remove("show");
+  render();setMessage("Select four terms that share a precise scientific connection.","");
+}
+function render(){
+  grid.innerHTML="";
+  remainingTerms.forEach(term=>{
+    const b=document.createElement("button");b.type="button";b.className="term";b.textContent=term;
+    if(selected.includes(term))b.classList.add("selected");
+    b.addEventListener("click",()=>toggleTerm(term));grid.appendChild(b);
+  });
+  groupsFound.innerHTML=solved.map(g=>`<div class="found"><strong>${escapeHtml(g.connection)}</strong>${g.terms.map(escapeHtml).join(" · ")}<small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  renderLives();renderInfo();updateStats();
+}
+function toggleTerm(term){
+  if(finished)return;
+  if(selected.includes(term))selected=selected.filter(x=>x!==term);
+  else if(selected.length<4)selected.push(term);
+  render();
+}
+function submitGroup(){
+  if(finished)return;
+  if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
+  guesses++;
+  const target=puzzle.groups.find(g=>!solved.some(s=>s.connection===g.connection)&&selected.every(t=>g.terms.includes(t)));
+  if(target){
+    solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
+    setMessage("Correct connection: "+target.connection+".","good");render();
+    if(solved.length===4)finish(true);
+    return;
+  }
+  mistakes++;
+  let best=0;
+  puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection)).forEach(g=>{best=Math.max(best,selected.filter(t=>g.terms.includes(t)).length);});
+  const tiles=[...grid.children].filter(x=>selected.includes(x.textContent));tiles.forEach(x=>x.classList.add("one-away"));
+  if(best===3)setMessage("One away — three of your selected terms belong together.","near");
+  else setMessage("That group is not correct. Reconsider the most precise connection.","bad");
+  selected=[];render();
+  if(mistakes>=maxMistakes[complexityEl.value])finish(false);
+}
+function finish(won){
+  finished=true;
+  if(!won){setMessage("No mistakes remaining. The complete solution is shown below.","bad");showSolution();}
+  else{setMessage(`Puzzle complete in ${guesses} guesses.`,"good");showSolution();}
+}
+function showSolution(){
+  const reveal=document.getElementById("reveal"),box=document.getElementById("revealGrid");
+  box.innerHTML=puzzle.groups.map(g=>`<div class="reveal-item"><strong>${escapeHtml(g.connection)}</strong><br>${g.terms.map(escapeHtml).join(" · ")}<br><small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  reveal.classList.add("show");
+}
+function hint(){
+  if(finished)return;
+  const unsolved=puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection));
+  const g=unsolved[Math.floor(Math.random()*unsolved.length)];
+  if(infoEl.value==="terms")setMessage("Hint: one valid group includes “"+g.terms[Math.floor(Math.random()*4)]+"”.","near");
+  else setMessage("Hint: look for a group connected by “"+g.connection+"”.","near");
+}
+function renderLives(){
+  const box=document.getElementById("lives");box.innerHTML="";
+  for(let i=0;i<maxMistakes[complexityEl.value];i++){const d=document.createElement("span");d.className="life"+(i<mistakes?" lost":"");box.appendChild(d);}
+}
+function renderInfo(){
+  const box=document.getElementById("infoBank"),mode=infoEl.value;
+  if(mode==="terms"){box.style.display="none";return;}
+  box.style.display="block";
+  const titles=shuffle(puzzle.groups.map(g=>g.connection));
+  box.innerHTML="<strong>Connection bank</strong><ul>"+titles.map(x=>"<li>"+escapeHtml(x)+"</li>").join("")+"</ul>";
+  if(mode==="full")box.innerHTML+="<p><small>Full support is active: the Hint button identifies a connection category.</small></p>";
+}
+function updateStats(){document.getElementById("foundStat").textContent=solved.length;document.getElementById("guessStat").textContent=guesses;}
+function setMessage(text,kind){message.textContent=text;message.className="message"+(kind?" "+kind:"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+document.getElementById("newPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("resetPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("submitBtn").addEventListener("click",submitGroup);
+document.getElementById("deselectBtn").addEventListener("click",()=>{selected=[];render();});
+document.getElementById("shuffleBtn").addEventListener("click",()=>{remainingTerms=shuffle(remainingTerms);render();});
+document.getElementById("hintBtn").addEventListener("click",hint);
+document.getElementById("revealBtn").addEventListener("click",()=>{finished=true;showSolution();setMessage("Solution revealed.","near");});
+[bankEl,complexityEl].forEach(x=>x.addEventListener("change",startPuzzle));infoEl.addEventListener("change",render);
+startPuzzle();
+</script>
+</body>
+</html>
