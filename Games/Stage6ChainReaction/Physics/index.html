@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage 6 Chain Reaction — Physics</title>
+<style>
+
+:root{
+  --page:#eaf5ff;--page2:#f9fcff;--card:#fff;--ink:#17324a;--muted:#60778b;
+  --line:#cbddea;--accent:#0878bd;--accent2:#18a2d8;--soft:#edf7fd;
+  --good:#18875b;--goodSoft:#e8f8ef;--bad:#bd3e4e;--badSoft:#fff0f2;
+  --warn:#b97708;--warnSoft:#fff6dd;--shadow:0 11px 30px rgba(36,78,108,.13);
+}
+body[data-level="medium"]{
+  --page:#fff4dd;--page2:#fffdf8;--line:#ead4a8;--accent:#d47b0d;--accent2:#efa83c;--soft:#fff7e8;
+}
+body[data-level="hard"]{
+  --page:#ffe9eb;--page2:#fffafa;--line:#ebc1c7;--accent:#c63e51;--accent2:#e56876;--soft:#fff0f2;
+}
+*{box-sizing:border-box}
+html{scroll-behaviour:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  background:linear-gradient(180deg,var(--page),var(--page2));
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:background .25s;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+.page{width:min(1540px,calc(100% - 28px));margin:18px auto 34px}
+.back{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+  background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);
+  box-shadow:0 5px 14px rgba(31,81,120,.1)
+}
+.hero{
+  margin-top:14px;padding:25px 29px;border-radius:29px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)
+}
+.hero h1{margin:0 0 7px;font-size:clamp(2rem,4vw,3.65rem);line-height:1}
+.hero p{margin:0;max-width:1050px;font-size:1.05rem;line-height:1.5}
+.intentions{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.mini-card,.card{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:var(--shadow)}
+.mini-card{border-radius:18px;padding:15px 17px}
+.mini-card h2{font-size:1rem;margin:0 0 5px;color:var(--accent)}
+.mini-card p{margin:0;line-height:1.45}
+.layout{display:grid;grid-template-columns:minmax(300px,365px) 1fr;gap:18px;align-items:start;margin-top:18px}
+.card{border-radius:22px;padding:18px}
+h2{margin:0 0 12px;font-size:1.26rem}
+h3{margin:0 0 8px}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+button{
+  border:0;border-radius:12px;padding:11px 13px;font-weight:850;color:var(--ink);
+  background:var(--soft);border:1px solid var(--line)
+}
+button.primary{color:#fff;border:0;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+button.danger{color:#8e2836;background:var(--badSoft);border-color:#e2abb2}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,.term-card:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;color:var(--accent);font-size:1.45rem}
+.help{margin-top:14px;padding:12px 13px;background:var(--soft);border:1px solid var(--line);border-radius:13px;line-height:1.45;font-size:.94rem}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
+.status-box{padding:10px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line)}
+.status-box span{display:block;color:var(--muted);font-size:.79rem;font-weight:780;text-transform:uppercase;letter-spacing:.04em}
+.status-box strong{display:block;margin-top:3px}
+.board-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
+.board-head p{margin:4px 0 0;color:var(--muted);line-height:1.4}
+.mode-badge{white-space:nowrap;padding:7px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:900;color:var(--accent)}
+.progress-shell{height:12px;border-radius:999px;background:#e4edf3;overflow:hidden;margin:11px 0 16px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760;line-height:1.42}
+.message.good{background:var(--goodSoft);border-color:#90ceb0;color:#17623f}
+.message.bad{background:var(--badSoft);border-color:#e1a4ad;color:#8d2635}
+.message.warn{background:var(--warnSoft);border-color:#dec36b;color:#70530a}
+.sequence-list{display:grid;gap:9px}
+.sequence-item{
+  display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;
+  border:2px solid var(--line);border-radius:14px;background:#fff;padding:9px 10px;
+  transition:border-color .12s,transform .12s,background .12s
+}
+.sequence-item[draggable="true"]{cursor:grab}
+.sequence-item.dragging{opacity:.48}
+.sequence-item.correct-position{border-color:#36a66f;background:#eefaf3}
+.sequence-item.wrong-position{border-color:#d8a34d;background:#fff8e8}
+.position{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--soft);color:var(--accent);font-weight:900
+}
+.sequence-term{font-weight:850}
+.move-buttons{display:flex;gap:5px}
+.move-buttons button{padding:6px 9px;border-radius:9px}
+.chain-path{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding:8px 2px 12px;min-height:84px}
+.chain-node{
+  min-width:145px;max-width:205px;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:11px;border-radius:13px;background:linear-gradient(180deg,var(--soft),#fff);
+  border:2px solid var(--line);font-weight:850;line-height:1.25
+}
+.chain-arrow{display:flex;align-items:center;font-size:1.7rem;color:var(--accent);font-weight:900}
+.relationships{display:grid;gap:7px;margin:0 0 13px}
+.relationship{
+  padding:9px 11px;border-left:5px solid var(--accent);border-radius:10px;background:var(--soft);
+  font-size:.91rem;line-height:1.35
+}
+.candidate-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:5px 0 9px}
+.candidate-title p{margin:0;color:var(--muted);font-size:.91rem}
+.term-grid{display:grid;grid-template-columns:repeat(4,minmax(125px,1fr));gap:9px}
+.term-card{
+  min-height:76px;border:2px solid var(--line);border-radius:13px;background:#fff;padding:10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;font-weight:830;line-height:1.2
+}
+.term-card:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+.term-card.used{opacity:.42;text-decoration:line-through}
+.term-card.invalid-flash{animation:shake .28s;border-color:var(--bad);background:var(--badSoft)}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.explanation{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:15px;background:#fbfdff;display:none}
+.explanation.show{display:block}
+.solution-list{display:grid;gap:8px;margin-top:10px}
+.solution-step{display:grid;grid-template-columns:34px 1fr;gap:9px;padding:9px;border-radius:11px;background:var(--soft)}
+.solution-step strong{color:var(--accent)}
+.definition-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.definition-item{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:.9rem;line-height:1.35}
+.definition-item strong{color:var(--accent)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px}
+.notes ul,.notes ol{margin:8px 0 0;padding-left:22px}
+.notes li{margin:6px 0;line-height:1.4}
+.footer{text-align:center;color:var(--muted);font-size:.87rem;margin-top:18px}
+.footer a{color:var(--accent)}
+@media(max-width:1120px){.layout{grid-template-columns:1fr}}
+@media(max-width:820px){
+  .intentions,.notes{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .term-grid{grid-template-columns:repeat(2,1fr)}
+  .definition-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .page{width:min(100% - 16px,1540px)}.hero{padding:21px}
+  .button-grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}
+  .sequence-item{grid-template-columns:35px 1fr}.move-buttons{grid-column:2}
+}
+
+</style>
+</head>
+<body data-level="medium">
+
+<main class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Stage 6 Chain Reaction</h1>
+    <p>Physics: arrange course concepts into valid sequences or build the longest defensible chain of connected ideas.</p>
+  </header>
+
+  <section class="intentions">
+    <article class="mini-card">
+      <h2>Learning Intention</h2>
+      <p>Connect mechanics, electromagnetism, light, relativity, atomic physics and astrophysics through ordered physical processes.</p>
+    </article>
+    <article class="mini-card">
+      <h2>Success Criteria</h2>
+      <p>Arrange physical events in a defensible order and justify links using forces, fields, energy, waves and experimental evidence.</p>
+    </article>
+  </section>
+
+  <section class="layout">
+    <aside class="card">
+      <h2>Game Controls</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Physics</option></select>
+
+      <label for="bank">Content bank</label>
+      <select id="bank">
+                <option value="module5">Module 5 — Advanced Mechanics</option>
+        <option value="module6">Module 6 — Electromagnetism</option>
+        <option value="module7">Module 7 — The Nature of Light</option>
+        <option value="module8">Module 8 — From the Universe to the Atom</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+
+      <label for="mode">Game mode</label>
+      <select id="mode">
+        <option value="sequence">Science Sequence</option>
+        <option value="chain">Chain Reaction</option>
+      </select>
+
+      <label for="level">Challenge level</label>
+      <select id="level">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <div class="button-grid">
+        <button id="newBtn" class="primary">New Challenge</button>
+        <button id="checkBtn" class="primary">Check Sequence</button>
+        <button id="undoBtn">Undo Last Link</button>
+        <button id="hintBtn">Hint</button>
+        <button id="revealBtn">Reveal Answer</button>
+        <button id="resetScoreBtn" class="danger">Reset Score</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="scoreStat">0</strong>Session score</div>
+        <div class="stat"><strong id="streakStat">0</strong>Current streak</div>
+        <div class="stat"><strong id="solvedStat">0</strong>Challenges solved</div>
+        <div class="stat"><strong id="attemptStat">0</strong>Session attempts</div>
+      </div>
+
+      <div class="help" id="modeHelp">
+        Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="status-grid">
+        <div class="status-box"><span>Module</span><strong id="moduleStatus">Module 5</strong></div>
+        <div class="status-box"><span>Mode</span><strong id="modeStatus">Science Sequence</strong></div>
+        <div class="status-box"><span>Challenge level</span><strong id="levelStatus">Medium</strong></div>
+        <div class="status-box"><span>Round status</span><strong id="roundStatus">Ready</strong></div>
+      </div>
+
+      <div class="board-head">
+        <div>
+          <h2 id="challengeTitle">Select New Challenge</h2>
+          <p id="challengeInstruction">Choose a content bank, mode and challenge level.</p>
+        </div>
+        <div id="modeBadge" class="mode-badge">SCIENCE SEQUENCE</div>
+      </div>
+
+      <div class="progress-shell" aria-label="Challenge progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="sequenceBoard" class="sequence-list"></div>
+
+      <div id="chainBoard" hidden>
+        <div id="chainPath" class="chain-path"></div>
+        <div id="relationships" class="relationships"></div>
+        <div class="candidate-title">
+          <h3>Available terms</h3>
+          <p id="chainTarget">Target: longest valid chain</p>
+        </div>
+        <div id="candidateGrid" class="term-grid"></div>
+      </div>
+
+      <div id="message" class="message">Choose New Challenge to begin.</div>
+
+      <section id="explanation" class="explanation">
+        <h3>Explanation</h3>
+        <p id="summaryText"></p>
+        <div id="solutionList" class="solution-list"></div>
+        <h3 style="margin-top:14px">Term definitions</h3>
+        <div id="definitionGrid" class="definition-grid"></div>
+      </section>
+    </section>
+  </section>
+
+  <section class="notes">
+    <article class="card">
+      <h2>Student Challenge</h2>
+      <ol>
+        <li>In Science Sequence mode, drag terms or use the arrow buttons to place them in order.</li>
+        <li>Explain why each step follows the previous step before checking.</li>
+        <li>In Chain Reaction mode, begin with the supplied term and build the longest valid chain.</li>
+        <li>Use Undo Last Link when a valid branch leads to a shorter route.</li>
+        <li>Review the accepted relationships and definitions after each challenge.</li>
+      </ol>
+    </article>
+    <article class="card">
+      <h2>Teacher Notes</h2>
+      <ul>
+        <li>Easy sequence rounds use four terms; Medium uses six; Hard uses the complete curated sequence.</li>
+        <li>Easy chain rounds use a direct five-term pathway. Medium includes the full branching network. Hard adds plausible distractors.</li>
+        <li>Chain links are deliberately curated: conceptual similarity alone is not automatically accepted.</li>
+        <li>Whole-course review combines Modules 5–8. Mixed Expert integrates mathematical models and evidence across classical and modern physics.</li>
+      </ul>
+    </article>
+  </section>
+
+  <p class="footer">
+    Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/physics-stage-6-2017" target="_blank" rel="noopener">NSW Physics Stage 6 Syllabus (2017)</a>.
+    Definitions and relationship explanations are concise classroom paraphrases.
+  </p>
+</main>
+
+<script>
+
+"use strict";
+const SEQUENCES=[{"id":"phys-m5-projectile","bank":"module5","title":"Projectile Motion","hint":"Resolve the launch velocity before analysing horizontal and vertical motion separately.","summary":"Ideal projectile motion combines constant horizontal velocity with constant downward acceleration.","steps":[["Initial velocity","The projectile is launched with a speed and direction."],["Vector resolution","Velocity is separated into horizontal and vertical components."],["Horizontal motion","With no horizontal force, horizontal velocity remains constant."],["Vertical acceleration","Gravity changes vertical velocity at a constant rate."],["Ascending motion","Vertical velocity decreases while the projectile rises."],["Maximum height","Vertical velocity becomes zero momentarily."],["Descending motion","Vertical velocity increases downward."],["Trajectory and range","The components combine to produce a parabolic path."]]},{"id":"phys-m5-circular","bank":"module5","title":"Uniform Circular Motion","hint":"Speed may remain constant even though velocity changes.","summary":"A net inward force continually changes the direction of velocity.","steps":[["Tangential velocity","The object moves instantaneously along the tangent."],["Velocity direction changes","Circular motion requires continuous turning."],["Centripetal acceleration","Acceleration points towards the centre."],["Net inward force","The vector sum of forces provides centripetal force."],["Radial displacement","The object remains at a fixed radius."],["Constant speed","The ideal inward force does no work."],["Continuous direction change","Velocity keeps rotating."],["Uniform circular motion","The object completes repeated circular paths."]]},{"id":"phys-m5-orbit","bank":"module5","title":"Circular Satellite Orbit","hint":"Gravity supplies the centripetal force.","summary":"A satellite remains in orbit because its tangential motion and gravitational acceleration combine.","steps":[["Tangential launch velocity","The satellite begins moving sideways."],["Gravitational field","Earth exerts an inward force."],["Centripetal acceleration","The velocity direction curves towards Earth."],["Continuous free fall","The satellite falls while moving forward."],["Earth curves away","The surface drops beneath the trajectory."],["Circular orbit","Altitude remains approximately constant."],["Orbital period","The satellite completes one revolution."],["Energy relationship","Kinetic and gravitational potential energy remain constant in an ideal circular orbit."]]},{"id":"phys-m6-dc-motor","bank":"module6","title":"Simple DC Motor","hint":"Current in a magnetic field produces force before torque and rotation.","summary":"A DC motor converts electrical energy into rotational mechanical energy.","steps":[["Direct current supplied","Charge flows through the motor circuit."],["Armature current","Current passes through opposite sides of the coil."],["Magnetic field","The coil lies between magnetic poles."],["Motor effect","Opposite forces act on the current-carrying sides."],["Torque","The force pair turns the coil."],["Half-turn","The coil approaches the position where torque would reverse."],["Split-ring commutator","Current direction is reversed in the coil."],["Continuous rotation","Torque continues in the same rotational direction."]]},{"id":"phys-m6-generator","bank":"module6","title":"AC Generator","hint":"Mechanical rotation must change magnetic flux through the coil.","summary":"An AC generator converts mechanical energy into electrical energy by electromagnetic induction.","steps":[["Mechanical rotation","An external source turns the coil."],["Coil in magnetic field","The coil cuts magnetic field lines."],["Magnetic flux changes","Flux linkage varies with angle."],["Faraday’s law","Changing flux induces an emf."],["Lenz’s law","The induced effect opposes the producing change."],["Alternating emf","The polarity reverses every half-turn."],["Slip rings","Continuous contacts transfer the alternating output."],["Electrical energy output","Current can be supplied to an external circuit."]]},{"id":"phys-m6-transformer","bank":"module6","title":"High-voltage Electricity Transmission","hint":"Voltage is stepped up before long-distance transmission.","summary":"Transformers reduce transmission losses by increasing voltage and reducing current for a given power.","steps":[["AC generator output","Alternating electrical energy enters the grid."],["Step-up transformer","The turns ratio increases voltage."],["High voltage","The same power can be transmitted with lower current."],["Lower current","Charge flow through transmission wires is reduced."],["Reduced I²R loss","Less energy is transferred as heat."],["Long-distance transmission","Electrical energy travels through the network."],["Step-down transformer","Voltage is reduced near users."],["Safe distribution voltage","Homes and businesses receive usable electrical energy."]]},{"id":"phys-m7-double-slit","bank":"module7","title":"Double-slit Interference","hint":"A coherent source must illuminate both slits.","summary":"The double-slit pattern provides evidence for the wave behaviour of light.","steps":[["Monochromatic light","A narrow range of wavelengths is selected."],["Single source","The wave reaches both slits with a stable phase relationship."],["Two narrow slits","Each opening acts as a secondary source."],["Diffracted waves","Light spreads from each slit."],["Superposition","The waves overlap on the screen."],["Constructive interference","In-phase waves produce bright fringes."],["Destructive interference","Out-of-phase waves produce dark fringes."],["Interference pattern","Alternating fringes reveal wave behaviour."]]},{"id":"phys-m7-photoelectric","bank":"module7","title":"Photoelectric Effect","hint":"Photon frequency determines energy; intensity mainly changes photon rate.","summary":"Photoemission occurs when individual photons transfer enough energy to electrons.","steps":[["Incident light","Electromagnetic radiation reaches a metal surface."],["Photon absorption","One electron absorbs one photon."],["Photon energy hf","Energy depends on radiation frequency."],["Work function","Some energy is required to escape the material."],["Threshold frequency","Below this frequency no electrons are emitted."],["Photoelectron emission","An electron leaves the surface."],["Maximum kinetic energy","Remaining photon energy becomes electron kinetic energy."],["Stopping potential","A reverse voltage measures the most energetic electrons."]]},{"id":"phys-m7-relativity","bank":"module7","title":"Time Dilation","hint":"Identify the proper-time frame before applying the Lorentz factor.","summary":"Observers in relative motion measure different time intervals while agreeing on the speed of light.","steps":[["Two inertial frames","Observers move at constant relative velocity."],["Light-clock event","A pulse travels between mirrors."],["Constant light speed","Both observers measure the same value of c."],["Longer observed path","The moving clock’s light follows a diagonal path."],["Greater time interval","A longer path at the same speed requires more time."],["Lorentz factor","The relativistic scale depends on relative speed."],["Time dilation","The moving clock is measured to run slowly."],["Experimental evidence","Muon survival and atomic clocks confirm the effect."]]},{"id":"phys-m8-stellar","bank":"module8","title":"Evolution of a Sun-like Star","hint":"Hydrogen fusion supports the star before fuel depletion changes the core.","summary":"Stellar evolution follows from gravity, fusion, fuel availability and pressure balance.","steps":[["Molecular cloud","Gas and dust begin contracting under gravity."],["Protostar","Contraction raises central temperature."],["Hydrogen fusion begins","The proton–proton chain releases energy."],["Main sequence","Fusion pressure balances gravity."],["Core hydrogen depleted","The core contracts and surrounding layers expand."],["Red giant","The star becomes larger and cooler at the surface."],["Outer layers expelled","A planetary nebula forms."],["White dwarf","The hot dense core remains and cools over time."]]},{"id":"phys-m8-atomic-model","bank":"module8","title":"Development of the Atomic Model","hint":"Each model responds to evidence the previous model could not explain.","summary":"Atomic models changed as experiments revealed electrons, nuclei, quantised levels and probability distributions.","steps":[["Cathode-ray evidence","Electrons are identified as negative particles."],["Thomson model","Electrons are embedded in diffuse positive charge."],["Alpha-scattering evidence","Most particles pass through while a few deflect strongly."],["Rutherford model","Positive charge and most mass occupy a tiny nucleus."],["Hydrogen line spectrum","Discrete wavelengths require discrete energies."],["Bohr model","Electrons occupy quantised stationary levels."],["Electron diffraction","Matter-wave behaviour is observed."],["Schrödinger model","Electron states are represented by wavefunctions and probability."]]},{"id":"phys-m8-fission","bank":"module8","title":"Controlled Nuclear Fission","hint":"Neutron production must be regulated to keep the chain reaction steady.","summary":"A reactor controls neutron-induced fission to release thermal energy at a manageable rate.","steps":[["Slow neutron","A neutron is absorbed by a fissile nucleus."],["Unstable compound nucleus","The nucleus becomes highly excited."],["Nuclear fission","The heavy nucleus splits."],["Fission fragments","Smaller nuclei carry kinetic energy."],["Additional neutrons","More neutrons are released."],["Moderator","Neutrons are slowed to increase further fission probability."],["Control rods","Excess neutrons are absorbed."],["Controlled chain reaction","Energy release remains approximately steady."]]},{"id":"phys-glossary-energy","bank":"glossary","title":"Glossary: Force, Work and Energy","hint":"A force transfers energy only when it acts through displacement.","summary":"Core glossary concepts connect force, motion and energy transfer.","steps":[["Force","An interaction can change motion."],["Net force","All forces are added vectorially."],["Acceleration","A non-zero net force changes velocity."],["Displacement","The object changes position."],["Work","A force component acts through displacement."],["Energy transfer","The system gains or loses energy."],["Kinetic energy","Motion-related energy may change."],["Conclusion","Evidence is used to judge the physical model."]]},{"id":"phys-review-models","bank":"review","title":"Whole-course Physics Models","hint":"Models connect mathematical relationships with experimental evidence.","summary":"The course links motion, fields, light, relativity, atoms and the Universe through models tested by evidence.","steps":[["Physical observation","A measurable pattern or anomaly is identified."],["Model assumption","A simplified representation is proposed."],["Mathematical relationship","Quantities are linked by equations."],["Prediction","The model specifies an expected result."],["Experiment or observation","Evidence is collected."],["Uncertainty analysis","Measurement limits are considered."],["Model validation","Prediction and evidence are compared."],["Model refinement","The explanation is retained, limited or replaced."]]},{"id":"phys-expert-unification","bank":"expert","title":"Expert: From Fields to Electromagnetic Waves","hint":"A changing electric field and changing magnetic field sustain each other.","summary":"Maxwell’s framework unified electricity, magnetism and light.","steps":[["Electric charge","Charge produces an electric field."],["Electric current","Moving charge produces a magnetic field."],["Changing magnetic field","Variation induces an electric field."],["Changing electric field","Variation contributes to a magnetic field."],["Coupled oscillations","Electric and magnetic fields sustain one another."],["Electromagnetic wave","The disturbance propagates through space."],["Speed predicted","The equations produce the measured speed of light."],["Light identified","Visible light is recognised as electromagnetic radiation."]]}];
+const CHAINS=[{"id":"phys-chain-projectile","bank":"module5","title":"Projectile Motion Chain","start":"Initial velocity","bestPath":["Initial velocity","Vector components","Horizontal velocity","Vertical acceleration","Maximum height","Descending motion","Range"],"nodes":["Initial velocity","Launch angle","Vector components","Horizontal velocity","Vertical velocity","Vertical acceleration","Maximum height","Descending motion","Time of flight","Range"],"edges":[["Initial velocity","Launch angle","Direction is specified relative to the horizontal."],["Launch angle","Vector components","Trigonometry resolves the initial velocity."],["Initial velocity","Vector components","Velocity is separated into perpendicular components."],["Vector components","Horizontal velocity","The horizontal component remains constant ideally."],["Vector components","Vertical velocity","The vertical component changes under gravity."],["Vertical velocity","Vertical acceleration","Gravity produces constant downward acceleration."],["Vertical acceleration","Maximum height","Upward velocity decreases to zero."],["Maximum height","Descending motion","The projectile then accelerates downward."],["Descending motion","Time of flight","Vertical motion determines total duration."],["Time of flight","Range","Horizontal speed multiplied by time gives range."],["Horizontal velocity","Vertical acceleration","Within this pathway, Horizontal velocity leads directly to Vertical acceleration."],["Descending motion","Range","Within this pathway, Descending motion leads directly to Range."]],"distractors":["DNA ligase","Ksp","Stromatolite"],"summary":"Projectile motion emerges from independent horizontal and vertical components."},{"id":"phys-chain-orbit","bank":"module5","title":"Orbital Mechanics Chain","start":"Gravitational field","bestPath":["Gravitational field","Gravitational force","Centripetal force","Orbital velocity","Circular orbit","Orbital period","Satellite application"],"nodes":["Central mass","Gravitational field","Gravitational force","Centripetal force","Orbital velocity","Circular orbit","Orbital period","Geostationary condition","Satellite application"],"edges":[["Central mass","Gravitational field","Mass creates a radial gravitational field."],["Gravitational field","Gravitational force","A satellite mass experiences force."],["Gravitational force","Centripetal force","Gravity supplies the required inward net force."],["Centripetal force","Orbital velocity","The speed must match radius and central mass."],["Orbital velocity","Circular orbit","Correct tangential speed maintains altitude."],["Circular orbit","Orbital period","One revolution defines the period."],["Orbital period","Geostationary condition","A 24-hour equatorial orbit can remain above one longitude."],["Geostationary condition","Satellite application","Communication satellites use this geometry."],["Orbital period","Satellite application","Within this pathway, Orbital period leads directly to Satellite application."]],"distractors":["Antibody","Buffer","Mutation"],"summary":"Gravity supplies the centripetal force governing orbital speed and period."},{"id":"phys-chain-motor","bank":"module6","title":"DC Motor Chain","start":"Electric current","bestPath":["Electric current","Magnetic field","Motor effect","Force pair","Torque","Rotation","Commutator","Continuous rotation"],"nodes":["Electric current","Armature","Magnetic field","Motor effect","Force pair","Torque","Rotation","Back emf","Commutator","Continuous rotation"],"edges":[["Electric current","Armature","Current enters the rotating coil."],["Armature","Magnetic field","The current-carrying coil lies in an external field."],["Magnetic field","Motor effect","The field exerts forces on current-carrying sides."],["Motor effect","Force pair","Opposite sides experience opposite forces."],["Force pair","Torque","The separated forces produce a turning moment."],["Torque","Rotation","The armature accelerates rotationally."],["Rotation","Back emf","Changing flux induces an opposing emf."],["Rotation","Commutator","The split ring changes contact each half-turn."],["Commutator","Continuous rotation","Current reversal maintains torque direction."],["Electric current","Magnetic field","Within this pathway, Electric current leads directly to Magnetic field."]],"distractors":["Meiosis","Carbonate ion","Climate proxy"],"summary":"The motor effect and commutation convert electrical input into sustained rotation."},{"id":"phys-chain-transformer","bank":"module6","title":"Transformer and Grid Chain","start":"Alternating current","bestPath":["Alternating current","Changing magnetic flux","Induced emf","Step-up transformer","High voltage","Low current","Reduced heating loss","Step-down transformer"],"nodes":["Alternating current","Primary coil","Changing magnetic flux","Iron core","Secondary coil","Induced emf","Step-up transformer","High voltage","Low current","Reduced heating loss","Step-down transformer"],"edges":[["Alternating current","Primary coil","AC flows through the input winding."],["Primary coil","Changing magnetic flux","Changing current produces changing flux."],["Changing magnetic flux","Iron core","The core links flux between windings."],["Iron core","Secondary coil","Flux passes through the output winding."],["Secondary coil","Induced emf","Changing flux induces a voltage."],["Induced emf","Step-up transformer","A greater secondary turn count raises voltage."],["Step-up transformer","High voltage","Transmission begins at high potential difference."],["High voltage","Low current","For fixed power, higher voltage permits lower current."],["Low current","Reduced heating loss","I²R losses fall strongly."],["Reduced heating loss","Step-down transformer","Voltage is later reduced for consumers."],["Alternating current","Changing magnetic flux","Within this pathway, Alternating current leads directly to Changing magnetic flux."],["Changing magnetic flux","Induced emf","Within this pathway, Changing magnetic flux leads directly to Induced emf."]],"distractors":["Natural selection","Ester","Pollen"],"summary":"Transformers enable efficient AC transmission by trading voltage against current."},{"id":"phys-chain-light","bank":"module7","title":"Wave Evidence Chain","start":"Coherent light","bestPath":["Coherent light","Two slits","Diffraction","Superposition","Path difference","Constructive interference","Bright fringe"],"nodes":["Coherent light","Two slits","Diffraction","Superposition","Path difference","Phase difference","Constructive interference","Destructive interference","Bright fringe","Dark fringe"],"edges":[["Coherent light","Two slits","Both slits receive waves with a stable phase relation."],["Two slits","Diffraction","Each narrow opening spreads the wave."],["Diffraction","Superposition","The two wavefields overlap."],["Superposition","Path difference","Different travel distances determine phase."],["Path difference","Phase difference","Distance difference produces a phase difference."],["Phase difference","Constructive interference","Whole-wavelength differences reinforce."],["Phase difference","Destructive interference","Half-wavelength differences cancel."],["Constructive interference","Bright fringe","Greater intensity is observed."],["Destructive interference","Dark fringe","Reduced intensity is observed."],["Path difference","Constructive interference","Within this pathway, Path difference leads directly to Constructive interference."]],"distractors":["Plasmid","Ksp","Subduction"],"summary":"Interference fringes arise from diffraction, superposition and phase relationships."},{"id":"phys-chain-photoelectric","bank":"module7","title":"Photoelectric Evidence Chain","start":"Photon frequency","bestPath":["Photon frequency","Photon energy","Work function","Threshold frequency","Photoelectron","Maximum kinetic energy","Stopping potential"],"nodes":["Light intensity","Photon frequency","Photon energy","Work function","Threshold frequency","Photoelectron","Emission rate","Maximum kinetic energy","Stopping potential"],"edges":[["Photon frequency","Photon energy","Energy equals hf."],["Photon energy","Work function","The material requires a minimum escape energy."],["Work function","Threshold frequency","The minimum frequency satisfies hf = phi."],["Threshold frequency","Photoelectron","Electrons are emitted only above threshold."],["Light intensity","Emission rate","More photons per second produce more emitted electrons."],["Photon frequency","Maximum kinetic energy","Higher frequency leaves more energy after escape."],["Photoelectron","Maximum kinetic energy","Emitted electrons carry the remaining energy."],["Maximum kinetic energy","Stopping potential","A reverse voltage measures the maximum energy."]],"distractors":["Homeostasis","Titration","Stromatolite"],"summary":"The photoelectric effect links photon frequency with discrete energy transfer."},{"id":"phys-chain-atom","bank":"module8","title":"Atomic Model Evidence Chain","start":"Cathode rays","bestPath":["Cathode rays","Electron","Thomson model","Alpha scattering","Nucleus","Line spectrum","Quantised levels","Quantum model"],"nodes":["Cathode rays","Electron","Oil-drop experiment","Elementary charge","Thomson model","Alpha scattering","Nucleus","Line spectrum","Quantised levels","Electron diffraction","Quantum model"],"edges":[["Cathode rays","Electron","Deflection evidence identifies negative particles."],["Electron","Oil-drop experiment","Charged droplets measure electron charge magnitude."],["Oil-drop experiment","Elementary charge","Charges occur in integer multiples of e."],["Electron","Thomson model","Atoms must contain negative particles."],["Thomson model","Alpha scattering","Scattering tests the diffuse-charge model."],["Alpha scattering","Nucleus","Large deflections reveal concentrated positive mass."],["Nucleus","Line spectrum","A nuclear atom still requires explanation of discrete spectra."],["Line spectrum","Quantised levels","Discrete photons imply discrete energy changes."],["Quantised levels","Electron diffraction","Matter-wave evidence challenges fixed classical orbits."],["Electron diffraction","Quantum model","Wavefunctions describe electron probability states."],["Quantised levels","Quantum model","Within this pathway, Quantised levels leads directly to Quantum model."]],"distractors":["Antibody","Buffer capacity","Urbanisation"],"summary":"Atomic models changed through successive experiments that revealed new structure."},{"id":"phys-chain-stars","bank":"module8","title":"Stellar Evolution Chain","start":"Molecular cloud","bestPath":["Molecular cloud","Gravitational collapse","Protostar","Core heating","Hydrogen fusion","Main sequence","Red giant","White dwarf"],"nodes":["Molecular cloud","Gravitational collapse","Protostar","Core heating","Hydrogen fusion","Hydrostatic equilibrium","Main sequence","Hydrogen depletion","Red giant","Planetary nebula","White dwarf"],"edges":[["Molecular cloud","Gravitational collapse","Self-gravity pulls gas and dust inward."],["Gravitational collapse","Protostar","A dense central object forms."],["Protostar","Core heating","Potential energy becomes thermal energy."],["Core heating","Hydrogen fusion","Sufficient temperature enables fusion."],["Hydrogen fusion","Hydrostatic equilibrium","Energy supports pressure against gravity."],["Hydrostatic equilibrium","Main sequence","The star remains stable while core hydrogen burns."],["Main sequence","Hydrogen depletion","Fuel abundance gradually falls."],["Hydrogen depletion","Red giant","Core contraction and shell burning expand the envelope."],["Red giant","Planetary nebula","Outer layers are expelled."],["Planetary nebula","White dwarf","The exposed core remains as a dense remnant."],["Hydrogen fusion","Main sequence","Within this pathway, Hydrogen fusion leads directly to Main sequence."],["Main sequence","Red giant","Within this pathway, Main sequence leads directly to Red giant."],["Red giant","White dwarf","Within this pathway, Red giant leads directly to White dwarf."]],"distractors":["Meiosis","Ksp","Hazard map"],"summary":"Stellar evolution follows changing fuel, gravity and pressure balance."},{"id":"physics-glossary-derived-chain","bank":"glossary","title":"Glossary: Force, Work and Energy — Connected Chain","start":"Force","bestPath":["Force","Net force","Acceleration","Displacement","Work","Energy transfer","Kinetic energy","Conclusion"],"nodes":["Force","Net force","Acceleration","Displacement","Work","Energy transfer","Kinetic energy","Conclusion"],"edges":[["Force","Net force","All forces are added vectorially."],["Net force","Acceleration","A non-zero net force changes velocity."],["Acceleration","Displacement","The object changes position."],["Displacement","Work","A force component acts through displacement."],["Work","Energy transfer","The system gains or loses energy."],["Energy transfer","Kinetic energy","Motion-related energy may change."],["Kinetic energy","Conclusion","Evidence is used to judge the physical model."]],"distractors":["Initial velocity","Vector resolution","Horizontal motion"],"summary":"Core glossary concepts connect force, motion and energy transfer."},{"id":"physics-review-derived-chain","bank":"review","title":"Whole-course Physics Models — Connected Chain","start":"Physical observation","bestPath":["Physical observation","Model assumption","Mathematical relationship","Prediction","Experiment or observation","Uncertainty analysis","Model validation","Model refinement"],"nodes":["Physical observation","Model assumption","Mathematical relationship","Prediction","Experiment or observation","Uncertainty analysis","Model validation","Model refinement"],"edges":[["Physical observation","Model assumption","A simplified representation is proposed."],["Model assumption","Mathematical relationship","Quantities are linked by equations."],["Mathematical relationship","Prediction","The model specifies an expected result."],["Prediction","Experiment or observation","Evidence is collected."],["Experiment or observation","Uncertainty analysis","Measurement limits are considered."],["Uncertainty analysis","Model validation","Prediction and evidence are compared."],["Model validation","Model refinement","The explanation is retained, limited or replaced."]],"distractors":["Initial velocity","Vector resolution","Horizontal motion"],"summary":"The course links motion, fields, light, relativity, atoms and the Universe through models tested by evidence."},{"id":"physics-expert-derived-chain","bank":"expert","title":"Expert: From Fields to Electromagnetic Waves — Connected Chain","start":"Electric charge","bestPath":["Electric charge","Electric current","Changing magnetic field","Changing electric field","Coupled oscillations","Electromagnetic wave","Speed predicted","Light identified"],"nodes":["Electric charge","Electric current","Changing magnetic field","Changing electric field","Coupled oscillations","Electromagnetic wave","Speed predicted","Light identified"],"edges":[["Electric charge","Electric current","Moving charge produces a magnetic field."],["Electric current","Changing magnetic field","Variation induces an electric field."],["Changing magnetic field","Changing electric field","Variation contributes to a magnetic field."],["Changing electric field","Coupled oscillations","Electric and magnetic fields sustain one another."],["Coupled oscillations","Electromagnetic wave","The disturbance propagates through space."],["Electromagnetic wave","Speed predicted","The equations produce the measured speed of light."],["Speed predicted","Light identified","Visible light is recognised as electromagnetic radiation."]],"distractors":["Initial velocity","Vector resolution","Horizontal motion"],"summary":"Maxwell’s framework unified electricity, magnetism and light."}];
+const DEFINITIONS={"Projectile":"An object moving under gravity after being launched, with air resistance commonly neglected in the model.","Projectile motion":"Two-dimensional motion modelled as constant horizontal velocity and constant vertical acceleration.","Horizontal component":"The part of a vector acting parallel to the horizontal axis.","Vertical component":"The part of a vector acting parallel to the vertical axis.","Vector resolution":"The process of separating a vector into perpendicular components.","Initial velocity":"The velocity of an object at the chosen starting time.","Launch angle":"The angle between the initial velocity vector and the horizontal.","Launch height":"The vertical position from which a projectile begins its motion.","Time of flight":"The total time a projectile remains in motion before reaching its final height.","Maximum height":"The greatest vertical displacement reached by a projectile.","Horizontal range":"The horizontal displacement of a projectile from launch to landing.","Trajectory":"The path followed by a moving object.","Parabolic trajectory":"The ideal curved path of a projectile when air resistance is neglected and gravity is uniform.","Acceleration due to gravity":"The downward acceleration produced by a gravitational field near a planetary surface.","Constant horizontal velocity":"The ideal projectile condition produced when no horizontal force acts.","Zero vertical velocity":"The vertical-velocity condition at the highest point of an ideal projectile path.","Air resistance":"A drag force exerted by air that opposes relative motion.","Uniform circular motion":"Motion at constant speed around a circular path.","Centripetal acceleration":"Acceleration directed towards the centre of a circular path.","Centripetal force":"The net inward force required to maintain circular motion.","Tangential velocity":"Instantaneous velocity directed along the tangent to a circular path.","Radius":"The distance from the centre of a circle to an object on its path.","Period":"The time taken to complete one cycle or orbit.","Frequency":"The number of complete cycles per unit time.","Angular velocity":"The rate of change of angular displacement.","Banked track":"A curved surface tilted so that part of the normal force contributes to centripetal force.","Normal force":"A contact force acting perpendicular to a surface.","Friction":"A contact force opposing relative motion or attempted motion between surfaces.","Torque":"The turning effect of a force about an axis or pivot.","Moment arm":"The perpendicular distance from an axis to the line of action of a force.","Rotational equilibrium":"A condition in which the net torque on a system is zero.","Work in circular motion":"Work determined by the component of force parallel to displacement; ideal centripetal force does no work.","Newton’s law of universal gravitation":"The law stating that masses attract with force proportional to their product and inversely proportional to separation squared.","Universal gravitational constant":"The constant G in Newton’s law of universal gravitation.","Gravitational field":"A region in which a mass experiences a gravitational force.","Gravitational field strength":"Gravitational force per unit mass at a point.","Radial gravitational field":"A gravitational field directed towards or away from a central mass.","Mass":"A measure of inertia and gravitational interaction.","Weight":"The gravitational force acting on a mass.","Gravitational potential energy":"Energy associated with position in a gravitational field.","Escape velocity":"The minimum launch speed needed to reach infinite separation with zero final speed, neglecting resistance.","Orbital velocity":"The tangential speed required for a specified orbit.","Orbital period":"The time taken for one complete orbit.","Orbital radius":"The distance from the centre of the attracting body to the orbiting object.","Artificial satellite":"A human-made object placed into orbit around a celestial body.","Low Earth orbit":"An orbit relatively close to Earth, commonly used by imaging and crewed spacecraft.","Geostationary orbit":"A circular equatorial orbit whose period matches Earth’s rotation, keeping a satellite above one longitude.","Elliptical orbit":"A closed orbit shaped as an ellipse with the attracting body at one focus.","Kepler’s first law":"Planets move in elliptical orbits with the Sun at one focus.","Kepler’s second law":"A line from a planet to the Sun sweeps out equal areas in equal times.","Kepler’s third law":"For objects orbiting the same central mass, orbital period squared is proportional to semi-major axis cubed.","Semi-major axis":"Half the longest diameter of an ellipse, used to characterise orbital size.","Periapsis":"The point in an orbit closest to the central body.","Apoapsis":"The point in an orbit furthest from the central body.","Total orbital energy":"The sum of kinetic and gravitational potential energy of an orbiting object.","Bound orbit":"An orbit with negative total mechanical energy in the usual zero-at-infinity convention.","Orbital transfer":"A manoeuvre that changes a spacecraft from one orbit to another.","Hohmann transfer":"An efficient two-burn transfer between coplanar circular orbits using an intermediate ellipse.","Energy conservation":"The principle that energy changes form or location but the total in an isolated system remains constant.","Mechanical energy":"The sum of kinetic and potential energy.","Kinetic energy":"Energy associated with motion.","Net force":"The vector sum of all forces acting on an object.","Free-body diagram":"A diagram showing the external forces acting on a selected object.","Inertial frame":"A frame of reference in which an object with zero net force moves at constant velocity.","Non-inertial frame":"An accelerating or rotating frame in which apparent forces may be introduced.","Model assumption":"A simplification adopted to make a physical system analysable.","Validation":"Comparison of model predictions with reliable evidence to judge whether the model is suitable.","Electric charge":"A property of matter responsible for electric forces and fields.","Positive charge":"The type of charge carried by a proton.","Negative charge":"The type of charge carried by an electron.","Electric field":"A region in which an electric charge experiences a force.","Electric field strength":"Electric force per unit positive test charge.","Uniform electric field":"An electric field with constant magnitude and direction across a region.","Parallel plates":"Two oppositely charged conducting plates used to create an approximately uniform electric field.","Electric force":"The force experienced by a charge in an electric field.","Potential difference":"Work done per unit charge in moving between two points.","Work done on a charge":"Energy transferred when an electric force moves a charge through a potential difference.","Charged-particle acceleration":"Acceleration produced when an electric or magnetic force acts on a charged particle.","Electric-field trajectory":"The path of a charged particle accelerated by an electric field.","Magnetic field":"A region in which moving charges, currents or magnetic materials experience magnetic effects.","Magnetic flux density":"A measure of magnetic-field strength, represented by B and measured in tesla.","Magnetic flux":"The amount of magnetic field passing through a surface.","Magnetic force on a charge":"A force perpendicular to both the velocity of a moving charge and the magnetic field.","Lorentz force":"The combined electric and magnetic force acting on a charged particle.","Right-hand rule":"A directional rule used to relate current, magnetic field and force for positive conventional current.","Circular path in a magnetic field":"The trajectory of a charge moving perpendicular to a uniform magnetic field.","Helical path":"The spiral trajectory of a charged particle with velocity components parallel and perpendicular to a magnetic field.","Motor effect":"The force on a current-carrying conductor placed in a magnetic field.","Current-carrying conductor":"A conductor through which electric charge is flowing.","Maximum motor force":"The force condition occurring when current is perpendicular to the magnetic field.","Zero motor force":"The force condition occurring when current is parallel to the magnetic field.","Force between parallel wires":"Magnetic interaction causing parallel currents to attract and opposite currents to repel.","Ampere":"The SI unit of electric current.","Electric current":"The rate of flow of electric charge.","DC motor":"A device that converts direct-current electrical energy into rotational mechanical energy.","Armature":"The rotating coil or current-carrying part of a motor or generator.","Split-ring commutator":"A rotating contact that reverses current every half-turn in a simple DC motor.","Brushes":"Stationary electrical contacts that transfer current to or from a rotating commutator or ring.","Torque on a coil":"The turning effect produced by magnetic forces on opposite sides of a current-carrying coil.","Back emf":"An induced emf in a motor that opposes the applied voltage.","Magnetic braking":"Braking produced by induced currents whose magnetic effects oppose motion.","Electromagnetic induction":"Production of an emf by changing magnetic flux through a circuit.","Induced emf":"Potential difference generated by a changing magnetic flux.","Faraday’s law":"The induced emf is proportional to the rate of change of magnetic flux linkage.","Lenz’s law":"The induced current acts in a direction that opposes the change producing it.","Magnetic flux linkage":"The product of magnetic flux through one turn and the number of turns.","Solenoid":"A helical coil that produces a magnetic field when current flows.","Mutual induction":"Induction of an emf in one circuit due to changing current in another circuit.","Self-induction":"Induction of an emf in a circuit due to change in its own current.","Eddy current":"A circulating induced current formed within a conducting material.","Generator":"A device that converts mechanical energy into electrical energy by electromagnetic induction.","AC generator":"A generator producing an alternating output using slip rings.","DC generator":"A generator producing a unidirectional output using a split-ring commutator.","Slip rings":"Continuous conducting rings that connect a rotating coil to an external circuit in an AC machine.","Alternating current":"Current that periodically reverses direction.","Direct current":"Current that flows in one direction.","Transformer":"A device that changes alternating voltage through mutual induction.","Ideal transformer":"A transformer model with no energy loss and complete magnetic-flux linkage.","Step-up transformer":"A transformer with a higher secondary voltage than primary voltage.","Step-down transformer":"A transformer with a lower secondary voltage than primary voltage.","Primary coil":"The transformer winding connected to the input supply.","Secondary coil":"The transformer winding connected to the output circuit.","Turns ratio":"The ratio of secondary turns to primary turns in a transformer.","Transformer efficiency":"Useful output power divided by input power, expressed as a percentage.","Resistive heating":"Thermal energy produced when current flows through electrical resistance.","Incomplete flux linkage":"Transformer loss caused when not all primary magnetic flux passes through the secondary coil.","Laminated core":"A core made of insulated layers to reduce eddy-current losses.","High-voltage transmission":"Electrical-energy distribution at high voltage to reduce current and resistive power loss.","Transmission loss":"Energy transferred to unwanted forms, especially heat, during electricity distribution.","Power grid":"An interconnected network for electricity generation, transmission and distribution.","AC induction motor":"A motor in which a rotating magnetic field induces current and torque in the rotor.","Rotor":"The rotating component of an electric motor or generator.","Stator":"The stationary component surrounding or supporting a rotor.","Conservation of energy":"The principle explaining why induced effects oppose the change producing them.","Electromagnetic wave":"A self-propagating wave of oscillating electric and magnetic fields.","Electromagnetic spectrum":"The full range of electromagnetic radiation arranged by frequency or wavelength.","Radio wave":"Low-frequency, long-wavelength electromagnetic radiation.","Microwave":"Electromagnetic radiation used in communication, radar and heating.","Infrared radiation":"Electromagnetic radiation associated with thermal emission and molecular vibration.","Visible light":"The part of the electromagnetic spectrum detectable by the human eye.","Ultraviolet radiation":"Electromagnetic radiation with higher frequency than visible violet light.","X-ray":"High-frequency electromagnetic radiation capable of penetrating matter and ionising atoms.","Gamma radiation":"Very high-frequency electromagnetic radiation commonly emitted in nuclear processes.","Maxwell’s equations":"Equations unifying electric and magnetic fields and predicting electromagnetic waves.","Speed of light":"The invariant speed c of electromagnetic radiation in vacuum.","Oscillating electric field":"A changing electric field forming one component of an electromagnetic wave.","Oscillating magnetic field":"A changing magnetic field perpendicular to the electric field in an electromagnetic wave.","Transverse wave":"A wave whose oscillations are perpendicular to the direction of propagation.","Wavefront":"A surface joining points of a wave that are in the same phase.","Wavelength":"The distance between corresponding points on successive waves.","Photon":"A quantum of electromagnetic radiation with energy proportional to frequency.","Spectrum":"The distribution of radiation intensity across wavelength or frequency.","Continuous spectrum":"An uninterrupted range of wavelengths emitted by a dense hot source.","Emission spectrum":"Bright lines or bands at wavelengths emitted by excited atoms or molecules.","Absorption spectrum":"Dark lines or bands where wavelengths have been absorbed from a continuous spectrum.","Spectroscopy":"The study of interactions between electromagnetic radiation and matter.","Spectral line":"A narrow wavelength feature produced by a specific atomic or molecular transition.","Doppler shift":"A change in observed frequency or wavelength due to relative motion.","Redshift":"A shift of spectral features towards longer wavelengths.","Blueshift":"A shift of spectral features towards shorter wavelengths.","Stellar temperature":"Surface temperature inferred from a star’s spectrum and black-body distribution.","Stellar composition":"The elements present in a star, inferred from spectral lines.","Diffraction":"Spreading of a wave as it passes through an aperture or around an obstacle.","Interference":"Superposition of waves producing regions of reinforcement and cancellation.","Constructive interference":"Interference producing increased amplitude when waves arrive in phase.","Destructive interference":"Interference producing reduced amplitude when waves arrive out of phase.","Double-slit experiment":"An experiment producing an interference pattern from coherent light passing through two slits.","Diffraction grating":"A surface or device with many closely spaced lines that separates light by wavelength.","Coherence":"A stable phase relationship between waves.","Path difference":"The difference in distances travelled by two waves to reach a point.","Phase difference":"The difference in phase angle between two oscillations.","Polarisation":"Restriction of transverse-wave oscillations to a particular direction.","Plane-polarised light":"Light whose electric-field oscillations occur in one plane.","Malus’ law":"The transmitted intensity through an analyser varies with the square of the cosine of the angle.","Newton’s corpuscular model":"A historical model describing light as particles.","Huygens’ wave model":"A model treating each point on a wavefront as a source of secondary wavelets.","Black body":"An ideal object that absorbs and emits all wavelengths perfectly.","Black-body radiation":"The continuous thermal spectrum emitted by an ideal absorber and emitter.","Wien’s law":"The peak wavelength of a black-body spectrum is inversely proportional to absolute temperature.","Ultraviolet catastrophe":"The classical prediction of unbounded high-frequency black-body radiation.","Planck’s quantum hypothesis":"The proposal that electromagnetic energy is emitted or absorbed in discrete packets.","Planck constant":"The constant h relating photon energy to frequency.","Photoelectric effect":"Emission of electrons from a material after absorption of sufficiently energetic photons.","Photoelectron":"An electron emitted through the photoelectric effect.","Work function":"The minimum energy needed to remove an electron from a material.","Threshold frequency":"The minimum light frequency required to produce photoemission from a material.","Stopping potential":"The reverse potential required to stop the most energetic photoelectrons.","Photon energy":"Energy given by E = hf.","Wave–particle duality":"The principle that light exhibits both wave-like and particle-like behaviour.","Special relativity":"Einstein’s theory describing space, time and motion at high relative speeds.","First postulate of relativity":"The laws of physics are the same in all inertial frames.","Second postulate of relativity":"The speed of light in vacuum is the same for all inertial observers.","Inertial frame of reference":"A non-accelerating frame in which Newton’s first law is valid.","Relativity of simultaneity":"The result that separated events simultaneous in one frame need not be simultaneous in another.","Time dilation":"The measured time interval for a moving clock is greater than its proper time.","Proper time":"The time interval measured in the frame where two events occur at the same location.","Length contraction":"The measured length of a moving object parallel to motion is less than its proper length.","Proper length":"The length measured in the frame where the object is at rest.","Lorentz factor":"The factor gamma describing relativistic time, length and momentum effects.","Relativistic momentum":"Momentum that increases according to gamma mv at high speed.","Mass–energy equivalence":"The relationship E = mc² linking mass and energy.","Cosmic-ray muon":"A short-lived particle whose detection at Earth’s surface provides evidence for time dilation.","Hafele–Keating experiment":"An atomic-clock experiment comparing elapsed times after flights in different directions.","Particle accelerator":"A device using electric and magnetic fields to accelerate charged particles.","Electron–positron annihilation":"Conversion of an electron and positron into electromagnetic radiation.","Pair production":"Conversion of sufficient photon energy into a particle and antiparticle.","Classical physics":"The pre-relativistic and pre-quantum framework of mechanics and electromagnetism.","Quantum model of light":"A model in which electromagnetic radiation exchanges energy as photons.","Big Bang theory":"The model that the Universe developed from an early hot, dense state and has expanded and cooled.","Expansion of the Universe":"The increase in distance between large-scale cosmic structures as space expands.","Hubble’s law":"The approximately proportional relationship between galaxy recession speed and distance.","Hubble constant":"The proportionality constant linking recession speed and galaxy distance.","Cosmological redshift":"Stretching of light wavelength as the Universe expands.","Cosmic microwave background":"Relic microwave radiation released when the early Universe became transparent.","Primordial nucleosynthesis":"Formation of light nuclei in the first minutes after the Big Bang.","Matter–radiation transformation":"Conversion between energy carried by radiation and particle mass.","Continuous black-body spectrum":"A thermal spectrum whose shape depends mainly on temperature.","Stellar absorption spectrum":"A spectrum containing dark lines produced when a star’s atmosphere absorbs selected wavelengths.","Stellar emission spectrum":"Bright spectral lines produced by excited atoms or ions.","Hertzsprung–Russell diagram":"A graph relating stellar luminosity or absolute magnitude to surface temperature or spectral class.","Main sequence":"The HR-diagram band occupied by stars fusing hydrogen in their cores.","Red giant":"A large luminous star with a relatively cool surface during a later evolutionary stage.","White dwarf":"A hot, dense stellar remnant supported by electron degeneracy pressure.","Supergiant":"A very luminous, massive star with a large radius.","Neutron star":"An extremely dense stellar remnant composed mainly of neutrons.","Black hole":"A region where gravity is strong enough that nothing inside the event horizon can escape.","Luminosity":"The total power radiated by a star.","Surface temperature":"The effective temperature of a star’s visible surface.","Spectral class":"A classification of stars based on their spectra and surface temperatures.","Stellar evolution":"The sequence of changes experienced by a star over its lifetime.","Proton–proton chain":"A fusion sequence converting hydrogen into helium in stars such as the Sun.","CNO cycle":"A hydrogen-fusion cycle using carbon, nitrogen and oxygen nuclei as catalysts.","Helium fusion":"Fusion of helium nuclei to form heavier nuclei such as carbon.","Stellar nucleosynthesis":"Production of new nuclei through reactions within stars.","Supernova nucleosynthesis":"Production and dispersal of many heavy elements during a supernova.","Cathode ray":"A beam of electrons produced in a low-pressure discharge tube.","Cathode-ray tube":"An evacuated tube used to investigate electron beams.","J. J. Thomson":"The physicist whose cathode-ray experiments measured electron charge-to-mass ratio.","Charge-to-mass ratio":"The ratio q/m determined for an electron using electric and magnetic deflection.","Millikan oil-drop experiment":"An experiment measuring the elementary electric charge using charged droplets.","Elementary charge":"The magnitude of the charge carried by a proton or electron.","Geiger–Marsden experiment":"The alpha-scattering experiment providing evidence for a small dense atomic nucleus.","Rutherford model":"An atomic model with a small positive nucleus surrounded by electrons.","Atomic nucleus":"The small dense central region containing protons and neutrons.","Chadwick experiment":"The experiment providing evidence for the neutron.","Neutron":"An electrically neutral nucleon in an atomic nucleus.","Bohr model":"An atomic model with electrons occupying quantised stationary energy levels.","Quantised energy level":"An allowed discrete electron-energy state in an atom.","Ground state":"The lowest available energy state of an atom or particle.","Excited state":"An energy state above the ground state.","Balmer series":"Visible hydrogen spectral lines produced by transitions to the n = 2 level.","Hydrogen line spectrum":"Discrete wavelengths emitted or absorbed by hydrogen due to quantised energy transitions.","de Broglie wavelength":"The matter-wave wavelength associated with momentum, given by lambda = h/p.","Matter wave":"Wave-like behaviour associated with a moving particle.","Electron diffraction":"A diffraction pattern produced by electrons, supporting matter-wave behaviour.","Schrödinger model":"A quantum-mechanical model describing electrons using wavefunctions and probabilities.","Wavefunction":"A mathematical function whose squared magnitude gives probability density.","Atomic orbital":"A quantum state describing the probability distribution of an electron.","Probability density":"The probability per unit volume of finding a particle near a point.","Radioactive decay":"Spontaneous transformation of an unstable nucleus.","Alpha radiation":"Radiation consisting of helium nuclei.","Beta-minus radiation":"Radiation consisting of electrons emitted when a neutron changes into a proton.","Beta-plus radiation":"Radiation consisting of positrons emitted when a proton changes into a neutron.","Half-life":"The time required for half the unstable nuclei in a sample to decay.","Decay constant":"The probability per unit time that an unstable nucleus decays.","Activity":"The number of nuclear decays per unit time.","Nuclear fission":"Splitting of a heavy nucleus into smaller nuclei with energy and neutrons released.","Chain reaction":"A sequence in which neutrons from one fission cause additional fissions.","Critical mass":"The minimum amount and arrangement of fissile material needed for a self-sustaining chain reaction.","Controlled chain reaction":"A nuclear chain reaction regulated so its rate remains manageable.","Uncontrolled chain reaction":"A rapidly increasing chain reaction that releases energy explosively.","Nuclear fusion":"Joining of light nuclei to form a heavier nucleus with energy released.","Nuclear transmutation":"Conversion of one nuclide into another through decay or nuclear reaction.","Mass defect":"The difference between the total mass of separated nucleons and the mass of the bound nucleus.","Binding energy":"The energy required to separate a nucleus completely into its nucleons.","Binding energy per nucleon":"Average binding energy for each nucleon, indicating nuclear stability.","Standard Model":"The theory describing fundamental particles and three non-gravitational fundamental interactions.","Quark":"A fundamental particle that combines to form hadrons.","Lepton":"A fundamental particle family including electrons and neutrinos.","Hadron":"A composite particle made of quarks and held together by the strong interaction.","Baryon":"A hadron composed of three quarks, such as a proton or neutron.","Meson":"A hadron composed of a quark and an antiquark.","Up quark":"A quark with charge +2/3 of the elementary charge.","Down quark":"A quark with charge −1/3 of the elementary charge.","Proton quark composition":"Two up quarks and one down quark.","Neutron quark composition":"One up quark and two down quarks.","Fundamental interaction":"One of the basic interactions: strong, electromagnetic, weak and gravitational.","Strong interaction":"The interaction binding quarks in hadrons and nucleons in nuclei.","Weak interaction":"The interaction responsible for processes including beta decay.","Electromagnetic interaction":"The interaction between electrically charged particles.","Gravitational interaction":"The attractive interaction associated with mass-energy.","Collision experiment":"An experiment using particle collisions to create and detect products.","Detector":"An instrument used to identify particles, radiation or their interactions.","Incomplete model":"A scientific model that explains available evidence but may require revision when new evidence appears.","Charge":"An intrinsic electrical property that may be positive or negative.","Collision":"An interaction, commonly involving contact, between two or more bodies.","Conclusion":"A judgement reached from evidence.","Controlled variable":"A factor kept constant, or changed consistently, during an investigation.","Dependent variable":"The factor that changes in response to the independent variable.","Digital technologies":"Hardware and software systems that process digital data for specific purposes.","Dipole":"A system with separated opposite electric charges or magnetic poles.","Dynamic":"Changing with time.","Elastic":"Able to return towards an original shape after a deforming force is removed.","Elastic collision":"A collision in which total kinetic energy as well as momentum is conserved.","Electrical resistance":"A measure of opposition to electric-current flow.","Energy":"The capacity of a system to cause change or do work.","Energy potential":"Stored capacity for energy transfer because of position or configuration.","Environment":"All living and non-living surroundings.","Equilibrium":"A state in which competing effects are balanced and no net change occurs.","Equipotential":"A line or surface whose points have the same electric potential.","Field":"A region in which an object experiences an influence or force due to a source.","Force":"An interaction capable of changing an object’s motion or shape.","Frame of reference":"A coordinate system and clock used to describe positions and motions.","Hypothesis":"A precise, testable proposed explanation that can be supported or refuted.","Independent variable":"The factor deliberately changed to observe its effect on the dependent variable.","Inelastic collision":"A collision in which momentum is conserved but kinetic energy is not.","Investigation":"A planned scientific process used to answer a question, explore an idea or solve a problem.","Law":"A statement describing a consistent relationship under specified conditions.","Linear momentum":"The vector quantity equal to mass multiplied by velocity.","Magnet":"An object producing a magnetic field with north and south poles.","Magnetic material":"A material that responds strongly to an applied magnetic field.","Magnetised material":"A material whose magnetic domains have become sufficiently aligned to produce a net magnetic field.","Model":"A representation used to describe, simplify, explain or predict a system.","Non-ohmic":"Describing a conductor whose current is not directly proportional to voltage under the stated conditions.","Ohmic":"Describing a conductor with current directly proportional to voltage when physical conditions remain constant.","Plan":"To decide on a course of action and make arrangements before carrying it out.","Practical investigation":"A systematic inquiry using equipment and hands-on methods to obtain data or information.","Primary sources/primary data":"Information produced by people directly involved in an observation or study.","Qualitative":"Relating to descriptions or qualities rather than numerical amounts.","Quantitative":"Relating to numerical measurement or amount.","Reliability":"The extent to which repeated measurements under the same conditions produce similar results.","Resistor":"An electrical component designed to provide a specified resistance.","Secondary-sourced investigation":"A planned inquiry using data and information produced by other people.","Static":"Not changing with time.","Technology":"A human-made tool, system, machine or process used to solve problems or meet needs.","Theory":"A broad, testable explanatory framework supported by evidence and capable of prediction.","Validity":"The extent to which a method measures what was intended and supports accurate inferences.","Variable":"A factor in an investigation that can be changed, maintained or measured.","Vector":"A quantity having both magnitude and direction.","Voltage":"Electric potential difference, measured in volts or joules per coulomb.","Work (in physics)":"Energy transferred when a force produces displacement with a component in the force direction.","Horizontal motion":"With no horizontal force, horizontal velocity remains constant.","Vertical acceleration":"Gravity changes vertical velocity at a constant rate.","Ascending motion":"Vertical velocity decreases while the projectile rises.","Descending motion":"Vertical velocity increases downward.","Trajectory and range":"The components combine to produce a parabolic path.","Velocity direction changes":"Circular motion requires continuous turning.","Net inward force":"The vector sum of forces provides centripetal force.","Radial displacement":"The object remains at a fixed radius.","Constant speed":"The ideal inward force does no work.","Continuous direction change":"Velocity keeps rotating.","Tangential launch velocity":"The satellite begins moving sideways.","Continuous free fall":"The satellite falls while moving forward.","Earth curves away":"The surface drops beneath the trajectory.","Circular orbit":"Altitude remains approximately constant.","Energy relationship":"Kinetic and gravitational potential energy remain constant in an ideal circular orbit.","Direct current supplied":"Charge flows through the motor circuit.","Armature current":"Current passes through opposite sides of the coil.","Half-turn":"The coil approaches the position where torque would reverse.","Continuous rotation":"Torque continues in the same rotational direction.","Mechanical rotation":"An external source turns the coil.","Coil in magnetic field":"The coil cuts magnetic field lines.","Magnetic flux changes":"Flux linkage varies with angle.","Alternating emf":"The polarity reverses every half-turn.","Electrical energy output":"Current can be supplied to an external circuit.","AC generator output":"Alternating electrical energy enters the grid.","High voltage":"The same power can be transmitted with lower current.","Lower current":"Charge flow through transmission wires is reduced.","Reduced I²R loss":"Less energy is transferred as heat.","Long-distance transmission":"Electrical energy travels through the network.","Safe distribution voltage":"Homes and businesses receive usable electrical energy.","Monochromatic light":"A narrow range of wavelengths is selected.","Single source":"The wave reaches both slits with a stable phase relationship.","Two narrow slits":"Each opening acts as a secondary source.","Diffracted waves":"Light spreads from each slit.","Superposition":"The waves overlap on the screen.","Interference pattern":"Alternating fringes reveal wave behaviour.","Incident light":"Electromagnetic radiation reaches a metal surface.","Photon absorption":"One electron absorbs one photon.","Photon energy hf":"Energy depends on radiation frequency.","Photoelectron emission":"An electron leaves the surface.","Maximum kinetic energy":"Remaining photon energy becomes electron kinetic energy.","Two inertial frames":"Observers move at constant relative velocity.","Light-clock event":"A pulse travels between mirrors.","Constant light speed":"Both observers measure the same value of c.","Longer observed path":"The moving clock’s light follows a diagonal path.","Greater time interval":"A longer path at the same speed requires more time.","Experimental evidence":"Muon survival and atomic clocks confirm the effect.","Molecular cloud":"Gas and dust begin contracting under gravity.","Protostar":"Contraction raises central temperature.","Hydrogen fusion begins":"The proton–proton chain releases energy.","Core hydrogen depleted":"The core contracts and surrounding layers expand.","Outer layers expelled":"A planetary nebula forms.","Cathode-ray evidence":"Electrons are identified as negative particles.","Thomson model":"Electrons are embedded in diffuse positive charge.","Alpha-scattering evidence":"Most particles pass through while a few deflect strongly.","Slow neutron":"A neutron is absorbed by a fissile nucleus.","Unstable compound nucleus":"The nucleus becomes highly excited.","Fission fragments":"Smaller nuclei carry kinetic energy.","Additional neutrons":"More neutrons are released.","Moderator":"Neutrons are slowed to increase further fission probability.","Control rods":"Excess neutrons are absorbed.","Acceleration":"A non-zero net force changes velocity.","Displacement":"The object changes position.","Work":"A force component acts through displacement.","Energy transfer":"The system gains or loses energy.","Physical observation":"A measurable pattern or anomaly is identified.","Mathematical relationship":"Quantities are linked by equations.","Prediction":"The model specifies an expected result.","Experiment or observation":"Evidence is collected.","Uncertainty analysis":"Measurement limits are considered.","Model validation":"Prediction and evidence are compared.","Model refinement":"The explanation is retained, limited or replaced.","Changing magnetic field":"Variation induces an electric field.","Changing electric field":"Variation contributes to a magnetic field.","Coupled oscillations":"Electric and magnetic fields sustain one another.","Speed predicted":"The equations produce the measured speed of light.","Light identified":"Visible light is recognised as electromagnetic radiation.","Vector components":"A course concept used in the Projectile Motion Chain challenge.","Horizontal velocity":"A course concept used in the Projectile Motion Chain challenge.","Vertical velocity":"A course concept used in the Projectile Motion Chain challenge.","Range":"A course concept used in the Projectile Motion Chain challenge.","DNA ligase":"A course concept used in the Projectile Motion Chain challenge.","Ksp":"A course concept used in the Projectile Motion Chain challenge.","Stromatolite":"A course concept used in the Projectile Motion Chain challenge.","Central mass":"A course concept used in the Orbital Mechanics Chain challenge.","Gravitational force":"A course concept used in the Orbital Mechanics Chain challenge.","Geostationary condition":"A course concept used in the Orbital Mechanics Chain challenge.","Satellite application":"A course concept used in the Orbital Mechanics Chain challenge.","Antibody":"A course concept used in the Orbital Mechanics Chain challenge.","Buffer":"A course concept used in the Orbital Mechanics Chain challenge.","Mutation":"A course concept used in the Orbital Mechanics Chain challenge.","Force pair":"A course concept used in the DC Motor Chain challenge.","Rotation":"A course concept used in the DC Motor Chain challenge.","Commutator":"A course concept used in the DC Motor Chain challenge.","Meiosis":"A course concept used in the DC Motor Chain challenge.","Carbonate ion":"A course concept used in the DC Motor Chain challenge.","Climate proxy":"A course concept used in the DC Motor Chain challenge.","Changing magnetic flux":"A course concept used in the Transformer and Grid Chain challenge.","Iron core":"A course concept used in the Transformer and Grid Chain challenge.","Low current":"A course concept used in the Transformer and Grid Chain challenge.","Reduced heating loss":"A course concept used in the Transformer and Grid Chain challenge.","Natural selection":"A course concept used in the Transformer and Grid Chain challenge.","Ester":"A course concept used in the Transformer and Grid Chain challenge.","Pollen":"A course concept used in the Transformer and Grid Chain challenge.","Coherent light":"A course concept used in the Wave Evidence Chain challenge.","Two slits":"A course concept used in the Wave Evidence Chain challenge.","Bright fringe":"A course concept used in the Wave Evidence Chain challenge.","Dark fringe":"A course concept used in the Wave Evidence Chain challenge.","Plasmid":"A course concept used in the Wave Evidence Chain challenge.","Subduction":"A course concept used in the Wave Evidence Chain challenge.","Light intensity":"A course concept used in the Photoelectric Evidence Chain challenge.","Photon frequency":"A course concept used in the Photoelectric Evidence Chain challenge.","Emission rate":"A course concept used in the Photoelectric Evidence Chain challenge.","Homeostasis":"A course concept used in the Photoelectric Evidence Chain challenge.","Titration":"A course concept used in the Photoelectric Evidence Chain challenge.","Cathode rays":"A course concept used in the Atomic Model Evidence Chain challenge.","Electron":"A course concept used in the Atomic Model Evidence Chain challenge.","Oil-drop experiment":"A course concept used in the Atomic Model Evidence Chain challenge.","Alpha scattering":"A course concept used in the Atomic Model Evidence Chain challenge.","Nucleus":"A course concept used in the Atomic Model Evidence Chain challenge.","Line spectrum":"A course concept used in the Atomic Model Evidence Chain challenge.","Quantised levels":"A course concept used in the Atomic Model Evidence Chain challenge.","Quantum model":"A course concept used in the Atomic Model Evidence Chain challenge.","Buffer capacity":"A course concept used in the Atomic Model Evidence Chain challenge.","Urbanisation":"A course concept used in the Atomic Model Evidence Chain challenge.","Gravitational collapse":"A course concept used in the Stellar Evolution Chain challenge.","Core heating":"A course concept used in the Stellar Evolution Chain challenge.","Hydrogen fusion":"A course concept used in the Stellar Evolution Chain challenge.","Hydrostatic equilibrium":"A course concept used in the Stellar Evolution Chain challenge.","Hydrogen depletion":"A course concept used in the Stellar Evolution Chain challenge.","Planetary nebula":"A course concept used in the Stellar Evolution Chain challenge.","Hazard map":"A course concept used in the Stellar Evolution Chain challenge."};
+
+const bankEl=document.getElementById("bank");
+const modeEl=document.getElementById("mode");
+const levelEl=document.getElementById("level");
+const sequenceBoard=document.getElementById("sequenceBoard");
+const chainBoard=document.getElementById("chainBoard");
+const chainPathEl=document.getElementById("chainPath");
+const relationshipEl=document.getElementById("relationships");
+const candidateGrid=document.getElementById("candidateGrid");
+const messageEl=document.getElementById("message");
+const explanationEl=document.getElementById("explanation");
+const solutionList=document.getElementById("solutionList");
+const definitionGrid=document.getElementById("definitionGrid");
+
+let current=null;
+let sequenceOrder=[];
+let chainPath=[];
+let chainRelationships=[];
+let candidatePool=[];
+let roundAttempts=0;
+let hinted=false;
+let completed=false;
+let draggedIndex=null;
+let lastChallengeId="";
+let stats={score:0,streak:0,solved:0,attempts:0};
+
+const bankNames={"module5":"Module 5 — Advanced Mechanics","module6":"Module 6 — Electromagnetism","module7":"Module 7 — The Nature of Light","module8":"Module 8 — From the Universe to the Atom","glossary":"Syllabus Glossary","review":"Whole HSC Course Review","expert":"Mixed Expert Challenge"};
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[ch]));
+}
+
+function sequenceLength(){
+  if(levelEl.value==="easy")return 4;
+  if(levelEl.value==="medium")return Math.min(6,current.steps.length);
+  return current.steps.length;
+}
+
+function chainTargetLength(){
+  return levelEl.value==="easy" ? Math.min(5,current.bestPath.length) : current.bestPath.length;
+}
+
+function setMessage(text,type=""){
+  messageEl.textContent=text;
+  messageEl.className="message"+(type?" "+type:"");
+}
+
+function updateStats(){
+  document.getElementById("scoreStat").textContent=stats.score;
+  document.getElementById("streakStat").textContent=stats.streak;
+  document.getElementById("solvedStat").textContent=stats.solved;
+  document.getElementById("attemptStat").textContent=stats.attempts;
+}
+
+function updateControls(){
+  const chainMode=modeEl.value==="chain";
+  document.getElementById("checkBtn").textContent=chainMode?"Check Chain":"Check Sequence";
+  document.getElementById("undoBtn").disabled=!chainMode||chainPath.length<=1||completed;
+  document.getElementById("modeHelp").textContent=chainMode
+    ?"Chain Reaction mode accepts only the curated directed links. Valid branches may lead to shorter routes, so use Undo Last Link strategically."
+    :"Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.";
+}
+
+function pickChallenge(){
+  const data=modeEl.value==="sequence"?SEQUENCES:CHAINS;
+  let choices=data.filter(item=>item.bank===bankEl.value);
+  if(!choices.length)throw new Error("No challenges available for this selection.");
+  if(choices.length>1){
+    const alternatives=choices.filter(item=>item.id!==lastChallengeId);
+    if(alternatives.length)choices=alternatives;
+  }
+  current=choices[Math.floor(Math.random()*choices.length)];
+  lastChallengeId=current.id;
+}
+
+function newChallenge(){
+  document.body.dataset.level=levelEl.value;
+  pickChallenge();
+  roundAttempts=0;
+  hinted=false;
+  completed=false;
+  explanationEl.classList.remove("show");
+  sequenceBoard.innerHTML="";
+  candidateGrid.innerHTML="";
+  chainPath=[];
+  chainRelationships=[];
+
+  document.getElementById("moduleStatus").textContent=bankNames[bankEl.value];
+  document.getElementById("modeStatus").textContent=modeEl.options[modeEl.selectedIndex].text;
+  document.getElementById("levelStatus").textContent=levelEl.options[levelEl.selectedIndex].text;
+  document.getElementById("roundStatus").textContent="In progress";
+  document.getElementById("challengeTitle").textContent=current.title;
+  document.getElementById("modeBadge").textContent=
+    modeEl.value==="sequence"?"SCIENCE SEQUENCE":"CHAIN REACTION";
+
+  if(modeEl.value==="sequence"){
+    sequenceBoard.hidden=false;
+    chainBoard.hidden=true;
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    sequenceOrder=shuffle(target);
+    if(sequenceOrder.length>1 && sequenceOrder.every((term,index)=>term===target[index])){
+      [sequenceOrder[0],sequenceOrder[1]]=[sequenceOrder[1],sequenceOrder[0]];
+    }
+    document.getElementById("challengeInstruction").textContent=
+      `Arrange ${target.length} terms into the scientifically defensible order.`;
+    renderSequence();
+    setMessage("Drag the cards or use the arrow buttons, then check your sequence.");
+  }else{
+    sequenceBoard.hidden=true;
+    chainBoard.hidden=false;
+    const target=current.bestPath.slice(0,chainTargetLength());
+    chainPath=[current.start];
+    candidatePool=levelEl.value==="easy"
+      ?shuffle(target.slice(1))
+      :shuffle(
+          current.nodes
+            .filter(term=>term!==current.start)
+            .concat(levelEl.value==="hard"?current.distractors:[])
+        );
+    document.getElementById("challengeInstruction").textContent=
+      `Begin with ${current.start} and build the longest accepted chain.`;
+    document.getElementById("chainTarget").textContent=`Target length: ${target.length} terms`;
+    renderChain();
+    setMessage("Choose a term that has an accepted relationship with the current end of the chain.");
+  }
+  updateControls();
+  updateProgress();
+}
+
+function renderSequence(){
+  sequenceBoard.innerHTML="";
+  sequenceOrder.forEach((term,index)=>{
+    const item=document.createElement("div");
+    item.className="sequence-item";
+    item.draggable=!completed;
+    item.dataset.index=String(index);
+
+    item.addEventListener("dragstart",()=>{
+      if(completed)return;
+      draggedIndex=index;
+      item.classList.add("dragging");
+    });
+    item.addEventListener("dragend",()=>{
+      draggedIndex=null;
+      item.classList.remove("dragging");
+    });
+    item.addEventListener("dragover",event=>event.preventDefault());
+    item.addEventListener("drop",event=>{
+      event.preventDefault();
+      if(draggedIndex===null||draggedIndex===index||completed)return;
+      const [moved]=sequenceOrder.splice(draggedIndex,1);
+      sequenceOrder.splice(index,0,moved);
+      clearPositionFeedback();
+      renderSequence();
+      updateProgress();
+    });
+
+    const pos=document.createElement("div");
+    pos.className="position";
+    pos.textContent=String(index+1);
+
+    const termEl=document.createElement("div");
+    termEl.className="sequence-term";
+    termEl.textContent=term;
+
+    const moves=document.createElement("div");
+    moves.className="move-buttons";
+
+    const up=document.createElement("button");
+    up.type="button";
+    up.textContent="↑";
+    up.title="Move up";
+    up.disabled=index===0||completed;
+    up.addEventListener("click",()=>moveSequence(index,-1));
+
+    const down=document.createElement("button");
+    down.type="button";
+    down.textContent="↓";
+    down.title="Move down";
+    down.disabled=index===sequenceOrder.length-1||completed;
+    down.addEventListener("click",()=>moveSequence(index,1));
+
+    moves.append(up,down);
+    item.append(pos,termEl,moves);
+    sequenceBoard.appendChild(item);
+  });
+}
+
+function moveSequence(index,direction){
+  const target=index+direction;
+  if(target<0||target>=sequenceOrder.length||completed)return;
+  [sequenceOrder[index],sequenceOrder[target]]=[sequenceOrder[target],sequenceOrder[index]];
+  clearPositionFeedback();
+  renderSequence();
+  updateProgress();
+}
+
+function clearPositionFeedback(){
+  [...sequenceBoard.children].forEach(item=>{
+    item.classList.remove("correct-position","wrong-position");
+  });
+}
+
+function checkSequence(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+  const correct=sequenceOrder.every((term,index)=>term===target[index]);
+
+  if(correct){
+    completeRound("sequence");
+    return;
+  }
+
+  const correctPositions=sequenceOrder.filter((term,index)=>term===target[index]).length;
+  [...sequenceBoard.children].forEach((item,index)=>{
+    item.classList.add(
+      sequenceOrder[index]===target[index]?"correct-position":"wrong-position"
+    );
+  });
+  stats.streak=0;
+  setMessage(`${correctPositions} of ${target.length} terms are currently in the correct position.`,"warn");
+  updateStats();
+  updateProgress();
+}
+
+function edgeFromTo(from,to){
+  return current.edges.find(edge=>edge[0]===from&&edge[1]===to);
+}
+
+function renderChain(){
+  chainPathEl.innerHTML="";
+  chainPath.forEach((term,index)=>{
+    const node=document.createElement("div");
+    node.className="chain-node";
+    node.textContent=term;
+    chainPathEl.appendChild(node);
+
+    if(index<chainPath.length-1){
+      const arrow=document.createElement("div");
+      arrow.className="chain-arrow";
+      arrow.textContent="→";
+      chainPathEl.appendChild(arrow);
+    }
+  });
+
+  relationshipEl.innerHTML=chainRelationships.map((rel,index)=>
+    `<div class="relationship"><strong>${index+1}. ${escapeHtml(chainPath[index])} → ${escapeHtml(chainPath[index+1])}</strong><br>${escapeHtml(rel)}</div>`
+  ).join("");
+
+  candidateGrid.innerHTML="";
+  candidatePool.forEach(term=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="term-card";
+    button.textContent=term;
+    const used=chainPath.includes(term);
+    button.disabled=used||completed;
+    if(used)button.classList.add("used");
+    button.addEventListener("click",()=>tryChainTerm(term,button));
+    candidateGrid.appendChild(button);
+  });
+
+  updateControls();
+  updateProgress();
+}
+
+function tryChainTerm(term,button){
+  if(completed)return;
+  const from=chainPath[chainPath.length-1];
+  const edge=edgeFromTo(from,term);
+  stats.attempts++;
+  roundAttempts++;
+
+  if(!edge||chainPath.includes(term)){
+    stats.streak=0;
+    button.classList.add("invalid-flash");
+    setTimeout(()=>button.classList.remove("invalid-flash"),320);
+    setMessage(`No accepted link from “${from}” to “${term}”.`,"bad");
+    updateStats();
+    return;
+  }
+
+  chainPath.push(term);
+  chainRelationships.push(edge[2]);
+  setMessage(`Valid link: ${edge[2]}`,"good");
+  renderChain();
+
+  if(chainPath.length>=chainTargetLength()){
+    completeRound("chain");
+  }else{
+    const possible=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(possible.length<=1){
+      setMessage(
+        `This branch is valid but ends at ${chainPath.length} terms. Undo the last link and try another route.`,
+        "warn"
+      );
+    }
+  }
+}
+
+function undoChain(){
+  if(modeEl.value!=="chain"||chainPath.length<=1||completed)return;
+  chainPath.pop();
+  chainRelationships.pop();
+  setMessage("Last valid link removed.");
+  renderChain();
+}
+
+function outgoing(term,used){
+  return current.edges
+    .filter(edge=>
+      edge[0]===term &&
+      !used.has(edge[1]) &&
+      candidatePool.includes(edge[1])
+    )
+    .map(edge=>edge[1]);
+}
+
+function longestRemainingPath(term,used,memo=new Map()){
+  const key=term+"|"+[...used].sort().join("~");
+  if(memo.has(key))return memo.get(key);
+
+  let best=[term];
+  for(const next of outgoing(term,used)){
+    const nextUsed=new Set(used);
+    nextUsed.add(next);
+    const candidate=[term,...longestRemainingPath(next,nextUsed,memo)];
+    if(candidate.length>best.length)best=candidate;
+  }
+  memo.set(key,best);
+  return best;
+}
+
+function checkChain(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=chainTargetLength();
+
+  if(chainPath.length>=target){
+    completeRound("chain");
+    return;
+  }
+
+  const possible=longestRemainingPath(
+    chainPath[chainPath.length-1],
+    new Set(chainPath)
+  );
+
+  if(possible.length>1){
+    setMessage(
+      `Your chain is valid but can still be extended. Current length: ${chainPath.length} / ${target}.`,
+      "warn"
+    );
+  }else{
+    stats.streak=0;
+    setMessage(
+      `This valid branch ends at ${chainPath.length} terms. Undo links and try another route to reach ${target}.`,
+      "warn"
+    );
+  }
+  updateStats();
+}
+
+function giveHint(){
+  if(!current||completed)return;
+  hinted=true;
+  stats.score=Math.max(0,stats.score-5);
+
+  if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const wrongIndex=sequenceOrder.findIndex((term,index)=>term!==target[index]);
+    if(wrongIndex===-1){
+      setMessage("The sequence is already correct. Check it to score.","good");
+    }else{
+      setMessage(`Hint: position ${wrongIndex+1} should be “${target[wrongIndex]}”.`,"warn");
+    }
+  }else{
+    const continuation=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(continuation.length>1){
+      const next=continuation[1];
+      const edge=edgeFromTo(chainPath[chainPath.length-1],next);
+      setMessage(`Hint: try “${next}” next. ${edge?edge[2]:""}`,"warn");
+    }else{
+      setMessage("This branch has ended. Undo the last link and choose another valid route.","warn");
+    }
+  }
+  updateStats();
+}
+
+function revealAnswer(){
+  if(!current)return;
+  completed=true;
+  stats.streak=0;
+  document.getElementById("roundStatus").textContent="Answer revealed";
+
+  if(modeEl.value==="sequence"){
+    sequenceOrder=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    renderSequence();
+  }else{
+    chainPath=current.bestPath.slice(0,chainTargetLength());
+    chainRelationships=[];
+    for(let i=0;i<chainPath.length-1;i++){
+      const edge=edgeFromTo(chainPath[i],chainPath[i+1]);
+      chainRelationships.push(edge?edge[2]:"Accepted relationship.");
+    }
+    renderChain();
+  }
+
+  showExplanation();
+  setMessage("Answer revealed. Review why each step or link is accepted.","warn");
+  updateStats();
+  updateControls();
+  updateProgress();
+}
+
+function completeRound(mode){
+  if(completed)return;
+  completed=true;
+  const base=mode==="sequence"?100:120;
+  const penalty=Math.min(60,Math.max(0,roundAttempts-1)*10)+(hinted?5:0);
+  const earned=Math.max(40,base-penalty);
+
+  stats.score+=earned;
+  stats.streak++;
+  stats.solved++;
+  document.getElementById("roundStatus").textContent="Solved";
+  setMessage(`Challenge solved. +${earned} points.`,"good");
+  showExplanation();
+  updateStats();
+  updateControls();
+  updateProgress();
+
+  if(mode==="sequence")renderSequence();
+  else renderChain();
+}
+
+function showExplanation(){
+  explanationEl.classList.add("show");
+  document.getElementById("summaryText").textContent=
+    current.summary||"Review the accepted order and relationships.";
+
+  let terms=[];
+  if(modeEl.value==="sequence"){
+    const steps=current.steps.slice(0,sequenceLength());
+    solutionList.innerHTML=steps.map((step,index)=>{
+      const rel=index===0?"Starting point.":step[1];
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(step[0])}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=steps.map(step=>step[0]);
+  }else{
+    const path=current.bestPath.slice(0,chainTargetLength());
+    solutionList.innerHTML=path.map((term,index)=>{
+      let rel="Starting term.";
+      if(index>0){
+        const edge=edgeFromTo(path[index-1],term);
+        rel=edge?edge[2]:"Accepted relationship.";
+      }
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(term)}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=[...new Set(path)];
+  }
+
+  definitionGrid.innerHTML=terms.map(term=>
+    `<div class="definition-item"><strong>${escapeHtml(term)}</strong><br>${escapeHtml(DEFINITIONS[term]||"Scientific concept used in this challenge.")}</div>`
+  ).join("");
+}
+
+function updateProgress(){
+  let percent=0;
+  if(!current){
+    percent=0;
+  }else if(completed){
+    percent=100;
+  }else if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const correct=sequenceOrder.filter((term,index)=>term===target[index]).length;
+    percent=target.length?correct/target.length*100:0;
+  }else{
+    percent=chainTargetLength()?chainPath.length/chainTargetLength()*100:0;
+  }
+  document.getElementById("progressBar").style.width=Math.min(100,percent)+"%";
+}
+
+function resetScore(){
+  stats={score:0,streak:0,solved:0,attempts:0};
+  updateStats();
+  setMessage("Session score reset. The current challenge remains available.");
+}
+
+document.getElementById("newBtn").addEventListener("click",newChallenge);
+document.getElementById("checkBtn").addEventListener("click",()=>{
+  if(!current)return;
+  modeEl.value==="sequence"?checkSequence():checkChain();
+});
+document.getElementById("undoBtn").addEventListener("click",undoChain);
+document.getElementById("hintBtn").addEventListener("click",giveHint);
+document.getElementById("revealBtn").addEventListener("click",revealAnswer);
+document.getElementById("resetScoreBtn").addEventListener("click",resetScore);
+
+[bankEl,modeEl,levelEl].forEach(control=>{
+  control.addEventListener("change",()=>{
+    document.body.dataset.level=levelEl.value;
+    newChallenge();
+  });
+});
+
+updateStats();
+newChallenge();
+
+</script>
+</body>
+</html>
