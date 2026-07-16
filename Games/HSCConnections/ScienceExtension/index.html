@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Connections — Science Extension</title>
+<style>
+:root{
+  --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
+  --accent:#178452;--accent2:#49ad78;--soft:#eaf8f0;--shadow:0 10px 28px rgba(32,88,65,.13);
+}
+body[data-complexity="hard"]{--bg:#fff3dc;--ink:#543810;--muted:#776143;--line:#ead2a4;--accent:#d27b0e;--accent2:#eda83f;--soft:#fff6e8;--shadow:0 10px 28px rgba(130,82,13,.14)}
+body[data-complexity="insane"]{--bg:#ffe8e9;--ink:#541f26;--muted:#785057;--line:#e9bfc4;--accent:#c53d4e;--accent2:#e26673;--soft:#fff0f2;--shadow:0 10px 28px rgba(120,30,42,.15)}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#fbfdff);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;transition:background .25s,color .25s}
+.page{width:min(1500px,calc(100% - 28px));margin:18px auto 34px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,81,120,.10)}
+.hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
+.hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero p{margin:7px 0 0;max-width:980px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:18px;margin-top:18px;align-items:start}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+h2{margin:0 0 12px;font-size:1.25rem} h3{margin:0}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select,button{font:inherit}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+button{border:0;border-radius:12px;padding:11px 14px;font-weight:850;cursor:pointer}
+button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;font-size:1.45rem;color:var(--accent)}
+.help,.info-bank{padding:12px;border-radius:13px;background:var(--soft);border:1px solid var(--line);line-height:1.45;margin-top:14px}
+.info-bank ul{margin:8px 0 0;padding-left:20px}
+.board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.board-head p{margin:4px 0 0;color:var(--muted)}
+.life-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+.life{width:28px;height:28px;border-radius:50%;background:var(--accent);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.life.lost{background:#d5dadd;opacity:.6}
+.groups-found{display:grid;gap:9px;margin-bottom:10px}
+.found{border-radius:14px;padding:12px 14px;color:#173129}
+.found:nth-child(1){background:#f2dc72}.found:nth-child(2){background:#9fd7a6}.found:nth-child(3){background:#8fc9ed}.found:nth-child(4){background:#c6a9e8}
+.found strong{display:block;font-size:1.04rem}.found small{display:block;margin-top:4px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px}
+.term{min-height:86px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px;text-align:center;color:var(--ink);font-weight:820;line-height:1.2;transition:transform .12s,border-color .12s,background .12s}
+.term:hover{transform:translateY(-2px);border-color:var(--accent)}
+.term.selected{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.term.one-away{animation:pulse .45s}
+@keyframes pulse{50%{transform:scale(1.035)}}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.action-row button{min-width:120px}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760}
+.message.good{background:#e8f8ef;border-color:#89c9a6;color:#17623e}
+.message.bad{background:#fff0f2;border-color:#e0a1aa;color:#8b2533}
+.message.near{background:#fff7dc;border-color:#e0c76e;color:#67500d}
+.reveal{margin-top:14px;display:none}
+.reveal.show{display:block}
+.reveal-grid{display:grid;gap:9px}
+.reveal-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px}
+.reveal-item strong{color:var(--accent)}
+.footer{margin-top:18px;color:var(--muted);font-size:.88rem;text-align:center}
+.footer a{color:var(--accent)}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.page{width:min(100% - 16px,1500px)}.hero{padding:20px}.term{min-height:76px;font-size:.9rem}}
+</style>
+</head>
+<body data-complexity="easy">
+<div class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+  <header class="hero">
+    <h1>HSC Connections</h1>
+    <p>Science Extension HSC course: sort 16 research terms into four scientifically connected groups of four.</p>
+  </header>
+  <main class="layout">
+    <aside class="card">
+      <h2>Game setup</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Science Extension</option></select>
+      <label for="bank">Content bank</label>
+      <select id="bank">
+        <option value="module1">Module 1 — The Foundations of Scientific Thinking</option>
+        <option value="module2">Module 2 — The Scientific Research Proposal</option>
+        <option value="module3">Module 3 — The Data, Evidence and Decisions</option>
+        <option value="module4">Module 4 — The Scientific Research Report</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+      <label for="info">Available Info</label>
+      <select id="info">
+        <option value="full">Full support</option>
+        <option value="bank" selected>Connection bank</option>
+        <option value="terms">Terms only</option>
+      </select>
+      <label for="complexity">Complexity</label>
+      <select id="complexity">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+        <option value="insane">Insane</option>
+      </select>
+      <div class="controls-row">
+        <button id="newPuzzle" class="primary">New puzzle</button>
+        <button id="resetPuzzle" class="secondary">Reset puzzle</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="foundStat">0</strong>Groups found</div>
+        <div class="stat"><strong id="guessStat">0</strong>Guesses</div>
+      </div>
+      <div id="infoBank" class="info-bank"></div>
+      <div class="help"><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. An incorrect selection may receive a “one away” message if three terms belong together.</div>
+    </aside>
+    <section class="card">
+      <div class="board-head">
+        <div><h2 id="puzzleTitle">Foundations of Scientific Thinking</h2><p id="puzzleSubtitle">Find four connected groups.</p></div>
+        <button id="shuffleBtn" class="secondary">Shuffle</button>
+      </div>
+      <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
+      <div id="groupsFound" class="groups-found"></div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="action-row">
+        <button id="submitBtn" class="primary">Submit group</button>
+        <button id="deselectBtn" class="secondary">Deselect</button>
+        <button id="hintBtn" class="secondary">Hint</button>
+        <button id="revealBtn" class="secondary">Reveal groups</button>
+      </div>
+      <div id="message" class="message">Select four terms that share a precise scientific connection.</div>
+      <div id="reveal" class="reveal"><h3>Complete solution</h3><div id="revealGrid" class="reveal-grid"></div></div>
+    </section>
+  </main>
+  <div class="footer">Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/science-extension-stage-6-2017" target="_blank" rel="noopener">NSW Science Extension Stage 6 Syllabus (2017)</a>. Connections include syllabus concepts and closely related scientific terminology.</div>
+</div>
+<script>
+"use strict";
+const PUZZLES=[{"id":"m1-easy-1","bank":"module1","complexity":"easy","title":"Foundations of Scientific Thinking","groups":[{"connection":"Forms of scientific reasoning","explanation":"These move between observations, general principles and possible explanations.","terms":["Induction","Deduction","Abduction","Inference"]},{"connection":"Criteria used to assess explanations","explanation":"These help distinguish productive scientific explanations from unsupported claims.","terms":["Testability","Falsifiability","Parsimony","Evidence"]},{"connection":"Named paradigm-shift examples","explanation":"These are syllabus examples of evidence changing accepted scientific explanations.","terms":["Lavoisier","Einstein","Wegener","McClintock"]},{"connection":"Current influences on scientific thinking","explanation":"These shape the questions investigated, resources available and use of findings.","terms":["Economic","Political","Global","Ethical"]}]},{"id":"m1-hard-1","bank":"module1","complexity":"hard","title":"Knowledge, Observation and Bias","groups":[{"connection":"Philosophy-of-science concepts","explanation":"These concern knowledge, experience, explanation and logical simplicity.","terms":["Epistemology","Empiricism","Parsimony","Falsifiability"]},{"connection":"Observation and interpretation","explanation":"These describe how evidence can be noticed, framed or distorted.","terms":["Cultural observation","Theory-dependence","Confirmation bias","Observer bias"]},{"connection":"Superseded or expanded explanations","explanation":"These changed when new evidence or a more powerful framework became available.","terms":["Phlogiston","Newtonian gravity","Continental drift","Fixed genome"]},{"connection":"Research-ethics contexts","explanation":"These require ethical frameworks for participation, welfare, privacy and data use.","terms":["Human experimentation","Animal experimentation","Biobanks","Research data"]}]},{"id":"m1-insane-1","bank":"module1","complexity":"insane","title":"Paradigms and Arguments","groups":[{"connection":"Elements of a deductive argument","explanation":"These determine whether a deductive conclusion is logically and evidentially acceptable.","terms":["Premises","Logical form","Validity","Soundness"]},{"connection":"Kuhn-style scientific change","explanation":"These describe movement from an accepted framework through unresolved evidence to major change.","terms":["Paradigm","Normal science","Anomaly","Scientific revolution"]},{"connection":"Evidence supporting oxygen-based combustion","explanation":"These helped replace phlogiston explanations with quantitative oxygen chemistry.","terms":["Careful mass measurement","Closed vessels","Oxygen","Conservation of mass"]},{"connection":"Features of responsible scientific objectivity","explanation":"These reduce the influence of individual expectation and undisclosed choice.","terms":["Transparent methods","Reproducibility","Critical review","Bias disclosure"]}]},{"id":"m2-easy-1","bank":"module2","complexity":"easy","title":"Building a Research Proposal","groups":[{"connection":"Early research-development stages","explanation":"These move a broad area towards a focused and testable project.","terms":["Literature search","Research question","Initial hypothesis","Resource evaluation"]},{"connection":"Core proposal components","explanation":"These explain why and how the research will be completed.","terms":["Rationale","Methodology","Data analysis","Timeline"]},{"connection":"Data-source categories","explanation":"These distinguish data collected directly, sourced from others or accessed publicly at scale.","terms":["Primary data","Secondary data","Public data set","Large data set"]},{"connection":"Referencing systems","explanation":"These are accepted protocols named in the syllabus.","terms":["APA","Harvard","MLA","In-text citation"]}]},{"id":"m2-hard-1","bank":"module2","complexity":"hard","title":"Methodology and Data Collection","groups":[{"connection":"Evaluating a research question","explanation":"A strong question should meet these practical and scientific criteria.","terms":["Meaningful","Significant","Feasible","Focused"]},{"connection":"Research-method classifications","explanation":"These distinguish manipulation, observation and types of resulting data.","terms":["Experimental","Observational","Quantitative","Qualitative"]},{"connection":"Measurement-error concepts","explanation":"These describe consistent bias, scatter and numerical expression of uncertainty.","terms":["Systematic error","Random error","Absolute uncertainty","Percentage uncertainty"]},{"connection":"Large-data acquisition","explanation":"These produce or distribute high-volume scientific observations.","terms":["Remote sensing","Streamed data","Sensor network","Public repository"]}]},{"id":"m2-insane-1","bank":"module2","complexity":"insane","title":"Proposal Quality and Reproducibility","groups":[{"connection":"Operationalising a causal hypothesis","explanation":"These define what changes, what is measured and what alternative explanations are controlled.","terms":["Independent variable","Dependent variable","Operational definition","Confounding variable"]},{"connection":"Data-management planning","explanation":"These allow data to remain understandable, secure and recoverable.","terms":["Metadata","File format","Version control","Backup"]},{"connection":"Public scientific data examples","explanation":"These syllabus examples generated large data sets for further research.","terms":["Large Hadron Collider","Kepler Telescope","Human Genome Project","Open data"]},{"connection":"Proposal-refinement checkpoints","explanation":"These are used to evaluate progress and justify changes before or during research.","terms":["Pilot study","Benchmark","Milestone","Amendment"]}]},{"id":"m3-easy-1","bank":"module3","complexity":"easy","title":"Data, Evidence and Statistics","groups":[{"connection":"Descriptive statistics","explanation":"These summarise centre and spread within numerical data.","terms":["Mean","Median","Range","Standard deviation"]},{"connection":"Named statistical tests","explanation":"These are syllabus statistical procedures used for different research questions.","terms":["Student’s t-test","Chi-squared test","F-test","Correlation coefficient"]},{"connection":"Data-quality measures","explanation":"These are used to judge the integrity and usefulness of data.","terms":["Accuracy","Precision","Bias","Uncertainty"]},{"connection":"Data-modelling categories","explanation":"These are modelling types identified in the syllabus.","terms":["Predictive","Statistical","Descriptive","Graphical"]}]},{"id":"m3-hard-1","bank":"module3","complexity":"hard","title":"Finding Meaning in Data","groups":[{"connection":"Qualitative-analysis processes","explanation":"These organise and interpret non-numerical material.","terms":["Content analysis","Thematic analysis","Coding","Theme"]},{"connection":"Common data-cleaning actions","explanation":"These improve data quality before analysis.","terms":["Remove duplicates","Correct invalid values","Handle missing data","Standardise formats"]},{"connection":"Requirements supporting a causal claim","explanation":"These strengthen the inference that one factor produces another.","terms":["Correlation","Temporal precedence","Plausible mechanism","Alternative causes controlled"]},{"connection":"Model evaluation","explanation":"These determine whether a model is useful beyond the data used to create it.","terms":["Assumptions","Validation","Cross-validation","Sensitivity analysis"]}]},{"id":"m3-insane-1","bank":"module3","complexity":"insane","title":"Statistical Decisions","groups":[{"connection":"Statistical-hypothesis testing","explanation":"These connect the claim being tested with a probability-based decision rule.","terms":["Null hypothesis","Test statistic","p-value","Significance level"]},{"connection":"Student’s t-test decisions","explanation":"These are considered when deciding how and whether to compare means.","terms":["Group dependence","Mean difference","Variance estimate","Degrees of freedom"]},{"connection":"Interpreting a correlation coefficient","explanation":"These aspects describe a correlation result without automatically establishing causation.","terms":["Direction","Strength","Linearity","No proof of causation"]},{"connection":"Evidence-based research decisions","explanation":"These occur after analysing patterns, uncertainty and limitations.","terms":["Construct conclusion","Evaluate limitations","Refine model","Propose further research"]}]},{"id":"m4-easy-1","bank":"module4","complexity":"easy","title":"The Scientific Research Report","groups":[{"connection":"Opening report sections","explanation":"These identify and summarise the research and establish its scientific basis.","terms":["Title","Abstract","Introduction","Research question"]},{"connection":"Evidence and interpretation sections","explanation":"These explain how research was conducted, what was found and what it means.","terms":["Methodology","Results","Discussion","Conclusion"]},{"connection":"Scientific communication settings","explanation":"These communicate findings to specialist or general audiences.","terms":["Journal","Conference","Poster","Popular media"]},{"connection":"Communication forms","explanation":"These are modes named in the syllabus for communicating scientific information.","terms":["Oral","Written","Mathematical","Graphical"]}]},{"id":"m4-hard-1","bank":"module4","complexity":"hard","title":"Reporting Findings Clearly","groups":[{"connection":"Results-section content","explanation":"These present findings in organised forms before extended interpretation.","terms":["Processed data","Tables","Figures","Captions"]},{"connection":"Discussion-section functions","explanation":"These interpret findings and evaluate the strength of the investigation.","terms":["Explain patterns","Compare supporting evidence","Analyse limitations","Suggest modifications"]},{"connection":"Choosing a communication approach","explanation":"These determine an appropriate mode and medium.","terms":["Purpose","Audience","Context","Complexity"]},{"connection":"Good scholarship","explanation":"These protect authenticity, transparency and responsible use of information.","terms":["Accurate citation","Acknowledgement","Data transparency","Original work"]}]},{"id":"m4-insane-1","bank":"module4","complexity":"insane","title":"Peer Review and Publication","groups":[{"connection":"Peer-review sequence","explanation":"These are common stages between manuscript submission and publication.","terms":["Submission","Editorial screening","Expert review","Revision"]},{"connection":"Research-integrity breaches","explanation":"These undermine the authenticity and accuracy of the scientific record.","terms":["Fabrication","Falsification","Plagiarism","Undisclosed conflict"]},{"connection":"Transparent-reporting statements","explanation":"These allow readers to evaluate support, access and potential influence.","terms":["Data availability","Funding disclosure","Conflict of interest","Ethics approval"]},{"connection":"From data to claim","explanation":"These form the logical sequence used to justify a scientific conclusion.","terms":["Data","Analysis","Evidence","Conclusion"]}]},{"id":"glossary-easy-1","bank":"glossary","complexity":"easy","title":"Science Extension Glossary","groups":[{"connection":"Scientific reasoning terms","explanation":"These describe movement between observations, generalisations and logical conclusions.","terms":["Induction","Deduction","Philosophical argument","Conclusion"]},{"connection":"Philosophy-of-science terms","explanation":"These concern knowledge, experience, simplicity and testability.","terms":["Epistemology","Empiricism","Parsimony","Falsifiability"]},{"connection":"Data-analysis terms","explanation":"These organise, clean, summarise or identify patterns in information.","terms":["Data set","Data cleansing","Descriptive statistics","Content analysis"]},{"connection":"Data and investigation descriptions","explanation":"These distinguish numerical, descriptive, direct and sourced information.","terms":["Quantitative","Qualitative","Primary data","Secondary-sourced data"]}]},{"id":"glossary-hard-1","bank":"glossary","complexity":"hard","title":"Glossary Relationships","groups":[{"connection":"Simple-explanation concepts","explanation":"These express preference for the simplest adequate explanation.","terms":["Occam’s razor","Parsimony","Model","Hypothesis"]},{"connection":"Qualitative-analysis terms","explanation":"These examine characteristics, themes and culturally situated observations.","terms":["Content analysis","Thematic analysis","Cultural observations","Qualitative"]},{"connection":"Large-scale quantitative evidence","explanation":"These terms concern organised numerical information and statistical patterns.","terms":["Large data sets","Data set","Quantitative","Correlation"]},{"connection":"Responsible knowledge development","explanation":"These recognise ethical guidance, Indigenous knowledge holders and direct evidence sources.","terms":["Ethical framework","Aboriginal and Torres Strait Islander Peoples","Primary sources","Empiricism"]}]},{"id":"glossary-insane-1","bank":"glossary","complexity":"insane","title":"Glossary Fine Distinctions","groups":[{"connection":"Reasoning and knowledge","explanation":"These distinguish the study of knowledge, sensory evidence and two directions of reasoning.","terms":["Epistemology","Empiricism","Induction","Deduction"]},{"connection":"Evaluating a proposed explanation","explanation":"These concern testability, simplicity and formal support for a proposed causal claim.","terms":["Falsifiability","Parsimony","Hypothesis","Philosophical argument"]},{"connection":"Converting information into analysable form","explanation":"These organise, correct, code and statistically summarise data.","terms":["Data set","Data cleansing","Thematic analysis","Descriptive statistics"]},{"connection":"Sources and forms of evidence","explanation":"These distinguish direct and sourced information and descriptive and numerical forms.","terms":["Primary data","Secondary-sourced data","Qualitative","Quantitative"]}]},{"id":"review-easy-1","bank":"review","complexity":"easy","title":"Balanced Science Extension Review","groups":[{"connection":"Module 1 scientific thinking","explanation":"These help develop and critically assess scientific explanations.","terms":["Empiricism","Induction","Falsifiability","Parsimony"]},{"connection":"Module 2 research planning","explanation":"These move a project from existing literature to a workable plan.","terms":["Literature review","Research question","Hypothesis","Research proposal"]},{"connection":"Module 3 data analysis","explanation":"These summarise, test and interpret research data.","terms":["Standard deviation","t-test","Correlation","Data modelling"]},{"connection":"Module 4 report sections","explanation":"These communicate the research process, evidence and conclusion.","terms":["Abstract","Methodology","Discussion","Conclusion"]}]},{"id":"review-hard-1","bank":"review","complexity":"hard","title":"Cross-module Research Skills","groups":[{"connection":"Threats to sound scientific conclusions","explanation":"These can distort observation, design, analysis or reporting.","terms":["Confirmation bias","Confounding variable","Data error","Selective reporting"]},{"connection":"Processes strengthening research credibility","explanation":"These make methods and findings easier to evaluate and reproduce.","terms":["Peer review","Replication","Transparent methods","Accurate referencing"]},{"connection":"Ways to represent research evidence","explanation":"These support analysis and communication across the project.","terms":["Table","Graph","Mathematical model","Written discussion"]},{"connection":"Research-quality criteria","explanation":"These judge whether a study is dependable, appropriate and useful.","terms":["Reliability","Validity","Relevance","Feasibility"]}]},{"id":"review-insane-1","bank":"review","complexity":"insane","title":"Science Extension Synthesis","groups":[{"connection":"From observation to accepted knowledge","explanation":"These trace the development and testing of a scientific explanation.","terms":["Observation","Hypothesis","Evidence","Theory"]},{"connection":"From raw information to a decision","explanation":"These trace the research pathway from collection to an evidence-based judgement.","terms":["Raw data","Processing","Analysis","Conclusion"]},{"connection":"Research planning constraints","explanation":"These determine whether a proposed investigation can be responsibly completed.","terms":["Time","Resources","Data access","Ethics"]},{"connection":"Communicating uncertainty honestly","explanation":"These show readers the strength and boundaries of the evidence.","terms":["Error bars","Confidence interval","Limitations","Future directions"]}]},{"id":"expert-hard-1","bank":"expert","complexity":"hard","title":"Mixed Science Extension Expert Challenge","groups":[{"connection":"Philosophical checks on a scientific claim","explanation":"These test how the claim was formed, whether it can fail and whether complexity is justified.","terms":["Empirical support","Deductive validity","Falsifiability","Parsimony"]},{"connection":"Statistical evidence reporting","explanation":"These communicate the magnitude, uncertainty and decision associated with a result.","terms":["Effect size","Confidence interval","p-value","Sample size"]},{"connection":"Open and reproducible research","explanation":"These allow other researchers to inspect, repeat and extend the work.","terms":["Public data","Metadata","Version control","Detailed methodology"]},{"connection":"Audience-specific communication","explanation":"These formats are suited to different specialist and public contexts.","terms":["Journal article","Conference talk","Scientific poster","Media release"]}]},{"id":"expert-insane-1","bank":"expert","complexity":"insane","title":"Mixed Science Extension Expert Challenge II","groups":[{"connection":"Alternative explanations controlled by design","explanation":"These reduce the likelihood that an observed effect has a non-causal explanation.","terms":["Random allocation","Control group","Blinding","Confounder measurement"]},{"connection":"Model-development cycle","explanation":"These describe iterative construction and evaluation of a scientific model.","terms":["Assumptions","Parameter fitting","Validation","Revision"]},{"connection":"Responsible handling of research participants or data","explanation":"These protect autonomy, privacy and accountability.","terms":["Informed consent","Confidentiality","Secure storage","Ethics approval"]},{"connection":"Evidence-changing scientific ideas","explanation":"These syllabus examples show new evidence refining or transforming accepted explanations.","terms":["Oxygen and combustion","General relativity","Plate tectonics","Transposable elements"]}]}];
+const bankEl=document.getElementById("bank"),infoEl=document.getElementById("info"),complexityEl=document.getElementById("complexity");
+const grid=document.getElementById("grid"),groupsFound=document.getElementById("groupsFound"),message=document.getElementById("message");
+let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,finished=false;
+const maxMistakes={easy:4,hard:3,insane:2};
+
+function shuffle(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function availablePuzzles(){
+  const bank=bankEl.value,c=complexityEl.value;
+  let list=PUZZLES.filter(p=>p.bank===bank&&p.complexity===c);
+  if(!list.length) list=PUZZLES.filter(p=>p.bank===bank);
+  return list;
+}
+function startPuzzle(){
+  const list=availablePuzzles();
+  puzzle=list[Math.floor(Math.random()*list.length)];
+  if(puzzle.complexity!==complexityEl.value) complexityEl.value=puzzle.complexity;
+  selected=[];solved=[];mistakes=0;guesses=0;finished=false;
+  remainingTerms=shuffle(puzzle.groups.flatMap(g=>g.terms));
+  document.body.dataset.complexity=puzzle.complexity;
+  document.getElementById("puzzleTitle").textContent=puzzle.title;
+  document.getElementById("puzzleSubtitle").textContent=bankEl.options[bankEl.selectedIndex].text+" · "+complexityEl.options[complexityEl.selectedIndex].text;
+  document.getElementById("reveal").classList.remove("show");
+  render();setMessage("Select four terms that share a precise scientific connection.","");
+}
+function render(){
+  grid.innerHTML="";
+  remainingTerms.forEach(term=>{
+    const b=document.createElement("button");b.type="button";b.className="term";b.textContent=term;
+    if(selected.includes(term))b.classList.add("selected");
+    b.addEventListener("click",()=>toggleTerm(term));grid.appendChild(b);
+  });
+  groupsFound.innerHTML=solved.map(g=>`<div class="found"><strong>${escapeHtml(g.connection)}</strong>${g.terms.map(escapeHtml).join(" · ")}<small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  renderLives();renderInfo();updateStats();
+}
+function toggleTerm(term){
+  if(finished)return;
+  if(selected.includes(term))selected=selected.filter(x=>x!==term);
+  else if(selected.length<4)selected.push(term);
+  render();
+}
+function submitGroup(){
+  if(finished)return;
+  if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
+  guesses++;
+  const target=puzzle.groups.find(g=>!solved.some(s=>s.connection===g.connection)&&selected.every(t=>g.terms.includes(t)));
+  if(target){
+    solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
+    setMessage("Correct connection: "+target.connection+".","good");render();
+    if(solved.length===4)finish(true);
+    return;
+  }
+  mistakes++;
+  let best=0;
+  puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection)).forEach(g=>{best=Math.max(best,selected.filter(t=>g.terms.includes(t)).length);});
+  const tiles=[...grid.children].filter(x=>selected.includes(x.textContent));tiles.forEach(x=>x.classList.add("one-away"));
+  if(best===3)setMessage("One away — three of your selected terms belong together.","near");
+  else setMessage("That group is not correct. Reconsider the most precise connection.","bad");
+  selected=[];render();
+  if(mistakes>=maxMistakes[complexityEl.value])finish(false);
+}
+function finish(won){
+  finished=true;
+  if(!won){setMessage("No mistakes remaining. The complete solution is shown below.","bad");showSolution();}
+  else{setMessage(`Puzzle complete in ${guesses} guesses.`,"good");showSolution();}
+}
+function showSolution(){
+  const reveal=document.getElementById("reveal"),box=document.getElementById("revealGrid");
+  box.innerHTML=puzzle.groups.map(g=>`<div class="reveal-item"><strong>${escapeHtml(g.connection)}</strong><br>${g.terms.map(escapeHtml).join(" · ")}<br><small>${escapeHtml(g.explanation)}</small></div>`).join("");
+  reveal.classList.add("show");
+}
+function hint(){
+  if(finished)return;
+  const unsolved=puzzle.groups.filter(g=>!solved.some(s=>s.connection===g.connection));
+  const g=unsolved[Math.floor(Math.random()*unsolved.length)];
+  if(infoEl.value==="terms")setMessage("Hint: one valid group includes “"+g.terms[Math.floor(Math.random()*4)]+"”.","near");
+  else setMessage("Hint: look for a group connected by “"+g.connection+"”.","near");
+}
+function renderLives(){
+  const box=document.getElementById("lives");box.innerHTML="";
+  for(let i=0;i<maxMistakes[complexityEl.value];i++){const d=document.createElement("span");d.className="life"+(i<mistakes?" lost":"");box.appendChild(d);}
+}
+function renderInfo(){
+  const box=document.getElementById("infoBank"),mode=infoEl.value;
+  if(mode==="terms"){box.style.display="none";return;}
+  box.style.display="block";
+  const titles=shuffle(puzzle.groups.map(g=>g.connection));
+  box.innerHTML="<strong>Connection bank</strong><ul>"+titles.map(x=>"<li>"+escapeHtml(x)+"</li>").join("")+"</ul>";
+  if(mode==="full")box.innerHTML+="<p><small>Full support is active: the Hint button identifies a connection category.</small></p>";
+}
+function updateStats(){document.getElementById("foundStat").textContent=solved.length;document.getElementById("guessStat").textContent=guesses;}
+function setMessage(text,kind){message.textContent=text;message.className="message"+(kind?" "+kind:"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+document.getElementById("newPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("resetPuzzle").addEventListener("click",startPuzzle);
+document.getElementById("submitBtn").addEventListener("click",submitGroup);
+document.getElementById("deselectBtn").addEventListener("click",()=>{selected=[];render();});
+document.getElementById("shuffleBtn").addEventListener("click",()=>{remainingTerms=shuffle(remainingTerms);render();});
+document.getElementById("hintBtn").addEventListener("click",hint);
+document.getElementById("revealBtn").addEventListener("click",()=>{finished=true;showSolution();setMessage("Solution revealed.","near");});
+[bankEl,complexityEl].forEach(x=>x.addEventListener("change",startPuzzle));infoEl.addEventListener("change",render);
+startPuzzle();
+</script>
+</body>
+</html>
