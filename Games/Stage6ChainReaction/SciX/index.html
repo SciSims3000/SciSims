@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage 6 Chain Reaction — Science Extension</title>
+<style>
+
+:root{
+  --page:#eaf5ff;--page2:#f9fcff;--card:#fff;--ink:#17324a;--muted:#60778b;
+  --line:#cbddea;--accent:#0878bd;--accent2:#18a2d8;--soft:#edf7fd;
+  --good:#18875b;--goodSoft:#e8f8ef;--bad:#bd3e4e;--badSoft:#fff0f2;
+  --warn:#b97708;--warnSoft:#fff6dd;--shadow:0 11px 30px rgba(36,78,108,.13);
+}
+body[data-level="medium"]{
+  --page:#fff4dd;--page2:#fffdf8;--line:#ead4a8;--accent:#d47b0d;--accent2:#efa83c;--soft:#fff7e8;
+}
+body[data-level="hard"]{
+  --page:#ffe9eb;--page2:#fffafa;--line:#ebc1c7;--accent:#c63e51;--accent2:#e56876;--soft:#fff0f2;
+}
+*{box-sizing:border-box}
+html{scroll-behaviour:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  background:linear-gradient(180deg,var(--page),var(--page2));
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:background .25s;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+.page{width:min(1540px,calc(100% - 28px));margin:18px auto 34px}
+.back{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+  background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);
+  box-shadow:0 5px 14px rgba(31,81,120,.1)
+}
+.hero{
+  margin-top:14px;padding:25px 29px;border-radius:29px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)
+}
+.hero h1{margin:0 0 7px;font-size:clamp(2rem,4vw,3.65rem);line-height:1}
+.hero p{margin:0;max-width:1050px;font-size:1.05rem;line-height:1.5}
+.intentions{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.mini-card,.card{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:var(--shadow)}
+.mini-card{border-radius:18px;padding:15px 17px}
+.mini-card h2{font-size:1rem;margin:0 0 5px;color:var(--accent)}
+.mini-card p{margin:0;line-height:1.45}
+.layout{display:grid;grid-template-columns:minmax(300px,365px) 1fr;gap:18px;align-items:start;margin-top:18px}
+.card{border-radius:22px;padding:18px}
+h2{margin:0 0 12px;font-size:1.26rem}
+h3{margin:0 0 8px}
+label{display:block;font-weight:850;margin:12px 0 6px}
+select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+button{
+  border:0;border-radius:12px;padding:11px 13px;font-weight:850;color:var(--ink);
+  background:var(--soft);border:1px solid var(--line)
+}
+button.primary{color:#fff;border:0;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+button.danger{color:#8e2836;background:var(--badSoft);border-color:#e2abb2}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,.term-card:focus-visible{outline:4px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}
+.stat strong{display:block;color:var(--accent);font-size:1.45rem}
+.help{margin-top:14px;padding:12px 13px;background:var(--soft);border:1px solid var(--line);border-radius:13px;line-height:1.45;font-size:.94rem}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
+.status-box{padding:10px 12px;border-radius:13px;background:var(--soft);border:1px solid var(--line)}
+.status-box span{display:block;color:var(--muted);font-size:.79rem;font-weight:780;text-transform:uppercase;letter-spacing:.04em}
+.status-box strong{display:block;margin-top:3px}
+.board-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
+.board-head p{margin:4px 0 0;color:var(--muted);line-height:1.4}
+.mode-badge{white-space:nowrap;padding:7px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:900;color:var(--accent)}
+.progress-shell{height:12px;border-radius:999px;background:#e4edf3;overflow:hidden;margin:11px 0 16px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}
+.message{min-height:52px;margin-top:13px;padding:12px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-weight:760;line-height:1.42}
+.message.good{background:var(--goodSoft);border-color:#90ceb0;color:#17623f}
+.message.bad{background:var(--badSoft);border-color:#e1a4ad;color:#8d2635}
+.message.warn{background:var(--warnSoft);border-color:#dec36b;color:#70530a}
+.sequence-list{display:grid;gap:9px}
+.sequence-item{
+  display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;
+  border:2px solid var(--line);border-radius:14px;background:#fff;padding:9px 10px;
+  transition:border-color .12s,transform .12s,background .12s
+}
+.sequence-item[draggable="true"]{cursor:grab}
+.sequence-item.dragging{opacity:.48}
+.sequence-item.correct-position{border-color:#36a66f;background:#eefaf3}
+.sequence-item.wrong-position{border-color:#d8a34d;background:#fff8e8}
+.position{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--soft);color:var(--accent);font-weight:900
+}
+.sequence-term{font-weight:850}
+.move-buttons{display:flex;gap:5px}
+.move-buttons button{padding:6px 9px;border-radius:9px}
+.chain-path{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding:8px 2px 12px;min-height:84px}
+.chain-node{
+  min-width:145px;max-width:205px;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:11px;border-radius:13px;background:linear-gradient(180deg,var(--soft),#fff);
+  border:2px solid var(--line);font-weight:850;line-height:1.25
+}
+.chain-arrow{display:flex;align-items:center;font-size:1.7rem;color:var(--accent);font-weight:900}
+.relationships{display:grid;gap:7px;margin:0 0 13px}
+.relationship{
+  padding:9px 11px;border-left:5px solid var(--accent);border-radius:10px;background:var(--soft);
+  font-size:.91rem;line-height:1.35
+}
+.candidate-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:5px 0 9px}
+.candidate-title p{margin:0;color:var(--muted);font-size:.91rem}
+.term-grid{display:grid;grid-template-columns:repeat(4,minmax(125px,1fr));gap:9px}
+.term-card{
+  min-height:76px;border:2px solid var(--line);border-radius:13px;background:#fff;padding:10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;font-weight:830;line-height:1.2
+}
+.term-card:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+.term-card.used{opacity:.42;text-decoration:line-through}
+.term-card.invalid-flash{animation:shake .28s;border-color:var(--bad);background:var(--badSoft)}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.explanation{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:15px;background:#fbfdff;display:none}
+.explanation.show{display:block}
+.solution-list{display:grid;gap:8px;margin-top:10px}
+.solution-step{display:grid;grid-template-columns:34px 1fr;gap:9px;padding:9px;border-radius:11px;background:var(--soft)}
+.solution-step strong{color:var(--accent)}
+.definition-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.definition-item{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:.9rem;line-height:1.35}
+.definition-item strong{color:var(--accent)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px}
+.notes ul,.notes ol{margin:8px 0 0;padding-left:22px}
+.notes li{margin:6px 0;line-height:1.4}
+.footer{text-align:center;color:var(--muted);font-size:.87rem;margin-top:18px}
+.footer a{color:var(--accent)}
+@media(max-width:1120px){.layout{grid-template-columns:1fr}}
+@media(max-width:820px){
+  .intentions,.notes{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .term-grid{grid-template-columns:repeat(2,1fr)}
+  .definition-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .page{width:min(100% - 16px,1540px)}.hero{padding:21px}
+  .button-grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}
+  .sequence-item{grid-template-columns:35px 1fr}.move-buttons{grid-column:2}
+}
+
+</style>
+</head>
+<body data-level="medium">
+
+<main class="page">
+  <a class="back" href="../../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Stage 6 Chain Reaction</h1>
+    <p>Science Extension: arrange course concepts into valid sequences or build the longest defensible chain of connected ideas.</p>
+  </header>
+
+  <section class="intentions">
+    <article class="mini-card">
+      <h2>Learning Intention</h2>
+      <p>Connect scientific reasoning, research planning, data analysis and research communication through ordered inquiry processes.</p>
+    </article>
+    <article class="mini-card">
+      <h2>Success Criteria</h2>
+      <p>Arrange research processes in a defensible order and justify links using epistemology, methodology, statistics and scientific communication.</p>
+    </article>
+  </section>
+
+  <section class="layout">
+    <aside class="card">
+      <h2>Game Controls</h2>
+      <label for="course">Course</label>
+      <select id="course"><option>Science Extension</option></select>
+
+      <label for="bank">Content bank</label>
+      <select id="bank">
+                <option value="module1">Module 1 — The Foundations of Scientific Thinking</option>
+        <option value="module2">Module 2 — The Scientific Research Proposal</option>
+        <option value="module3">Module 3 — The Data, Evidence and Decisions</option>
+        <option value="module4">Module 4 — The Scientific Research Report</option>
+        <option value="glossary">Syllabus Glossary</option>
+        <option value="review">Whole HSC Course Review</option>
+        <option value="expert">Mixed Expert Challenge</option>
+      </select>
+
+      <label for="mode">Game mode</label>
+      <select id="mode">
+        <option value="sequence">Science Sequence</option>
+        <option value="chain">Chain Reaction</option>
+      </select>
+
+      <label for="level">Challenge level</label>
+      <select id="level">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <div class="button-grid">
+        <button id="newBtn" class="primary">New Challenge</button>
+        <button id="checkBtn" class="primary">Check Sequence</button>
+        <button id="undoBtn">Undo Last Link</button>
+        <button id="hintBtn">Hint</button>
+        <button id="revealBtn">Reveal Answer</button>
+        <button id="resetScoreBtn" class="danger">Reset Score</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="scoreStat">0</strong>Session score</div>
+        <div class="stat"><strong id="streakStat">0</strong>Current streak</div>
+        <div class="stat"><strong id="solvedStat">0</strong>Challenges solved</div>
+        <div class="stat"><strong id="attemptStat">0</strong>Session attempts</div>
+      </div>
+
+      <div class="help" id="modeHelp">
+        Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="status-grid">
+        <div class="status-box"><span>Module</span><strong id="moduleStatus">Module 5</strong></div>
+        <div class="status-box"><span>Mode</span><strong id="modeStatus">Science Sequence</strong></div>
+        <div class="status-box"><span>Challenge level</span><strong id="levelStatus">Medium</strong></div>
+        <div class="status-box"><span>Round status</span><strong id="roundStatus">Ready</strong></div>
+      </div>
+
+      <div class="board-head">
+        <div>
+          <h2 id="challengeTitle">Select New Challenge</h2>
+          <p id="challengeInstruction">Choose a content bank, mode and challenge level.</p>
+        </div>
+        <div id="modeBadge" class="mode-badge">SCIENCE SEQUENCE</div>
+      </div>
+
+      <div class="progress-shell" aria-label="Challenge progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="sequenceBoard" class="sequence-list"></div>
+
+      <div id="chainBoard" hidden>
+        <div id="chainPath" class="chain-path"></div>
+        <div id="relationships" class="relationships"></div>
+        <div class="candidate-title">
+          <h3>Available terms</h3>
+          <p id="chainTarget">Target: longest valid chain</p>
+        </div>
+        <div id="candidateGrid" class="term-grid"></div>
+      </div>
+
+      <div id="message" class="message">Choose New Challenge to begin.</div>
+
+      <section id="explanation" class="explanation">
+        <h3>Explanation</h3>
+        <p id="summaryText"></p>
+        <div id="solutionList" class="solution-list"></div>
+        <h3 style="margin-top:14px">Term definitions</h3>
+        <div id="definitionGrid" class="definition-grid"></div>
+      </section>
+    </section>
+  </section>
+
+  <section class="notes">
+    <article class="card">
+      <h2>Student Challenge</h2>
+      <ol>
+        <li>In Science Sequence mode, drag terms or use the arrow buttons to place them in order.</li>
+        <li>Explain why each step follows the previous step before checking.</li>
+        <li>In Chain Reaction mode, begin with the supplied term and build the longest valid chain.</li>
+        <li>Use Undo Last Link when a valid branch leads to a shorter route.</li>
+        <li>Review the accepted relationships and definitions after each challenge.</li>
+      </ol>
+    </article>
+    <article class="card">
+      <h2>Teacher Notes</h2>
+      <ul>
+        <li>Easy sequence rounds use four terms; Medium uses six; Hard uses the complete curated sequence.</li>
+        <li>Easy chain rounds use a direct five-term pathway. Medium includes the full branching network. Hard adds plausible distractors.</li>
+        <li>Chain links are deliberately curated: conceptual similarity alone is not automatically accepted.</li>
+        <li>Whole-course review combines Modules 1–4. Mixed Expert integrates scientific thinking, proposal design, analysis and reporting.</li>
+      </ul>
+    </article>
+  </section>
+
+  <p class="footer">
+    Content aligned to the <a href="https://www.nsw.gov.au/education-and-training/nesa/curriculum/science/science-extension-stage-6-2017" target="_blank" rel="noopener">NSW Science Extension Stage 6 Syllabus (2017)</a>.
+    Definitions and relationship explanations are concise classroom paraphrases.
+  </p>
+</main>
+
+<script>
+
+"use strict";
+const SEQUENCES=[{"id":"se-m1-induction","bank":"module1","title":"From Observation to Generalisation","hint":"Induction moves from repeated specific observations towards a broader claim.","summary":"Scientific generalisations require sufficient representative observations and remain open to further testing.","steps":[["Observation","A specific event or measurement is recorded."],["Repeated observations","The phenomenon is examined across cases or times."],["Pattern","A recurring relationship is identified."],["Inductive reasoning","Specific cases are used to propose a broader statement."],["Generalisation","A tentative wider claim is formed."],["Prediction","The claim is applied to a new case."],["Testing","New evidence is collected."],["Revision","The generalisation is strengthened, limited or rejected."]]},{"id":"se-m1-paradigm","bank":"module1","title":"Paradigm Change","hint":"An anomaly does not instantly cause a revolution; unresolved anomalies must accumulate and a stronger framework must emerge.","summary":"Scientific frameworks change when persistent evidence is better explained by a new paradigm.","steps":[["Accepted paradigm","A scientific community shares models, methods and standards."],["Normal science","Researchers solve problems within the framework."],["Anomaly","Some evidence resists explanation."],["Repeated anomalies","Unresolved problems accumulate."],["Crisis","Confidence in the existing framework weakens."],["Alternative framework","A competing explanation is developed."],["Comparative testing","Old and new frameworks are judged against evidence."],["Paradigm shift","The community adopts the more productive framework."]]},{"id":"se-m1-argument","bank":"module1","title":"Constructing a Sound Scientific Argument","hint":"A valid form is not enough if the premises are unsupported.","summary":"A sound argument combines well-supported premises with valid reasoning.","steps":[["Scientific claim","A conclusion to be defended is stated."],["Premise one","A relevant evidence-based statement is provided."],["Premise two","Additional evidence or principle is established."],["Logical connection","The relationship among premises is made explicit."],["Deductive reasoning","The conclusion is derived from the premises."],["Validity check","The logical form is examined."],["Premise evaluation","Evidence supporting each premise is assessed."],["Sound argument","The conclusion follows from supported premises."]]},{"id":"se-m2-literature","bank":"module2","title":"Developing a Literature Review","hint":"Search widely before synthesising and identifying the research gap.","summary":"A literature review critically organises existing evidence to justify a new research question.","steps":[["Research area","A broad scientific field is selected."],["Search terms","Keywords and Boolean operators are planned."],["Database search","Relevant scholarly sources are located."],["Screening","Titles, abstracts and methods are checked for relevance."],["Source evaluation","Reliability, validity and bias are assessed."],["Thematic synthesis","Findings are grouped into patterns and disagreements."],["Research gap","An unresolved question is identified."],["Research rationale","The need for the proposed project is justified."]]},{"id":"se-m2-proposal","bank":"module2","title":"Building a Research Proposal","hint":"The question and hypothesis come before detailed method planning.","summary":"A research proposal connects significance, feasibility, method, analysis and ethics.","steps":[["Research problem","A meaningful scientific issue is identified."],["Research question","The problem is narrowed to a focused question."],["Hypothesis","A testable explanation or prediction is developed."],["Rationale","Existing evidence establishes significance."],["Methodology","The overall approach is selected and justified."],["Data plan","Collection, processing and analysis are specified."],["Risk and ethics","Hazards and ethical requirements are addressed."],["Timeline and feasibility","Resources and milestones are confirmed."]]},{"id":"se-m2-data-management","bank":"module2","title":"Research Data Management","hint":"Metadata and file organisation should be planned before data collection.","summary":"Good data management protects provenance, integrity, access and reproducibility.","steps":[["Data-management plan","Storage, naming, access and backup procedures are defined."],["File format","Suitable open or durable formats are selected."],["Metadata","Variables, units, methods and conditions are documented."],["Data collection","Raw observations are recorded consistently."],["Version control","Changes to files and analysis are tracked."],["Backup","Independent copies protect against loss."],["Data security","Access is controlled where required."],["Data archive","Final data and documentation remain usable."]]},{"id":"se-m3-cleaning","bank":"module3","title":"From Raw Data to Analysis","hint":"Inspect and clean data before applying statistical tests.","summary":"Data processing makes errors and assumptions visible before inference.","steps":[["Raw data","Original measurements or observations are assembled."],["Data inspection","Ranges, formats and completeness are checked."],["Missing values","Absent observations are identified and documented."],["Duplicate records","Repeated entries are removed or reconciled."],["Invalid values","Impossible or inconsistent values are corrected or excluded."],["Processed data","A transparent analysable data set is produced."],["Statistical analysis","Appropriate summaries or tests are applied."],["Evidence","Results are interpreted in relation to the research question."]]},{"id":"se-m3-hypothesis-test","bank":"module3","title":"Statistical Hypothesis Testing","hint":"Define the null hypothesis and significance level before interpreting the p-value.","summary":"A hypothesis test evaluates whether observed data are compatible with a specified null model.","steps":[["Null hypothesis","No effect, difference or association is proposed."],["Alternative hypothesis","A competing effect or relationship is specified."],["Significance level","A decision threshold is selected."],["Test assumptions","Distribution, independence and measurement conditions are checked."],["Test statistic","Sample evidence is summarised mathematically."],["p-value","The probability of an equally extreme result under the null is calculated."],["Statistical decision","The null is rejected or not rejected."],["Scientific interpretation","Effect size, uncertainty and limitations are considered."]]},{"id":"se-m3-model","bank":"module3","title":"Developing and Validating a Model","hint":"A model must be tested on evidence not used only to construct it.","summary":"Scientific models are iterative representations whose usefulness depends on assumptions, fit and validation.","steps":[["Research question","The purpose of the model is defined."],["Model assumptions","Simplifications and boundaries are stated."],["Variables and parameters","Inputs and relationships are specified."],["Model construction","A mathematical or computational representation is built."],["Parameter fitting","Observed data are used to estimate values."],["Prediction","The model generates expected outcomes."],["Validation","Predictions are compared with independent evidence."],["Model revision","Assumptions or parameters are refined."]]},{"id":"se-m4-report","bank":"module4","title":"Scientific Research Report Structure","hint":"Results present findings before the discussion interprets them.","summary":"A scientific report communicates the research question, method, evidence, interpretation and conclusion transparently.","steps":[["Title","The research focus is identified concisely."],["Abstract","Question, method, key result and conclusion are summarised."],["Introduction","Background, rationale and hypothesis are established."],["Methodology","Data collection and analysis are explained and justified."],["Results","Processed findings are presented clearly."],["Discussion","Patterns, evidence, limitations and literature are interpreted."],["Conclusion","The research question is answered using evidence."],["References and appendices","Sources and supporting material are documented."]]},{"id":"se-m4-peer-review","bank":"module4","title":"From Manuscript to Publication","hint":"Peer review occurs after editorial screening and before final publication.","summary":"Scientific publication involves scrutiny, revision and continuing post-publication evaluation.","steps":[["Manuscript submission","Authors send the report to a journal."],["Editorial screening","Scope, quality and ethical requirements are checked."],["Peer review","Experts evaluate methods, evidence and reasoning."],["Reviewer feedback","Strengths, errors and required changes are identified."],["Revision","Authors respond and modify the manuscript."],["Editorial decision","The paper is accepted, rejected or returned again."],["Publication","The work enters the scientific record."],["Post-publication scrutiny","Replication, criticism and correction continue."]]},{"id":"se-m4-communication","bank":"module4","title":"Adapting Scientific Communication","hint":"Purpose and audience determine mode, detail and language.","summary":"The same evidence must be communicated differently to specialist and public audiences without changing its meaning.","steps":[["Research finding","The core evidence and conclusion are identified."],["Communication purpose","Informing, persuading or enabling action is clarified."],["Audience analysis","Prior knowledge, needs and concerns are assessed."],["Mode and medium","Journal, poster, talk or media format is chosen."],["Evidence selection","Relevant data are retained without cherry-picking."],["Language adaptation","Technical detail is adjusted while accuracy is preserved."],["Visual design","Tables, graphs or diagrams support understanding."],["Feedback and revision","Communication is improved for clarity and integrity."]]},{"id":"se-glossary-reasoning","bank":"glossary","title":"Glossary: Scientific Reasoning","hint":"Observation and experience inform induction, while deduction tests implications.","summary":"Core glossary concepts connect knowledge, reasoning, testability and simplicity.","steps":[["Empiricism","Knowledge begins with observation and experience."],["Induction","Repeated observations support a generalisation."],["Hypothesis","A testable causal statement is proposed."],["Deduction","Specific predictions are derived from the hypothesis."],["Investigation","Predictions are tested against evidence."],["Falsifiability","Results capable of contradicting the claim are identified."],["Parsimony","Unnecessary assumptions are avoided."],["Conclusion","Evidence supports, limits or rejects the explanation."]]},{"id":"se-review-project","bank":"review","title":"Whole-course Research Project","hint":"Scientific thinking leads into proposal, analysis and communication.","summary":"Science Extension integrates philosophy, planning, evidence evaluation and reporting in one sustained project.","steps":[["Scientific problem","A meaningful question emerges from observation or literature."],["Epistemological framing","Assumptions about evidence and knowledge are considered."],["Research proposal","Question, hypothesis and methodology are justified."],["Data collection","Primary or secondary evidence is obtained."],["Data analysis","Patterns, uncertainty and statistical tests are applied."],["Scientific decision","Evidence is interpreted against the hypothesis."],["Research report","Methods, findings and reasoning are communicated."],["Peer scrutiny","The work is evaluated and refined."]]},{"id":"se-expert-causation","bank":"expert","title":"Expert: Building a Causal Claim","hint":"Correlation is only one part of a causal argument.","summary":"A strong causal inference integrates design, timing, mechanism, effect size and replication.","steps":[["Association","Variables show a statistical relationship."],["Temporal precedence","The proposed cause occurs first."],["Confounding control","Alternative explanations are reduced."],["Dose–response pattern","Changing exposure is linked with changing outcome."],["Plausible mechanism","A process explains how the effect occurs."],["Effect size","The magnitude of the relationship is quantified."],["Replication","Independent studies reproduce the pattern."],["Causal judgement","The combined evidence supports a qualified conclusion."]]}];
+const CHAINS=[{"id":"se-chain-thinking","bank":"module1","title":"Scientific Reasoning Chain","start":"Observation","bestPath":["Observation","Pattern","Induction","Hypothesis","Deduction","Prediction","Investigation","Conclusion"],"nodes":["Observation","Pattern","Induction","Generalisation","Hypothesis","Deduction","Prediction","Investigation","Evidence","Conclusion","Revision"],"edges":[["Observation","Pattern","Repeated observations reveal structure."],["Pattern","Induction","Specific cases support broader reasoning."],["Induction","Generalisation","A tentative general statement is formed."],["Induction","Hypothesis","A possible explanation is proposed."],["Generalisation","Hypothesis","The broad pattern can motivate a causal explanation."],["Hypothesis","Deduction","Logical consequences are derived."],["Deduction","Prediction","A specific expected observation is stated."],["Prediction","Investigation","Evidence is collected to test the prediction."],["Investigation","Evidence","Results become evidence in relation to the claim."],["Evidence","Conclusion","A judgement is made."],["Conclusion","Revision","The explanation may be refined."],["Investigation","Conclusion","Within this pathway, Investigation leads directly to Conclusion."]],"distractors":["Titration","Mitosis","Orbital velocity"],"summary":"Scientific reasoning cycles among observation, explanation, prediction and testing."},{"id":"se-chain-paradigm","bank":"module1","title":"Paradigm Shift Chain","start":"Paradigm","bestPath":["Paradigm","Normal science","Anomaly","Repeated anomaly","Crisis","Alternative framework","Evidence comparison","Paradigm shift"],"nodes":["Paradigm","Normal science","Anomaly","Repeated anomaly","Crisis","Alternative framework","Thought experiment","Evidence comparison","Scientific community","Paradigm shift"],"edges":[["Paradigm","Normal science","Research operates within shared assumptions."],["Normal science","Anomaly","Some findings resist explanation."],["Anomaly","Repeated anomaly","Further work confirms the mismatch."],["Repeated anomaly","Crisis","Confidence in the framework declines."],["Crisis","Alternative framework","A new explanation is developed."],["Alternative framework","Thought experiment","Conceptual tests explore implications."],["Alternative framework","Evidence comparison","Predictions are compared with observations."],["Evidence comparison","Scientific community","Researchers debate explanatory power."],["Scientific community","Paradigm shift","The stronger framework becomes accepted."],["Evidence comparison","Paradigm shift","Within this pathway, Evidence comparison leads directly to Paradigm shift."]],"distractors":["Ksp","Antibody","Stalagmite"],"summary":"Paradigm change requires persistent anomalies and a more productive alternative."},{"id":"se-chain-proposal","bank":"module2","title":"Research Proposal Chain","start":"Research area","bestPath":["Research area","Literature search","Literature review","Research gap","Research question","Hypothesis","Methodology","Feasibility"],"nodes":["Research area","Search terms","Literature search","Source evaluation","Literature review","Research gap","Research question","Hypothesis","Methodology","Risk assessment","Feasibility","Timeline"],"edges":[["Research area","Search terms","Keywords define the search."],["Search terms","Literature search","Databases are queried systematically."],["Literature search","Source evaluation","Retrieved sources are screened for quality."],["Source evaluation","Literature review","Reliable findings are synthesised."],["Literature review","Research gap","Unresolved issues are identified."],["Research gap","Research question","The gap is converted into a focused question."],["Research question","Hypothesis","A testable explanation is proposed."],["Hypothesis","Methodology","Methods are chosen to test it."],["Methodology","Risk assessment","Hazards and ethical issues are evaluated."],["Risk assessment","Feasibility","Controls and available resources are considered."],["Feasibility","Timeline","A realistic schedule is produced."],["Research area","Literature search","Within this pathway, Research area leads directly to Literature search."],["Literature search","Literature review","Within this pathway, Literature search leads directly to Literature review."],["Methodology","Feasibility","Within this pathway, Methodology leads directly to Feasibility."]],"distractors":["Photoelectric effect","Meiosis","Acid buffer"],"summary":"A defensible proposal emerges from literature, a gap, a testable question and feasible methods."},{"id":"se-chain-data","bank":"module2","title":"Data Provenance Chain","start":"Instrument","bestPath":["Instrument","Raw data","Metadata","File naming","Version control","Backup","Data archive"],"nodes":["Instrument","Calibration","Raw data","Metadata","File naming","Version control","Data processing","Backup","Data security","Data archive"],"edges":[["Instrument","Calibration","Measurement systems are checked against standards."],["Calibration","Raw data","Measurements are collected with documented settings."],["Raw data","Metadata","Context, units and conditions are recorded."],["Metadata","File naming","Consistent names make records traceable."],["File naming","Version control","Changes are tracked across analysis stages."],["Version control","Data processing","Transformations are documented."],["Data processing","Backup","Processed and raw files are copied safely."],["Backup","Data security","Access and integrity are protected."],["Data security","Data archive","Final data remain available and understandable."],["Instrument","Raw data","Within this pathway, Instrument leads directly to Raw data."],["Version control","Backup","Within this pathway, Version control leads directly to Backup."],["Backup","Data archive","Within this pathway, Backup leads directly to Data archive."]],"distractors":["Natural selection","Transformer","Volcanic ash"],"summary":"Data provenance connects instruments, metadata, processing and secure preservation."},{"id":"se-chain-statistics","bank":"module3","title":"Hypothesis Test Chain","start":"Null hypothesis","bestPath":["Null hypothesis","Alternative hypothesis","Significance level","Test statistic","p-value","Statistical decision","Effect size","Scientific interpretation"],"nodes":["Null hypothesis","Alternative hypothesis","Significance level","Assumption check","Test statistic","p-value","Confidence interval","Statistical decision","Effect size","Scientific interpretation"],"edges":[["Null hypothesis","Alternative hypothesis","Competing statements are defined."],["Alternative hypothesis","Significance level","A decision threshold is selected in advance."],["Significance level","Assumption check","Test requirements are examined."],["Assumption check","Test statistic","An appropriate calculation is applied."],["Test statistic","p-value","The observed result is located under the null model."],["p-value","Statistical decision","The null is rejected or not rejected."],["Test statistic","Confidence interval","The plausible parameter range is estimated."],["Statistical decision","Effect size","Practical magnitude is considered separately from significance."],["Confidence interval","Scientific interpretation","Uncertainty informs the conclusion."],["Effect size","Scientific interpretation","Magnitude and context determine scientific importance."],["Significance level","Test statistic","Within this pathway, Significance level leads directly to Test statistic."]],"distractors":["Centripetal force","Ester","Stromatolite"],"summary":"Statistical decisions require assumptions, probability, magnitude and uncertainty."},{"id":"se-chain-causation","bank":"module3","title":"Causal Inference Chain","start":"Correlation","bestPath":["Correlation","Temporal precedence","Confounding control","Mechanism","Replication","Effect size","Causal inference"],"nodes":["Correlation","Temporal precedence","Confounding variable","Control group","Random allocation","Mechanism","Replication","Effect size","Causal inference","Confounding control"],"edges":[["Correlation","Temporal precedence","The proposed cause must occur first."],["Temporal precedence","Confounding variable","Alternative explanations are identified."],["Confounding variable","Control group","A comparison helps isolate the factor."],["Control group","Random allocation","Chance assignment reduces systematic differences."],["Random allocation","Mechanism","A plausible process is investigated."],["Mechanism","Replication","Independent studies test the relationship."],["Replication","Effect size","Repeated work estimates the magnitude."],["Effect size","Causal inference","The combined evidence supports a qualified causal judgement."],["Temporal precedence","Confounding control","Within this pathway, Temporal precedence leads directly to Confounding control."],["Confounding control","Mechanism","Within this pathway, Confounding control leads directly to Mechanism."]],"distractors":["Ksp","Antibody","Redshift"],"summary":"Causal inference is stronger than correlation because design, timing and mechanism are considered."},{"id":"se-chain-report","bank":"module4","title":"Scientific Report Chain","start":"Research question","bestPath":["Research question","Methodology","Results","Data visualisation","Discussion","Limitations","Conclusion","References"],"nodes":["Research question","Introduction","Methodology","Raw data","Results","Data visualisation","Discussion","Literature comparison","Limitations","Conclusion","References","Appendix"],"edges":[["Research question","Introduction","The question is placed in scientific context."],["Introduction","Methodology","The chosen approach follows from the rationale."],["Methodology","Raw data","The method generates original observations."],["Raw data","Results","Data are processed and presented."],["Results","Data visualisation","Graphs and tables reveal patterns."],["Data visualisation","Discussion","Patterns are interpreted scientifically."],["Discussion","Literature comparison","Findings are compared with previous research."],["Literature comparison","Limitations","Agreement and disagreement expose constraints."],["Limitations","Conclusion","The strength of the final judgement is qualified."],["Conclusion","References","Claims are linked to acknowledged sources."],["References","Appendix","Supporting details may be supplied separately."],["Research question","Methodology","Within this pathway, Research question leads directly to Methodology."],["Methodology","Results","Within this pathway, Methodology leads directly to Results."],["Discussion","Limitations","Within this pathway, Discussion leads directly to Limitations."]],"distractors":["Meiosis","Transformer","Ocean current"],"summary":"A report separates presentation of evidence from interpretation while maintaining a clear evidence chain."},{"id":"se-chain-peerreview","bank":"module4","title":"Publication and Self-correction Chain","start":"Manuscript","bestPath":["Manuscript","Editorial screening","Peer review","Revision","Publication","Replication","Correction","Refined knowledge"],"nodes":["Manuscript","Editorial screening","Peer review","Reviewer criticism","Revision","Editorial decision","Publication","Replication","Post-publication critique","Correction","Retraction","Refined knowledge"],"edges":[["Manuscript","Editorial screening","The journal checks scope, ethics and basic quality."],["Editorial screening","Peer review","Relevant experts evaluate the work."],["Peer review","Reviewer criticism","Detailed concerns and recommendations are provided."],["Reviewer criticism","Revision","Authors respond and modify the report."],["Revision","Editorial decision","The editor decides whether requirements are met."],["Editorial decision","Publication","Accepted work enters the record."],["Publication","Replication","Independent researchers test the findings."],["Replication","Post-publication critique","New evidence may reveal strengths or problems."],["Post-publication critique","Correction","Limited errors can be amended."],["Post-publication critique","Retraction","Serious unreliability may require withdrawal."],["Correction","Refined knowledge","The corrected record supports improved understanding."],["Retraction","Refined knowledge","Removing unreliable evidence changes the accepted record."],["Peer review","Revision","Within this pathway, Peer review leads directly to Revision."],["Revision","Publication","Within this pathway, Revision leads directly to Publication."],["Replication","Correction","Within this pathway, Replication leads directly to Correction."]],"distractors":["Ksp","Antibody","Orbital radius"],"summary":"Peer review is one stage in a longer process of scientific scrutiny and correction."},{"id":"scienceextension-glossary-derived-chain","bank":"glossary","title":"Glossary: Scientific Reasoning — Connected Chain","start":"Empiricism","bestPath":["Empiricism","Induction","Hypothesis","Deduction","Investigation","Falsifiability","Parsimony","Conclusion"],"nodes":["Empiricism","Induction","Hypothesis","Deduction","Investigation","Falsifiability","Parsimony","Conclusion"],"edges":[["Empiricism","Induction","Repeated observations support a generalisation."],["Induction","Hypothesis","A testable causal statement is proposed."],["Hypothesis","Deduction","Specific predictions are derived from the hypothesis."],["Deduction","Investigation","Predictions are tested against evidence."],["Investigation","Falsifiability","Results capable of contradicting the claim are identified."],["Falsifiability","Parsimony","Unnecessary assumptions are avoided."],["Parsimony","Conclusion","Evidence supports, limits or rejects the explanation."]],"distractors":["Observation","Repeated observations","Pattern"],"summary":"Core glossary concepts connect knowledge, reasoning, testability and simplicity."},{"id":"scienceextension-review-derived-chain","bank":"review","title":"Whole-course Research Project — Connected Chain","start":"Scientific problem","bestPath":["Scientific problem","Epistemological framing","Research proposal","Data collection","Data analysis","Scientific decision","Research report","Peer scrutiny"],"nodes":["Scientific problem","Epistemological framing","Research proposal","Data collection","Data analysis","Scientific decision","Research report","Peer scrutiny"],"edges":[["Scientific problem","Epistemological framing","Assumptions about evidence and knowledge are considered."],["Epistemological framing","Research proposal","Question, hypothesis and methodology are justified."],["Research proposal","Data collection","Primary or secondary evidence is obtained."],["Data collection","Data analysis","Patterns, uncertainty and statistical tests are applied."],["Data analysis","Scientific decision","Evidence is interpreted against the hypothesis."],["Scientific decision","Research report","Methods, findings and reasoning are communicated."],["Research report","Peer scrutiny","The work is evaluated and refined."]],"distractors":["Observation","Repeated observations","Pattern"],"summary":"Science Extension integrates philosophy, planning, evidence evaluation and reporting in one sustained project."},{"id":"scienceextension-expert-derived-chain","bank":"expert","title":"Expert: Building a Causal Claim — Connected Chain","start":"Association","bestPath":["Association","Temporal precedence","Confounding control","Dose–response pattern","Plausible mechanism","Effect size","Replication","Causal judgement"],"nodes":["Association","Temporal precedence","Confounding control","Dose–response pattern","Plausible mechanism","Effect size","Replication","Causal judgement"],"edges":[["Association","Temporal precedence","The proposed cause occurs first."],["Temporal precedence","Confounding control","Alternative explanations are reduced."],["Confounding control","Dose–response pattern","Changing exposure is linked with changing outcome."],["Dose–response pattern","Plausible mechanism","A process explains how the effect occurs."],["Plausible mechanism","Effect size","The magnitude of the relationship is quantified."],["Effect size","Replication","Independent studies reproduce the pattern."],["Replication","Causal judgement","The combined evidence supports a qualified conclusion."]],"distractors":["Observation","Repeated observations","Pattern"],"summary":"A strong causal inference integrates design, timing, mechanism, effect size and replication."}];
+const DEFINITIONS={"Epistemology":"The branch of philosophy concerned with the origin, nature, methods and limits of knowledge.","Empiricism":"The view that reliable knowledge is grounded in observation and experience through the senses.","Rationalism":"The view that reason and logical analysis are major sources of knowledge.","Scientific thinking":"Reasoning that uses evidence, testable explanations, logical argument and critical evaluation.","Scientific inquiry":"A systematic process used to investigate questions and develop evidence-based explanations.","Alternative ways of knowing":"Knowledge systems or approaches that may use cultural, historical, experiential or philosophical foundations.","Cultural observation":"Knowledge developed through repeated observations interpreted within a particular cultural context.","Traditional knowledge":"Knowledge accumulated and transmitted within communities over many generations.","Aboriginal navigation":"Use of detailed knowledge of Country, sky, landscape, water and seasonal patterns to navigate.","Celestial navigation":"Determining direction or position using observed celestial objects.","Induction":"Reasoning from particular observations towards a general conclusion.","Deduction":"Reasoning from accepted premises or general principles towards a specific conclusion.","Abduction":"Selecting the most plausible explanation for a set of observations.","Premise":"A statement used as a starting point in an argument.","Conclusion":"A judgement supported by evidence or derived through reasoning.","Philosophical argument":"A connected series of statements presenting reasons for accepting a conclusion.","Valid argument":"An argument in which the conclusion follows logically from the premises.","Sound argument":"A valid argument whose premises are also true or well supported.","Parsimony":"Preference for the least complicated explanation that adequately accounts for the evidence.","Occam’s razor":"The principle that unnecessary assumptions should not be added when simpler explanations fit equally well.","Falsifiability":"The requirement that a scientific claim can, in principle, be shown false by evidence.","Testability":"The capacity of a claim or hypothesis to be examined using observations or measurements.","Reproducibility":"The capacity for an independent investigation to obtain compatible findings using the described approach.","Confirmation bias":"The tendency to seek or interpret information in ways that support an existing belief.","Theory-dependence of observation":"The influence of prior concepts and expectations on what is noticed and how observations are interpreted.","Observer bias":"Systematic influence of an investigator’s expectations on observation, measurement or interpretation.","Scientific scepticism":"Withholding acceptance of a claim until sufficient reliable evidence is available.","Scientific objectivity":"Efforts to minimise personal influence through transparent methods, evidence and critical review.","Anomaly":"An observation or result that does not fit the current accepted explanation.","Paradigm":"A shared framework of concepts, assumptions, methods and standards used by a scientific community.","Paradigm shift":"A major change in the accepted scientific framework used to explain evidence.","Scientific revolution":"A period in which a dominant scientific framework is substantially replaced.","Scientific model":"A representation used to describe, explain or predict features of a system.","Scientific hypothesis":"A precise and testable proposed explanation linking variables or observations.","Scientific theory":"A broad explanatory framework supported by substantial evidence and capable of generating predictions.","Scientific law":"A concise statement describing a consistent relationship under stated conditions.","Scientific concept":"A general scientific idea used to organise observations and explanations.","Evidence":"Information interpreted as supporting, refuting or refining a claim.","Observation":"Information detected directly or with instruments.","Inference":"An interpretation or conclusion drawn from observations and prior knowledge.","Thought experiment":"A reasoned imaginary scenario used to test implications of an idea or theory.","Einstein’s thought experiments":"Imagined scenarios involving light, motion and gravity used to develop relativity.","Conservation of mass":"The principle that total mass is conserved in a closed chemical system.","Conservation of energy":"The principle that total energy remains constant in an isolated system.","Cell theory":"The theory that living organisms are made of cells and that cells arise from existing cells.","Phlogiston theory":"A superseded theory proposing that combustible materials released a fire-like substance.","Lavoisier":"A scientist whose quantitative evidence supported oxygen-based explanations of combustion.","Oxygen theory of combustion":"The explanation that combustion involves reaction with oxygen.","General relativity":"Einstein’s theory describing gravity as curvature of spacetime.","Continental drift":"Wegener’s proposal that continents move across Earth’s surface.","Plate tectonics":"The theory that lithospheric plates move and interact above the asthenosphere.","Alfred Wegener":"The scientist who assembled evidence for continental drift.","Barbara McClintock":"The geneticist who discovered mobile genetic elements in maize.","Transposable element":"A DNA sequence capable of changing position within a genome.","Jumping gene":"A common term for a transposable genetic element.","Historical observation":"Evidence recorded in an earlier period and interpreted within its historical context.","Greek scientific traditions":"Ancient approaches involving observation, natural explanation, geometry and philosophical reasoning.","Egyptian scientific traditions":"Ancient practical and observational knowledge in areas such as medicine, astronomy and engineering.","Asian scientific traditions":"Diverse knowledge systems developed across Asian societies through observation, calculation and technology.","Economic influence":"The effect of funding, markets, employment and resources on scientific research priorities.","Political influence":"The effect of government, policy and power on scientific research and communication.","Global influence":"The effect of international problems, collaboration and competition on scientific priorities.","Ethical framework":"A set of principles used to guide responsible decisions and behaviour.","Research ethics":"Principles governing responsible treatment of participants, animals, communities, data and the environment.","Human experimentation":"Research involving people as participants or sources of biological information.","Animal experimentation":"Research involving non-human animals under welfare and ethical requirements.","Biobank":"An organised collection of biological samples and associated information for research.","Informed consent":"Voluntary agreement to participate after receiving understandable information about the research.","Confidentiality":"Protection of private participant or research information from unauthorised disclosure.","Privacy":"A person’s control over access to personal information and participation.","Data ownership":"Rights and responsibilities concerning control, use and sharing of research data.","Research integrity":"Honest, transparent and accountable conduct throughout research.","Ethics committee":"A body that reviews proposed research for ethical acceptability and participant protection.","Scientific Research Project":"The sustained investigation through which a student develops evidence-based responses to a research question.","Scientific Research Proposal":"A structured plan explaining the question, hypothesis, rationale, methods, data and feasibility of proposed research.","Scientific Research Portfolio":"A documented collection of evidence showing the development and conduct of the research project.","Research area":"The broad scientific field or topic within which a research problem is identified.","Research problem":"A significant issue, uncertainty or gap that can be investigated scientifically.","Research question":"A focused, meaningful and feasible question that directs scientific research.","Initial hypothesis":"A preliminary testable explanation developed early from the research question and literature.","Final hypothesis":"The refined hypothesis adopted after detailed review and planning.","Causal hypothesis":"A testable statement proposing that change in one variable produces change in another.","Null hypothesis":"A statistical statement proposing no effect, difference or association.","Alternative hypothesis":"A statistical statement proposing an effect, difference or association.","Literature search":"A systematic process for finding relevant published research and data.","Literature review":"A critical synthesis of existing research used to establish context, evidence and gaps.","Peer-reviewed source":"Research evaluated by relevant experts before publication.","Scholarly journal":"A publication containing research and analysis written for an academic or professional audience.","Search term":"A word or phrase entered into a database to locate relevant sources.","Boolean operator":"A search command such as AND, OR or NOT used to combine search terms.","Citation searching":"Locating research through references cited by or citing a known source.","Source relevance":"The extent to which a source directly addresses the research question.","Source reliability":"The trustworthiness of information based on expertise, methods, evidence and transparency.","Source validity":"The extent to which a source appropriately measures or supports the claim being examined.","Contemporary data set":"A current or recent organised collection of data relevant to the investigation.","Publicly available data set":"A data set that can be accessed by researchers or the public under stated conditions.","Primary data":"Data collected directly by the researcher for the current investigation.","Secondary-sourced data":"Data originally produced by other people and used in a new investigation.","Large data set":"A data collection large enough to require computational processing and support statistical analysis.","Open data":"Data made available for access, reuse and redistribution under stated conditions.","Metadata":"Information describing the origin, structure, variables and conditions of a data set.","Data provenance":"A record of where data came from and how it was collected, processed and changed.","Research significance":"The importance of the question and the value of answering it.","Research feasibility":"Whether the investigation can be completed with available time, data, skills, resources and ethical approval.","Research scope":"The boundaries defining what the investigation will and will not examine.","Research rationale":"The evidence-based justification for why the research should be conducted.","Possible outcome":"A plausible result or implication anticipated during planning.","Current state of theory":"The present level of evidence, agreement and uncertainty surrounding an explanation.","Resource evaluation":"Assessment of equipment, data, expertise, cost and time needed for research.","Overall strategy":"The broad approach chosen to answer the research question.","Methodology":"The overall research approach and justification for selected methods.","Research method":"A particular procedure used to collect, process or analyse information.","Experimental method":"A method that deliberately manipulates variables under controlled conditions.","Observational method":"A method that records phenomena without deliberately manipulating the system.","Quantitative method":"A method producing or analysing numerical data.","Qualitative method":"A method producing or analysing descriptive, textual or categorical data.","Mixed-method research":"Research combining quantitative and qualitative methods.","Sampling method":"The process used to select observations, participants or cases.","Random sample":"A sample selected so members of the target population have a known chance of inclusion.","Representative sample":"A sample reflecting important characteristics of the target population.","Sample size":"The number of observations, participants or cases included.","Pilot study":"A small preliminary investigation used to test and refine a method.","Independent variable":"The factor deliberately changed or used as the proposed explanatory variable.","Dependent variable":"The measured outcome expected to respond to the independent variable.","Controlled variable":"A factor maintained consistently to reduce alternative explanations.","Confounding variable":"A factor associated with both variables that may distort an apparent relationship.","Operational definition":"A precise statement of how a variable will be measured or classified.","Systematic error":"A consistent bias that shifts measurements in the same direction.","Random error":"Unpredictable variation causing measurements to scatter.","Uncertainty":"The estimated range or limitation associated with a measured or calculated value.","Absolute uncertainty":"Uncertainty expressed in the same units as the measured value.","Relative uncertainty":"Absolute uncertainty divided by the measured value.","Percentage uncertainty":"Relative uncertainty expressed as a percentage.","Error propagation":"Calculation of how measurement uncertainties combine in a derived result.","Curve of best fit":"A smooth curve representing the general relationship shown by data.","Line of best fit":"A straight line representing the overall trend in a scatter plot.","Remote sensing":"Collection of information about an object or environment without direct contact.","Streamed data":"Data transmitted continuously or in near real time from instruments or systems.","Sensor network":"A group of connected sensors collecting data across locations or time.","Data logger":"A device that automatically records measurements over time.","Data processing":"Conversion of raw data into a form suitable for analysis.","Data recording":"Systematic documentation of observations and measurements.","Data organisation":"Arranging data into consistent structures, categories or tables.","Data storage":"Preservation of data in a secure and accessible form.","File format":"The defined structure used to store digital data.","Backup":"A separate copy of data kept to prevent loss.","Version control":"A system for tracking changes to research files and documents.","Data security":"Protection of data from loss, alteration or unauthorised access.","Timeline":"A schedule showing when stages of research will occur.","Milestone":"A significant stage or deliverable used to track progress.","Benchmark":"A defined standard or checkpoint used to evaluate progress or performance.","Research amendment":"A justified change made to the proposal or method after critical review.","Risk assessment":"Identification of hazards, estimation of risks and selection of controls.","Ethical approval":"Formal authorisation indicating that proposed research meets ethical requirements.","Referencing protocol":"An accepted system for acknowledging sources consistently.","APA style":"An author–date referencing system commonly used in science and social science.","Harvard style":"An author–date referencing system with specified citation and reference-list conventions.","MLA style":"A referencing system using author and page details, commonly in the humanities.","In-text citation":"A brief source acknowledgement placed within the report text.","Reference list":"A list of sources cited directly in a piece of research.","Bibliography":"A list of cited and sometimes additionally consulted sources.","Plagiarism":"Presenting another person’s words, ideas or data without appropriate acknowledgement.","Large Hadron Collider data":"Large publicly shared particle-collision data sets produced at CERN.","Kepler Telescope data":"Photometric data used to investigate exoplanets and stellar variation.","Human Genome Project data":"Public genomic data generated through international sequencing of the human genome.","Data":"Recorded observations, measurements, categories or values collected during research.","Raw data":"Data in its original collected form before substantial processing.","Processed data":"Data transformed, summarised or organised to support analysis.","Qualitative data":"Descriptive, textual or categorical information.","Quantitative data":"Numerical information produced through counting or measurement.","Structured data":"Data organised into defined fields or tables.","Unstructured data":"Data without a fixed tabular form, such as text, images or audio.","Data set":"An organised collection of related data.","Content analysis":"Systematic analysis of characteristics or content within a resource.","Thematic analysis":"Identification and coding of recurring themes or patterns in qualitative data.","Coding":"Assigning labels or categories to observations or qualitative material.","Descriptive statistics":"Numerical methods used to summarise and describe features of data.","Mean":"The arithmetic average of numerical values.","Median":"The middle value when observations are placed in order.","Mode":"The most frequently occurring value or category.","Range":"The difference between the maximum and minimum values.","Variance":"The average squared deviation from the mean.","Standard deviation":"A measure of the typical spread of values around the mean.","Distribution":"The pattern of values and their frequencies within a data set.","Normal distribution":"A symmetric bell-shaped probability distribution described by its mean and standard deviation.","Skewed distribution":"A distribution with a longer tail on one side.","Outlier":"An observation unusually distant from the general pattern of a data set.","Pattern":"A repeated or recognisable arrangement within data.","Trend":"A general direction of change shown by data.","Relationship":"An association or dependency between variables.","Spreadsheet":"Software that stores, calculates, sorts and graphs tabular data.","Graphical representation":"A visual display of data such as a graph, chart or plot.","Scatter plot":"A graph showing paired numerical observations for two variables.","Histogram":"A graph showing the frequency distribution of continuous numerical data.","Box plot":"A graph summarising median, quartiles and possible outliers.","Error bar":"A graphical indication of uncertainty or variability around a plotted value.","Physical model":"A tangible representation of an object or system.","Computational model":"A computer-based representation that simulates a system or process.","Mathematical model":"A representation using equations and mathematical relationships.","Predictive model":"A model used to estimate unknown or future outcomes.","Statistical model":"A mathematical representation of variability and relationships in data.","Descriptive model":"A model used primarily to summarise or characterise observed features.","Graphical model":"A visual representation of variables and their relationships.","Model assumption":"A simplification or condition accepted when constructing a model.","Model parameter":"A quantity controlling the behaviour or fit of a model.","Model validation":"Comparison of model predictions with independent or observed evidence.","Overfitting":"Modelling random variation too closely, reducing performance on new data.","Data relevance":"The extent to which data address the research question.","Data accuracy":"How close measurements or records are to accepted or true values.","Data validity":"The extent to which data and methods measure what was intended.","Data reliability":"The consistency of data under repeated or comparable conditions.","Error":"A difference between an observed value and an accepted, true or modelled value.","Precision":"The closeness of repeated measurements and the level of measurement resolution.","Bias":"A systematic tendency that shifts results away from a fair or true estimate.","Measurement uncertainty":"The estimated range within which a measured value is expected to lie.","Limitation":"A feature of data, method or analysis that restricts interpretation.","Data cleansing":"Detection and correction or removal of errors and inconsistencies in data.","Missing data":"Expected observations that are absent from a data set.","Duplicate record":"A repeated data entry representing the same observation or case.","Invalid value":"A recorded value outside permitted formats or plausible limits.","Student’s t-test":"A statistical test used to compare means under specified assumptions.","Paired t-test":"A t-test comparing linked measurements from the same or matched cases.","Independent-samples t-test":"A t-test comparing means from two independent groups.","Chi-squared test":"A test comparing observed categorical frequencies with expected frequencies.","F-test":"A statistical test based on a ratio of variances.","Statistical hypothesis test":"A formal procedure for evaluating data against a null hypothesis.","Test statistic":"A value calculated from sample data and used in a statistical test.","p-value":"The probability, assuming the null hypothesis, of obtaining a result at least as extreme as the observed result.","Significance level":"The threshold probability selected for deciding whether to reject a null hypothesis.","Statistical significance":"A result considered unlikely under the null hypothesis at a selected significance level.","Degrees of freedom":"The number of independent values available when estimating a statistical quantity.","Confidence interval":"A range calculated from sample data that estimates a population parameter with stated confidence.","Effect size":"A quantitative measure of the magnitude of a difference or relationship.","Correlation":"Statistical association between variables.","Correlation coefficient":"A numerical measure of the direction and strength of a relationship.","Positive correlation":"A relationship in which larger values of one variable tend to occur with larger values of another.","Negative correlation":"A relationship in which larger values of one variable tend to occur with smaller values of another.","Zero correlation":"Absence of a consistent linear relationship between two variables.","Causation":"A relationship in which change in one factor contributes to producing change in another.","Temporal precedence":"The requirement that a proposed cause occurs before its effect.","Causal mechanism":"A plausible process explaining how one factor produces an effect.","Confounding":"Distortion of a relationship by an additional variable.","Random allocation":"Assignment to treatment groups by chance to reduce systematic group differences.","Control group":"A comparison group not receiving the experimental treatment or condition.","Replication":"Independent repetition of a study or analysis to test whether findings recur.","Collective decision-making":"A decision process involving multiple researchers or stakeholders.","Individual decision-making":"A decision reached by one researcher using available evidence and judgement.","Scientific judgement":"A reasoned decision integrating evidence, uncertainty, methods and scientific understanding.","Inference from data":"A conclusion about a wider process or population based on analysed observations.","Generalisability":"The extent to which findings apply beyond the studied sample or conditions.","Research conclusion":"An evidence-based response to the research question or hypothesis.","Further investigation":"Additional research proposed to resolve limitations or new questions.","Gravitational-wave evidence":"Observations of spacetime disturbances supporting and extending tests of general relativity.","Disease transmission model":"A representation used to explain or predict spread and control of disease.","Natural-disaster prediction":"Use of evidence and models to estimate the likelihood or effects of hazardous events.","Chemical pollutant":"A substance introduced to the environment that can alter systems such as climate or ecosystems.","Climate-impact evidence":"Data used to evaluate effects of pollutants or other drivers on climate.","Sensitivity analysis":"Testing how model outputs change when assumptions or parameter values are varied.","Cross-validation":"Testing a model using data not used to fit it.","Software analysis":"Use of digital tools to apply statistical, graphical or modelling techniques.","Scientific Research Report":"A concise, structured and evidence-based account of completed scientific research.","Research finding":"A result or conclusion produced through analysis of research data.","Generalisation":"A broader statement extended from a sample or set of observations.","Scientific conclusion":"A judgement addressing the research question and supported by analysed evidence.","Title":"A concise statement identifying the focus of a scientific report.","Abstract":"A brief summary of the question, method, major results and conclusion.","Introduction":"The section establishing scientific background, rationale, question and hypothesis.","Methodology section":"The section explaining and justifying how data were obtained and analysed.","Results section":"The section presenting processed findings without extensive interpretation.","Discussion section":"The section interpreting findings, comparing evidence and evaluating limitations.","Conclusion section":"The section providing the final evidence-based response to the question or hypothesis.","Appendix":"Supplementary material placed after the main report, such as detailed raw data or procedures.","Table":"An organised display of values in rows and columns.","Figure":"A visual element such as a graph, diagram, image or model included in a report.","Caption":"A concise title and explanation accompanying a table or figure.","Raw-data table":"A table containing original observations before substantial processing.","Processed-data table":"A table containing calculated, transformed or summarised data.","Uncertainty analysis":"Evaluation and communication of measurement and analytical uncertainty.","Limitation analysis":"Evaluation of features restricting the strength or interpretation of findings.","Modification":"A justified change proposed to improve a research method.","Future direction":"A justified proposal for further research arising from findings or limitations.","Scientific language":"Precise discipline-specific terminology and expression used to communicate research.","Technical language":"Specialised vocabulary and conventions used by a professional field.","Concise writing":"Communication using only the words needed to express meaning clearly.","Objective tone":"A style focused on evidence and reasoning rather than personal opinion or emotion.","Past tense":"A grammatical tense commonly used to describe completed methods and observations.","Active voice":"A sentence structure in which the performer of an action is stated directly.","Passive voice":"A sentence structure that emphasises an action or object rather than the performer.","Coherence":"Logical connection and flow among ideas, paragraphs and report sections.","Authenticity":"The quality of being the researcher’s own genuine work.","Good scholarship":"Honest research practice involving accurate representation, acknowledgement and responsible use of sources.","Peer review":"Critical evaluation of research by experts in the relevant field.","Reviewer":"An expert who evaluates a manuscript’s methods, evidence and reasoning.","Editorial decision":"A journal decision to accept, revise or reject a submitted manuscript.","Revision":"A change made to a report in response to evidence, review or editorial feedback.","Scientific journal":"A periodical publication containing scientific research and review articles.","Online journal":"A scientific journal distributed electronically.","Print journal":"A scientific journal distributed in physical printed form.","Conference presentation":"Formal communication of research to a professional meeting.","Poster presentation":"A visual conference format summarising research for discussion.","Oral presentation":"Spoken communication of research supported by suitable evidence and visuals.","Popular media":"Communication channels intended for a broad non-specialist audience.","Media release":"A concise public announcement designed to communicate a research finding to news media.","Purpose":"The intended outcome of a communication.","Audience":"The people for whom communication is designed.","Context":"The circumstances and setting influencing communication choices.","Medium":"The channel or platform through which communication is delivered.","Written communication":"Communication using structured text.","Oral communication":"Communication delivered through speech.","Mathematical communication":"Communication using equations, quantities and symbolic relationships.","Graphical communication":"Communication using graphs, diagrams, maps or other visual displays.","Data visualisation":"A designed visual representation used to communicate patterns or relationships in data.","Supporting data":"Relevant evidence used to justify analysis, interpretation or conclusions.","Peer-reviewed evidence":"Evidence drawn from research that has undergone expert evaluation.","Trend analysis":"Interpretation of a general direction of change in data.","Pattern analysis":"Interpretation of repeated or structured features in data.","Relationship analysis":"Interpretation of associations among variables.","Research claim":"A statement advanced on the basis of evidence and reasoning.","Evidence chain":"The logical connection from data through analysis to a claim or conclusion.","Acknowledgement":"Recognition of assistance, contribution, funding or access provided by others.","Conflict-of-interest statement":"Disclosure of interests that might influence research or its interpretation.","Data-availability statement":"Information explaining whether and how supporting data can be accessed.","Reproducible method":"A method described in enough detail for another researcher to repeat it.","Transparent reporting":"Clear disclosure of methods, choices, uncertainties and limitations.","Research misconduct":"Serious departure from responsible research practice, such as fabrication, falsification or plagiarism.","Fabrication":"Inventing data, results or procedures that did not occur.","Falsification":"Manipulating research materials, processes or data so the record is inaccurate.","Publication":"Formal release of research so it can be examined and used by others.","Public support for science":"Community confidence and willingness to fund, accept or participate in scientific activity.","Public funding":"Government or community financial support for research.","Science communication":"Communication of scientific methods, evidence and implications to particular audiences.","Aboriginal and Torres Strait Islander Peoples":"Australia’s Indigenous peoples, comprising diverse Aboriginal language groups and Torres Strait Islander cultural groups.","Cultural observations":"Traditional knowledge based on observations interpreted through local culture, philosophy and practices.","Hypothesis":"A testable statement proposing a causal relationship between an independent and dependent variable.","Large data sets":"Data sets large enough to support statistical reliability and require computational analysis to reveal patterns.","Model":"A representation that describes, simplifies, clarifies or explains an object, system or idea.","Primary sources/primary data":"Information created by people directly involved in a study or observation.","Qualitative":"Relating to descriptions or qualities rather than numerical quantities.","Quantitative":"Relating to numerical measurement or quantity.","Secondary-sourced investigation/data":"A systematic inquiry using data or information produced by other people.","Repeated observations":"The phenomenon is examined across cases or times.","Inductive reasoning":"Specific cases are used to propose a broader statement.","Prediction":"The claim is applied to a new case.","Testing":"New evidence is collected.","Accepted paradigm":"A scientific community shares models, methods and standards.","Normal science":"Researchers solve problems within the framework.","Repeated anomalies":"Unresolved problems accumulate.","Crisis":"Confidence in the existing framework weakens.","Alternative framework":"A competing explanation is developed.","Comparative testing":"Old and new frameworks are judged against evidence.","Scientific claim":"A conclusion to be defended is stated.","Premise one":"A relevant evidence-based statement is provided.","Premise two":"Additional evidence or principle is established.","Logical connection":"The relationship among premises is made explicit.","Deductive reasoning":"The conclusion is derived from the premises.","Validity check":"The logical form is examined.","Premise evaluation":"Evidence supporting each premise is assessed.","Search terms":"Keywords and Boolean operators are planned.","Database search":"Relevant scholarly sources are located.","Screening":"Titles, abstracts and methods are checked for relevance.","Source evaluation":"Reliability, validity and bias are assessed.","Thematic synthesis":"Findings are grouped into patterns and disagreements.","Research gap":"An unresolved question is identified.","Rationale":"Existing evidence establishes significance.","Data plan":"Collection, processing and analysis are specified.","Risk and ethics":"Hazards and ethical requirements are addressed.","Timeline and feasibility":"Resources and milestones are confirmed.","Data-management plan":"Storage, naming, access and backup procedures are defined.","Data collection":"Raw observations are recorded consistently.","Data archive":"Final data and documentation remain usable.","Data inspection":"Ranges, formats and completeness are checked.","Missing values":"Absent observations are identified and documented.","Duplicate records":"Repeated entries are removed or reconciled.","Invalid values":"Impossible or inconsistent values are corrected or excluded.","Statistical analysis":"Appropriate summaries or tests are applied.","Test assumptions":"Distribution, independence and measurement conditions are checked.","Statistical decision":"The null is rejected or not rejected.","Scientific interpretation":"Effect size, uncertainty and limitations are considered.","Model assumptions":"Simplifications and boundaries are stated.","Variables and parameters":"Inputs and relationships are specified.","Model construction":"A mathematical or computational representation is built.","Parameter fitting":"Observed data are used to estimate values.","Validation":"Predictions are compared with independent evidence.","Model revision":"Assumptions or parameters are refined.","Results":"Processed findings are presented clearly.","Discussion":"Patterns, evidence, limitations and literature are interpreted.","References and appendices":"Sources and supporting material are documented.","Manuscript submission":"Authors send the report to a journal.","Editorial screening":"Scope, quality and ethical requirements are checked.","Reviewer feedback":"Strengths, errors and required changes are identified.","Post-publication scrutiny":"Replication, criticism and correction continue.","Communication purpose":"Informing, persuading or enabling action is clarified.","Audience analysis":"Prior knowledge, needs and concerns are assessed.","Mode and medium":"Journal, poster, talk or media format is chosen.","Evidence selection":"Relevant data are retained without cherry-picking.","Language adaptation":"Technical detail is adjusted while accuracy is preserved.","Visual design":"Tables, graphs or diagrams support understanding.","Feedback and revision":"Communication is improved for clarity and integrity.","Investigation":"Predictions are tested against evidence.","Scientific problem":"A meaningful question emerges from observation or literature.","Epistemological framing":"Assumptions about evidence and knowledge are considered.","Research proposal":"Question, hypothesis and methodology are justified.","Data analysis":"Patterns, uncertainty and statistical tests are applied.","Scientific decision":"Evidence is interpreted against the hypothesis.","Research report":"Methods, findings and reasoning are communicated.","Peer scrutiny":"The work is evaluated and refined.","Association":"Variables show a statistical relationship.","Confounding control":"Alternative explanations are reduced.","Dose–response pattern":"Changing exposure is linked with changing outcome.","Plausible mechanism":"A process explains how the effect occurs.","Causal judgement":"The combined evidence supports a qualified conclusion.","Titration":"A course concept used in the Scientific Reasoning Chain challenge.","Mitosis":"A course concept used in the Scientific Reasoning Chain challenge.","Orbital velocity":"A course concept used in the Scientific Reasoning Chain challenge.","Repeated anomaly":"A course concept used in the Paradigm Shift Chain challenge.","Evidence comparison":"A course concept used in the Paradigm Shift Chain challenge.","Scientific community":"A course concept used in the Paradigm Shift Chain challenge.","Ksp":"A course concept used in the Paradigm Shift Chain challenge.","Antibody":"A course concept used in the Paradigm Shift Chain challenge.","Stalagmite":"A course concept used in the Paradigm Shift Chain challenge.","Feasibility":"A course concept used in the Research Proposal Chain challenge.","Photoelectric effect":"A course concept used in the Research Proposal Chain challenge.","Meiosis":"A course concept used in the Research Proposal Chain challenge.","Acid buffer":"A course concept used in the Research Proposal Chain challenge.","Instrument":"A course concept used in the Data Provenance Chain challenge.","Calibration":"A course concept used in the Data Provenance Chain challenge.","File naming":"A course concept used in the Data Provenance Chain challenge.","Natural selection":"A course concept used in the Data Provenance Chain challenge.","Transformer":"A course concept used in the Data Provenance Chain challenge.","Volcanic ash":"A course concept used in the Data Provenance Chain challenge.","Assumption check":"A course concept used in the Hypothesis Test Chain challenge.","Centripetal force":"A course concept used in the Hypothesis Test Chain challenge.","Ester":"A course concept used in the Hypothesis Test Chain challenge.","Stromatolite":"A course concept used in the Hypothesis Test Chain challenge.","Mechanism":"A course concept used in the Causal Inference Chain challenge.","Causal inference":"A course concept used in the Causal Inference Chain challenge.","Redshift":"A course concept used in the Causal Inference Chain challenge.","Literature comparison":"A course concept used in the Scientific Report Chain challenge.","Limitations":"A course concept used in the Scientific Report Chain challenge.","References":"A course concept used in the Scientific Report Chain challenge.","Ocean current":"A course concept used in the Scientific Report Chain challenge.","Manuscript":"A course concept used in the Publication and Self-correction Chain challenge.","Reviewer criticism":"A course concept used in the Publication and Self-correction Chain challenge.","Post-publication critique":"A course concept used in the Publication and Self-correction Chain challenge.","Correction":"A course concept used in the Publication and Self-correction Chain challenge.","Retraction":"A course concept used in the Publication and Self-correction Chain challenge.","Refined knowledge":"A course concept used in the Publication and Self-correction Chain challenge.","Orbital radius":"A course concept used in the Publication and Self-correction Chain challenge."};
+
+const bankEl=document.getElementById("bank");
+const modeEl=document.getElementById("mode");
+const levelEl=document.getElementById("level");
+const sequenceBoard=document.getElementById("sequenceBoard");
+const chainBoard=document.getElementById("chainBoard");
+const chainPathEl=document.getElementById("chainPath");
+const relationshipEl=document.getElementById("relationships");
+const candidateGrid=document.getElementById("candidateGrid");
+const messageEl=document.getElementById("message");
+const explanationEl=document.getElementById("explanation");
+const solutionList=document.getElementById("solutionList");
+const definitionGrid=document.getElementById("definitionGrid");
+
+let current=null;
+let sequenceOrder=[];
+let chainPath=[];
+let chainRelationships=[];
+let candidatePool=[];
+let roundAttempts=0;
+let hinted=false;
+let completed=false;
+let draggedIndex=null;
+let lastChallengeId="";
+let stats={score:0,streak:0,solved:0,attempts:0};
+
+const bankNames={"module1":"Module 1 — The Foundations of Scientific Thinking","module2":"Module 2 — The Scientific Research Proposal","module3":"Module 3 — The Data, Evidence and Decisions","module4":"Module 4 — The Scientific Research Report","glossary":"Syllabus Glossary","review":"Whole HSC Course Review","expert":"Mixed Expert Challenge"};
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[ch]));
+}
+
+function sequenceLength(){
+  if(levelEl.value==="easy")return 4;
+  if(levelEl.value==="medium")return Math.min(6,current.steps.length);
+  return current.steps.length;
+}
+
+function chainTargetLength(){
+  return levelEl.value==="easy" ? Math.min(5,current.bestPath.length) : current.bestPath.length;
+}
+
+function setMessage(text,type=""){
+  messageEl.textContent=text;
+  messageEl.className="message"+(type?" "+type:"");
+}
+
+function updateStats(){
+  document.getElementById("scoreStat").textContent=stats.score;
+  document.getElementById("streakStat").textContent=stats.streak;
+  document.getElementById("solvedStat").textContent=stats.solved;
+  document.getElementById("attemptStat").textContent=stats.attempts;
+}
+
+function updateControls(){
+  const chainMode=modeEl.value==="chain";
+  document.getElementById("checkBtn").textContent=chainMode?"Check Chain":"Check Sequence";
+  document.getElementById("undoBtn").disabled=!chainMode||chainPath.length<=1||completed;
+  document.getElementById("modeHelp").textContent=chainMode
+    ?"Chain Reaction mode accepts only the curated directed links. Valid branches may lead to shorter routes, so use Undo Last Link strategically."
+    :"Sequence mode uses curated ordered pathways. Drag cards or use the arrow buttons, then check the sequence.";
+}
+
+function pickChallenge(){
+  const data=modeEl.value==="sequence"?SEQUENCES:CHAINS;
+  let choices=data.filter(item=>item.bank===bankEl.value);
+  if(!choices.length)throw new Error("No challenges available for this selection.");
+  if(choices.length>1){
+    const alternatives=choices.filter(item=>item.id!==lastChallengeId);
+    if(alternatives.length)choices=alternatives;
+  }
+  current=choices[Math.floor(Math.random()*choices.length)];
+  lastChallengeId=current.id;
+}
+
+function newChallenge(){
+  document.body.dataset.level=levelEl.value;
+  pickChallenge();
+  roundAttempts=0;
+  hinted=false;
+  completed=false;
+  explanationEl.classList.remove("show");
+  sequenceBoard.innerHTML="";
+  candidateGrid.innerHTML="";
+  chainPath=[];
+  chainRelationships=[];
+
+  document.getElementById("moduleStatus").textContent=bankNames[bankEl.value];
+  document.getElementById("modeStatus").textContent=modeEl.options[modeEl.selectedIndex].text;
+  document.getElementById("levelStatus").textContent=levelEl.options[levelEl.selectedIndex].text;
+  document.getElementById("roundStatus").textContent="In progress";
+  document.getElementById("challengeTitle").textContent=current.title;
+  document.getElementById("modeBadge").textContent=
+    modeEl.value==="sequence"?"SCIENCE SEQUENCE":"CHAIN REACTION";
+
+  if(modeEl.value==="sequence"){
+    sequenceBoard.hidden=false;
+    chainBoard.hidden=true;
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    sequenceOrder=shuffle(target);
+    if(sequenceOrder.length>1 && sequenceOrder.every((term,index)=>term===target[index])){
+      [sequenceOrder[0],sequenceOrder[1]]=[sequenceOrder[1],sequenceOrder[0]];
+    }
+    document.getElementById("challengeInstruction").textContent=
+      `Arrange ${target.length} terms into the scientifically defensible order.`;
+    renderSequence();
+    setMessage("Drag the cards or use the arrow buttons, then check your sequence.");
+  }else{
+    sequenceBoard.hidden=true;
+    chainBoard.hidden=false;
+    const target=current.bestPath.slice(0,chainTargetLength());
+    chainPath=[current.start];
+    candidatePool=levelEl.value==="easy"
+      ?shuffle(target.slice(1))
+      :shuffle(
+          current.nodes
+            .filter(term=>term!==current.start)
+            .concat(levelEl.value==="hard"?current.distractors:[])
+        );
+    document.getElementById("challengeInstruction").textContent=
+      `Begin with ${current.start} and build the longest accepted chain.`;
+    document.getElementById("chainTarget").textContent=`Target length: ${target.length} terms`;
+    renderChain();
+    setMessage("Choose a term that has an accepted relationship with the current end of the chain.");
+  }
+  updateControls();
+  updateProgress();
+}
+
+function renderSequence(){
+  sequenceBoard.innerHTML="";
+  sequenceOrder.forEach((term,index)=>{
+    const item=document.createElement("div");
+    item.className="sequence-item";
+    item.draggable=!completed;
+    item.dataset.index=String(index);
+
+    item.addEventListener("dragstart",()=>{
+      if(completed)return;
+      draggedIndex=index;
+      item.classList.add("dragging");
+    });
+    item.addEventListener("dragend",()=>{
+      draggedIndex=null;
+      item.classList.remove("dragging");
+    });
+    item.addEventListener("dragover",event=>event.preventDefault());
+    item.addEventListener("drop",event=>{
+      event.preventDefault();
+      if(draggedIndex===null||draggedIndex===index||completed)return;
+      const [moved]=sequenceOrder.splice(draggedIndex,1);
+      sequenceOrder.splice(index,0,moved);
+      clearPositionFeedback();
+      renderSequence();
+      updateProgress();
+    });
+
+    const pos=document.createElement("div");
+    pos.className="position";
+    pos.textContent=String(index+1);
+
+    const termEl=document.createElement("div");
+    termEl.className="sequence-term";
+    termEl.textContent=term;
+
+    const moves=document.createElement("div");
+    moves.className="move-buttons";
+
+    const up=document.createElement("button");
+    up.type="button";
+    up.textContent="↑";
+    up.title="Move up";
+    up.disabled=index===0||completed;
+    up.addEventListener("click",()=>moveSequence(index,-1));
+
+    const down=document.createElement("button");
+    down.type="button";
+    down.textContent="↓";
+    down.title="Move down";
+    down.disabled=index===sequenceOrder.length-1||completed;
+    down.addEventListener("click",()=>moveSequence(index,1));
+
+    moves.append(up,down);
+    item.append(pos,termEl,moves);
+    sequenceBoard.appendChild(item);
+  });
+}
+
+function moveSequence(index,direction){
+  const target=index+direction;
+  if(target<0||target>=sequenceOrder.length||completed)return;
+  [sequenceOrder[index],sequenceOrder[target]]=[sequenceOrder[target],sequenceOrder[index]];
+  clearPositionFeedback();
+  renderSequence();
+  updateProgress();
+}
+
+function clearPositionFeedback(){
+  [...sequenceBoard.children].forEach(item=>{
+    item.classList.remove("correct-position","wrong-position");
+  });
+}
+
+function checkSequence(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+  const correct=sequenceOrder.every((term,index)=>term===target[index]);
+
+  if(correct){
+    completeRound("sequence");
+    return;
+  }
+
+  const correctPositions=sequenceOrder.filter((term,index)=>term===target[index]).length;
+  [...sequenceBoard.children].forEach((item,index)=>{
+    item.classList.add(
+      sequenceOrder[index]===target[index]?"correct-position":"wrong-position"
+    );
+  });
+  stats.streak=0;
+  setMessage(`${correctPositions} of ${target.length} terms are currently in the correct position.`,"warn");
+  updateStats();
+  updateProgress();
+}
+
+function edgeFromTo(from,to){
+  return current.edges.find(edge=>edge[0]===from&&edge[1]===to);
+}
+
+function renderChain(){
+  chainPathEl.innerHTML="";
+  chainPath.forEach((term,index)=>{
+    const node=document.createElement("div");
+    node.className="chain-node";
+    node.textContent=term;
+    chainPathEl.appendChild(node);
+
+    if(index<chainPath.length-1){
+      const arrow=document.createElement("div");
+      arrow.className="chain-arrow";
+      arrow.textContent="→";
+      chainPathEl.appendChild(arrow);
+    }
+  });
+
+  relationshipEl.innerHTML=chainRelationships.map((rel,index)=>
+    `<div class="relationship"><strong>${index+1}. ${escapeHtml(chainPath[index])} → ${escapeHtml(chainPath[index+1])}</strong><br>${escapeHtml(rel)}</div>`
+  ).join("");
+
+  candidateGrid.innerHTML="";
+  candidatePool.forEach(term=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="term-card";
+    button.textContent=term;
+    const used=chainPath.includes(term);
+    button.disabled=used||completed;
+    if(used)button.classList.add("used");
+    button.addEventListener("click",()=>tryChainTerm(term,button));
+    candidateGrid.appendChild(button);
+  });
+
+  updateControls();
+  updateProgress();
+}
+
+function tryChainTerm(term,button){
+  if(completed)return;
+  const from=chainPath[chainPath.length-1];
+  const edge=edgeFromTo(from,term);
+  stats.attempts++;
+  roundAttempts++;
+
+  if(!edge||chainPath.includes(term)){
+    stats.streak=0;
+    button.classList.add("invalid-flash");
+    setTimeout(()=>button.classList.remove("invalid-flash"),320);
+    setMessage(`No accepted link from “${from}” to “${term}”.`,"bad");
+    updateStats();
+    return;
+  }
+
+  chainPath.push(term);
+  chainRelationships.push(edge[2]);
+  setMessage(`Valid link: ${edge[2]}`,"good");
+  renderChain();
+
+  if(chainPath.length>=chainTargetLength()){
+    completeRound("chain");
+  }else{
+    const possible=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(possible.length<=1){
+      setMessage(
+        `This branch is valid but ends at ${chainPath.length} terms. Undo the last link and try another route.`,
+        "warn"
+      );
+    }
+  }
+}
+
+function undoChain(){
+  if(modeEl.value!=="chain"||chainPath.length<=1||completed)return;
+  chainPath.pop();
+  chainRelationships.pop();
+  setMessage("Last valid link removed.");
+  renderChain();
+}
+
+function outgoing(term,used){
+  return current.edges
+    .filter(edge=>
+      edge[0]===term &&
+      !used.has(edge[1]) &&
+      candidatePool.includes(edge[1])
+    )
+    .map(edge=>edge[1]);
+}
+
+function longestRemainingPath(term,used,memo=new Map()){
+  const key=term+"|"+[...used].sort().join("~");
+  if(memo.has(key))return memo.get(key);
+
+  let best=[term];
+  for(const next of outgoing(term,used)){
+    const nextUsed=new Set(used);
+    nextUsed.add(next);
+    const candidate=[term,...longestRemainingPath(next,nextUsed,memo)];
+    if(candidate.length>best.length)best=candidate;
+  }
+  memo.set(key,best);
+  return best;
+}
+
+function checkChain(){
+  if(completed)return;
+  stats.attempts++;
+  roundAttempts++;
+  const target=chainTargetLength();
+
+  if(chainPath.length>=target){
+    completeRound("chain");
+    return;
+  }
+
+  const possible=longestRemainingPath(
+    chainPath[chainPath.length-1],
+    new Set(chainPath)
+  );
+
+  if(possible.length>1){
+    setMessage(
+      `Your chain is valid but can still be extended. Current length: ${chainPath.length} / ${target}.`,
+      "warn"
+    );
+  }else{
+    stats.streak=0;
+    setMessage(
+      `This valid branch ends at ${chainPath.length} terms. Undo links and try another route to reach ${target}.`,
+      "warn"
+    );
+  }
+  updateStats();
+}
+
+function giveHint(){
+  if(!current||completed)return;
+  hinted=true;
+  stats.score=Math.max(0,stats.score-5);
+
+  if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const wrongIndex=sequenceOrder.findIndex((term,index)=>term!==target[index]);
+    if(wrongIndex===-1){
+      setMessage("The sequence is already correct. Check it to score.","good");
+    }else{
+      setMessage(`Hint: position ${wrongIndex+1} should be “${target[wrongIndex]}”.`,"warn");
+    }
+  }else{
+    const continuation=longestRemainingPath(
+      chainPath[chainPath.length-1],
+      new Set(chainPath)
+    );
+    if(continuation.length>1){
+      const next=continuation[1];
+      const edge=edgeFromTo(chainPath[chainPath.length-1],next);
+      setMessage(`Hint: try “${next}” next. ${edge?edge[2]:""}`,"warn");
+    }else{
+      setMessage("This branch has ended. Undo the last link and choose another valid route.","warn");
+    }
+  }
+  updateStats();
+}
+
+function revealAnswer(){
+  if(!current)return;
+  completed=true;
+  stats.streak=0;
+  document.getElementById("roundStatus").textContent="Answer revealed";
+
+  if(modeEl.value==="sequence"){
+    sequenceOrder=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    renderSequence();
+  }else{
+    chainPath=current.bestPath.slice(0,chainTargetLength());
+    chainRelationships=[];
+    for(let i=0;i<chainPath.length-1;i++){
+      const edge=edgeFromTo(chainPath[i],chainPath[i+1]);
+      chainRelationships.push(edge?edge[2]:"Accepted relationship.");
+    }
+    renderChain();
+  }
+
+  showExplanation();
+  setMessage("Answer revealed. Review why each step or link is accepted.","warn");
+  updateStats();
+  updateControls();
+  updateProgress();
+}
+
+function completeRound(mode){
+  if(completed)return;
+  completed=true;
+  const base=mode==="sequence"?100:120;
+  const penalty=Math.min(60,Math.max(0,roundAttempts-1)*10)+(hinted?5:0);
+  const earned=Math.max(40,base-penalty);
+
+  stats.score+=earned;
+  stats.streak++;
+  stats.solved++;
+  document.getElementById("roundStatus").textContent="Solved";
+  setMessage(`Challenge solved. +${earned} points.`,"good");
+  showExplanation();
+  updateStats();
+  updateControls();
+  updateProgress();
+
+  if(mode==="sequence")renderSequence();
+  else renderChain();
+}
+
+function showExplanation(){
+  explanationEl.classList.add("show");
+  document.getElementById("summaryText").textContent=
+    current.summary||"Review the accepted order and relationships.";
+
+  let terms=[];
+  if(modeEl.value==="sequence"){
+    const steps=current.steps.slice(0,sequenceLength());
+    solutionList.innerHTML=steps.map((step,index)=>{
+      const rel=index===0?"Starting point.":step[1];
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(step[0])}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=steps.map(step=>step[0]);
+  }else{
+    const path=current.bestPath.slice(0,chainTargetLength());
+    solutionList.innerHTML=path.map((term,index)=>{
+      let rel="Starting term.";
+      if(index>0){
+        const edge=edgeFromTo(path[index-1],term);
+        rel=edge?edge[2]:"Accepted relationship.";
+      }
+      return `<div class="solution-step"><strong>${index+1}</strong><div><b>${escapeHtml(term)}</b><br>${escapeHtml(rel)}</div></div>`;
+    }).join("");
+    terms=[...new Set(path)];
+  }
+
+  definitionGrid.innerHTML=terms.map(term=>
+    `<div class="definition-item"><strong>${escapeHtml(term)}</strong><br>${escapeHtml(DEFINITIONS[term]||"Scientific concept used in this challenge.")}</div>`
+  ).join("");
+}
+
+function updateProgress(){
+  let percent=0;
+  if(!current){
+    percent=0;
+  }else if(completed){
+    percent=100;
+  }else if(modeEl.value==="sequence"){
+    const target=current.steps.slice(0,sequenceLength()).map(step=>step[0]);
+    const correct=sequenceOrder.filter((term,index)=>term===target[index]).length;
+    percent=target.length?correct/target.length*100:0;
+  }else{
+    percent=chainTargetLength()?chainPath.length/chainTargetLength()*100:0;
+  }
+  document.getElementById("progressBar").style.width=Math.min(100,percent)+"%";
+}
+
+function resetScore(){
+  stats={score:0,streak:0,solved:0,attempts:0};
+  updateStats();
+  setMessage("Session score reset. The current challenge remains available.");
+}
+
+document.getElementById("newBtn").addEventListener("click",newChallenge);
+document.getElementById("checkBtn").addEventListener("click",()=>{
+  if(!current)return;
+  modeEl.value==="sequence"?checkSequence():checkChain();
+});
+document.getElementById("undoBtn").addEventListener("click",undoChain);
+document.getElementById("hintBtn").addEventListener("click",giveHint);
+document.getElementById("revealBtn").addEventListener("click",revealAnswer);
+document.getElementById("resetScoreBtn").addEventListener("click",resetScore);
+
+[bankEl,modeEl,levelEl].forEach(control=>{
+  control.addEventListener("change",()=>{
+    document.body.dataset.level=levelEl.value;
+    newChallenge();
+  });
+});
+
+updateStats();
+newChallenge();
+
+</script>
+</body>
+</html>
