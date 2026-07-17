@@ -432,6 +432,15 @@
       border-left:6px solid #7e22ce;
     }
 
+    .hsc-worksheet-description{
+      display:block;
+      margin-top:5px;
+      color:var(--muted);
+      font-size:.82rem;
+      font-weight:650;
+      line-height:1.35;
+    }
+
     .hsc-worksheet-link{
       background:#7e22ce;
       border-color:#7e22ce;
@@ -8556,18 +8565,37 @@
 
     const worksheetRow=`
       <tr class="hsc-worksheet-row">
-        <th class="hsc-worksheet-label" scope="row">Game worksheet</th>
-        <td class="hsc-game-cell"><span class="hsc-game-missing">—</span></td>
+        <th class="hsc-worksheet-label" scope="row">
+          Game worksheets
+          <span class="hsc-worksheet-description">Download the worksheet and modify it for your own use.</span>
+        </th>
+        <td class="hsc-game-cell">
+          <a class="hsc-game-link hsc-worksheet-link"
+            href="https://docs.google.com/document/d/1gP9a395dq8rvyjPfiUjAbx9Ew6O32mWXHSPS2pddlFg/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download the Word Match worksheet">
+            Download worksheet
+          </a>
+        </td>
         <td class="hsc-game-cell">
           <a class="hsc-game-link hsc-worksheet-link"
             href="https://docs.google.com/document/d/1io3ff3-yZTrAFIPE76zTS-Mgc2nxZkA7Fl0x_1mszto/edit?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Download the Connections game worksheet">
-            Download game worksheet
+            aria-label="Download the Connections worksheet">
+            Download worksheet
           </a>
         </td>
-        <td class="hsc-game-cell"><span class="hsc-game-missing">—</span></td>
+        <td class="hsc-game-cell">
+          <a class="hsc-game-link hsc-worksheet-link"
+            href="https://docs.google.com/document/d/1oJOyqhfDUlTUOo8eoirGtSl0LpMz7rMptdcD-S6Axvg/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download the Chain Reactions worksheet">
+            Download worksheet
+          </a>
+        </td>
       </tr>
     `;
 
