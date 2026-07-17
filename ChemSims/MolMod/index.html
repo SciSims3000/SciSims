@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Molecular Model Kit | SciSims</title>
+  <style>
+    :root{
+      --bg:#eef7ff;
+      --card:#ffffff;
+      --ink:#16324a;
+      --muted:#5f7488;
+      --line:#cfe0ee;
+      --blue:#2b7de9;
+      --blue2:#55b7f3;
+      --navy:#164a7b;
+      --good:#1c8f5a;
+      --warn:#c37b00;
+      --bad:#c84444;
+      --shadow:0 12px 30px rgba(24,73,117,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-rounded, "SF Pro Rounded", "Segoe UI", Arial, sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+    }
+
+    button, select, input{font:inherit}
+    button{cursor:pointer}
+
+    .page{
+      width:min(1500px, 96vw);
+      margin:0 auto;
+      padding:18px 0 38px;
+    }
+
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:.55rem;
+      text-decoration:none;
+      color:var(--navy);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:.7rem 1rem;
+      font-weight:800;
+      box-shadow:0 5px 16px rgba(24,73,117,.08);
+      margin-bottom:14px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #2068d8 0%, #3c94ec 55%, #6fc6f1 100%);
+      color:white;
+      border-radius:28px;
+      padding:28px 30px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:240px;height:240px;
+      border:28px solid rgba(255,255,255,.12);
+      border-radius:50%;
+      right:-70px;top:-78px;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(2rem,4vw,3.35rem);line-height:1.02}
+    .hero p{margin:0;max-width:900px;font-size:1.07rem;line-height:1.5}
+
+    .toolbar{
+      margin-top:16px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:.78rem 1rem;
+      font-weight:850;
+      background:#eaf3fb;
+      color:var(--navy);
+      transition:.16s ease;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+    .btn.primary{background:var(--blue);color:white}
+    .btn.good{background:var(--good);color:white}
+    .btn.danger{background:#ffecec;color:var(--bad)}
+    .btn.active{outline:3px solid rgba(43,125,233,.25);background:#dcecff}
+    .toolbar .spacer{flex:1}
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(300px, 380px) minmax(0,1fr);
+      gap:16px;
+      margin-top:16px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-inner{padding:18px}
+    .card h2{margin:0 0 12px;font-size:1.24rem}
+    .card h3{margin:18px 0 8px;font-size:1rem}
+    .subtle{color:var(--muted);line-height:1.45}
+
+    .mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .mode-btn{
+      border:1px solid var(--line);
+      background:#f7fbff;
+      color:var(--navy);
+      border-radius:12px;
+      padding:.8rem .6rem;
+      font-weight:850;
+    }
+    .mode-btn.active{background:#dcecff;border-color:#9cc7f1}
+
+    .scope-note{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      background:#fff8e8;
+      border:1px solid #efd18d;
+      color:#704a00;
+      line-height:1.42;
+    }
+    .scope-note strong{
+      display:block;
+      margin-bottom:4px;
+    }
+    .scope-note span{
+      display:block;
+      font-size:.9rem;
+    }
+
+    .challenge-box{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      background:#f1f8ff;
+      border:1px solid #c9e1f5;
+    }
+    .challenge-box label{display:block;font-size:.82rem;font-weight:850;color:var(--muted);margin-bottom:6px}
+    select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:.72rem;
+      color:var(--ink);
+      background:white;
+    }
+
+    .atom-palette{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(72px, 88px));
+      justify-content:center;
+      gap:10px;
+      margin-top:10px;
+    }
+    .atom-chip{
+      width:88px;
+      max-width:100%;
+      aspect-ratio:1;
+      border:none;
+      border-radius:50%;
+      font-size:1.1rem;
+      font-weight:950;
+      box-shadow:inset 0 -7px 12px rgba(0,0,0,.13), 0 6px 12px rgba(20,55,85,.14);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      line-height:1;
+      transition:.15s ease;
+    }
+    .atom-chip:hover{transform:translateY(-2px) scale(1.02)}
+    .atom-chip small{font-size:.56rem;margin-top:5px;font-weight:800;opacity:.75}
+
+    .bond-row{display:grid;grid-template-columns:repeat(2, 1fr);gap:8px}
+    .bond-btn{
+      padding:.72rem .4rem;
+      border-radius:11px;
+      border:1px solid var(--line);
+      background:#f7fbff;
+      color:var(--navy);
+      font-weight:850;
+    }
+    .bond-btn.active{background:#dcecff;border-color:#78b5ed;box-shadow:0 0 0 3px rgba(43,125,233,.12)}
+
+
+    .mode-btn[aria-pressed="true"],
+    .bond-btn[aria-pressed="true"]{
+      background:#dcecff;
+      border-color:#78b5ed;
+      box-shadow:0 0 0 3px rgba(43,125,233,.12);
+    }
+    button:focus-visible, select:focus-visible, [role="button"]:focus-visible{
+      outline:3px solid rgba(43,125,233,.35);
+      outline-offset:3px;
+    }
+    .challenge-actions{
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+    }
+    .challenge-actions .btn{flex:1}
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{
+        scroll-behavior:auto!important;
+        transition:none!important;
+        animation:none!important;
+      }
+    }
+
+    .status{
+      margin-top:14px;
+      border-radius:14px;
+      padding:12px;
+      background:#f7fbff;
+      border:1px solid var(--line);
+    }
+    .status strong{display:block;margin-bottom:4px}
+    .status.good{background:#eaf8f1;border-color:#b8e3ce;color:#12663e}
+    .status.warn{background:#fff7e7;border-color:#f3d18b;color:#885400}
+    .status.bad{background:#fff0f0;border-color:#efb4b4;color:#963434}
+
+    .workspace-card{min-height:860px}
+    .workspace-top{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      background:linear-gradient(#fff,#f9fcff);
+    }
+    .workspace-top .readout{
+      min-width:145px;
+      padding:.6rem .8rem;
+      border-radius:11px;
+      background:#eef6fd;
+      border:1px solid #d3e6f5;
+    }
+    .readout span{display:block;color:var(--muted);font-size:.74rem;font-weight:800}
+    .readout strong{font-size:1rem}
+
+    .view-grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1.45fr) minmax(360px, .75fr);
+      min-height:640px;
+    }
+    .panel{
+      position:relative;
+      min-height:640px;
+    }
+    .panel + .panel{border-left:1px solid var(--line)}
+    .panel-title{
+      position:absolute;
+      left:14px;top:12px;
+      z-index:5;
+      border-radius:999px;
+      padding:.45rem .7rem;
+      background:rgba(255,255,255,.88);
+      border:1px solid var(--line);
+      font-size:.8rem;
+      font-weight:850;
+      backdrop-filter:blur(6px);
+    }
+
+    #builder{
+      width:100%;
+      height:640px;
+      display:block;
+      background:
+        linear-gradient(rgba(80,140,185,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(80,140,185,.055) 1px, transparent 1px),
+        radial-gradient(circle at 50% 45%, #ffffff 0, #f4faff 72%);
+      background-size:28px 28px, 28px 28px, auto;
+      touch-action:none;
+    }
+
+    #preview3d{
+      width:100%;
+      height:640px;
+      display:block;
+      background:radial-gradient(circle at 50% 42%, #ffffff, #edf5fb 76%);
+      touch-action:none;
+      cursor:grab;
+    }
+    #preview3d.dragging{cursor:grabbing}
+
+    .hint{
+      position:absolute;
+      bottom:12px;
+      left:12px;
+      right:12px;
+      background:rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:.65rem .8rem;
+      color:var(--muted);
+      font-size:.8rem;
+      line-height:1.35;
+      backdrop-filter:blur(6px);
+    }
+
+    .evidence{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      padding:14px;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+    .evidence-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+      padding:12px;
+      min-height:82px;
+    }
+    .evidence-box span{
+      display:block;
+      color:var(--muted);
+      font-size:.75rem;
+      font-weight:850;
+      margin-bottom:6px;
+    }
+    .evidence-box strong{font-size:1rem;line-height:1.35}
+
+    .below{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    .how-list{margin:8px 0 0;padding-left:1.2rem;line-height:1.55}
+    .quiz-grid{display:grid;gap:10px}
+    .quiz-item{
+      border:1px solid var(--line);
+      background:#f9fcff;
+      border-radius:13px;
+      padding:12px;
+    }
+    .quiz-item label{display:block;font-weight:800;margin-bottom:8px}
+    .quiz-item select{max-width:100%}
+    .quiz-feedback{margin-top:8px;font-size:.88rem;font-weight:800}
+
+    .sr-only{
+      position:absolute!important;
+      width:1px!important;height:1px!important;
+      padding:0!important;margin:-1px!important;
+      overflow:hidden!important;clip:rect(0,0,0,0)!important;
+      white-space:nowrap!important;border:0!important;
+    }
+
+    @media (max-width:1050px){
+      .layout{grid-template-columns:1fr}
+      .view-grid{grid-template-columns:1fr}
+      .panel + .panel{border-left:none;border-top:1px solid var(--line)}
+      .evidence{grid-template-columns:repeat(2,1fr)}
+      .workspace-card{min-height:auto}
+    }
+    @media (max-width:680px){
+      .page{width:min(100% - 18px, 1500px)}
+      .hero{padding:23px 20px}
+      .toolbar{position:sticky;top:6px;z-index:20}
+      .atom-palette{grid-template-columns:repeat(auto-fit, minmax(66px, 78px))}
+      .atom-chip{width:78px}
+      .below{grid-template-columns:1fr}
+      .evidence{grid-template-columns:1fr}
+      .workspace-top .readout{min-width:calc(50% - 8px)}
+      #builder,#preview3d{height:520px}
+      .panel{min-height:460px}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../index.html">← Back to main SciSims page</a>
+
+    <section class="hero">
+      <h1>Virtual Molecular Model Kit</h1>
+      <p>Build simple molecules, test valency, compare structural formulae and explore molecular shape using an interactive 2D model and rotatable Space-filling preview.</p>
+    </section>
+
+    <section class="toolbar" aria-label="Main controls">
+      <button type="button" id="newBtn" class="btn primary">New molecule</button>
+      <button type="button" id="checkBtn" class="btn good">Check molecule</button>
+      <button type="button" id="deleteBtn" class="btn danger">Delete selected</button>
+      <button type="button" id="layoutBtn" class="btn">Tidy layout</button>
+      <div class="spacer"></div>
+      <button type="button" id="fullscreenBtn" class="btn">Fullscreen</button>
+    </section>
+
+    <section class="layout">
+      <aside class="card">
+        <div class="card-inner">
+          <h2>Build settings</h2>
+
+          <div class="mode-row" role="group" aria-label="Mode selection">
+            <button type="button" id="challengeModeBtn" class="mode-btn active" aria-pressed="true">Guided challenge</button>
+            <button type="button" id="freeModeBtn" class="mode-btn" aria-pressed="false">Free build</button>
+          </div>
+
+          <div id="freeBuildScope" class="scope-note" hidden>
+            <strong>Free-build scope</strong>
+            <span>This mode supports simple neutral covalent molecules. It does not model ions, formal charges, radicals, resonance or exact geometry for unrecognised structures.</span>
+          </div>
+
+          <div id="challengeBox" class="challenge-box">
+            <label for="challengeSelect">Target molecule</label>
+            <select id="challengeSelect"></select>
+            <p id="challengeClue" class="subtle" style="margin:.65rem 0 0"></p>
+            <div class="challenge-actions">
+              <button type="button" id="nextChallengeBtn" class="btn">Next challenge</button>
+            </div>
+          </div>
+
+          <h3>1. Add atoms</h3>
+          <p class="subtle" style="margin-top:0">Select an element to place it in the 2D workspace.</p>
+          <div id="atomPalette" class="atom-palette"></div>
+
+          <h3>2. Choose a bond</h3>
+          <p class="subtle" style="margin-top:0">Select a bond type. Click the first atom once, then click the second atom once. A blue dashed ring shows the first selected atom.</p>
+          <div class="bond-row" role="group" aria-label="Bond tool">
+            <button type="button" class="bond-btn active" data-order="1" aria-pressed="true">Single —</button>
+            <button type="button" class="bond-btn" data-order="2" aria-pressed="false">Double =</button>
+            <button type="button" class="bond-btn" data-order="3" aria-pressed="false">Triple ≡</button>
+            <button type="button" class="bond-btn" data-order="0" aria-pressed="false">Remove bond</button>
+          </div>
+
+          <div id="statusBox" class="status" role="status" aria-live="polite" aria-atomic="true">
+            <strong>Ready to build</strong>
+            <span>Add atoms, then connect them with bonds.</span>
+          </div>
+
+          <h3>Selection</h3>
+          <p id="selectionText" class="subtle">No atom selected.</p>
+        </div>
+      </aside>
+
+      <section class="card workspace-card">
+        <div class="workspace-top">
+          <div class="readout"><span>Molecular formula</span><strong id="formulaReadout">—</strong></div>
+          <div class="readout"><span>Atoms</span><strong id="atomCountReadout">0</strong></div>
+          <div class="readout"><span>Bonds</span><strong id="bondCountReadout">0</strong></div>
+          <div class="readout"><span>Valency</span><strong id="valencyReadout">Not tested</strong></div>
+          <div class="readout"><span>Relative molecular mass</span><strong id="massReadout">—</strong></div>
+          <button id="spinToggleBtn" class="btn active" type="button" aria-pressed="true">Auto-spin: On</button>
+          <button id="resetViewBtn" class="btn" type="button">Reset 3D view</button>
+        </div>
+
+        <div class="view-grid">
+          <div class="panel">
+            <div class="panel-title">2D construction area</div>
+            <svg id="builder" viewBox="0 0 800 560" aria-label="Molecule construction workspace"></svg>
+            <div class="hint"><strong>Bonding:</strong> click one atom, then click a second atom. <strong>Moving:</strong> press and drag an atom a short distance. Click empty space to clear the selection.</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">Space-filling preview</div>
+            <svg id="preview3d" viewBox="0 0 480 560" tabindex="0" role="application" aria-label="Interactive three-dimensional molecule preview"></svg>
+            <div class="hint"><strong>Rotate:</strong> drag in any direction. <strong>Move:</strong> hold Shift while dragging. <strong>Zoom:</strong> scroll or use a trackpad gesture. This preview now uses a tighter space-filling style. Bonded atoms are drawn to touch or slightly overlap so the molecule reads as one joined 3D form. Manual control pauses auto-spin.</div>
+          </div>
+        </div>
+
+        <div class="evidence">
+          <div class="evidence-box"><span>Structural formula</span><strong id="structuralReadout">—</strong></div>
+          <div class="evidence-box"><span>Likely molecule</span><strong id="nameReadout">Unknown</strong></div>
+          <div class="evidence-box"><span>Approximate shape</span><strong id="shapeReadout">Build a molecule</strong></div>
+          <div class="evidence-box"><span>Bond angle</span><strong id="angleReadout">—</strong></div>
+          <div class="evidence-box"><span>Model confidence</span><strong id="confidenceReadout">Waiting for a structure</strong></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="below">
+      <article class="card">
+        <div class="card-inner">
+          <h2>How to use the model</h2>
+          <ol class="how-list">
+            <li>Choose a guided challenge or switch to <strong>Free build</strong>. Free build is limited to one simple neutral covalent molecule at a time.</li>
+            <li>Add the required atoms from the element palette.</li>
+            <li>Select single, double or triple bonding, or choose <strong>Remove bond</strong>.</li>
+            <li>Click one atom and then another to add, replace or remove the bond between them.</li>
+            <li>Use <strong>Check molecule</strong> to test valency and compare your structure with the challenge.</li>
+            <li>Drag across the Space-filling preview to inspect the molecule from different directions.</li>
+          </ol>
+          <p class="subtle"><strong>Model limitation:</strong> this model is designed for simple neutral covalent molecules. It does not represent ions, formal charges, radicals or resonance structures. Recognised examples use simplified VSEPR-style arrangements and a tighter perspective space-filling 3D preview in which bonded atoms touch or overlap slightly; unrecognised structures use an approximate display layout. Sulfur structures use simplified school-level bonding models.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-inner">
+          <h2>Quick self-test</h2>
+          <div class="quiz-grid">
+            <div class="quiz-item">
+              <label for="q1">Which bond joins the two oxygen atoms in O₂?</label>
+              <select id="q1">
+                <option value="">Choose…</option>
+                <option value="single">Single bond</option>
+                <option value="double">Double bond</option>
+                <option value="triple">Triple bond</option>
+                <option value="ionic">Ionic bond</option>
+              </select>
+              <div id="q1f" class="quiz-feedback"></div>
+            </div>
+            <div class="quiz-item">
+              <label for="q2">What is the approximate shape of CH₄?</label>
+              <select id="q2">
+                <option value="">Choose…</option>
+                <option value="linear">Linear</option>
+                <option value="bent">Bent</option>
+                <option value="trigonal">Trigonal planar</option>
+                <option value="tetrahedral">Tetrahedral</option>
+              </select>
+              <div id="q2f" class="quiz-feedback"></div>
+            </div>
+            <button type="button" id="quizCheckBtn" class="btn primary">Check self-test</button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+<script>
+/*
+  Production note:
+  This file does not open new windows or tabs. ChatGPT's embedded HTML
+  preview may expand into a separate code/preview workspace when the user
+  interacts with it; that behaviour belongs to the preview interface and
+  does not occur when the file is opened normally or hosted on GitHub Pages.
+*/
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+
+  const elements = {
+    H:{name:"Hydrogen", colour:"#f5f7fb", text:"#23394d", valence:1, radius:24, mass:1.008},
+    C:{name:"Carbon", colour:"#2f3640", text:"#ffffff", valence:4, radius:31, mass:12.011},
+    N:{name:"Nitrogen", colour:"#3973e6", text:"#ffffff", valence:3, radius:29, mass:14.007},
+    O:{name:"Oxygen", colour:"#e94b4b", text:"#ffffff", valence:2, radius:29, mass:15.999},
+    F:{name:"Fluorine", colour:"#79d36c", text:"#14321a", valence:1, radius:27, mass:18.998},
+    Cl:{name:"Chlorine", colour:"#63c96f", text:"#17351c", valence:1, radius:32, mass:35.45},
+    S:{name:"Sulfur", colour:"#f0cf3f", text:"#3d3300", valence:2, allowedValences:[2,4,6], radius:32, mass:32.06}
+  };
+
+  const challenges = [
+    {id:"H2", name:"Hydrogen", formula:"H2", atoms:["H","H"], bonds:[[0,1,1]], clue:"Two hydrogen atoms joined by one single covalent bond."},
+    {id:"O2", name:"Oxygen", formula:"O2", atoms:["O","O"], bonds:[[0,1,2]], clue:"Two oxygen atoms joined by a double covalent bond."},
+    {id:"N2", name:"Nitrogen", formula:"N2", atoms:["N","N"], bonds:[[0,1,3]], clue:"Two nitrogen atoms joined by a triple covalent bond."},
+    {id:"HCl", name:"Hydrogen chloride", formula:"HCl", atoms:["H","Cl"], bonds:[[0,1,1]], clue:"A hydrogen atom joined to a chlorine atom."},
+    {id:"H2O", name:"Water", formula:"H2O", atoms:["O","H","H"], bonds:[[0,1,1],[0,2,1]], clue:"Oxygen is the central atom with two single bonds."},
+    {id:"CO2", name:"Carbon dioxide", formula:"CO2", atoms:["C","O","O"], bonds:[[0,1,2],[0,2,2]], clue:"Carbon is central and forms two double bonds."},
+    {id:"NH3", name:"Ammonia", formula:"NH3", atoms:["N","H","H","H"], bonds:[[0,1,1],[0,2,1],[0,3,1]], clue:"Nitrogen is central and forms three single bonds."},
+    {id:"CH4", name:"Methane", formula:"CH4", atoms:["C","H","H","H","H"], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]], clue:"Carbon is central and forms four single bonds."},
+    {id:"C2H6", name:"Ethane", formula:"C2H6", atoms:["C","C","H","H","H","H","H","H"], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1],[1,5,1],[1,6,1],[1,7,1]], clue:"Two carbon atoms joined by a single bond; each carbon also bonds to three hydrogens."},
+    {id:"C2H4", name:"Ethene", formula:"C2H4", atoms:["C","C","H","H","H","H"], bonds:[[0,1,2],[0,2,1],[0,3,1],[1,4,1],[1,5,1]], clue:"Two carbon atoms joined by a double bond; each carbon also bonds to two hydrogens."},
+    {id:"C2H2", name:"Ethyne", formula:"C2H2", atoms:["C","C","H","H"], bonds:[[0,1,3],[0,2,1],[1,3,1]], clue:"Two carbon atoms joined by a triple bond; each carbon also bonds to one hydrogen."},
+    {id:"F2", name:"Fluorine", formula:"F2", atoms:["F","F"], bonds:[[0,1,1]], clue:"Two fluorine atoms joined by one single covalent bond."},
+    {id:"Cl2", name:"Chlorine", formula:"Cl2", atoms:["Cl","Cl"], bonds:[[0,1,1]], clue:"Two chlorine atoms joined by one single covalent bond."},
+    {id:"HF", name:"Hydrogen fluoride", formula:"HF", atoms:["H","F"], bonds:[[0,1,1]], clue:"A hydrogen atom joined to a fluorine atom."},
+    {id:"H2S", name:"Hydrogen sulfide", formula:"H2S", atoms:["S","H","H"], bonds:[[0,1,1],[0,2,1]], clue:"Sulfur is central and forms two single bonds to hydrogen."},
+    {id:"CH3Cl", name:"Chloromethane", formula:"CH3Cl", atoms:["C","H","H","H","Cl"], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]], clue:"Carbon is central and bonds to three hydrogens and one chlorine."},
+    {id:"CH3OH", name:"Methanol", formula:"CH3OH", atoms:["C","O","H","H","H","H"], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1],[1,5,1]], clue:"A carbon bonded to three hydrogens and an oxygen; the oxygen also bonds to hydrogen."},
+    {id:"SO2", name:"Sulfur dioxide", formula:"SO2", atoms:["S","O","O"], bonds:[[0,1,2],[0,2,2]], clue:"A simplified school-level model with sulfur central and two double bonds."}
+  ];
+
+  const challengeGroups = [
+    {
+      label:"Beginner",
+      ids:["H2","O2","N2","HCl","F2","Cl2"]
+    },
+    {
+      label:"Intermediate",
+      ids:["H2O","CO2","NH3","CH4","HF","H2S"]
+    },
+    {
+      label:"Extended",
+      ids:["C2H6","C2H4","C2H2","CH3Cl","CH3OH","SO2"]
+    }
+  ];
+
+  const builder = document.getElementById("builder");
+  const preview = document.getElementById("preview3d");
+  const palette = document.getElementById("atomPalette");
+  const challengeSelect = document.getElementById("challengeSelect");
+  const challengeClue = document.getElementById("challengeClue");
+  const challengeBox = document.getElementById("challengeBox");
+  const freeBuildScope = document.getElementById("freeBuildScope");
+  const statusBox = document.getElementById("statusBox");
+  const selectionText = document.getElementById("selectionText");
+
+  let atoms = [];
+  let bonds = [];
+  let selectedAtoms = [];
+  let selectedBondOrder = 1;
+  let pointerState = null;
+  const DRAG_THRESHOLD = 9;
+  let mode = "challenge";
+  let nextId = 1;
+  let rotationY = -0.35;
+  let rotationX = -0.38;
+  let previewPanX = 0;
+  let previewPanY = 0;
+  let previewZoom = 1;
+  let previewDrag = null;
+
+  // Space-filling tuning: atoms are enlarged and packed together so bonded atoms touch.
+  const PREVIEW_BOND_COMPRESSION = 0.82;
+  const PREVIEW_ATOM_SCALE = 1.42;
+  const PREVIEW_ROD_HIDE_FACTOR = 1.0;
+  const PREVIEW_SPACE_FILLING = true;
+  const reducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+  let autoSpin = !(reducedMotionQuery?.matches);
+  let animationFrameId = null;
+  let lastAnimationTime = null;
+  let lastPreviewRenderTime = 0;
+
+  function svgEl(name, attrs = {}) {
+    const el = document.createElementNS(NS, name);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  function setStatus(title, text, kind="") {
+    statusBox.className = "status" + (kind ? " " + kind : "");
+    statusBox.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+  }
+
+  function initialise() {
+    for (const [symbol, data] of Object.entries(elements)) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "atom-chip";
+      b.style.background = data.colour;
+      b.style.color = data.text;
+      b.setAttribute("aria-label", `Add ${data.name} atom`);
+      b.setAttribute("title", `Add ${data.name} atom`);
+      b.innerHTML = `${symbol}<small>${data.name}</small>`;
+      b.addEventListener("click", () => addAtom(symbol));
+      palette.appendChild(b);
+    }
+
+    challengeGroups.forEach((group, groupIndex) => {
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = group.label;
+
+      group.ids.forEach((id, itemIndex) => {
+        const c = challenges.find(challenge => challenge.id === id);
+        if (!c) return;
+
+        const option = document.createElement("option");
+        option.value = c.id;
+        option.textContent = `${c.formula} — ${c.name}`;
+
+        if (groupIndex === 0 && itemIndex === 0) option.selected = true;
+        optgroup.appendChild(option);
+      });
+
+      challengeSelect.appendChild(optgroup);
+    });
+
+    challengeSelect.addEventListener("change", () => {
+      updateChallengeClue();
+      newMolecule();
+    });
+    updateChallengeClue();
+
+    document.querySelectorAll(".bond-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".bond-btn").forEach(b => {
+          b.classList.remove("active");
+          b.setAttribute("aria-pressed", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+        selectedBondOrder = Number(btn.dataset.order);
+        if (selectedBondOrder === 0) {
+          setStatus("Remove bond selected", "Click the two atoms whose bond you want to remove.");
+        } else {
+          setStatus("Bond tool selected", `${["","Single","Double","Triple"][selectedBondOrder]} bond: click two atoms to connect them.`);
+        }
+      });
+    });
+
+    bindButton("challengeModeBtn", () => setMode("challenge"));
+    bindButton("freeModeBtn", () => setMode("free"));
+    bindButton("newBtn", newMolecule);
+    bindButton("deleteBtn", deleteSelected);
+    bindButton("checkBtn", checkMolecule);
+    bindButton("layoutBtn", tidyLayout);
+    bindButton("fullscreenBtn", toggleFullscreen);
+    bindButton("quizCheckBtn", checkQuiz);
+    bindButton("spinToggleBtn", toggleAutoSpin);
+    bindButton("resetViewBtn", resetPreviewView);
+    bindButton("nextChallengeBtn", nextChallenge);
+
+    builder.addEventListener("pointerdown", builderPointerDown);
+    builder.addEventListener("pointermove", builderPointerMove);
+    builder.addEventListener("pointerup", builderPointerUp);
+    builder.addEventListener("pointercancel", builderPointerCancel);
+
+    preview.addEventListener("pointerdown", event => {
+      event.preventDefault();
+      pauseAutoSpinForManualControl();
+      previewDrag = {
+        x:event.clientX,
+        y:event.clientY,
+        mode:event.shiftKey ? "pan" : "rotate",
+        pointerId:event.pointerId
+      };
+      preview.classList.add("dragging");
+      preview.setPointerCapture?.(event.pointerId);
+    });
+
+    preview.addEventListener("pointermove", event => {
+      if (previewDrag === null) return;
+      event.preventDefault();
+
+      const dx = event.clientX - previewDrag.x;
+      const dy = event.clientY - previewDrag.y;
+      previewDrag.x = event.clientX;
+      previewDrag.y = event.clientY;
+
+      if (previewDrag.mode === "pan" || event.shiftKey) {
+        previewDrag.mode = "pan";
+        previewPanX += dx;
+        previewPanY += dy;
+      } else {
+        rotationY += dx * 0.012;
+        rotationX += dy * 0.012;
+        normalisePreviewRotation();
+      }
+
+      renderPreview();
+    });
+
+    const endPreviewDrag = event => {
+      if (previewDrag === null) return;
+      if (event?.pointerId !== undefined && previewDrag.pointerId !== event.pointerId) return;
+      preview.releasePointerCapture?.(previewDrag.pointerId);
+      previewDrag = null;
+      preview.classList.remove("dragging");
+    };
+
+    preview.addEventListener("pointerup", endPreviewDrag);
+    preview.addEventListener("pointercancel", endPreviewDrag);
+    preview.addEventListener("lostpointercapture", endPreviewDrag);
+
+    preview.addEventListener("wheel", event => {
+      event.preventDefault();
+      pauseAutoSpinForManualControl();
+      const zoomFactor = Math.exp(-event.deltaY * 0.0012);
+      previewZoom = Math.max(0.55, Math.min(1.85, previewZoom * zoomFactor));
+      renderPreview();
+    }, {passive:false});
+
+    preview.addEventListener("keydown", event => {
+      const step = event.shiftKey ? 12 : 0.10;
+      let handled = true;
+
+      switch (event.key) {
+        case "ArrowLeft":
+          if (event.shiftKey) previewPanX -= step;
+          else rotationY -= step;
+          break;
+        case "ArrowRight":
+          if (event.shiftKey) previewPanX += step;
+          else rotationY += step;
+          break;
+        case "ArrowUp":
+          if (event.shiftKey) previewPanY -= step;
+          else rotationX -= step;
+          break;
+        case "ArrowDown":
+          if (event.shiftKey) previewPanY += step;
+          else rotationX += step;
+          break;
+        case "+":
+        case "=":
+          previewZoom = Math.min(1.85, previewZoom * 1.08);
+          break;
+        case "-":
+        case "_":
+          previewZoom = Math.max(0.55, previewZoom / 1.08);
+          break;
+        case "r":
+        case "R":
+          resetPreviewView();
+          break;
+        default:
+          handled = false;
+      }
+
+      if (!handled) return;
+      event.preventDefault();
+      pauseAutoSpinForManualControl();
+      normalisePreviewRotation();
+      renderPreview();
+    });
+
+    reducedMotionQuery?.addEventListener?.("change", (event) => {
+      if (event.matches) autoSpin = false;
+      updateSpinButton();
+    });
+
+    updateSpinButton();
+    startAnimationLoop();
+    render();
+  }
+
+  function bindButton(id, action) {
+    const button = document.getElementById(id);
+    if (!button) return;
+    button.type = "button";
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      action();
+    });
+  }
+
+  function setMode(newMode) {
+    mode = newMode;
+    const challengeModeBtn = document.getElementById("challengeModeBtn");
+    const freeModeBtn = document.getElementById("freeModeBtn");
+    challengeModeBtn.classList.toggle("active", mode === "challenge");
+    freeModeBtn.classList.toggle("active", mode === "free");
+    challengeModeBtn.setAttribute("aria-pressed", mode === "challenge" ? "true" : "false");
+    freeModeBtn.setAttribute("aria-pressed", mode === "free" ? "true" : "false");
+    challengeBox.style.display = mode === "challenge" ? "block" : "none";
+    freeBuildScope.hidden = mode !== "free";
+    newMolecule();
+    setStatus(mode === "challenge" ? "Guided challenge" : "Free build",
+      mode === "challenge"
+        ? "Build the selected target molecule."
+        : "Build one simple neutral covalent molecule and test its valency.");
+  }
+
+  function nextChallenge() {
+    const currentIndex = challenges.findIndex(c => c.id === challengeSelect.value);
+    const nextIndex = (currentIndex + 1) % challenges.length;
+    challengeSelect.value = challenges[nextIndex].id;
+    updateChallengeClue();
+    newMolecule();
+    setStatus("Next challenge", `Build ${challenges[nextIndex].name}, ${challenges[nextIndex].formula}.`);
+  }
+
+  function updateChallengeClue() {
+    const c = currentChallenge();
+    challengeClue.textContent = c.clue;
+  }
+
+  function currentChallenge() {
+    return challenges.find(c => c.id === challengeSelect.value) || challenges[0];
+  }
+
+  function addAtom(symbol) {
+    const count = atoms.length;
+    const angle = count * 2.399;
+    const radius = 30 + Math.min(150, count * 11);
+    const x = 400 + Math.cos(angle) * radius;
+    const y = 280 + Math.sin(angle) * radius;
+    atoms.push({id:nextId++, symbol, x, y});
+    selectedAtoms = [];
+    setStatus(`${elements[symbol].name} added`, "Click an atom to select it, then click a second atom to create the chosen bond.");
+    render();
+  }
+
+  function newMolecule() {
+    atoms = [];
+    bonds = [];
+    selectedAtoms = [];
+    nextId = 1;
+    rotationY = -0.35;
+    rotationX = -0.38;
+    previewPanX = 0;
+    previewPanY = 0;
+    previewZoom = 1;
+    setStatus("New molecule", mode === "challenge" ? `Build ${currentChallenge().formula}: ${currentChallenge().name}.` : "Add atoms to begin.");
+    render();
+  }
+
+  function deleteSelected() {
+    if (!selectedAtoms.length) {
+      setStatus("Nothing selected", "Select an atom first.", "warn");
+      return;
+    }
+    const ids = new Set(selectedAtoms);
+    atoms = atoms.filter(a => !ids.has(a.id));
+    bonds = bonds.filter(b => !ids.has(b.a) && !ids.has(b.b));
+    selectedAtoms = [];
+    setStatus("Atom deleted", "The selected atom and its bonds were removed.");
+    render();
+  }
+
+  function toggleFullscreen() {
+    const target = document.querySelector(".workspace-card");
+    if (!document.fullscreenElement) target.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+
+  function normalisePreviewRotation() {
+    const fullTurn = Math.PI * 2;
+    rotationX = ((rotationX + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
+    rotationY = ((rotationY + Math.PI) % fullTurn + fullTurn) % fullTurn - Math.PI;
+  }
+
+  function pauseAutoSpinForManualControl() {
+    if (!autoSpin) return;
+    autoSpin = false;
+    updateSpinButton();
+  }
+
+  function resetPreviewView() {
+    rotationY = -0.35;
+    rotationX = -0.38;
+    previewPanX = 0;
+    previewPanY = 0;
+    previewZoom = 1;
+    renderPreview();
+  }
+
+  function toggleAutoSpin() {
+    autoSpin = !autoSpin;
+    updateSpinButton();
+    if (autoSpin) {
+      lastAnimationTime = null;
+      startAnimationLoop();
+    }
+  }
+
+  function updateSpinButton() {
+    const btn = document.getElementById("spinToggleBtn");
+    if (!btn) return;
+    btn.textContent = `Auto-spin: ${autoSpin ? "On" : "Off"}`;
+    btn.classList.toggle("active", autoSpin);
+    btn.setAttribute("aria-pressed", autoSpin ? "true" : "false");
+    btn.title = reducedMotionQuery?.matches && !autoSpin
+      ? "Auto-spin is off because reduced motion is enabled in your system settings."
+      : "Toggle automatic rotation of the 3D model.";
+  }
+
+  function startAnimationLoop() {
+    if (animationFrameId !== null) return;
+    const step = (timestamp) => {
+      if (lastAnimationTime === null) lastAnimationTime = timestamp;
+      const delta = timestamp - lastAnimationTime;
+      lastAnimationTime = timestamp;
+
+      if (!document.hidden && autoSpin && previewDrag === null && atoms.length) {
+        rotationY += delta * 0.0006;
+        normalisePreviewRotation();
+        if (timestamp - lastPreviewRenderTime >= 33) {
+          lastPreviewRenderTime = timestamp;
+          renderPreview();
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(step);
+    };
+    animationFrameId = requestAnimationFrame(step);
+  }
+
+  function getSvgPoint(svg, clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function atomFromTarget(target) {
+    const g = target.closest?.("[data-atom-id]");
+    if (!g) return null;
+    return atoms.find(a => a.id === Number(g.dataset.atomId)) || null;
+  }
+
+  function builderPointerDown(e) {
+    const atom = atomFromTarget(e.target);
+
+    if (!atom) {
+      selectedAtoms = [];
+      setStatus("Selection cleared", "Click an atom to choose the first end of a bond.");
+      render();
+      return;
+    }
+
+    e.preventDefault();
+    const p = getSvgPoint(builder, e.clientX, e.clientY);
+    pointerState = {
+      pointerId:e.pointerId,
+      atomId:atom.id,
+      startClientX:e.clientX,
+      startClientY:e.clientY,
+      offsetX:p.x - atom.x,
+      offsetY:p.y - atom.y,
+      dragging:false
+    };
+    builder.setPointerCapture?.(e.pointerId);
+  }
+
+  function builderPointerMove(e) {
+    if (!pointerState || pointerState.pointerId !== e.pointerId) return;
+    const atom = atoms.find(a => a.id === pointerState.atomId);
+    if (!atom) return;
+
+    const travel = Math.hypot(
+      e.clientX - pointerState.startClientX,
+      e.clientY - pointerState.startClientY
+    );
+
+    if (!pointerState.dragging && travel < DRAG_THRESHOLD) return;
+    pointerState.dragging = true;
+
+    const p = getSvgPoint(builder, e.clientX, e.clientY);
+    atom.x = Math.max(35, Math.min(765, p.x - pointerState.offsetX));
+    atom.y = Math.max(45, Math.min(525, p.y - pointerState.offsetY));
+    render();
+  }
+
+  function builderPointerUp(e) {
+    if (!pointerState || pointerState.pointerId !== e.pointerId) return;
+    const finished = pointerState;
+    pointerState = null;
+    builder.releasePointerCapture?.(e.pointerId);
+
+    if (finished.dragging) {
+      setStatus("Atom moved", "Click an atom without dragging to select it for bonding.");
+      render();
+      return;
+    }
+
+    activateAtom(finished.atomId);
+  }
+
+  function builderPointerCancel() {
+    pointerState = null;
+  }
+
+  function activateAtom(atomId) {
+    const atom = atoms.find(a => a.id === atomId);
+    if (!atom) return;
+
+    if (selectedAtoms.length === 0) {
+      selectedAtoms = [atom.id];
+      const action = selectedBondOrder === 0 ? "remove its bond" : "create the chosen bond";
+      setStatus("First atom selected", `${elements[atom.symbol].name} ${atom.id} is selected. Click a second atom to ${action}.`, "good");
+      render();
+      return;
+    }
+
+    if (selectedAtoms[0] === atom.id) {
+      selectedAtoms = [];
+      setStatus("Selection cleared", "Select two different atoms.");
+      render();
+      return;
+    }
+
+    const firstId = selectedAtoms[0];
+    createOrReplaceBond(firstId, atom.id, selectedBondOrder);
+    selectedAtoms = [];
+    render();
+  }
+
+  function createOrReplaceBond(a, b, order) {
+    const index = bonds.findIndex(x => (x.a === a && x.b === b) || (x.a === b && x.b === a));
+    const existing = index >= 0 ? bonds[index] : null;
+
+    if (order === 0) {
+      if (existing) {
+        bonds.splice(index, 1);
+        setStatus("Bond removed", "The bond between the selected atoms was removed.", "good");
+      } else {
+        setStatus("No bond to remove", "Those atoms are not currently bonded.", "warn");
+      }
+      return;
+    }
+
+    if (existing) {
+      existing.order = order;
+      const label = ["","single","double","triple"][order];
+      setStatus("Bond replaced", `The bond was changed to a ${label} bond.`);
+    } else {
+      bonds.push({a,b,order});
+      const label = ["","single","double","triple"][order];
+      setStatus("Bond created", `A ${label} bond now joins the selected atoms.`);
+    }
+  }
+
+  function atomValenceUsed(id) {
+    return bonds.reduce((sum,b) => sum + ((b.a === id || b.b === id) ? b.order : 0), 0);
+  }
+
+  function getFormula() {
+    if (!atoms.length) return "—";
+    const known = recognisedMolecule();
+    if (known) return known.formula;
+    const counts = {};
+    atoms.forEach(a => counts[a.symbol] = (counts[a.symbol] || 0) + 1);
+    let order = [];
+    if (counts.C) {
+      order.push("C");
+      if (counts.H) order.push("H");
+      order.push(...Object.keys(counts).filter(k => !["C","H"].includes(k)).sort());
+    } else {
+      order = Object.keys(counts).sort((a,b) => {
+        if (a === "H") return -1;
+        if (b === "H") return 1;
+        return a.localeCompare(b);
+      });
+    }
+    return order.map(k => k + (counts[k] > 1 ? counts[k] : "")).join("");
+  }
+
+  function atomicMass() {
+    return atoms.reduce((sum,a) => sum + elements[a.symbol].mass, 0);
+  }
+
+  function valencyReport() {
+    if (!atoms.length) return {complete:false, valid:false, text:"Not tested"};
+    const over = [];
+    const under = [];
+    atoms.forEach(a => {
+      const used = atomValenceUsed(a.id);
+      const data = elements[a.symbol];
+      const allowed = data.allowedValences || [data.valence];
+      const maxAllowed = Math.max(...allowed);
+      if (used > maxAllowed) over.push(`${a.symbol}${a.id}`);
+      else if (!allowed.includes(used)) under.push(`${a.symbol}${a.id}`);
+    });
+    if (over.length) return {complete:false,valid:false,text:"Over-bonded",over,under};
+    if (under.length) return {complete:false,valid:true,text:"Incomplete",over,under};
+    return {complete:true,valid:true,text:"Complete",over,under};
+  }
+
+  function adjacency() {
+    const map = new Map(atoms.map(a => [a.id, []]));
+    bonds.forEach(b => {
+      map.get(b.a)?.push({id:b.b,order:b.order});
+      map.get(b.b)?.push({id:b.a,order:b.order});
+    });
+    return map;
+  }
+
+  function connectedComponents() {
+    if (!atoms.length) return [];
+
+    const adj = adjacency();
+    const visited = new Set();
+    const components = [];
+
+    atoms.forEach(atom => {
+      if (visited.has(atom.id)) return;
+
+      const component = [];
+      const stack = [atom.id];
+      visited.add(atom.id);
+
+      while (stack.length) {
+        const currentId = stack.pop();
+        component.push(currentId);
+
+        (adj.get(currentId) || []).forEach(neighbour => {
+          if (visited.has(neighbour.id)) return;
+          visited.add(neighbour.id);
+          stack.push(neighbour.id);
+        });
+      }
+
+      components.push(component);
+    });
+
+    return components;
+  }
+
+  function disconnectedStructureReport() {
+    const components = connectedComponents();
+    if (components.length <= 1) return null;
+
+    const count = components.length;
+    return {
+      count,
+      title: count === 2 ? "Two separate structures detected" : `${count} separate structures detected`,
+      text: "All atoms must belong to one connected molecule. Join the structures or remove the extra atoms before checking again."
+    };
+  }
+
+  function moleculeSignature() {
+    const adj = adjacency();
+    return atoms.map(a => {
+      const neighbours = (adj.get(a.id) || [])
+        .map(n => {
+          const other = atoms.find(x => x.id === n.id);
+          return `${other.symbol}${n.order}`;
+        })
+        .sort().join(",");
+      return `${a.symbol}[${neighbours}]`;
+    }).sort().join("|");
+  }
+
+  function challengeSignature(c) {
+    const ids = c.atoms.map((_,i) => i);
+    const adj = new Map(ids.map(i => [i, []]));
+    c.bonds.forEach(([a,b,o]) => {
+      adj.get(a).push({id:b,order:o});
+      adj.get(b).push({id:a,order:o});
+    });
+    return c.atoms.map((symbol,i) => {
+      const neighbours = adj.get(i)
+        .map(n => `${c.atoms[n.id]}${n.order}`)
+        .sort().join(",");
+      return `${symbol}[${neighbours}]`;
+    }).sort().join("|");
+  }
+
+  function mappingForChallenge(c) {
+    if (atoms.length !== c.atoms.length || bonds.length !== c.bonds.length) return null;
+
+    const actualAdj = adjacency();
+    const targetAdj = new Map(c.atoms.map((_,i) => [i, []]));
+    c.bonds.forEach(([a,b,order]) => {
+      targetAdj.get(a).push({id:b,order});
+      targetAdj.get(b).push({id:a,order});
+    });
+
+    const targetOrder = c.atoms.map((_,i) => i).sort((a,b) =>
+      targetAdj.get(b).length - targetAdj.get(a).length
+    );
+    const mapping = Array(c.atoms.length).fill(-1);
+    const usedActual = new Set();
+
+    function compatible(targetIndex, actualIndex) {
+      const actualAtom = atoms[actualIndex];
+      if (!actualAtom || actualAtom.symbol !== c.atoms[targetIndex]) return false;
+      if ((actualAdj.get(actualAtom.id) || []).length !== targetAdj.get(targetIndex).length) return false;
+
+      for (const targetNeighbour of targetAdj.get(targetIndex)) {
+        const mappedActualIndex = mapping[targetNeighbour.id];
+        if (mappedActualIndex < 0) continue;
+        const mappedActualId = atoms[mappedActualIndex].id;
+        const actualBond = (actualAdj.get(actualAtom.id) || []).find(n => n.id === mappedActualId);
+        if (!actualBond || actualBond.order !== targetNeighbour.order) return false;
+      }
+      return true;
+    }
+
+    function search(depth) {
+      if (depth === targetOrder.length) return true;
+      const targetIndex = targetOrder[depth];
+      for (let actualIndex = 0; actualIndex < atoms.length; actualIndex++) {
+        if (usedActual.has(actualIndex) || !compatible(targetIndex, actualIndex)) continue;
+        mapping[targetIndex] = actualIndex;
+        usedActual.add(actualIndex);
+        if (search(depth + 1)) return true;
+        usedActual.delete(actualIndex);
+        mapping[targetIndex] = -1;
+      }
+      return false;
+    }
+
+    return search(0) ? mapping : null;
+  }
+
+  function recognisedMolecule() {
+    if (connectedComponents().length !== 1) return null;
+    const sig = moleculeSignature();
+    return challenges.find(c => challengeSignature(c) === sig && mappingForChallenge(c)) || null;
+  }
+
+  function centralAtom() {
+    if (!atoms.length) return null;
+    const adj = adjacency();
+    return [...atoms].sort((a,b) => (adj.get(b.id)?.length || 0) - (adj.get(a.id)?.length || 0))[0];
+  }
+
+  function geometryInfo() {
+    const known = recognisedMolecule();
+    const knownMap = {
+      H2:["Linear","180°"], O2:["Linear","180°"], N2:["Linear","180°"], HCl:["Linear","180°"],
+      H2O:["Bent","about 104.5°"], CO2:["Linear","180°"], NH3:["Trigonal pyramidal","about 107°"],
+      CH4:["Tetrahedral","about 109.5°"], C2H6:["Tetrahedral around each carbon","about 109.5°"],
+      C2H4:["Trigonal planar around each carbon","about 120°"], C2H2:["Linear","180°"],
+      F2:["Linear","180°"], Cl2:["Linear","180°"], HF:["Linear","180°"],
+      H2S:["Bent","about 92°"], CH3Cl:["Tetrahedral around carbon","about 109.5°"],
+      CH3OH:["Tetrahedral around carbon; bent at oxygen","about 109.5° and 108°"],
+      SO2:["Bent","about 120°"]
+    };
+    if (known && knownMap[known.id]) return {shape:knownMap[known.id][0], angle:knownMap[known.id][1]};
+
+    const centre = centralAtom();
+    if (!centre) return {shape:"Build a molecule",angle:"—"};
+    const degree = (adjacency().get(centre.id) || []).length;
+    if (atoms.length === 2) return {shape:"Linear",angle:"180°"};
+    if (degree === 2) return {shape:"Linear or bent",angle:"depends on lone pairs"};
+    if (degree === 3) return {shape:"Trigonal planar or pyramidal",angle:"about 107–120°"};
+    if (degree === 4) return {shape:"Tetrahedral",angle:"about 109.5°"};
+    return {shape:"Complex or incomplete",angle:"—"};
+  }
+
+  function structuralFormula() {
+    if (connectedComponents().length > 1) return "Separate structures";
+    const known = recognisedMolecule();
+    const formulas = {
+      H2:"H–H", O2:"O=O", N2:"N≡N", HCl:"H–Cl", H2O:"H–O–H",
+      CO2:"O=C=O", NH3:"H₃N", CH4:"CH₄", C2H6:"CH₃–CH₃",
+      C2H4:"CH₂=CH₂", C2H2:"HC≡CH", F2:"F–F", Cl2:"Cl–Cl",
+      HF:"H–F", H2S:"H–S–H", CH3Cl:"CH₃–Cl", CH3OH:"CH₃–OH", SO2:"O=S=O"
+    };
+    if (known) return formulas[known.id] || known.formula;
+    if (!atoms.length) return "—";
+    return "Model shown above";
+  }
+
+  function checkMolecule() {
+    if (!atoms.length) {
+      setStatus("Nothing to check", "Add at least one atom first.", "warn");
+      return;
+    }
+    const report = valencyReport();
+    const disconnected = disconnectedStructureReport();
+
+    if (disconnected) {
+      setStatus(disconnected.title, disconnected.text, "warn");
+      render();
+      return;
+    }
+
+    if (!report.valid) {
+      setStatus("Valency error", `At least one atom has too many bonds: ${report.over.join(", ")}.`, "bad");
+      render();
+      return;
+    }
+    if (!report.complete) {
+      setStatus("Molecule incomplete", `Some atoms still have unused bonding capacity: ${report.under.join(", ")}.`, "warn");
+      render();
+      return;
+    }
+
+    if (mode === "challenge") {
+      const success = Boolean(mappingForChallenge(currentChallenge()));
+      if (success) {
+        tidyLayout(false);
+        setStatus("Challenge complete", `Correct: you built ${currentChallenge().name}, ${currentChallenge().formula}. Select Next challenge when ready.`, "good");
+      } else {
+        setStatus("Valid, but not the target", `The atoms satisfy the simplified valency rules, but the bonding pattern does not match ${currentChallenge().formula}.`, "warn");
+      }
+    } else {
+      const known = recognisedMolecule();
+      if (known) {
+        tidyLayout(false);
+        setStatus("Recognised valid molecule", `This matches ${known.name}, ${known.formula}.`, "good");
+      } else {
+        setStatus("Valid structure — not in library", "The atoms satisfy the simplified valency rules, but this structure is not one of the named examples in the model library. Its 3D arrangement is approximate.", "good");
+      }
+    }
+    render();
+  }
+
+  function tidyLayout(showStatus = true) {
+    if (!atoms.length) return;
+    const known = recognisedMolecule();
+    if (known) {
+      const coords = layoutForKnown(known.id, atoms.length);
+      const mapping = mappingForChallenge(known);
+      if (mapping) {
+        mapping.forEach((actualIndex, targetIndex) => {
+          atoms[actualIndex].x = coords[targetIndex].x;
+          atoms[actualIndex].y = coords[targetIndex].y;
+        });
+      }
+    } else {
+      const centre = {x:400,y:280};
+      const r = Math.min(205, 75 + atoms.length * 14);
+      atoms.forEach((a,i) => {
+        const ang = -Math.PI/2 + i * Math.PI*2/atoms.length;
+        a.x = atoms.length === 1 ? centre.x : centre.x + Math.cos(ang)*r;
+        a.y = atoms.length === 1 ? centre.y : centre.y + Math.sin(ang)*r;
+      });
+    }
+    if (showStatus) setStatus("Layout tidied", "Atoms were rearranged for a clearer display.");
+    render();
+  }
+
+  function layoutForKnown(id, n) {
+    const C = {x:400,y:280};
+    const patterns = {
+      H2:[{x:300,y:280},{x:500,y:280}],
+      O2:[{x:300,y:280},{x:500,y:280}],
+      N2:[{x:300,y:280},{x:500,y:280}],
+      HCl:[{x:300,y:280},{x:500,y:280}],
+      H2O:[C,{x:290,y:365},{x:510,y:365}],
+      CO2:[C,{x:235,y:280},{x:565,y:280}],
+      NH3:[C,{x:400,y:130},{x:275,y:375},{x:525,y:375}],
+      CH4:[C,{x:400,y:115},{x:400,y:445},{x:235,y:280},{x:565,y:280}],
+      C2H6:[{x:330,y:280},{x:470,y:280},{x:235,y:170},{x:210,y:280},{x:235,y:390},{x:565,y:170},{x:590,y:280},{x:565,y:390}],
+      C2H4:[{x:330,y:280},{x:470,y:280},{x:235,y:185},{x:235,y:375},{x:565,y:185},{x:565,y:375}],
+      C2H2:[{x:330,y:280},{x:470,y:280},{x:200,y:280},{x:600,y:280}],
+      F2:[{x:300,y:280},{x:500,y:280}],
+      Cl2:[{x:300,y:280},{x:500,y:280}],
+      HF:[{x:300,y:280},{x:500,y:280}],
+      H2S:[C,{x:290,y:365},{x:510,y:365}],
+      CH3Cl:[C,{x:400,y:125},{x:270,y:365},{x:530,y:365},{x:400,y:455}],
+      CH3OH:[{x:350,y:280},{x:480,y:280},{x:240,y:180},{x:220,y:320},{x:300,y:420},{x:590,y:280}],
+      SO2:[C,{x:270,y:380},{x:530,y:380}]
+    };
+    return patterns[id] || Array.from({length:n},(_,i)=>({x:400+Math.cos(i*6.28/n)*160,y:280+Math.sin(i*6.28/n)*160}));
+  }
+
+  function render() {
+    renderBuilder();
+    renderPreview();
+    updateReadouts();
+  }
+
+  function renderBuilder() {
+    builder.innerHTML = "";
+
+    bonds.forEach(b => {
+      const a = atoms.find(x => x.id === b.a);
+      const c = atoms.find(x => x.id === b.b);
+      if (!a || !c) return;
+      drawBond(builder, a.x, a.y, c.x, c.y, b.order, "#38526a", 7);
+    });
+
+    atoms.forEach(a => {
+      const data = elements[a.symbol];
+      const g = svgEl("g", {"data-atom-id":a.id, tabindex:"0", role:"button", "aria-label":`${data.name} atom`});
+      g.style.cursor = "pointer";
+      g.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        activateAtom(a.id);
+      });
+
+      // Larger invisible target for reliable trackpad, touchscreen and mouse selection.
+      g.appendChild(svgEl("circle", {cx:a.x,cy:a.y,r:data.radius+14,fill:"transparent",stroke:"none"}));
+
+      if (selectedAtoms.includes(a.id)) {
+        g.appendChild(svgEl("circle", {cx:a.x,cy:a.y,r:data.radius+11,fill:"rgba(43,125,233,.10)",stroke:"#2b7de9","stroke-width":5,"stroke-dasharray":"7 5"}));
+      }
+
+      g.appendChild(svgEl("circle", {cx:a.x,cy:a.y+4,r:data.radius,fill:"rgba(0,0,0,.16)"}));
+      g.appendChild(svgEl("circle", {cx:a.x,cy:a.y,r:data.radius,fill:data.colour,stroke:"#ffffff","stroke-width":3}));
+      const t = svgEl("text", {x:a.x,y:a.y+6,"text-anchor":"middle","font-size":a.symbol.length > 1 ? 19 : 23,"font-weight":900,fill:data.text});
+      t.textContent = a.symbol;
+      g.appendChild(t);
+
+      const used = atomValenceUsed(a.id);
+      const allowedText = (data.allowedValences || [data.valence]).join(",");
+      const small = svgEl("text", {x:a.x,y:a.y+data.radius+18,"text-anchor":"middle","font-size":11,"font-weight":800,fill:"#5f7488"});
+      small.textContent = `${used}/${allowedText}`;
+      g.appendChild(small);
+      builder.appendChild(g);
+    });
+  }
+
+  function drawBond(svg, x1, y1, x2, y2, order, colour, width) {
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.hypot(dx,dy) || 1;
+    const ox = -dy/len * 8;
+    const oy = dx/len * 8;
+    const offsets = order === 1 ? [0] : order === 2 ? [-0.6,0.6] : [-1,0,1];
+    offsets.forEach(mult => {
+      svg.appendChild(svgEl("line", {
+        x1:x1+ox*mult,y1:y1+oy*mult,x2:x2+ox*mult,y2:y2+oy*mult,
+        stroke:colour,"stroke-width":width,"stroke-linecap":"round"
+      }));
+    });
+  }
+
+  function previewPositions() {
+    const known = recognisedMolecule();
+    const id = known?.id;
+    const layouts = {
+      H2:[[-0.28,0,0],[0.28,0,0]],
+      O2:[[-0.30,0,0],[0.30,0,0]],
+      N2:[[-0.30,0,0],[0.30,0,0]],
+      HCl:[[-0.24,0,0],[0.24,0,0]],
+      F2:[[-0.30,0,0],[0.30,0,0]],
+      Cl2:[[-0.34,0,0],[0.34,0,0]],
+      HF:[[-0.24,0,0],[0.24,0,0]],
+
+      H2O:[[0,0,0],[-0.42,0.35,0],[0.42,0.35,0]],
+      CO2:[[0,0,0],[-0.58,0,0],[0.58,0,0]],
+      NH3:[[0,0,0],[0,-0.50,0.24],[-0.44,0.28,0.24],[0.44,0.28,0.24]],
+      CH4:[[0,0,0],[0.44,0.44,0.44],[-0.44,-0.44,0.44],[-0.44,0.44,-0.44],[0.44,-0.44,-0.44]],
+      H2S:[[0,0,0],[-0.48,0.34,0],[0.48,0.34,0]],
+
+      C2H6:[[-0.28,0,0],[0.28,0,0],[-0.58,0.48,0.32],[-0.58,-0.48,0.32],[-0.58,0,-0.54],[0.58,0.48,-0.32],[0.58,-0.48,-0.32],[0.58,0,0.54]],
+      C2H4:[[-0.30,0,0],[0.30,0,0],[-0.58,0.48,0],[-0.58,-0.48,0],[0.58,0.48,0],[0.58,-0.48,0]],
+      C2H2:[[-0.26,0,0],[0.26,0,0],[-0.66,0,0],[0.66,0,0]],
+
+      CH3Cl:[[0,0,0],[0.44,0.44,0.44],[-0.44,-0.44,0.44],[-0.44,0.44,-0.44],[0.54,-0.54,-0.54]],
+      CH3OH:[[-0.22,0,0],[0.34,0,0],[-0.52,0.44,0.30],[-0.52,-0.44,0.30],[-0.52,0,-0.48],[0.62,0.26,0]],
+      SO2:[[0,0,0],[-0.52,0.34,0],[0.52,0.34,0]]
+    };
+    if (id && layouts[id]) {
+      const mapping = mappingForChallenge(known);
+      if (mapping) {
+        const actualOrder = Array(atoms.length);
+        mapping.forEach((actualIndex, targetIndex) => {
+          actualOrder[actualIndex] = layouts[id][targetIndex];
+        });
+        return actualOrder;
+      }
+    }
+
+    if (!atoms.length) return [];
+    const r = atoms.length === 1 ? 0 : 0.52;
+    return atoms.map((_,i) => {
+      const ang = i * 2 * Math.PI / atoms.length;
+      return [Math.cos(ang) * r, Math.sin(ang) * r, (i % 2 ? 0.12 : -0.12)];
+    });
+  }
+
+
+
+  function previewElementScale(symbol) {
+    const scaleMap = {
+      H: 0.78,
+      C: 1.06,
+      N: 1.10,
+      O: 1.12,
+      F: 1.14,
+      Cl: 1.30,
+      S: 1.22
+    };
+    return scaleMap[symbol] || 1;
+  }
+
+  function hexToRgb(hex) {
+    let c = hex.replace("#","").trim();
+    if (c.length === 3) c = c.split("").map(x => x + x).join("");
+    const n = parseInt(c, 16);
+    return {r:(n >> 16) & 255, g:(n >> 8) & 255, b:n & 255};
+  }
+
+  function rgbToHex(r, g, b) {
+    const toHex = (v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0");
+    return "#" + toHex(r) + toHex(g) + toHex(b);
+  }
+
+  function shade(hex, factor) {
+    const {r,g,b} = hexToRgb(hex);
+    if (factor >= 0) {
+      return rgbToHex(r + (255-r)*factor, g + (255-g)*factor, b + (255-b)*factor);
+    }
+    const f = 1 + factor;
+    return rgbToHex(r*f, g*f, b*f);
+  }
+
+  function ensurePreviewDefs() {
+    const defs = svgEl("defs");
+    preview.appendChild(defs);
+
+    const rodGrad = svgEl("linearGradient", {id:"rodGradient", x1:"0%", y1:"0%", x2:"0%", y2:"100%"});
+    rodGrad.appendChild(svgEl("stop", {offset:"0%", "stop-color":"#edf2f5"}));
+    rodGrad.appendChild(svgEl("stop", {offset:"35%", "stop-color":"#c6cfd6"}));
+    rodGrad.appendChild(svgEl("stop", {offset:"65%", "stop-color":"#8f9aa3"}));
+    rodGrad.appendChild(svgEl("stop", {offset:"100%", "stop-color":"#dfe6eb"}));
+    defs.appendChild(rodGrad);
+
+    const capGrad = svgEl("radialGradient", {id:"capGradient", cx:"35%", cy:"30%", r:"70%"});
+    capGrad.appendChild(svgEl("stop", {offset:"0%", "stop-color":"#f8fbfd"}));
+    capGrad.appendChild(svgEl("stop", {offset:"55%", "stop-color":"#cfd7de"}));
+    capGrad.appendChild(svgEl("stop", {offset:"100%", "stop-color":"#8c98a3"}));
+    defs.appendChild(capGrad);
+
+    const shadowGrad = svgEl("radialGradient", {id:"floorShadow", cx:"50%", cy:"50%", r:"50%"});
+    shadowGrad.appendChild(svgEl("stop", {offset:"0%", "stop-color":"rgba(0,0,0,0.18)"}));
+    shadowGrad.appendChild(svgEl("stop", {offset:"100%", "stop-color":"rgba(0,0,0,0)"}));
+    defs.appendChild(shadowGrad);
+
+    Object.entries(elements).forEach(([symbol, data]) => {
+      const grad = svgEl("radialGradient", {id:`ballGrad_${symbol}`, cx:"32%", cy:"28%", r:"72%"});
+      grad.appendChild(svgEl("stop", {offset:"0%", "stop-color":shade(data.colour, 0.52)}));
+      grad.appendChild(svgEl("stop", {offset:"42%", "stop-color":shade(data.colour, 0.12)}));
+      grad.appendChild(svgEl("stop", {offset:"78%", "stop-color":data.colour}));
+      grad.appendChild(svgEl("stop", {offset:"100%", "stop-color":shade(data.colour, -0.28)}));
+      defs.appendChild(grad);
+    });
+  }
+
+  function drawPreviewRod(svg, x1, y1, x2, y2, order, r1, r2) {
+    if (PREVIEW_SPACE_FILLING) return;
+
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    const px = -uy, py = ux;
+    const trimA = Math.max(12, r1 * PREVIEW_ROD_HIDE_FACTOR);
+    const trimB = Math.max(12, r2 * PREVIEW_ROD_HIDE_FACTOR);
+    const sx = x1 + ux * trimA, sy = y1 + uy * trimA;
+    const ex = x2 - ux * trimB, ey = y2 - uy * trimB;
+
+    const spread = order === 1 ? [0] : order === 2 ? [-4.6, 4.6] : [-8.2, 0, 8.2];
+    spread.forEach(offset => {
+      const ox = px * offset, oy = py * offset;
+
+      const under = svgEl("line", {
+        x1: sx + ox, y1: sy + oy, x2: ex + ox, y2: ey + oy,
+        stroke: "#6d7882", "stroke-width": 8.5, "stroke-linecap": "round", opacity: "0.22"
+      });
+      svg.appendChild(under);
+
+      const rod = svgEl("line", {
+        x1: sx + ox, y1: sy + oy, x2: ex + ox, y2: ey + oy,
+        stroke: "url(#rodGradient)", "stroke-width": 6.3, "stroke-linecap": "round"
+      });
+      svg.appendChild(rod);
+
+      const shine = svgEl("line", {
+        x1: sx + ox - px*1.4, y1: sy + oy - py*1.4, x2: ex + ox - px*1.4, y2: ey + oy - py*1.4,
+        stroke: "rgba(255,255,255,0.42)", "stroke-width": 1.4, "stroke-linecap": "round"
+      });
+      svg.appendChild(shine);
+
+      const cap1 = svgEl("circle", {cx:sx+ox, cy:sy+oy, r:3.8, fill:"url(#capGradient)", stroke:"#77838c", "stroke-width":"0.5"});
+      const cap2 = svgEl("circle", {cx:ex+ox, cy:ey+oy, r:3.8, fill:"url(#capGradient)", stroke:"#77838c", "stroke-width":"0.5"});
+      svg.appendChild(cap1);
+      svg.appendChild(cap2);
+    });
+  }
+
+  function drawPreviewBall(svg, atom, p) {
+    const data = elements[atom.symbol];
+    const r = data.radius * 0.90 * p.scale * PREVIEW_ATOM_SCALE * previewElementScale(atom.symbol);
+
+    svg.appendChild(svgEl("ellipse", {
+      cx:p.x, cy:p.y + r + 12, rx:r*0.95, ry:r*0.34,
+      fill:"rgba(0,0,0,0.16)"
+    }));
+
+    svg.appendChild(svgEl("circle", {
+      cx:p.x, cy:p.y, r:r,
+      fill:`url(#ballGrad_${atom.symbol})`,
+      stroke:shade(data.colour, -0.32),
+      "stroke-width":2.6
+    }));
+
+    svg.appendChild(svgEl("ellipse", {
+      cx:p.x - r*0.28, cy:p.y - r*0.34, rx:r*0.28, ry:r*0.18,
+      fill:"rgba(255,255,255,0.48)"
+    }));
+
+    svg.appendChild(svgEl("circle", {
+      cx:p.x + r*0.18, cy:p.y + r*0.2, r:r*0.58,
+      fill:"rgba(255,255,255,0.05)"
+    }));
+
+    const t = svgEl("text", {
+      x:p.x, y:p.y + 6,
+      "text-anchor":"middle",
+      "font-size":Math.max(15, r*0.72),
+      "font-weight":900,
+      fill:data.text,
+      "paint-order":"stroke",
+      stroke:"rgba(255,255,255,0.38)",
+      "stroke-width":"0.9"
+    });
+    t.textContent = atom.symbol;
+    svg.appendChild(t);
+  }
+
+
+
+
+  function rotatePoint3D(x, y, z) {
+    // First compress the model so atoms sit closer together, then rotate it in 3D.
+    x *= PREVIEW_BOND_COMPRESSION;
+    y *= PREVIEW_BOND_COMPRESSION;
+    z *= PREVIEW_BOND_COMPRESSION;
+
+    const cy = Math.cos(rotationY), sy = Math.sin(rotationY);
+    const cx = Math.cos(rotationX), sx = Math.sin(rotationX);
+
+    const x1 = x * cy + z * sy;
+    const z1 = -x * sy + z * cy;
+
+    const y2 = y * cx - z1 * sx;
+    const z2 = y * sx + z1 * cx;
+
+    return {x:x1, y:y2, z:z2};
+  }
+
+  function projectPoint3D(x, y, z) {
+    const rotated = rotatePoint3D(x, y, z);
+
+    // Perspective projection tuned for a stronger model-kit feel.
+    const cameraDistance = 6.2;
+    const perspective = cameraDistance / (cameraDistance - rotated.z);
+    const worldScaleX = 112;
+    const worldScaleY = 112;
+
+    return {
+      x: 240 + previewPanX + rotated.x * worldScaleX * perspective * previewZoom,
+      y: 276 + previewPanY + rotated.y * worldScaleY * perspective * previewZoom,
+      z: rotated.z,
+      perspective,
+      scale: (0.88 + (perspective - 1) * 0.95) * previewZoom
+    };
+  }
+
+
+  function renderPreview() {
+    preview.innerHTML = "";
+    ensurePreviewDefs();
+
+    // Subtle floor shadow to make the model feel like a physical kit on a bench.
+    preview.appendChild(svgEl("ellipse", {
+      cx:240 + previewPanX, cy:472 + previewPanY * 0.18,
+      rx:122 * previewZoom, ry:27 * previewZoom, fill:"url(#floorShadow)"
+    }));
+
+    if (!atoms.length) {
+      const t = svgEl("text", {x:240,y:282,"text-anchor":"middle","font-size":18,"font-weight":800,fill:"#7890a3"});
+      t.textContent = "Build a molecule to see the preview";
+      preview.appendChild(t);
+      return;
+    }
+
+    const raw = previewPositions();
+    const projected = raw.map(([x,y,z]) => projectPoint3D(x, y, z));
+
+    const orderedBonds = bonds.map(b => {
+      const ai = atoms.findIndex(a => a.id === b.a);
+      const bi = atoms.findIndex(a => a.id === b.b);
+      return {...b, ai, bi, z:(projected[ai]?.z + projected[bi]?.z)/2};
+    }).filter(b => b.ai >= 0 && b.bi >= 0).sort((a,b) => a.z - b.z);
+
+    orderedBonds.forEach(b => {
+      const a = projected[b.ai], c = projected[b.bi];
+      const r1 = elements[atoms[b.ai].symbol].radius * 0.86 * a.scale;
+      const r2 = elements[atoms[b.bi].symbol].radius * 0.86 * c.scale;
+      drawPreviewRod(preview, a.x, a.y, c.x, c.y, b.order, r1, r2);
+    });
+
+    atoms.map((a,i)=>({a,p:projected[i]}))
+      .sort((u,v)=>u.p.z-v.p.z)
+      .forEach(({a,p}) => drawPreviewBall(preview, a, p));
+  }
+
+
+  function updateReadouts() {
+    const report = valencyReport();
+    const components = connectedComponents();
+    const disconnected = components.length > 1;
+    const known = disconnected ? null : recognisedMolecule();
+    const geom = disconnected
+      ? {shape:"Separate structures", angle:"—"}
+      : geometryInfo();
+
+    document.getElementById("formulaReadout").textContent = getFormula();
+    document.getElementById("atomCountReadout").textContent = atoms.length;
+    document.getElementById("bondCountReadout").textContent = bonds.length;
+    document.getElementById("valencyReadout").textContent = atoms.length ? report.text : "Not tested";
+    document.getElementById("massReadout").textContent = atoms.length ? atomicMass().toFixed(2) : "—";
+    document.getElementById("structuralReadout").textContent = structuralFormula();
+    document.getElementById("nameReadout").textContent = disconnected
+      ? `${components.length} separate structures`
+      : (known
+          ? `${known.name} (${known.formula})`
+          : (atoms.length
+              ? (report.complete && report.valid ? "Valid structure — not in library" : "Unknown or incomplete")
+              : "Unknown"));
+    document.getElementById("shapeReadout").textContent = geom.shape;
+    document.getElementById("angleReadout").textContent = geom.angle;
+    const confidence = document.getElementById("confidenceReadout");
+    if (!atoms.length) confidence.textContent = "Waiting for a structure";
+    else if (disconnected) confidence.textContent = "Disconnected structures";
+    else if (known) confidence.textContent = "Recognised example geometry";
+    else if (report.complete && report.valid) confidence.textContent = "Valid valency; approximate 3D layout";
+    else confidence.textContent = "Incomplete structure";
+
+    if (selectedAtoms.length) {
+      const a = atoms.find(x => x.id === selectedAtoms[0]);
+      const data = a ? elements[a.symbol] : null;
+      const allowedText = data ? (data.allowedValences || [data.valence]).join(", ") : "";
+      selectionText.textContent = a ? `${data.name} ${a.id} is selected as the first atom. ${atomValenceUsed(a.id)} bond units are used; valid completed valencies: ${allowedText}. Click a second atom to form the chosen bond.` : "No atom selected.";
+    } else {
+      selectionText.textContent = "No atom selected.";
+    }
+  }
+
+  function checkQuiz() {
+    const q1 = document.getElementById("q1").value;
+    const q2 = document.getElementById("q2").value;
+    const q1f = document.getElementById("q1f");
+    const q2f = document.getElementById("q2f");
+
+    q1f.textContent = q1 === "double" ? "Correct — O₂ contains an O=O double bond." : "Not yet — oxygen gas is modelled with a double bond.";
+    q1f.style.color = q1 === "double" ? "#1c8f5a" : "#c84444";
+
+    q2f.textContent = q2 === "tetrahedral" ? "Correct — methane is approximately tetrahedral." : "Not yet — four bonding regions around carbon produce a tetrahedral arrangement.";
+    q2f.style.color = q2 === "tetrahedral" ? "#1c8f5a" : "#c84444";
+  }
+
+  initialise();
+})();
+</script>
+</body>
+</html>
