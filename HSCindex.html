@@ -8599,7 +8599,31 @@
       </tr>
     `;
 
-    elements.hscGamesTableBody.innerHTML=worksheetRow+courseRows+scienceWebRow;
+const scienceWebWorksheetRow = `
+<tr class="hsc-worksheet-row">
+  <th class="hsc-worksheet-label" scope="row">
+    Science Web worksheet
+    <span class="hsc-worksheet-description">
+      Download the student worksheet and modify it for your own use.
+    </span>
+  </th>
+  <td class="hsc-game-cell" colspan="3">
+    <a class="hsc-game-link hsc-worksheet-link"
+      href="https://docs.google.com/document/d/1lS_tVUBon0DKeqE7SlvdtpMChpH2hX0-u821wiTEuUU/edit?usp=sharing"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Download the Science Web worksheet">
+      Download Science Web worksheet
+    </a>
+  </td>
+</tr>
+`;
+
+elements.hscGamesTableBody.innerHTML =
+    worksheetRow +
+    courseRows +
+    scienceWebRow +
+    scienceWebWorksheetRow;
   }
 
   function mappingMatchesSelectors(mapping,includeModule=true){
