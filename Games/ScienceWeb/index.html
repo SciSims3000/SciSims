@@ -54,8 +54,24 @@ button{cursor:pointer}
 .node.connected{border-color:#16a34a}
 .node.branch{background:#ecfdf5}
 .node.cross{background:#f5f3ff;border-color:#7c3aed}
-.edge{stroke:#64748b;stroke-width:3}
-.edge.weak{stroke:#d97706}.edge.moderate{stroke:#2563eb}.edge.strong{stroke:#15803d}
+.edge{
+  stroke:#64748b;
+  stroke-width:4;
+  fill:none;
+  stroke-linecap:round;
+}
+.edge.weak{
+  stroke:#d97706;
+  stroke-dasharray:2 8;
+}
+.edge.moderate{
+  stroke:#2563eb;
+  stroke-dasharray:11 7;
+}
+.edge.strong{
+  stroke:#15803d;
+  stroke-dasharray:none;
+}
 .edge-label{font-size:12px;font-weight:900;fill:#334155;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
 .right-col{display:grid;gap:14px}
 .selection{background:#f8fafc;border:1px solid var(--line);border-radius:11px;padding:9px;min-height:60px;font-size:.9rem}
@@ -394,14 +410,55 @@ function centres(node){
  const d=nodeElement(node.id);
  return {x:node.x+(d?.offsetWidth||150)/2,y:node.y+(d?.offsetHeight||45)/2}
 }
+function edgeEndpoints(a,b){
+ const aEl=nodeElement(a.id),bEl=nodeElement(b.id);
+ const aW=aEl?.offsetWidth||150,aH=aEl?.offsetHeight||45;
+ const bW=bEl?.offsetWidth||150,bH=bEl?.offsetHeight||45;
+ const ac={x:a.x+aW/2,y:a.y+aH/2},bc={x:b.x+bW/2,y:b.y+bH/2};
+ const dx=bc.x-ac.x,dy=bc.y-ac.y;
+ const len=Math.hypot(dx,dy)||1;
+ const ux=dx/len,uy=dy/len;
+
+ function insetForRect(w,h){
+   const tx=Math.abs(ux)>0.0001?(w/2)/Math.abs(ux):Infinity;
+   const ty=Math.abs(uy)>0.0001?(h/2)/Math.abs(uy):Infinity;
+   return Math.min(tx,ty);
+ }
+
+ const startInset=insetForRect(aW,aH)+6;
+ const endInset=insetForRect(bW,bH)+14;
+
+ return {
+   x1:ac.x+ux*startInset,
+   y1:ac.y+uy*startInset,
+   x2:bc.x-ux*endInset,
+   y2:bc.y-uy*endInset
+ };
+}
 function drawEdges(){
- els.edgeLayer.innerHTML='';
+ els.edgeLayer.innerHTML=`
+   <defs>
+     <marker id="arrow-weak" viewBox="0 0 10 10" refX="9" refY="5"
+       markerWidth="6" markerHeight="6" orient="auto">
+       <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97706"></path>
+     </marker>
+     <marker id="arrow-moderate" viewBox="0 0 10 10" refX="9" refY="5"
+       markerWidth="6" markerHeight="6" orient="auto">
+       <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"></path>
+     </marker>
+     <marker id="arrow-strong" viewBox="0 0 10 10" refX="9" refY="5"
+       markerWidth="6" markerHeight="6" orient="auto">
+       <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d"></path>
+     </marker>
+   </defs>`;
  state.links.forEach(link=>{
    const a=state.nodes.find(n=>n.id===link.a),b=state.nodes.find(n=>n.id===link.b);if(!a||!b)return;
-   const p1=centres(a),p2=centres(b),mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
+   const p1=centres(a),p2=centres(b),points=edgeEndpoints(a,b),mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-   line.setAttribute('x1',p1.x);line.setAttribute('y1',p1.y);line.setAttribute('x2',p2.x);line.setAttribute('y2',p2.y);
-   line.setAttribute('class',`edge ${link.strength}`);els.edgeLayer.appendChild(line);
+   line.setAttribute('x1',points.x1);line.setAttribute('y1',points.y1);line.setAttribute('x2',points.x2);line.setAttribute('y2',points.y2);
+   line.setAttribute('class',`edge ${link.strength}`);
+   line.setAttribute('marker-end',`url(#arrow-${link.strength})`);
+   els.edgeLayer.appendChild(line);
    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
    text.setAttribute('x',mx);text.setAttribute('y',my-5);text.setAttribute('text-anchor','middle');text.setAttribute('class','edge-label');
    text.textContent=link.label;els.edgeLayer.appendChild(text);
