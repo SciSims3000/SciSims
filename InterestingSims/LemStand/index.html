@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lemonade Stand Lab | SciSims</title>
+  <link rel="icon" type="image/png" href="/SciSims/favicon.png">
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --soft-blue:#e0ecff;
+      --soft-green:#dcfce7;
+      --soft-yellow:#fef3c7;
+      --soft-red:#fee2e2;
+      --soft-purple:#ede9fe;
+      --radius:18px;
+      --shadow:0 12px 30px rgba(15,23,42,0.08);
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#f8fafc 0%,#eaf1ff 100%);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    a{color:var(--button);}
+
+    .page{
+      width:min(1180px,calc(100% - 32px));
+      margin:0 auto;
+      padding:22px 0 44px;
+    }
+
+    .home-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:16px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      color:var(--button);
+      text-decoration:none;
+      font-weight:700;
+      box-shadow:var(--shadow);
+      border:1px solid var(--line);
+    }
+
+    header{
+      background:linear-gradient(135deg,#fff7d6,#e0f2fe 58%,#dcfce7);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      right:-60px;
+      top:-60px;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:rgba(251,191,36,0.35);
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(2rem,4vw,3.3rem);
+      letter-spacing:-0.04em;
+    }
+
+    .subtitle{
+      margin:0;
+      max-width:780px;
+      font-size:1.08rem;
+      color:#334155;
+    }
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:18px;
+    }
+
+    .tag{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.78);
+      border:1px solid rgba(148,163,184,0.35);
+      color:#334155;
+      font-size:0.9rem;
+      font-weight:700;
+    }
+
+    .info-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin:18px 0;
+    }
+
+    .info-card,.panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .info-card h2,.panel h2{
+      margin:0 0 10px;
+    }
+
+    .info-card h2{font-size:1.05rem;}
+    .panel h2{font-size:1.3rem;}
+    .info-card p{margin:0;color:#475569;}
+
+    .layout{
+      display:grid;
+      grid-template-columns:390px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    .mode-box{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:14px;
+    }
+
+    .mode-box h3{
+      margin:0 0 8px;
+      font-size:1.05rem;
+    }
+
+    .check-row{
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+      margin:8px 0;
+      color:#334155;
+      font-weight:700;
+    }
+
+    .check-row input{margin-top:4px;}
+
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:white;
+      color:#1f2937;
+      font-weight:700;
+    }
+
+    .scenario{
+      background:var(--soft-yellow);
+      border:1px solid #fde68a;
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:16px;
+    }
+
+    .scenario h3{
+      margin:0 0 6px;
+      font-size:1.05rem;
+    }
+
+    .scenario p{margin:0;color:#475569;}
+
+    .control{
+      margin-bottom:14px;
+    }
+
+    label.slider-label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-weight:800;
+      margin-bottom:6px;
+      color:#334155;
+    }
+
+    .value{
+      color:var(--button);
+      font-variant-numeric:tabular-nums;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--button);
+    }
+
+    input[type="range"]:disabled{
+      opacity:0.35;
+      cursor:not-allowed;
+    }
+
+    .hint{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:0.88rem;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--button);
+      color:white;
+      transition:0.15s ease;
+    }
+
+    button:hover{background:var(--button-hover);transform:translateY(-1px);}
+    button.secondary{background:#475569;}
+    button.secondary:hover{background:#334155;}
+    button.ghost{background:#e2e8f0;color:#1e293b;}
+    button.ghost:hover{background:#cbd5e1;}
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .stat{
+      padding:14px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+    }
+
+    .stat .label{
+      display:block;
+      font-size:0.78rem;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+      color:var(--muted);
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .stat .number{
+      font-size:1.55rem;
+      font-weight:900;
+      letter-spacing:-0.04em;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .visual{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:16px;
+    }
+
+    .stand-scene{
+      min-height:250px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#bae6fd 0%,#e0f2fe 55%,#bbf7d0 56%,#86efac 100%);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .sun{
+      position:absolute;
+      width:78px;
+      height:78px;
+      border-radius:50%;
+      background:#facc15;
+      top:22px;
+      right:32px;
+      box-shadow:0 0 34px rgba(250,204,21,0.75);
+    }
+
+    .cloud{
+      position:absolute;
+      width:112px;
+      height:38px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.92);
+      left:24px;
+      top:44px;
+      box-shadow:34px -12px 0 4px rgba(255,255,255,0.92),64px 2px 0 rgba(255,255,255,0.92);
+      opacity:0.9;
+    }
+
+    .stand{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:42px;
+      width:190px;
+      height:112px;
+      background:#f59e0b;
+      border:5px solid #92400e;
+      border-radius:14px 14px 8px 8px;
+    }
+
+    .stand::before{
+      content:"";
+      position:absolute;
+      left:-20px;
+      right:-20px;
+      top:-38px;
+      height:40px;
+      background:repeating-linear-gradient(90deg,#fef3c7 0 24px,#fb7185 24px 48px);
+      border:4px solid #92400e;
+      border-radius:14px 14px 4px 4px;
+    }
+
+    .jugs{
+      position:absolute;
+      display:flex;
+      gap:9px;
+      left:28px;
+      top:22px;
+    }
+
+    .jug{
+      width:34px;
+      height:48px;
+      border-radius:8px 8px 12px 12px;
+      background:#fde68a;
+      border:3px solid #92400e;
+      opacity:0.92;
+    }
+
+    .customer-bar{
+      position:absolute;
+      left:20px;
+      right:20px;
+      bottom:14px;
+      height:16px;
+      background:rgba(255,255,255,0.55);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.7);
+    }
+
+    .customer-fill{
+      height:100%;
+      width:0%;
+      background:#22c55e;
+      border-radius:999px;
+      transition:width 0.4s ease;
+    }
+
+    .chart-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+      background:#f8fafc;
+      min-height:250px;
+    }
+
+    canvas{
+      width:100%;
+      height:215px;
+      display:block;
+    }
+
+    .feedback,.limitations{
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:16px;
+      color:#334155;
+    }
+
+    .feedback{
+      background:var(--soft-blue);
+      border:1px solid #bfdbfe;
+    }
+
+    .limitations{
+      background:var(--soft-purple);
+      border:1px solid #ddd6fe;
+    }
+
+    .feedback strong{color:#1e3a8a;}
+    .limitations strong{color:#4c1d95;}
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .summary-item{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+    }
+
+    .summary-item span{
+      display:block;
+      color:var(--muted);
+      font-size:0.76rem;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      font-weight:900;
+    }
+
+    .summary-item b{
+      display:block;
+      margin-top:2px;
+      font-size:1.05rem;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .cer-box{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .cer-card{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .cer-card h3{
+      margin:0 0 6px;
+      font-size:0.98rem;
+    }
+
+    .cer-card p{margin:0;color:#475569;font-size:0.92rem;}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.92rem;
+      overflow:hidden;
+      border-radius:14px;
+    }
+
+    th,td{
+      border-bottom:1px solid var(--line);
+      padding:8px 9px;
+      text-align:left;
+      white-space:nowrap;
+    }
+
+    th{
+      background:#eff6ff;
+      color:#1e3a8a;
+      font-size:0.8rem;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    tr:last-child td{border-bottom:0;}
+
+    .table-wrap{
+      overflow-x:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+    }
+
+    .learning-section{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .learning-section ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+
+    .learning-section li{margin-bottom:8px;}
+
+    .teacher-notes{
+      margin-top:18px;
+      background:#f8fafc;
+    }
+
+    .teacher-notes details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:white;
+    }
+
+    .teacher-notes summary{
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    @media (max-width:980px){
+      .layout,.info-box,.visual,.learning-section,.cer-box{grid-template-columns:1fr;}
+      .stats,.summary-grid{grid-template-columns:repeat(2,1fr);}
+    }
+
+    @media (max-width:560px){
+      .page{width:min(100% - 20px,1180px);}
+      header{padding:22px;}
+      .stats,.summary-grid{grid-template-columns:1fr;}
+      th,td{font-size:0.82rem;}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+
+    <header>
+      <h1>Lemonade Stand Lab</h1>
+      <p class="subtitle">Run a virtual lemonade stand and investigate how price, stock, advertising, weather and random variation affect sales, profit and evidence-based decision-making.</p>
+      <div class="tag-row">
+        <span class="tag">Data Science</span>
+        <span class="tag">Working Scientifically</span>
+        <span class="tag">Variables</span>
+        <span class="tag">Modelling</span>
+      </div>
+    </header>
+
+    <section class="info-box" aria-label="Learning information">
+      <div class="info-card">
+        <h2>Learning Intention</h2>
+        <p>Students will understand that models can be used to test decisions, identify relationships between variables and explain patterns in data.</p>
+      </div>
+      <div class="info-card">
+        <h2>Success Criteria</h2>
+        <p>Students can adjust variables, collect repeated data, identify trends and use evidence to justify an improved business strategy.</p>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel" aria-label="Simulation controls">
+        <h2>Daily decisions</h2>
+
+        <div class="mode-box">
+          <h3>Investigation tools</h3>
+          <label class="check-row"><input id="investigationMode" type="checkbox"> Investigation mode: repeat the same weather and random pattern after reset</label>
+          <label class="check-row"><input id="lockMode" type="checkbox"> Lock controls except one independent variable</label>
+          <label for="independentVariable" class="slider-label">Independent variable</label>
+          <select id="independentVariable">
+            <option value="none">None selected</option>
+            <option value="price">Price per cup</option>
+            <option value="cups">Cups prepared</option>
+            <option value="recipe">Recipe quality</option>
+            <option value="ads">Advertising spend</option>
+            <option value="location">Location quality</option>
+          </select>
+          <p class="hint">Use these tools to conduct a fairer test by changing one variable at a time.</p>
+        </div>
+
+        <div class="scenario">
+          <h3>Daily condition</h3>
+          <p id="weatherText">Press “Run day” to start your first trading day.</p>
+        </div>
+
+        <div class="control">
+          <label class="slider-label" for="price">Price per cup <span class="value" id="priceValue">$1.00</span></label>
+          <input id="price" data-variable="price" type="range" min="0.40" max="3.00" step="0.05" value="1.00">
+          <p class="hint">Higher prices increase profit per cup, but may reduce demand.</p>
+        </div>
+
+        <div class="control">
+          <label class="slider-label" for="cups">Cups prepared <span class="value" id="cupsValue">60</span></label>
+          <input id="cups" data-variable="cups" type="range" min="10" max="200" step="5" value="60">
+          <p class="hint">Unsold cups still cost money to make.</p>
+        </div>
+
+        <div class="control">
+          <label class="slider-label" for="recipe">Recipe quality <span class="value" id="recipeValue">6 / 10</span></label>
+          <input id="recipe" data-variable="recipe" type="range" min="1" max="10" step="1" value="6">
+          <p class="hint">Better quality can increase demand, but increases ingredient cost.</p>
+        </div>
+
+        <div class="control">
+          <label class="slider-label" for="ads">Advertising spend <span class="value" id="adsValue">$5</span></label>
+          <input id="ads" data-variable="ads" type="range" min="0" max="40" step="1" value="5">
+          <p class="hint">Advertising may increase customers, but it is not guaranteed to pay off.</p>
+        </div>
+
+        <div class="control">
+          <label class="slider-label" for="location">Location quality <span class="value" id="locationValue">5 / 10</span></label>
+          <input id="location" data-variable="location" type="range" min="1" max="10" step="1" value="5">
+          <p class="hint">Better locations have more passing customers.</p>
+        </div>
+
+        <div class="button-row">
+          <button id="runDay">Run day</button>
+          <button id="runWeek" class="secondary">Run 7 days</button>
+          <button id="reset" class="ghost">Reset</button>
+          <button id="downloadCsv" class="ghost">Download CSV</button>
+        </div>
+      </aside>
+
+      <section class="panel" aria-label="Simulation results">
+        <h2>Results</h2>
+        <div class="stats">
+          <div class="stat"><span class="label">Day</span><span class="number" id="dayStat">0</span></div>
+          <div class="stat"><span class="label">Cash</span><span class="number" id="cashStat">$50.00</span></div>
+          <div class="stat"><span class="label">Total profit</span><span class="number" id="profitStat">$0.00</span></div>
+          <div class="stat"><span class="label">Mean profit</span><span class="number" id="meanProfitStat">$0.00</span></div>
+        </div>
+
+        <div class="visual">
+          <div class="stand-scene" aria-label="Lemonade stand visualisation">
+            <div class="sun" id="sun"></div>
+            <div class="cloud" id="cloud"></div>
+            <div class="stand">
+              <div class="jugs"><span class="jug"></span><span class="jug"></span><span class="jug"></span></div>
+            </div>
+            <div class="customer-bar" aria-label="Demand visualisation"><div class="customer-fill" id="customerFill"></div></div>
+          </div>
+          <div class="chart-card">
+            <label for="graphType" class="slider-label">Graph type</label>
+            <select id="graphType">
+              <option value="profitDay">Profit by day</option>
+              <option value="soldDay">Cups sold by day</option>
+              <option value="priceProfit">Price vs profit</option>
+              <option value="adsProfit">Advertising vs profit</option>
+              <option value="demandCups">Demand vs cups prepared</option>
+            </select>
+            <canvas id="profitChart" width="500" height="260" aria-label="Results graph"></canvas>
+          </div>
+        </div>
+
+        <div class="feedback" id="feedbackBox">
+          <strong>Decision feedback:</strong> Adjust the controls and run a day. Look for patterns across several trials, not just one result.
+        </div>
+
+        <div class="summary-grid" aria-label="Trial summary">
+          <div class="summary-item"><span>Best day</span><b id="bestDayStat">-</b></div>
+          <div class="summary-item"><span>Worst day</span><b id="worstDayStat">-</b></div>
+          <div class="summary-item"><span>Profit range</span><b id="rangeStat">-</b></div>
+          <div class="summary-item"><span>Sell-out days</span><b id="selloutStat">-</b></div>
+          <div class="summary-item"><span>Loss days</span><b id="lossStat">-</b></div>
+          <div class="summary-item"><span>Mean cups sold</span><b id="meanSoldStat">-</b></div>
+          <div class="summary-item"><span>Total revenue</span><b id="revenueStat">-</b></div>
+          <div class="summary-item"><span>Total cost</span><b id="costStat">-</b></div>
+        </div>
+
+        <div class="limitations">
+          <strong>Model limitations:</strong> This model simplifies a real business. It does not include competitors, food safety, supply shortages, staff costs, changing customer loyalty or long-term reputation.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Condition</th>
+                <th>Price</th>
+                <th>Cups</th>
+                <th>Demand</th>
+                <th>Sold</th>
+                <th>Revenue</th>
+                <th>Cost</th>
+                <th>Profit</th>
+                <th>Cash</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody">
+              <tr><td colspan="10">No data yet. Run a day to begin.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" style="margin-top:18px;">
+      <h2>Scientific argument builder</h2>
+      <div class="cer-box">
+        <div class="cer-card"><h3>Claim</h3><p>The most effective strategy was...</p></div>
+        <div class="cer-card"><h3>Evidence</h3><p>The data shows...</p></div>
+        <div class="cer-card"><h3>Reasoning</h3><p>This suggests...</p></div>
+        <div class="cer-card"><h3>Limitations</h3><p>This conclusion may be uncertain because...</p></div>
+      </div>
+    </section>
+
+    <section class="learning-section">
+      <div class="panel">
+        <h2>Student challenge</h2>
+        <ul>
+          <li>Run at least 10 days using the same strategy. Record your total profit, mean profit and profit range.</li>
+          <li>Turn on Investigation Mode. Change only one independent variable, then run another 10 days.</li>
+          <li>Identify the independent variable, dependent variable and at least two controlled variables.</li>
+          <li>Use the graph and trial summary to justify your best lemonade stand strategy.</li>
+          <li>Explain why one very good or very bad day may not be enough evidence to prove a strategy works.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>Assess the simulation</h2>
+        <ul>
+          <li>What did this simulation help you understand about variables and decision-making?</li>
+          <li>What are two strengths of this model?</li>
+          <li>What are two limitations of this model compared with a real lemonade stand?</li>
+          <li>How could random variation affect the reliability of your conclusions?</li>
+          <li>Overall, how useful is this simulation for learning about data and modelling? Give reasons.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel teacher-notes">
+      <details>
+        <summary>Teacher notes</summary>
+        <p>This simulation can be used to teach variables, repeated trials, model limitations, reliability, uncertainty and evidence-based decision-making. It is also suitable for introductory data science activities because students can export a CSV and analyse profit patterns in a spreadsheet.</p>
+        <p>Investigation Mode uses a repeatable pseudo-random sequence, so students can reset and compare different strategies under the same simulated weather and random variation. This supports fair testing and validity.</p>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      day: 0,
+      cash: 50,
+      startCash: 50,
+      records: [],
+      weather: null,
+      seed: 123456,
+      baseSeed: 123456
+    };
+
+    const weatherOptions = [
+      {name:'Cold rain', temp:14, demand:0.48, sky:'rainy', costMultiplier:1.00, extraFixedCost:0, note:'Few people want cold drinks today.'},
+      {name:'Rainy lunch break', temp:17, demand:0.60, sky:'rainy', costMultiplier:1.00, extraFixedCost:0, note:'Rain reduces foot traffic.'},
+      {name:'Windy and overcast', temp:19, demand:0.72, sky:'cloudy', costMultiplier:1.00, extraFixedCost:0, note:'Some customers avoid stopping in the wind.'},
+      {name:'Quiet school day', temp:22, demand:0.86, sky:'cloudy', costMultiplier:1.00, extraFixedCost:0, note:'There are fewer passing customers than expected.'},
+      {name:'Mild and sunny', temp:24, demand:1.05, sky:'sunny', costMultiplier:1.00, extraFixedCost:0, note:'A fairly normal trading day.'},
+      {name:'Hot and sunny', temp:32, demand:1.42, sky:'sunny', costMultiplier:1.00, extraFixedCost:0, note:'Hot weather increases demand.'},
+      {name:'Very hot day', temp:38, demand:1.58, sky:'sunny', costMultiplier:1.03, extraFixedCost:0, note:'Demand is high, but ingredients are slightly harder to keep cool.'},
+      {name:'Weekend crowd', temp:27, demand:1.48, sky:'sunny', costMultiplier:1.00, extraFixedCost:0, note:'More people are walking past the stand.'},
+      {name:'Local sports event', temp:29, demand:1.72, sky:'sunny', costMultiplier:1.00, extraFixedCost:0, note:'A nearby event brings a rush of customers.'},
+      {name:'Roadworks nearby', temp:25, demand:0.66, sky:'cloudy', costMultiplier:1.00, extraFixedCost:0, note:'Roadworks make it harder for customers to reach the stand.'},
+      {name:'Competitor nearby', temp:28, demand:0.62, sky:'cloudy', costMultiplier:1.00, extraFixedCost:0, note:'A competing stall takes some customers.'},
+      {name:'Supply price spike', temp:26, demand:0.95, sky:'cloudy', costMultiplier:1.18, extraFixedCost:2.00, note:'Ingredient prices rise unexpectedly.'},
+      {name:'Storm warning', temp:18, demand:0.40, sky:'storm', costMultiplier:1.00, extraFixedCost:0, note:'Most customers stay away.'}
+    ];
+
+    const els = {
+      price: document.getElementById('price'),
+      cups: document.getElementById('cups'),
+      recipe: document.getElementById('recipe'),
+      ads: document.getElementById('ads'),
+      location: document.getElementById('location'),
+      priceValue: document.getElementById('priceValue'),
+      cupsValue: document.getElementById('cupsValue'),
+      recipeValue: document.getElementById('recipeValue'),
+      adsValue: document.getElementById('adsValue'),
+      locationValue: document.getElementById('locationValue'),
+      investigationMode: document.getElementById('investigationMode'),
+      lockMode: document.getElementById('lockMode'),
+      independentVariable: document.getElementById('independentVariable'),
+      graphType: document.getElementById('graphType'),
+      weatherText: document.getElementById('weatherText'),
+      dayStat: document.getElementById('dayStat'),
+      cashStat: document.getElementById('cashStat'),
+      profitStat: document.getElementById('profitStat'),
+      meanProfitStat: document.getElementById('meanProfitStat'),
+      bestDayStat: document.getElementById('bestDayStat'),
+      worstDayStat: document.getElementById('worstDayStat'),
+      rangeStat: document.getElementById('rangeStat'),
+      selloutStat: document.getElementById('selloutStat'),
+      lossStat: document.getElementById('lossStat'),
+      meanSoldStat: document.getElementById('meanSoldStat'),
+      revenueStat: document.getElementById('revenueStat'),
+      costStat: document.getElementById('costStat'),
+      dataBody: document.getElementById('dataBody'),
+      feedbackBox: document.getElementById('feedbackBox'),
+      customerFill: document.getElementById('customerFill'),
+      sun: document.getElementById('sun'),
+      cloud: document.getElementById('cloud'),
+      standScene: document.querySelector('.stand-scene'),
+      chart: document.getElementById('profitChart')
+    };
+
+    const controls = [els.price, els.cups, els.recipe, els.ads, els.location];
+
+    function money(value){
+      return '$' + Number(value).toFixed(2);
+    }
+
+    function seededRandom(){
+      state.seed = (1664525 * state.seed + 1013904223) % 4294967296;
+      return state.seed / 4294967296;
+    }
+
+    function randomValue(){
+      return els.investigationMode.checked ? seededRandom() : Math.random();
+    }
+
+    function rand(min,max){
+      return randomValue() * (max - min) + min;
+    }
+
+    function pickWeather(){
+      return weatherOptions[Math.floor(randomValue() * weatherOptions.length)];
+    }
+
+    function updateControlLabels(){
+      els.priceValue.textContent = money(Number(els.price.value));
+      els.cupsValue.textContent = els.cups.value;
+      els.recipeValue.textContent = els.recipe.value + ' / 10';
+      els.adsValue.textContent = money(Number(els.ads.value));
+      els.locationValue.textContent = els.location.value + ' / 10';
+    }
+
+    function updateControlLocks(){
+      const selected = els.independentVariable.value;
+      controls.forEach(control => {
+        control.disabled = els.lockMode.checked && selected !== 'none' && control.dataset.variable !== selected;
+      });
+    }
+
+    function updateSky(weather){
+      if(!weather){return;}
+      const isWet = weather.sky === 'rainy' || weather.sky === 'storm';
+      els.sun.style.opacity = isWet ? '0.12' : '1';
+      els.cloud.style.opacity = weather.sky === 'sunny' ? '0.25' : '0.96';
+      els.cloud.style.transform = isWet ? 'scale(1.35)' : 'scale(1)';
+      if(weather.sky === 'sunny'){
+        els.standScene.style.background = 'linear-gradient(180deg,#bae6fd 0%,#e0f2fe 55%,#bbf7d0 56%,#86efac 100%)';
+      }else if(weather.sky === 'rainy'){
+        els.standScene.style.background = 'linear-gradient(180deg,#94a3b8 0%,#cbd5e1 55%,#a7f3d0 56%,#65a30d 100%)';
+      }else if(weather.sky === 'storm'){
+        els.standScene.style.background = 'linear-gradient(180deg,#475569 0%,#94a3b8 55%,#6b7280 56%,#4d7c0f 100%)';
+      }else{
+        els.standScene.style.background = 'linear-gradient(180deg,#cbd5e1 0%,#e2e8f0 55%,#bbf7d0 56%,#86efac 100%)';
+      }
+    }
+
+    function calculateDay(){
+      const price = Number(els.price.value);
+      const cups = Number(els.cups.value);
+      const recipe = Number(els.recipe.value);
+      const ads = Number(els.ads.value);
+      const location = Number(els.location.value);
+      const weather = pickWeather();
+
+      const ingredientCostPerCup = 0.22 + recipe * 0.045;
+      const fixedCost = 3.50 + (weather.extraFixedCost || 0);
+      const productionCost = cups * ingredientCostPerCup * (weather.costMultiplier || 1);
+      const overproductionPenalty = cups > 150 ? (cups - 150) * 0.025 : 0;
+      const totalCost = productionCost + ads + fixedCost + overproductionPenalty;
+
+      const priceEffect = Math.max(0.18, 1.72 - price * 0.42);
+      const recipeEffect = 0.76 + recipe * 0.048;
+      const adEffect = 1 + Math.sqrt(ads) * 0.042;
+      const locationEffect = 0.58 + location * 0.078;
+      const randomEffect = rand(0.70, 1.32);
+      const baseCustomers = 54;
+
+      let demand = baseCustomers * weather.demand * priceEffect * recipeEffect * adEffect * locationEffect * randomEffect;
+      demand = Math.max(0, Math.round(demand));
+      const sold = Math.min(cups, demand);
+      const revenue = sold * price;
+      const profit = revenue - totalCost;
+      state.day += 1;
+      state.cash += profit;
+
+      const record = {
+        day: state.day,
+        weather: weather.name,
+        temp: weather.temp,
+        conditionNote: weather.note,
+        price,
+        cups,
+        recipe,
+        ads,
+        location,
+        demand,
+        sold,
+        revenue,
+        cost: totalCost,
+        profit,
+        cash: state.cash
+      };
+      state.records.push(record);
+      state.weather = weather;
+      return record;
+    }
+
+    function getFeedback(record){
+      const unsold = record.cups - record.sold;
+      const totalProfit = state.cash - state.startCash;
+      let message = '';
+
+      if(record.profit > 35){
+        message = 'Strong result. Your price, demand and costs worked well together today.';
+      }else if(record.profit > 0){
+        message = 'Positive result. You made a profit, but there may still be a more efficient strategy.';
+      }else{
+        message = 'Loss recorded. Check whether the price was too high, demand was low, too many cups were prepared, or costs were too large.';
+      }
+
+      if(record.conditionNote){
+        message += ' Condition factor: ' + record.conditionNote;
+      }
+      if(unsold > record.cups * 0.35){
+        message += ' A large amount of unsold stock increased wasted cost.';
+      }
+      if(record.sold === record.cups && record.demand > record.cups){
+        message += ' You sold out, which suggests demand was higher than your stock level.';
+      }
+      if(els.investigationMode.checked){
+        message += ' Investigation Mode is on, so resetting will repeat the same weather and random pattern for fairer comparisons.';
+      }
+      if(state.records.length >= 5){
+        const recent = state.records.slice(-5).map(r => r.profit);
+        const mean = recent.reduce((a,b) => a + b, 0) / recent.length;
+        message += ' The mean profit over the last five days is ' + money(mean) + ', which is stronger evidence than one day alone.';
+      }
+      if(totalProfit < 0){
+        message += ' Overall, the stand is currently losing money.';
+      }
+      return message;
+    }
+
+    function updateStats(){
+      const totalProfit = state.cash - state.startCash;
+      const meanProfit = state.records.length ? totalProfit / state.records.length : 0;
+      els.dayStat.textContent = state.day;
+      els.cashStat.textContent = money(state.cash);
+      els.profitStat.textContent = money(totalProfit);
+      els.meanProfitStat.textContent = money(meanProfit);
+
+      if(state.records.length === 0){
+        [els.bestDayStat, els.worstDayStat, els.rangeStat, els.selloutStat, els.lossStat, els.meanSoldStat, els.revenueStat, els.costStat].forEach(el => el.textContent = '-');
+        return;
+      }
+
+      const profits = state.records.map(r => r.profit);
+      const best = Math.max(...profits);
+      const worst = Math.min(...profits);
+      const sellouts = state.records.filter(r => r.sold === r.cups && r.demand > r.cups).length;
+      const losses = state.records.filter(r => r.profit < 0).length;
+      const meanSold = state.records.reduce((a,r) => a + r.sold, 0) / state.records.length;
+      const revenue = state.records.reduce((a,r) => a + r.revenue, 0);
+      const cost = state.records.reduce((a,r) => a + r.cost, 0);
+
+      els.bestDayStat.textContent = money(best);
+      els.worstDayStat.textContent = money(worst);
+      els.rangeStat.textContent = money(best - worst);
+      els.selloutStat.textContent = sellouts;
+      els.lossStat.textContent = losses;
+      els.meanSoldStat.textContent = meanSold.toFixed(1);
+      els.revenueStat.textContent = money(revenue);
+      els.costStat.textContent = money(cost);
+    }
+
+    function updateTable(){
+      if(state.records.length === 0){
+        els.dataBody.innerHTML = '<tr><td colspan="10">No data yet. Run a day to begin.</td></tr>';
+        return;
+      }
+      els.dataBody.innerHTML = state.records.slice().reverse().map(r => `
+        <tr>
+          <td>${r.day}</td>
+          <td>${r.weather}</td>
+          <td>${money(r.price)}</td>
+          <td>${r.cups}</td>
+          <td>${r.demand}</td>
+          <td>${r.sold}</td>
+          <td>${money(r.revenue)}</td>
+          <td>${money(r.cost)}</td>
+          <td>${money(r.profit)}</td>
+          <td>${money(r.cash)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function drawAxes(ctx, canvas, title, xLabel, yLabel){
+      const pad = 42;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad,pad);
+      ctx.lineTo(pad,h-pad);
+      ctx.lineTo(w-pad,h-pad);
+      ctx.stroke();
+      ctx.fillStyle = '#64748b';
+      ctx.font = '13px system-ui';
+      ctx.fillText(title, pad, 22);
+      ctx.fillText(xLabel, w - 95, h - 10);
+      ctx.save();
+      ctx.translate(15, h/2 + 32);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText(yLabel, 0, 0);
+      ctx.restore();
+      return {pad,w,h,plotW:w-pad*2,plotH:h-pad*2};
+    }
+
+    function drawChart(){
+      const canvas = els.chart;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const graphType = els.graphType.value;
+      const titles = {
+        profitDay:['Profit by day','Day','Profit ($)'],
+        soldDay:['Cups sold by day','Day','Cups sold'],
+        priceProfit:['Price vs profit','Price ($)','Profit ($)'],
+        adsProfit:['Advertising vs profit','Advertising ($)','Profit ($)'],
+        demandCups:['Demand vs cups prepared','Cups prepared','Demand']
+      };
+      const axis = drawAxes(ctx, canvas, ...titles[graphType]);
+      const {pad,w,h,plotW,plotH} = axis;
+
+      if(state.records.length === 0){
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '16px system-ui';
+        ctx.fillText('Run a day to generate graph data.', pad + 30, h/2);
+        return;
+      }
+
+      let points;
+      if(graphType === 'profitDay') points = state.records.map(r => ({x:r.day,y:r.profit}));
+      if(graphType === 'soldDay') points = state.records.map(r => ({x:r.day,y:r.sold}));
+      if(graphType === 'priceProfit') points = state.records.map(r => ({x:r.price,y:r.profit}));
+      if(graphType === 'adsProfit') points = state.records.map(r => ({x:r.ads,y:r.profit}));
+      if(graphType === 'demandCups') points = state.records.map(r => ({x:r.cups,y:r.demand}));
+
+      let minX = Math.min(...points.map(p => p.x));
+      let maxX = Math.max(...points.map(p => p.x));
+      let minY = Math.min(...points.map(p => p.y));
+      let maxY = Math.max(...points.map(p => p.y));
+      if(minX === maxX){minX -= 1; maxX += 1;}
+      if(minY === maxY){minY -= 1; maxY += 1;}
+      if(graphType.includes('Profit') || graphType === 'profitDay'){
+        minY = Math.min(minY, -20);
+        maxY = Math.max(maxY, 20);
+      }
+
+      const xFor = (v) => pad + ((v - minX) / (maxX - minX)) * plotW;
+      const yFor = (v) => h - pad - ((v - minY) / (maxY - minY)) * plotH;
+
+      if(minY < 0 && maxY > 0){
+        const zeroY = yFor(0);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.setLineDash([5,5]);
+        ctx.beginPath();
+        ctx.moveTo(pad, zeroY);
+        ctx.lineTo(w-pad, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      if(graphType === 'profitDay' || graphType === 'soldDay'){
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        points.forEach((p,i) => {
+          const x = xFor(p.x);
+          const y = yFor(p.y);
+          if(i === 0){ctx.moveTo(x,y);} else {ctx.lineTo(x,y);}
+        });
+        ctx.stroke();
+      }
+
+      points.forEach(p => {
+        ctx.beginPath();
+        ctx.fillStyle = p.y >= 0 || graphType === 'soldDay' || graphType === 'demandCups' ? '#16a34a' : '#dc2626';
+        ctx.arc(xFor(p.x),yFor(p.y),5,0,Math.PI*2);
+        ctx.fill();
+      });
+
+      ctx.fillStyle = '#475569';
+      ctx.font = '12px system-ui';
+      ctx.fillText(String(Number(maxY).toFixed(1)), 4, pad + 4);
+      ctx.fillText(String(Number(minY).toFixed(1)), 4, h - pad + 4);
+      ctx.fillText(String(Number(minX).toFixed(1)), pad - 4, h - 22);
+      ctx.fillText(String(Number(maxX).toFixed(1)), w - pad - 32, h - 22);
+    }
+
+    function render(record){
+      updateControlLabels();
+      updateControlLocks();
+      updateStats();
+      updateTable();
+      drawChart();
+      if(state.weather){
+        els.weatherText.textContent = `${state.weather.name}, ${state.weather.temp} °C. ${state.weather.note}`;
+        updateSky(state.weather);
+      }
+      if(record){
+        const demandPercent = Math.min(100, Math.round((record.sold / Math.max(1, record.cups)) * 100));
+        els.customerFill.style.width = demandPercent + '%';
+        els.feedbackBox.innerHTML = '<strong>Decision feedback:</strong> ' + getFeedback(record);
+      }
+    }
+
+    function runDay(){
+      const record = calculateDay();
+      render(record);
+    }
+
+    function runWeek(){
+      let record = null;
+      for(let i = 0; i < 7; i += 1){
+        record = calculateDay();
+      }
+      render(record);
+    }
+
+    function reset(){
+      state.day = 0;
+      state.cash = state.startCash;
+      state.records = [];
+      state.weather = null;
+      if(els.investigationMode.checked){
+        state.seed = state.baseSeed;
+      }else{
+        state.seed = Math.floor(Math.random() * 4294967296);
+      }
+      els.weatherText.textContent = 'Press “Run day” to start your first trading day.';
+      els.feedbackBox.innerHTML = '<strong>Decision feedback:</strong> Adjust the controls and run a day. Look for patterns across several trials, not just one result.';
+      els.customerFill.style.width = '0%';
+      updateControlLabels();
+      updateControlLocks();
+      updateStats();
+      updateTable();
+      drawChart();
+    }
+
+    function csvEscape(value){
+      const text = String(value);
+      if(text.includes(',') || text.includes('"') || text.includes('\n') || text.includes('\r')){
+        return '"' + text.replace(/"/g,'""') + '"';
+      }
+      return text;
+    }
+
+    function downloadCsv(){
+      if(state.records.length === 0){
+        alert('Run at least one day before downloading data.');
+        return;
+      }
+      const headers = ['Day','Condition','Temperature C','Price','Cups Prepared','Recipe Quality','Advertising Spend','Location Quality','Demand','Sold','Revenue','Cost','Profit','Cash'];
+      const rows = state.records.map(r => [r.day,r.weather,r.temp,r.price,r.cups,r.recipe,r.ads,r.location,r.demand,r.sold,r.revenue.toFixed(2),r.cost.toFixed(2),r.profit.toFixed(2),r.cash.toFixed(2)]);
+      const csv = [headers, ...rows].map(row => row.map(csvEscape).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'lemonade_stand_lab_data.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    controls.forEach(input => input.addEventListener('input', updateControlLabels));
+    els.investigationMode.addEventListener('change', reset);
+    els.lockMode.addEventListener('change', updateControlLocks);
+    els.independentVariable.addEventListener('change', updateControlLocks);
+    els.graphType.addEventListener('change', drawChart);
+    document.getElementById('runDay').addEventListener('click', runDay);
+    document.getElementById('runWeek').addEventListener('click', runWeek);
+    document.getElementById('reset').addEventListener('click', reset);
+    document.getElementById('downloadCsv').addEventListener('click', downloadCsv);
+
+    reset();
+  </script>
+</body>
+</html>
