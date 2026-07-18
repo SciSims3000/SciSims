@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predator-Prey Simulator</title>
+  <style>
+    :root {
+      --bg: #eef3f7;
+      --panel: #ffffff;
+      --line: #d5dee7;
+      --text: #1f2b33;
+      --muted: #62727d;
+      --accent: #2f6fed;
+      --green: #2d9d57;
+      --orange: #d1681c;
+      --shadow: rgba(20, 35, 50, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #f9fbfd 0%, var(--bg) 72%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+    }
+
+    .panel, .stage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 28px var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    .sub {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .group {
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .label-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .value {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .btn-row.single {
+      grid-template-columns: 1fr;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #e9eef5;
+      color: var(--text);
+      transition: transform 0.08s ease, opacity 0.2s ease;
+    }
+
+    button:hover { opacity: 0.95; }
+    button:active { transform: scale(0.98); }
+    button.primary { background: var(--accent); color: white; }
+    button.green { background: var(--green); color: white; }
+    button.orange { background: var(--orange); color: white; }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .stage {
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 12px;
+    }
+
+    .stage-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f4f7fb;
+      border: 1px solid var(--line);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.85fr;
+      gap: 14px;
+      min-height: 620px;
+    }
+
+    .canvas-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fbfcfe 0%, #f2f6fa 100%);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .canvas-title {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      color: var(--muted);
+      background: rgba(255,255,255,0.65);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .note {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-grid {
+        grid-template-columns: 1fr;
+        min-height: unset;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <div>
+        <h1>Predator-Prey Simulator</h1>
+        <div class="sub">A simplified ecosystem model showing prey, predators, and plant regrowth. Use it to explore how population cycles change when food supply, reproduction, and hunting pressure are adjusted.</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="playPauseBtn">Play</button>
+        <button id="resetBtn" class="orange">Reset</button>
+      </div>
+
+      <div class="btn-row">
+        <button id="step1Btn">Move 1 day</button>
+        <button id="step10Btn">Move 10 days</button>
+      </div>
+
+      <div class="btn-row">
+        <button id="addPreyBtn" class="green">Add prey</button>
+        <button id="addPredBtn" class="orange">Add predator</button>
+      </div>
+
+      <div class="btn-row single">
+        <button id="downloadBtn" class="primary">Download data (CSV)</button>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <div class="label-line"><span>Simulation speed</span><span id="speedValue" class="value">1.0×</span></div>
+          <input id="speed" type="range" min="0.2" max="3" step="0.1" value="1" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Initial prey</span><span id="preyValue" class="value">40</span></div>
+          <input id="initialPrey" type="range" min="10" max="120" step="1" value="40" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Initial predators</span><span id="predValue" class="value">8</span></div>
+          <input id="initialPredators" type="range" min="2" max="40" step="1" value="8" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Plant regrowth</span><span id="regrowthValue" class="value">55%</span></div>
+          <input id="plantRegrowth" type="range" min="5" max="100" step="1" value="55" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Prey reproduction</span><span id="preyReproValue" class="value">45%</span></div>
+          <input id="preyReproduction" type="range" min="5" max="100" step="1" value="45" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Predator reproduction</span><span id="predReproValue" class="value">28%</span></div>
+          <input id="predatorReproduction" type="range" min="5" max="100" step="1" value="28" />
+        </div>
+        <div class="row">
+          <div class="label-line"><span>Predator hunger</span><span id="hungerValue" class="value">50%</span></div>
+          <input id="predatorHunger" type="range" min="10" max="100" step="1" value="50" />
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="checkbox-row"><input id="showGrid" type="checkbox" /> Show grid</label>
+        <label class="checkbox-row"><input id="trails" type="checkbox" checked /> Fade trails</label>
+      </div>
+
+      <div class="group note">
+        This is a conceptual model. It is designed to show general predator-prey cycling rather than exact field data. It works well for discussing carrying capacity, limiting factors, feedback loops, and ecosystem stability.
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div class="stage-top">
+        <div class="badge-row">
+          <div class="badge" id="ecosystemBadge">Ecosystem state: balanced</div>
+          <div class="badge" id="phaseBadge">Trend: stable</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Prey</div>
+          <div class="stat-value" id="preyStat">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Predators</div>
+          <div class="stat-value" id="predStat">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Plant cover</div>
+          <div class="stat-value" id="plantStat">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Predator success</div>
+          <div class="stat-value" id="huntStat">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Elapsed time</div>
+          <div class="stat-value" id="timeStat">0 days</div>
+        </div>
+      </div>
+
+      <div class="canvas-grid">
+        <div class="canvas-card">
+          <div class="canvas-title">Ecosystem</div>
+          <canvas id="worldCanvas" width="920" height="620"></canvas>
+        </div>
+        <div class="canvas-card">
+          <div class="canvas-title">Population graph</div>
+          <canvas id="graphCanvas" width="520" height="620"></canvas>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="dot" style="background:#8fcf6d"></span>Plant-rich area</div>
+        <div class="legend-item"><span class="dot" style="background:#f2f0c9"></span>Low plant area</div>
+        <div class="legend-item"><span class="dot" style="background:#d5d5d5"></span>Prey</div>
+        <div class="legend-item"><span class="dot" style="background:#d46b1d"></span>Predators</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const worldCanvas = document.getElementById('worldCanvas');
+    const worldCtx = worldCanvas.getContext('2d');
+    const graphCanvas = document.getElementById('graphCanvas');
+    const graphCtx = graphCanvas.getContext('2d');
+
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const step1Btn = document.getElementById('step1Btn');
+    const step10Btn = document.getElementById('step10Btn');
+    const addPreyBtn = document.getElementById('addPreyBtn');
+    const addPredBtn = document.getElementById('addPredBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    const speedInput = document.getElementById('speed');
+    const initialPreyInput = document.getElementById('initialPrey');
+    const initialPredatorsInput = document.getElementById('initialPredators');
+    const plantRegrowthInput = document.getElementById('plantRegrowth');
+    const preyReproductionInput = document.getElementById('preyReproduction');
+    const predatorReproductionInput = document.getElementById('predatorReproduction');
+    const predatorHungerInput = document.getElementById('predatorHunger');
+    const showGridInput = document.getElementById('showGrid');
+    const trailsInput = document.getElementById('trails');
+
+    const speedValue = document.getElementById('speedValue');
+    const preyValue = document.getElementById('preyValue');
+    const predValue = document.getElementById('predValue');
+    const regrowthValue = document.getElementById('regrowthValue');
+    const preyReproValue = document.getElementById('preyReproValue');
+    const predReproValue = document.getElementById('predReproValue');
+    const hungerValue = document.getElementById('hungerValue');
+
+    const preyStat = document.getElementById('preyStat');
+    const predStat = document.getElementById('predStat');
+    const plantStat = document.getElementById('plantStat');
+    const huntStat = document.getElementById('huntStat');
+    const timeStat = document.getElementById('timeStat');
+    const ecosystemBadge = document.getElementById('ecosystemBadge');
+    const phaseBadge = document.getElementById('phaseBadge');
+
+    const WORLD_W = worldCanvas.width;
+    const WORLD_H = worldCanvas.height;
+    const GRID = 46;
+    const CELL_W = WORLD_W / GRID;
+    const CELL_H = WORLD_H / GRID;
+    const MAX_GRAPH_POINTS = 220;
+
+    let running = false;
+    let lastTime = 0;
+    let day = 0;
+    let prey = [];
+    let predators = [];
+    let plants = [];
+    let history = [];
+    let lastHuntRate = 0;
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function updatePlayPauseButton() {
+      playPauseBtn.textContent = running ? 'Pause' : 'Play';
+      playPauseBtn.classList.toggle('primary', running);
+    }
+
+    function updateReadouts() {
+      speedValue.textContent = `${Number(speedInput.value).toFixed(1)}×`;
+      preyValue.textContent = initialPreyInput.value;
+      predValue.textContent = initialPredatorsInput.value;
+      regrowthValue.textContent = `${plantRegrowthInput.value}%`;
+      preyReproValue.textContent = `${preyReproductionInput.value}%`;
+      predReproValue.textContent = `${predatorReproductionInput.value}%`;
+      hungerValue.textContent = `${predatorHungerInput.value}%`;
+      updatePlayPauseButton();
+    }
+
+    function createPlants() {
+      plants = [];
+      for (let y = 0; y < GRID; y++) {
+        const row = [];
+        for (let x = 0; x < GRID; x++) {
+          row.push(0.45 + Math.random() * 0.55);
+        }
+        plants.push(row);
+      }
+    }
+
+    function createPrey(count) {
+      prey = [];
+      for (let i = 0; i < count; i++) {
+        prey.push({
+          x: rand(0, WORLD_W),
+          y: rand(0, WORLD_H),
+          energy: rand(10, 16),
+          age: rand(0, 20),
+          vx: rand(-1.4, 1.4),
+          vy: rand(-1.4, 1.4)
+        });
+      }
+    }
+
+    function createPredators(count) {
+      predators = [];
+      for (let i = 0; i < count; i++) {
+        predators.push({
+          x: rand(0, WORLD_W),
+          y: rand(0, WORLD_H),
+          energy: rand(16, 24),
+          age: rand(0, 25),
+          vx: rand(-1.6, 1.6),
+          vy: rand(-1.6, 1.6)
+        });
+      }
+    }
+
+    function addPrey(count = 6) {
+      for (let i = 0; i < count; i++) {
+        prey.push({
+          x: rand(0, WORLD_W),
+          y: rand(0, WORLD_H),
+          energy: rand(10, 15),
+          age: 0,
+          vx: rand(-1.2, 1.2),
+          vy: rand(-1.2, 1.2)
+        });
+      }
+    }
+
+    function addPredators(count = 2) {
+      for (let i = 0; i < count; i++) {
+        predators.push({
+          x: rand(0, WORLD_W),
+          y: rand(0, WORLD_H),
+          energy: rand(16, 22),
+          age: 0,
+          vx: rand(-1.5, 1.5),
+          vy: rand(-1.5, 1.5)
+        });
+      }
+    }
+
+    function resetSimulation() {
+      running = false;
+      day = 0;
+      history = [];
+      lastHuntRate = 0;
+      createPlants();
+      createPrey(Number(initialPreyInput.value));
+      createPredators(Number(initialPredatorsInput.value));
+      updateReadouts();
+      recordHistory();
+      drawWorld(true);
+      drawGraph();
+    }
+
+    function getPlantCell(x, y) {
+      const gx = clamp(Math.floor(x / CELL_W), 0, GRID - 1);
+      const gy = clamp(Math.floor(y / CELL_H), 0, GRID - 1);
+      return { gx, gy, value: plants[gy][gx] };
+    }
+
+    function regrowPlants(dtDays) {
+      const regrowth = Number(plantRegrowthInput.value) / 100;
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          plants[y][x] = clamp(plants[y][x] + (0.004 + regrowth * 0.02) * dtDays, 0, 1);
+        }
+      }
+    }
+
+    function moveAgent(agent, speedBase, dtDays) {
+      agent.vx += rand(-0.35, 0.35) * dtDays;
+      agent.vy += rand(-0.35, 0.35) * dtDays;
+      const speed = Math.hypot(agent.vx, agent.vy) || 1;
+      const target = speedBase * (0.7 + Math.random() * 0.6);
+      agent.vx = agent.vx / speed * target;
+      agent.vy = agent.vy / speed * target;
+      agent.x += agent.vx * dtDays * 6;
+      agent.y += agent.vy * dtDays * 6;
+
+      if (agent.x < 0) { agent.x = 0; agent.vx *= -1; }
+      if (agent.x > WORLD_W) { agent.x = WORLD_W; agent.vx *= -1; }
+      if (agent.y < 0) { agent.y = 0; agent.vy *= -1; }
+      if (agent.y > WORLD_H) { agent.y = WORLD_H; agent.vy *= -1; }
+    }
+
+    function updatePrey(dtDays) {
+      const repro = Number(preyReproductionInput.value) / 100;
+      const newborns = [];
+
+      for (let i = prey.length - 1; i >= 0; i--) {
+        const p = prey[i];
+        moveAgent(p, 1.1, dtDays);
+        p.age += dtDays;
+        p.energy -= (0.22 + prey.length * 0.0008) * dtDays;
+
+        const cell = getPlantCell(p.x, p.y);
+        const eaten = Math.min(cell.value, 0.14 * dtDays);
+        plants[cell.gy][cell.gx] -= eaten;
+        p.energy += eaten * 17;
+
+        if (p.energy > 19 && Math.random() < repro * 0.04 * dtDays && prey.length + newborns.length < 260) {
+          p.energy *= 0.62;
+          newborns.push({
+            x: clamp(p.x + rand(-10, 10), 0, WORLD_W),
+            y: clamp(p.y + rand(-10, 10), 0, WORLD_H),
+            energy: 9,
+            age: 0,
+            vx: rand(-1.2, 1.2),
+            vy: rand(-1.2, 1.2)
+          });
+        }
+
+        if (p.energy <= 0 || p.age > 100) {
+          prey.splice(i, 1);
+        }
+      }
+
+      prey.push(...newborns);
+    }
+
+    function updatePredators(dtDays) {
+      const repro = Number(predatorReproductionInput.value) / 100;
+      const hunger = Number(predatorHungerInput.value) / 100;
+      const newborns = [];
+      let hunts = 0;
+      let successful = 0;
+
+      for (let i = predators.length - 1; i >= 0; i--) {
+        const d = predators[i];
+        d.age += dtDays;
+        d.energy -= (0.36 + hunger * 0.42 + predators.length * 0.0015) * dtDays;
+
+        let target = null;
+        let bestDist = Infinity;
+        for (let j = 0; j < prey.length; j++) {
+          const p = prey[j];
+          const dx = p.x - d.x;
+          const dy = p.y - d.y;
+          const dist = dx * dx + dy * dy;
+          if (dist < bestDist && dist < 140 * 140) {
+            bestDist = dist;
+            target = p;
+          }
+        }
+
+        if (target) {
+          const dx = target.x - d.x;
+          const dy = target.y - d.y;
+          const mag = Math.hypot(dx, dy) || 1;
+          d.vx += (dx / mag) * 0.55 * dtDays;
+          d.vy += (dy / mag) * 0.55 * dtDays;
+        }
+
+        moveAgent(d, 1.45 + hunger * 0.5, dtDays);
+
+        hunts++;
+        for (let j = prey.length - 1; j >= 0; j--) {
+          const p = prey[j];
+          const dist = Math.hypot(p.x - d.x, p.y - d.y);
+          if (dist < 9) {
+            prey.splice(j, 1);
+            d.energy += 11;
+            successful++;
+            break;
+          }
+        }
+
+        if (d.energy > 27 && Math.random() < repro * 0.02 * dtDays && predators.length + newborns.length < 90) {
+          d.energy *= 0.58;
+          newborns.push({
+            x: clamp(d.x + rand(-12, 12), 0, WORLD_W),
+            y: clamp(d.y + rand(-12, 12), 0, WORLD_H),
+            energy: 13,
+            age: 0,
+            vx: rand(-1.4, 1.4),
+            vy: rand(-1.4, 1.4)
+          });
+        }
+
+        if (d.energy <= 0 || d.age > 120) {
+          predators.splice(i, 1);
+        }
+      }
+
+      predators.push(...newborns);
+      lastHuntRate = hunts ? successful / hunts : 0;
+    }
+
+    function recordHistory() {
+      let plantTotal = 0;
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          plantTotal += plants[y][x];
+        }
+      }
+      const plantCover = plantTotal / (GRID * GRID);
+      history.push({ day, prey: prey.length, predators: predators.length, plantCover, huntRate: lastHuntRate });
+      if (history.length > MAX_GRAPH_POINTS) history.shift();
+      updateStats(plantCover);
+    }
+
+    function updateStats(plantCover) {
+      preyStat.textContent = prey.length;
+      predStat.textContent = predators.length;
+      plantStat.textContent = `${Math.round(plantCover * 100)}%`;
+      huntStat.textContent = `${Math.round(lastHuntRate * 100)}%`;
+      timeStat.textContent = `${Math.round(day)} days`;
+
+      let ecosystemState = 'balanced';
+      if (prey.length < 6 && predators.length > 0) ecosystemState = 'prey collapse';
+      else if (predators.length === 0 && prey.length > 0) ecosystemState = 'predator loss';
+      else if (prey.length > 150 && plantCover < 0.3) ecosystemState = 'overgrazing';
+      else if (prey.length > 0 && predators.length > 0 && plantCover > 0.45) ecosystemState = 'balanced';
+      else if (prey.length === 0 && predators.length === 0) ecosystemState = 'extinction';
+      else ecosystemState = 'unstable';
+
+      ecosystemBadge.textContent = `Ecosystem state: ${ecosystemState}`;
+
+      const recent = history.slice(-20);
+      if (recent.length > 4) {
+        const preyDelta = recent[recent.length - 1].prey - recent[0].prey;
+        const predDelta = recent[recent.length - 1].predators - recent[0].predators;
+        let trend = 'stable';
+        if (preyDelta > 12 && predDelta <= 2) trend = 'prey rising';
+        else if (predDelta > 4 && preyDelta < 0) trend = 'predators rising';
+        else if (preyDelta < -12 && predDelta < -3) trend = 'decline';
+        else if (Math.abs(preyDelta) + Math.abs(predDelta) > 18) trend = 'oscillating';
+        phaseBadge.textContent = `Trend: ${trend}`;
+      }
+    }
+
+    function simulateDays(daysToAdvance) {
+      const chunk = 0.5;
+      let remaining = daysToAdvance;
+      while (remaining > 0) {
+        const dtDays = Math.min(chunk, remaining);
+        day += dtDays;
+        regrowPlants(dtDays);
+        updatePrey(dtDays);
+        updatePredators(dtDays);
+        remaining -= dtDays;
+      }
+      recordHistory();
+      drawWorld();
+      drawGraph();
+    }
+
+    function drawWorld(clearAll = false) {
+      if (clearAll || !trailsInput.checked) {
+        worldCtx.clearRect(0, 0, WORLD_W, WORLD_H);
+      } else {
+        worldCtx.fillStyle = 'rgba(250, 252, 253, 0.16)';
+        worldCtx.fillRect(0, 0, WORLD_W, WORLD_H);
+      }
+
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          const g = plants[y][x];
+          const red = Math.round(242 - g * 95);
+          const green = Math.round(236 - g * 28 + g * 70);
+          const blue = Math.round(201 - g * 120);
+          worldCtx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+          worldCtx.fillRect(x * CELL_W, y * CELL_H, CELL_W + 0.5, CELL_H + 0.5);
+        }
+      }
+
+      if (showGridInput.checked) {
+        worldCtx.strokeStyle = 'rgba(0,0,0,0.08)';
+        worldCtx.lineWidth = 1;
+        for (let x = 0; x <= GRID; x++) {
+          worldCtx.beginPath();
+          worldCtx.moveTo(x * CELL_W, 0);
+          worldCtx.lineTo(x * CELL_W, WORLD_H);
+          worldCtx.stroke();
+        }
+        for (let y = 0; y <= GRID; y++) {
+          worldCtx.beginPath();
+          worldCtx.moveTo(0, y * CELL_H);
+          worldCtx.lineTo(WORLD_W, y * CELL_H);
+          worldCtx.stroke();
+        }
+      }
+
+      for (const p of prey) {
+        worldCtx.fillStyle = '#dadde2';
+        worldCtx.beginPath();
+        worldCtx.arc(p.x, p.y, 4.3, 0, Math.PI * 2);
+        worldCtx.fill();
+        worldCtx.strokeStyle = 'rgba(60,60,60,0.25)';
+        worldCtx.lineWidth = 1;
+        worldCtx.stroke();
+      }
+
+      for (const d of predators) {
+        worldCtx.fillStyle = '#d46b1d';
+        worldCtx.beginPath();
+        worldCtx.arc(d.x, d.y, 6, 0, Math.PI * 2);
+        worldCtx.fill();
+        worldCtx.strokeStyle = 'rgba(70,30,0,0.22)';
+        worldCtx.lineWidth = 1.2;
+        worldCtx.stroke();
+      }
+    }
+
+    function downloadCSV() {
+      if (!history.length) recordHistory();
+
+      const rows = [
+        ['setting', 'value'],
+        ['initial_prey', initialPreyInput.value],
+        ['initial_predators', initialPredatorsInput.value],
+        ['plant_regrowth_percent', plantRegrowthInput.value],
+        ['prey_reproduction_percent', preyReproductionInput.value],
+        ['predator_reproduction_percent', predatorReproductionInput.value],
+        ['predator_hunger_percent', predatorHungerInput.value],
+        ['simulation_speed', Number(speedInput.value).toFixed(1)],
+        [],
+        ['day', 'prey', 'predators', 'plant_cover_percent', 'hunt_success_percent']
+      ];
+
+      history.forEach(entry => {
+        rows.push([
+          entry.day.toFixed(2),
+          entry.prey,
+          entry.predators,
+          (entry.plantCover * 100).toFixed(2),
+          ((entry.huntRate || 0) * 100).toFixed(2)
+        ]);
+      });
+
+      const csv = rows
+        .map(row => row.map(value => `${value}`.includes(',') ? `"${`${value}`.replace(/"/g, '""')}"` : `${value}`).join(','))
+        .join('\\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `predator_prey_data_day_${Math.round(day)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function drawGraph() {
+      const W = graphCanvas.width;
+      const H = graphCanvas.height;
+      graphCtx.clearRect(0, 0, W, H);
+
+      graphCtx.fillStyle = '#fbfcfe';
+      graphCtx.fillRect(0, 0, W, H);
+
+      const padL = 54;
+      const padR = 18;
+      const padT = 18;
+      const padB = 42;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+
+      graphCtx.strokeStyle = 'rgba(0,0,0,0.08)';
+      graphCtx.lineWidth = 1;
+      for (let i = 0; i <= 5; i++) {
+        const y = padT + innerH * (i / 5);
+        graphCtx.beginPath();
+        graphCtx.moveTo(padL, y);
+        graphCtx.lineTo(W - padR, y);
+        graphCtx.stroke();
+      }
+
+      graphCtx.beginPath();
+      graphCtx.moveTo(padL, padT);
+      graphCtx.lineTo(padL, H - padB);
+      graphCtx.lineTo(W - padR, H - padB);
+      graphCtx.strokeStyle = '#93a4b3';
+      graphCtx.lineWidth = 2;
+      graphCtx.stroke();
+
+      graphCtx.fillStyle = '#6a7882';
+      graphCtx.font = '12px Arial';
+      graphCtx.fillText('Population / cover', 16, 14);
+      graphCtx.fillText('Time', W - 48, H - 14);
+
+      if (history.length < 2) return;
+
+      const maxPop = Math.max(20,
+        ...history.map(h => h.prey),
+        ...history.map(h => h.predators * 3)
+      );
+
+      function mapX(i) {
+        return padL + (i / (history.length - 1)) * innerW;
+      }
+
+      function mapY(v) {
+        return padT + innerH - (v / maxPop) * innerH;
+      }
+
+      function drawSeries(getValue, strokeStyle, lineWidth = 3) {
+        graphCtx.beginPath();
+        history.forEach((h, i) => {
+          const x = mapX(i);
+          const y = mapY(getValue(h));
+          if (i === 0) graphCtx.moveTo(x, y);
+          else graphCtx.lineTo(x, y);
+        });
+        graphCtx.strokeStyle = strokeStyle;
+        graphCtx.lineWidth = lineWidth;
+        graphCtx.stroke();
+      }
+
+      drawSeries(h => h.prey, '#b9bdc3', 3);
+      drawSeries(h => h.predators * 3, '#d46b1d', 3);
+      drawSeries(h => h.plantCover * maxPop, '#5aa85c', 2.5);
+
+      graphCtx.fillStyle = '#7a8892';
+      graphCtx.font = '12px Arial';
+      graphCtx.fillText('Prey', padL + 6, padT + 14);
+      graphCtx.fillStyle = '#d46b1d';
+      graphCtx.fillText('Predators ×3', padL + 52, padT + 14);
+      graphCtx.fillStyle = '#5aa85c';
+      graphCtx.fillText('Plant cover', padL + 150, padT + 14);
+    }
+
+    function animate(ts) {
+      if (!lastTime) lastTime = ts;
+      const dt = Math.min(1.6, (ts - lastTime) / 16.6667);
+      lastTime = ts;
+
+      if (running) {
+        const speed = Number(speedInput.value);
+        const daysToAdvance = 0.18 * dt * speed;
+        simulateDays(daysToAdvance);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    playPauseBtn.addEventListener('click', () => {
+      running = !running;
+      updatePlayPauseButton();
+    });
+
+    resetBtn.addEventListener('click', resetSimulation);
+    step1Btn.addEventListener('click', () => simulateDays(1));
+    step10Btn.addEventListener('click', () => simulateDays(10));
+    addPreyBtn.addEventListener('click', () => { addPrey(); recordHistory(); drawWorld(); drawGraph(); });
+    addPredBtn.addEventListener('click', () => { addPredators(); recordHistory(); drawWorld(); drawGraph(); });
+    downloadBtn.addEventListener('click', downloadCSV);
+
+    [speedInput, initialPreyInput, initialPredatorsInput, plantRegrowthInput, preyReproductionInput, predatorReproductionInput, predatorHungerInput, showGridInput, trailsInput].forEach(el => {
+      el.addEventListener('input', updateReadouts);
+    });
+
+    updateReadouts();
+    resetSimulation();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
