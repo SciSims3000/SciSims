@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Oscillator Stereo Simulator</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1f2430;
+      --line: #343b4d;
+      --text: #edf1f7;
+      --muted: #9aa7bd;
+      --accent: #67b3ff;
+      --accent-2: #92f0c4;
+      --danger: #ff7c7c;
+      --canvas: #090b10;
+      --good: #7ef7a6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b0d11 0%, #11141b 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.96rem;
+      margin-top: 6px;
+    }
+
+    .topbar, .panel {
+      background: rgba(23, 26, 33, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+    }
+
+    .topbar {
+      padding: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .master-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    button, select, input[type="number"] {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover { filter: brightness(1.08); }
+    button.active { outline: 2px solid var(--accent); }
+
+    .play {
+      background: linear-gradient(180deg, #1f68d5 0%, #164ea3 100%);
+      border-color: #2e73dd;
+    }
+
+    .mute-btn.muted {
+      background: linear-gradient(180deg, #7e2d2d 0%, #631f1f 100%);
+      border-color: #9a3b3b;
+    }
+
+    .master-volume {
+      min-width: 260px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .osc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .osc-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .knob-wrap {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .knob {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #3f475b 0%, #262c39 45%, #171c24 75%, #10141a 100%);
+      border: 2px solid #49526a;
+      position: relative;
+      cursor: ns-resize;
+      user-select: none;
+      touch-action: none;
+      box-shadow:
+        inset 0 6px 16px rgba(255,255,255,0.06),
+        inset 0 -14px 18px rgba(0,0,0,0.35),
+        0 10px 18px rgba(0,0,0,0.25);
+    }
+
+    .knob::after {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .indicator {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 4px;
+      height: 34px;
+      margin-left: -2px;
+      margin-top: -42px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, #d8ebff 0%, var(--accent) 100%);
+      transform-origin: 50% 42px;
+      box-shadow: 0 0 10px rgba(103,179,255,0.4);
+    }
+
+    .knob-caption {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .readout {
+      font-weight: 700;
+      color: var(--good);
+      min-height: 22px;
+    }
+
+    .control-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 120px 1fr 80px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .row label {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .presets button {
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+
+    .views {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+
+
+    .views-bottom {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .view.superposition canvas {
+      height: 280px;
+    }
+    .view {
+      background: rgba(23, 26, 33, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+    }
+
+    .view h2 {
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 250px;
+      display: block;
+      border-radius: 12px;
+      background: var(--canvas);
+      border: 1px solid #2b3242;
+    }
+
+    .footer-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #222938;
+      border: 1px solid #394258;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      color: #cfe2ff;
+    }
+
+    @media (max-width: 1100px) {
+      .views { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .controls-grid { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 110px 1fr 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Dual Oscillator Stereo Simulator</h1>
+        <div class="sub">Two independent tone generators with live waveform displays, stereo panning, phase offset, waveform selection, presets, and combined signal analysis. In Chrome, click Start Audio after opening the file.</div>
+      </div>
+      <div class="master-controls">
+        <button id="playBtn" class="play">Start Audio</button>
+        <button id="freezeBtn">Freeze Views</button>
+        <button id="resetBtn">Reset</button>
+        <select id="combinedMode">
+          <option value="output">Combined view: stereo output</option>
+          <option value="math">Combined view: mathematical sum</option>
+        </select>
+        <div class="master-volume">
+          <label for="masterVolume">Master volume: <span id="masterVolumeLabel">0.40</span></label>
+          <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="0.40" />
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel" id="oscA">
+        <div class="osc-header">
+          <div>
+            <div class="osc-title">Signal A</div>
+            <div class="status" id="statusA">Ready</div>
+          </div>
+          <button class="mute-btn" id="muteA">Mute A</button>
+        </div>
+        <div class="controls-grid">
+          <div class="knob-wrap">
+            <div class="knob" id="knobA" aria-label="Frequency knob A" role="slider" tabindex="0">
+              <div class="indicator" id="indicatorA"></div>
+            </div>
+            <div class="knob-caption">Frequency knob</div>
+            <div class="readout" id="freqReadoutA">440 Hz</div>
+          </div>
+          <div class="control-list">
+            <div class="row">
+              <label for="freqA">Freq input</label>
+              <input id="freqA" type="number" min="20" max="20000" step="1" value="440" />
+              <span>Hz</span>
+            </div>
+            <div class="row">
+              <label for="waveA">Waveform</label>
+              <select id="waveA">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+              </select>
+              <span></span>
+            </div>
+            <div class="row">
+              <label for="gainA">Level</label>
+              <input id="gainA" type="range" min="0" max="1" step="0.01" value="0.40" />
+              <span id="gainLabelA">0.40</span>
+            </div>
+            <div class="row">
+              <label for="panA">Pan</label>
+              <input id="panA" type="range" min="-1" max="1" step="0.01" value="-0.60" />
+              <span id="panLabelA">L 0.60</span>
+            </div>
+            <div class="row">
+              <label for="phaseA">Phase</label>
+              <input id="phaseA" type="range" min="0" max="360" step="1" value="0" />
+              <span id="phaseLabelA">0°</span>
+            </div>
+            <div class="presets">
+              <button data-target="A" data-freq="20">20 Hz</button>
+              <button data-target="A" data-freq="100">100 Hz</button>
+              <button data-target="A" data-freq="440">440 Hz</button>
+              <button data-target="A" data-freq="1000">1000 Hz</button>
+              <button data-target="A" data-freq="10000">10000 Hz</button>
+              <button data-target="A" data-freq="20000">20000 Hz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="oscB">
+        <div class="osc-header">
+          <div>
+            <div class="osc-title">Signal B</div>
+            <div class="status" id="statusB">Ready</div>
+          </div>
+          <button class="mute-btn" id="muteB">Mute B</button>
+        </div>
+        <div class="controls-grid">
+          <div class="knob-wrap">
+            <div class="knob" id="knobB" aria-label="Frequency knob B" role="slider" tabindex="0">
+              <div class="indicator" id="indicatorB"></div>
+            </div>
+            <div class="knob-caption">Frequency knob</div>
+            <div class="readout" id="freqReadoutB">444 Hz</div>
+          </div>
+          <div class="control-list">
+            <div class="row">
+              <label for="freqB">Freq input</label>
+              <input id="freqB" type="number" min="20" max="20000" step="1" value="444" />
+              <span>Hz</span>
+            </div>
+            <div class="row">
+              <label for="waveB">Waveform</label>
+              <select id="waveB">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+              </select>
+              <span></span>
+            </div>
+            <div class="row">
+              <label for="gainB">Level</label>
+              <input id="gainB" type="range" min="0" max="1" step="0.01" value="0.40" />
+              <span id="gainLabelB">0.40</span>
+            </div>
+            <div class="row">
+              <label for="panB">Pan</label>
+              <input id="panB" type="range" min="-1" max="1" step="0.01" value="0.60" />
+              <span id="panLabelB">R 0.60</span>
+            </div>
+            <div class="row">
+              <label for="phaseB">Phase</label>
+              <input id="phaseB" type="range" min="0" max="360" step="1" value="0" />
+              <span id="phaseLabelB">0°</span>
+            </div>
+            <div class="presets">
+              <button data-target="B" data-freq="20">20 Hz</button>
+              <button data-target="B" data-freq="100">100 Hz</button>
+              <button data-target="B" data-freq="440">440 Hz</button>
+              <button data-target="B" data-freq="1000">1000 Hz</button>
+              <button data-target="B" data-freq="10000">10000 Hz</button>
+              <button data-target="B" data-freq="20000">20000 Hz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="views">
+      <div class="view">
+        <h2>Signal A View</h2>
+        <div class="meta" id="metaA"></div>
+        <canvas id="canvasA" width="440" height="250"></canvas>
+      </div>
+      <div class="view">
+        <h2>Signal B View</h2>
+        <div class="meta" id="metaB"></div>
+        <canvas id="canvasB" width="440" height="250"></canvas>
+      </div>
+      <div class="view">
+        <h2>Combined View</h2>
+        <div class="meta" id="metaCombined"></div>
+        <canvas id="canvasCombined" width="440" height="250"></canvas>
+      </div>
+    </div>
+
+    <div class="views-bottom">
+      <div class="view superposition">
+        <h2>Superposition View</h2>
+        <div class="meta" id="metaSuperposition">Mathematical sum of Signal A and Signal B.</div>
+        <canvas id="canvasSuperposition" width="1380" height="280"></canvas>
+      </div>
+    </div>
+
+    <div class="panel footer-note">
+      <div><span class="tag">Tip</span>Close frequencies such as 440 Hz and 444 Hz make beat patterns easier to hear and see.</div>
+      <div><span class="tag">Pan</span>Hard left is -1.00 and hard right is +1.00.</div>
+      <div><span class="tag">Combined modes</span><strong>Stereo output</strong> reflects what is being sent to the speakers. <strong>Mathematical sum</strong> ignores stereo placement and simply adds the two waveforms together.</div>
+    </div>
+  </div>
+
+  <script>
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const logMin = Math.log10(20);
+    const logMax = Math.log10(20000);
+
+    function freqToNorm(freq) {
+      const safe = clamp(freq, 20, 20000);
+      return (Math.log10(safe) - logMin) / (logMax - logMin);
+    }
+
+    function normToFreq(norm) {
+      const n = clamp(norm, 0, 1);
+      return Math.pow(10, logMin + n * (logMax - logMin));
+    }
+
+    function formatPan(v) {
+      const n = Math.abs(v).toFixed(2);
+      if (v < -0.01) return `L ${n}`;
+      if (v > 0.01) return `R ${n}`;
+      return 'Centre';
+    }
+
+    class Knob {
+      constructor(el, indicator, onChange, initialFreq) {
+        this.el = el;
+        this.indicator = indicator;
+        this.onChange = onChange;
+        this.norm = freqToNorm(initialFreq);
+        this.dragging = false;
+        this.lastY = 0;
+        this.setNorm(this.norm);
+        this.attach();
+      }
+
+      setNorm(norm) {
+        this.norm = clamp(norm, 0, 1);
+        const angle = -135 + this.norm * 270;
+        this.indicator.style.transform = `rotate(${angle}deg)`;
+        this.el.setAttribute('aria-valuenow', Math.round(normToFreq(this.norm)));
+      }
+
+      attach() {
+        this.el.addEventListener('pointerdown', (e) => {
+          this.dragging = true;
+          this.lastY = e.clientY;
+          this.el.setPointerCapture(e.pointerId);
+        });
+
+        this.el.addEventListener('pointermove', (e) => {
+          if (!this.dragging) return;
+          const dy = this.lastY - e.clientY;
+          this.lastY = e.clientY;
+          this.setNorm(this.norm + dy * 0.0035);
+          this.onChange(Math.round(normToFreq(this.norm)));
+        });
+
+        const stop = () => { this.dragging = false; };
+        this.el.addEventListener('pointerup', stop);
+        this.el.addEventListener('pointercancel', stop);
+        this.el.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.018 : -0.018;
+          this.setNorm(this.norm + delta);
+          this.onChange(Math.round(normToFreq(this.norm)));
+        }, { passive: false });
+
+        this.el.addEventListener('keydown', (e) => {
+          let delta = 0;
+          if (e.key === 'ArrowUp' || e.key === 'ArrowRight') delta = 0.01;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') delta = -0.01;
+          if (!delta) return;
+          e.preventDefault();
+          this.setNorm(this.norm + delta);
+          this.onChange(Math.round(normToFreq(this.norm)));
+        });
+      }
+    }
+
+    const defaultState = {
+      started: false,
+      frozen: false,
+      combinedMode: 'output',
+      masterVolume: 0.40,
+      A: { freq: 440, wave: 'sine', gain: 0.40, pan: -0.60, phase: 0, mute: false },
+      B: { freq: 444, wave: 'sine', gain: 0.40, pan: 0.60, phase: 0, mute: false }
+    };
+
+    const state = JSON.parse(JSON.stringify(defaultState));
+
+    const ui = {
+      playBtn: document.getElementById('playBtn'),
+      freezeBtn: document.getElementById('freezeBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      combinedMode: document.getElementById('combinedMode'),
+      masterVolume: document.getElementById('masterVolume'),
+      masterVolumeLabel: document.getElementById('masterVolumeLabel'),
+      A: {
+        freqInput: document.getElementById('freqA'),
+        readout: document.getElementById('freqReadoutA'),
+        wave: document.getElementById('waveA'),
+        gain: document.getElementById('gainA'),
+        gainLabel: document.getElementById('gainLabelA'),
+        pan: document.getElementById('panA'),
+        panLabel: document.getElementById('panLabelA'),
+        phase: document.getElementById('phaseA'),
+        phaseLabel: document.getElementById('phaseLabelA'),
+        mute: document.getElementById('muteA'),
+        status: document.getElementById('statusA'),
+        meta: document.getElementById('metaA'),
+        canvas: document.getElementById('canvasA'),
+      },
+      B: {
+        freqInput: document.getElementById('freqB'),
+        readout: document.getElementById('freqReadoutB'),
+        wave: document.getElementById('waveB'),
+        gain: document.getElementById('gainB'),
+        gainLabel: document.getElementById('gainLabelB'),
+        pan: document.getElementById('panB'),
+        panLabel: document.getElementById('panLabelB'),
+        phase: document.getElementById('phaseB'),
+        phaseLabel: document.getElementById('phaseLabelB'),
+        mute: document.getElementById('muteB'),
+        status: document.getElementById('statusB'),
+        meta: document.getElementById('metaB'),
+        canvas: document.getElementById('canvasB'),
+      },
+      combinedMeta: document.getElementById('metaCombined'),
+      combinedCanvas: document.getElementById('canvasCombined'),
+      superpositionMeta: document.getElementById('metaSuperposition'),
+      superpositionCanvas: document.getElementById('canvasSuperposition')
+    };
+
+    let audio = null;
+
+    async function initAudio() {
+      if (audio) return audio;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const processor = ctx.createScriptProcessor(1024, 0, 2);
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = state.masterVolume;
+
+      audio = {
+        ctx,
+        processor,
+        masterGain,
+        phaseA: 0,
+        phaseB: 0,
+        lastPhaseDegA: state.A.phase,
+        lastPhaseDegB: state.B.phase
+      };
+
+      processor.onaudioprocess = (event) => {
+        const left = event.outputBuffer.getChannelData(0);
+        const right = event.outputBuffer.getChannelData(1);
+        const sr = ctx.sampleRate;
+
+        const phaseShiftA = (state.A.phase - audio.lastPhaseDegA) / 360;
+        const phaseShiftB = (state.B.phase - audio.lastPhaseDegB) / 360;
+        if (Math.abs(phaseShiftA) > 1e-9) {
+          audio.phaseA += phaseShiftA;
+          audio.lastPhaseDegA = state.A.phase;
+        }
+        if (Math.abs(phaseShiftB) > 1e-9) {
+          audio.phaseB += phaseShiftB;
+          audio.lastPhaseDegB = state.B.phase;
+        }
+
+        const leftGainA = (1 - state.A.pan) / 2;
+        const rightGainA = (1 + state.A.pan) / 2;
+        const leftGainB = (1 - state.B.pan) / 2;
+        const rightGainB = (1 + state.B.pan) / 2;
+
+        for (let i = 0; i < left.length; i++) {
+          audio.phaseA += state.A.freq / sr;
+          audio.phaseB += state.B.freq / sr;
+
+          const sampleA = state.A.mute ? 0 : waveSample(state.A.wave, audio.phaseA) * state.A.gain;
+          const sampleB = state.B.mute ? 0 : waveSample(state.B.wave, audio.phaseB) * state.B.gain;
+
+          left[i] = (sampleA * leftGainA + sampleB * leftGainB);
+          right[i] = (sampleA * rightGainA + sampleB * rightGainB);
+        }
+      };
+
+      processor.connect(masterGain);
+      masterGain.connect(ctx.destination);
+      return audio;
+    }
+
+    function applyVoiceToAudio(key) {
+      if (!audio) return;
+      if (key === 'A') {
+        audio.lastPhaseDegA = state.A.phase;
+      } else {
+        audio.lastPhaseDegB = state.B.phase;
+      }
+    }
+
+    function applyAllToAudio() {
+      if (!audio) return;
+      audio.masterGain.gain.setValueAtTime(state.masterVolume, audio.ctx.currentTime);
+      audio.lastPhaseDegA = state.A.phase;
+      audio.lastPhaseDegB = state.B.phase;
+    }
+
+    function syncUIFor(key) {
+      const s = state[key];
+      const u = ui[key];
+      u.freqInput.value = s.freq;
+      u.readout.textContent = `${s.freq} Hz`;
+      u.wave.value = s.wave;
+      u.gain.value = s.gain;
+      u.gainLabel.textContent = Number(s.gain).toFixed(2);
+      u.pan.value = s.pan;
+      u.panLabel.textContent = formatPan(Number(s.pan));
+      u.phase.value = s.phase;
+      u.phaseLabel.textContent = `${s.phase}°`;
+      u.status.textContent = s.mute ? 'Muted' : (state.started ? 'Audio running' : 'Ready');
+      u.mute.classList.toggle('muted', s.mute);
+      u.meta.textContent = `${s.wave} • ${s.freq} Hz • level ${Number(s.gain).toFixed(2)} • pan ${formatPan(Number(s.pan))} • phase ${s.phase}°`;
+    }
+
+    function syncMasterUI() {
+      ui.masterVolume.value = state.masterVolume;
+      ui.masterVolumeLabel.textContent = Number(state.masterVolume).toFixed(2);
+      ui.combinedMode.value = state.combinedMode;
+      ui.combinedMeta.textContent = state.combinedMode === 'output'
+        ? 'Stereo output mode: reflects speaker placement and panning.'
+        : 'Mathematical sum mode: adds the two waveforms without stereo placement.';
+      ui.superpositionMeta.textContent = `A + B mathematical sum • A ${state.A.freq} Hz • B ${state.B.freq} Hz`;
+      ui.freezeBtn.classList.toggle('active', state.frozen);
+      ui.playBtn.textContent = state.started ? 'Pause Audio' : 'Start Audio';
+    }
+
+    const knobA = new Knob(document.getElementById('knobA'), document.getElementById('indicatorA'), (freq) => setFreq('A', freq), state.A.freq);
+    const knobB = new Knob(document.getElementById('knobB'), document.getElementById('indicatorB'), (freq) => setFreq('B', freq), state.B.freq);
+
+    function updateKnob(key) {
+      if (key === 'A') knobA.setNorm(freqToNorm(state.A.freq));
+      if (key === 'B') knobB.setNorm(freqToNorm(state.B.freq));
+    }
+
+    function setFreq(key, value) {
+      state[key].freq = clamp(Math.round(Number(value) || 440), 20, 20000);
+      syncUIFor(key);
+      updateKnob(key);
+      applyVoiceToAudio(key);
+    }
+
+    function waveSample(type, phaseCycles) {
+      const x = phaseCycles - Math.floor(phaseCycles);
+      switch (type) {
+        case 'square': return x < 0.5 ? 1 : -1;
+        case 'triangle': return 1 - 4 * Math.abs(x - 0.5);
+        case 'sawtooth': return 2 * x - 1;
+        default: return Math.sin(2 * Math.PI * x);
+      }
+    }
+
+    function getVisualSample(voice, t) {
+      const amp = voice.mute ? 0 : voice.gain;
+      const phase = voice.phase / 360;
+      return waveSample(voice.wave, t * voice.freq + phase) * amp;
+    }
+
+    function drawGrid(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#090b10';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(120, 140, 180, 0.15)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= w; x += w / 10) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y <= h; y += h / 8) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(190, 210, 255, 0.22)';
+      ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+    }
+
+    function drawSignal(canvas, generator, color, labelText) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      drawGrid(ctx, w, h);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      const now = performance.now() / 1000;
+      const displayWindow = 0.008;
+      for (let x = 0; x < w; x++) {
+        const t = now + (x / (w - 1)) * displayWindow;
+        const yNorm = generator(t);
+        const y = h / 2 - yNorm * h * 0.34;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(230, 240, 255, 0.82)';
+      ctx.font = '13px Arial';
+      ctx.fillText(labelText, 12, 20);
+    }
+
+    function drawCombined(canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      drawGrid(ctx, w, h);
+      const now = performance.now() / 1000;
+      const displayWindow = 0.008;
+      if (state.combinedMode === 'output') {
+        const leftGainA = (1 - state.A.pan) / 2;
+        const rightGainA = (1 + state.A.pan) / 2;
+        const leftGainB = (1 - state.B.pan) / 2;
+        const rightGainB = (1 + state.B.pan) / 2;
+
+        const drawChannel = (sampleFn, color) => {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.1;
+          ctx.beginPath();
+          for (let x = 0; x < w; x++) {
+            const t = now + (x / (w - 1)) * displayWindow;
+            const yNorm = sampleFn(t) * state.masterVolume;
+            const y = h / 2 - yNorm * h * 0.30;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        };
+
+        drawChannel((t) => getVisualSample(state.A, t) * leftGainA + getVisualSample(state.B, t) * leftGainB, '#7ef7a6');
+        drawChannel((t) => getVisualSample(state.A, t) * rightGainA + getVisualSample(state.B, t) * rightGainB, '#67b3ff');
+
+        ctx.fillStyle = 'rgba(230,240,255,0.82)';
+        ctx.font = '13px Arial';
+        ctx.fillText('Left output', 12, 20);
+        ctx.fillText('Right output', 12, 38);
+      } else {
+        ctx.strokeStyle = '#ffd77c';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+          const t = now + (x / (w - 1)) * displayWindow;
+          const sum = (getVisualSample(state.A, t) + getVisualSample(state.B, t)) * state.masterVolume;
+          const y = h / 2 - clamp(sum, -1.5, 1.5) * h * 0.25;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(230,240,255,0.82)';
+        ctx.font = '13px Arial';
+        ctx.fillText('A + B mathematical sum', 12, 20);
+      }
+    }
+
+
+    function drawSuperposition(canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      drawGrid(ctx, w, h);
+      const now = performance.now() / 1000;
+      const displayWindow = 0.008;
+      ctx.strokeStyle = '#ffd77c';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const t = now + (x / (w - 1)) * displayWindow;
+        const sum = (getVisualSample(state.A, t) + getVisualSample(state.B, t)) * state.masterVolume;
+        const y = h / 2 - clamp(sum, -1.5, 1.5) * h * 0.25;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(230,240,255,0.82)';
+      ctx.font = '13px Arial';
+      ctx.fillText('Superposition: A + B', 12, 20);
+    }
+
+    function animate() {
+      if (!state.frozen) {
+        drawSignal(ui.A.canvas, (t) => getVisualSample(state.A, t), '#67b3ff', 'Signal A');
+        drawSignal(ui.B.canvas, (t) => getVisualSample(state.B, t), '#92f0c4', 'Signal B');
+        drawCombined(ui.combinedCanvas);
+        drawSuperposition(ui.superpositionCanvas);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    ui.playBtn.addEventListener('click', async () => {
+      const a = await initAudio();
+      if (!state.started) {
+        await a.ctx.resume();
+        state.started = true;
+      } else {
+        await a.ctx.suspend();
+        state.started = false;
+      }
+      syncUIFor('A');
+      syncUIFor('B');
+      syncMasterUI();
+    });
+
+    ui.freezeBtn.addEventListener('click', () => {
+      state.frozen = !state.frozen;
+      syncMasterUI();
+    });
+
+    ui.resetBtn.addEventListener('click', () => {
+      const wasStarted = state.started;
+      Object.assign(state, JSON.parse(JSON.stringify(defaultState)));
+      state.started = wasStarted;
+      syncUIFor('A');
+      syncUIFor('B');
+      syncMasterUI();
+      updateKnob('A');
+      updateKnob('B');
+      applyAllToAudio();
+    });
+
+    ui.combinedMode.addEventListener('change', (e) => {
+      state.combinedMode = e.target.value;
+      syncMasterUI();
+    });
+
+    ui.masterVolume.addEventListener('input', (e) => {
+      state.masterVolume = Number(e.target.value);
+      syncMasterUI();
+      applyAllToAudio();
+    });
+
+    ['A', 'B'].forEach((key) => {
+      const u = ui[key];
+      u.freqInput.addEventListener('input', (e) => setFreq(key, e.target.value));
+      u.wave.addEventListener('change', (e) => {
+        state[key].wave = e.target.value;
+        syncUIFor(key);
+        applyVoiceToAudio(key);
+      });
+      u.gain.addEventListener('input', (e) => {
+        state[key].gain = Number(e.target.value);
+        syncUIFor(key);
+        applyVoiceToAudio(key);
+      });
+      u.pan.addEventListener('input', (e) => {
+        state[key].pan = Number(e.target.value);
+        syncUIFor(key);
+        applyVoiceToAudio(key);
+      });
+      u.phase.addEventListener('input', (e) => {
+        state[key].phase = Number(e.target.value);
+        syncUIFor(key);
+        applyVoiceToAudio(key);
+      });
+      u.mute.addEventListener('click', () => {
+        state[key].mute = !state[key].mute;
+        syncUIFor(key);
+        applyVoiceToAudio(key);
+      });
+    });
+
+    document.querySelectorAll('.presets button').forEach((btn) => {
+      btn.addEventListener('click', () => setFreq(btn.dataset.target, btn.dataset.freq));
+    });
+
+    syncUIFor('A');
+    syncUIFor('B');
+    syncMasterUI();
+    updateKnob('A');
+    updateKnob('B');
+    animate();
+  </script>
+</body>
+</html>
