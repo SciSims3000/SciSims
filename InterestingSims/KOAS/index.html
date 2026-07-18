@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Touch Pad Synth Simulator</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #151b24;
+      --panel2: #1b2330;
+      --line: #334055;
+      --text: #eef3fb;
+      --muted: #9eb0c7;
+      --accent: #67b3ff;
+      --accent2: #8df0c5;
+      --danger: #ff8181;
+      --padbg: #090c12;
+      --padglow: rgba(103, 179, 255, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0b0f14 0%, #121822 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1450px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(21, 27, 36, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.28);
+    }
+
+    .topbar {
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.85rem;
+    }
+
+    .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button, select, input[type="number"] {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover { filter: brightness(1.08); }
+    button.active { outline: 2px solid var(--accent); }
+    button.recording { outline: 2px solid var(--danger); }
+
+    .start-btn {
+      background: linear-gradient(180deg, #1d68d9 0%, #124a99 100%);
+      border-color: #2c73e0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(380px, 1.2fr) minmax(320px, 0.8fr);
+      gap: 18px;
+    }
+
+    .pad-panel {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .pad-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .readouts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      background: #20293a;
+      border: 1px solid #39455b;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.88rem;
+      color: #dce9ff;
+    }
+
+    .pad-wrap {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #2c3647;
+      background: var(--padbg);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 620px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .controls {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .group {
+      background: rgba(27, 35, 48, 0.8);
+      border: 1px solid #354157;
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .group h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      canvas { height: 520px; }
+    }
+
+    @media (max-width: 700px) {
+      .topbar { align-items: flex-start; }
+      .two-col { grid-template-columns: 1fr; }
+      canvas { height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel topbar">
+      <div>
+        <h1>Touch Pad Synth Simulator</h1>
+        <div class="sub">A simple X-Y synth inspired by touch-pad instruments. X controls scale-quantised pitch, Y controls filter brightness, with hold mode and a basic loop recorder.</div>
+      </div>
+      <div class="button-row">
+        <button id="startBtn" class="start-btn">Start Audio</button>
+        <button id="holdBtn">Hold Mode</button>
+        <button id="recordBtn">Record Loop</button>
+        <button id="playLoopBtn">Play Loop</button>
+        <button id="clearLoopBtn">Clear Loop</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="panel pad-panel">
+        <div class="pad-header">
+          <div>
+            <strong>Touch Pad</strong>
+            <div class="hint">Move across the pad for pitch. Move upward for a brighter sound. Click, drag, or use touch. Headphones help if you are using a laptop speaker with low bass response.</div>
+          </div>
+          <div class="readouts">
+            <div class="chip" id="noteChip">Note: --</div>
+            <div class="chip" id="freqChip">Freq: -- Hz</div>
+            <div class="chip" id="filterChip">Filter: -- Hz</div>
+            <div class="chip" id="presetChip">Preset: Lead</div>
+          </div>
+        </div>
+        <div class="pad-wrap">
+          <canvas id="padCanvas" width="900" height="620"></canvas>
+        </div>
+      </div>
+
+      <div class="panel controls">
+        <div class="group">
+          <h2>Pitch</h2>
+          <div class="two-col">
+            <div class="field">
+              <label for="keySelect">Key</label>
+              <select id="keySelect">
+                <option>C</option><option>C#</option><option>D</option><option>D#</option><option>E</option><option>F</option>
+                <option>F#</option><option>G</option><option>G#</option><option>A</option><option>A#</option><option>B</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="scaleSelect">Scale</label>
+              <select id="scaleSelect">
+                <option value="major">Major</option>
+                <option value="minor">Minor</option>
+                <option value="pentatonic" selected>Pentatonic</option>
+                <option value="blues">Blues</option>
+                <option value="dorian">Dorian</option>
+              </select>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label for="baseOctave">Base octave</label>
+              <select id="baseOctave">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="octaveSpan">Octave span</label>
+              <select id="octaveSpan">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>Sound</h2>
+          <div class="field">
+            <label for="presetSelect">Preset</label>
+            <select id="presetSelect">
+              <option value="lead" selected>Lead</option>
+              <option value="bass">Bass</option>
+              <option value="pad">Pad</option>
+              <option value="pluck">Pluck</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="volumeSlider">Master volume <span id="volumeLabel">0.40</span></label>
+            <input id="volumeSlider" type="range" min="0" max="0.9" step="0.01" value="0.40" />
+          </div>
+          <div class="field">
+            <label for="reverbMix">Delay mix <span id="delayLabel">0.18</span></label>
+            <input id="reverbMix" type="range" min="0" max="0.5" step="0.01" value="0.18" />
+          </div>
+          <div class="field">
+            <label for="releaseSlider">Release <span id="releaseLabel">0.22 s</span></label>
+            <input id="releaseSlider" type="range" min="0.05" max="1.50" step="0.01" value="0.22" />
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>Loop</h2>
+          <div class="status" id="loopStatus">No loop recorded.</div>
+          <div class="hint">Press <strong>Record Loop</strong>, perform on the pad, then press it again to stop. Press <strong>Play Loop</strong> to repeat the captured motion.</div>
+        </div>
+
+        <div class="group">
+          <h2>Status</h2>
+          <div class="status" id="statusText">Audio is ready. Click Start Audio, then use the touch pad.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const KEY_MAP = { 'C':0, 'C#':1, 'D':2, 'D#':3, 'E':4, 'F':5, 'F#':6, 'G':7, 'G#':8, 'A':9, 'A#':10, 'B':11 };
+    const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const SCALES = {
+      major: [0, 2, 4, 5, 7, 9, 11],
+      minor: [0, 2, 3, 5, 7, 8, 10],
+      pentatonic: [0, 3, 5, 7, 10],
+      blues: [0, 3, 5, 6, 7, 10],
+      dorian: [0, 2, 3, 5, 7, 9, 10]
+    };
+
+    const PRESETS = {
+      lead:  { wave1:'sawtooth', wave2:'square', detune:7, filterBase:220, filterMax:6200, attack:0.015, release:0.18, gain:0.22, delay:0.12 },
+      bass:  { wave1:'square',   wave2:'sine',   detune:-5, filterBase:90,  filterMax:1800, attack:0.01,  release:0.18, gain:0.24, delay:0.06 },
+      pad:   { wave1:'triangle', wave2:'sawtooth',detune:4, filterBase:180, filterMax:5000, attack:0.25,  release:0.65, gain:0.16, delay:0.22 },
+      pluck: { wave1:'triangle', wave2:'square', detune:2, filterBase:260, filterMax:6800, attack:0.004, release:0.12, gain:0.20, delay:0.10 }
+    };
+
+    const state = {
+      started: false,
+      hold: false,
+      masterVolume: 0.40,
+      delayMix: 0.18,
+      release: 0.22,
+      key: 'C',
+      scale: 'pentatonic',
+      baseOctave: 3,
+      octaveSpan: 2,
+      preset: 'lead',
+      pointerActive: false,
+      currentX: 0.5,
+      currentY: 0.5,
+      lastNote: null,
+      lastFreq: null,
+      lastFilter: null,
+      loopRecording: false,
+      loopPlaying: false,
+      loopData: [],
+      loopLength: 0,
+      loopPlayTimeouts: []
+    };
+
+    const ui = {
+      startBtn: document.getElementById('startBtn'),
+      holdBtn: document.getElementById('holdBtn'),
+      recordBtn: document.getElementById('recordBtn'),
+      playLoopBtn: document.getElementById('playLoopBtn'),
+      clearLoopBtn: document.getElementById('clearLoopBtn'),
+      keySelect: document.getElementById('keySelect'),
+      scaleSelect: document.getElementById('scaleSelect'),
+      baseOctave: document.getElementById('baseOctave'),
+      octaveSpan: document.getElementById('octaveSpan'),
+      presetSelect: document.getElementById('presetSelect'),
+      volumeSlider: document.getElementById('volumeSlider'),
+      reverbMix: document.getElementById('reverbMix'),
+      releaseSlider: document.getElementById('releaseSlider'),
+      volumeLabel: document.getElementById('volumeLabel'),
+      delayLabel: document.getElementById('delayLabel'),
+      releaseLabel: document.getElementById('releaseLabel'),
+      noteChip: document.getElementById('noteChip'),
+      freqChip: document.getElementById('freqChip'),
+      filterChip: document.getElementById('filterChip'),
+      presetChip: document.getElementById('presetChip'),
+      loopStatus: document.getElementById('loopStatus'),
+      statusText: document.getElementById('statusText'),
+      canvas: document.getElementById('padCanvas')
+    };
+
+    const canvas = ui.canvas;
+    const ctx2d = canvas.getContext('2d');
+    let audio = null;
+    let recordStartTime = 0;
+    let lastRecordStamp = 0;
+    let animationId = null;
+
+    function clamp(v, min, max) {
+      return Math.min(max, Math.max(min, v));
+    }
+
+    function midiToFreq(midi) {
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    function buildScaleNotes() {
+      const intervals = SCALES[state.scale];
+      const root = KEY_MAP[state.key];
+      const baseMidi = 12 * (state.baseOctave + 1) + root;
+      const notes = [];
+      for (let oct = 0; oct < state.octaveSpan; oct++) {
+        for (const interval of intervals) {
+          notes.push(baseMidi + oct * 12 + interval);
+        }
+      }
+      notes.push(baseMidi + state.octaveSpan * 12 + intervals[0]);
+      return notes;
+    }
+
+    function getNoteFromX(xNorm) {
+      const notes = buildScaleNotes();
+      const idx = clamp(Math.round(xNorm * (notes.length - 1)), 0, notes.length - 1);
+      const midi = notes[idx];
+      const name = NOTE_NAMES[midi % 12] + String(Math.floor(midi / 12) - 1);
+      return { midi, name, freq: midiToFreq(midi), index: idx, total: notes.length };
+    }
+
+    function getFilterFromY(yNorm) {
+      const preset = PRESETS[state.preset];
+      const bright = 1 - yNorm;
+      const min = preset.filterBase;
+      const max = preset.filterMax;
+      return Math.round(min * Math.pow(max / min, bright));
+    }
+
+    async function initAudio() {
+      if (audio) return audio;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioCtx();
+
+      const master = audioCtx.createGain();
+      master.gain.value = state.masterVolume;
+
+      const dryGain = audioCtx.createGain();
+      const delayNode = audioCtx.createDelay(1.2);
+      delayNode.delayTime.value = 0.22;
+      const feedback = audioCtx.createGain();
+      feedback.gain.value = 0.28;
+      const wetGain = audioCtx.createGain();
+      wetGain.gain.value = state.delayMix;
+      dryGain.gain.value = 1 - state.delayMix;
+
+      dryGain.connect(master);
+      delayNode.connect(feedback);
+      feedback.connect(delayNode);
+      delayNode.connect(wetGain);
+      wetGain.connect(master);
+      master.connect(audioCtx.destination);
+
+      audio = {
+        ctx: audioCtx,
+        master,
+        dryGain,
+        delayNode,
+        feedback,
+        wetGain,
+        voice: null
+      };
+
+      updateEffectMix();
+      return audio;
+    }
+
+    function updateEffectMix() {
+      if (!audio) return;
+      audio.master.gain.setValueAtTime(state.masterVolume, audio.ctx.currentTime);
+      audio.wetGain.gain.setValueAtTime(state.delayMix, audio.ctx.currentTime);
+      audio.dryGain.gain.setValueAtTime(1 - state.delayMix * 0.9, audio.ctx.currentTime);
+    }
+
+    function createVoice(freq, filterHz) {
+      const preset = PRESETS[state.preset];
+      const t = audio.ctx.currentTime;
+
+      const osc1 = audio.ctx.createOscillator();
+      const osc2 = audio.ctx.createOscillator();
+      const filter = audio.ctx.createBiquadFilter();
+      const amp = audio.ctx.createGain();
+      const voiceGain = audio.ctx.createGain();
+
+      osc1.type = preset.wave1;
+      osc2.type = preset.wave2;
+      osc1.frequency.value = freq;
+      osc2.frequency.value = freq;
+      osc2.detune.value = preset.detune;
+      filter.type = 'lowpass';
+      filter.Q.value = 1.3;
+      filter.frequency.value = filterHz;
+
+      amp.gain.setValueAtTime(0, t);
+      const voiceLevel = preset.gain;
+      amp.gain.linearRampToValueAtTime(voiceLevel, t + preset.attack);
+
+      osc1.connect(voiceGain);
+      osc2.connect(voiceGain);
+      voiceGain.connect(filter);
+      filter.connect(amp);
+      amp.connect(audio.dryGain);
+      amp.connect(audio.delayNode);
+
+      osc1.start();
+      osc2.start();
+
+      audio.voice = { osc1, osc2, filter, amp, voiceGain, startedAt: t };
+    }
+
+    function stopVoice() {
+      if (!audio || !audio.voice) return;
+      const t = audio.ctx.currentTime;
+      const voice = audio.voice;
+      const safeRelease = Math.max(0.03, state.release);
+      voice.amp.gain.cancelScheduledValues(t);
+      const current = voice.amp.gain.value;
+      voice.amp.gain.setValueAtTime(current, t);
+      voice.amp.gain.linearRampToValueAtTime(0, t + safeRelease);
+      voice.osc1.stop(t + safeRelease + 0.03);
+      voice.osc2.stop(t + safeRelease + 0.03);
+      setTimeout(() => {
+        try { voice.osc1.disconnect(); } catch {}
+        try { voice.osc2.disconnect(); } catch {}
+        try { voice.filter.disconnect(); } catch {}
+        try { voice.amp.disconnect(); } catch {}
+      }, (safeRelease + 0.08) * 1000);
+      audio.voice = null;
+    }
+
+    function updateVoice(freq, filterHz) {
+      if (!audio) return;
+      if (!audio.voice) createVoice(freq, filterHz);
+      const t = audio.ctx.currentTime;
+      const voice = audio.voice;
+      voice.osc1.frequency.setTargetAtTime(freq, t, 0.02);
+      voice.osc2.frequency.setTargetAtTime(freq, t, 0.02);
+      voice.filter.frequency.setTargetAtTime(filterHz, t, 0.02);
+    }
+
+    function refreshVoiceForPreset() {
+      if (!audio) return;
+      if (state.lastFreq && state.lastFilter) {
+        if (audio.voice) stopVoice();
+        createVoice(state.lastFreq, state.lastFilter);
+      }
+      updateEffectMix();
+    }
+
+    function applyPadPosition(xNorm, yNorm, fromLoop = false) {
+      state.currentX = clamp(xNorm, 0, 1);
+      state.currentY = clamp(yNorm, 0, 1);
+      const note = getNoteFromX(state.currentX);
+      const filterHz = getFilterFromY(state.currentY);
+      state.lastNote = note.name;
+      state.lastFreq = note.freq;
+      state.lastFilter = filterHz;
+
+      ui.noteChip.textContent = `Note: ${note.name}`;
+      ui.freqChip.textContent = `Freq: ${note.freq.toFixed(1)} Hz`;
+      ui.filterChip.textContent = `Filter: ${filterHz} Hz`;
+      ui.presetChip.textContent = `Preset: ${ui.presetSelect.options[ui.presetSelect.selectedIndex].text}`;
+
+      if (state.started && audio && (state.pointerActive || state.hold || fromLoop)) {
+        updateVoice(note.freq, filterHz);
+      }
+
+      if (state.loopRecording) maybeRecordPoint();
+    }
+
+    function pointerDown(xNorm, yNorm) {
+      state.pointerActive = true;
+      applyPadPosition(xNorm, yNorm);
+      if (state.started && audio) updateVoice(state.lastFreq, state.lastFilter);
+    }
+
+    function pointerMove(xNorm, yNorm) {
+      if (!state.pointerActive) return;
+      applyPadPosition(xNorm, yNorm);
+    }
+
+    function pointerUp() {
+      state.pointerActive = false;
+      if (!state.hold && !state.loopPlaying) stopVoice();
+    }
+
+    function syncUI() {
+      ui.holdBtn.classList.toggle('active', state.hold);
+      ui.recordBtn.classList.toggle('recording', state.loopRecording);
+      ui.playLoopBtn.classList.toggle('active', state.loopPlaying);
+      ui.volumeLabel.textContent = Number(state.masterVolume).toFixed(2);
+      ui.delayLabel.textContent = Number(state.delayMix).toFixed(2);
+      ui.releaseLabel.textContent = `${Number(state.release).toFixed(2)} s`;
+      ui.startBtn.textContent = state.started ? 'Pause Audio' : 'Start Audio';
+      if (!state.loopData.length) ui.loopStatus.textContent = 'No loop recorded.';
+      else ui.loopStatus.textContent = `Loop recorded: ${(state.loopLength / 1000).toFixed(2)} s, ${state.loopData.length} captured points.`;
+    }
+
+    function canvasToNorm(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = evt.clientX ?? (evt.touches && evt.touches[0]?.clientX) ?? 0;
+      const clientY = evt.clientY ?? (evt.touches && evt.touches[0]?.clientY) ?? 0;
+      const x = clamp((clientX - rect.left) / rect.width, 0, 1);
+      const y = clamp((clientY - rect.top) / rect.height, 0, 1);
+      return { x, y };
+    }
+
+    function drawPad() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx2d.clearRect(0, 0, w, h);
+
+      const grad = ctx2d.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#0b1320');
+      grad.addColorStop(0.5, '#101a2c');
+      grad.addColorStop(1, '#081019');
+      ctx2d.fillStyle = grad;
+      ctx2d.fillRect(0, 0, w, h);
+
+      ctx2d.strokeStyle = 'rgba(115, 140, 190, 0.18)';
+      ctx2d.lineWidth = 1;
+      for (let i = 0; i <= 12; i++) {
+        const x = (w / 12) * i;
+        ctx2d.beginPath();
+        ctx2d.moveTo(x, 0);
+        ctx2d.lineTo(x, h);
+        ctx2d.stroke();
+      }
+      for (let i = 0; i <= 8; i++) {
+        const y = (h / 8) * i;
+        ctx2d.beginPath();
+        ctx2d.moveTo(0, y);
+        ctx2d.lineTo(w, y);
+        ctx2d.stroke();
+      }
+
+      const notes = buildScaleNotes();
+      ctx2d.fillStyle = 'rgba(220, 235, 255, 0.75)';
+      ctx2d.font = '12px Arial';
+      notes.forEach((midi, i) => {
+        const x = (i / (notes.length - 1)) * (w - 40) + 20;
+        const label = NOTE_NAMES[midi % 12];
+        ctx2d.fillText(label, x - 8, h - 12);
+      });
+
+      const x = state.currentX * w;
+      const y = state.currentY * h;
+      const r = state.pointerActive || state.hold || state.loopPlaying ? 18 : 12;
+      const glow = ctx2d.createRadialGradient(x, y, 4, x, y, 70);
+      glow.addColorStop(0, 'rgba(141, 240, 197, 0.85)');
+      glow.addColorStop(0.4, 'rgba(103, 179, 255, 0.35)');
+      glow.addColorStop(1, 'rgba(103, 179, 255, 0)');
+      ctx2d.fillStyle = glow;
+      ctx2d.beginPath();
+      ctx2d.arc(x, y, 70, 0, Math.PI * 2);
+      ctx2d.fill();
+
+      ctx2d.strokeStyle = '#dff1ff';
+      ctx2d.lineWidth = 2;
+      ctx2d.beginPath();
+      ctx2d.arc(x, y, r, 0, Math.PI * 2);
+      ctx2d.stroke();
+
+      ctx2d.fillStyle = '#8df0c5';
+      ctx2d.beginPath();
+      ctx2d.arc(x, y, 5, 0, Math.PI * 2);
+      ctx2d.fill();
+
+      ctx2d.fillStyle = 'rgba(235, 242, 255, 0.88)';
+      ctx2d.font = '14px Arial';
+      ctx2d.fillText('Brighter filter', 16, 24);
+      ctx2d.fillText('Lower pitch', 16, h - 28);
+      ctx2d.fillText('Higher pitch', w - 100, h - 28);
+      ctx2d.save();
+      ctx2d.translate(20, h - 120);
+      ctx2d.rotate(-Math.PI / 2);
+      ctx2d.fillText('Darker filter', 0, 0);
+      ctx2d.restore();
+    }
+
+    function animate() {
+      drawPad();
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function clearLoopTimers() {
+      state.loopPlayTimeouts.forEach(id => clearTimeout(id));
+      state.loopPlayTimeouts = [];
+    }
+
+    function stopLoopPlayback() {
+      state.loopPlaying = false;
+      clearLoopTimers();
+      if (!state.pointerActive && !state.hold) stopVoice();
+      syncUI();
+    }
+
+    function scheduleLoopCycle() {
+      if (!state.loopPlaying || !state.loopData.length) return;
+      clearLoopTimers();
+
+      state.loopData.forEach(point => {
+        const id = setTimeout(() => {
+          applyPadPosition(point.x, point.y, true);
+          updateVoice(state.lastFreq, state.lastFilter);
+        }, point.t);
+        state.loopPlayTimeouts.push(id);
+      });
+
+      const tail = setTimeout(() => {
+        if (!state.loopPlaying) return;
+        scheduleLoopCycle();
+      }, state.loopLength + 20);
+      state.loopPlayTimeouts.push(tail);
+    }
+
+    function maybeRecordPoint(force = false) {
+      const now = performance.now();
+      if (!force && now - lastRecordStamp < 45) return;
+      lastRecordStamp = now;
+      state.loopData.push({
+        t: now - recordStartTime,
+        x: state.currentX,
+        y: state.currentY
+      });
+    }
+
+    canvas.addEventListener('pointerdown', async (evt) => {
+      evt.preventDefault();
+      if (!state.started) {
+        ui.statusText.textContent = 'Click Start Audio first, then use the touch pad.';
+        return;
+      }
+      const { x, y } = canvasToNorm(evt);
+      canvas.setPointerCapture(evt.pointerId);
+      pointerDown(x, y);
+    });
+
+    canvas.addEventListener('pointermove', (evt) => {
+      const { x, y } = canvasToNorm(evt);
+      pointerMove(x, y);
+    });
+
+    canvas.addEventListener('pointerup', () => pointerUp());
+    canvas.addEventListener('pointercancel', () => pointerUp());
+    canvas.addEventListener('pointerleave', () => { if (state.pointerActive) pointerUp(); });
+
+    ui.startBtn.addEventListener('click', async () => {
+      const a = await initAudio();
+      if (!state.started) {
+        await a.ctx.resume();
+        state.started = true;
+        ui.statusText.textContent = 'Audio running. Use the pad to play.';
+      } else {
+        await a.ctx.suspend();
+        state.started = false;
+        ui.statusText.textContent = 'Audio paused.';
+      }
+      syncUI();
+    });
+
+    ui.holdBtn.addEventListener('click', () => {
+      state.hold = !state.hold;
+      if (!state.hold && !state.pointerActive && !state.loopPlaying) stopVoice();
+      syncUI();
+    });
+
+    ui.recordBtn.addEventListener('click', () => {
+      if (!state.loopRecording) {
+        state.loopRecording = true;
+        state.loopData = [];
+        recordStartTime = performance.now();
+        lastRecordStamp = 0;
+        ui.statusText.textContent = 'Recording loop. Perform on the pad, then press Record Loop again to stop.';
+      } else {
+        state.loopRecording = false;
+        state.loopLength = Math.max(300, performance.now() - recordStartTime);
+        ui.statusText.textContent = state.loopData.length ? 'Loop recorded.' : 'Recording stopped, but no motion was captured.';
+      }
+      syncUI();
+    });
+
+    ui.playLoopBtn.addEventListener('click', () => {
+      if (!state.loopData.length) {
+        ui.statusText.textContent = 'Record a loop first.';
+        return;
+      }
+      state.loopPlaying = !state.loopPlaying;
+      if (state.loopPlaying) {
+        ui.statusText.textContent = 'Loop playing.';
+        scheduleLoopCycle();
+      } else {
+        ui.statusText.textContent = 'Loop stopped.';
+        stopLoopPlayback();
+      }
+      syncUI();
+    });
+
+    ui.clearLoopBtn.addEventListener('click', () => {
+      stopLoopPlayback();
+      state.loopRecording = false;
+      state.loopData = [];
+      state.loopLength = 0;
+      ui.statusText.textContent = 'Loop cleared.';
+      syncUI();
+    });
+
+    ui.keySelect.addEventListener('change', (e) => { state.key = e.target.value; });
+    ui.scaleSelect.addEventListener('change', (e) => { state.scale = e.target.value; });
+    ui.baseOctave.addEventListener('change', (e) => { state.baseOctave = Number(e.target.value); });
+    ui.octaveSpan.addEventListener('change', (e) => { state.octaveSpan = Number(e.target.value); });
+
+    ui.presetSelect.addEventListener('change', (e) => {
+      state.preset = e.target.value;
+      ui.presetChip.textContent = `Preset: ${ui.presetSelect.options[ui.presetSelect.selectedIndex].text}`;
+      const preset = PRESETS[state.preset];
+      state.release = preset.release;
+      ui.releaseSlider.value = state.release;
+      syncUI();
+      if (audio && state.lastFreq && state.lastFilter) refreshVoiceForPreset();
+    });
+
+    ui.volumeSlider.addEventListener('input', (e) => {
+      state.masterVolume = Number(e.target.value);
+      syncUI();
+      updateEffectMix();
+    });
+
+    ui.reverbMix.addEventListener('input', (e) => {
+      state.delayMix = Number(e.target.value);
+      syncUI();
+      updateEffectMix();
+    });
+
+    ui.releaseSlider.addEventListener('input', (e) => {
+      state.release = Number(e.target.value);
+      syncUI();
+    });
+
+    ui.keySelect.value = state.key;
+    ui.scaleSelect.value = state.scale;
+    ui.baseOctave.value = String(state.baseOctave);
+    ui.octaveSpan.value = String(state.octaveSpan);
+    ui.presetSelect.value = state.preset;
+    syncUI();
+    applyPadPosition(0.5, 0.5);
+    animate();
+  </script>
+</body>
+</html>
