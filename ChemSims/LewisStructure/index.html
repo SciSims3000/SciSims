@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build and check Lewis electron-dot structures for atoms, molecules and polyatomic ions.">
+  <title>Lewis Structure Builder | SciSims</title>
+  <style>
+    :root{
+      --navy:#0f2f57;
+      --blue:#2563eb;
+      --blue-dark:#1747a6;
+      --cyan:#0ea5e9;
+      --ink:#172033;
+      --muted:#5f6f86;
+      --page:#eaf3fb;
+      --card:#ffffff;
+      --soft:#f5f9fd;
+      --line:#cbd9e8;
+      --good:#16835b;
+      --good-bg:#e8f7ef;
+      --warn:#a35b00;
+      --warn-bg:#fff5dc;
+      --bad:#b42336;
+      --bad-bg:#fff0f2;
+      --shadow:0 14px 34px rgba(26,57,91,.12);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#e7f2fb 0%,#f5f9fd 48%,#eaf3fb 100%);
+      color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      min-height:100vh;
+    }
+    button,select,input{font:inherit}
+    button{cursor:pointer}
+    .page{width:min(1520px,calc(100% - 28px));margin:0 auto;padding:18px 0 36px}
+    .back{
+      display:inline-flex;align-items:center;gap:7px;margin:0 0 12px;padding:10px 15px;
+      border-radius:999px;background:#fff;color:var(--navy);text-decoration:none;font-weight:850;
+      box-shadow:0 5px 16px rgba(31,62,99,.11);border:1px solid #d4e0ec;
+    }
+    .back:hover{transform:translateY(-1px)}
+    .hero{
+      position:relative;overflow:hidden;border-radius:28px;padding:30px 34px;color:#fff;
+      background:linear-gradient(135deg,#0f2f57 0%,#185db5 55%,#0ea5e9 100%);
+      box-shadow:var(--shadow);
+    }
+    .hero::after{
+      content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-90px;top:-130px;
+      border:34px solid rgba(255,255,255,.10);
+    }
+    .hero h1{position:relative;margin:0;font-size:clamp(2rem,4vw,3.5rem);line-height:1.03;letter-spacing:-.035em}
+    .hero p{position:relative;max-width:900px;margin:11px 0 0;font-size:1.08rem;line-height:1.55;color:#e8f4ff}
+    .pills{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}
+    .pill{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.27);font-weight:780;font-size:.88rem}
+
+    .learning-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+    .learning-card,.panel,.stage-card,.info-card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    }
+    .learning-card{padding:17px 19px}
+    .learning-card h2{margin:0 0 7px;color:var(--navy);font-size:1.05rem}
+    .learning-card p{margin:0;color:var(--muted);line-height:1.5}
+
+    .sim-grid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}
+    .panel{padding:18px;position:sticky;top:12px}
+    .panel h2,.stage-card h2,.info-card h2{margin:0;color:var(--navy)}
+    .panel h3{margin:18px 0 8px;color:var(--navy);font-size:.96rem}
+    label{display:block;font-weight:820;color:#334155;margin:13px 0 6px}
+    select{
+      width:100%;padding:11px 12px;border:1px solid #b9cadd;border-radius:12px;background:#fff;color:var(--ink);
+    }
+    select:focus,button:focus-visible{outline:3px solid rgba(37,99,235,.23);outline-offset:2px}
+    .button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .btn{
+      border:1px solid transparent;border-radius:11px;padding:10px 12px;font-weight:850;color:#243247;background:#edf3f8;
+      transition:transform .12s,box-shadow .12s,background .12s;
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(27,58,94,.10)}
+    .btn.primary{background:var(--blue);color:#fff}
+    .btn.primary:hover{background:var(--blue-dark)}
+    .btn.secondary{background:#fff;border-color:#c7d5e4}
+    .btn.danger{background:#fff0f2;color:#a61e32;border-color:#edbdc5}
+    .btn.active{background:#143f75;color:#fff;border-color:#143f75;box-shadow:0 0 0 3px rgba(20,63,117,.16)}
+    .btn.wide{width:100%}
+    .btn.small{padding:8px 10px;font-size:.88rem}
+    .segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .element-palette{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .element-btn{
+      min-height:43px;border:1px solid #c7d5e4;border-radius:11px;background:#fff;font-weight:900;color:#21314a;
+    }
+    .element-btn:hover,.element-btn.active{border-color:var(--blue);background:#eaf2ff;color:#173f92}
+    .selected-box{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+    .selected-box strong{color:var(--navy)}
+    .selected-box p{margin:5px 0 0;color:var(--muted);font-size:.9rem;line-height:1.4}
+    .selected-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+    .selected-actions .btn:last-child:nth-child(odd){grid-column:1/-1}
+    .help{margin-top:14px;padding:12px;border-radius:14px;background:#eef6ff;border:1px solid #c9def5;color:#35506f;font-size:.9rem;line-height:1.48}
+
+    .stage-card{padding:18px;min-width:0}
+    .stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:13px}
+    .stage-head p{margin:5px 0 0;color:var(--muted);line-height:1.45}
+    .formula-badge{
+      flex:none;min-width:110px;padding:10px 13px;border-radius:14px;background:#eef5ff;border:1px solid #c7daf5;
+      color:#123c78;text-align:center;font-weight:900;font-size:1.2rem;
+    }
+    .status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:12px}
+    .status-card{padding:11px;border-radius:14px;background:#f7fafc;border:1px solid #d5e0eb;text-align:center}
+    .status-card strong{display:block;color:var(--navy);font-size:1.25rem;line-height:1.1}
+    .status-card span{display:block;color:var(--muted);font-size:.78rem;font-weight:760;margin-top:4px}
+
+    .workspace-shell{
+      position:relative;min-height:570px;border:1px solid #bfcfe0;border-radius:18px;overflow:hidden;
+      background-color:#fbfdff;
+      background-image:linear-gradient(#e7eef6 1px,transparent 1px),linear-gradient(90deg,#e7eef6 1px,transparent 1px);
+      background-size:30px 30px;
+      user-select:none;touch-action:none;
+    }
+    #workspace{display:block;width:100%;height:570px;touch-action:none}
+    .workspace-tip{
+      position:absolute;left:12px;bottom:12px;z-index:3;padding:8px 11px;border-radius:10px;
+      background:rgba(255,255,255,.91);border:1px solid #d3dfeb;color:#52657c;font-size:.82rem;pointer-events:none;
+    }
+    .ion-bracket{stroke:#2d405a;stroke-width:3;fill:none;stroke-linecap:round}
+    .bond-line{stroke:#334155;stroke-width:5;stroke-linecap:round}
+    .bond-hit{stroke:transparent;stroke-width:22;cursor:pointer}
+    .atom-group{cursor:grab}
+    .atom-group:active{cursor:grabbing}
+    .atom-circle{stroke:#20334b;stroke-width:2.3;filter:drop-shadow(0 3px 4px rgba(15,47,87,.13))}
+    .atom-symbol{font-size:26px;font-weight:900;text-anchor:middle;dominant-baseline:central;fill:#102137;pointer-events:none}
+    .atom-charge{font-size:15px;font-weight:900;fill:#9d2339;pointer-events:none}
+    .electron-dot{fill:#18253a;pointer-events:none}
+    .selection-ring{fill:none;stroke:#72dff5;stroke-width:3.5;stroke-dasharray:5 4;pointer-events:none}
+    .bond-pending{fill:none;stroke:#f59e0b;stroke-width:5;stroke-dasharray:7 5;pointer-events:none}
+    .empty-message{fill:#64748b;font-weight:800;font-size:21px;text-anchor:middle}
+    .empty-sub{fill:#8190a2;font-size:15px;text-anchor:middle}
+
+    .action-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .feedback{margin-top:12px;padding:14px;border:1px solid #ccd9e6;border-radius:15px;background:#f7fafc;min-height:68px}
+    .feedback h3{margin:0 0 5px;font-size:1rem;color:var(--navy)}
+    .feedback p{margin:0;color:#52657b;line-height:1.48}
+    .feedback.good{background:var(--good-bg);border-color:#9bd3b8}
+    .feedback.good h3,.feedback.good p{color:#116241}
+    .feedback.warn{background:var(--warn-bg);border-color:#e7c476}
+    .feedback.warn h3,.feedback.warn p{color:#795000}
+    .feedback.bad{background:var(--bad-bg);border-color:#e4abb4}
+    .feedback.bad h3,.feedback.bad p{color:#8e2334}
+
+    .analysis-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+    .analysis-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:#fff}
+    .analysis-card h3{margin:0 0 8px;color:var(--navy);font-size:.96rem}
+    .analysis-card p,.analysis-card li{color:var(--muted);font-size:.9rem;line-height:1.45}
+    .analysis-card p{margin:0}
+    .analysis-card ul{margin:0;padding-left:20px}
+    .analysis-card li+li{margin-top:4px}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+    .info-card{padding:18px}
+    .info-card p,.info-card li{color:var(--muted);line-height:1.5}
+    .info-card p{margin:8px 0 0}
+    .info-card ol,.info-card ul{margin:9px 0 0;padding-left:22px}
+    .teacher-note{background:#fff8eb;border-color:#ecd2a0}
+    footer{text-align:center;color:#6b7a8c;font-size:.88rem;margin-top:17px}
+
+    @media(max-width:1120px){
+      .sim-grid{grid-template-columns:1fr}.panel{position:static}
+      .element-palette{grid-template-columns:repeat(9,1fr)}
+    }
+    @media(max-width:820px){
+      .learning-grid,.info-grid,.analysis-grid{grid-template-columns:1fr}
+      .status-grid{grid-template-columns:1fr 1fr}
+      .stage-head{flex-direction:column}.formula-badge{align-self:stretch}
+      .element-palette{grid-template-columns:repeat(5,1fr)}
+      .workspace-shell,#workspace{min-height:490px;height:490px}
+    }
+    @media(max-width:520px){
+      .page{width:min(100% - 16px,1520px);padding-top:9px}
+      .hero{padding:23px 20px}.panel,.stage-card{padding:13px}
+      .segmented{grid-template-columns:1fr}.workspace-shell,#workspace{min-height:440px;height:440px}
+      .workspace-tip{display:none}.status-card strong{font-size:1.05rem}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../index.html">← Back to main SciSims page</a>
+
+  <header class="hero">
+    <h1>Lewis Structure Builder</h1>
+    <p>Place valence electrons, form covalent bonds and analyse Lewis electron-dot structures. Use the guided challenges or construct your own molecule or ion.</p>
+    <div class="pills" aria-label="Simulation tags">
+      <span class="pill">Chemistry</span><span class="pill">Valence electrons</span><span class="pill">Covalent bonding</span><span class="pill">Formal charge</span>
+    </div>
+  </header>
+
+  <section class="learning-grid">
+    <div class="learning-card">
+      <h2>Learning Intention</h2>
+      <p>Students will understand how valence electrons are represented in Lewis structures and how electron pairs form covalent bonds.</p>
+    </div>
+    <div class="learning-card">
+      <h2>Success Criteria</h2>
+      <p>Students can count available electrons, construct valid structures, identify lone pairs and use octet and formal-charge evidence to evaluate a model.</p>
+    </div>
+  </section>
+
+  <main class="sim-grid">
+    <aside class="panel" aria-label="Lewis structure controls">
+      <h2>Build controls</h2>
+
+      <label for="modeSelect">Mode</label>
+      <select id="modeSelect">
+        <option value="atom">Valence dots — atoms</option>
+        <option value="guided" selected>Guided molecule challenges</option>
+        <option value="free">Free build and analyse</option>
+      </select>
+
+      <label for="challengeSelect">Challenge</label>
+      <select id="challengeSelect"></select>
+
+      <label for="chargeSelect">Overall charge</label>
+      <select id="chargeSelect" disabled>
+        <option value="-3">3−</option>
+        <option value="-2">2−</option>
+        <option value="-1">1−</option>
+        <option value="0" selected>Neutral</option>
+        <option value="1">1+</option>
+        <option value="2">2+</option>
+        <option value="3">3+</option>
+      </select>
+
+      <div class="button-row">
+        <button type="button" class="btn primary" id="loadChallenge">Start challenge</button>
+        <button type="button" class="btn secondary" id="nextChallenge">Next</button>
+      </div>
+
+      <div id="moleculeControls">
+        <h3>Workspace tool</h3>
+        <div class="segmented" id="toolButtons">
+          <button type="button" class="btn small active" data-tool="select">Move/select</button>
+          <button type="button" class="btn small" data-tool="bond">Make bond</button>
+          <button type="button" class="btn small" data-tool="delete">Delete</button>
+        </div>
+
+        <h3>Bond order</h3>
+        <div class="segmented" id="bondButtons">
+          <button type="button" class="btn small active" data-order="1">Single</button>
+          <button type="button" class="btn small" data-order="2">Double</button>
+          <button type="button" class="btn small" data-order="3">Triple</button>
+        </div>
+
+        <h3>Add an atom</h3>
+        <div class="element-palette" id="elementPalette"></div>
+      </div>
+
+      <div class="selected-box" id="selectedBox">
+        <strong id="selectedTitle">No atom selected</strong>
+        <p id="selectedDetail">Select an atom to change its non-bonding electrons.</p>
+        <div class="selected-actions" id="moleculeAtomActions">
+          <button type="button" class="btn small" id="addPair">+ Lone pair</button>
+          <button type="button" class="btn small" id="removePair">− Lone pair</button>
+          <button type="button" class="btn small danger" id="deleteSelected">Delete atom</button>
+        </div>
+        <div class="selected-actions" id="atomActions" hidden>
+          <button type="button" class="btn small" id="addElectron">+ Electron</button>
+          <button type="button" class="btn small" id="removeElectron">− Electron</button>
+        </div>
+      </div>
+
+      <div class="help" id="helpText"><strong>How to build:</strong> select <em>Make bond</em>, choose the bond order, then click two atoms. Select an atom to add or remove lone pairs. Drag atoms to rearrange the structure.</div>
+    </aside>
+
+    <section class="stage-card" aria-label="Lewis structure workspace">
+      <div class="stage-head">
+        <div>
+          <h2 id="challengeTitle">Water</h2>
+          <p id="challengePrompt">Construct the Lewis structure, including all lone pairs.</p>
+        </div>
+        <div class="formula-badge" id="formulaBadge">H₂O</div>
+      </div>
+
+      <div class="status-grid" aria-label="Electron and octet status">
+        <div class="status-card"><strong id="availableCount">8</strong><span>electrons available</span></div>
+        <div class="status-card"><strong id="usedCount">0</strong><span>electrons shown</span></div>
+        <div class="status-card"><strong id="differenceCount">8 left</strong><span>electron difference</span></div>
+        <div class="status-card"><strong id="octetCount">0/3</strong><span id="shellLabel">duets/octets complete</span></div>
+      </div>
+
+      <div class="workspace-shell" id="workspaceShell">
+        <svg id="workspace" viewBox="0 0 1000 570" role="img" aria-label="Interactive Lewis structure drawing area"></svg>
+        <div class="workspace-tip" id="workspaceTip">Drag atoms to move them. A selected atom has a blue dashed ring.</div>
+      </div>
+
+      <div class="action-strip">
+        <button type="button" class="btn primary" id="checkButton">Check structure</button>
+        <button type="button" class="btn secondary" id="analyseButton">Analyse model</button>
+        <button type="button" class="btn secondary" id="resetButton">Reset challenge</button>
+        <button type="button" class="btn secondary" id="revealButton">Show answer</button>
+        <button type="button" class="btn secondary" id="tidyButton" hidden>Tidy structure</button>
+        <button type="button" class="btn danger" id="clearButton">Clear workspace</button>
+      </div>
+
+      <div class="feedback" id="feedback" aria-live="polite">
+        <h3>Ready to build</h3>
+        <p>Use the electron counter and duet/octet indicators as evidence. A correct drawing must also have the correct bonding pattern and lone pairs.</p>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <h3>Electron accounting</h3>
+          <p id="electronAnalysis">Available valence electrons are calculated from the atoms and the overall ionic charge.</p>
+        </div>
+        <div class="analysis-card">
+          <h3>Atom check</h3>
+          <ul id="atomAnalysis"><li>No structure analysed yet.</li></ul>
+        </div>
+        <div class="analysis-card">
+          <h3>Formal charge</h3>
+          <p id="chargeAnalysis">Formal charge is calculated automatically from bonds and non-bonding electrons.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="info-grid">
+    <article class="info-card">
+      <h2>A reliable Lewis structure method</h2>
+      <ol>
+        <li>Count all available valence electrons. Add electrons for a negative charge and subtract them for a positive charge.</li>
+        <li>Choose a central atom and connect the atoms with single bonds.</li>
+        <li>Complete the outer atoms first, then place remaining electrons on the central atom.</li>
+        <li>If the central atom lacks an octet, convert neighbouring lone pairs into multiple bonds.</li>
+        <li>Check electron totals, octets and formal charges. Some atoms have valid incomplete or expanded octets.</li>
+      </ol>
+    </article>
+    <article class="info-card teacher-note">
+      <h2>What the model shows</h2>
+      <p>Lewis structures track valence electrons, but they do not show molecular size, bond length, three-dimensional shape or electron-cloud distribution accurately. Compare completed structures with the Virtual Molecular Model Kit when teaching molecular geometry.</p>
+      <p><strong>Included challenge types:</strong> atoms, simple molecules, multiple bonds, polyatomic ions, resonance examples, incomplete octets and expanded octets.</p>
+    </article>
+  </section>
+
+  <footer>SciSims · Lewis Structure Builder · Standalone HTML simulation</footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const ELEMENTS = {
+    H:{valence:1,colour:'#f8fafc',radius:31},
+    B:{valence:3,colour:'#f6c98b',radius:35},
+    C:{valence:4,colour:'#8fa3b8',radius:36},
+    N:{valence:5,colour:'#8fb5ff',radius:36},
+    O:{valence:6,colour:'#ff8c8c',radius:36},
+    F:{valence:7,colour:'#b8ed9b',radius:35},
+    P:{valence:5,colour:'#efb3ff',radius:38},
+    S:{valence:6,colour:'#ffe279',radius:39},
+    Cl:{valence:7,colour:'#8fdf9a',radius:39}
+  };
+
+  const ATOM_CHALLENGES = [
+    {name:'Hydrogen atom',formula:'H',element:'H',prompt:'Place the one valence electron around hydrogen.'},
+    {name:'Carbon atom',formula:'C',element:'C',prompt:'Place carbon’s four valence electrons. Add one electron to each side before pairing.'},
+    {name:'Nitrogen atom',formula:'N',element:'N',prompt:'Place nitrogen’s five valence electrons.'},
+    {name:'Oxygen atom',formula:'O',element:'O',prompt:'Place oxygen’s six valence electrons.'},
+    {name:'Chlorine atom',formula:'Cl',element:'Cl',prompt:'Place chlorine’s seven valence electrons.'}
+  ];
+
+  const MOLECULE_CHALLENGES = [
+    challenge('Hydrogen','H₂',['H','H'],[[350,305],[650,305]],0,[variant([[0,1,1]],[0,0])],
+      'Join the two hydrogen atoms so each has a duet.'),
+    challenge('Hydrogen chloride','HCl',['H','Cl'],[[350,305],[650,305]],0,[variant([[0,1,1]],[0,3])],
+      'Construct HCl and include all non-bonding electron pairs.'),
+    challenge('Chlorine','Cl₂',['Cl','Cl'],[[350,305],[650,305]],0,[variant([[0,1,1]],[3,3])],
+      'Construct the diatomic chlorine molecule.'),
+    challenge('Water','H₂O',['H','O','H'],[[250,305],[500,305],[750,305]],0,[variant([[0,1,1],[1,2,1]],[0,2,0])],
+      'Construct the Lewis structure, including all lone pairs.'),
+    challenge('Ammonia','NH₃',['N','H','H','H'],[[500,300],[500,105],[310,410],[690,410]],0,[variant([[0,1,1],[0,2,1],[0,3,1]],[1,0,0,0])],
+      'Show the three N–H bonds and nitrogen’s remaining lone pair.'),
+    challenge('Methane','CH₄',['C','H','H','H','H'],[[500,305],[500,95],[500,515],[285,305],[715,305]],0,[variant([[0,1,1],[0,2,1],[0,3,1],[0,4,1]],[0,0,0,0,0])],
+      'Build four single C–H bonds.'),
+    challenge('Oxygen','O₂',['O','O'],[[350,305],[650,305]],0,[variant([[0,1,2]],[2,2])],
+      'Use a multiple bond so both oxygen atoms achieve octets.'),
+    challenge('Nitrogen','N₂',['N','N'],[[350,305],[650,305]],0,[variant([[0,1,3]],[1,1])],
+      'Use a multiple bond and include the remaining lone pairs.'),
+    challenge('Carbon dioxide','CO₂',['O','C','O'],[[245,305],[500,305],[755,305]],0,[variant([[0,1,2],[1,2,2]],[2,0,2])],
+      'Construct a structure with complete octets and minimal formal charge.'),
+    challenge('Hydrogen cyanide','HCN',['H','C','N'],[[245,305],[500,305],[755,305]],0,[variant([[0,1,1],[1,2,3]],[0,0,1])],
+      'Construct HCN. Carbon is the central atom.'),
+    challenge('Sulfur dioxide','SO₂',['O','S','O'],[[270,360],[500,235],[730,360]],0,[variant([[0,1,2],[1,2,2]],[2,1,2])],
+      'Use sulfur’s expanded valence shell to minimise formal charges.'),
+    challenge('Ozone','O₃',['O','O','O'],[[270,360],[500,235],[730,360]],0,[
+      variant([[0,1,2],[1,2,1]],[2,1,3]),variant([[0,1,1],[1,2,2]],[3,1,2])
+    ],'Construct either valid resonance contributor.'),
+    challenge('Ammonium ion','NH₄⁺',['N','H','H','H','H'],[[500,305],[500,95],[500,515],[285,305],[715,305]],1,[variant([[0,1,1],[0,2,1],[0,3,1],[0,4,1]],[0,0,0,0,0])],
+      'Construct the ammonium ion. The overall charge is +1.'),
+    challenge('Carbonate ion','CO₃²⁻',['C','O','O','O'],[[500,280],[500,80],[290,410],[710,410]],-2,[
+      variant([[0,1,2],[0,2,1],[0,3,1]],[0,2,3,3]),
+      variant([[0,1,1],[0,2,2],[0,3,1]],[0,3,2,3]),
+      variant([[0,1,1],[0,2,1],[0,3,2]],[0,3,3,2])
+    ],'Construct any one of the three equivalent resonance contributors.'),
+    challenge('Nitrate ion','NO₃⁻',['N','O','O','O'],[[500,280],[500,80],[290,410],[710,410]],-1,[
+      variant([[0,1,2],[0,2,1],[0,3,1]],[0,2,3,3]),
+      variant([[0,1,1],[0,2,2],[0,3,1]],[0,3,2,3]),
+      variant([[0,1,1],[0,2,1],[0,3,2]],[0,3,3,2])
+    ],'Construct one nitrate resonance contributor and check the formal charges.'),
+    challenge('Boron trifluoride','BF₃',['B','F','F','F'],[[500,280],[500,75],[285,410],[715,410]],0,[variant([[0,1,1],[0,2,1],[0,3,1]],[0,3,3,3])],
+      'Build BF₃. Boron is a valid incomplete-octet exception.'),
+    challenge('Sulfur hexafluoride','SF₆',['S','F','F','F','F','F','F'],[[500,285],[500,65],[500,505],[280,170],[720,170],[280,400],[720,400]],0,[variant([[0,1,1],[0,2,1],[0,3,1],[0,4,1],[0,5,1],[0,6,1]],[0,3,3,3,3,3,3])],
+      'Build SF₆. Sulfur has an expanded valence shell.' )
+  ];
+
+  function challenge(name,formula,elements,positions,charge,variants,prompt){
+    return {name,formula,elements,positions,charge,variants,prompt};
+  }
+  function variant(bonds,lonePairs){return {bonds,lonePairs};}
+
+  const state = {
+    mode:'guided',challengeIndex:3,atoms:[],bonds:[],selectedId:null,
+    tool:'select',bondOrder:1,bondStartId:null,activeElement:'C',nextId:1,
+    dragging:null,charge:0,revealed:false,solved:false
+  };
+
+  const el = id => document.getElementById(id);
+  const modeSelect=el('modeSelect'), challengeSelect=el('challengeSelect'), chargeSelect=el('chargeSelect'), svg=el('workspace');
+  const tidyButton=el('tidyButton');
+  const feedback=el('feedback');
+
+  function svgNode(tag,attrs={}){
+    const node=document.createElementNS(NS,tag);
+    Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,String(v)));
+    return node;
+  }
+
+  function populateElements(){
+    const palette=el('elementPalette'); palette.innerHTML='';
+    Object.keys(ELEMENTS).forEach(symbol=>{
+      const b=document.createElement('button'); b.type='button'; b.className='element-btn'; b.textContent=symbol;
+      b.dataset.element=symbol; b.title=`Add ${symbol}`;
+      b.addEventListener('click',()=>{
+        state.activeElement=symbol; state.tool='add'; state.bondStartId=null;
+        updateControlStates();
+        setFeedback('Add atom',`Click an empty position in the workspace to place ${symbol}.`,'');
+      });
+      palette.appendChild(b);
+    });
+  }
+
+  function populateChallenges(){
+    const list=state.mode==='atom'?ATOM_CHALLENGES:MOLECULE_CHALLENGES;
+    challengeSelect.innerHTML='';
+    list.forEach((item,i)=>{
+      const option=document.createElement('option'); option.value=String(i); option.textContent=`${i+1}. ${item.name}`;
+      challengeSelect.appendChild(option);
+    });
+    state.challengeIndex=Math.min(state.challengeIndex,list.length-1);
+    challengeSelect.value=String(state.challengeIndex);
+    challengeSelect.disabled=state.mode==='free';
+    chargeSelect.disabled=state.mode!=='free';
+    el('loadChallenge').textContent=state.mode==='free'?'New workspace':'Start challenge';
+    el('nextChallenge').hidden=state.mode==='free';
+  }
+
+  function setMode(mode){
+    state.mode=mode;
+    state.challengeIndex=mode==='atom'?0:(mode==='guided'?3:0);
+    populateChallenges();
+    el('moleculeControls').hidden=mode==='atom';
+    el('moleculeAtomActions').hidden=mode==='atom';
+    el('atomActions').hidden=mode!=='atom';
+    el('revealButton').hidden=mode==='free';
+    el('checkButton').textContent=mode==='free'?'Check electron rules':'Check structure';
+    el('helpText').innerHTML=mode==='atom'
+      ?'<strong>How to build:</strong> select the atom, then add electrons. The display places one electron on each side before pairing them.'
+      :'<strong>How to build:</strong> select <em>Make bond</em>, choose the bond order, then click two atoms. Select an atom to add or remove lone pairs. Drag atoms to rearrange the structure.';
+    loadCurrent();
+  }
+
+  function loadCurrent(){
+    state.atoms=[]; state.bonds=[]; state.selectedId=null; state.bondStartId=null; state.nextId=1; state.revealed=false; state.solved=false;
+    if(state.mode==='atom'){
+      const c=ATOM_CHALLENGES[state.challengeIndex];
+      state.charge=0; chargeSelect.value='0';
+      state.atoms=[newAtom(c.element,500,305)]; state.selectedId=state.atoms[0].id;
+      updateHead(c.name,c.formula,c.prompt);
+    }else if(state.mode==='guided'){
+      const c=MOLECULE_CHALLENGES[state.challengeIndex]; state.charge=c.charge; chargeSelect.value=String(c.charge);
+      state.atoms=c.elements.map((symbol,i)=>newAtom(symbol,c.positions[i][0],c.positions[i][1]));
+      updateHead(c.name,c.formula,c.prompt);
+    }else{
+      state.charge=Number(chargeSelect.value)||0;
+      updateHead('Free build',state.charge===0?'Custom structure':`Custom ${formatCharge(state.charge)}`,'Add atoms, bonds and lone pairs, then analyse the resulting model.');
+    }
+    setFeedback('Ready to build',state.mode==='free'?'Choose an element, place atoms and join them with bonds.':'Complete the structure and use the counters as evidence.','');
+    render();
+  }
+
+  function newAtom(symbol,x,y){return {id:state.nextId++,symbol,x,y,lonePairs:0,singleElectrons:0};}
+
+  function updateHead(title,formula,prompt){
+    el('challengeTitle').textContent=title; el('formulaBadge').textContent=formula; el('challengePrompt').textContent=prompt;
+  }
+
+  function availableElectrons(){return state.atoms.reduce((sum,a)=>sum+ELEMENTS[a.symbol].valence,0)-state.charge;}
+  function usedElectrons(){return state.bonds.reduce((sum,b)=>sum+2*b.order,0)+state.atoms.reduce((sum,a)=>sum+2*a.lonePairs+a.singleElectrons,0);}
+  function bondOrderSum(atomId){return state.bonds.filter(b=>b.a===atomId||b.b===atomId).reduce((s,b)=>s+b.order,0);}
+  function electronsAround(atom){return 2*bondOrderSum(atom.id)+2*atom.lonePairs+atom.singleElectrons;}
+  function formalCharge(atom){return ELEMENTS[atom.symbol].valence-(2*atom.lonePairs+atom.singleElectrons)-bondOrderSum(atom.id);}
+  function targetShell(atom){
+    if(atom.symbol==='H')return 2;
+    if(atom.symbol==='B')return 6;
+    if(['P','S'].includes(atom.symbol)&&electronsAround(atom)>8)return electronsAround(atom);
+    return 8;
+  }
+  function shellComplete(atom){
+    const e=electronsAround(atom);
+    if(atom.symbol==='H')return e===2;
+    if(atom.symbol==='B')return e===6||e===8;
+    if(['P','S'].includes(atom.symbol))return e>=8&&e<=12;
+    return e===8;
+  }
+
+  function render(){
+    svg.innerHTML='';
+    renderIonBrackets();
+    state.bonds.forEach(renderBond);
+    state.atoms.forEach(renderAtom);
+    if(state.atoms.length===0){
+      const t=svgNode('text',{x:500,y:285,class:'empty-message'});t.textContent=state.mode==='free'?'Choose an element and click here':'Workspace cleared';svg.appendChild(t);
+      const s=svgNode('text',{x:500,y:318,class:'empty-sub'});s.textContent='Use the controls to begin building a Lewis structure.';svg.appendChild(s);
+    }
+    updateStatus(); updateSelectedBox(); updateControlStates(); updateActionButtons();
+  }
+
+  function renderIonBrackets(){
+    if(state.charge===0||state.atoms.length===0)return;
+    const xs=state.atoms.map(a=>a.x), ys=state.atoms.map(a=>a.y);
+    const left=Math.max(32,Math.min(...xs)-95), right=Math.min(968,Math.max(...xs)+95);
+    const top=Math.max(35,Math.min(...ys)-92), bottom=Math.min(575,Math.max(...ys)+92);
+    const d=22;
+    svg.appendChild(svgNode('path',{d:`M ${left+d} ${top} H ${left} V ${bottom} H ${left+d}`,class:'ion-bracket'}));
+    svg.appendChild(svgNode('path',{d:`M ${right-d} ${top} H ${right} V ${bottom} H ${right-d}`,class:'ion-bracket'}));
+    const charge=svgNode('text',{x:right+4,y:top-7,class:'atom-charge'});charge.textContent=formatCharge(state.charge);svg.appendChild(charge);
+  }
+
+  function renderBond(bond){
+    const a=getAtom(bond.a), b=getAtom(bond.b); if(!a||!b)return;
+    const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len;
+    const offset=bond.order===1?[0]:bond.order===2?[-7,7]:[-10,0,10];
+    const g=svgNode('g',{'data-bond':bond.id});
+    offset.forEach(off=>g.appendChild(svgNode('line',{x1:a.x+nx*off,y1:a.y+ny*off,x2:b.x+nx*off,y2:b.y+ny*off,class:'bond-line'})));
+    const hit=svgNode('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'bond-hit'});
+    hit.addEventListener('pointerdown',ev=>{ev.stopPropagation();if(state.tool==='delete'){state.bonds=state.bonds.filter(x=>x.id!==bond.id);render();}});
+    g.appendChild(hit);svg.appendChild(g);
+  }
+
+  function renderAtom(atom){
+    const cfg=ELEMENTS[atom.symbol], g=svgNode('g',{class:'atom-group','data-id':atom.id,transform:`translate(${atom.x} ${atom.y})`});
+    if(state.selectedId===atom.id)g.appendChild(svgNode('circle',{r:cfg.radius+12,class:'selection-ring'}));
+    if(state.bondStartId===atom.id)g.appendChild(svgNode('circle',{r:cfg.radius+19,class:'bond-pending'}));
+    g.appendChild(svgNode('circle',{r:cfg.radius,fill:cfg.colour,class:'atom-circle'}));
+    const symbol=svgNode('text',{x:0,y:1,class:'atom-symbol'});symbol.textContent=atom.symbol;g.appendChild(symbol);
+    const fc=formalCharge(atom);
+    if(state.mode!=='atom'&&fc!==0){const q=svgNode('text',{x:cfg.radius-2,y:-cfg.radius+5,class:'atom-charge'});q.textContent=formatCharge(fc);g.appendChild(q);}
+    renderElectrons(g,atom,cfg.radius);
+    g.addEventListener('pointerdown',ev=>handleAtomPointerDown(ev,atom.id));
+    svg.appendChild(g);
+  }
+
+  function renderElectrons(group,atom,r){
+    const sidePositions=[
+      [[-5,-r-12],[5,-r-12]],
+      [[r+12,-5],[r+12,5]],
+      [[-5,r+12],[5,r+12]],
+      [[-r-12,-5],[-r-12,5]]
+    ];
+    if(state.mode==='atom'){
+      const counts=[0,0,0,0];
+      let remaining=atom.singleElectrons;
+      for(let i=0;i<4&&remaining>0;i++,remaining--)counts[i]++;
+      for(let i=0;i<4&&remaining>0;i++,remaining--)counts[i]++;
+      counts.forEach((count,side)=>{for(let i=0;i<count;i++)group.appendChild(svgNode('circle',{cx:sidePositions[side][i][0],cy:sidePositions[side][i][1],r:4.2,class:'electron-dot'}));});
+      return;
+    }
+    const sideScores=[0,0,0,0];
+    connectedDirections(atom).forEach(angle=>sideScores[angleToSide(angle)]++);
+    const sides=[0,1,2,3].sort((a,b)=>sideScores[a]-sideScores[b]);
+    for(let pair=0;pair<atom.lonePairs;pair++){
+      const side=sides[pair%4];
+      sidePositions[side].forEach(([x,y])=>group.appendChild(svgNode('circle',{cx:x,cy:y,r:4.2,class:'electron-dot'})));
+    }
+    for(let one=0;one<atom.singleElectrons;one++){
+      const side=sides[(atom.lonePairs+one)%4],p=sidePositions[side][0];
+      group.appendChild(svgNode('circle',{cx:p[0],cy:p[1],r:4.2,class:'electron-dot'}));
+    }
+  }
+
+  function connectedDirections(atom){
+    return state.bonds.filter(b=>b.a===atom.id||b.b===atom.id).map(b=>{const other=getAtom(b.a===atom.id?b.b:b.a);return Math.atan2(other.y-atom.y,other.x-atom.x);});
+  }
+  function angleToSide(angle){
+    const c=Math.cos(angle),s=Math.sin(angle);
+    if(Math.abs(c)>Math.abs(s))return c>0?1:3;
+    return s>0?2:0;
+  }
+
+  function handleAtomPointerDown(ev,id){
+    ev.preventDefault();ev.stopPropagation();
+    state.selectedId=id;
+    if(state.tool==='delete'){deleteAtom(id);return;}
+    if(state.tool==='bond'){handleBondClick(id);return;}
+    const atom=getAtom(id); if(!atom)return;
+    const p=svgPoint(ev);
+    state.dragging={id,dx:atom.x-p.x,dy:atom.y-p.y};
+    svg.setPointerCapture?.(ev.pointerId);render();
+  }
+
+  function handleBondClick(id){
+    if(state.bondStartId===null){state.bondStartId=id;setFeedback('First atom selected','Now click the second atom to create the bond.','');render();return;}
+    if(state.bondStartId===id){state.bondStartId=null;render();return;}
+    const existing=state.bonds.find(b=>(b.a===state.bondStartId&&b.b===id)||(b.a===id&&b.b===state.bondStartId));
+    if(existing)existing.order=state.bondOrder;
+    else state.bonds.push({id:`b${Date.now()}${Math.random()}`,a:state.bondStartId,b:id,order:state.bondOrder});
+    state.solved=false;
+    state.bondStartId=null;render();
+  }
+
+  function svgPoint(ev){
+    const rect=svg.getBoundingClientRect();
+    return {x:(ev.clientX-rect.left)*1000/rect.width,y:(ev.clientY-rect.top)*570/rect.height};
+  }
+
+  svg.addEventListener('pointermove',ev=>{
+    if(!state.dragging)return;
+    const atom=getAtom(state.dragging.id),p=svgPoint(ev); if(!atom)return;
+    atom.x=clamp(p.x+state.dragging.dx,55,945);atom.y=clamp(p.y+state.dragging.dy,55,515);render();
+  });
+  svg.addEventListener('pointerup',()=>state.dragging=null);
+  svg.addEventListener('pointercancel',()=>state.dragging=null);
+  svg.addEventListener('pointerdown',ev=>{
+    if(ev.target!==svg)return;
+    state.selectedId=null;state.bondStartId=null;
+    if(state.tool==='add'&&state.mode!=='atom'){
+      const p=svgPoint(ev);const atom=newAtom(state.activeElement,clamp(p.x,55,945),clamp(p.y,55,515));state.atoms.push(atom);state.selectedId=atom.id;state.tool='select';state.solved=false;
+    }
+    render();
+  });
+
+  function deleteAtom(id){
+    state.atoms=state.atoms.filter(a=>a.id!==id);state.bonds=state.bonds.filter(b=>b.a!==id&&b.b!==id);state.solved=false;
+    if(state.selectedId===id)state.selectedId=null;if(state.bondStartId===id)state.bondStartId=null;render();
+  }
+  function getAtom(id){return state.atoms.find(a=>a.id===id);}
+  function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+  function formatCharge(q){if(q===0)return '';const n=Math.abs(q)===1?'':Math.abs(q);return `${n}${q>0?'+':'−'}`;}
+
+  function updateStatus(){
+    const available=availableElectrons(),used=usedElectrons(),difference=available-used;
+    el('availableCount').textContent=available;el('usedCount').textContent=used;
+    el('differenceCount').textContent=difference===0?'balanced':difference>0?`${difference} left`:`${Math.abs(difference)} extra`;
+    if(state.mode==='atom'){
+      const atom=state.atoms[0],target=atom?ELEMENTS[atom.symbol].valence:0,actual=atom?.singleElectrons||0;
+      el('octetCount').textContent=`${actual}/${target}`;el('shellLabel').textContent='valence dots placed';
+    } else {
+      const complete=state.atoms.filter(shellComplete).length;el('octetCount').textContent=`${complete}/${state.atoms.length}`;el('shellLabel').textContent='duets/octets complete';
+    }
+  }
+
+  function updateSelectedBox(){
+    const atom=getAtom(state.selectedId);
+    if(!atom){el('selectedTitle').textContent='No atom selected';el('selectedDetail').textContent='Select an atom to inspect or change its electrons.';return;}
+    el('selectedTitle').textContent=`Selected: ${atom.symbol}`;
+    if(state.mode==='atom')el('selectedDetail').textContent=`${atom.singleElectrons} of ${ELEMENTS[atom.symbol].valence} valence electrons placed.`;
+    else el('selectedDetail').textContent=`${atom.lonePairs} lone pair${atom.lonePairs===1?'':'s'} · ${electronsAround(atom)} electrons around atom · formal charge ${formalCharge(atom)===0?'0':formatCharge(formalCharge(atom))}.`;
+  }
+
+  function updateControlStates(){
+    document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===state.tool));
+    document.querySelectorAll('[data-order]').forEach(b=>b.classList.toggle('active',Number(b.dataset.order)===state.bondOrder));
+    document.querySelectorAll('[data-element]').forEach(b=>b.classList.toggle('active',b.dataset.element===state.activeElement&&state.tool==='add'));
+  }
+
+  function updateActionButtons(){
+    tidyButton.hidden = !(state.mode==='guided' && state.solved);
+  }
+
+  function applyTidyLayout(){
+    if(state.mode!=='guided' || !state.solved) return;
+    const c = MOLECULE_CHALLENGES[state.challengeIndex];
+    const formula = c.formula;
+    let positions = c.positions.map(([x,y])=>({x,y}));
+    switch(formula){
+      case 'H₂O':
+        positions = [{x:390,y:360},{x:500,y:275},{x:610,y:360}];
+        break;
+      case 'SO₂':
+      case 'O₃':
+        positions = [{x:385,y:360},{x:500,y:260},{x:615,y:360}];
+        break;
+      case 'NH₃':
+        positions = [{x:500,y:270},{x:500,y:145},{x:365,y:375},{x:635,y:375}];
+        break;
+      case 'CH₄':
+      case 'NH₄⁺':
+        positions = [{x:500,y:300},{x:500,y:155},{x:500,y:445},{x:350,y:315},{x:650,y:315}];
+        break;
+      case 'BF₃':
+      case 'CO₃²⁻':
+      case 'NO₃⁻':
+        positions = [{x:500,y:275},{x:500,y:140},{x:375,y:370},{x:625,y:370}];
+        break;
+      case 'CO₂':
+      case 'HCN':
+        positions = [{x:290,y:305},{x:500,y:305},{x:710,y:305}];
+        break;
+      case 'SF₆':
+        positions = [{x:500,y:285},{x:500,y:110},{x:500,y:460},{x:325,y:185},{x:675,y:185},{x:325,y:385},{x:675,y:385}];
+        break;
+      default:
+        positions = c.positions.map(([x,y])=>({x,y}));
+    }
+    state.atoms.forEach((atom,i)=>{
+      const target = positions[i] || positions[positions.length-1];
+      if(target){ atom.x = target.x; atom.y = target.y; }
+    });
+    setFeedback('Structure tidied','The atoms have been rearranged into a clearer molecular-shape layout for this challenge.','good');
+    render();
+  }
+
+  function analyse(showFeedback=true){
+    const available=availableElectrons(),used=usedElectrons(),difference=available-used;
+    el('electronAnalysis').textContent=difference===0
+      ?`${used} electrons are shown, matching the ${available} available valence electrons.`
+      :`${available} electrons are available, but ${used} are shown. ${difference>0?`${difference} more must be placed.`:`Remove ${Math.abs(difference)} electrons.`}`;
+    const list=el('atomAnalysis');list.innerHTML='';
+    if(state.atoms.length===0){const li=document.createElement('li');li.textContent='Add at least one atom.';list.appendChild(li);}
+    state.atoms.forEach((atom,i)=>{
+      const li=document.createElement('li'),around=electronsAround(atom);
+      li.textContent=`${atom.symbol}${i+1}: ${around} electrons — ${shellComplete(atom)?'shell rule satisfied':`target not satisfied`}.`;
+      list.appendChild(li);
+    });
+    const net=state.atoms.reduce((sum,a)=>sum+formalCharge(a),0);
+    if(state.mode==='atom'){
+      el('chargeAnalysis').textContent='Formal charge is not used for the isolated valence-dot challenge. The goal is to show the correct number and distribution of valence electrons.';
+    } else {
+    const charges=state.atoms.map((a,i)=>`${a.symbol}${i+1} ${formalCharge(a)===0?'0':formatCharge(formalCharge(a))}`).join(', ');
+    el('chargeAnalysis').textContent=state.atoms.length?`Atom charges: ${charges}. Net formal charge = ${net===0?'0':formatCharge(net)}; target charge = ${state.charge===0?'0':formatCharge(state.charge)}.`:'No atoms to analyse.';
+    }
+    if(showFeedback){
+      if(state.mode==='atom'){
+        const atom=state.atoms[0],target=atom?ELEMENTS[atom.symbol].valence:0,actual=atom?.singleElectrons||0;
+        if(atom&&actual===target)setFeedback('Valence electrons complete',`${atom.symbol} has the correct ${target} valence electron${target===1?'':'s'}.`,'good');
+        else setFeedback('Valence dots incomplete',`Place ${target} valence electron${target===1?'':'s'} around the atom. ${actual} are currently shown.`,'warn');
+      } else if(state.atoms.length===0)setFeedback('Nothing to analyse','Add an atom to the workspace first.','bad');
+      else if(difference===0&&state.atoms.every(shellComplete)&&net===state.charge)setFeedback('Electron rules satisfied','The electron total, shell rules and net formal charge are internally consistent. Check whether the atom connections are chemically appropriate.','good');
+      else setFeedback('Model needs revision','Use the detailed analysis below to locate missing or extra electrons, incomplete shells or an incorrect net charge.','warn');
+    }
+    return {available,used,difference,net,allShells:state.atoms.every(shellComplete)};
+  }
+
+  function checkStructure(){
+    if(state.mode==='atom'){
+      const target=ELEMENTS[ATOM_CHALLENGES[state.challengeIndex].element].valence;
+      const actual=state.atoms[0]?.singleElectrons??0;
+      analyse(false);
+      if(state.atoms.length===1&&state.atoms[0].symbol===ATOM_CHALLENGES[state.challengeIndex].element&&actual===target){
+        state.solved=true;
+        setFeedback('Correct valence-dot structure',`${ATOM_CHALLENGES[state.challengeIndex].element} has ${target} valence electron${target===1?'':'s'}, placed singly before pairing.`, 'good');
+      }else {state.solved=false; setFeedback('Keep working',`This atom needs ${target} valence electron${target===1?'':'s'}. You currently show ${actual}.`,'warn');}
+      render();
+      return;
+    }
+    const analysis=analyse(false);
+    if(state.mode==='free'){
+      if(state.atoms.length&&analysis.difference===0&&analysis.net===state.charge&&analysis.allShells){state.solved=true; setFeedback('Electron rules satisfied','The structure is internally consistent. In free-build mode, you should still consider whether the connectivity represents a plausible substance.','good');}
+      else {state.solved=false; setFeedback('Rules not yet satisfied','Review the electron total, shell completion and formal charge analysis.','warn');}
+      render();
+      return;
+    }
+    const c=MOLECULE_CHALLENGES[state.challengeIndex];
+    const countsMatch=elementCounts(state.atoms.map(a=>a.symbol))===elementCounts(c.elements);
+    const variantMatch=c.variants.some(v=>matchesVariant(v));
+    if(countsMatch&&variantMatch){
+      state.solved=true;
+      const resonance=c.variants.length>1?' This is one valid resonance contributor.':'';
+      setFeedback('Correct Lewis structure',`The bonding, lone pairs, electron count and charge are correct.${resonance}`,'good');
+      render();
+    }else{
+      state.solved=false;
+      const problems=[];
+      if(!countsMatch)problems.push('the atom count or elements do not match the formula');
+      if(analysis.difference!==0)problems.push('the electron total is not balanced');
+      if(!analysis.allShells)problems.push('one or more shell rules are incomplete');
+      if(analysis.net!==state.charge)problems.push('the net formal charge is incorrect');
+      if(!variantMatch&&problems.length===0)problems.push('the bond orders or lone-pair locations differ from a valid structure');
+      setFeedback('Structure not complete',sentenceList(problems)+'.','warn');
+      render();
+    }
+  }
+
+  function elementCounts(symbols){
+    const counts={};symbols.forEach(s=>counts[s]=(counts[s]||0)+1);return JSON.stringify(Object.keys(counts).sort().reduce((o,k)=>(o[k]=counts[k],o),{}));
+  }
+
+  function matchesVariant(v){
+    if(state.atoms.length!==v.lonePairs.length)return false;
+    for(let i=0;i<v.lonePairs.length;i++)if(state.atoms[i].lonePairs!==v.lonePairs[i]||state.atoms[i].singleElectrons!==0)return false;
+    if(state.bonds.length!==v.bonds.length)return false;
+    return v.bonds.every(([i,j,order])=>{
+      const a=state.atoms[i]?.id,b=state.atoms[j]?.id;
+      return state.bonds.some(x=>((x.a===a&&x.b===b)||(x.a===b&&x.b===a))&&x.order===order);
+    });
+  }
+
+  function sentenceList(items){
+    if(items.length===0)return 'The structure needs revision';
+    if(items.length===1)return `Check that ${items[0]}`;
+    return `Check that ${items.slice(0,-1).join(', ')}, and ${items.at(-1)}`;
+  }
+
+  function revealAnswer(){
+    if(state.mode==='free')return;
+    if(state.mode==='atom'){
+      const atom=state.atoms[0];if(atom)atom.singleElectrons=ELEMENTS[atom.symbol].valence;
+    }else{
+      const c=MOLECULE_CHALLENGES[state.challengeIndex],v=c.variants[0];
+      state.atoms=c.elements.map((symbol,i)=>newAtom(symbol,c.positions[i][0],c.positions[i][1]));
+      state.bonds=v.bonds.map(([i,j,order],n)=>({id:`answer${n}`,a:state.atoms[i].id,b:state.atoms[j].id,order}));
+      state.atoms.forEach((a,i)=>a.lonePairs=v.lonePairs[i]);
+    }
+    state.revealed=true;state.selectedId=null;analyse(false);render();
+    setFeedback('Answer displayed','Study how the available electrons are divided between bonds and lone pairs, then reset the challenge and reconstruct it.','good');
+  }
+
+  function setFeedback(title,message,type){
+    feedback.className=`feedback${type?` ${type}`:''}`;feedback.querySelector('h3').textContent=title;feedback.querySelector('p').textContent=message;
+  }
+
+  document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{state.tool=b.dataset.tool;state.bondStartId=null;updateControlStates();}));
+  document.querySelectorAll('[data-order]').forEach(b=>b.addEventListener('click',()=>{state.bondOrder=Number(b.dataset.order);state.tool='bond';updateControlStates();}));
+
+  modeSelect.addEventListener('change',()=>setMode(modeSelect.value));
+  challengeSelect.addEventListener('change',()=>{state.challengeIndex=Number(challengeSelect.value);loadCurrent();});
+  chargeSelect.addEventListener('change',()=>{
+    if(state.mode!=='free')return;
+    state.charge=Number(chargeSelect.value)||0;
+    el('formulaBadge').textContent=state.charge===0?'Custom structure':`Custom ${formatCharge(state.charge)}`;
+    render();
+  });
+  el('loadChallenge').addEventListener('click',loadCurrent);
+  el('nextChallenge').addEventListener('click',()=>{
+    const list=state.mode==='atom'?ATOM_CHALLENGES:MOLECULE_CHALLENGES;
+    state.challengeIndex=(state.challengeIndex+1)%list.length;challengeSelect.value=String(state.challengeIndex);loadCurrent();
+  });
+  el('addPair').addEventListener('click',()=>{const a=getAtom(state.selectedId);if(a&&a.lonePairs<4){a.lonePairs++;state.solved=false;render();}});
+  el('removePair').addEventListener('click',()=>{const a=getAtom(state.selectedId);if(a&&a.lonePairs>0){a.lonePairs--;state.solved=false;render();}});
+  el('addElectron').addEventListener('click',()=>{const a=getAtom(state.selectedId);if(a&&a.singleElectrons<8){a.singleElectrons++;state.solved=false;render();}});
+  el('removeElectron').addEventListener('click',()=>{const a=getAtom(state.selectedId);if(a&&a.singleElectrons>0){a.singleElectrons--;state.solved=false;render();}});
+  el('deleteSelected').addEventListener('click',()=>{if(state.selectedId!==null)deleteAtom(state.selectedId);});
+  el('checkButton').addEventListener('click',checkStructure);
+  el('analyseButton').addEventListener('click',()=>analyse(true));
+  el('resetButton').addEventListener('click',loadCurrent);
+  el('revealButton').addEventListener('click',revealAnswer);
+  el('clearButton').addEventListener('click',()=>{state.atoms=[];state.bonds=[];state.selectedId=null;state.bondStartId=null;state.solved=false;setFeedback('Workspace cleared','Use the controls to rebuild the structure.','');render();});
+  tidyButton.addEventListener('click',applyTidyLayout);
+
+  populateElements();populateChallenges();loadCurrent();
+})();
+</script>
+</body>
+</html>
