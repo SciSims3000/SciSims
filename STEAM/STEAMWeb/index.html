@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f6f73">
+  <meta name="description" content="Year 7 STEAM project planning portfolio with phase tabs, shared group planning, JSON save/load and flexible printing.">
+  <title>STEAM WEB ENGINE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#phase-content">Skip to phase planning</a>
+
+  <header class="site-header">
+    <div class="brand-row">
+      <a class="back-link" href="../../index.html" aria-label="Back to the main SciSims page">← Back to SciSims</a>
+      <div class="brand-block">
+        <p class="eyebrow">Year 7 collaborative project planner</p>
+        <h1>STEAM WEB ENGINE</h1>
+        <p class="tagline">Plan, document and improve your project through each STEAM phase.</p>
+      </div>
+      <div class="version-pill" aria-label="Application version">v1.0.0</div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="control-bar" aria-label="Project file controls">
+      <div class="control-actions">
+        <button class="button button-primary" id="new-project-btn" type="button">New project</button>
+        <button class="button" id="save-json-btn" type="button">Save JSON</button>
+        <button class="button" id="load-json-btn" type="button">Load JSON</button>
+        <button class="button" id="print-btn" type="button">Print</button>
+        <input id="load-json-input" type="file" accept="application/json,.json" hidden>
+      </div>
+
+      <div class="file-name-wrap">
+        <label for="file-name">JSON file name</label>
+        <div class="file-name-row">
+          <input id="file-name" type="text" autocomplete="off" spellcheck="false" aria-describedby="file-name-help">
+          <button class="icon-button" id="reset-file-name-btn" type="button" title="Reset to the suggested file name" aria-label="Reset to the suggested file name">↻</button>
+        </div>
+        <small id="file-name-help">You can edit this before saving.</small>
+      </div>
+
+      <div class="autosave-box" role="status" aria-live="polite">
+        <span class="autosave-dot" aria-hidden="true"></span>
+        <span id="autosave-status">Autosave ready</span>
+      </div>
+    </section>
+
+    <nav class="phase-tabs-wrap" aria-label="STEAM phases">
+      <div class="phase-tabs" id="phase-tabs" role="tablist" aria-label="Select a STEAM phase"></div>
+    </nav>
+
+    <details class="project-panel" id="project-panel" open>
+      <summary>
+        <span>
+          <strong>Project and group information</strong>
+          <small>These details stay available across every phase.</small>
+        </span>
+        <span class="summary-toggle" aria-hidden="true">Show / hide</span>
+      </summary>
+
+      <div class="project-panel-body">
+        <section aria-labelledby="project-details-heading">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="section-kicker">Shared project file</p>
+              <h2 id="project-details-heading">Project details</h2>
+            </div>
+          </div>
+          <div class="meta-grid" id="meta-fields"></div>
+        </section>
+
+        <section aria-labelledby="group-members-heading">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="section-kicker">Maximum group size: four</p>
+              <h2 id="group-members-heading">Group members and roles</h2>
+            </div>
+            <p class="section-note">A student may hold more than one role, and roles can change during the project.</p>
+          </div>
+          <div class="member-grid" id="member-grid"></div>
+        </section>
+      </div>
+    </details>
+
+    <section class="phase-progress" aria-label="Project progress">
+      <div>
+        <p class="section-kicker">Progress overview</p>
+        <h2 id="progress-label">0 of 8 phases complete</h2>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </section>
+
+    <section id="phase-content" class="phase-content" role="tabpanel" tabindex="-1" aria-live="polite"></section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>STEAM WEB ENGINE</strong> stores a recovery copy in this browser. Save the shared JSON file at the end of each session so the group can continue on another device.</p>
+  </footer>
+
+  <dialog id="print-dialog" class="modal-dialog">
+    <form method="dialog" id="print-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="section-kicker">Print options</p>
+          <h2>Choose what to print</h2>
+        </div>
+        <button class="dialog-close" value="cancel" aria-label="Close print options">×</button>
+      </div>
+
+      <fieldset class="print-options">
+        <legend>Print format</legend>
+        <label><input type="radio" name="print-mode" value="all" checked> Complete project portfolio</label>
+        <label><input type="radio" name="print-mode" value="current"> Current phase only</label>
+        <label><input type="radio" name="print-mode" value="summary"> Concise project summary</label>
+        <label><input type="radio" name="print-mode" value="selected"> Selected phases</label>
+        <label><input type="radio" name="print-mode" value="blank"> Blank planning workbook</label>
+      </fieldset>
+
+      <fieldset class="selected-phase-options" id="selected-phase-options" hidden>
+        <legend>Select phases</legend>
+        <div id="print-phase-checkboxes"></div>
+      </fieldset>
+
+      <div class="dialog-actions">
+        <button class="button" value="cancel" type="button" id="cancel-print-btn">Cancel</button>
+        <button class="button button-primary" value="default" type="submit">Open print view</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
