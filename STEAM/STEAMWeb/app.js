@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const STORAGE_KEY = 'steam-web-engine-v1';
 
   const STATUS_OPTIONS = [
@@ -1044,6 +1044,7 @@
     const phaseState = state.phases[phase.id];
 
     dom.content.setAttribute('aria-labelledby', `tab-${phase.id}`);
+    dom.content.dataset.phase = phase.id;
     dom.content.innerHTML = `
       <div class="phase-hero">
         <div class="phase-title-block">
