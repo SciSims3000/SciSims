@@ -130,6 +130,13 @@
       box-shadow: none;
     }
 
+    button:disabled {
+      cursor: wait;
+      opacity: 0.68;
+      transform: none;
+      box-shadow: none;
+    }
+
     .primary { background: var(--accent); color: white; border-color: var(--accent); }
     .green { background: var(--accent2); color: white; border-color: var(--accent2); }
     .purple { background: var(--purple); color: white; border-color: var(--purple); }
@@ -271,6 +278,13 @@
 
     .electron.moving {
       animation: pulseMove 0.8s ease-in-out infinite alternate;
+    }
+
+    .transfer-electron {
+      position: fixed;
+      z-index: 2000;
+      pointer-events: none;
+      will-change: left, top, transform;
     }
 
     @keyframes pulseMove {
@@ -432,6 +446,7 @@
       <div id="covalentControls" hidden>
         <label for="covalentExample">Choose a covalent example</label>
         <select id="covalentExample"></select>
+        <button class="purple" id="animateCovalentBtn">Animate electron sharing</button>
         <button class="ghost" id="resetCovalentBtn">Reset covalent model</button>
       </div>
 
@@ -514,7 +529,7 @@
       Cl2: { label: "Chlorine molecule, Cl₂", atoms: ["Cl", "Cl"], bonds: 1, lonePairs: 6, explanation: "Two chlorine atoms share one pair of electrons. Each chlorine also has three unbonded pairs of electrons." },
       HCl: { label: "Hydrogen chloride, HCl", atoms: ["H", "Cl"], bonds: 1, lonePairs: 3, explanation: "Hydrogen and chlorine share one pair of electrons. Chlorine also has three unbonded pairs of electrons." },
       H2O: { label: "Water, H₂O", atoms: ["O", "H", "H"], bonds: 2, lonePairs: 2, explanation: "Oxygen shares one pair of electrons with each hydrogen atom. Oxygen also has two unbonded pairs of electrons." },
-      NH3: { label: "Ammonia, NH₃", atoms: ["N", "H", "H", "H"], bonds: 3, lonePairs: 1, explanation: "Nitrogen shares electrons with three hydrogen atoms. Nitrogen also has one unbonded pair of electrons." },
+      NH3: { label: "Ammonia, NH₃", atoms: ["N", "H", "H", "H"], bonds: 3, lonePairs: 1, explanation: "Nitrogen shares one electron pair with each of three hydrogen atoms and retains one unbonded pair. The molecule has a trigonal pyramidal shape with an H–N–H bond angle of about 107°." },
       CH4: { label: "Methane, CH₄", atoms: ["C", "H", "H", "H", "H"], bonds: 4, lonePairs: 0, explanation: "Carbon has four valence electrons and shares one pair with each hydrogen atom, forming four covalent bonds." }
     };
 
@@ -524,7 +539,11 @@
       currentShells: [2, 4],
       ionicKey: "NaCl",
       ionicTransferred: false,
-      covalentKey: "H2O"
+      ionicAnimating: false,
+      ionicAnimationToken: 0,
+      covalentKey: "H2O",
+      covalentPhase: "initial",
+      covalentAnimationToken: 0
     };
 
     const shellCap = [2, 8, 8];
@@ -559,6 +578,8 @@
     const resultStat = document.getElementById("resultStat");
     const explainBox = document.getElementById("explainBox");
     const promptBox = document.getElementById("promptBox");
+    const transferBtn = document.getElementById("transferBtn");
+    const animateCovalentBtn = document.getElementById("animateCovalentBtn");
 
     function fillSelects() {
       Object.entries(elements).forEach(([symbol, el]) => {
@@ -650,9 +671,7 @@
       if (!showSecond) atomStageB.innerHTML = "";
     }
 
-    function drawAtom(stage, symbol, shells, options = {}) {
-      stage.innerHTML = "";
-
+    function getAtomGeometry(stage, shells) {
       const rect = stage.getBoundingClientRect();
       const w = rect.width || stage.clientWidth || 400;
       const h = rect.height || stage.clientHeight || 400;
@@ -662,45 +681,87 @@
       const padBottom = 24;
       const drawW = Math.max(w - padX * 2, 240);
       const drawH = Math.max(h - padTop - padBottom, 240);
-
       const cx = padX + drawW / 2;
       const cy = padTop + drawH / 2;
       const maxR = Math.min(drawW, drawH) * 0.42;
       const spacing = maxR / Math.max(shells.length, 1);
 
-      const angleMap = {
-        1: [-90],
-        2: [-90, 90],
-        3: [-90, 30, 150],
-        4: [-90, 0, 90, 180],
-        5: [-90, -18, 54, 126, 198],
-        6: [-90, -30, 30, 90, 150, 210],
-        7: [-90, -39, 12, 63, 114, 165, 216],
-        8: [-90, -45, 0, 45, 90, 135, 180, 225]
-      };
+      return { cx, cy, spacing };
+    }
 
-      shells.forEach((count, s) => {
-        const r = spacing * (s + 1);
+    function getPairedElectronAngles(count, radius, shellIndex) {
+      if (count <= 0) return [];
+
+      const pairSites = shellIndex === 0 ? [-90] : [-90, 0, 90, 180];
+      const halfPairGap = Math.asin(Math.min(0.42, 10 / Math.max(radius, 24))) * 180 / Math.PI;
+      const angles = [];
+
+      for (let electron = 0; electron < count; electron += 2) {
+        const site = pairSites[Math.floor(electron / 2) % pairSites.length];
+        const hasPair = electron + 1 < count;
+
+        if (hasPair) {
+          angles.push(site - halfPairGap, site + halfPairGap);
+        } else {
+          angles.push(site);
+        }
+      }
+
+      return angles.slice(0, count);
+    }
+
+    function getElectronLayout(stage, shells) {
+      const { cx, cy, spacing } = getAtomGeometry(stage, shells);
+      const layout = [];
+
+      shells.forEach((count, shellIndex) => {
+        const radius = spacing * (shellIndex + 1);
+        const angles = getPairedElectronAngles(count, radius, shellIndex);
+
+        angles.forEach((degrees, electronIndex) => {
+          const angle = degrees * Math.PI / 180;
+          layout.push({
+            shellIndex,
+            electronIndex,
+            x: cx + Math.cos(angle) * radius,
+            y: cy + Math.sin(angle) * radius
+          });
+        });
+      });
+
+      return { cx, cy, spacing, electrons: layout };
+    }
+
+    function drawAtom(stage, symbol, shells, options = {}) {
+      stage.innerHTML = "";
+
+      const { cx, cy, spacing, electrons } = getElectronLayout(stage, shells);
+
+      shells.forEach((_, shellIndex) => {
+        const radius = spacing * (shellIndex + 1);
         const shell = document.createElement("div");
         shell.className = "shell";
-        shell.style.width = `${r * 2}px`;
-        shell.style.height = `${r * 2}px`;
+        shell.style.width = `${radius * 2}px`;
+        shell.style.height = `${radius * 2}px`;
         shell.style.left = `${cx}px`;
         shell.style.top = `${cy}px`;
         stage.appendChild(shell);
+      });
 
-        const angles = angleMap[count] || Array.from({ length: count }, (_, i) => -90 + (360 / Math.max(count, 1)) * i);
+      electrons.forEach(position => {
+        const count = shells[position.shellIndex];
+        const dot = document.createElement("div");
+        const outerClass = position.shellIndex === shells.length - 1 ? " outer" : "";
+        const movingClass = options.movingOuter &&
+          position.shellIndex === shells.length - 1 &&
+          position.electronIndex >= count - options.movingOuter ? " moving" : "";
 
-        angles.forEach((deg, i) => {
-          const angle = deg * Math.PI / 180;
-          const dot = document.createElement("div");
-          const outerClass = s === shells.length - 1 ? " outer" : "";
-          const movingClass = options.movingOuter && s === shells.length - 1 && i >= count - options.movingOuter ? " moving" : "";
-          dot.className = `electron${outerClass}${movingClass}`;
-          dot.style.left = `${cx + Math.cos(angle) * r}px`;
-          dot.style.top = `${cy + Math.sin(angle) * r}px`;
-          stage.appendChild(dot);
-        });
+        dot.className = `electron${outerClass}${movingClass}`;
+        dot.dataset.shellIndex = position.shellIndex;
+        dot.dataset.electronIndex = position.electronIndex;
+        dot.style.left = `${position.x}px`;
+        dot.style.top = `${position.y}px`;
+        stage.appendChild(dot);
       });
 
       const nucleus = document.createElement("div");
@@ -712,7 +773,7 @@
       stage.appendChild(nucleus);
     }
 
-    function drawLewisStructure(stage, key) {
+    function drawLewisStructure(stage, key, options = {}) {
       stage.innerHTML = "";
 
       const rect = stage.getBoundingClientRect();
@@ -753,21 +814,21 @@
         H2O: {
           atoms: {
             O: { symbol: "O", x: cx, y: cy },
-            H1: { symbol: "H", x: cx - 125, y: cy + 70 },
-            H2: { symbol: "H", x: cx + 125, y: cy + 70 }
+            H1: { symbol: "H", x: cx - 120, y: cy + 93 },
+            H2: { symbol: "H", x: cx + 120, y: cy + 93 }
           },
           bonds: [{ from: "O", to: "H1" }, { from: "O", to: "H2" }],
-          lonePairs: { O: ["top", "left"], H1: [], H2: [] }
+          lonePairs: { O: ["topLeft", "topRight"], H1: [], H2: [] }
         },
         NH3: {
           atoms: {
-            N: { symbol: "N", x: cx, y: cy },
-            H1: { symbol: "H", x: cx - 125, y: cy + 85 },
-            H2: { symbol: "H", x: cx + 125, y: cy + 85 },
-            H3: { symbol: "H", x: cx, y: cy - 125 }
+            N: { symbol: "N", x: cx, y: cy - 8 },
+            H1: { symbol: "H", x: cx - 145, y: cy + 20 },
+            H2: { symbol: "H", x: cx + 145, y: cy + 20 },
+            H3: { symbol: "H", x: cx, y: cy + 145 }
           },
           bonds: [{ from: "N", to: "H1" }, { from: "N", to: "H2" }, { from: "N", to: "H3" }],
-          lonePairs: { N: ["bottom"], H1: [], H2: [], H3: [] }
+          lonePairs: { N: ["top"], H1: [], H2: [], H3: [] }
         },
         CH4: {
           atoms: {
@@ -800,6 +861,7 @@
         dot.style.left = `${x}px`;
         dot.style.top = `${y}px`;
         wrapper.appendChild(dot);
+        return dot;
       }
 
       function addPair(x, y, orientation, cls) {
@@ -807,25 +869,59 @@
         if (orientation === "h") {
           addDot(x - offset, y, cls);
           addDot(x + offset, y, cls);
-        } else {
+        } else if (orientation === "v") {
           addDot(x, y - offset, cls);
           addDot(x, y + offset, cls);
+        } else if (orientation === "diag-left") {
+          addDot(x - offset * 0.85, y - offset * 0.55, cls);
+          addDot(x + offset * 0.85, y + offset * 0.55, cls);
+        } else if (orientation === "diag-right") {
+          addDot(x - offset * 0.85, y + offset * 0.55, cls);
+          addDot(x + offset * 0.85, y - offset * 0.55, cls);
+        } else {
+          addDot(x - offset, y, cls);
+          addDot(x + offset, y, cls);
         }
       }
 
       function pairPosition(atom, side) {
-        const d = 40;
+        const d = 44;
+        const diag = 34;
         if (side === "top") return { x: atom.x, y: atom.y - d, orientation: "h" };
         if (side === "bottom") return { x: atom.x, y: atom.y + d, orientation: "h" };
         if (side === "left") return { x: atom.x - d, y: atom.y, orientation: "v" };
+        if (side === "right") return { x: atom.x + d, y: atom.y, orientation: "v" };
+        if (side === "topLeft") return { x: atom.x - 40, y: atom.y - 36, orientation: "diag-right" };
+        if (side === "topRight") return { x: atom.x + 40, y: atom.y - 36, orientation: "diag-left" };
+        if (side === "bottomLeft") return { x: atom.x - 40, y: atom.y + 36, orientation: "diag-left" };
+        if (side === "bottomRight") return { x: atom.x + 40, y: atom.y + 36, orientation: "diag-right" };
         return { x: atom.x + d, y: atom.y, orientation: "v" };
       }
 
-      function drawBondLine(a, b) {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const phase = options.phase || "complete";
+
+      function drawInitialBondElectrons() {
+        model.bonds.forEach(bond => {
+          const a = model.atoms[bond.from];
+          const b = model.atoms[bond.to];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+          const ux = dx / distance;
+          const uy = dy / distance;
+
+          addDot(a.x + ux * 40, a.y + uy * 40, "lone");
+          addDot(b.x - ux * 40, b.y - uy * 40, "lone");
+        });
+      }
+
+      function drawBondLine(a, b, bondIndex) {
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx);
+        const angleDegrees = angle * 180 / Math.PI;
         const startOffset = 32;
         const len = Math.max(distance - startOffset * 2, 20);
 
@@ -834,30 +930,73 @@
         line.style.left = `${a.x + Math.cos(angle) * startOffset}px`;
         line.style.top = `${a.y + Math.sin(angle) * startOffset}px`;
         line.style.width = `${len}px`;
-        line.style.transform = `rotate(${angle * 180 / Math.PI}deg)`;
+        line.style.transform = `rotate(${angleDegrees}deg)`;
         wrapper.appendChild(line);
+
+        if (phase === "animate" && !reducedMotion) {
+          line.animate([
+            { transform: `rotate(${angleDegrees}deg) scaleX(0)`, opacity: 0 },
+            { transform: `rotate(${angleDegrees}deg) scaleX(1)`, opacity: 1 }
+          ], {
+            duration: 520,
+            delay: 420 + bondIndex * 180,
+            easing: "ease-out",
+            fill: "both"
+          });
+        }
       }
 
-      function drawBondPair(a, b) {
-        const mx = (a.x + b.x) / 2;
-        const my = (a.y + b.y) / 2;
-        const horizontal = Math.abs(a.x - b.x) >= Math.abs(a.y - b.y);
-        addPair(mx, my, horizontal ? "h" : "v", "bonded");
-      }
+      function drawBondPair(a, b, bondIndex) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+        const ux = dx / distance;
+        const uy = dy / distance;
+        const px = -uy;
+        const py = ux;
+        const mx = a.x + (b.x - a.x) * 0.46;
+        const my = a.y + (b.y - a.y) * 0.46;
+        const pairOffset = 8;
 
-      model.bonds.forEach(bond => {
-        const a = model.atoms[bond.from];
-        const b = model.atoms[bond.to];
-        drawBondLine(a, b);
-      });
+        const finalA = { x: mx + px * pairOffset, y: my + py * pairOffset };
+        const finalB = { x: mx - px * pairOffset, y: my - py * pairOffset };
+        const startA = { x: a.x + ux * 34, y: a.y + uy * 34 };
+        const startB = { x: b.x - ux * 34, y: b.y - uy * 34 };
+
+        const dotA = addDot(finalA.x, finalA.y, "bonded");
+        const dotB = addDot(finalB.x, finalB.y, "bonded");
+
+        if (phase === "animate" && !reducedMotion) {
+          const timing = {
+            duration: 850,
+            delay: bondIndex * 180,
+            easing: "cubic-bezier(.22,.78,.22,1)",
+            fill: "both"
+          };
+
+          dotA.animate([
+            {
+              transform: `translate(-50%, -50%) translate(${startA.x - finalA.x}px, ${startA.y - finalA.y}px) scale(0.85)`,
+              opacity: 1,
+              backgroundColor: "#f59e0b"
+            },
+            { transform: "translate(-50%, -50%) translate(0, 0) scale(1.25)", opacity: 1, backgroundColor: "#2563eb", offset: 0.82 },
+            { transform: "translate(-50%, -50%) translate(0, 0) scale(1)", opacity: 1, backgroundColor: "#2563eb" }
+          ], timing);
+
+          dotB.animate([
+            {
+              transform: `translate(-50%, -50%) translate(${startB.x - finalB.x}px, ${startB.y - finalB.y}px) scale(0.85)`,
+              opacity: 1,
+              backgroundColor: "#f59e0b"
+            },
+            { transform: "translate(-50%, -50%) translate(0, 0) scale(1.25)", opacity: 1, backgroundColor: "#2563eb", offset: 0.82 },
+            { transform: "translate(-50%, -50%) translate(0, 0) scale(1)", opacity: 1, backgroundColor: "#2563eb" }
+          ], timing);
+        }
+      }
 
       Object.values(model.atoms).forEach(addSymbol);
-
-      model.bonds.forEach(bond => {
-        const a = model.atoms[bond.from];
-        const b = model.atoms[bond.to];
-        drawBondPair(a, b);
-      });
 
       Object.entries(model.lonePairs).forEach(([atomKey, sides]) => {
         const atom = model.atoms[atomKey];
@@ -867,14 +1006,37 @@
         });
       });
 
+      if (phase === "initial") {
+        drawInitialBondElectrons();
+      } else {
+        model.bonds.forEach((bond, bondIndex) => {
+          const a = model.atoms[bond.from];
+          const b = model.atoms[bond.to];
+          drawBondLine(a, b, bondIndex);
+        });
+
+        model.bonds.forEach((bond, bondIndex) => {
+          const a = model.atoms[bond.from];
+          const b = model.atoms[bond.to];
+          drawBondPair(a, b, bondIndex);
+        });
+      }
+
       const legend = document.createElement("div");
       legend.className = "legend";
-      legend.innerHTML = `<span><i class="dot bonded"></i> bonding electrons</span><span><i class="dot lone"></i> unbonded electrons</span>`;
+      legend.innerHTML = phase === "initial"
+        ? `<span><i class="dot lone"></i> separate valence electrons</span>`
+        : `<span><i class="dot bonded"></i> bonding electrons</span><span><i class="dot lone"></i> unbonded electrons</span>`;
       wrapper.appendChild(legend);
     }
 
     function setMode(mode) {
+      const enteringCovalent = mode === "covalent" && state.mode !== "covalent";
       state.mode = mode;
+      if (enteringCovalent) {
+        state.covalentAnimationToken++;
+        state.covalentPhase = "initial";
+      }
       modeSelect.value = mode;
       singleControls.hidden = mode !== "single";
       ionicControls.hidden = mode !== "ionic";
@@ -926,37 +1088,165 @@
         nonmetalCharge = ex.move === 1 ? "-1" : `-${ex.move}`;
       }
 
+      transferBtn.disabled = state.ionicAnimating;
+      transferBtn.textContent = state.ionicAnimating
+        ? "Transferring electrons…"
+        : state.ionicTransferred
+          ? "Replay electron transfer"
+          : "Transfer electrons";
+
       titleA.textContent = `${metal.name} ${state.ionicTransferred ? "ion" : "atom"}`;
       titleB.textContent = `${nonmetal.name} ${state.ionicTransferred ? "ion" : "atom"}`;
-      drawAtom(atomStageA, ex.metal, metalShells, { charge: metalCharge, movingOuter: state.ionicTransferred ? 0 : ex.move });
-      drawAtom(atomStageB, ex.nonmetal, nonmetalShells, { charge: nonmetalCharge, movingOuter: state.ionicTransferred ? ex.move : 0 });
+      drawAtom(atomStageA, ex.metal, metalShells, { charge: metalCharge, movingOuter: !state.ionicTransferred && !state.ionicAnimating ? ex.move : 0 });
+      drawAtom(atomStageB, ex.nonmetal, nonmetalShells, { charge: nonmetalCharge });
 
       arrangementStat.textContent = `${ex.metal}: ${arrangement(metalShells)} | ${ex.nonmetal}: ${arrangement(nonmetalShells)}`;
       valenceStat.textContent = `${ex.metal}: ${valence(metalShells)} | ${ex.nonmetal}: ${valence(nonmetalShells)}`;
-      resultStat.textContent = state.ionicTransferred ? ex.formula : "Before transfer";
+      resultStat.textContent = state.ionicAnimating ? "Electrons moving…" : state.ionicTransferred ? ex.formula : "Before transfer";
 
       explainBox.innerHTML = state.ionicTransferred
         ? `<strong>Ionic transfer:</strong> ${ex.explanation} The electron arrangement changes to <strong>${ex.metal}: ${arrangement(metalShells)}</strong> and <strong>${ex.nonmetal}: ${arrangement(nonmetalShells)}</strong>.`
-        : `<strong>Before transfer:</strong> ${metal.name} has ${valence(metalShells)} valence electron${valence(metalShells) === 1 ? "" : "s"}. ${nonmetal.name} has ${valence(nonmetalShells)} valence electron${valence(nonmetalShells) === 1 ? "" : "s"}. Press transfer to model electrons moving from the metal to the non-metal.`;
-      promptBox.textContent = "Identify which atom loses electrons, which atom gains electrons, and the charges that form.";
+        : `<strong>Before transfer:</strong> ${metal.name} has ${valence(metalShells)} valence electron${valence(metalShells) === 1 ? "" : "s"}. ${nonmetal.name} has ${valence(nonmetalShells)} valence electron${valence(nonmetalShells) === 1 ? "" : "s"}. Press transfer to watch electrons move from the metal to the non-metal.`;
+      promptBox.textContent = state.ionicAnimating
+        ? "Follow each orange electron as it moves from the metal to the non-metal."
+        : "Identify which atom loses electrons, which atom gains electrons, and the charges that form.";
+    }
+
+    function waitForPaint() {
+      return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    function getViewportElectronPositions(stage, shells) {
+      const stageRect = stage.getBoundingClientRect();
+      const layout = getElectronLayout(stage, shells).electrons;
+      return layout.map(position => ({
+        ...position,
+        viewportX: stageRect.left + position.x,
+        viewportY: stageRect.top + position.y
+      }));
+    }
+
+    async function animateIonicTransfer() {
+      if (state.ionicAnimating) return;
+
+      const ex = ionicExamples[state.ionicKey];
+      const animationToken = ++state.ionicAnimationToken;
+      const metalShells = cloneShells(ex.metal);
+      const nonmetalShells = cloneShells(ex.nonmetal);
+      let finalNonmetalShells = cloneShells(ex.nonmetal);
+
+      for (let i = 0; i < ex.move; i++) {
+        finalNonmetalShells = addElectron(finalNonmetalShells);
+      }
+
+      state.ionicTransferred = false;
+      state.ionicAnimating = true;
+      render();
+      await waitForPaint();
+
+      const starts = getViewportElectronPositions(atomStageA, metalShells)
+        .filter(position => position.shellIndex === metalShells.length - 1)
+        .slice(-ex.move);
+
+      const originalOuterCount = nonmetalShells[nonmetalShells.length - 1];
+      const ends = getViewportElectronPositions(atomStageB, finalNonmetalShells)
+        .filter(position => position.shellIndex === finalNonmetalShells.length - 1)
+        .filter(position => position.electronIndex >= originalOuterCount)
+        .slice(0, ex.move);
+
+      starts.forEach(start => {
+        const source = atomStageA.querySelector(
+          `.electron[data-shell-index="${start.shellIndex}"][data-electron-index="${start.electronIndex}"]`
+        );
+        if (source) source.style.opacity = "0";
+      });
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (!reducedMotion) {
+        const animations = starts.map((start, index) => {
+          const end = ends[index] || ends[ends.length - 1];
+          const flyingElectron = document.createElement("div");
+          flyingElectron.className = "electron outer transfer-electron";
+          flyingElectron.style.left = `${start.viewportX}px`;
+          flyingElectron.style.top = `${start.viewportY}px`;
+          document.body.appendChild(flyingElectron);
+
+          const middleX = (start.viewportX + end.viewportX) / 2;
+          const middleY = Math.min(start.viewportY, end.viewportY) - 72 - index * 12;
+
+          const animation = flyingElectron.animate([
+            {
+              left: `${start.viewportX}px`,
+              top: `${start.viewportY}px`,
+              transform: "translate(-50%, -50%) scale(1)",
+              opacity: 1
+            },
+            {
+              left: `${middleX}px`,
+              top: `${middleY}px`,
+              transform: "translate(-50%, -50%) scale(1.35)",
+              opacity: 1,
+              offset: 0.52
+            },
+            {
+              left: `${end.viewportX}px`,
+              top: `${end.viewportY}px`,
+              transform: "translate(-50%, -50%) scale(1)",
+              opacity: 1
+            }
+          ], {
+            duration: 950,
+            delay: index * 170,
+            easing: "cubic-bezier(.25,.8,.25,1)",
+            fill: "forwards"
+          });
+
+          return animation.finished.finally(() => flyingElectron.remove());
+        });
+
+        await Promise.all(animations);
+      }
+
+      if (animationToken !== state.ionicAnimationToken) return;
+
+      state.ionicAnimating = false;
+      state.ionicTransferred = true;
+      render();
     }
 
     function renderCovalent() {
       setVisualLayout(false);
 
       const ex = covalentExamples[state.covalentKey];
-      titleA.textContent = `${ex.label} Lewis dot structure`;
-      drawLewisStructure(atomStageA, state.covalentKey);
+      const phase = state.covalentPhase;
+
+      titleA.textContent = phase === "initial"
+        ? `${ex.label} before sharing`
+        : `${ex.label} Lewis dot structure`;
+      drawLewisStructure(atomStageA, state.covalentKey, { phase });
 
       statLabelA.textContent = "Atoms shown";
       statLabelB.textContent = "Electron pairs";
       statLabelC.textContent = "Model result";
       arrangementStat.textContent = ex.atoms.join(", ");
-      valenceStat.textContent = `${ex.bonds} bonding pair${ex.bonds === 1 ? "" : "s"} | ${ex.lonePairs} unbonded pair${ex.lonePairs === 1 ? "" : "s"}`;
-      resultStat.textContent = "Lewis structure shown";
+      valenceStat.textContent = phase === "initial"
+        ? `${ex.bonds * 2} separate bonding electrons ready to share`
+        : `${ex.bonds} bonding pair${ex.bonds === 1 ? "" : "s"} | ${ex.lonePairs} unbonded pair${ex.lonePairs === 1 ? "" : "s"}`;
+      resultStat.textContent = phase === "initial"
+        ? "Atoms not bonded"
+        : phase === "animate"
+          ? "Electron pairs forming"
+          : "Lewis structure shown";
 
-      explainBox.innerHTML = `<strong>Covalent bonding:</strong> ${ex.explanation} In this model, <strong>bonding electrons are blue</strong> and <strong>unbonded electrons are orange</strong>.`;
-      promptBox.textContent = "Use the colour coding to compare bonding electrons and unbonded electrons.";
+      explainBox.innerHTML = phase === "initial"
+        ? `<strong>Before bonding:</strong> Each orange dot is a valence electron. The atoms are shown close together, but no electrons have been shared yet.`
+        : `<strong>Covalent bonding:</strong> ${ex.explanation} In this model, <strong>bonding electrons are blue</strong> and <strong>unbonded electrons are orange</strong>.`;
+      promptBox.textContent = phase === "initial"
+        ? "Predict which electrons will move together, then press Animate electron sharing."
+        : phase === "animate"
+          ? "Watch one electron from each atom move together to form each shared pair."
+          : "Use the colour coding to compare bonding electrons and unbonded electrons.";
     }
 
     function render() {
@@ -999,28 +1289,54 @@
       render();
     });
 
-    document.getElementById("transferBtn").addEventListener("click", () => {
-      state.ionicTransferred = true;
-      render();
-    });
+    transferBtn.addEventListener("click", animateIonicTransfer);
 
     document.getElementById("resetIonicBtn").addEventListener("click", () => {
+      state.ionicAnimationToken++;
+      state.ionicAnimating = false;
       state.ionicTransferred = false;
+      document.querySelectorAll(".transfer-electron").forEach(dot => dot.remove());
       render();
     });
 
     covalentExample.addEventListener("change", e => {
+      state.covalentAnimationToken++;
       state.covalentKey = e.target.value;
+      state.covalentPhase = "initial";
       render();
     });
 
+    animateCovalentBtn.addEventListener("click", () => {
+      const ex = covalentExamples[state.covalentKey];
+      const animationToken = ++state.covalentAnimationToken;
+      state.covalentPhase = "animate";
+      render();
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const finishDelay = reducedMotion ? 80 : 1050 + Math.max(ex.bonds - 1, 0) * 180;
+      window.setTimeout(() => {
+        if (animationToken !== state.covalentAnimationToken) return;
+        if (state.mode !== "covalent") return;
+        state.covalentPhase = "complete";
+        render();
+      }, finishDelay);
+    });
+
     document.getElementById("resetCovalentBtn").addEventListener("click", () => {
+      state.covalentAnimationToken++;
+      state.covalentPhase = "initial";
       render();
     });
 
     fillSelects();
     render();
-    window.addEventListener("resize", render);
+    window.addEventListener("resize", () => {
+      if (state.mode === "covalent" && state.covalentPhase === "animate") {
+        state.covalentAnimationToken++;
+        state.covalentPhase = "initial";
+      }
+      render();
+    });
   </script>
 </body>
 </html>
