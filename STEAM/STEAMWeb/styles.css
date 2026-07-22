@@ -312,6 +312,8 @@ input[type="radio"] {
 }
 
 .phase-tab {
+  --phase-colour: var(--teal-700);
+  --phase-colour-dark: var(--teal-900);
   position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
@@ -319,23 +321,40 @@ input[type="radio"] {
   gap: 8px;
   min-height: 64px;
   padding: 9px 11px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--phase-colour-dark);
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.88);
-  color: var(--teal-900);
+  background: var(--phase-colour);
+  color: #fff;
   text-align: left;
   font-weight: 800;
+  box-shadow: 0 3px 9px rgba(23, 48, 51, 0.12);
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
 }
 
+/* Phase colour journey: red at the beginning, gradually shifting to green. */
+.phase-tab:nth-child(1) { --phase-colour: #b4232c; --phase-colour-dark: #7f1d25; }
+.phase-tab:nth-child(2) { --phase-colour: #c44a22; --phase-colour-dark: #8f3218; }
+.phase-tab:nth-child(3) { --phase-colour: #c96d12; --phase-colour-dark: #92500d; }
+.phase-tab:nth-child(4) { --phase-colour: #b58a0a; --phase-colour-dark: #806207; }
+.phase-tab:nth-child(5) { --phase-colour: #8b9b16; --phase-colour-dark: #626e10; }
+.phase-tab:nth-child(6) { --phase-colour: #5f962b; --phase-colour-dark: #41691d; }
+.phase-tab:nth-child(7) { --phase-colour: #36884a; --phase-colour-dark: #246134; }
+.phase-tab:nth-child(8) { --phase-colour: #187a43; --phase-colour-dark: #10562f; }
+
 .phase-tab:hover {
-  background: var(--sand-050);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(23, 48, 51, 0.18);
 }
 
 .phase-tab[aria-selected="true"] {
-  background: var(--teal-900);
-  border-color: var(--teal-900);
+  background: var(--phase-colour-dark);
+  border-color: #fff;
   color: #fff;
-  box-shadow: 0 7px 18px rgba(18, 73, 77, 0.22);
+  box-shadow:
+    0 0 0 3px var(--phase-colour),
+    0 8px 18px rgba(23, 48, 51, 0.28);
+  transform: translateY(-2px);
 }
 
 .phase-number {
@@ -344,13 +363,19 @@ input[type="radio"] {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--sand-100);
-  color: var(--teal-900);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--phase-colour-dark);
   font-size: 0.84rem;
 }
 
 .phase-tab[aria-selected="true"] .phase-number {
-  background: var(--sand-300);
+  background: #fff;
+  color: var(--phase-colour-dark);
+}
+
+.phase-tab .tab-status {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 1px rgba(23, 48, 51, 0.12);
 }
 
 .tab-status {
