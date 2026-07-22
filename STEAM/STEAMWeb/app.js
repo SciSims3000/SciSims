@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const STORAGE_KEY = 'steam-web-engine-v1';
 
   const STATUS_OPTIONS = [
