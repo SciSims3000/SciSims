@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0.0",
+  "entries": [],
+  "reactions": [],
+  "instance": {
+    "id": "demo-cross-faculty",
+    "label": "Cross-faculty Demo",
+    "year": "2027",
+    "updatedAt": "2026-07-24T00:00:00Z",
+    "templateId": "cross-faculty-demo"
+  }
+}
