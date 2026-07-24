@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "appName": "StudyBoard3000",
-  "appVersion": "0.4.1",
+  "appVersion": "0.4.2",
   "boardsFile": "config/boards.json",
   "accessFile": "config/access.json",
   "defaultBoard": "2027-12is1"
