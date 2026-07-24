@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "ama-welcome",
+      "nodeId": "open-ama-questions",
+      "parentEntryId": null,
+      "entryType": "teacher-highlight",
+      "author": {
+        "id": "teacher",
+        "displayName": "Facilitator",
+        "firstName": "",
+        "lastInitial": "",
+        "className": "",
+        "role": "teacher",
+        "avatarInitials": "F",
+        "avatarColour": "hsl(285 35% 42%)"
+      },
+      "body": "Welcome. Add a question, support other questions using Helpful, and reply when you have an idea or experience to contribute.",
+      "createdAt": "2026-07-24T00:00:00Z",
+      "updatedAt": "2026-07-24T00:00:00Z",
+      "status": "published",
+      "curation": {
+        "isTeacherRecommended": true,
+        "promotedFromEntryId": null,
+        "curatedBy": "Facilitator",
+        "curatedAt": "2026-07-24T00:00:00Z",
+        "reason": "Session instructions."
+      },
+      "tags": [
+        "ama",
+        "welcome"
+      ],
+      "sourceLinks": [],
+      "flashcardEligible": false,
+      "studyBuddyEligible": false
+    }
+  ],
+  "reactions": [],
+  "instance": {
+    "id": "teacher-ama-2026",
+    "label": "Teacher AMA 2026",
+    "year": "2026",
+    "updatedAt": "2026-07-24T00:00:00Z",
+    "templateId": "teacher-ama"
+  }
+}
