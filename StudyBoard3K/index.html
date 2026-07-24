@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="StudyBoard3000 — reusable collaborative knowledge boards">
+  <title>StudyBoard3000</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="mode-guest">
+  <header class="hero">
+    <div>
+      <div class="brandline">
+        <span class="logo">SB3K</span>
+        <div>
+          <h1 id="appTitle">StudyBoard3000</h1>
+          <p id="appSubtitle">Collaborative knowledge boards</p>
+        </div>
+      </div>
+      <div class="access-badge" id="accessBadge">🔎 Guest mode</div>
+    </div>
+    <div class="header-actions">
+      <button id="boardPickerBtn">Boards</button>
+      <button id="accessBtn">Access</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="startup" class="panel startup">
+      <h2>Loading StudyBoard3000…</h2>
+      <p id="startupMessage">Reading board configuration.</p>
+    </section>
+
+    <section id="appShell" hidden>
+      <nav id="tabs" class="tabs" aria-label="Board sections"></nav>
+
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Search this board…">
+        <button id="printBtn">Print</button>
+        <button id="flashBtn">Flashcards</button>
+        <button class="teacher-only" id="exportBtn">Export instance JSON</button>
+        <label class="filelabel teacher-only">Import instance JSON
+          <input id="importFile" type="file" accept=".json,application/json">
+        </label>
+        <button class="teacher-only danger" id="resetBtn">Reset local instance data</button>
+      </div>
+
+      <section id="boardMeta" class="board-meta"></section>
+      <section id="content"></section>
+    </section>
+  </main>
+
+  <dialog id="boardDialog">
+    <form method="dialog" class="dialog-card">
+      <h2>Select a board</h2>
+      <div id="boardList" class="board-list"></div>
+      <div class="dialog-actions"><button value="cancel">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accessDialog">
+    <form method="dialog" class="dialog-card">
+      <h2>Access</h2>
+      <div class="access-options">
+        <button type="button" data-mode="guest" class="access-card">
+          <strong>Guest</strong><span>Browse, search, print and generate flashcards.</span>
+        </button>
+        <button type="button" data-mode="student" class="access-card">
+          <strong>Student</strong><span>Add notes, reply and react.</span>
+        </button>
+        <button type="button" data-mode="teacher" class="access-card">
+          <strong>Teacher</strong><span>Curate, delete, import and export.</span>
+        </button>
+      </div>
+      <div id="passwordArea" hidden>
+        <label id="passwordLabel" for="passwordInput">Password</label>
+        <div class="password-row">
+          <input id="passwordInput" type="password" autocomplete="current-password">
+          <button type="button" id="unlockBtn">Unlock</button>
+        </div>
+        <p id="accessMessage" class="message"></p>
+      </div>
+      <div class="dialog-actions"><button value="cancel">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="flashDialog">
+    <form method="dialog" class="dialog-card wide">
+      <h2>Generated flashcards</h2>
+      <div id="flashcards" class="flashcards"></div>
+      <div class="dialog-actions">
+        <button type="button" id="downloadFlashBtn">Download JSON</button>
+        <button value="cancel">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="errorTemplate">
+    <section class="panel error-panel">
+      <h2>StudyBoard3000 could not load this board</h2>
+      <pre></pre>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
