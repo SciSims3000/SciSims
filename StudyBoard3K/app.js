@@ -187,18 +187,49 @@ function activeSection(){
   const nav=template.navigation.find(n=>n.id===currentTab);
   return template.sections.find(s=>s.id===nav?.sectionId);
 }
+function getOpenInquiryIds(){
+  return [...document.querySelectorAll("details.inquiry[open]")]
+    .map(details => details.dataset.inquiryId)
+    .filter(Boolean);
+}
 
-function renderContent(){
+function restoreOpenInquiryIds(openInquiryIds){
+  openInquiryIds.forEach(inquiryId => {
+    const details = document.querySelector(
+      `details.inquiry[data-inquiry-id="${CSS.escape(inquiryId)}"]`
+    );
+
+    if(details){
+      details.open = true;
+    }
+  });
+}
+function renderContent(options={}){
+  const openInquiryIds = options.openInquiryIds || getOpenInquiryIds();
+
   const section=activeSection();
   const q=$("#searchInput").value.trim().toLowerCase();
-  if(!section){$("#content").innerHTML="<section class='panel'>No section found.</section>";return}
+
+  if(!section){
+    $("#content").innerHTML="<section class='panel'>No section found.</section>";
+    return;
+  }
+
   const nodes=section.nodes||[];
-  const roots=nodes.filter(n=>!n.parentId).sort((a,b)=>a.order-b.order);
+  const roots=nodes
+    .filter(n=>!n.parentId)
+    .sort((a,b)=>a.order-b.order);
+
   $("#content").innerHTML=`<section class="section">
-    <header class="section-heading"><h2>${esc(section.title)}</h2><p>${esc(section.subtitle||"")}</p></header>
+    <header class="section-heading">
+      <h2>${esc(section.title)}</h2>
+      <p>${esc(section.subtitle||"")}</p>
+    </header>
     ${roots.map(n=>renderNode(n,nodes,q)).join("")}
   </section>`;
+
   bindDynamicActions();
+  restoreOpenInquiryIds(openInquiryIds);
 }
 
 function renderNode(node,nodes,q){
@@ -207,9 +238,14 @@ function renderNode(node,nodes,q){
   const childHTML=children.map(n=>renderNode(n,nodes,q)).join("");
   if(q && !hay.includes(q) && !childHTML.includes("outcome-card"))return "";
   if(node.nodeType==="inquiry-question"){
-    return `<details class="inquiry" ${node.collapsedByDefault===false?"open":""}>
-      <summary>${esc(node.title)}</summary><div class="node-list">${childHTML}</div>
-    </details>`;
+return `<details
+  class="inquiry"
+  data-inquiry-id="${esc(node.id)}"
+  ${node.collapsedByDefault===false?"open":""}
+>
+  <summary>${esc(node.title)}</summary>
+  <div class="node-list">${childHTML}</div>
+</details>`;
   }
   if(node.nodeType==="outcome-card"||node.nodeType==="glossary-term"||node.nodeType==="custom"){
     return renderOutcome(node);
@@ -293,13 +329,38 @@ function bindDynamicActions(){
 
 function addEntryFromComposer(button){
   if(!["student","teacher"].includes(accessMode))return;
+
   const card=button.closest(".outcome-card");
+  const inquiry=button.closest("details.inquiry");
+  const inquiryId=inquiry?.dataset.inquiryId;
+
   const type=card.querySelector("[data-entry-type]").value;
   const authorName=card.querySelector("[data-author]").value.trim();
   const body=card.querySelector("[data-body]").value.trim();
-  if(!authorName||!body){alert("Add your name/class and a note.");return}
-  instanceData.entries.push(makeEntry(button.dataset.addEntry,type,authorName,body,null));
-  persist();renderContent();
+
+  if(!authorName||!body){
+    alert("Add your name/class and a note.");
+    return;
+  }
+
+  const openInquiryIds=getOpenInquiryIds();
+
+  if(inquiryId && !openInquiryIds.includes(inquiryId)){
+    openInquiryIds.push(inquiryId);
+  }
+
+  instanceData.entries.push(
+    makeEntry(
+      button.dataset.addEntry,
+      type,
+      authorName,
+      body,
+      null
+    )
+  );
+
+  persist();
+  renderContent({openInquiryIds});
 }
 
 function makeEntry(nodeId,type,authorName,body,parentEntryId){
@@ -314,20 +375,49 @@ function makeEntry(nodeId,type,authorName,body,parentEntryId){
 
 function addHighlight(nodeId){
   if(accessMode!=="teacher")return;
+
+  const openInquiryIds=getOpenInquiryIds();
   const body=prompt("Teacher Highlight:");
+
   if(!body?.trim())return;
-  instanceData.entries.push(makeEntry(nodeId,"teacher-highlight","Teacher",body.trim(),null));
-  persist();renderContent();
+
+  instanceData.entries.push(
+    makeEntry(
+      nodeId,
+      "teacher-highlight",
+      "Teacher",
+      body.trim(),
+      null
+    )
+  );
+
+  persist();
+  renderContent({openInquiryIds});
 }
 
 function replyTo(parentEntryId,nodeId){
   if(!["student","teacher"].includes(accessMode))return;
+
+  const openInquiryIds=getOpenInquiryIds();
+
   const author=prompt("Your first name, last initial and instance:");
   if(!author?.trim())return;
+
   const body=prompt("Reply:");
   if(!body?.trim())return;
-  instanceData.entries.push(makeEntry(nodeId,"community-note",author.trim(),body.trim(),parentEntryId));
-  persist();renderContent();
+
+  instanceData.entries.push(
+    makeEntry(
+      nodeId,
+      "community-note",
+      author.trim(),
+      body.trim(),
+      parentEntryId
+    )
+  );
+
+  persist();
+  renderContent({openInquiryIds});
 }
 
 function promote(entryId){
