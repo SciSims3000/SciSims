@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.0.0",
+  "navigation": [
+    {
+      "id": "instructions",
+      "label": "Instructions",
+      "type": "instructions",
+      "sectionId": "instructions",
+      "order": 0,
+      "visible": true
+    },
+    {
+      "id": "english",
+      "label": "English",
+      "type": "custom",
+      "sectionId": "english",
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "history",
+      "label": "History",
+      "type": "custom",
+      "sectionId": "history",
+      "order": 2,
+      "visible": true
+    }
+  ],
+  "sections": [
+    {
+      "id": "instructions",
+      "type": "instructions",
+      "title": "Instructions",
+      "subtitle": "",
+      "order": 0,
+      "themeKey": "instructions",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "demo-inst",
+          "nodeType": "instructions-block",
+          "title": "Instructions",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "<h2>Cross-faculty demonstration</h2><p>This board proves that StudyBoard3000 is not tied to a science syllabus.</p>",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "type": "custom",
+      "title": "English",
+      "subtitle": "Texts, interpretations and evidence",
+      "order": 1,
+      "themeKey": "english",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "eng-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How does language shape interpretation?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "eng-o1",
+          "nodeType": "outcome-card",
+          "title": "Collect examples of language choices and their effects.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "eng-iq1",
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "type": "custom",
+      "title": "History",
+      "subtitle": "Evidence, perspectives and interpretations",
+      "order": 2,
+      "themeKey": "history",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "hist-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How do historians construct accounts of the past?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "hist-o1",
+          "nodeType": "outcome-card",
+          "title": "Compare evidence from different historical sources.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "hist-iq1",
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    }
+  ],
+  "template": {
+    "id": "cross-faculty-demo",
+    "title": "Cross-faculty Demonstration",
+    "subtitle": "The same engine outside science",
+    "faculty": "Whole School",
+    "yearLevel": "Stage 4",
+    "jurisdiction": "NSW, Australia",
+    "theme": {
+      "defaultAccent": "#765589",
+      "defaultSoft": "#efe8f3"
+    },
+    "templateType": "cross-faculty"
+  }
+}

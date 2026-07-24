@@ -1,0 +1,363 @@
+{
+  "schemaVersion": "1.0.0",
+  "navigation": [
+    {
+      "id": "instructions",
+      "label": "Instructions",
+      "type": "instructions",
+      "sectionId": "instructions",
+      "order": 0,
+      "visible": true
+    },
+    {
+      "id": "module-5",
+      "label": "Module 5",
+      "type": "module",
+      "sectionId": "module-5",
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "module-6",
+      "label": "Module 6",
+      "type": "module",
+      "sectionId": "module-6",
+      "order": 2,
+      "visible": true
+    },
+    {
+      "id": "module-7",
+      "label": "Module 7",
+      "type": "module",
+      "sectionId": "module-7",
+      "order": 3,
+      "visible": true
+    },
+    {
+      "id": "module-8",
+      "label": "Module 8",
+      "type": "module",
+      "sectionId": "module-8",
+      "order": 4,
+      "visible": true
+    },
+    {
+      "id": "working-scientifically",
+      "label": "Working Scientifically",
+      "type": "working-scientifically",
+      "sectionId": "working-scientifically",
+      "order": 5,
+      "visible": true
+    },
+    {
+      "id": "glossary",
+      "label": "Glossary",
+      "type": "glossary",
+      "sectionId": "glossary",
+      "order": 6,
+      "visible": true
+    }
+  ],
+  "sections": [
+    {
+      "id": "instructions",
+      "type": "instructions",
+      "title": "Instructions",
+      "subtitle": "",
+      "order": 0,
+      "themeKey": "instructions",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "instructions-main",
+          "nodeType": "instructions-block",
+          "title": "Instructions",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "<h2>How to use this board</h2>\n<p>Browse as a guest, unlock Student mode to contribute, or unlock Teacher mode to curate the board.</p>\n<p><strong>Every student contribution should finish with a first name, last initial and class in the author field.</strong></p>\n<p><strong><em>After significant editing, a teacher should export a fresh class JSON file.</em></strong></p>",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "module-5",
+      "type": "module",
+      "title": "Module 5",
+      "subtitle": "Scientific Investigations",
+      "order": 1,
+      "themeKey": "module-5",
+      "outcomes": [
+        {
+          "code": "INS12-12",
+          "text": "Develops and evaluates questions and hypotheses for scientific investigation.",
+          "source": "NESA",
+          "tags": [
+            "module-5"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "m5-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How are scientific investigations developed?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [
+            "INS12-12"
+          ],
+          "content": "",
+          "collapsedByDefault": true,
+          "tags": [
+            "module-5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "m5-iq1-o1",
+          "nodeType": "outcome-card",
+          "title": "Develop questions and hypotheses suitable for scientific investigation.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "m5-iq1",
+          "outcomeCodes": [
+            "INS12-12"
+          ],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [
+            "hypotheses"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "m5-iq1-o2",
+          "nodeType": "outcome-card",
+          "title": "Evaluate variables, controls, validity, reliability and accuracy.",
+          "subtitle": "",
+          "order": 1,
+          "parentId": "m5-iq1",
+          "outcomeCodes": [
+            "INS12-12"
+          ],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [
+            "validity",
+            "reliability"
+          ],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "module-6",
+      "type": "module",
+      "title": "Module 6",
+      "subtitle": "Technologies",
+      "order": 2,
+      "themeKey": "module-6",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "m6-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How have technologies influenced scientific investigation?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": true,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "m6-iq1-o1",
+          "nodeType": "outcome-card",
+          "title": "Analyse how technologies extend observation, measurement and data collection.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "m6-iq1",
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "module-7",
+      "type": "module",
+      "title": "Module 7",
+      "subtitle": "Fact or Fallacy?",
+      "order": 3,
+      "themeKey": "module-7",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "m7-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How is scientific evidence evaluated?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": true,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "m7-iq1-o1",
+          "nodeType": "outcome-card",
+          "title": "Distinguish reliable scientific evidence from unsupported claims.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "m7-iq1",
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "module-8",
+      "type": "module",
+      "title": "Module 8",
+      "subtitle": "Science and Society",
+      "order": 4,
+      "themeKey": "module-8",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "m8-iq1",
+          "nodeType": "inquiry-question",
+          "title": "How do science and society influence one another?",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": true,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "m8-iq1-o1",
+          "nodeType": "outcome-card",
+          "title": "Assess interactions between scientific research, ethics, policy and society.",
+          "subtitle": "",
+          "order": 0,
+          "parentId": "m8-iq1",
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "working-scientifically",
+      "type": "working-scientifically",
+      "title": "Working Scientifically",
+      "subtitle": "Shared investigative capabilities",
+      "order": 5,
+      "themeKey": "working-scientifically",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "ws-o1",
+          "nodeType": "outcome-card",
+          "title": "Questioning and predicting",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        },
+        {
+          "id": "ws-o2",
+          "nodeType": "outcome-card",
+          "title": "Processing and analysing data",
+          "subtitle": "",
+          "order": 1,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [],
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "id": "glossary",
+      "type": "glossary",
+      "title": "Glossary",
+      "subtitle": "Course vocabulary",
+      "order": 6,
+      "themeKey": "glossary",
+      "outcomes": [],
+      "nodes": [
+        {
+          "id": "glossary-validity",
+          "nodeType": "glossary-term",
+          "title": "Validity",
+          "subtitle": "",
+          "order": 0,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [
+            "validity"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "glossary-reliability",
+          "nodeType": "glossary-term",
+          "title": "Reliability",
+          "subtitle": "",
+          "order": 1,
+          "parentId": null,
+          "outcomeCodes": [],
+          "content": "",
+          "collapsedByDefault": false,
+          "tags": [
+            "reliability"
+          ],
+          "metadata": {}
+        }
+      ]
+    }
+  ],
+  "template": {
+    "id": "y12-investigating-science",
+    "title": "Year 12 Investigating Science",
+    "subtitle": "Collaborative syllabus-based knowledge board",
+    "faculty": "Science",
+    "yearLevel": "Year 12",
+    "jurisdiction": "NSW, Australia",
+    "syllabusName": "Investigating Science Stage 6 Syllabus",
+    "syllabusVersion": "2017",
+    "theme": {
+      "defaultAccent": "#356b6f",
+      "defaultSoft": "#e5f0f0"
+    },
+    "templateType": "course"
+  }
+}
