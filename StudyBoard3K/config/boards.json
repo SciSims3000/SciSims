@@ -3,7 +3,7 @@
   "boards": [
     {
       "id": "2027-12is1",
-      "label": "Year 12 Investigating Science \u2014 12IS1",
+      "label": "Year 12 Investigating Science — 12IS1",
       "description": "First StudyBoard3000 course pack and demonstration class.",
       "accessProfile": "senior-studies-2027",
       "default": true,
@@ -17,6 +17,14 @@
       "accessProfile": "general-2027",
       "templateFile": "templates/cross-faculty-demo.json",
       "instanceFile": "instances/demo-cross-faculty.json"
+    },
+    {
+      "id": "teacher-ama-2026",
+      "label": "Teacher Ask Me Anything",
+      "description": "A facilitated AMA board for staff questions, discussion and voting.",
+      "accessProfile": "general-2027",
+      "templateFile": "templates/teacher-ama.json",
+      "instanceFile": "instances/teacher-ama-2026.json"
     }
   ]
 }
