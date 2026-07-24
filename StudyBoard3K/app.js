@@ -1,4 +1,4 @@
-const APP_VERSION="0.4.1";
+const APP_VERSION="0.4.2";
 const STORAGE_PREFIX="studyboard3000:";
 const ACCESS_SESSION_KEY="studyboard3000:access-mode";
 
