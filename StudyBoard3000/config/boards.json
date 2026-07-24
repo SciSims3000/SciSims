@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "boards": [
+    {
+      "id": "2027-12is1",
+      "label": "Year 12 Investigating Science \u2014 12IS1",
+      "description": "First StudyBoard3000 course pack and demonstration class.",
+      "courseFile": "courses/y12-investigating-science.json",
+      "classFile": "classes/2027-12is1.json",
+      "accessProfile": "senior-studies-2027",
+      "default": true
+    },
+    {
+      "id": "demo-cross-faculty",
+      "label": "Cross-faculty demonstration board",
+      "description": "A compact example showing how the engine can support any faculty.",
+      "courseFile": "courses/cross-faculty-demo.json",
+      "classFile": "classes/demo-cross-faculty.json",
+      "accessProfile": "general-2027"
+    }
+  ]
+}
