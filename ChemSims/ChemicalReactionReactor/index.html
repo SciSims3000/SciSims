@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chemical Reaction Reactor | SciSims</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="hero"><div class="hero-inner">
+<a class="back" href="../../index.html">← Back to main SciSims page</a>
+<div><p class="eyebrow">SciSims Chemistry</p><h1>Chemical Reaction Reactor</h1><p>Watch atoms persist, bonds change and laboratory evidence develop as chemical reactions occur.</p></div><div class="logo-orb">⚗️</div>
+</div></header>
+<main class="shell">
+<div class="safety"><strong>Virtual investigation only.</strong> Reactions shown may require specialist equipment, risk controls and teacher supervision in a real laboratory.</div>
+<div class="layout">
+<aside class="card controls">
+<section class="control-section"><div class="head-row"><h2>Run the reaction</h2><span id="modePill" class="pill">Explore</span></div>
+<label for="mode">Challenge mode</label><select id="mode"><option value="explore">Explore</option><option value="guided">Guided</option><option value="mystery">Mystery</option><option value="challenge">Challenge</option></select>
+<label for="reaction">Reaction</label><select id="reaction"></select>
+<div class="row2"><div><label for="speed">Animation speed</label><select id="speed"><option value=".55">Slow</option><option value="1" selected>Normal</option><option value="1.65">Fast</option></select></div><div><label for="scale">Particle model</label><select id="scale"><option value="ball">Ball-and-stick</option><option value="space">Space-filling</option></select></div></div>
+<div class="buttons"><button id="start" class="primary">▶ Start</button><button id="pause">Ⅱ Pause</button><button id="step">Step</button><button id="replay">↻ Replay</button><button id="reset">Reset</button><button id="theme">Dark mode</button></div>
+<div class="timeline"><div id="progress"></div></div><div id="phase" class="phase-label">Ready — particles moving randomly</div>
+</section>
+<section class="control-section"><h2>Reaction library</h2><div id="librarySummary" class="library-summary"></div></section>
+</aside>
+<section class="card sim-card">
+<div class="toolbar"><div class="status"><span id="dot" class="dot"></span><span id="status">Paused — ready to begin</span></div><div class="view-buttons"><button id="labBtn">Laboratory</button><button id="particleBtn">Particles</button><button id="splitBtn" class="active">Split</button></div></div>
+<div id="canvasGrid" class="canvas-grid">
+<div class="canvas-panel lab-panel"><div class="canvas-title"><h2>Laboratory-level evidence</h2><span id="labState">Before reaction</span></div><canvas id="labCanvas"></canvas><div class="instrument-strip"><div class="instrument"><span>Temperature</span><strong id="temp">22 °C</strong></div><div class="instrument"><span>pH</span><strong id="ph">—</strong></div><div class="instrument"><span>Evidence</span><strong id="evidence">None yet</strong></div></div></div>
+<div class="canvas-panel particle-panel"><div class="canvas-title"><h2>Particle-level model</h2><span>Every atom has a persistent identity</span></div><canvas id="particleCanvas" class="particle-canvas"></canvas></div>
+</div>
+<div class="explain"><div><p class="eyebrow">Reaction explanation</p><h2 id="title">Reaction</h2></div><p id="description"></p><div id="equation" class="equation"></div><div id="narration" class="narration">Observe the starting particles.</div><div id="counts" class="counts"></div></div>
+</section></div>
+
+<section class="card lower workspace">
+<div class="head-row"><div><p class="eyebrow">Investigation workspace</p><h2>Record, classify and explain</h2></div><button id="csv">Export CSV</button></div>
+<div class="workspace-grid">
+<section class="workspace-card evidence-work"><h3>1. Record evidence</h3><div id="checks" class="checks"></div><button id="record" class="workspace-action">Add evidence to table</button></section>
+<section class="workspace-card"><h3>2. Classify the reaction</h3><label for="typeAnswer">Reaction type</label><select id="typeAnswer"><option value="">Choose…</option><option>synthesis</option><option>decomposition</option><option>single displacement</option><option>double displacement</option><option>combustion</option><option>acid–base neutralisation</option></select><button id="checkType" class="workspace-action">Check classification</button><div id="typeFeedback" class="feedback"></div></section>
+<section class="workspace-card"><h3>3. Balance the equation</h3><div id="builder"></div><button id="checkEq" class="workspace-action">Check equation</button><div id="eqFeedback" class="feedback"></div></section>
+<section class="workspace-card conservation-work"><h3>4. Explain conservation</h3><textarea id="explanation" rows="4" placeholder="Explain what happens to the atoms…"></textarea><button id="checkExplain" class="workspace-action">Check explanation</button><div id="explainFeedback" class="feedback"></div></section>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Reactants</th><th>Products</th><th>Observations</th><th>Temperature</th><th>pH</th><th>Gas</th><th>Precipitate</th><th>Classification</th></tr></thead><tbody id="tbody"><tr><td colspan="8" class="small">No evidence recorded yet.</td></tr></tbody></table></div>
+</section>
+<section class="card lower"><div class="head-row"><div><p class="eyebrow">Self-check</p><h2>Classify a mystery reaction</h2></div><strong id="score">0 correct</strong></div><div class="quiz"><div id="quizPrompt"></div><div id="quizOptions" class="quiz-options"></div><div id="quizFeedback" class="feedback"></div><button id="nextQuiz">Next example</button></div></section>
+</main><footer>Chemical Reaction Reactor · SciSims</footer><script src="app.js"></script></body></html>
