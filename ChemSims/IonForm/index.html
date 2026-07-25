@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ion Formation | SciSims</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      --page:#061426;
+      --page-2:#03101e;
+      --panel:#0d2239;
+      --panel-2:#112b47;
+      --stage:#020b17;
+      --stage-2:#06182f;
+      --line:#2c5f85;
+      --text:#eef8ff;
+      --muted:#a7c3d8;
+      --cyan:#46d7ff;
+      --blue:#4f86ff;
+      --green:#39d98a;
+      --amber:#ffc857;
+      --red:#ff6b6b;
+      --button:#102d49;
+      --button-hover:#163a5d;
+      --glass:rgba(3,17,31,.80);
+      --soft-border:rgba(255,255,255,.09);
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+
+    body[data-theme="light"]{
+      color-scheme:light;
+      --page:#eaf4fb;
+      --page-2:#d9ebf7;
+      --panel:#ffffff;
+      --panel-2:#edf6fb;
+      --stage:#eaf6fd;
+      --stage-2:#d7eefb;
+      --line:#91b8cf;
+      --text:#102638;
+      --muted:#527086;
+      --cyan:#007ca8;
+      --blue:#356fc0;
+      --green:#168558;
+      --amber:#a66300;
+      --red:#b73737;
+      --button:#e8f3fa;
+      --button-hover:#d9ebf6;
+      --glass:rgba(255,255,255,.88);
+      --soft-border:rgba(16,38,56,.14);
+      --shadow:0 18px 40px rgba(51,91,117,.16);
+    }
+
+    *{box-sizing:border-box}
+    html,body{min-height:100%}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%,rgba(70,215,255,.10),transparent 28%),
+        radial-gradient(circle at 80% 15%,rgba(79,134,255,.10),transparent 25%),
+        linear-gradient(145deg,var(--page-2),var(--page) 58%,var(--page-2));
+      color:var(--text);
+      overflow-x:hidden;
+      transition:background .25s,color .25s;
+    }
+
+    button,select,input{font:inherit}
+    button{cursor:pointer}
+
+    .app{min-height:100vh;display:flex;flex-direction:column}
+
+    header{
+      padding:16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      border-bottom:1px solid var(--soft-border);
+      background:color-mix(in srgb,var(--panel) 90%,transparent);
+      backdrop-filter:blur(10px);
+    }
+
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .logo{
+      width:48px;height:48px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(145deg,var(--cyan),var(--blue));
+      box-shadow:0 0 26px color-mix(in srgb,var(--cyan) 25%,transparent);
+      font-weight:900;color:#04101e;
+    }
+    .title-wrap h1{margin:0;font-size:clamp(1.2rem,2vw,1.85rem);letter-spacing:.2px}
+    .title-wrap p{margin:3px 0 0;color:var(--muted);font-size:.94rem}
+
+    .header-actions{display:flex;align-items:center;gap:10px}
+    .status-pill{
+      padding:8px 12px;border-radius:999px;
+      color:var(--text);
+      background:color-mix(in srgb,var(--cyan) 12%,transparent);
+      border:1px solid color-mix(in srgb,var(--cyan) 30%,transparent);
+      font-size:.85rem;white-space:nowrap;
+    }
+    .theme-btn{
+      border:1px solid var(--line);
+      background:var(--button);
+      color:var(--text);
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:800;
+    }
+
+    main{
+      width:min(1600px,100%);
+      margin:0 auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns:minmax(300px,370px) minmax(0,1fr);
+      gap:18px;
+      flex:1;
+    }
+
+    .panel,.stage-card,.lower-card{
+      border:1px solid var(--soft-border);
+      background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel) 88%,var(--page-2)));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
+
+    .panel{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-self:start;
+      position:sticky;
+      top:14px;
+    }
+
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .section-title h2,.section-title h3{margin:0;font-size:1rem}
+    .small{font-size:.82rem;color:var(--muted)}
+    .control{display:grid;gap:7px}
+    label{font-weight:700;font-size:.9rem}
+
+    select,input[type="range"]{width:100%}
+    select{
+      appearance:none;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 38px 10px 12px;
+      color:var(--text);
+      background:
+        linear-gradient(45deg,transparent 50%,var(--muted) 50%) calc(100% - 18px) 50%/6px 6px no-repeat,
+        linear-gradient(135deg,var(--muted) 50%,transparent 50%) calc(100% - 12px) 50%/6px 6px no-repeat,
+        var(--panel-2);
+    }
+
+    .segmented{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .segmented button{
+      border:1px solid var(--line);
+      background:var(--button);
+      color:var(--muted);
+      border-radius:12px;
+      padding:10px 8px;
+      font-weight:800;
+    }
+    .segmented button.active{
+      color:#04101e;
+      background:linear-gradient(145deg,var(--cyan),color-mix(in srgb,var(--cyan) 45%,white));
+      border-color:transparent;
+    }
+
+    .toggle-row{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:10px 0;
+      border-top:1px solid var(--soft-border);
+    }
+    .switch{
+      width:44px;height:24px;border-radius:999px;
+      background:color-mix(in srgb,var(--muted) 45%,transparent);
+      position:relative;border:0;padding:0;
+    }
+    .switch::after{
+      content:"";position:absolute;top:3px;left:3px;
+      width:18px;height:18px;border-radius:50%;
+      background:#fff;transition:.2s;
+    }
+    .switch.on{background:var(--green)}
+    .switch.on::after{left:23px}
+
+    input[type="range"]{accent-color:var(--cyan)}
+    .range-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.8rem}
+
+    .button-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .button-grid button{
+      min-height:42px;border-radius:12px;
+      border:1px solid var(--line);
+      color:var(--text);
+      background:var(--button);
+      font-weight:800;
+      transition:transform .12s,background .12s,border-color .12s;
+    }
+    .button-grid button:hover{transform:translateY(-1px);background:var(--button-hover)}
+    .primary{
+      color:#03111d!important;
+      background:linear-gradient(145deg,var(--cyan),color-mix(in srgb,var(--cyan) 45%,white))!important;
+      border-color:transparent!important;
+    }
+    .danger{border-color:color-mix(in srgb,var(--red) 50%,transparent)!important}
+    button:disabled,select:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+
+    .info-box{
+      padding:12px;border-radius:14px;
+      background:color-mix(in srgb,var(--cyan) 9%,transparent);
+      border:1px solid color-mix(in srgb,var(--cyan) 22%,transparent);
+      line-height:1.45;
+      color:var(--text);
+      font-size:.9rem;
+    }
+
+    .warning-box{
+      padding:10px 12px;border-radius:12px;
+      background:color-mix(in srgb,var(--amber) 10%,transparent);
+      border:1px solid color-mix(in srgb,var(--amber) 30%,transparent);
+      color:var(--text);
+      font-size:.84rem;
+      line-height:1.4;
+    }
+
+    .content{min-width:0;display:grid;grid-template-rows:auto auto;gap:18px}
+    .stage-card{padding:14px;position:relative;overflow:hidden}
+    .stage-toolbar{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;
+      padding:4px 6px 12px;position:relative;z-index:2;
+    }
+    .stage-toolbar strong{font-size:1rem}
+    .legend{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:.8rem}
+    .legend span{display:inline-flex;align-items:center;gap:5px}
+    .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+    .dot.proton{background:#e85757}
+    .dot.neutron{background:#9aaabb}
+    .dot.electron{background:#2bb9e8}
+
+    .stage{
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      min-height:520px;
+      border-radius:16px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 62% 50%,color-mix(in srgb,var(--blue) 18%,transparent),transparent 30%),
+        linear-gradient(155deg,var(--stage),var(--stage-2) 72%,var(--stage));
+      border:1px solid var(--soft-border);
+      transition:background .25s;
+    }
+
+    #atomSvg{width:100%;height:100%;display:block}
+
+    .equation-card{
+      position:absolute;left:20px;bottom:20px;z-index:3;
+      max-width:48%;
+      padding:13px 16px;border-radius:14px;
+      background:var(--glass);
+      border:1px solid color-mix(in srgb,var(--cyan) 24%,transparent);
+      backdrop-filter:blur(8px);
+    }
+    .equation-card .eq{font-size:clamp(1rem,2vw,1.5rem);font-weight:900;letter-spacing:.2px}
+    .equation-card .caption{margin-top:5px;color:var(--muted);font-size:.86rem}
+
+    .charge-badge{
+      position:absolute;right:22px;top:22px;z-index:3;
+      width:88px;height:88px;border-radius:50%;
+      display:grid;place-items:center;text-align:center;
+      background:radial-gradient(circle,color-mix(in srgb,var(--cyan) 18%,transparent),var(--glass));
+      border:1px solid color-mix(in srgb,var(--cyan) 38%,transparent);
+    }
+    .charge-badge strong{font-size:2rem;line-height:1}
+    .charge-badge span{display:block;font-size:.72rem;color:var(--muted);margin-top:3px}
+
+    .metric-strip{
+      position:absolute;right:22px;bottom:22px;z-index:3;
+      display:grid;grid-template-columns:repeat(4,minmax(82px,1fr));gap:8px;
+    }
+    .metric{
+      background:var(--glass);
+      border:1px solid var(--soft-border);
+      border-radius:12px;padding:9px 10px;text-align:center;backdrop-filter:blur(6px);
+    }
+    .metric strong{display:block;font-size:1.15rem}
+    .metric span{font-size:.72rem;color:var(--muted)}
+
+    .lower-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+    .lower-card{padding:16px}
+    .lower-card h3{margin:0 0 10px;font-size:1rem}
+    .steps{display:grid;gap:8px}
+    .step{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;background:color-mix(in srgb,var(--panel-2) 55%,transparent)}
+    .step-num{
+      flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+      display:grid;place-items:center;background:var(--button);color:var(--text);font-weight:900
+    }
+    .step p{margin:0;color:var(--text);line-height:1.4;font-size:.9rem}
+
+    .quiz{display:grid;gap:10px}
+    .quiz button{
+      text-align:left;padding:10px 12px;border-radius:12px;
+      background:var(--button);border:1px solid var(--line);color:var(--text)
+    }
+    .quiz button.correct{border-color:var(--green);background:color-mix(in srgb,var(--green) 15%,transparent)}
+    .quiz button.wrong{border-color:var(--red);background:color-mix(in srgb,var(--red) 13%,transparent)}
+    #quizFeedback{min-height:22px;color:var(--muted);font-size:.88rem}
+
+    .paused-tag{
+      position:absolute;left:20px;top:20px;
+      z-index:4;padding:9px 14px;border-radius:999px;
+      color:var(--text);background:var(--glass);
+      border:1px solid color-mix(in srgb,var(--cyan) 24%,transparent);
+      pointer-events:none;transition:opacity .2s
+    }
+    .paused-tag.hidden{opacity:0}
+
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      .panel{position:relative;top:auto}
+      .lower-grid{grid-template-columns:1fr}
+    }
+
+    @media (max-width:760px){
+      header{align-items:flex-start}
+      .status-pill{display:none}
+      main{padding:10px}
+      .stage{min-height:520px;aspect-ratio:auto}
+      .equation-card{max-width:calc(100% - 40px);right:20px}
+      .metric-strip{left:20px;right:20px;bottom:112px;grid-template-columns:repeat(2,1fr)}
+      .charge-badge{width:70px;height:70px}
+      .charge-badge strong{font-size:1.6rem}
+      .stage-toolbar{align-items:flex-start;flex-direction:column}
+    }
+
+    @media (max-width:520px){
+      .theme-btn{padding:8px 10px}
+      .theme-btn span{display:none}
+    }
+  </style>
+</head>
+<body data-theme="dark">
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">⚛</div>
+      <div class="title-wrap">
+        <h1>Ion Formation</h1>
+        <p>Explore electron transfer and ion charge.</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-pill">SciSims • animations start paused</div>
+      <button id="themeBtn" class="theme-btn" type="button" aria-pressed="false">☀️ <span>Light mode</span></button>
+    </div>
+  </header>
+
+  <main>
+    <aside class="panel" aria-label="Simulation controls">
+      <div>
+        <div class="section-title">
+          <h2>Controls</h2>
+          <span class="small" id="recommendedText">Common ion: H⁺</span>
+        </div>
+
+        <div class="control">
+          <label for="elementSelect">Element</label>
+          <select id="elementSelect"></select>
+        </div>
+      </div>
+
+      <div class="control">
+        <label>Process</label>
+        <div class="segmented" role="group" aria-label="Ion formation process">
+          <button id="loseBtn" class="active" type="button">Lose electrons</button>
+          <button id="gainBtn" type="button">Gain electrons</button>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <span>
+          <strong>Exploration mode</strong><br />
+          <span class="small">Allow uncommon or hypothetical ions</span>
+        </span>
+        <button id="explorationToggle" class="switch" type="button" aria-pressed="false" aria-label="Toggle exploration mode"></button>
+      </div>
+
+      <div class="control">
+        <label for="transferSelect">Electrons transferred</label>
+        <select id="transferSelect"></select>
+        <div class="small" id="transferHint">Recommended value selected for this element.</div>
+      </div>
+
+      <div class="control">
+        <label for="speedRange">Animation speed</label>
+        <input id="speedRange" type="range" min="0.4" max="2.2" step="0.1" value="1" />
+        <div class="range-meta"><span>Slower</span><span id="speedValue">1.0×</span><span>Faster</span></div>
+      </div>
+
+      <div>
+        <div class="toggle-row">
+          <span>
+            <strong>Electron trail</strong><br />
+            <span class="small">Show the motion path</span>
+          </span>
+          <button id="trailToggle" class="switch on" type="button" aria-pressed="true" aria-label="Toggle electron trail"></button>
+        </div>
+        <div class="toggle-row">
+          <span>
+            <strong>Labels</strong><br />
+            <span class="small">Show shell and particle labels</span>
+          </span>
+          <button id="labelToggle" class="switch on" type="button" aria-pressed="true" aria-label="Toggle labels"></button>
+        </div>
+      </div>
+
+      <div class="button-grid" aria-label="Playback controls">
+        <button id="startBtn" class="primary" type="button">Start</button>
+        <button id="pauseBtn" type="button">Pause</button>
+        <button id="stepBtn" type="button">Step</button>
+        <button id="replayBtn" type="button">Replay</button>
+        <button id="resetBtn" class="danger" type="button">Reset</button>
+      </div>
+
+      <div class="info-box" id="infoBox"></div>
+      <div class="warning-box" id="modelNote">
+        Simplified electron-shell model using a representative common isotope. Electrons occupy orbitals, not fixed circular paths; the rings only show shell populations.
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="stage-card">
+        <div class="stage-toolbar">
+          <strong>Particle model</strong>
+          <div class="legend" aria-label="Particle key">
+            <span><i class="dot proton"></i> proton</span>
+            <span><i class="dot neutron"></i> neutron</span>
+            <span><i class="dot electron"></i> electron</span>
+          </div>
+        </div>
+
+        <div class="stage" id="stage">
+          <svg id="atomSvg" viewBox="0 0 1200 675" role="img" aria-labelledby="svgTitle svgDesc">
+            <title id="svgTitle">Animated ion formation model</title>
+            <desc id="svgDesc">An atom gains or loses outer-shell electrons and its charge changes.</desc>
+
+            <defs>
+              <radialGradient id="nucleusGlow">
+                <stop offset="0%" stop-color="#fff2be" stop-opacity=".95"/>
+                <stop offset="30%" stop-color="#ffb35c" stop-opacity=".55"/>
+                <stop offset="100%" stop-color="#ff7a3d" stop-opacity="0"/>
+              </radialGradient>
+
+              <radialGradient id="electronGrad">
+                <stop offset="0%" stop-color="#e7fcff"/>
+                <stop offset="35%" stop-color="#6be8ff"/>
+                <stop offset="100%" stop-color="#007bd3"/>
+              </radialGradient>
+
+              <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="7" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+
+              <filter id="smallGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="3.5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <g opacity=".22" fill="currentColor">
+              <circle cx="120" cy="90" r="2"/><circle cx="215" cy="154" r="1.5"/>
+              <circle cx="94" cy="500" r="1.5"/><circle cx="280" cy="590" r="2"/>
+              <circle cx="1090" cy="80" r="1.5"/><circle cx="1135" cy="535" r="2"/>
+              <circle cx="980" cy="610" r="1.5"/><circle cx="825" cy="82" r="2"/>
+            </g>
+
+            <g id="atomGroup">
+              <circle id="nucleusHalo" cx="760" cy="338" r="145" fill="url(#nucleusGlow)" opacity=".72"/>
+              <g id="shellGroup"></g>
+              <g id="nucleusGroup"></g>
+              <g id="electronGroup"></g>
+              <g id="labelGroup"></g>
+            </g>
+
+            <path id="motionPath" d="" fill="none" stroke="#51dfff" stroke-width="7"
+                  stroke-linecap="round" stroke-dasharray="12 14" opacity=".86"
+                  filter="url(#smallGlow)"/>
+
+            <g id="movingElectron" filter="url(#softGlow)">
+              <circle r="16" fill="url(#electronGrad)" stroke="#d9fbff" stroke-width="2"/>
+              <text x="0" y="6" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff">−</text>
+            </g>
+          </svg>
+
+          <div class="paused-tag" id="pausedTag">Paused</div>
+
+          <div class="charge-badge" aria-live="polite">
+            <div>
+              <strong id="chargeValue">0</strong>
+              <span>net charge</span>
+            </div>
+          </div>
+
+          <div class="metric-strip">
+            <div class="metric"><strong id="protonCount">1</strong><span>protons</span></div>
+            <div class="metric"><strong id="electronCount">1</strong><span>bound electrons</span></div>
+            <div class="metric"><strong id="outerCount">1</strong><span>outer shell</span></div>
+            <div class="metric"><strong id="transferCount">0/1</strong><span>transferred</span></div>
+          </div>
+
+          <div class="equation-card">
+            <div class="eq" id="equation">H → H⁺ + e⁻</div>
+            <div class="caption" id="equationCaption">One electron will be transferred.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower-grid">
+        <article class="lower-card">
+          <h3>What is happening?</h3>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <p>The atom starts neutral because its proton and electron numbers are equal.</p>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <p>Each electron shakes briefly before it is transferred. The nucleus remains unchanged.</p>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <p>Losing electrons forms a positive ion. Gaining electrons forms a negative ion.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="lower-card">
+          <h3>Self-test</h3>
+          <div class="quiz">
+            <div id="quizQuestion">Why does an atom become positively charged after losing an electron?</div>
+            <button type="button" data-id="a"></button>
+            <button type="button" data-id="b"></button>
+            <button type="button" data-id="c"></button>
+            <button type="button" data-id="d"></button>
+            <div id="quizFeedback" aria-live="polite"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const ELEMENTS = [
+    {z:1,symbol:"H",name:"Hydrogen",neutrons:0,shells:[1],preferred:"lose",preferredCount:1,note:"Hydrogen can form H⁺ by losing its only electron. In water, the proton is associated with water molecules rather than existing as an isolated bare proton."},
+    {z:2,symbol:"He",name:"Helium",neutrons:2,shells:[2],preferred:null,preferredCount:0,note:"Helium has a complete first shell and does not commonly form a simple monatomic ion."},
+    {z:3,symbol:"Li",name:"Lithium",neutrons:4,shells:[2,1],preferred:"lose",preferredCount:1,note:"Lithium commonly loses one outer electron to form Li⁺."},
+    {z:4,symbol:"Be",name:"Beryllium",neutrons:5,shells:[2,2],preferred:"lose",preferredCount:2,note:"Beryllium forms Be²⁺ in ionic descriptions by losing two outer electrons, although its compounds often have substantial covalent character."},
+    {z:5,symbol:"B",name:"Boron",neutrons:6,shells:[2,3],preferred:null,preferredCount:0,note:"Boron usually forms covalent bonds and does not commonly exist as a simple monatomic ion."},
+    {z:6,symbol:"C",name:"Carbon",neutrons:6,shells:[2,4],preferred:null,preferredCount:0,note:"Carbon usually shares electrons in covalent bonds rather than forming a simple C⁴⁺ or C⁴⁻ ion."},
+    {z:7,symbol:"N",name:"Nitrogen",neutrons:7,shells:[2,5],preferred:"gain",preferredCount:3,note:"Nitrogen can gain three electrons in ionic nitrides to form N³⁻."},
+    {z:8,symbol:"O",name:"Oxygen",neutrons:8,shells:[2,6],preferred:"gain",preferredCount:2,note:"Oxygen commonly gains two electrons in ionic oxides to form O²⁻."},
+    {z:9,symbol:"F",name:"Fluorine",neutrons:10,shells:[2,7],preferred:"gain",preferredCount:1,note:"Fluorine commonly gains one electron to form F⁻."},
+    {z:10,symbol:"Ne",name:"Neon",neutrons:10,shells:[2,8],preferred:null,preferredCount:0,note:"Neon has a complete outer shell and does not commonly form a simple monatomic ion."},
+    {z:11,symbol:"Na",name:"Sodium",neutrons:12,shells:[2,8,1],preferred:"lose",preferredCount:1,note:"Sodium commonly loses one outer electron to form Na⁺."},
+    {z:12,symbol:"Mg",name:"Magnesium",neutrons:12,shells:[2,8,2],preferred:"lose",preferredCount:2,note:"Magnesium loses two outer electrons sequentially to form Mg²⁺."},
+    {z:13,symbol:"Al",name:"Aluminium",neutrons:14,shells:[2,8,3],preferred:"lose",preferredCount:3,note:"Aluminium commonly loses three outer electrons to form Al³⁺."},
+    {z:14,symbol:"Si",name:"Silicon",neutrons:14,shells:[2,8,4],preferred:null,preferredCount:0,note:"Silicon usually forms covalent structures and does not commonly exist as a simple monatomic ion."},
+    {z:15,symbol:"P",name:"Phosphorus",neutrons:16,shells:[2,8,5],preferred:"gain",preferredCount:3,note:"Phosphorus can gain three electrons in ionic phosphides to form P³⁻."},
+    {z:16,symbol:"S",name:"Sulfur",neutrons:16,shells:[2,8,6],preferred:"gain",preferredCount:2,note:"Sulfur commonly gains two electrons in ionic sulfides to form S²⁻."},
+    {z:17,symbol:"Cl",name:"Chlorine",neutrons:18,shells:[2,8,7],preferred:"gain",preferredCount:1,note:"Chlorine commonly gains one electron to form Cl⁻."},
+    {z:18,symbol:"Ar",name:"Argon",neutrons:22,shells:[2,8,8],preferred:null,preferredCount:0,note:"Argon has a complete outer shell and does not commonly form a simple monatomic ion."},
+    {z:19,symbol:"K",name:"Potassium",neutrons:20,shells:[2,8,8,1],preferred:"lose",preferredCount:1,note:"Potassium commonly loses one outer electron to form K⁺."},
+    {z:20,symbol:"Ca",name:"Calcium",neutrons:20,shells:[2,8,8,2],preferred:"lose",preferredCount:2,note:"Calcium loses two outer electrons sequentially to form Ca²⁺."}
+  ];
+
+  const ORBITALS = [
+    {n:1,capacity:2}, {n:2,capacity:2}, {n:2,capacity:6},
+    {n:3,capacity:2}, {n:3,capacity:6}, {n:4,capacity:2},
+    {n:3,capacity:10}, {n:4,capacity:6}
+  ];
+  const NS = "http://www.w3.org/2000/svg";
+  const centre = {x:760,y:338};
+  const shellRadii = [82,145,208,268];
+
+  const el = id => document.getElementById(id);
+  const els = {
+    themeBtn:el("themeBtn"), elementSelect:el("elementSelect"),
+    loseBtn:el("loseBtn"), gainBtn:el("gainBtn"), explorationToggle:el("explorationToggle"),
+    transferSelect:el("transferSelect"), transferHint:el("transferHint"),
+    speedRange:el("speedRange"), speedValue:el("speedValue"),
+    trailToggle:el("trailToggle"), labelToggle:el("labelToggle"),
+    startBtn:el("startBtn"), pauseBtn:el("pauseBtn"), stepBtn:el("stepBtn"),
+    replayBtn:el("replayBtn"), resetBtn:el("resetBtn"),
+    infoBox:el("infoBox"), recommendedText:el("recommendedText"),
+    shellGroup:el("shellGroup"), nucleusGroup:el("nucleusGroup"),
+    electronGroup:el("electronGroup"), labelGroup:el("labelGroup"),
+    motionPath:el("motionPath"), movingElectron:el("movingElectron"),
+    chargeValue:el("chargeValue"), protonCount:el("protonCount"),
+    electronCount:el("electronCount"), outerCount:el("outerCount"),
+    transferCount:el("transferCount"), equation:el("equation"),
+    equationCaption:el("equationCaption"), pausedTag:el("pausedTag"),
+    quizQuestion:el("quizQuestion"), quizFeedback:el("quizFeedback")
+  };
+
+  const state = {
+    elementIndex:10,
+    mode:"lose",
+    targetTransfers:1,
+    completedTransfers:0,
+    phaseProgress:0,
+    playing:false,
+    completed:false,
+    showTrail:true,
+    showLabels:true,
+    exploration:false,
+    speed:1,
+    theme:"dark",
+    raf:null,
+    lastTime:null
+  };
+
+  function currentElement(){ return ELEMENTS[state.elementIndex]; }
+
+  function svgEl(tag,attrs={}){
+    const node=document.createElementNS(NS,tag);
+    Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,v));
+    return node;
+  }
+
+  function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+
+  function superscriptNumber(n){
+    const map={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+    return String(n).split("").map(x=>map[x]).join("");
+  }
+
+  function ionText(symbol,charge){
+    if(charge===0) return symbol;
+    const magnitude=Math.abs(charge)===1 ? "" : superscriptNumber(Math.abs(charge));
+    return `${symbol}${magnitude}${charge>0 ? "⁺" : "⁻"}`;
+  }
+
+  function shellConfiguration(electronCount){
+    let remaining=Math.max(0,electronCount);
+    const shells=[0,0,0,0];
+    for(const orbital of ORBITALS){
+      if(remaining<=0) break;
+      const filled=Math.min(orbital.capacity,remaining);
+      shells[orbital.n-1]+=filled;
+      remaining-=filled;
+    }
+    while(shells.length>1 && shells[shells.length-1]===0) shells.pop();
+    return shells;
+  }
+
+  function simulationAvailable(){
+    return Boolean(currentElement().preferred)||state.exploration;
+  }
+
+  function maxTransfersForMode(mode){
+    const d=currentElement();
+    if(!state.exploration && d.preferred===mode) return d.preferredCount;
+    if(mode==="lose") return Math.max(1,Math.min(4,d.z));
+    return 4;
+  }
+
+  function populateElements(){
+    clear(els.elementSelect);
+    ELEMENTS.forEach((d,i)=>{
+      const option=document.createElement("option");
+      option.value=String(i);
+      option.textContent=`${d.z}. ${d.name} (${d.symbol}) — ${d.shells.join(",")}`;
+      els.elementSelect.appendChild(option);
+    });
+  }
+
+  function populateTransferOptions(){
+    const max=Math.min(4,maxTransfersForMode(state.mode));
+    clear(els.transferSelect);
+    for(let i=1;i<=max;i++){
+      const option=document.createElement("option");
+      option.value=String(i);
+      option.textContent=`${i} electron${i===1 ? "" : "s"}`;
+      els.transferSelect.appendChild(option);
+    }
+    if(state.targetTransfers>max) state.targetTransfers=max;
+    els.transferSelect.value=String(state.targetTransfers);
+  }
+
+  function applyPreferredSettings(){
+    const d=currentElement();
+    state.exploration=false;
+    if(d.preferred){
+      state.mode=d.preferred;
+      state.targetTransfers=d.preferredCount;
+      els.transferHint.textContent="Common monatomic ion pathway selected.";
+    }else{
+      state.mode="lose";
+      state.targetTransfers=1;
+      els.transferHint.textContent="No common simple monatomic ion. Enable Exploration mode to model a non-common pathway.";
+    }
+    populateTransferOptions();
+  }
+
+  function shellCountsAfter(completed){
+    const d=currentElement();
+    const electronCount=d.z+(state.mode==="gain" ? completed : -completed);
+    return shellConfiguration(electronCount);
+  }
+
+  function activeShellCounts(){
+    return shellCountsAfter(state.completedTransfers);
+  }
+
+  function electronPosition(shellIndex,index,count){
+    const r=shellRadii[shellIndex];
+    const offset=(shellIndex%2===0 ? -Math.PI/2 : -Math.PI/2+Math.PI/8);
+    const angle=offset+(Math.PI*2*index/count);
+    return {x:centre.x+Math.cos(angle)*r,y:centre.y+Math.sin(angle)*r,angle};
+  }
+
+  function movingEndpoints(){
+    const counts=activeShellCounts();
+    const free={x:245,y:225};
+    if(state.mode==="lose"){
+      const shellIndex=counts.length-1;
+      const count=counts[shellIndex];
+      const attach=electronPosition(shellIndex,Math.max(0,count-1),Math.max(1,count));
+      return {start:attach,end:free};
+    }
+
+    const nextCounts=shellConfiguration(boundElectronCount()+1);
+    let shellIndex=nextCounts.length-1;
+    for(let i=0;i<nextCounts.length;i++){
+      if((nextCounts[i]||0)>(counts[i]||0)){
+        shellIndex=i;
+        break;
+      }
+    }
+    const nextCount=nextCounts[shellIndex];
+    const destination=electronPosition(shellIndex,nextCount-1,nextCount);
+    return {start:free,end:destination};
+  }
+
+  function quadraticPoint(p0,p1,p2,t){
+    const mt=1-t;
+    return {
+      x:mt*mt*p0.x+2*mt*t*p1.x+t*t*p2.x,
+      y:mt*mt*p0.y+2*mt*t*p1.y+t*t*p2.y
+    };
+  }
+
+  function buildNucleus(){
+    clear(els.nucleusGroup);
+    const d=currentElement();
+    const total=d.z+d.neutrons;
+    const particles=[];
+    let protonsUsed=0;
+    let neutronsUsed=0;
+
+    for(let i=0;i<total;i++){
+      const targetProtons=Math.round(((i+1)*d.z)/total);
+      if(protonsUsed<targetProtons){
+        particles.push("p");
+        protonsUsed++;
+      }else{
+        particles.push("n");
+        neutronsUsed++;
+      }
+    }
+
+    const spacing=total>32 ? 8.1 : total>20 ? 9.2 : 11;
+    const radius=total>32 ? 14 : total>20 ? 15.5 : 17;
+
+    particles.forEach((type,i)=>{
+      const angle=i*2.3999632297;
+      const radial=spacing*Math.sqrt(i);
+      const x=centre.x+Math.cos(angle)*radial;
+      const y=centre.y+Math.sin(angle)*radial;
+      const proton=type==="p";
+      const circle=svgEl("circle",{
+        cx:x,cy:y,r:radius,
+        fill:proton ? "#e85757" : "#9aaabb",
+        stroke:proton ? "#ffb2a8" : "#e6edf3",
+        "stroke-width":"1.6",
+        filter:"url(#smallGlow)"
+      });
+      els.nucleusGroup.appendChild(circle);
+      if(proton && radius>=14){
+        const t=svgEl("text",{x,y:y+5,"text-anchor":"middle","font-size":"15","font-weight":"900",fill:"#fff"});
+        t.textContent="+";
+        els.nucleusGroup.appendChild(t);
+      }
+    });
+  }
+
+  function buildShells(){
+    clear(els.shellGroup);
+    const counts=activeShellCounts();
+    const activeTransfer=simulationAvailable()&&!state.completed&&state.completedTransfers<state.targetTransfers;
+    const nextCounts=(activeTransfer&&state.mode==="gain") ? shellConfiguration(boundElectronCount()+1) : counts;
+    const shellTotal=Math.max(counts.length,nextCounts.length);
+
+    for(let i=0;i<shellTotal;i++){
+      const occupied=(counts[i]||0)>0;
+      const destination=(nextCounts[i]||0)>(counts[i]||0);
+      const circle=svgEl("circle",{
+        cx:centre.x,cy:centre.y,r:shellRadii[i],
+        fill:"none",
+        stroke:"#2bb9e8",
+        "stroke-width":i===shellTotal-1 ? 4 : 3,
+        opacity:occupied ? (i===shellTotal-1 ? .9 : .68) : destination ? .42 : .25,
+        "stroke-dasharray":occupied ? "" : "7 10",
+        filter:"url(#smallGlow)"
+      });
+      els.shellGroup.appendChild(circle);
+    }
+  }
+
+  function addElectron(x,y,opacity=1){
+    const g=svgEl("g",{transform:`translate(${x},${y})`,opacity});
+    const c=svgEl("circle",{r:14,fill:"url(#electronGrad)",stroke:"#d8fbff","stroke-width":"2",filter:"url(#smallGlow)"});
+    const t=svgEl("text",{x:0,y:5,"text-anchor":"middle","font-size":"17","font-weight":"900",fill:"#fff"});
+    t.textContent="−";
+    g.append(c,t);
+    els.electronGroup.appendChild(g);
+  }
+
+  function buildElectrons(){
+    clear(els.electronGroup);
+    const d=currentElement();
+    const counts=activeShellCounts();
+    const activeTransfer=simulationAvailable()&&!state.completed&&state.completedTransfers<state.targetTransfers;
+
+    counts.forEach((count,shellIndex)=>{
+      let visible=count;
+
+      if(activeTransfer && state.mode==="lose" && shellIndex===counts.length-1){
+        visible=Math.max(0,count-1);
+      }
+
+      for(let i=0;i<visible;i++){
+        const p=electronPosition(shellIndex,i,Math.max(1,count));
+        addElectron(p.x,p.y);
+      }
+    });
+  }
+
+  function buildLabels(){
+    clear(els.labelGroup);
+    if(!state.showLabels||window.innerWidth<620) return;
+
+    const d=currentElement();
+    const counts=activeShellCounts();
+    const shellIndex=Math.max(0,counts.length-1);
+
+    const nucleusText=svgEl("text",{
+      x:centre.x,y:centre.y+108,"text-anchor":"middle",
+      fill:"currentColor","font-size":"18","font-weight":"800"
+    });
+    nucleusText.textContent=`${d.z} p⁺   ${d.neutrons} n⁰`;
+
+    const shellLabel=svgEl("text",{
+      x:centre.x+shellRadii[shellIndex]+14,
+      y:centre.y-10,
+      fill:"currentColor","font-size":"17","font-weight":"800"
+    });
+    shellLabel.textContent="outer shell";
+
+    els.labelGroup.append(nucleusText,shellLabel);
+  }
+
+  function updateMovingElectron(){
+    const active=simulationAvailable()&&!state.completed&&state.completedTransfers<state.targetTransfers;
+    els.movingElectron.style.display=active ? "" : "none";
+    els.motionPath.style.display=active && state.showTrail ? "" : "none";
+    if(!active) return;
+
+    const {start,end}=movingEndpoints();
+    const cx=(start.x+end.x)/2;
+    const cy=Math.min(start.y,end.y)-90;
+    els.motionPath.setAttribute("d",`M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`);
+
+    const shakeFraction=.22;
+    let position;
+
+    if(state.phaseProgress<shakeFraction){
+      const local=state.phaseProgress/shakeFraction;
+      const amplitude=7*(1-local*.35);
+      const dx=Math.sin(local*Math.PI*12)*amplitude;
+      const dy=Math.cos(local*Math.PI*9)*amplitude*.55;
+      position={x:start.x+dx,y:start.y+dy};
+      els.motionPath.style.opacity="0";
+    }else{
+      const t=(state.phaseProgress-shakeFraction)/(1-shakeFraction);
+      position=quadraticPoint(start,{x:cx,y:cy},end,t);
+      els.motionPath.style.opacity=state.showTrail ? ".86" : "0";
+    }
+
+    els.movingElectron.setAttribute("transform",`translate(${position.x},${position.y})`);
+  }
+
+  function currentCharge(){
+    return state.mode==="lose" ? state.completedTransfers : -state.completedTransfers;
+  }
+
+  function boundElectronCount(){
+    return currentElement().z-currentCharge();
+  }
+
+  function outerElectronCount(){
+    const counts=activeShellCounts();
+    return counts[counts.length-1]||0;
+  }
+
+  function finalCharge(){
+    return state.mode==="lose" ? state.targetTransfers : -state.targetTransfers;
+  }
+
+  function updateEquation(){
+    const d=currentElement();
+    if(!simulationAvailable()){
+      els.equation.textContent=`${d.symbol}: no common simple monatomic ion`;
+      els.equationCaption.textContent="Enable Exploration mode only to examine a deliberately non-common electron-transfer pathway.";
+      return;
+    }
+
+    const n=state.targetTransfers;
+    const final=finalCharge();
+    const eTerm=n===1 ? "e⁻" : `${n}e⁻`;
+    if(state.mode==="lose"){
+      els.equation.textContent=`${d.symbol} → ${ionText(d.symbol,final)} + ${eTerm}`;
+      els.equationCaption.textContent=`${n} electron${n===1 ? "" : "s"} ${n===1 ? "is" : "are"} lost sequentially.`;
+    }else{
+      els.equation.textContent=`${d.symbol} + ${eTerm} → ${ionText(d.symbol,final)}`;
+      els.equationCaption.textContent=`${n} electron${n===1 ? "" : "s"} ${n===1 ? "is" : "are"} gained sequentially.`;
+    }
+  }
+
+  function updateMetrics(){
+    const charge=currentCharge();
+    els.protonCount.textContent=currentElement().z;
+    els.electronCount.textContent=boundElectronCount();
+    els.outerCount.textContent=outerElectronCount();
+    els.transferCount.textContent=`${state.completedTransfers}/${state.targetTransfers}`;
+    els.chargeValue.textContent=charge===0 ? "0" : charge>0 ? `+${charge}` : `−${Math.abs(charge)}`;
+    els.chargeValue.style.color=charge>0 ? "var(--amber)" : charge<0 ? "var(--cyan)" : "var(--text)";
+  }
+
+  function updateQuiz(){
+    const d=currentElement();
+    let answers;
+
+    if(!d.preferred&&!state.exploration){
+      const noble=["He","Ne","Ar"].includes(d.symbol);
+      els.quizQuestion.textContent=noble
+        ? `Why does ${d.name.toLowerCase()} not commonly form a simple monatomic ion?`
+        : `Why does ${d.name.toLowerCase()} usually form covalent bonds rather than a simple monatomic ion?`;
+      answers=noble ? {
+        a:"Its outer electron shell is already complete.",
+        b:"It contains no protons.",
+        c:"Its neutrons repel electrons.",
+        d:"It has no electron shells.",
+        correct:"a"
+      } : {
+        a:"Sharing electrons is generally more favourable than transferring enough electrons to form a simple ion.",
+        b:"It has no valence electrons.",
+        c:"Its nucleus has no charge.",
+        d:"It cannot form chemical bonds.",
+        correct:"a"
+      };
+    }else{
+      const gaining=state.mode==="gain";
+      els.quizQuestion.textContent=gaining
+        ? "Why does an atom become negatively charged after gaining an electron?"
+        : "Why does an atom become positively charged after losing an electron?";
+      answers=gaining ? {
+        a:"It has more electrons than protons.",
+        b:"It gains an extra proton.",
+        c:"Its neutrons become negative.",
+        d:"Its nucleus loses mass.",
+        correct:"a"
+      } : {
+        a:"It gains an extra proton.",
+        b:"It has more protons than electrons.",
+        c:"Its neutrons become positive.",
+        d:"Its nucleus loses mass.",
+        correct:"b"
+      };
+    }
+
+    document.querySelectorAll(".quiz button").forEach(btn=>{
+      btn.textContent=answers[btn.dataset.id];
+      btn.dataset.correct=String(btn.dataset.id===answers.correct);
+      btn.classList.remove("correct","wrong");
+    });
+    els.quizFeedback.textContent="";
+  }
+
+  function commonIonLabel(){
+    const d=currentElement();
+    if(!d.preferred) return "No common simple ion";
+    const charge=d.preferred==="lose" ? d.preferredCount : -d.preferredCount;
+    return `Common ion: ${ionText(d.symbol,charge)}`;
+  }
+
+  function updateUI(){
+    const d=currentElement();
+    const available=simulationAvailable();
+    const controlsUnlocked=state.exploration;
+
+    els.loseBtn.classList.toggle("active",available&&state.mode==="lose");
+    els.gainBtn.classList.toggle("active",available&&state.mode==="gain");
+    els.loseBtn.disabled=!controlsUnlocked;
+    els.gainBtn.disabled=!controlsUnlocked;
+    els.transferSelect.disabled=!controlsUnlocked;
+
+    els.explorationToggle.classList.toggle("on",state.exploration);
+    els.explorationToggle.setAttribute("aria-pressed",String(state.exploration));
+    els.trailToggle.classList.toggle("on",state.showTrail);
+    els.labelToggle.classList.toggle("on",state.showLabels);
+    els.trailToggle.setAttribute("aria-pressed",String(state.showTrail));
+    els.labelToggle.setAttribute("aria-pressed",String(state.showLabels));
+    els.speedValue.textContent=`${state.speed.toFixed(1)}×`;
+    els.infoBox.textContent=d.note;
+    els.recommendedText.textContent=commonIonLabel();
+
+    els.pausedTag.textContent=available ? "Paused" : "No common ion pathway";
+    els.pausedTag.classList.toggle("hidden",available&&(state.playing||state.completed));
+    els.startBtn.disabled=!available||state.playing||state.completed;
+    els.pauseBtn.disabled=!state.playing;
+    els.stepBtn.disabled=!available||state.playing||state.completed;
+    els.replayBtn.disabled=!available;
+
+    updateEquation();
+    updateMetrics();
+    buildLabels();
+    updateMovingElectron();
+  }
+
+  function renderAll(){
+    buildNucleus();
+    buildShells();
+    buildElectrons();
+    buildLabels();
+    updateMovingElectron();
+    updateUI();
+  }
+
+  function stop(){
+    state.playing=false;
+    state.lastTime=null;
+    if(state.raf) cancelAnimationFrame(state.raf);
+    state.raf=null;
+    updateUI();
+  }
+
+  function resetAnimation(){
+    if(state.raf) cancelAnimationFrame(state.raf);
+    state.playing=false;
+    state.completed=false;
+    state.completedTransfers=0;
+    state.phaseProgress=0;
+    state.lastTime=null;
+    renderAll();
+  }
+
+  function finishSingleTransfer(){
+    state.completedTransfers++;
+    state.phaseProgress=0;
+    if(state.completedTransfers>=state.targetTransfers){
+      state.completed=true;
+      state.playing=false;
+    }
+    buildShells();
+    buildElectrons();
+    updateUI();
+  }
+
+  function step(){
+    if(state.completed||!simulationAvailable()) return;
+    state.phaseProgress=Math.min(1,state.phaseProgress+.12);
+    if(state.phaseProgress>=1) finishSingleTransfer();
+    else updateMovingElectron();
+  }
+
+  function start(){
+    if(state.completed||!simulationAvailable()) return;
+    state.playing=true;
+    state.lastTime=null;
+    updateUI();
+    state.raf=requestAnimationFrame(tick);
+  }
+
+  function tick(time){
+    if(!state.playing) return;
+    if(state.lastTime===null) state.lastTime=time;
+    const dt=(time-state.lastTime)/1000;
+    state.lastTime=time;
+    state.phaseProgress=Math.min(1,state.phaseProgress+dt*(.48*state.speed));
+    updateMovingElectron();
+
+    if(state.phaseProgress>=1){
+      finishSingleTransfer();
+      if(state.completed) return;
+    }
+    state.raf=requestAnimationFrame(tick);
+  }
+
+  function replay(){ resetAnimation(); start(); }
+
+  function changeMode(mode){
+    if(!state.exploration) return;
+    state.mode=mode;
+    const d=currentElement();
+    state.targetTransfers=(d.preferred===mode&&d.preferredCount) ? d.preferredCount : 1;
+    populateTransferOptions();
+    els.transferHint.textContent=(d.preferred===mode&&d.preferredCount===state.targetTransfers)
+      ? "This matches the element's common monatomic ion."
+      : "Exploration pathway: this is not necessarily a common or stable monatomic ion.";
+    updateQuiz();
+    resetAnimation();
+  }
+
+  populateElements();
+  applyPreferredSettings();
+  els.elementSelect.value="10";
+  updateQuiz();
+
+  els.themeBtn.addEventListener("click",()=>{
+    state.theme=state.theme==="dark" ? "light" : "dark";
+    document.body.dataset.theme=state.theme;
+    const light=state.theme==="light";
+    els.themeBtn.innerHTML=light ? '🌙 <span>Dark mode</span>' : '☀️ <span>Light mode</span>';
+    els.themeBtn.setAttribute("aria-pressed",String(light));
+  });
+
+  els.elementSelect.addEventListener("change",()=>{
+    state.elementIndex=Number(els.elementSelect.value);
+    applyPreferredSettings();
+    updateQuiz();
+    resetAnimation();
+  });
+
+  els.explorationToggle.addEventListener("click",()=>{
+    state.exploration=!state.exploration;
+    const d=currentElement();
+    if(!state.exploration){
+      if(d.preferred){
+        state.mode=d.preferred;
+        state.targetTransfers=d.preferredCount;
+        els.transferHint.textContent="Common monatomic ion pathway selected.";
+      }else{
+        state.mode="lose";
+        state.targetTransfers=1;
+        els.transferHint.textContent="No common simple monatomic ion. Enable Exploration mode to model a non-common pathway.";
+      }
+    }else{
+      els.transferHint.textContent=(d.preferred===state.mode&&d.preferredCount===state.targetTransfers)
+        ? "This matches the element's common monatomic ion."
+        : "Exploration pathway: this is not necessarily a common or stable monatomic ion.";
+    }
+    populateTransferOptions();
+    updateQuiz();
+    resetAnimation();
+  });
+
+  els.loseBtn.addEventListener("click",()=>changeMode("lose"));
+  els.gainBtn.addEventListener("click",()=>changeMode("gain"));
+
+  els.transferSelect.addEventListener("change",()=>{
+    state.targetTransfers=Number(els.transferSelect.value);
+    const d=currentElement();
+    els.transferHint.textContent=(d.preferred===state.mode&&d.preferredCount===state.targetTransfers)
+      ? "This matches the element's common monatomic ion."
+      : "Exploration pathway: this is not necessarily a common or stable monatomic ion.";
+    resetAnimation();
+  });
+
+  els.speedRange.addEventListener("input",()=>{
+    state.speed=Number(els.speedRange.value);
+    updateUI();
+  });
+
+  els.trailToggle.addEventListener("click",()=>{
+    state.showTrail=!state.showTrail;
+    updateUI();
+  });
+
+  els.labelToggle.addEventListener("click",()=>{
+    state.showLabels=!state.showLabels;
+    updateUI();
+  });
+
+  els.startBtn.addEventListener("click",start);
+  els.pauseBtn.addEventListener("click",stop);
+  els.stepBtn.addEventListener("click",step);
+  els.replayBtn.addEventListener("click",replay);
+  els.resetBtn.addEventListener("click",resetAnimation);
+  window.addEventListener("resize",buildLabels);
+
+  document.querySelectorAll(".quiz button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll(".quiz button").forEach(b=>b.classList.remove("correct","wrong"));
+      const correct=btn.dataset.correct==="true";
+      btn.classList.add(correct ? "correct" : "wrong");
+      els.quizFeedback.textContent=correct
+        ? "Correct. The explanation matches the selected element and pathway."
+        : "Not quite. Reconsider the outer-shell arrangement and the balance between protons and electrons.";
+    });
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
