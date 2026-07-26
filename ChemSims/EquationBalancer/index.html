@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equation Balancer | SciSims</title>
+  <style>
+    :root {
+      --bg: #eef6f7;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-strong: #ffffff;
+      --text: #17343a;
+      --muted: #5c7479;
+      --line: #c8dcdf;
+      --primary: #087e8b;
+      --primary-dark: #055f69;
+      --secondary: #f4a261;
+      --success: #2a9d5b;
+      --danger: #d64545;
+      --warning: #d98b1f;
+      --shadow: 0 14px 34px rgba(27, 75, 82, 0.14);
+      --radius: 20px;
+      --atom-H: #f4f4f4;
+      --atom-O: #ef5350;
+      --atom-N: #5c6bc0;
+      --atom-C: #424242;
+      --atom-Cl: #66bb6a;
+      --atom-Na: #ab47bc;
+      --atom-Mg: #90a4ae;
+      --atom-Al: #b0bec5;
+      --atom-S: #fdd835;
+      --atom-P: #ff8a65;
+      --atom-K: #7e57c2;
+      --atom-Ca: #8d6e63;
+      --atom-Fe: #8d4f3f;
+      --atom-Zn: #78909c;
+      --atom-Cu: #c57b38;
+      --atom-Ag: #cfd8dc;
+      --atom-Mn: #ec407a;
+      --atom-Ba: #26a69a;
+    }
+
+    body.dark {
+      --bg: #071a1e;
+      --panel: rgba(16, 42, 47, 0.96);
+      --panel-strong: #102a2f;
+      --text: #eefbfc;
+      --muted: #a7c0c4;
+      --line: #294a50;
+      --primary: #31b7c4;
+      --primary-dark: #1b8e99;
+      --secondary: #f5ad73;
+      --success: #54d58a;
+      --danger: #ff7474;
+      --warning: #f6b14a;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+      --atom-H: #f0f0f0;
+      --atom-C: #151515;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(8, 126, 139, 0.16), transparent 28%),
+        radial-gradient(circle at 92% 12%, rgba(244, 162, 97, 0.16), transparent 26%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background 180ms ease, color 180ms ease;
+    }
+
+    button, select { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .app-shell {
+      width: min(1480px, calc(100% - 28px));
+      margin: 18px auto 36px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border-radius: 28px;
+      background:
+        linear-gradient(125deg, rgba(7, 91, 102, 0.97), rgba(8, 126, 139, 0.93) 52%, rgba(26, 151, 160, 0.93));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -135px;
+      top: -210px;
+      border: 40px solid rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .hero-button {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.82;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4.4vw, 4.4rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-subtitle {
+      margin: 12px 0 0;
+      max-width: 780px;
+      font-size: clamp(1rem, 1.7vw, 1.28rem);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .law-badge {
+      min-width: 220px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .mode-tab {
+      min-height: 58px;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+      padding: 10px 14px;
+    }
+
+    .mode-tab.active {
+      color: white;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      box-shadow: 0 8px 18px rgba(8, 126, 139, 0.26);
+    }
+
+    .mode-tab small {
+      display: block;
+      margin-top: 3px;
+      opacity: 0.78;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(270px, 0.78fr) minmax(460px, 1.55fr) minmax(300px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(8, 126, 139, 0.08), transparent);
+    }
+
+    .card-head h2, .card-head h3 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .card-body { padding: 18px; }
+
+    .mode-summary {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mode-summary p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .pill {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: rgba(8, 126, 139, 0.12);
+      color: var(--primary-dark);
+    }
+
+    body.dark .pill { color: #b8f5fa; }
+
+    .control-group {
+      display: grid;
+      gap: 7px;
+    }
+
+    .control-group label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 11px 12px;
+      font-weight: 750;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .toggle-row:first-of-type { border-top: 0; }
+
+    .toggle-row span {
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 27px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #9fb4b8;
+      transition: 160ms ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      transition: 160ms ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .switch input:checked + .slider { background: var(--primary); }
+    .switch input:checked + .slider::before { transform: translateX(21px); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+    }
+
+    .stat span {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 850;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 1.45rem;
+    }
+
+    .reaction-panel {
+      min-height: 668px;
+    }
+
+    .reaction-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .reaction-name {
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .reaction-type {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .equation-wrap {
+      min-height: 172px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(8,126,139,0.07), rgba(244,162,97,0.07)),
+        var(--panel-strong);
+      overflow-x: auto;
+    }
+
+    .equation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-width: max-content;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: clamp(1.15rem, 2.6vw, 2rem);
+      font-weight: 850;
+    }
+
+    .equation-side {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .term {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 8px;
+      border-radius: 14px;
+      transition: 160ms ease;
+    }
+
+    .term.teach-highlight {
+      background: rgba(244, 162, 97, 0.18);
+      outline: 3px solid rgba(244, 162, 97, 0.55);
+    }
+
+    .coefficient-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+    }
+
+    .coefficient-controls button {
+      width: 31px;
+      height: 31px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--panel-strong);
+      color: var(--text);
+      font-weight: 950;
+    }
+
+    .coefficient-controls button:hover:not(:disabled) {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .coefficient-controls button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .coefficient {
+      min-width: 30px;
+      text-align: center;
+      color: var(--primary);
+      font-size: 1.2em;
+    }
+
+    .formula {
+      white-space: nowrap;
+    }
+
+    .formula sub {
+      font-size: 0.58em;
+      vertical-align: -0.33em;
+    }
+
+    .plus, .arrow {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .arrow {
+      font-size: 1.45em;
+      color: var(--secondary);
+      padding: 0 3px;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      line-height: 1.4;
+      font-weight: 750;
+    }
+
+    .feedback.info { border-left: 5px solid var(--primary); }
+    .feedback.success { border-left: 5px solid var(--success); }
+    .feedback.warning { border-left: 5px solid var(--warning); }
+    .feedback.error { border-left: 5px solid var(--danger); }
+
+    .feedback-icon {
+      font-size: 1.4rem;
+      flex: 0 0 auto;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 15px;
+      font-weight: 900;
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 6px 14px rgba(8,126,139,0.17);
+    }
+
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn.secondary {
+      color: var(--text);
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.warn { background: var(--secondary); color: #2f251d; }
+    .btn.success { background: var(--success); }
+    .btn.danger { background: var(--danger); }
+
+    .lesson-card {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--panel-strong);
+      overflow: hidden;
+    }
+
+    .lesson-progress {
+      height: 8px;
+      background: rgba(8,126,139,0.13);
+    }
+
+    .lesson-progress > div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      transition: width 220ms ease;
+    }
+
+    .lesson-copy { padding: 15px 16px 17px; }
+
+    .lesson-copy h3 {
+      margin: 0 0 7px;
+      font-size: 1.05rem;
+    }
+
+    .lesson-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.52;
+    }
+
+    .particle-stage {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--panel-strong);
+    }
+
+    .particle-stage h3 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+    }
+
+    .particle-sides {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .particle-side {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 7px;
+      min-height: 105px;
+      padding: 10px;
+      border-radius: 13px;
+      background: rgba(8,126,139,0.045);
+    }
+
+    .particle-arrow {
+      align-self: center;
+      color: var(--secondary);
+      font-size: 1.7rem;
+      font-weight: 950;
+    }
+
+    .molecule {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      align-items: center;
+      max-width: 90px;
+      padding: 5px 7px;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+
+    .molecule-label {
+      width: 100%;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .atom-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.25);
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.52rem;
+      font-weight: 950;
+      color: #111;
+    }
+
+    .atom-dot.C, .atom-dot.Fe, .atom-dot.Cu { color: white; }
+
+    .more-molecules {
+      align-self: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .count-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .count-table th, .count-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .count-table th:first-child, .count-table td:first-child {
+      text-align: left;
+    }
+
+    .count-table th {
+      color: var(--muted);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .count-table tr:last-child td { border-bottom: 0; }
+
+    .count-table tr.unbalanced {
+      background: rgba(214, 69, 69, 0.08);
+    }
+
+    .count-table tr.balanced {
+      background: rgba(42, 157, 91, 0.07);
+    }
+
+    .element-token {
+      display: inline-flex;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #111;
+      font-weight: 950;
+      border: 1px solid rgba(0,0,0,0.18);
+      margin-right: 7px;
+    }
+
+    .status-ok { color: var(--success); font-weight: 950; }
+    .status-no { color: var(--danger); font-weight: 950; }
+
+    .hidden { display: none !important; }
+
+    .teach-key {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .teach-key-item {
+      padding: 11px 12px;
+      border-radius: 13px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+    }
+
+    .teach-key-item strong { color: var(--primary); }
+
+    .subscript-demo {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 12px;
+    }
+
+    .demo-box {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--panel-strong);
+    }
+
+    .demo-box.bad { border-color: rgba(214, 69, 69, 0.5); }
+    .demo-box.good { border-color: rgba(42, 157, 91, 0.5); }
+
+    .demo-box b {
+      display: block;
+      margin-bottom: 5px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 1.25rem;
+    }
+
+    details {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--panel-strong);
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 12px 14px;
+      font-weight: 900;
+    }
+
+    details p, details ul {
+      margin: 0;
+      padding: 0 16px 15px 32px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .rush-overlay {
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .rush-stat {
+      padding: 12px;
+      border-radius: 14px;
+      text-align: center;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+    }
+
+    .rush-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+
+    .rush-stat strong {
+      display: block;
+      font-size: 1.7rem;
+      margin-top: 2px;
+    }
+
+    .timer-low { color: var(--danger); }
+
+    .completion {
+      text-align: center;
+      padding: 26px 18px;
+    }
+
+    .completion .big {
+      font-size: 3rem;
+      margin-bottom: 8px;
+    }
+
+    .completion h2 { margin: 0 0 7px; }
+    .completion p { color: var(--muted); }
+
+    @keyframes pulseBad {
+      0%,100% { box-shadow: inset 0 0 0 0 rgba(214,69,69,0); }
+      50% { box-shadow: inset 0 0 0 3px rgba(214,69,69,0.26); }
+    }
+
+    .count-table tr.unbalanced.pulse {
+      animation: pulseBad 1.1s ease-in-out infinite;
+    }
+
+    @media (max-width: 1120px) {
+      .workspace {
+        grid-template-columns: 280px minmax(0, 1fr);
+      }
+      .right-column {
+        grid-column: 1 / -1;
+      }
+      .reaction-panel { min-height: auto; }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { width: min(100% - 16px, 1480px); margin-top: 8px; }
+      .hero { border-radius: 21px; padding: 16px; }
+      .hero-copy { grid-template-columns: 1fr; }
+      .law-badge { text-align: left; }
+      .mode-tabs { grid-template-columns: repeat(2, 1fr); }
+      .workspace { grid-template-columns: 1fr; }
+      .right-column { grid-column: auto; }
+      .particle-sides { grid-template-columns: 1fr; }
+      .particle-arrow { transform: rotate(90deg); justify-self: center; }
+      .subscript-demo { flex-direction: column; }
+
+      .equation-wrap {
+        justify-content: center;
+        overflow-x: hidden;
+        padding: 16px 8px;
+      }
+
+      .equation {
+        width: 100%;
+        min-width: 0;
+        flex-direction: column;
+        gap: 7px;
+        font-size: clamp(1.05rem, 5vw, 1.45rem);
+      }
+
+      .equation-side {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        row-gap: 4px;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+        line-height: 1;
+      }
+
+      .coefficient-controls button {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        font-size: 1.15rem;
+      }
+
+      .coefficient { min-width: 34px; }
+      .term { padding: 7px 5px; }
+    }
+
+    @media (max-width: 460px) {
+      .mode-tabs { grid-template-columns: 1fr; }
+      .hero-actions { width: 100%; }
+      .hero-button { flex: 1; }
+      .rush-overlay { grid-template-columns: 1fr; }
+      .action-row .btn { flex: 1 1 135px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="topbar">
+        <a class="back-link" href="../../index.html" aria-label="Back to the main SciSims page">← Back to main SciSims page</a>
+        <div class="hero-actions">
+          <button class="hero-button" id="fullscreenBtn" type="button">⛶ Fullscreen</button>
+          <button class="hero-button" id="themeBtn" type="button">🌙 Dark mode</button>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div>
+          <p class="eyebrow">ChemSims • Conservation of mass</p>
+          <h1>Equation Balancer</h1>
+          <p class="hero-subtitle">Learn why chemical equations must balance, then practise and test your skills by changing coefficients.</p>
+        </div>
+        <div class="law-badge">Atoms are rearranged — never created or destroyed.</div>
+      </div>
+    </header>
+
+    <nav class="mode-tabs" aria-label="Game modes">
+      <button class="mode-tab active" data-mode="teach">Learn<small>Start here</small></button>
+      <button class="mode-tab" data-mode="practice">Practise<small>Adjustable support</small></button>
+      <button class="mode-tab" data-mode="challenge">Challenge<small>Ten reactions</small></button>
+      <button class="mode-tab" data-mode="rush">Reaction Rush<small>Beat the clock</small></button>
+    </nav>
+
+    <section class="workspace">
+      <aside class="card left-column">
+        <div class="card-head">
+          <h2 id="leftTitle">Learn mode</h2>
+          <span class="pill" id="modePill">Start here</span>
+        </div>
+        <div class="card-body">
+          <div id="modeSummary" class="mode-summary"></div>
+
+          <div id="learnControls">
+            <div class="control-group" style="margin-top:14px;">
+              <label for="learnExampleSelect">Worked example</label>
+              <select id="learnExampleSelect">
+                <option value="1">1. Formation of water</option>
+                <option value="2">2. Formation of magnesium oxide</option>
+                <option value="3">3. Formation of ammonia</option>
+                <option value="4">4. Combustion of methane</option>
+                <option value="5">5. Formation of aluminium oxide</option>
+              </select>
+            </div>
+            <button class="btn secondary" id="nextExampleBtn" type="button" style="width:100%; margin-top:10px;">Skip to next example</button>
+          </div>
+
+          <div id="practiceControls" class="hidden">
+            <div class="control-group" style="margin-top:14px;">
+              <label for="difficultySelect">Reaction level</label>
+              <select id="difficultySelect">
+                <option value="foundation">Foundation</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="mixed">Mixed</option>
+              </select>
+            </div>
+
+            <div style="margin-top:14px;">
+              <div class="toggle-row">
+                <span>Show atom table</span>
+                <label class="switch">
+                  <input id="showTableToggle" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <span>Show particle models</span>
+                <label class="switch">
+                  <input id="showParticlesToggle" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="challengeStats" class="stats-grid hidden" style="margin-top:14px;">
+            <div class="stat"><span>Question</span><strong id="challengeQuestion">1/10</strong></div>
+            <div class="stat"><span>Score</span><strong id="challengeScore">0</strong></div>
+            <div class="stat"><span>Attempts</span><strong id="challengeAttempts">0/3</strong></div>
+            <div class="stat"><span>Hints</span><strong id="challengeHints">0</strong></div>
+          </div>
+
+          <div id="rushStartPanel" class="hidden" style="margin-top:14px;">
+            <button class="btn" id="startRushBtn" type="button" style="width:100%;">Start 60-second round</button>
+          </div>
+
+          <div class="teach-key" id="teachKey">
+            <div class="teach-key-item"><strong>Coefficient</strong><br>The large number placed before a formula. It changes the number of particles.</div>
+            <div class="teach-key-item"><strong>Subscript</strong><br>The small number within a formula. It is part of the substance and must not be changed.</div>
+            <div class="teach-key-item"><strong>Balanced</strong><br>The number of each type of atom is equal on both sides.</div>
+          </div>
+
+          <details>
+            <summary>How to balance efficiently</summary>
+            <ul>
+              <li>Count every element on both sides.</li>
+              <li>Begin with an element that appears in the fewest substances.</li>
+              <li>Change coefficients only.</li>
+              <li>Recount after every change.</li>
+              <li>Finish with the lowest whole-number ratio.</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>Teacher notes</summary>
+            <p>Learn mode includes five worked examples and a required student checkpoint after each one. Practise mode keeps visual supports adjustable, while Challenge progressively reveals scaffolding only after errors or hints.</p>
+          </details>
+        </div>
+      </aside>
+
+      <section class="card reaction-panel">
+        <div class="card-head">
+          <h2 id="mainPanelTitle">Worked example</h2>
+          <span class="pill" id="difficultyPill">Foundation</span>
+        </div>
+        <div class="card-body">
+          <div id="rushOverlay" class="rush-overlay hidden">
+            <div class="rush-stat"><span>Time</span><strong id="rushTime">60</strong></div>
+            <div class="rush-stat"><span>Balanced</span><strong id="rushScore">0</strong></div>
+            <div class="rush-stat"><span>Streak</span><strong id="rushStreak">0</strong></div>
+          </div>
+
+          <div id="completionPanel" class="completion hidden"></div>
+
+          <div id="reactionContent">
+            <div class="reaction-meta">
+              <div>
+                <div class="reaction-name" id="reactionName">Formation of water</div>
+                <div class="reaction-type" id="reactionType">Synthesis reaction</div>
+              </div>
+              <span class="pill" id="balanceStatus">Not balanced</span>
+            </div>
+
+            <div class="equation-wrap" aria-live="polite">
+              <div class="equation" id="equation"></div>
+            </div>
+
+            <div class="feedback info" id="feedback">
+              <span class="feedback-icon">💡</span>
+              <span id="feedbackText">A chemical equation represents atoms being rearranged into new substances.</span>
+            </div>
+
+            <div class="action-row" id="standardActions">
+              <button class="btn" id="checkBtn" type="button">Check equation</button>
+              <button class="btn secondary" id="hintBtn" type="button">Give me a hint</button>
+              <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+              <button class="btn warn" id="newBtn" type="button">New reaction</button>
+            </div>
+
+            <div class="action-row" id="teachActions">
+              <button class="btn secondary" id="teachBackBtn" type="button">← Back</button>
+              <button class="btn" id="teachNextBtn" type="button">Next step →</button>
+              <button class="btn secondary" id="teachReplayBtn" type="button">Replay explanation</button>
+            </div>
+
+            <div class="lesson-card" id="lessonCard">
+              <div class="lesson-progress"><div id="lessonProgressBar"></div></div>
+              <div class="lesson-copy">
+                <h3 id="lessonTitle">1. What does the equation show?</h3>
+                <p id="lessonText">The substances on the left are reactants. The substances on the right are products. The arrow means “reacts to form”.</p>
+                <div id="subscriptDemo" class="subscript-demo hidden">
+                  <div class="demo-box good">
+                    <b>2H<sub>2</sub>O</b>
+                    Two water molecules. The substance is still water.
+                  </div>
+                  <div class="demo-box bad">
+                    <b>H<sub>2</sub>O<sub>2</sub></b>
+                    Hydrogen peroxide. Changing a subscript creates a different substance.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="particle-stage" id="particleStage">
+              <h3>Particle count model</h3>
+              <div class="particle-sides">
+                <div class="particle-side" id="reactantParticles"></div>
+                <div class="particle-arrow">→</div>
+                <div class="particle-side" id="productParticles"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card right-column" id="countCard">
+        <div class="card-head">
+          <h2>Atom count</h2>
+          <span class="pill" id="conservationPill">Check conservation</span>
+        </div>
+        <div class="card-body">
+          <table class="count-table">
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Reactants</th>
+                <th>Products</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="countTableBody"></tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    const reactions = [
+      {
+        id: "water",
+        name: "Formation of water",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["H2", "O2"],
+        products: ["H2O"],
+        solution: [2, 1, 2],
+        hint: "Balance oxygen first by placing a 2 before water, then rebalance hydrogen."
+      },
+      {
+        id: "sodium-chloride",
+        name: "Formation of sodium chloride",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["Na", "Cl2"],
+        products: ["NaCl"],
+        solution: [2, 1, 2],
+        hint: "Chlorine occurs in pairs. Make two sodium chloride units, then balance sodium."
+      },
+      {
+        id: "magnesium-oxide",
+        name: "Formation of magnesium oxide",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["Mg", "O2"],
+        products: ["MgO"],
+        solution: [2, 1, 2],
+        hint: "Make two magnesium oxide units to match the two oxygen atoms."
+      },
+      {
+        id: "ammonia",
+        name: "Formation of ammonia",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["N2", "H2"],
+        products: ["NH3"],
+        solution: [1, 3, 2],
+        hint: "Balance nitrogen first. Two ammonia molecules contain six hydrogen atoms."
+      },
+      {
+        id: "hydrogen-peroxide",
+        name: "Decomposition of hydrogen peroxide",
+        type: "Decomposition reaction",
+        level: "foundation",
+        reactants: ["H2O2"],
+        products: ["H2O", "O2"],
+        solution: [2, 2, 1],
+        hint: "Try placing a 2 before hydrogen peroxide and water."
+      },
+      {
+        id: "potassium-chlorate",
+        name: "Decomposition of potassium chlorate",
+        type: "Decomposition reaction",
+        level: "foundation",
+        reactants: ["KClO3"],
+        products: ["KCl", "O2"],
+        solution: [2, 2, 3],
+        hint: "The least common multiple of 3 oxygen atoms and 2 oxygen atoms is 6."
+      },
+      {
+        id: "zinc-acid",
+        name: "Zinc and hydrochloric acid",
+        type: "Single displacement reaction",
+        level: "foundation",
+        reactants: ["Zn", "HCl"],
+        products: ["ZnCl2", "H2"],
+        solution: [1, 2, 1, 1],
+        hint: "Zinc chloride contains two chlorine atoms, so begin by placing a 2 before HCl."
+      },
+      {
+        id: "aluminium-copper",
+        name: "Aluminium and copper(II) chloride",
+        type: "Single displacement reaction",
+        level: "foundation",
+        reactants: ["Al", "CuCl2"],
+        products: ["AlCl3", "Cu"],
+        solution: [2, 3, 2, 3],
+        hint: "The least common multiple of 2 and 3 chlorine atoms is 6."
+      },
+      {
+        id: "iron-oxide",
+        name: "Formation of iron(III) oxide",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["Fe", "O2"],
+        products: ["Fe2O3"],
+        solution: [4, 3, 2],
+        hint: "Use 6 oxygen atoms: three O2 molecules and two Fe2O3 units."
+      },
+      {
+        id: "aluminium-oxide",
+        name: "Formation of aluminium oxide",
+        type: "Synthesis reaction",
+        level: "foundation",
+        reactants: ["Al", "O2"],
+        products: ["Al2O3"],
+        solution: [4, 3, 2],
+        hint: "Use 6 oxygen atoms, then balance aluminium."
+      },
+      {
+        id: "methane",
+        name: "Combustion of methane",
+        type: "Combustion reaction",
+        level: "intermediate",
+        reactants: ["CH4", "O2"],
+        products: ["CO2", "H2O"],
+        solution: [1, 2, 1, 2],
+        hint: "Balance carbon, then hydrogen, and leave oxygen until last."
+      },
+      {
+        id: "ethane",
+        name: "Combustion of ethane",
+        type: "Combustion reaction",
+        level: "intermediate",
+        reactants: ["C2H6", "O2"],
+        products: ["CO2", "H2O"],
+        solution: [2, 7, 4, 6],
+        hint: "Balance carbon and hydrogen first. Doubling ethane avoids a fractional oxygen coefficient."
+      },
+      {
+        id: "propane",
+        name: "Combustion of propane",
+        type: "Combustion reaction",
+        level: "intermediate",
+        reactants: ["C3H8", "O2"],
+        products: ["CO2", "H2O"],
+        solution: [1, 5, 3, 4],
+        hint: "Three carbon dioxide and four water molecules determine the oxygen coefficient."
+      },
+      {
+        id: "ethanol",
+        name: "Combustion of ethanol",
+        type: "Combustion reaction",
+        level: "intermediate",
+        reactants: ["C2H5OH", "O2"],
+        products: ["CO2", "H2O"],
+        solution: [1, 3, 2, 3],
+        hint: "Count all oxygen atoms carefully: ethanol already contains one oxygen atom."
+      },
+      {
+        id: "neutralisation",
+        name: "Sodium hydroxide and sulfuric acid",
+        type: "Neutralisation reaction",
+        level: "intermediate",
+        reactants: ["NaOH", "H2SO4"],
+        products: ["Na2SO4", "H2O"],
+        solution: [2, 1, 1, 2],
+        hint: "Treat sulfate as a unit. Sodium sulfate requires two sodium ions."
+      },
+      {
+        id: "barium-sulfate",
+        name: "Formation of barium sulfate",
+        type: "Double displacement reaction",
+        level: "intermediate",
+        reactants: ["BaCl2", "Na2SO4"],
+        products: ["BaSO4", "NaCl"],
+        solution: [1, 1, 1, 2],
+        hint: "Barium and sulfate are already balanced. Balance sodium and chlorine together."
+      },
+      {
+        id: "silver-chloride",
+        name: "Formation of silver chloride",
+        type: "Double displacement reaction",
+        level: "intermediate",
+        reactants: ["AgNO3", "NaCl"],
+        products: ["AgCl", "NaNO3"],
+        solution: [1, 1, 1, 1],
+        hint: "Count each element. This equation may already be balanced."
+      },
+      {
+        id: "calcium-carbonate-acid",
+        name: "Calcium carbonate and hydrochloric acid",
+        type: "Acid–carbonate reaction",
+        level: "intermediate",
+        reactants: ["CaCO3", "HCl"],
+        products: ["CaCl2", "CO2", "H2O"],
+        solution: [1, 2, 1, 1, 1],
+        hint: "Calcium and carbon are already balanced. Calcium chloride requires two chlorine atoms."
+      },
+      {
+        id: "iron-hydroxide",
+        name: "Formation of iron(III) hydroxide",
+        type: "Double displacement reaction",
+        level: "intermediate",
+        reactants: ["FeCl3", "NaOH"],
+        products: ["Fe(OH)3", "NaCl"],
+        solution: [1, 3, 1, 3],
+        hint: "Iron(III) hydroxide contains three hydroxide groups."
+      },
+      {
+        id: "ammonia-oxidation",
+        name: "Oxidation of ammonia",
+        type: "Redox reaction",
+        level: "intermediate",
+        reactants: ["NH3", "O2"],
+        products: ["N2", "H2O"],
+        solution: [4, 3, 2, 6],
+        hint: "Balance nitrogen first, then hydrogen, and oxygen last."
+      },
+      {
+        id: "phosphoric-neutralisation",
+        name: "Calcium hydroxide and phosphoric acid",
+        type: "Neutralisation reaction",
+        level: "advanced",
+        reactants: ["Ca(OH)2", "H3PO4"],
+        products: ["Ca3(PO4)2", "H2O"],
+        solution: [3, 2, 1, 6],
+        hint: "Balance calcium and phosphate first. Then use water to balance hydrogen and oxygen."
+      },
+      {
+        id: "aluminium-sulfate",
+        name: "Aluminium sulfate and calcium hydroxide",
+        type: "Double displacement reaction",
+        level: "advanced",
+        reactants: ["Al2(SO4)3", "Ca(OH)2"],
+        products: ["Al(OH)3", "CaSO4"],
+        solution: [1, 3, 2, 3],
+        hint: "Treat sulfate and hydroxide as units while they remain unchanged."
+      },
+      {
+        id: "permanganate-acid",
+        name: "Potassium permanganate and hydrochloric acid",
+        type: "Redox reaction",
+        level: "advanced",
+        reactants: ["KMnO4", "HCl"],
+        products: ["KCl", "MnCl2", "H2O", "Cl2"],
+        solution: [2, 16, 2, 2, 8, 5],
+        hint: "This is a challenging redox equation. Begin with K and Mn, then balance O using water."
+      },
+      {
+        id: "glucose",
+        name: "Cellular respiration",
+        type: "Combustion/respiration reaction",
+        level: "advanced",
+        reactants: ["C6H12O6", "O2"],
+        products: ["CO2", "H2O"],
+        solution: [1, 6, 6, 6],
+        hint: "Balance carbon and hydrogen first. Remember that glucose already contains oxygen."
+      },
+      {
+        id: "pyrite",
+        name: "Roasting iron pyrite",
+        type: "Redox reaction",
+        level: "advanced",
+        reactants: ["FeS2", "O2"],
+        products: ["Fe2O3", "SO2"],
+        solution: [4, 11, 2, 8],
+        hint: "Balance iron and sulfur first. Oxygen will require the largest coefficient."
+      },
+      {
+        id: "magnesium-phosphate",
+        name: "Formation of magnesium phosphate",
+        type: "Double displacement reaction",
+        level: "advanced",
+        reactants: ["Na3PO4", "MgCl2"],
+        products: ["Mg3(PO4)2", "NaCl"],
+        solution: [2, 3, 1, 6],
+        hint: "Balance phosphate and magnesium first, then sodium and chlorine."
+      }
+    ];
+
+    const teachSteps = [
+      {
+        reactionId: "water", example: 1, exampleStep: 1, exampleSteps: 6,
+        title: "What does the equation show?",
+        text: "The substances on the left are reactants. The substances on the right are products. The arrow means “reacts to form”.",
+        coefficients: [1, 1, 1], highlight: [], showDemo: false, pulseUnbalanced: false,
+        feedback: "H₂ and O₂ are reactants. H₂O is the product.", feedbackType: "info", feedbackIcon: "💡"
+      },
+      {
+        reactionId: "water", example: 1, exampleStep: 2, exampleSteps: 6,
+        title: "Count every type of atom",
+        text: "There are two hydrogen atoms on each side, but there are two oxygen atoms in the reactants and only one in the products. The equation is not balanced.",
+        coefficients: [1, 1, 1], highlight: [1, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "The oxygen row does not match, so mass is not conserved.", feedbackType: "error", feedbackIcon: "✕"
+      },
+      {
+        reactionId: "water", example: 1, exampleStep: 3, exampleSteps: 6,
+        title: "Coefficients are not subscripts",
+        text: "A coefficient changes the number of whole particles. A subscript is part of a chemical formula. Changing a subscript creates a different substance.",
+        coefficients: [1, 1, 1], highlight: [2], showDemo: true, pulseUnbalanced: false,
+        feedback: "Balance equations by changing coefficients only.", feedbackType: "info", feedbackIcon: "💡"
+      },
+      {
+        reactionId: "water", example: 1, exampleStep: 4, exampleSteps: 6,
+        title: "Balance oxygen first",
+        text: "Place a coefficient of 2 before H₂O. There are now two oxygen atoms on each side — but four hydrogen atoms appear in the products.",
+        coefficients: [1, 1, 2], highlight: [2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Oxygen is balanced. Hydrogen must now be rebalanced.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "water", example: 1, exampleStep: 5, exampleSteps: 6,
+        title: "Rebalance hydrogen",
+        text: "Place a coefficient of 2 before H₂. This gives four hydrogen atoms and two oxygen atoms on each side.",
+        coefficients: [2, 1, 2], highlight: [0], showDemo: false, pulseUnbalanced: false,
+        feedback: "Every element now has the same atom count on both sides.", feedbackType: "success", feedbackIcon: "✓"
+      },
+      {
+        reactionId: "water", example: 1, exampleStep: 6, exampleSteps: 6,
+        title: "Check the final ratio",
+        text: "The equation is balanced using the lowest whole-number ratio, 2 : 1 : 2. The atoms have been rearranged, but none were created or destroyed.",
+        coefficients: [2, 1, 2], highlight: [], showDemo: false, pulseUnbalanced: false,
+        feedback: "Balanced: 2H₂ + O₂ → 2H₂O.", feedbackType: "success", feedbackIcon: "✓"
+      },
+
+      {
+        reactionId: "magnesium-oxide", example: 2, exampleStep: 1, exampleSteps: 3,
+        title: "A similar pattern with magnesium",
+        text: "One O₂ molecule contains two oxygen atoms, but one MgO unit contains only one. Begin by matching the oxygen atoms.",
+        coefficients: [1, 1, 1], highlight: [1, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Oxygen is unbalanced: 2 atoms on the left and 1 on the right.", feedbackType: "error", feedbackIcon: "✕"
+      },
+      {
+        reactionId: "magnesium-oxide", example: 2, exampleStep: 2, exampleSteps: 3,
+        title: "Make two magnesium oxide units",
+        text: "Place a coefficient of 2 before MgO. Oxygen is now balanced, but the products contain two magnesium atoms.",
+        coefficients: [1, 1, 2], highlight: [2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Changing one coefficient can cause another element to become unbalanced.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "magnesium-oxide", example: 2, exampleStep: 3, exampleSteps: 3,
+        title: "Rebalance magnesium",
+        text: "Place a coefficient of 2 before Mg. The final ratio is 2 : 1 : 2.",
+        coefficients: [2, 1, 2], highlight: [0], showDemo: false, pulseUnbalanced: false,
+        feedback: "Balanced: 2Mg + O₂ → 2MgO.", feedbackType: "success", feedbackIcon: "✓"
+      },
+
+      {
+        reactionId: "ammonia", example: 3, exampleStep: 1, exampleSteps: 3,
+        title: "Balance nitrogen before hydrogen",
+        text: "N₂ contains two nitrogen atoms, while NH₃ contains one. Balance nitrogen first because it appears in only one substance on each side.",
+        coefficients: [1, 1, 1], highlight: [0, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Nitrogen and hydrogen are both unbalanced.", feedbackType: "error", feedbackIcon: "✕"
+      },
+      {
+        reactionId: "ammonia", example: 3, exampleStep: 2, exampleSteps: 3,
+        title: "Make two ammonia molecules",
+        text: "Place a coefficient of 2 before NH₃. Nitrogen is balanced, but the products now contain six hydrogen atoms.",
+        coefficients: [1, 1, 2], highlight: [2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Two NH₃ molecules contain 2 nitrogen atoms and 6 hydrogen atoms.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "ammonia", example: 3, exampleStep: 3, exampleSteps: 3,
+        title: "Use three hydrogen molecules",
+        text: "Place a coefficient of 3 before H₂. Three H₂ molecules provide the six hydrogen atoms required.",
+        coefficients: [1, 3, 2], highlight: [1], showDemo: false, pulseUnbalanced: false,
+        feedback: "Balanced: N₂ + 3H₂ → 2NH₃.", feedbackType: "success", feedbackIcon: "✓"
+      },
+
+      {
+        reactionId: "methane", example: 4, exampleStep: 1, exampleSteps: 3,
+        title: "A reaction with three elements",
+        text: "For combustion reactions, balance carbon first, hydrogen second and oxygen last. Carbon is already balanced here.",
+        coefficients: [1, 1, 1, 1], highlight: [0, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Carbon matches, but hydrogen and oxygen do not.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "methane", example: 4, exampleStep: 2, exampleSteps: 3,
+        title: "Balance hydrogen next",
+        text: "CH₄ contains four hydrogen atoms. Place a coefficient of 2 before H₂O to produce four hydrogen atoms.",
+        coefficients: [1, 1, 1, 2], highlight: [3], showDemo: false, pulseUnbalanced: true,
+        feedback: "Hydrogen is balanced. The products now contain four oxygen atoms.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "methane", example: 4, exampleStep: 3, exampleSteps: 3,
+        title: "Leave oxygen until last",
+        text: "Place a coefficient of 2 before O₂. Carbon, hydrogen and oxygen are now all balanced.",
+        coefficients: [1, 2, 1, 2], highlight: [1], showDemo: false, pulseUnbalanced: false,
+        feedback: "Balanced: CH₄ + 2O₂ → CO₂ + 2H₂O.", feedbackType: "success", feedbackIcon: "✓"
+      },
+
+      {
+        reactionId: "aluminium-oxide", example: 5, exampleStep: 1, exampleSteps: 4,
+        title: "Use a common multiple",
+        text: "O₂ supplies oxygen in groups of 2, while Al₂O₃ contains oxygen in groups of 3. The lowest common multiple is 6.",
+        coefficients: [1, 1, 1], highlight: [1, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Look for a total number of oxygen atoms that both 2 and 3 divide into.", feedbackType: "info", feedbackIcon: "💡"
+      },
+      {
+        reactionId: "aluminium-oxide", example: 5, exampleStep: 2, exampleSteps: 4,
+        title: "Create six oxygen atoms",
+        text: "Use 3O₂ on the left and 2Al₂O₃ on the right. Oxygen is now balanced with six atoms on each side.",
+        coefficients: [1, 3, 2], highlight: [1, 2], showDemo: false, pulseUnbalanced: true,
+        feedback: "Oxygen is balanced, but the products now contain four aluminium atoms.", feedbackType: "warning", feedbackIcon: "↺"
+      },
+      {
+        reactionId: "aluminium-oxide", example: 5, exampleStep: 3, exampleSteps: 4,
+        title: "Balance aluminium",
+        text: "Place a coefficient of 4 before Al. Both aluminium and oxygen now match.",
+        coefficients: [4, 3, 2], highlight: [0], showDemo: false, pulseUnbalanced: false,
+        feedback: "Balanced: 4Al + 3O₂ → 2Al₂O₃.", feedbackType: "success", feedbackIcon: "✓"
+      },
+      {
+        reactionId: "aluminium-oxide", example: 5, exampleStep: 4, exampleSteps: 4,
+        title: "The strategy to remember",
+        text: "When subscripts do not match neatly, use their lowest common multiple. Then rebalance the other elements and check the lowest whole-number ratio.",
+        coefficients: [4, 3, 2], highlight: [], showDemo: false, pulseUnbalanced: false,
+        feedback: "You are ready to move into Practise mode.", feedbackType: "success", feedbackIcon: "✓"
+      }
+    ];
+
+    const atomColours = {
+      H: "var(--atom-H)", O: "var(--atom-O)", N: "var(--atom-N)", C: "var(--atom-C)",
+      Cl: "var(--atom-Cl)", Na: "var(--atom-Na)", Mg: "var(--atom-Mg)", Al: "var(--atom-Al)",
+      S: "var(--atom-S)", P: "var(--atom-P)", K: "var(--atom-K)", Ca: "var(--atom-Ca)",
+      Fe: "var(--atom-Fe)", Zn: "var(--atom-Zn)", Cu: "var(--atom-Cu)", Ag: "var(--atom-Ag)",
+      Mn: "var(--atom-Mn)", Ba: "var(--atom-Ba)"
+    };
+
+    const state = {
+      mode: "teach",
+      reaction: reactions[0],
+      coefficients: [1, 1, 1],
+      teachStep: 0,
+      learnCheckpoint: false,
+      learnCheckpointComplete: false,
+      showTable: true,
+      showParticles: true,
+      challengePool: [],
+      challengeIndex: 0,
+      challengeScore: 0,
+      challengeMaxScore: 0,
+      challengeCorrect: 0,
+      challengeAttempts: 0,
+      challengeHints: 0,
+      challengeLocked: false,
+      challengeButtonState: "check",
+      challengeTableLevel: 0,
+      challengeFocusElement: null,
+      rushRunning: false,
+      rushTime: 60,
+      rushScore: 0,
+      rushStreak: 0,
+      rushBestStreak: 0,
+      rushTimer: null,
+      rushLocked: false
+    };
+
+    const els = {
+      tabs: [...document.querySelectorAll(".mode-tab")],
+      leftTitle: document.getElementById("leftTitle"),
+      modePill: document.getElementById("modePill"),
+      modeSummary: document.getElementById("modeSummary"),
+      learnControls: document.getElementById("learnControls"),
+      learnExampleSelect: document.getElementById("learnExampleSelect"),
+      nextExampleBtn: document.getElementById("nextExampleBtn"),
+      practiceControls: document.getElementById("practiceControls"),
+      challengeStats: document.getElementById("challengeStats"),
+      rushStartPanel: document.getElementById("rushStartPanel"),
+      teachKey: document.getElementById("teachKey"),
+      difficultySelect: document.getElementById("difficultySelect"),
+      showTableToggle: document.getElementById("showTableToggle"),
+      showParticlesToggle: document.getElementById("showParticlesToggle"),
+      challengeQuestion: document.getElementById("challengeQuestion"),
+      challengeScore: document.getElementById("challengeScore"),
+      challengeAttempts: document.getElementById("challengeAttempts"),
+      challengeHints: document.getElementById("challengeHints"),
+      startRushBtn: document.getElementById("startRushBtn"),
+      mainPanelTitle: document.getElementById("mainPanelTitle"),
+      difficultyPill: document.getElementById("difficultyPill"),
+      rushOverlay: document.getElementById("rushOverlay"),
+      rushTime: document.getElementById("rushTime"),
+      rushScore: document.getElementById("rushScore"),
+      rushStreak: document.getElementById("rushStreak"),
+      completionPanel: document.getElementById("completionPanel"),
+      reactionContent: document.getElementById("reactionContent"),
+      reactionName: document.getElementById("reactionName"),
+      reactionType: document.getElementById("reactionType"),
+      balanceStatus: document.getElementById("balanceStatus"),
+      equation: document.getElementById("equation"),
+      feedback: document.getElementById("feedback"),
+      feedbackText: document.getElementById("feedbackText"),
+      standardActions: document.getElementById("standardActions"),
+      teachActions: document.getElementById("teachActions"),
+      checkBtn: document.getElementById("checkBtn"),
+      hintBtn: document.getElementById("hintBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      newBtn: document.getElementById("newBtn"),
+      teachBackBtn: document.getElementById("teachBackBtn"),
+      teachNextBtn: document.getElementById("teachNextBtn"),
+      teachReplayBtn: document.getElementById("teachReplayBtn"),
+      lessonCard: document.getElementById("lessonCard"),
+      lessonProgressBar: document.getElementById("lessonProgressBar"),
+      lessonTitle: document.getElementById("lessonTitle"),
+      lessonText: document.getElementById("lessonText"),
+      subscriptDemo: document.getElementById("subscriptDemo"),
+      particleStage: document.getElementById("particleStage"),
+      reactantParticles: document.getElementById("reactantParticles"),
+      productParticles: document.getElementById("productParticles"),
+      countCard: document.getElementById("countCard"),
+      conservationPill: document.getElementById("conservationPill"),
+      countTableBody: document.getElementById("countTableBody"),
+      themeBtn: document.getElementById("themeBtn"),
+      fullscreenBtn: document.getElementById("fullscreenBtn")
+    };
+
+    function parseFormula(formula) {
+      let index = 0;
+
+      function readNumber() {
+        let digits = "";
+        while (index < formula.length && /\d/.test(formula[index])) {
+          digits += formula[index++];
+        }
+        return digits ? Number(digits) : 1;
+      }
+
+      function merge(target, source, multiplier = 1) {
+        Object.entries(source).forEach(([element, count]) => {
+          target[element] = (target[element] || 0) + count * multiplier;
+        });
+      }
+
+      function parseGroup(stopAtParenthesis = false) {
+        const counts = {};
+
+        while (index < formula.length) {
+          const char = formula[index];
+
+          if (char === ")" && stopAtParenthesis) {
+            index++;
+            break;
+          }
+
+          if (char === "(") {
+            index++;
+            const nested = parseGroup(true);
+            const multiplier = readNumber();
+            merge(counts, nested, multiplier);
+            continue;
+          }
+
+          if (/[A-Z]/.test(char)) {
+            let symbol = formula[index++];
+            while (index < formula.length && /[a-z]/.test(formula[index])) {
+              symbol += formula[index++];
+            }
+            const multiplier = readNumber();
+            counts[symbol] = (counts[symbol] || 0) + multiplier;
+            continue;
+          }
+
+          index++;
+        }
+
+        return counts;
+      }
+
+      return parseGroup(false);
+    }
+
+    function formatFormula(formula) {
+      return formula.replace(/(\d+)/g, "<sub>$1</sub>");
+    }
+
+    function allTerms(reaction = state.reaction) {
+      return [...reaction.reactants, ...reaction.products];
+    }
+
+    function splitCoefficients() {
+      const rCount = state.reaction.reactants.length;
+      return {
+        reactants: state.coefficients.slice(0, rCount),
+        products: state.coefficients.slice(rCount)
+      };
+    }
+
+    function totalsFor(formulas, coefficients) {
+      const totals = {};
+      formulas.forEach((formula, i) => {
+        const parsed = parseFormula(formula);
+        Object.entries(parsed).forEach(([element, count]) => {
+          totals[element] = (totals[element] || 0) + count * coefficients[i];
+        });
+      });
+      return totals;
+    }
+
+    function getBalanceData() {
+      const split = splitCoefficients();
+      const left = totalsFor(state.reaction.reactants, split.reactants);
+      const right = totalsFor(state.reaction.products, split.products);
+      const elements = [...new Set([...Object.keys(left), ...Object.keys(right)])].sort();
+      const rows = elements.map(element => ({
+        element,
+        left: left[element] || 0,
+        right: right[element] || 0,
+        balanced: (left[element] || 0) === (right[element] || 0)
+      }));
+      return {
+        rows,
+        balanced: rows.every(row => row.balanced)
+      };
+    }
+
+    function gcd(a, b) {
+      while (b) [a, b] = [b, a % b];
+      return Math.abs(a);
+    }
+
+    function coefficientGcd(values) {
+      return values.reduce((acc, value) => gcd(acc, value));
+    }
+
+    function isSimplestRatio() {
+      return coefficientGcd(state.coefficients) === 1;
+    }
+
+    function setFeedback(message, type = "info", icon = "💡") {
+      els.feedback.className = `feedback ${type}`;
+      els.feedback.querySelector(".feedback-icon").textContent = icon;
+      els.feedbackText.textContent = message;
+    }
+
+    function randomChoice(items, excludeId = null) {
+      const eligible = items.filter(item => item.id !== excludeId);
+      return eligible[Math.floor(Math.random() * eligible.length)] || items[0];
+    }
+
+    function levelLabel(level) {
+      const labels = {
+        foundation: "Foundation",
+        intermediate: "Intermediate",
+        advanced: "Advanced",
+        mixed: "Mixed"
+      };
+      return labels[level] || level;
+    }
+
+    function challengeBaseScore(reaction) {
+      if (reaction.level === "advanced") return 140;
+      if (reaction.level === "intermediate") return 110;
+      return 80;
+    }
+
+    function renderEquation() {
+      const reaction = state.reaction;
+      const rCount = reaction.reactants.length;
+      const learnLocked = state.mode === "teach" && (!state.learnCheckpoint || state.learnCheckpointComplete);
+      const locked = learnLocked || state.challengeLocked || state.rushLocked || (state.mode === "rush" && !state.rushRunning);
+      let globalIndex = 0;
+
+      const sideHTML = (formulas, side) => {
+        return formulas.map((formula, localIndex) => {
+          const termIndex = globalIndex++;
+          const coefficient = state.coefficients[termIndex];
+          const teachHighlight = state.mode === "teach" && !state.learnCheckpoint && teachSteps[state.teachStep].highlight.includes(termIndex);
+          const term = `
+            <div class="term ${teachHighlight ? "teach-highlight" : ""}">
+              <div class="coefficient-controls">
+                <button type="button" data-term="${termIndex}" data-change="-1" ${locked || coefficient <= 1 ? "disabled" : ""} aria-label="Decrease coefficient for ${formula}">−</button>
+                <span class="coefficient">${coefficient === 1 ? "" : coefficient}</span>
+                <button type="button" data-term="${termIndex}" data-change="1" ${locked || coefficient >= 20 ? "disabled" : ""} aria-label="Increase coefficient for ${formula}">+</button>
+              </div>
+              <span class="formula">${formatFormula(formula)}</span>
+            </div>`;
+          const plus = localIndex < formulas.length - 1 ? `<span class="plus">+</span>` : "";
+          return term + plus;
+        }).join("");
+      };
+
+      els.equation.innerHTML = `
+        <div class="equation-side">${sideHTML(reaction.reactants, "reactants")}</div>
+        <span class="arrow">→</span>
+        <div class="equation-side">${sideHTML(reaction.products, "products")}</div>
+      `;
+
+      els.equation.querySelectorAll("[data-term]").forEach(button => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.term);
+          const change = Number(button.dataset.change);
+          state.coefficients[index] = Math.min(20, Math.max(1, state.coefficients[index] + change));
+          if (state.mode === "challenge") state.challengeLocked = false;
+          renderAll();
+        });
+      });
+    }
+
+    function renderCountTable() {
+      const data = getBalanceData();
+      let rowsToShow = data.rows;
+
+      if (state.mode === "challenge" && state.challengeTableLevel === 1) {
+        const focus = state.challengeFocusElement ||
+          data.rows.find(row => !row.balanced)?.element ||
+          data.rows[0]?.element;
+        rowsToShow = data.rows.filter(row => row.element === focus);
+      }
+
+      els.countTableBody.innerHTML = rowsToShow.map(row => {
+        const colour = atomColours[row.element] || "#9e9e9e";
+        const pulseLearn = state.mode === "teach" &&
+          !state.learnCheckpoint &&
+          teachSteps[state.teachStep].pulseUnbalanced &&
+          !row.balanced;
+        return `
+          <tr class="${row.balanced ? "balanced" : "unbalanced"} ${pulseLearn ? "pulse" : ""}">
+            <td><span class="element-token" style="background:${colour}">${row.element}</span>${row.element}</td>
+            <td>${row.left}</td>
+            <td>${row.right}</td>
+            <td class="${row.balanced ? "status-ok" : "status-no"}">${row.balanced ? "✓" : "✕"}</td>
+          </tr>
+        `;
+      }).join("");
+
+      if (state.mode === "challenge" && state.challengeTableLevel === 1) {
+        const focus = rowsToShow[0]?.element || "one element";
+        els.conservationPill.textContent = `Focus: ${focus}`;
+        els.conservationPill.style.background = "rgba(244, 162, 97, 0.18)";
+      } else if (data.balanced) {
+        els.balanceStatus.textContent = isSimplestRatio() ? "Balanced" : "Balanced, simplify";
+        els.balanceStatus.style.background = isSimplestRatio()
+          ? "rgba(42, 157, 91, 0.16)"
+          : "rgba(217, 139, 31, 0.16)";
+        els.conservationPill.textContent = "Mass conserved";
+        els.conservationPill.style.background = "rgba(42, 157, 91, 0.16)";
+      } else {
+        els.balanceStatus.textContent = "Not balanced";
+        els.balanceStatus.style.background = "rgba(214, 69, 69, 0.13)";
+        els.conservationPill.textContent = "Counts do not match";
+        els.conservationPill.style.background = "rgba(214, 69, 69, 0.13)";
+      }
+
+      if (state.mode === "challenge" && state.challengeTableLevel === 0) {
+        els.balanceStatus.textContent = "Check when ready";
+        els.balanceStatus.style.background = "rgba(8, 126, 139, 0.12)";
+      }
+    }
+
+    function createMolecule(formula) {
+      const atoms = parseFormula(formula);
+      const dotLimit = 14;
+      let dots = "";
+      let used = 0;
+
+      Object.entries(atoms).forEach(([element, count]) => {
+        for (let i = 0; i < count && used < dotLimit; i++, used++) {
+          dots += `<span class="atom-dot ${element}" style="background:${atomColours[element] || "#9e9e9e"}">${element}</span>`;
+        }
+      });
+
+      if (Object.values(atoms).reduce((a, b) => a + b, 0) > dotLimit) {
+        dots += `<span class="more-molecules">…</span>`;
+      }
+
+      return `<div class="molecule"><span class="molecule-label">${formatFormula(formula)}</span>${dots}</div>`;
+    }
+
+    function renderParticles() {
+      const split = splitCoefficients();
+
+      const side = (formulas, coefficients) => {
+        let html = "";
+        formulas.forEach((formula, index) => {
+          const coefficient = coefficients[index];
+          const shown = Math.min(coefficient, 8);
+          for (let i = 0; i < shown; i++) html += createMolecule(formula);
+          if (coefficient > shown) html += `<span class="more-molecules">+${coefficient - shown} more ${formatFormula(formula)}</span>`;
+        });
+        return html;
+      };
+
+      els.reactantParticles.innerHTML = side(state.reaction.reactants, split.reactants);
+      els.productParticles.innerHTML = side(state.reaction.products, split.products);
+    }
+
+    function renderReactionMeta() {
+      els.reactionName.textContent = state.reaction.name;
+      els.reactionType.textContent = state.reaction.type;
+      els.difficultyPill.textContent = levelLabel(state.reaction.level);
+    }
+
+    function renderVisibility() {
+      const isTeach = state.mode === "teach";
+      const isPractice = state.mode === "practice";
+      const isChallenge = state.mode === "challenge";
+      const isRush = state.mode === "rush";
+
+      els.learnControls.classList.toggle("hidden", !isTeach);
+      els.practiceControls.classList.toggle("hidden", !isPractice);
+      els.challengeStats.classList.toggle("hidden", !isChallenge);
+      els.rushStartPanel.classList.toggle("hidden", !isRush || state.rushRunning);
+      els.teachKey.classList.toggle("hidden", !isTeach);
+      els.teachActions.classList.toggle("hidden", !isTeach);
+      els.standardActions.classList.toggle("hidden", isTeach || (isRush && !state.rushRunning));
+      els.lessonCard.classList.toggle("hidden", !isTeach);
+      els.rushOverlay.classList.toggle("hidden", !isRush || !state.rushRunning);
+
+      let tableVisible = isTeach || (isPractice && state.showTable) || isRush;
+      const particlesVisible = isTeach || (isPractice && state.showParticles);
+      if (isChallenge) tableVisible = state.challengeTableLevel > 0 || state.challengeLocked;
+
+      els.countCard.classList.toggle("hidden", !tableVisible);
+      els.particleStage.classList.toggle("hidden", !particlesVisible);
+      if (isChallenge) els.particleStage.classList.add("hidden");
+      if (isRush) {
+        els.particleStage.classList.add("hidden");
+        els.countCard.classList.toggle("hidden", !state.rushRunning);
+      }
+
+      els.checkBtn.className = "btn";
+      if (isRush) {
+        els.checkBtn.textContent = "Submit";
+      } else if (isChallenge) {
+        if (state.challengeButtonState === "retry") {
+          els.checkBtn.className = "btn danger";
+          els.checkBtn.textContent = "Try again";
+        } else if (state.challengeButtonState === "next") {
+          els.checkBtn.className = "btn success";
+          els.checkBtn.textContent = "Next";
+        } else if (state.challengeButtonState === "forcedNext") {
+          els.checkBtn.className = "btn warn";
+          els.checkBtn.textContent = "Next";
+        } else {
+          els.checkBtn.textContent = "Check equation";
+        }
+      } else {
+        els.checkBtn.textContent = "Check equation";
+      }
+      els.newBtn.classList.toggle("hidden", isChallenge || isRush);
+      els.resetBtn.classList.toggle("hidden", isRush);
+    }
+
+    function renderTeach() {
+      const step = teachSteps[state.teachStep];
+      state.reaction = reactions.find(reaction => reaction.id === step.reactionId) || reactions[0];
+      if (!state.learnCheckpoint) state.coefficients = [...step.coefficients];
+
+      els.leftTitle.textContent = "Learn mode";
+      els.modePill.textContent = state.learnCheckpoint ? "Your turn" : "Start here";
+      els.learnExampleSelect.value = String(step.example);
+      els.nextExampleBtn.disabled = step.example >= 5;
+
+      if (state.learnCheckpoint) {
+        els.mainPanelTitle.textContent = `Checkpoint ${step.example} of 5`;
+        els.modeSummary.innerHTML = `
+          <span class="pill">Your turn</span>
+          <p>Balance this equation yourself before moving to the next worked example.</p>
+        `;
+        els.lessonTitle.textContent = `Your turn: ${state.reaction.name}`;
+        els.lessonText.textContent = "Use the + and − controls to balance the equation. The atom table remains visible, but the coefficients are now yours to choose.";
+        els.subscriptDemo.classList.add("hidden");
+        els.teachReplayBtn.textContent = "Show strategy";
+        els.teachNextBtn.textContent = state.learnCheckpointComplete
+          ? (state.teachStep === teachSteps.length - 1 ? "Start practising →" : "Continue →")
+          : "Check answer";
+      } else {
+        els.mainPanelTitle.textContent = `Guided example ${step.example} of 5`;
+        els.modeSummary.innerHTML = `
+          <span class="pill">Example ${step.example} • Step ${step.exampleStep} of ${step.exampleSteps}</span>
+          <p>Work through five examples that progress from simple diatomic molecules to combustion and common-multiple coefficients.</p>
+        `;
+        els.lessonTitle.textContent = step.title;
+        els.lessonText.textContent = step.text;
+        els.subscriptDemo.classList.toggle("hidden", !step.showDemo);
+        els.teachReplayBtn.textContent = "Replay explanation";
+        els.teachNextBtn.textContent = step.exampleStep === step.exampleSteps ? "Try it yourself →" : "Next step →";
+        setFeedback(step.feedback, step.feedbackType, step.feedbackIcon);
+      }
+
+      els.lessonProgressBar.style.width = `${((state.teachStep + 1) / teachSteps.length) * 100}%`;
+      els.teachBackBtn.disabled = state.teachStep === 0 && !state.learnCheckpoint;
+    }
+
+    function renderPractice() {
+      els.leftTitle.textContent = "Practise mode";
+      els.modePill.textContent = "Adjustable support";
+      els.mainPanelTitle.textContent = "Balance the equation";
+      els.modeSummary.innerHTML = `
+        <span class="pill">${levelLabel(els.difficultySelect.value)}</span>
+        <p>Change coefficients using the + and − controls. Keep the visual supports visible or hide them as your confidence grows.</p>
+      `;
+    }
+
+    function renderChallenge() {
+      els.leftTitle.textContent = "Challenge mode";
+      els.modePill.textContent = "10 reactions";
+      els.mainPanelTitle.textContent = "Challenge reaction";
+      els.modeSummary.innerHTML = `
+        <span class="pill">Three attempts each</span>
+        <p>The atom table begins hidden. One element is revealed after the first error or a hint, and the full table appears after a second error.</p>
+      `;
+      els.challengeQuestion.textContent = `${state.challengeIndex + 1}/10`;
+      els.challengeScore.textContent = `${state.challengeScore}/${state.challengeMaxScore}`;
+      els.challengeAttempts.textContent = `${state.challengeAttempts}/3`;
+      els.challengeHints.textContent = state.challengeHints;
+    }
+
+    function renderRush() {
+      els.leftTitle.textContent = "Reaction Rush";
+      els.modePill.textContent = "60 seconds";
+      els.mainPanelTitle.textContent = "Balance as many as possible";
+      els.modeSummary.innerHTML = `
+        <span class="pill">Speed round</span>
+        <p>Each correct equation increases your streak. An incorrect submission resets the streak.</p>
+      `;
+      els.rushTime.textContent = state.rushTime;
+      els.rushTime.classList.toggle("timer-low", state.rushTime <= 10);
+      els.rushScore.textContent = state.rushScore;
+      els.rushStreak.textContent = state.rushStreak;
+    }
+
+    function renderAll() {
+      if (state.mode === "teach") renderTeach();
+      if (state.mode === "practice") renderPractice();
+      if (state.mode === "challenge") renderChallenge();
+      if (state.mode === "rush") renderRush();
+
+      renderVisibility();
+      renderReactionMeta();
+      renderEquation();
+      renderCountTable();
+      renderParticles();
+    }
+
+    function setMode(mode) {
+      if (state.rushTimer) {
+        clearInterval(state.rushTimer);
+        state.rushTimer = null;
+      }
+
+      state.mode = mode;
+      state.learnCheckpoint = false;
+      state.learnCheckpointComplete = false;
+      state.challengeLocked = false;
+      state.challengeButtonState = "check";
+      state.challengeTableLevel = 0;
+      state.challengeFocusElement = null;
+      state.rushRunning = false;
+      state.rushLocked = false;
+      state.completion = false;
+      els.completionPanel.classList.add("hidden");
+      els.reactionContent.classList.remove("hidden");
+
+      els.tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.mode === mode));
+
+      if (mode === "teach") {
+        state.teachStep = 0;
+        state.learnCheckpoint = false;
+        state.learnCheckpointComplete = false;
+        state.reaction = reactions[0];
+        state.coefficients = [1, 1, 1];
+      }
+
+      if (mode === "practice") {
+        startNewPractice();
+      }
+
+      if (mode === "challenge") {
+        startChallenge();
+      }
+
+      if (mode === "rush") {
+        state.rushTime = 60;
+        state.rushScore = 0;
+        state.rushStreak = 0;
+        state.rushBestStreak = 0;
+        state.reaction = reactions[0];
+        state.coefficients = Array(allTerms().length).fill(1);
+        setFeedback("Press Start when you are ready.", "info", "⏱");
+      }
+
+      renderAll();
+    }
+
+    function poolForDifficulty(value) {
+      if (value === "mixed") return reactions;
+      return reactions.filter(reaction => reaction.level === value);
+    }
+
+    function startNewPractice() {
+      const pool = poolForDifficulty(els.difficultySelect.value);
+      state.reaction = randomChoice(pool, state.reaction?.id);
+      state.coefficients = Array(allTerms().length).fill(1);
+      setFeedback("Adjust the coefficients, then check your equation.", "info", "🧪");
+      renderAll();
+    }
+
+    function evaluateEquation() {
+      const data = getBalanceData();
+      if (!data.balanced) {
+        const mismatched = data.rows.filter(row => !row.balanced).map(row => row.element);
+        return {
+          correct: false,
+          message: `${mismatched.join(" and ")} ${mismatched.length === 1 ? "is" : "are"} not balanced yet. Recount both sides.`
+        };
+      }
+      if (!isSimplestRatio()) {
+        return {
+          correct: false,
+          simplify: true,
+          message: "The atom counts match, but the coefficients can be reduced. Use the lowest whole-number ratio."
+        };
+      }
+      return {
+        correct: true,
+        message: "Balanced correctly. The number of each type of atom is equal on both sides."
+      };
+    }
+
+    function checkCurrent() {
+      const result = evaluateEquation();
+
+      if (state.mode === "practice") {
+        if (result.correct) {
+          setFeedback(result.message, "success", "✓");
+        } else if (result.simplify) {
+          setFeedback(result.message, "warning", "↘");
+        } else {
+          setFeedback(result.message, "error", "✕");
+        }
+      }
+
+      if (state.mode === "challenge") {
+        if (state.challengeLocked) return;
+
+        state.challengeAttempts++;
+
+        if (result.correct) {
+          const base = challengeBaseScore(state.reaction);
+          const earned = Math.max(25, base - (state.challengeAttempts - 1) * 20 - state.challengeHints * 15);
+          state.challengeScore += earned;
+          state.challengeCorrect++;
+          state.challengeLocked = true;
+          state.challengeButtonState = "next";
+          state.challengeTableLevel = 2;
+          setFeedback(`Correct — ${earned} points. Select Next.`, "success", "✓");
+        } else if (state.challengeAttempts >= 3) {
+          state.challengeLocked = true;
+          state.challengeButtonState = "forcedNext";
+          state.challengeTableLevel = 2;
+          state.coefficients = [...state.reaction.solution];
+          setFeedback("Three attempts used. The correct coefficients and full atom table are now shown.", "warning", "↺");
+        } else {
+          const balanceData = getBalanceData();
+          state.challengeButtonState = "retry";
+
+          if (result.simplify) {
+            state.challengeFocusElement = null;
+            state.challengeTableLevel = 2;
+            setFeedback(result.message + " All element totals already match.", "warning", "↘");
+          } else {
+            const firstMismatch = balanceData.rows.find(row => !row.balanced)?.element || null;
+            state.challengeFocusElement = firstMismatch;
+            state.challengeTableLevel = state.challengeAttempts >= 2 ? 2 : Math.max(1, state.challengeTableLevel);
+            const scaffoldMessage = state.challengeTableLevel === 1
+              ? ` Focus on ${firstMismatch}; its atom count has been revealed.`
+              : " The full atom table is now available.";
+            setFeedback(result.message + scaffoldMessage, "error", "✕");
+          }
+        }
+      }
+
+      if (state.mode === "rush" && state.rushRunning && !state.rushLocked) {
+        if (result.correct) {
+          state.rushScore++;
+          state.rushStreak++;
+          state.rushBestStreak = Math.max(state.rushBestStreak, state.rushStreak);
+          state.rushLocked = true;
+          setFeedback(`Correct. Streak: ${state.rushStreak}`, "success", "✓");
+          setTimeout(() => {
+            if (!state.rushRunning) return;
+            nextRushReaction();
+          }, 320);
+        } else {
+          state.rushStreak = 0;
+          setFeedback("Not balanced — streak reset.", "error", "✕");
+        }
+      }
+
+      renderAll();
+    }
+
+    function giveHint() {
+      if (state.mode === "challenge") {
+        state.challengeHints++;
+        const balanceData = getBalanceData();
+        const firstMismatch = balanceData.rows.find(row => !row.balanced)?.element || null;
+        state.challengeFocusElement = firstMismatch;
+        state.challengeTableLevel = firstMismatch ? Math.max(1, state.challengeTableLevel) : 2;
+        const focusText = firstMismatch
+          ? `Focus on ${firstMismatch}. Its current atom counts are now shown. `
+          : "All atom totals match, so check whether the coefficients share a common factor. ";
+        setFeedback(focusText + state.reaction.hint, "info", "💡");
+      } else {
+        setFeedback(state.reaction.hint, "info", "💡");
+      }
+      renderAll();
+    }
+
+    function resetCurrent() {
+      state.coefficients = Array(allTerms().length).fill(1);
+      if (state.mode === "challenge") {
+        state.challengeLocked = false;
+        state.challengeButtonState = "check";
+      }
+      setFeedback("Coefficients reset to 1.", "info", "↺");
+      renderAll();
+    }
+
+    function startChallenge() {
+      const shuffled = [...reactions].sort(() => Math.random() - 0.5);
+      state.challengePool = shuffled.slice(0, 10);
+      state.challengeIndex = 0;
+      state.challengeScore = 0;
+      state.challengeMaxScore = state.challengePool.reduce((total, reaction) => total + challengeBaseScore(reaction), 0);
+      state.challengeCorrect = 0;
+      state.challengeAttempts = 0;
+      state.challengeHints = 0;
+      state.challengeLocked = false;
+      state.challengeButtonState = "check";
+      loadChallengeReaction();
+    }
+
+    function loadChallengeReaction() {
+      state.reaction = state.challengePool[state.challengeIndex];
+      state.coefficients = Array(allTerms().length).fill(1);
+      state.challengeAttempts = 0;
+      state.challengeHints = 0;
+      state.challengeLocked = false;
+      state.challengeButtonState = "check";
+      state.challengeTableLevel = 0;
+      state.challengeFocusElement = null;
+      setFeedback("Balance the equation. The atom table is hidden until you need support.", "info", "🎯");
+    }
+
+    function advanceChallenge() {
+      if (!state.challengeLocked) {
+        checkCurrent();
+        return;
+      }
+
+      if (state.challengeIndex >= 9) {
+        showChallengeResults();
+        return;
+      }
+
+      state.challengeIndex++;
+      loadChallengeReaction();
+      renderAll();
+    }
+
+    function showChallengeResults() {
+      els.reactionContent.classList.add("hidden");
+      els.completionPanel.classList.remove("hidden");
+      const percentage = state.challengeMaxScore > 0
+        ? Math.round((state.challengeScore / state.challengeMaxScore) * 100)
+        : 0;
+      let message = "Keep practising with the atom table visible.";
+      if (percentage >= 80) message = "Excellent control of coefficients and atom conservation.";
+      else if (percentage >= 60) message = "Strong result. Review the reactions that required hints.";
+      else if (percentage >= 40) message = "Good progress. Use Practise mode to strengthen the harder patterns.";
+
+      els.completionPanel.innerHTML = `
+        <div class="big">🏆</div>
+        <h2>Challenge complete</h2>
+        <p>Balanced correctly: <strong>${state.challengeCorrect}/10</strong></p>
+        <p>Score: <strong>${state.challengeScore}/${state.challengeMaxScore}</strong> (${percentage}%)</p>
+        <p>${message}</p>
+        <button class="btn" id="restartChallengeBtn" type="button">Try another challenge</button>
+      `;
+      document.getElementById("restartChallengeBtn").addEventListener("click", () => {
+        els.completionPanel.classList.add("hidden");
+        els.reactionContent.classList.remove("hidden");
+        startChallenge();
+        renderAll();
+      });
+    }
+
+    function startRush() {
+      if (state.rushTimer) clearInterval(state.rushTimer);
+
+      state.rushRunning = true;
+      state.rushTime = 60;
+      state.rushScore = 0;
+      state.rushStreak = 0;
+      state.rushBestStreak = 0;
+      nextRushReaction();
+      setFeedback("Go! Balance the equation and submit.", "info", "⏱");
+
+      state.rushTimer = setInterval(() => {
+        state.rushTime--;
+        if (state.rushTime <= 0) {
+          endRush();
+        } else {
+          renderRush();
+        }
+      }, 1000);
+
+      renderAll();
+    }
+
+    function nextRushReaction() {
+      const pool = reactions.filter(r => r.level !== "advanced");
+      state.reaction = randomChoice(pool, state.reaction?.id);
+      state.coefficients = Array(allTerms().length).fill(1);
+      state.rushLocked = false;
+      renderAll();
+    }
+
+    function endRush() {
+      clearInterval(state.rushTimer);
+      state.rushTimer = null;
+      state.rushRunning = false;
+      state.rushLocked = true;
+      state.rushTime = 0;
+
+      els.reactionContent.classList.add("hidden");
+      els.completionPanel.classList.remove("hidden");
+      els.completionPanel.innerHTML = `
+        <div class="big">⏱</div>
+        <h2>Time!</h2>
+        <p>You balanced <strong>${state.rushScore}</strong> ${state.rushScore === 1 ? "equation" : "equations"}.</p>
+        <p>Best streak: <strong>${state.rushBestStreak}</strong></p>
+        <button class="btn" id="restartRushBtn" type="button">Play again</button>
+      `;
+      document.getElementById("restartRushBtn").addEventListener("click", () => {
+        els.completionPanel.classList.add("hidden");
+        els.reactionContent.classList.remove("hidden");
+        startRush();
+      });
+      renderVisibility();
+      renderRush();
+    }
+
+    els.tabs.forEach(tab => tab.addEventListener("click", () => setMode(tab.dataset.mode)));
+
+    els.learnExampleSelect.addEventListener("change", () => {
+      const example = Number(els.learnExampleSelect.value);
+      const targetIndex = teachSteps.findIndex(step => step.example === example);
+      if (targetIndex >= 0) {
+        state.teachStep = targetIndex;
+        state.learnCheckpoint = false;
+        state.learnCheckpointComplete = false;
+        renderAll();
+      }
+    });
+
+    els.nextExampleBtn.addEventListener("click", () => {
+      const currentExample = teachSteps[state.teachStep].example;
+      const targetIndex = teachSteps.findIndex(step => step.example === currentExample + 1);
+      if (targetIndex >= 0) {
+        state.teachStep = targetIndex;
+        state.learnCheckpoint = false;
+        state.learnCheckpointComplete = false;
+        renderAll();
+      }
+    });
+
+    els.difficultySelect.addEventListener("change", startNewPractice);
+
+    els.showTableToggle.addEventListener("change", () => {
+      state.showTable = els.showTableToggle.checked;
+      renderAll();
+    });
+
+    els.showParticlesToggle.addEventListener("change", () => {
+      state.showParticles = els.showParticlesToggle.checked;
+      renderAll();
+    });
+
+    els.checkBtn.addEventListener("click", () => {
+      if (state.mode === "challenge" && state.challengeLocked) advanceChallenge();
+      else checkCurrent();
+    });
+
+    els.hintBtn.addEventListener("click", giveHint);
+    els.resetBtn.addEventListener("click", resetCurrent);
+    els.newBtn.addEventListener("click", startNewPractice);
+    els.startRushBtn.addEventListener("click", startRush);
+
+    els.teachBackBtn.addEventListener("click", () => {
+      if (state.learnCheckpoint) {
+        state.learnCheckpoint = false;
+        state.learnCheckpointComplete = false;
+      } else {
+        state.teachStep = Math.max(0, state.teachStep - 1);
+      }
+      renderAll();
+    });
+
+    els.teachNextBtn.addEventListener("click", () => {
+      const step = teachSteps[state.teachStep];
+
+      if (state.learnCheckpoint) {
+        if (!state.learnCheckpointComplete) {
+          const result = evaluateEquation();
+          if (result.correct) {
+            state.learnCheckpointComplete = true;
+            setFeedback("Correct. You have balanced this equation independently.", "success", "✓");
+          } else {
+            setFeedback(result.message + " Use the atom table and try again.", result.simplify ? "warning" : "error", result.simplify ? "↘" : "✕");
+          }
+          renderAll();
+          return;
+        }
+
+        state.learnCheckpoint = false;
+        state.learnCheckpointComplete = false;
+        if (state.teachStep >= teachSteps.length - 1) {
+          setMode("practice");
+        } else {
+          state.teachStep++;
+          renderAll();
+        }
+        return;
+      }
+
+      if (step.exampleStep === step.exampleSteps) {
+        state.learnCheckpoint = true;
+        state.learnCheckpointComplete = false;
+        state.coefficients = Array(allTerms().length).fill(1);
+        setFeedback("Your turn. Balance the same reaction using the + and − controls.", "info", "🧪");
+        renderAll();
+      } else {
+        state.teachStep++;
+        renderAll();
+      }
+    });
+
+    els.teachReplayBtn.addEventListener("click", () => {
+      const step = teachSteps[state.teachStep];
+      if (state.learnCheckpoint) {
+        setFeedback(state.reaction.hint, "info", "💡");
+      } else {
+        setFeedback(step.feedback, step.feedbackType, step.feedbackIcon);
+      }
+    });
+
+    els.themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const dark = document.body.classList.contains("dark");
+      els.themeBtn.textContent = dark ? "☀️ Light mode" : "🌙 Dark mode";
+      try {
+        localStorage.setItem("equation-balancer-theme", dark ? "dark" : "light");
+      } catch (error) {
+        // Some embedded previews block local storage; the theme still works for the current session.
+      }
+    });
+
+    els.fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+        else await document.exitFullscreen();
+      } catch (error) {
+        setFeedback("Fullscreen is not available in this browser view.", "warning", "⚠");
+      }
+    });
+
+    let savedTheme = null;
+    try {
+      savedTheme = localStorage.getItem("equation-balancer-theme");
+    } catch (error) {
+      savedTheme = null;
+    }
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+      els.themeBtn.textContent = "☀️ Light mode";
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
