@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TeacherSims | SeatingPlan | Version 1.3.1 -->
+<!-- TeacherSims | SeatingPlan | Version 1.4.0 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8">
@@ -140,8 +140,13 @@
     .workspace-tab.active{background:var(--accent);color:#fff;border-color:transparent}.workspace-tab small{opacity:.75;font-weight:700}
     .plan-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
     .plan-title-line{display:flex;flex-wrap:wrap;align-items:center;gap:9px}.summary-chip{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.82rem;font-weight:900}
-    .display-dashboard{position:sticky;top:var(--sticky-offset);z-index:30;display:grid;grid-template-columns:minmax(280px,1fr) minmax(240px,.8fr);gap:10px;margin-bottom:12px}
+    .display-dashboard{position:sticky;top:var(--sticky-offset);z-index:30;display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}
     .display-card{border:1px solid var(--border);border-radius:14px;background:var(--panel-strong);padding:11px 12px;box-shadow:0 6px 18px rgba(15,23,42,.08)}
+    .lesson-task-card{border-left:6px solid var(--plan-accent);background:color-mix(in srgb,var(--plan-accent) 7%,var(--panel-strong))}
+    .lesson-task-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}
+    .lesson-task-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--plan-accent) 13%,var(--panel-strong));color:var(--plan-accent);font-size:.72rem;font-weight:900}
+    .lesson-task-list{margin:0;padding-left:1.4rem;display:grid;gap:5px;color:var(--text);line-height:1.4}
+    .lesson-task-list li::marker{color:var(--plan-accent);font-weight:900}
     .timer-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.timer-display{font-variant-numeric:tabular-nums;font-size:clamp(1.8rem,4vw,3rem);font-weight:950;line-height:1;color:var(--plan-accent)}
     .timer-display.finished{color:var(--danger);animation:pulse .8s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.04)}}
     .timer-progress{height:8px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:8px}.timer-progress>span{display:block;height:100%;width:100%;background:var(--plan-accent);transition:width .3s linear}
@@ -215,12 +220,12 @@
     <header class="hero">
       <h1>Seating Plan Maker</h1>
       <div class="version-wrap">
-        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.3.1</button>
+        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.4.0</button>
         <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
       </div>
       <div id="versionNotes" class="version-notes" hidden>
         <strong>Latest changes</strong>
-        Added optional picker sounds: cycling clicks follow the changing names and slow with the animation, followed by a distinct final-selection chime. The sound can be muted independently of the activity timer.
+        Added a teacher-prepared lesson task panel. Enter the task title and student instructions in the setup area, then display them between the activity timer and random student picker, including in Student Display.
       </div>
       <p>Plan, save and project flexible classroom seating arrangements. Classes, plans, room tabs and planning information remain on this device unless you export a JSON backup.</p>
     </header>
@@ -253,6 +258,13 @@
           <p class="hint" style="margin-top:10px"><strong>This is not an official record.</strong> Its purpose is for randomly selecting students.</p>
           <div class="field-label" style="margin-top:10px"><span>Present students</span><button class="button small secondary" id="allPresentButton" type="button">Mark all present</button></div>
           <div id="attendanceList" class="attendance-list"></div>
+        </details>
+
+        <details class="control-section" open>
+          <summary>Lesson task</summary>
+          <p class="hint" style="margin-top:10px">Prepare the instructions that students will see between the timer and random picker. Use one task or instruction per line.</p>
+          <label style="display:block;margin-top:9px"><span class="field-label">Task heading</span><input id="lessonTaskTitleInput" type="text" maxlength="80" placeholder="Lesson task"></label>
+          <label style="display:block;margin-top:9px"><span class="field-label">Student instructions</span><textarea id="lessonTaskInput" style="min-height:120px" placeholder="Collect the required equipment.&#10;Complete the investigation in your learning zone.&#10;Record your results and prepare a brief conclusion."></textarea></label>
         </details>
 
         <div class="control-section">
@@ -336,6 +348,10 @@
               <div style="min-width:150px"><h3 id="timerHeading">Activity timer</h3><div id="timerDisplay" class="timer-display">10:00</div><div class="timer-progress"><span id="timerProgressBar"></span></div></div>
               <div style="flex:1"><div class="form-grid"><label><span class="field-label">Mode</span><select id="timerModeSelect"><option value="down">Countdown</option><option value="up">Count up</option></select></label><label><span class="field-label">Minutes</span><input id="timerMinutesInput" type="number" min="0" max="180" value="10"></label></div><div class="timer-actions" style="margin-top:7px"><button class="button small primary" id="timerStartButton" type="button">Start</button><button class="button small secondary" id="timerResetButton" type="button">Reset</button><button class="button small secondary" id="timerAddButton" type="button">+1 min</button><button class="button small secondary" id="timerSoundButton" type="button" aria-pressed="true">🔔 Sound</button></div></div>
             </section>
+            <section id="lessonTaskCard" class="display-card lesson-task-card" aria-labelledby="lessonTaskHeading" hidden>
+              <div class="lesson-task-header"><h3 id="lessonTaskHeading">Lesson task</h3><span id="lessonTaskCount" class="lesson-task-count">0 tasks</span></div>
+              <ol id="lessonTaskList" class="lesson-task-list"></ol>
+            </section>
             <section class="display-card picker-card" aria-labelledby="pickerHeading">
               <div style="min-width:0"><h3 id="pickerHeading">Random student picker</h3><div id="pickerName" class="picker-name" aria-live="polite">Ready</div><p id="pickerHistoryText" class="hint">No student selected yet.</p></div>
               <div class="picker-controls">
@@ -366,7 +382,7 @@
         <div id="emptyState" class="empty-state"><div><div class="empty-icon" aria-hidden="true">🪑</div><p>Add or load a class list to create a seating plan.</p></div></div>
       </section>
     </section>
-    <p class="footer-note">Classes, workspaces, up to five room tabs, attendance, planning rules, seating history, timers, colours, zones and room objects are saved locally. Export JSON to move or restore them.</p>
+    <p class="footer-note">Classes, workspaces, up to five room tabs, attendance, lesson tasks, planning rules, seating history, timers, colours, zones and room objects are saved locally. Export JSON to move or restore them.</p>
   </main>
   <dialog id="tableEditorDialog" class="editor-dialog">
     <div class="editor-dialog-inner">
@@ -399,13 +415,13 @@
   const $ = id => document.getElementById(id);
   const refs = {};
   [
-    'savedClassSelect','yearSelect','courseSelect','classCodeInput','customCourseWrap','customCourseInput','namesInput','studentCount','saveClassButton','newClassButton','deleteClassButton','classStatus','attendanceList','allPresentButton',
+    'savedClassSelect','yearSelect','courseSelect','classCodeInput','customCourseWrap','customCourseInput','namesInput','studentCount','saveClassButton','newClassButton','deleteClassButton','classStatus','attendanceList','allPresentButton','lessonTaskTitleInput','lessonTaskInput',
     'savedPlanSelect','planNameInput','saveStateBadge','savePlanButton','newPlanButton','duplicatePlanButton','deletePlanButton','exportButton','importButton','importInput','planStatus',
     'quickLayoutControls','customLayoutControls','quickLayoutSelect','rowsSelect','columnsSelect','tableCapacitySelect','snapTablesInput','addTableButton','arrangeTablesButton','clearTablesButton','frontSelect','accentPreset','accentColourInput','highlightColourInput',
     'planningModeInput','planningNotesInput','ruleStudentA','ruleStudentB','addTogetherButton','addApartButton','rulesList','avoidHistoryInput','historyDepthWrap','historyDepthSelect','clearHistoryButton','planningBanner','exitPlanningButton',
     'zoneNameInput','zoneColourInput','addZoneButton','assignRolesButton','clearRolesButton','rolesStatus','zoneList','newRoleInput','addRoleButton','roleChipList','objectTypeSelect','objectColourInput','addObjectButton','objectList',
     'alphabetiseButton','randomiseButton','randomiseAllButton','clearSeatsButton','unlockAllButton','undoButton','redoButton','exampleButton','planContent','emptyState','planSummary','planSubtitle','tabStrip','addTabButton','duplicateTabButton','renameTabButton','deleteTabButton','tabLimitText',
-    'timerDisplay','timerProgressBar','timerModeSelect','timerMinutesInput','timerStartButton','timerResetButton','timerAddButton','timerSoundButton','pickerName','pickerHistoryText','pickerPoolSelect','pickerRemoveInput','pickFastButton','pickSlowButton','pickerSoundButton','resetPickerButton','pickerTallySummary','pickerTallyList',
+    'timerDisplay','timerProgressBar','timerModeSelect','timerMinutesInput','timerStartButton','timerResetButton','timerAddButton','timerSoundButton','lessonTaskCard','lessonTaskHeading','lessonTaskCount','lessonTaskList','pickerName','pickerHistoryText','pickerPoolSelect','pickerRemoveInput','pickFastButton','pickSlowButton','pickerSoundButton','resetPickerButton','pickerTallySummary','pickerTallyList',
     'frontTop','frontBottom','seatGrid','customRoomScroll','customRoomCanvas','studentPool','unseatedArea','printButton','focusButton','themeButton','versionButton','versionNotes','tableEditorDialog','tableEditorClose','tableEditorName','tableEditorColour','tableEditorCapacity','tableEditorRotation','tableEditorZone','tableEditorCancel','tableEditorSave'
   ].forEach(id => refs[id] = $(id));
   const layoutModeInputs = [...document.querySelectorAll('input[name="layoutMode"]')];
@@ -467,6 +483,7 @@
       id:uid('tab'),title,students:[],mode:'quick',quickLayout:'traditional',rows:5,columns:6,front:'top',accent:'#136f8a',highlight:'#f59e0b',
       seats:Array(30).fill(null),locks:Array(30).fill(false),tables:[],zones:[],objects:[],snap:true,
       planning:{enabled:false,notes:'',together:[],apart:[],avoidHistory:false,historyDepth:5},history:[],roles:[...DEFAULT_ROLES],roleAssignments:{},rolesDirty:false,
+      lessonTask:{title:'Lesson task',text:''},
       picker:{history:[],counts:{},current:'',pool:'seated',removePicked:true,sound:true},timer:{mode:'down',duration:600,elapsed:0,remaining:600,running:false,sound:true,startedAt:null}
     };
   }
@@ -480,6 +497,7 @@
     tab.objects=Array.isArray(raw?.objects)?raw.objects.map(o=>({id:o.id||uid('object'),type:o.type||'board',label:o.label||objectLabel(o.type),x:Number(o.x)||50,y:Number(o.y)||12,w:Number(o.w)||18,h:Number(o.h)||8,rotation:Number(o.rotation)||0,color:o.color||'#64748b',locked:Boolean(o.locked)})):[];
     tab.planning={...base.planning,...(raw?.planning||{})};tab.planning.together=Array.isArray(tab.planning.together)?tab.planning.together:[];tab.planning.apart=Array.isArray(tab.planning.apart)?tab.planning.apart:[];
     tab.history=Array.isArray(raw?.history)?raw.history:[];tab.roles=Array.isArray(raw?.roles)&&raw.roles.length?raw.roles:[...DEFAULT_ROLES];tab.roleAssignments=raw?.roleAssignments&&typeof raw.roleAssignments==='object'?raw.roleAssignments:{};tab.rolesDirty=Boolean(raw?.rolesDirty);
+    tab.lessonTask={title:normaliseName(raw?.lessonTask?.title)||base.lessonTask.title,text:String(raw?.lessonTask?.text||'')};
     tab.picker={...base.picker,...(raw?.picker||{})};tab.picker.history=Array.isArray(tab.picker.history)?tab.picker.history:[];tab.picker.counts=tab.picker.counts&&typeof tab.picker.counts==='object'&&!Array.isArray(tab.picker.counts)?tab.picker.counts:{};tab.picker.pool=tab.picker.pool==='present'?'present':'seated';tab.picker.removePicked=tab.picker.removePicked!==false;tab.picker.sound=tab.picker.sound!==false;
     tab.timer={...base.timer,...(raw?.timer||{}),running:false,startedAt:null};
     ensureSeatArrays(tab);return tab;
@@ -718,10 +736,20 @@
     const width=Math.max(280,refs.customRoomScroll.clientWidth),scale=Math.min(1,width/980);document.documentElement.style.setProperty('--room-scale',String(scale));refs.customRoomScroll.style.height=`${Math.ceil(650*scale)}px`;
   }
 
+  function renderLessonTask(){
+    const task=activeTab().lessonTask||{title:'Lesson task',text:''};
+    const items=String(task.text||'').split(/\r?\n/).map(line=>line.trim().replace(/^(?:[-•*]|\d+[.)])\s*/,'' )).filter(Boolean);
+    refs.lessonTaskCard.hidden=items.length===0;
+    refs.lessonTaskHeading.textContent=normaliseName(task.title)||'Lesson task';
+    refs.lessonTaskCount.textContent=`${items.length} ${items.length===1?'task':'tasks'}`;
+    refs.lessonTaskList.innerHTML='';
+    items.forEach(item=>{const li=document.createElement('li');li.textContent=item;refs.lessonTaskList.appendChild(li)});
+  }
+
   function renderPlan(){
     const tab=activeTab(),has=sharedStudents().length>0;refs.planContent.hidden=!has;refs.emptyState.hidden=has;if(!has)return;ensureSeatArrays(tab);document.documentElement.style.setProperty('--plan-accent',tab.accent);document.documentElement.style.setProperty('--highlight',tab.highlight);
     const present=presentNames().length,seated=tab.seats.filter(Boolean).length;refs.planSummary.textContent=`${seated}/${present} seated · ${seatCount(tab)} seats`;refs.planSubtitle.textContent=`${refs.yearSelect.value} ${currentCourse()}${refs.classCodeInput.value.trim()?` — ${refs.classCodeInput.value.trim()}`:''}${refs.planNameInput.value.trim()?` · ${refs.planNameInput.value.trim()}`:''} · ${tab.title}`;
-    refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';tab.mode==='custom'?renderCustom():renderQuick();renderStudentPool();renderTimer();renderPicker();
+    refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';tab.mode==='custom'?renderCustom():renderQuick();renderStudentPool();renderTimer();renderLessonTask();renderPicker();
   }
   function renderStudentPool(){const tab=activeTab();refs.studentPool.innerHTML='';const pool=unseatedNames(tab);if(!pool.length){refs.studentPool.innerHTML='<p class="empty-pool">All present students are seated.</p>';return}pool.forEach(name=>{const chip=document.createElement('button');chip.type='button';chip.className=`student-chip${selected?.name===name&&selected.sourceIndex===null?' selected':''}`;chip.textContent=name;chip.draggable=true;chip.addEventListener('click',event=>{event.stopPropagation();selectStudent(name,null)});chip.addEventListener('dragstart',()=>{dragged={name,sourceIndex:null}});chip.addEventListener('dragend',()=>dragged=null);refs.studentPool.appendChild(chip)})}
 
@@ -862,7 +890,7 @@
   function duplicatePlan(){const source=activePlanId?plans.find(p=>p.id===activePlanId):workspaceRecord();if(!source)return;const name=window.prompt('Name the duplicated workspace',`${source.name||'Seating plan'} copy`);if(name===null)return;const copy=hydrateWorkspace({...deepClone(source),id:'',name:normaliseName(name)||`${source.name} copy`,updated:''});copy.tabs=copy.tabs.slice(0,5).map(tab=>({...tab,id:uid('tab')}));copy.activeTabId=copy.tabs[0].id;workspace=copy;activePlanId='';activeTabId=copy.activeTabId;lastSavedSignature='';draftRecovered=false;refs.planNameInput.value=copy.name;syncControlsFromTab();renderPlanOptions();renderAll();setStatus(refs.planStatus,'Duplicate created. Save it as a new workspace.');saveDraft()}
   function deletePlan(){const record=plans.find(p=>p.id===activePlanId);if(!record)return;if(!window.confirm(`Delete “${record.name}”?`))return;plans=plans.filter(p=>p.id!==activePlanId);saveValue(STORAGE.plans,plans);newPlan()}
 
-  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.3.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`TeacherSims-SeatingPlan-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
+  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.4.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`TeacherSims-SeatingPlan-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
   async function importBackup(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload||!Array.isArray(payload.classes)||!Array.isArray(payload.plans))throw new Error('Invalid backup');if(!window.confirm('Import and merge this backup with the items already stored on this device?'))return;const classMap=new Map(classes.map(i=>[i.id,i]));payload.classes.forEach(i=>{if(i?.id&&Array.isArray(i.names))classMap.set(i.id,i)});classes=[...classMap.values()];const planMap=new Map(plans.map(i=>[i.id,i]));payload.plans.forEach(i=>{if(i?.id&&Array.isArray(i.tabs))planMap.set(i.id,i)});plans=[...planMap.values()];saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);renderClassOptions();renderPlanOptions();setStatus(refs.planStatus,'Backup imported and merged successfully.')}catch(error){setStatus(refs.planStatus,'That file is not a valid Seating Plan Maker backup.','error')}finally{refs.importInput.value=''}}
   function saveDraft(){saveValue(STORAGE.draft,{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim(),savedAt:Date.now()});renderSaveState()}
   function loadDraft(){const draft=loadObject(STORAGE.draft);if(!draft?.workspace)return false;workspace=hydrateWorkspace(draft.workspace);activeClassId=draft.activeClassId||'';activePlanId=draft.activePlanId||'';activeTabId=workspace.tabs.some(t=>t.id===draft.activeTabId)?draft.activeTabId:workspace.activeTabId;refs.yearSelect.value=draft.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===draft.course&&draft.course!=='Other');refs.courseSelect.value=standard?draft.course:'Other';refs.customCourseInput.value=standard?'':draft.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=draft.classCode||'';refs.planNameInput.value=draft.planName||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');draftRecovered=true;lastSavedSignature='';return true}
@@ -890,7 +918,7 @@
     }
   }
 
-  function syncControlsFromTab(){const tab=activeTab();layoutModeInputs.forEach(input=>input.checked=input.value===tab.mode);refs.quickLayoutControls.hidden=tab.mode!=='quick';refs.customLayoutControls.hidden=tab.mode!=='custom';refs.quickLayoutSelect.value=tab.quickLayout;refs.rowsSelect.value=String(tab.rows);refs.columnsSelect.value=String(tab.columns);refs.snapTablesInput.checked=tab.snap;refs.frontSelect.value=tab.front;refs.accentColourInput.value=tab.accent;refs.highlightColourInput.value=tab.highlight;refs.accentPreset.value=[...refs.accentPreset.options].some(o=>o.value===tab.accent)?tab.accent:'custom';refs.timerModeSelect.value=tab.timer.mode;refs.timerMinutesInput.value=String(Math.round(tab.timer.duration/60));refs.pickerPoolSelect.value=tab.picker.pool;refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');renderRuleSelectors()}
+  function syncControlsFromTab(){const tab=activeTab();layoutModeInputs.forEach(input=>input.checked=input.value===tab.mode);refs.quickLayoutControls.hidden=tab.mode!=='quick';refs.customLayoutControls.hidden=tab.mode!=='custom';refs.quickLayoutSelect.value=tab.quickLayout;refs.rowsSelect.value=String(tab.rows);refs.columnsSelect.value=String(tab.columns);refs.snapTablesInput.checked=tab.snap;refs.frontSelect.value=tab.front;refs.accentColourInput.value=tab.accent;refs.highlightColourInput.value=tab.highlight;refs.accentPreset.value=[...refs.accentPreset.options].some(o=>o.value===tab.accent)?tab.accent:'custom';refs.timerModeSelect.value=tab.timer.mode;refs.timerMinutesInput.value=String(Math.round(tab.timer.duration/60));refs.lessonTaskTitleInput.value=tab.lessonTask?.title||'Lesson task';refs.lessonTaskInput.value=tab.lessonTask?.text||'';refs.pickerPoolSelect.value=tab.picker.pool;refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');renderRuleSelectors()}
   function renderAll(){renderAttendance();renderRuleSelectors();renderRules();renderRoles();renderZoneEditors();renderObjectEditors();renderTabs();renderPlan();renderSaveState();updateUndoButtons()}
   function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 
@@ -900,6 +928,7 @@
   refs.namesInput.addEventListener('change',()=>syncStudentsFromInput({mutate:true}));refs.namesInput.addEventListener('blur',()=>syncStudentsFromInput());
   refs.courseSelect.addEventListener('change',()=>{touchEdit();refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';renderPlan();saveDraft()});[refs.yearSelect,refs.classCodeInput,refs.customCourseInput,refs.planNameInput].forEach(control=>control.addEventListener('input',()=>{touchEdit();renderPlan();saveDraft()}));
   refs.savedClassSelect.addEventListener('change',()=>{const next=refs.savedClassSelect.value;if(!confirmUnsavedChanges()){refs.savedClassSelect.value=activeClassId;return}loadClass(next)});refs.saveClassButton.addEventListener('click',saveClass);refs.newClassButton.addEventListener('click',()=>{if(confirmUnsavedChanges())newClass()});refs.deleteClassButton.addEventListener('click',deleteClass);refs.allPresentButton.addEventListener('click',()=>{beginMutation();workspace.students.forEach(s=>s.present=true);syncSharedStudentsToTabs();renderAll();saveDraft()});
+  refs.lessonTaskTitleInput.addEventListener('input',()=>{touchEdit();activeTab().lessonTask.title=refs.lessonTaskTitleInput.value;renderLessonTask();saveDraft()});refs.lessonTaskInput.addEventListener('input',()=>{touchEdit();activeTab().lessonTask.text=refs.lessonTaskInput.value;renderLessonTask();saveDraft()});
   refs.savedPlanSelect.addEventListener('change',()=>{const next=refs.savedPlanSelect.value;if(!confirmUnsavedChanges()){refs.savedPlanSelect.value=activePlanId;return}loadPlan(next)});refs.savePlanButton.addEventListener('click',savePlan);refs.newPlanButton.addEventListener('click',()=>{if(confirmUnsavedChanges())newPlan()});refs.duplicatePlanButton.addEventListener('click',duplicatePlan);refs.deletePlanButton.addEventListener('click',deletePlan);refs.exportButton.addEventListener('click',exportBackup);refs.importButton.addEventListener('click',()=>refs.importInput.click());refs.importInput.addEventListener('change',()=>importBackup(refs.importInput.files?.[0]));
   layoutModeInputs.forEach(input=>input.addEventListener('change',()=>setLayoutMode(input.value)));refs.quickLayoutSelect.addEventListener('change',()=>{beginMutation();const tab=activeTab();tab.quickLayout=refs.quickLayoutSelect.value;renderAll();saveDraft()});refs.rowsSelect.addEventListener('change',()=>{beginMutation();activeTab().rows=Number(refs.rowsSelect.value);ensureSeatArrays();renderAll();saveDraft()});refs.columnsSelect.addEventListener('change',()=>{beginMutation();activeTab().columns=Number(refs.columnsSelect.value);ensureSeatArrays();renderAll();saveDraft()});refs.snapTablesInput.addEventListener('change',()=>{beginMutation();activeTab().snap=refs.snapTablesInput.checked;renderAll();saveDraft()});refs.frontSelect.addEventListener('change',()=>{beginMutation();activeTab().front=refs.frontSelect.value;renderPlan();saveDraft()});
   refs.addTableButton.addEventListener('click',()=>{beginMutation();addTableToTab(activeTab(),Number(refs.tableCapacitySelect.value)||4);renderAll()});refs.arrangeTablesButton.addEventListener('click',()=>{beginMutation();arrangeTables()});refs.clearTablesButton.addEventListener('click',()=>{if(!window.confirm('Remove all custom tables and their seat assignments?'))return;beginMutation();const tab=activeTab();tab.tables=[];tab.seats=[];tab.locks=[];invalidateRoles(tab);renderAll();saveDraft()});
