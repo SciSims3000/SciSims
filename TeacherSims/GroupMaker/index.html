@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<!-- TeacherSims | GroupMaker | Version 1.2 -->
+<!-- TeacherSims | GroupMaker | Version 1.4 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Create balanced random student groups directly in the browser.">
+  <meta name="description" content="Create balanced classroom groups with attendance, grouping rules, pairing history, locks and optional student roles.">
   <title>Random Group Maker | TeacherSims</title>
   <style>
     :root {
       color-scheme: light;
       --bg: #eef4f8;
-      --panel: rgba(255, 255, 255, 0.94);
+      --panel: rgba(255, 255, 255, 0.96);
       --panel-strong: #ffffff;
       --text: #17324d;
       --muted: #5d7185;
@@ -22,6 +22,8 @@
       --danger-soft: #ffebe8;
       --success: #18794e;
       --success-soft: #e6f6ed;
+      --warning: #9a5a00;
+      --warning-soft: #fff4d8;
       --shadow: 0 16px 40px rgba(29, 61, 89, 0.12);
       --radius: 20px;
     }
@@ -29,7 +31,7 @@
     body.dark {
       color-scheme: dark;
       --bg: #0d1823;
-      --panel: rgba(20, 35, 49, 0.96);
+      --panel: rgba(20, 35, 49, 0.97);
       --panel-strong: #162536;
       --text: #edf6fb;
       --muted: #a8bdcc;
@@ -41,13 +43,13 @@
       --danger-soft: #4a2425;
       --success: #7fdbac;
       --success-soft: #183b2d;
+      --warning: #ffd27a;
+      --warning-soft: #44371d;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
     }
 
     * { box-sizing: border-box; }
-
     [hidden] { display: none !important; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -63,10 +65,10 @@
     }
 
     button, textarea, input, select { font: inherit; }
-    button, select, input[type="radio"] { cursor: pointer; }
+    button, select, input[type="radio"], input[type="checkbox"] { cursor: pointer; }
 
     .app-shell {
-      width: min(1460px, calc(100% - 32px));
+      width: min(1540px, calc(100% - 32px));
       margin: 0 auto;
       padding: 18px 0 40px;
     }
@@ -135,7 +137,7 @@
 
     .hero p {
       margin: 0;
-      max-width: 760px;
+      max-width: 820px;
       font-size: clamp(1rem, 2vw, 1.25rem);
       line-height: 1.5;
       color: rgba(255,255,255,0.9);
@@ -158,7 +160,7 @@
 
     .workspace {
       display: grid;
-      grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
+      grid-template-columns: minmax(340px, 500px) minmax(0, 1fr);
       gap: 20px;
       align-items: start;
     }
@@ -174,9 +176,12 @@
       padding: 22px;
       position: sticky;
       top: 14px;
+      max-height: calc(100vh - 28px);
+      overflow-y: auto;
+      scrollbar-gutter: stable;
     }
 
-    .results-panel { padding: 22px; min-height: 520px; }
+    .results-panel { padding: 22px; min-height: 600px; }
 
     .panel-heading {
       display: flex;
@@ -186,15 +191,13 @@
       margin-bottom: 16px;
     }
 
-    h2, h3 { margin: 0; }
+    h2, h3, h4 { margin: 0; }
     h2 { font-size: 1.35rem; }
     h3 { font-size: 1.05rem; }
+    h4 { font-size: 0.96rem; }
 
-    .subtle {
-      color: var(--muted);
-      line-height: 1.5;
-      margin: 5px 0 0;
-    }
+    .subtle { color: var(--muted); line-height: 1.5; margin: 5px 0 0; }
+    .tiny { color: var(--muted); font-size: 0.8rem; line-height: 1.4; }
 
     .field-label {
       display: flex;
@@ -205,24 +208,25 @@
       margin-bottom: 8px;
     }
 
-    .count-badge {
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-weight: 700;
+    .count-badge { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+
+    textarea,
+    input[type="text"],
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none;
     }
 
     textarea {
-      width: 100%;
-      min-height: 255px;
+      min-height: 230px;
       resize: vertical;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--panel-strong);
-      color: var(--text);
       padding: 14px;
       line-height: 1.5;
-      outline: none;
-      transition: border-color 140ms ease, box-shadow 140ms ease;
     }
 
     textarea:focus,
@@ -232,13 +236,10 @@
       box-shadow: 0 0 0 4px rgba(39, 163, 157, 0.14);
     }
 
-    .hint {
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin: 7px 0 0;
-    }
+    .hint { font-size: 0.86rem; color: var(--muted); margin: 7px 0 0; }
 
-    .validation {
+    .validation,
+    .notice {
       display: none;
       margin-top: 10px;
       padding: 10px 12px;
@@ -247,14 +248,36 @@
       line-height: 1.4;
     }
 
-    .validation.show { display: block; }
-    .validation.warning { color: var(--danger); background: var(--danger-soft); }
-    .validation.success { color: var(--success); background: var(--success-soft); }
+    .validation.show,
+    .notice.show { display: block; }
+    .warning { color: var(--warning); background: var(--warning-soft); }
+    .danger-message { color: var(--danger); background: var(--danger-soft); }
+    .success { color: var(--success); background: var(--success-soft); }
 
     .control-section {
       border-top: 1px solid var(--border);
       margin-top: 18px;
       padding-top: 18px;
+    }
+
+    .control-section.first { border-top: 0; margin-top: 0; padding-top: 0; }
+
+    .metadata-grid,
+    .rule-builder {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metadata-grid .wide,
+    .rule-builder .wide { grid-column: 1 / -1; }
+
+    .label-small {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
     }
 
     .mode-grid {
@@ -284,26 +307,16 @@
 
     .number-row {
       display: grid;
-      grid-template-columns: 1fr 120px;
+      grid-template-columns: 1fr 135px;
       gap: 12px;
       align-items: end;
       margin-top: 14px;
     }
 
-    select {
-      width: 100%;
-      min-height: 44px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--panel-strong);
-      color: var(--text);
-      padding: 8px 10px;
-      outline: none;
-    }
-
     .mini-actions,
     .primary-actions,
-    .result-actions {
+    .result-actions,
+    .inline-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -311,8 +324,10 @@
 
     .mini-actions { margin-top: 12px; }
     .primary-actions { margin-top: 18px; }
+    .inline-actions { margin-top: 10px; }
 
     .button { border-radius: 12px; flex: 1 1 auto; }
+    .button.compact { min-height: 36px; padding: 7px 11px; font-size: 0.84rem; }
     .button.primary {
       color: white;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -323,8 +338,138 @@
     .button.danger { color: var(--danger); }
     .button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
 
+    .summary-chip,
+    .role-badge,
+    .lock-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 9px;
+      white-space: nowrap;
+    }
+
+    .feature-list { display: grid; gap: 10px; margin-top: 12px; }
+
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel-strong);
+      overflow: hidden;
+    }
+
+    .feature-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .feature-toggle-copy strong { display: block; }
+    .feature-toggle-copy small { display: block; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex: 0 0 46px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: var(--border);
+      transition: background 140ms ease;
+    }
+
+    .switch-track::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,.18);
+      transition: transform 140ms ease;
+    }
+
+    .switch input:checked + .switch-track { background: var(--accent); }
+    .switch input:checked + .switch-track::after { transform: translateX(20px); }
+
+    .feature-body {
+      border-top: 1px solid var(--border);
+      padding: 12px;
+      background: color-mix(in srgb, var(--panel-strong) 86%, var(--accent-soft));
+    }
+
+    .check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 9px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-strong);
+      min-width: 0;
+    }
+
+    .check-row span { overflow-wrap: anywhere; }
+
+    .attendance-list,
+    .rule-list,
+    .custom-role-list {
+      display: grid;
+      gap: 7px;
+      max-height: 260px;
+      overflow-y: auto;
+      margin-top: 10px;
+      padding-right: 3px;
+    }
+
+    .attendance-item,
+    .rule-item,
+    .custom-role-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-strong);
+    }
+
+    .attendance-item.absent { opacity: 0.58; text-decoration: line-through; }
+
+    .remove-button,
+    .lock-button {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--panel-strong);
+      color: var(--text);
+      min-width: 34px;
+      min-height: 34px;
+      padding: 5px 8px;
+      font-weight: 850;
+    }
+
+    .remove-button { color: var(--danger); }
+    .lock-button.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
     .empty-state {
-      min-height: 440px;
+      min-height: 520px;
       display: grid;
       place-items: center;
       text-align: center;
@@ -352,26 +497,125 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .results-header.show { display: flex; }
 
-    .summary-chip {
-      display: inline-flex;
+    .timer-panel {
+      display: none;
+      margin: 0 0 16px;
+      padding: 14px 16px 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(19,111,138,0.10), rgba(39,163,157,0.12));
+    }
+
+    .timer-panel.show { display: block; }
+
+    .timer-row {
+      display: grid;
+      grid-template-columns: minmax(170px, auto) minmax(230px, 1fr) auto;
+      gap: 14px;
       align-items: center;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.88rem;
-      font-weight: 800;
-      padding: 8px 11px;
+    }
+
+    .timer-readout {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .timer-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       white-space: nowrap;
+    }
+
+    .timer-display {
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .timer-panel.running .timer-display { color: var(--accent); }
+    .timer-panel.finished { border-color: var(--danger); background: var(--danger-soft); }
+    .timer-panel.finished .timer-display { color: var(--danger); animation: timerPulse 800ms ease-in-out 3; }
+
+    @keyframes timerPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
+    }
+
+    .timer-setting {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 8px;
+    }
+
+    .timer-input-wrap { min-width: 78px; }
+    .timer-input-wrap span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .timer-input-wrap input {
+      width: 78px;
+      min-height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 7px 9px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .timer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .timer-actions .button,
+    .timer-setting .button {
+      min-height: 40px;
+      padding: 8px 12px;
+      flex: 0 0 auto;
+    }
+
+    .timer-progress {
+      height: 7px;
+      margin-top: 11px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(93,113,133,0.20);
+    }
+
+    .timer-progress-bar {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 250ms linear;
     }
 
     .groups-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
       gap: 14px;
     }
 
@@ -394,10 +638,12 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding: 13px 14px;
+      padding: 12px 13px;
       background: linear-gradient(135deg, rgba(19,111,138,0.12), rgba(39,163,157,0.14));
       border-bottom: 1px solid var(--border);
     }
+
+    .group-title-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
 
     .group-number {
       min-width: 30px;
@@ -412,6 +658,7 @@
     }
 
     .group-count { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+    .group-actions { display: flex; align-items: center; gap: 7px; }
 
     .member-list {
       min-height: 74px;
@@ -421,11 +668,12 @@
     }
 
     .member {
-      display: flex;
+      display: grid;
+      grid-template-columns: 29px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 10px;
-      min-height: 42px;
-      padding: 8px 9px;
+      gap: 9px;
+      min-height: 46px;
+      padding: 7px 8px;
       border-radius: 10px;
       font-weight: 700;
       cursor: grab;
@@ -434,12 +682,12 @@
 
     .member:hover { background: var(--accent-soft); }
     .member.dragging { opacity: 0.42; }
+    .member.locked { background: var(--accent-soft); }
     .member-list.drag-over { outline: 2px dashed var(--accent); outline-offset: -5px; background: var(--accent-soft); }
 
     .initial {
-      width: 27px;
-      height: 27px;
-      flex: 0 0 27px;
+      width: 29px;
+      height: 29px;
       display: grid;
       place-items: center;
       border-radius: 50%;
@@ -449,52 +697,35 @@
       font-weight: 900;
     }
 
-    .footer-note {
-      text-align: center;
-      color: var(--muted);
-      margin-top: 18px;
-      font-size: 0.85rem;
-    }
+    .member-copy { min-width: 0; }
+    .member-name { display: block; overflow-wrap: anywhere; }
+    .member-role { display: block; color: var(--muted); font-size: 0.76rem; margin-top: 2px; font-weight: 750; }
 
-    body.groups-focus {
-      overflow: auto;
-    }
+    .footer-note { text-align: center; color: var(--muted); margin-top: 18px; font-size: 0.85rem; }
 
-    body.groups-focus .app-shell {
-      width: 100%;
-      max-width: none;
-      padding: 12px;
-    }
-
+    body.groups-focus { overflow: auto; }
+    body.groups-focus .app-shell { width: 100%; max-width: none; padding: 12px; }
     body.groups-focus .topbar,
     body.groups-focus .hero,
     body.groups-focus .controls,
-    body.groups-focus .footer-note {
-      display: none !important;
+    body.groups-focus .footer-note { display: none !important; }
+    body.groups-focus .workspace { display: block; }
+    body.groups-focus .results-panel { min-height: calc(100vh - 24px); border-radius: 18px; padding: clamp(16px, 2vw, 28px); }
+    body.groups-focus .groups-grid { grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: clamp(14px, 1.5vw, 22px); }
+    body.groups-focus .group-card { font-size: clamp(1rem, 1.25vw, 1.2rem); }
+    body.groups-focus .member { min-height: 52px; }
+    body.groups-focus .timer-panel {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin-bottom: clamp(14px, 1.5vw, 22px);
+      padding: clamp(14px, 1.5vw, 22px);
+      box-shadow: 0 10px 28px rgba(29,61,89,0.16);
+      backdrop-filter: blur(12px);
     }
-
-    body.groups-focus .workspace {
-      display: block;
-    }
-
-    body.groups-focus .results-panel {
-      min-height: calc(100vh - 24px);
-      border-radius: 18px;
-      padding: clamp(16px, 2vw, 28px);
-    }
-
-    body.groups-focus .groups-grid {
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: clamp(14px, 1.5vw, 22px);
-    }
-
-    body.groups-focus .group-card {
-      font-size: clamp(1rem, 1.25vw, 1.2rem);
-    }
-
-    body.groups-focus .member {
-      min-height: 50px;
-    }
+    body.groups-focus .timer-display { font-size: clamp(2.8rem, 6vw, 6rem); }
+    body.groups-focus .timer-label { font-size: clamp(0.8rem, 1.2vw, 1rem); }
+    body.groups-focus.hide-focus-roles .member-role { display: none; }
 
     .sr-only {
       position: absolute;
@@ -503,41 +734,46 @@
       padding: 0;
       margin: -1px;
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+      clip: rect(0,0,0,0);
       white-space: nowrap;
       border: 0;
     }
 
-    @media (max-width: 920px) {
+    @media (max-width: 1020px) {
       .workspace { grid-template-columns: 1fr; }
-      .controls { position: static; }
+      .controls { position: static; max-height: none; overflow: visible; }
     }
 
-    @media (max-width: 560px) {
-      .app-shell { width: min(100% - 18px, 1460px); padding-top: 9px; }
+    @media (max-width: 620px) {
+      .app-shell { width: min(100% - 18px, 1540px); padding-top: 9px; }
       .topbar { align-items: stretch; }
       .back-link span.long { display: none; }
       .hero { border-radius: 20px; }
       .controls, .results-panel { padding: 16px; }
-      .mode-grid, .number-row { grid-template-columns: 1fr; }
+      .mode-grid, .number-row, .metadata-grid, .rule-builder, .check-grid { grid-template-columns: 1fr; }
       .results-header { align-items: flex-start; flex-direction: column; }
+      .timer-row { grid-template-columns: 1fr; }
+      .timer-readout { justify-content: space-between; }
+      .timer-setting, .timer-actions { justify-content: flex-start; }
       .result-actions { width: 100%; }
       .result-actions .button { flex: 1; }
+      .member { grid-template-columns: 29px minmax(0, 1fr) auto; }
     }
 
     @media print {
       body { background: white; color: black; }
-      .topbar, .hero, .controls, .result-actions, .footer-note { display: none !important; }
+      .topbar, .hero, .controls, .result-actions, .footer-note, .notice, .timer-panel { display: none !important; }
       .app-shell { width: 100%; margin: 0; padding: 0; }
       .workspace { display: block; }
       .results-panel { border: 0; box-shadow: none; padding: 0; }
       .results-header { display: flex !important; }
-      .summary-chip { color: black; background: #eee; }
+      .summary-chip, .role-badge { color: black; background: #eee; }
       .groups-grid { grid-template-columns: repeat(3, 1fr); gap: 8mm; }
       .group-card { break-inside: avoid; border-color: #888; }
       .group-title { background: #eee; }
       .group-number { background: #333; }
       .member { min-height: 9mm; }
+      .lock-button { display: none !important; }
     }
   </style>
 </head>
@@ -554,8 +790,8 @@
 
     <header class="hero">
       <h1>Random Group Maker</h1>
-      <p class="version-label">Version 1.2</p>
-      <p>Paste a class list, choose how the groups should be formed, and create balanced random groups in seconds.</p>
+      <p class="version-label">Version 1.4</p>
+      <p>Create balanced classroom groups with optional attendance, locks, grouping rules, pairing history, student roles and a full-screen activity timer.</p>
     </header>
 
     <section class="workspace">
@@ -563,26 +799,63 @@
         <div class="panel-heading">
           <div>
             <h2 id="setupHeading">Class setup</h2>
-            <p class="subtle">Names stay on this device and are never uploaded.</p>
+            <p class="subtle">Class lists and settings stay on this device.</p>
           </div>
         </div>
 
-        <label class="field-label" for="namesInput">
-          <span>Student names</span>
-          <span class="count-badge" id="nameCount">0 students</span>
-        </label>
-        <textarea id="namesInput" spellcheck="false" placeholder="Alex Morgan&#10;Bailey Chen&#10;Charlie Singh&#10;Dakota Williams"></textarea>
-        <p class="hint">Use one name per line. Commas, semicolons and copied spreadsheet columns also work.</p>
-        <div class="validation" id="validationMessage" role="status" aria-live="polite"></div>
+        <section class="control-section first" aria-labelledby="savedClassesHeading">
+          <h3 id="savedClassesHeading">Saved class lists</h3>
+          <div class="metadata-grid" style="margin-top:10px">
+            <label class="wide">
+              <span class="label-small">Saved class</span>
+              <select id="savedRosterSelect">
+                <option value="">Unsaved class list</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-small">Year</span>
+              <select id="yearSelect">
+                <option>Year 7</option><option>Year 8</option><option>Year 9</option><option>Year 10</option>
+                <option>Year 11</option><option>Year 12</option><option>Other</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-small">Course</span>
+              <select id="courseSelect">
+                <option>Science</option><option>Biology</option><option>Chemistry</option>
+                <option>Earth and Environmental Science</option><option>Investigating Science</option>
+                <option>Physics</option><option>Science Extension</option><option>Other</option>
+              </select>
+            </label>
+            <label class="wide">
+              <span class="label-small">Class name or code</span>
+              <input id="classNameInput" type="text" maxlength="40" placeholder="For example, 9SCI2">
+            </label>
+          </div>
+          <div class="mini-actions">
+            <button class="button secondary compact" id="saveRosterButton" type="button">Save class</button>
+            <button class="button secondary compact" id="newRosterButton" type="button">New class</button>
+            <button class="button danger compact" id="deleteRosterButton" type="button" disabled>Delete saved class</button>
+          </div>
+        </section>
 
-        <div class="mini-actions">
-          <button class="button secondary" id="saveRosterButton" type="button">Save roster</button>
-          <button class="button secondary" id="loadExampleButton" type="button">Use example</button>
-          <button class="button danger" id="clearButton" type="button">Clear</button>
-        </div>
+        <section class="control-section" aria-labelledby="studentsHeading">
+          <label class="field-label" for="namesInput">
+            <span id="studentsHeading">Student names</span>
+            <span class="count-badge" id="nameCount">0 students</span>
+          </label>
+          <textarea id="namesInput" spellcheck="false" placeholder="Alex Morgan&#10;Bailey Chen&#10;Charlie Singh&#10;Dakota Williams"></textarea>
+          <p class="hint">Use one name per line. Commas, semicolons and copied spreadsheet columns also work.</p>
+          <div class="validation" id="validationMessage" role="status" aria-live="polite"></div>
 
-        <div class="control-section">
-          <h3>Make groups by</h3>
+          <div class="mini-actions">
+            <button class="button secondary compact" id="loadExampleButton" type="button">Use example</button>
+            <button class="button danger compact" id="clearButton" type="button">Clear names</button>
+          </div>
+        </section>
+
+        <section class="control-section" aria-labelledby="groupingHeading">
+          <h3 id="groupingHeading">Make groups by</h3>
           <div class="mode-grid">
             <label class="mode-card">
               <input type="radio" name="groupMode" value="count" checked>
@@ -604,7 +877,107 @@
               <div class="summary-chip" id="groupPreview">Add names</div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <section class="control-section" aria-labelledby="optionalToolsHeading">
+          <h3 id="optionalToolsHeading">Optional tools</h3>
+          <p class="hint">Turn on only the features needed for this lesson.</p>
+
+          <div class="feature-list">
+            <div class="feature-card">
+              <label class="feature-toggle" for="attendanceToggle">
+                <span class="feature-toggle-copy"><strong>Attendance</strong><small>Exclude absent students without deleting them.</small></span>
+                <span class="switch"><input id="attendanceToggle" type="checkbox"><span class="switch-track"></span></span>
+              </label>
+              <div class="feature-body" id="attendanceBody" hidden>
+                <div class="inline-actions">
+                  <button class="button secondary compact" id="markAllPresentButton" type="button">Mark all present</button>
+                  <span class="summary-chip" id="attendanceSummary">0 present</span>
+                </div>
+                <div class="attendance-list" id="attendanceList"></div>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <label class="feature-toggle" for="locksToggle">
+                <span class="feature-toggle-copy"><strong>Student and group locks</strong><small>Keep selected students or whole groups in place when reshuffling.</small></span>
+                <span class="switch"><input id="locksToggle" type="checkbox"><span class="switch-track"></span></span>
+              </label>
+              <div class="feature-body" id="locksBody" hidden>
+                <p class="tiny">After groups are created, use the padlocks beside students or in group headings.</p>
+                <button class="button secondary compact" id="clearLocksButton" type="button">Clear all locks</button>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <label class="feature-toggle" for="rulesToggle">
+                <span class="feature-toggle-copy"><strong>Grouping rules</strong><small>Keep selected pairs together or apart.</small></span>
+                <span class="switch"><input id="rulesToggle" type="checkbox"><span class="switch-track"></span></span>
+              </label>
+              <div class="feature-body" id="rulesBody" hidden>
+                <div class="rule-builder">
+                  <label>
+                    <span class="label-small">Rule</span>
+                    <select id="ruleTypeSelect"><option value="together">Keep together</option><option value="apart">Keep apart</option></select>
+                  </label>
+                  <label>
+                    <span class="label-small">First student</span>
+                    <select id="ruleStudentA"></select>
+                  </label>
+                  <label>
+                    <span class="label-small">Second student</span>
+                    <select id="ruleStudentB"></select>
+                  </label>
+                  <div style="display:flex;align-items:end">
+                    <button class="button primary compact" id="addRuleButton" type="button">Add rule</button>
+                  </div>
+                </div>
+                <div class="notice" id="ruleNotice" role="status" aria-live="polite"></div>
+                <div class="rule-list" id="ruleList"></div>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <label class="feature-toggle" for="historyToggle">
+                <span class="feature-toggle-copy"><strong>Avoid recent pairings</strong><small>Minimise students repeatedly being grouped together.</small></span>
+                <span class="switch"><input id="historyToggle" type="checkbox"><span class="switch-track"></span></span>
+              </label>
+              <div class="feature-body" id="historyBody" hidden>
+                <label>
+                  <span class="label-small">Compare with</span>
+                  <select id="historyDepthSelect"><option value="3">Last 3 groupings</option><option value="5">Last 5 groupings</option><option value="10">Last 10 groupings</option></select>
+                </label>
+                <div class="inline-actions">
+                  <span class="summary-chip" id="historySummary">No saved groupings</span>
+                  <button class="button secondary compact" id="clearHistoryButton" type="button">Clear history</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <label class="feature-toggle" for="rolesToggle">
+                <span class="feature-toggle-copy"><strong>Assign group roles</strong><small>Select only the roles needed and add your own.</small></span>
+                <span class="switch"><input id="rolesToggle" type="checkbox"><span class="switch-track"></span></span>
+              </label>
+              <div class="feature-body" id="rolesBody" hidden>
+                <h4>Built-in roles</h4>
+                <div class="check-grid" id="builtInRoles" style="margin-top:9px"></div>
+                <div class="control-section" style="margin-top:12px;padding-top:12px">
+                  <h4>Custom roles</h4>
+                  <div class="inline-actions">
+                    <input id="customRoleInput" type="text" maxlength="40" placeholder="Add another role" style="flex:1 1 180px">
+                    <button class="button secondary compact" id="addCustomRoleButton" type="button">Add role</button>
+                  </div>
+                  <div class="custom-role-list" id="customRoleList"></div>
+                </div>
+                <div class="control-section" style="margin-top:12px;padding-top:12px">
+                  <label class="check-row"><input id="randomiseRolesCheckbox" type="checkbox" checked><span>Randomise role assignment each time</span></label>
+                  <label class="check-row" style="margin-top:7px"><input id="hideRolesFocusCheckbox" type="checkbox"><span>Hide roles in full-screen view</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div class="primary-actions">
           <button class="button primary" id="generateButton" type="button" disabled>🎲 Make groups</button>
@@ -625,6 +998,35 @@
           </div>
         </div>
 
+        <div class="notice" id="generationNotice" role="status" aria-live="polite"></div>
+
+        <section class="timer-panel" id="timerPanel" aria-label="Group activity timer">
+          <div class="timer-row">
+            <div class="timer-readout">
+              <span class="timer-label">Group timer</span>
+              <span class="timer-display" id="timerDisplay" role="timer" aria-label="5 minutes remaining">05:00</span>
+            </div>
+            <div class="timer-setting" aria-label="Set timer duration">
+              <label class="timer-input-wrap" for="timerMinutes">
+                <span>Minutes</span>
+                <input id="timerMinutes" type="number" min="0" max="180" value="5" inputmode="numeric">
+              </label>
+              <label class="timer-input-wrap" for="timerSeconds">
+                <span>Seconds</span>
+                <input id="timerSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
+              </label>
+              <button class="button secondary" id="timerSetButton" type="button">Set</button>
+            </div>
+            <div class="timer-actions">
+              <button class="button primary" id="timerStartButton" type="button">▶ Start</button>
+              <button class="button secondary" id="timerResetButton" type="button">↺ Reset</button>
+              <button class="button secondary" id="timerAddMinuteButton" type="button">+1 min</button>
+            </div>
+          </div>
+          <div class="timer-progress" aria-hidden="true"><div class="timer-progress-bar" id="timerProgressBar"></div></div>
+          <p class="sr-only" id="timerStatus" aria-live="assertive"></p>
+        </section>
+
         <div class="empty-state" id="emptyState">
           <div>
             <div class="empty-icon" aria-hidden="true">👥</div>
@@ -636,32 +1038,24 @@
       </section>
     </section>
 
-    <p class="footer-note">Tip: after generating groups, drag students between groups to make any necessary adjustments.</p>
+    <p class="footer-note">Tip: drag unlocked students between unlocked groups to make final adjustments.</p>
   </main>
 
   <script>
     (() => {
       'use strict';
 
-      const namesInput = document.getElementById('namesInput');
-      const nameCount = document.getElementById('nameCount');
-      const validationMessage = document.getElementById('validationMessage');
-      const groupValue = document.getElementById('groupValue');
-      const groupValueLabel = document.getElementById('groupValueLabel');
-      const groupPreview = document.getElementById('groupPreview');
-      const generateButton = document.getElementById('generateButton');
-      const saveRosterButton = document.getElementById('saveRosterButton');
-      const loadExampleButton = document.getElementById('loadExampleButton');
-      const clearButton = document.getElementById('clearButton');
-      const resultsHeader = document.getElementById('resultsHeader');
-      const resultsSummary = document.getElementById('resultsSummary');
-      const emptyState = document.getElementById('emptyState');
-      const groupsGrid = document.getElementById('groupsGrid');
-      const reshuffleButton = document.getElementById('reshuffleButton');
-      const copyButton = document.getElementById('copyButton');
-      const printButton = document.getElementById('printButton');
-      const focusButton = document.getElementById('focusButton');
-      const themeButton = document.getElementById('themeButton');
+      const STORAGE = {
+        rosters: 'teachersims-groupmaker-rosters-v1',
+        activeRoster: 'teachersims-groupmaker-active-roster-v1',
+        settings: 'teachersims-groupmaker-settings-v1',
+        theme: 'scisims-random-group-theme'
+      };
+
+      const BUILT_IN_ROLES = [
+        'Coordinator', 'Recorder', 'Equipment manager',
+        'Reporter', 'Timekeeper', 'Safety officer'
+      ];
 
       const exampleNames = [
         'Aarav', 'Amelia', 'Archer', 'Ava', 'Charlotte', 'Ethan',
@@ -670,18 +1064,73 @@
         'Sofia', 'Thomas', 'William', 'Zoe'
       ];
 
+      const $ = id => document.getElementById(id);
+      const dom = {
+        namesInput: $('namesInput'), nameCount: $('nameCount'), validationMessage: $('validationMessage'),
+        savedRosterSelect: $('savedRosterSelect'), yearSelect: $('yearSelect'), courseSelect: $('courseSelect'), classNameInput: $('classNameInput'),
+        saveRosterButton: $('saveRosterButton'), newRosterButton: $('newRosterButton'), deleteRosterButton: $('deleteRosterButton'),
+        loadExampleButton: $('loadExampleButton'), clearButton: $('clearButton'),
+        groupValue: $('groupValue'), groupValueLabel: $('groupValueLabel'), groupPreview: $('groupPreview'), generateButton: $('generateButton'),
+        attendanceToggle: $('attendanceToggle'), attendanceBody: $('attendanceBody'), attendanceList: $('attendanceList'), attendanceSummary: $('attendanceSummary'), markAllPresentButton: $('markAllPresentButton'),
+        locksToggle: $('locksToggle'), locksBody: $('locksBody'), clearLocksButton: $('clearLocksButton'),
+        rulesToggle: $('rulesToggle'), rulesBody: $('rulesBody'), ruleTypeSelect: $('ruleTypeSelect'), ruleStudentA: $('ruleStudentA'), ruleStudentB: $('ruleStudentB'), addRuleButton: $('addRuleButton'), ruleList: $('ruleList'), ruleNotice: $('ruleNotice'),
+        historyToggle: $('historyToggle'), historyBody: $('historyBody'), historyDepthSelect: $('historyDepthSelect'), historySummary: $('historySummary'), clearHistoryButton: $('clearHistoryButton'),
+        rolesToggle: $('rolesToggle'), rolesBody: $('rolesBody'), builtInRoles: $('builtInRoles'), customRoleInput: $('customRoleInput'), addCustomRoleButton: $('addCustomRoleButton'), customRoleList: $('customRoleList'), randomiseRolesCheckbox: $('randomiseRolesCheckbox'), hideRolesFocusCheckbox: $('hideRolesFocusCheckbox'),
+        resultsHeader: $('resultsHeader'), resultsSummary: $('resultsSummary'), generationNotice: $('generationNotice'), emptyState: $('emptyState'), groupsGrid: $('groupsGrid'),
+        timerPanel: $('timerPanel'), timerDisplay: $('timerDisplay'), timerMinutes: $('timerMinutes'), timerSeconds: $('timerSeconds'), timerSetButton: $('timerSetButton'), timerStartButton: $('timerStartButton'), timerResetButton: $('timerResetButton'), timerAddMinuteButton: $('timerAddMinuteButton'), timerProgressBar: $('timerProgressBar'), timerStatus: $('timerStatus'),
+        reshuffleButton: $('reshuffleButton'), copyButton: $('copyButton'), printButton: $('printButton'), focusButton: $('focusButton'), themeButton: $('themeButton')
+      };
+
+      let rosters = readJSON(STORAGE.rosters, []);
+      let activeRosterId = localStorage.getItem(STORAGE.activeRoster) || '';
+      let attendance = new Map();
+      let rules = [];
       let currentGroups = [];
+      let roleAssignments = new Map();
+      let studentLocks = new Set();
+      let groupLocks = new Set();
+      let sessionHistory = [];
       let draggedStudent = null;
+      let timerDurationSeconds = 300;
+      let timerRemainingSeconds = 300;
+      let timerEndAt = 0;
+      let timerInterval = null;
+      let timerRunning = false;
+      let timerAudioContext = null;
+
+      const settings = Object.assign({
+        attendance: false,
+        locks: false,
+        rules: false,
+        history: false,
+        roles: false,
+        historyDepth: 3,
+        builtInRoles: BUILT_IN_ROLES.reduce((map, role) => ({ ...map, [role]: role !== 'Safety officer' }), {}),
+        customRoles: [],
+        randomiseRoles: true,
+        hideRolesFocus: false,
+        timerSeconds: 300
+      }, readJSON(STORAGE.settings, {}));
+
+      function readJSON(key, fallback) {
+        try {
+          const value = JSON.parse(localStorage.getItem(key));
+          return value ?? fallback;
+        } catch {
+          return fallback;
+        }
+      }
+
+      function writeJSON(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
 
       function normaliseName(name) {
         return name.trim().replace(/\s+/g, ' ');
       }
 
       function parseNames() {
-        return namesInput.value
-          .split(/[\n,;\t]+/)
-          .map(normaliseName)
-          .filter(Boolean);
+        return dom.namesInput.value.split(/[\n,;\t]+/).map(normaliseName).filter(Boolean);
       }
 
       function uniqueNames(names) {
@@ -705,118 +1154,637 @@
         return [...duplicates];
       }
 
+      function studentId(name) {
+        let hash = 2166136261;
+        const value = name.toLocaleLowerCase('en-AU');
+        for (let i = 0; i < value.length; i += 1) {
+          hash ^= value.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return `s${(hash >>> 0).toString(36)}`;
+      }
+
+      function getAllStudents() {
+        return uniqueNames(parseNames()).map(name => ({
+          id: studentId(name),
+          name,
+          present: attendance.has(studentId(name)) ? attendance.get(studentId(name)) : true
+        }));
+      }
+
+      function getEligibleStudents() {
+        const students = getAllStudents();
+        return settings.attendance ? students.filter(student => student.present) : students;
+      }
+
+      function syncAttendance() {
+        getAllStudents().forEach(student => {
+          if (!attendance.has(student.id)) attendance.set(student.id, true);
+        });
+      }
+
       function getMode() {
         return document.querySelector('input[name="groupMode"]:checked').value;
       }
 
       function getGroupCount(studentCount) {
-        const selected = Number(groupValue.value) || 2;
-        return getMode() === 'count'
-          ? Math.min(selected, studentCount)
-          : Math.ceil(studentCount / selected);
+        const selected = Number(dom.groupValue.value) || 2;
+        return getMode() === 'count' ? Math.min(selected, studentCount) : Math.ceil(studentCount / selected);
+      }
+
+      function activeRoster() {
+        return rosters.find(roster => roster.id === activeRosterId) || null;
+      }
+
+      function rosterLabel(roster) {
+        const code = roster.className ? ` — ${roster.className}` : '';
+        return `${roster.year} ${roster.course}${code}`;
+      }
+
+      function saveRosters() {
+        writeJSON(STORAGE.rosters, rosters);
+        renderRosterOptions();
+      }
+
+      function renderRosterOptions() {
+        const current = activeRosterId;
+        dom.savedRosterSelect.innerHTML = '<option value="">Unsaved class list</option>';
+        [...rosters].sort((a, b) => rosterLabel(a).localeCompare(rosterLabel(b), 'en-AU')).forEach(roster => {
+          const option = document.createElement('option');
+          option.value = roster.id;
+          option.textContent = rosterLabel(roster);
+          dom.savedRosterSelect.appendChild(option);
+        });
+        dom.savedRosterSelect.value = rosters.some(roster => roster.id === current) ? current : '';
+        dom.deleteRosterButton.disabled = !dom.savedRosterSelect.value;
+      }
+
+      function createId(prefix) {
+        if (window.crypto?.randomUUID) return `${prefix}-${window.crypto.randomUUID()}`;
+        return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+
+      function saveRoster() {
+        const names = uniqueNames(parseNames());
+        if (!names.length) {
+          showValidation('Add at least one student before saving the class.', 'danger-message');
+          return;
+        }
+
+        const existing = activeRoster();
+        const roster = {
+          id: existing?.id || createId('class'),
+          year: dom.yearSelect.value,
+          course: dom.courseSelect.value,
+          className: dom.classNameInput.value.trim(),
+          names,
+          attendance: Object.fromEntries(getAllStudents().map(student => [student.id, student.present])),
+          rules: [...rules],
+          history: existing?.history || [],
+          updated: Date.now()
+        };
+
+        if (existing) {
+          rosters = rosters.map(item => item.id === roster.id ? roster : item);
+        } else {
+          rosters.push(roster);
+          activeRosterId = roster.id;
+          localStorage.setItem(STORAGE.activeRoster, activeRosterId);
+        }
+
+        saveRosters();
+        flashButton(dom.saveRosterButton, '✓ Saved');
+        updateHistorySummary();
+      }
+
+      function loadRoster(id) {
+        const roster = rosters.find(item => item.id === id);
+        if (!roster) {
+          activeRosterId = '';
+          localStorage.removeItem(STORAGE.activeRoster);
+          dom.deleteRosterButton.disabled = true;
+          updateHistorySummary();
+          return;
+        }
+
+        activeRosterId = roster.id;
+        localStorage.setItem(STORAGE.activeRoster, activeRosterId);
+        dom.yearSelect.value = roster.year || 'Year 7';
+        dom.courseSelect.value = roster.course || 'Science';
+        dom.classNameInput.value = roster.className || '';
+        dom.namesInput.value = (roster.names || []).join('\n');
+        attendance = new Map(Object.entries(roster.attendance || {}));
+        rules = Array.isArray(roster.rules) ? [...roster.rules] : [];
+        currentGroups = [];
+        clearLocks();
+        resetResults();
+        updateInputState();
+        renderRules();
+        dom.deleteRosterButton.disabled = false;
+      }
+
+      function newRoster() {
+        activeRosterId = '';
+        localStorage.removeItem(STORAGE.activeRoster);
+        dom.savedRosterSelect.value = '';
+        dom.yearSelect.value = 'Year 7';
+        dom.courseSelect.value = 'Science';
+        dom.classNameInput.value = '';
+        dom.namesInput.value = '';
+        attendance = new Map();
+        rules = [];
+        sessionHistory = [];
+        clearLocks();
+        resetResults();
+        updateInputState();
+        renderRules();
+        dom.namesInput.focus();
+      }
+
+      function deleteRoster() {
+        const roster = activeRoster();
+        if (!roster) return;
+        if (!window.confirm(`Delete ${rosterLabel(roster)} from this device?`)) return;
+        rosters = rosters.filter(item => item.id !== roster.id);
+        saveRosters();
+        newRoster();
+      }
+
+      function persistActiveRosterExtras() {
+        const roster = activeRoster();
+        if (!roster) return;
+        roster.attendance = Object.fromEntries(getAllStudents().map(student => [student.id, student.present]));
+        roster.rules = [...rules];
+        roster.updated = Date.now();
+        saveRosters();
       }
 
       function updateGroupOptions() {
-        const names = uniqueNames(parseNames());
-        const count = names.length;
+        const count = getEligibleStudents().length;
         const mode = getMode();
-        const previous = Number(groupValue.value);
-        const maximum = mode === 'count'
-          ? Math.max(2, Math.min(12, count || 12))
-          : Math.max(2, Math.min(10, count || 10));
+        const previous = Number(dom.groupValue.value);
+        const maximum = mode === 'count' ? Math.max(2, Math.min(12, count || 12)) : Math.max(2, Math.min(10, count || 10));
 
-        groupValue.innerHTML = '';
+        dom.groupValue.innerHTML = '';
         for (let value = 2; value <= maximum; value += 1) {
           const option = document.createElement('option');
           option.value = String(value);
           option.textContent = String(value);
-          groupValue.appendChild(option);
+          dom.groupValue.appendChild(option);
         }
-
-        const preferred = previous >= 2 && previous <= maximum ? previous : (mode === 'count' ? Math.min(4, maximum) : Math.min(4, maximum));
-        groupValue.value = String(preferred);
-        groupValueLabel.textContent = mode === 'count' ? 'Number of groups' : 'Maximum group size';
+        const preferred = previous >= 2 && previous <= maximum ? previous : Math.min(4, maximum);
+        dom.groupValue.value = String(preferred);
+        dom.groupValueLabel.textContent = mode === 'count' ? 'Number of groups' : 'Maximum group size';
         updatePreview();
       }
 
       function updatePreview() {
-        const count = uniqueNames(parseNames()).length;
+        const count = getEligibleStudents().length;
         if (count < 2) {
-          groupPreview.textContent = 'Add names';
+          dom.groupPreview.textContent = 'Add names';
           return;
         }
         const groups = getGroupCount(count);
         const smallest = Math.floor(count / groups);
         const largest = Math.ceil(count / groups);
-        groupPreview.textContent = smallest === largest
-          ? `${groups} × ${smallest}`
-          : `${groups} groups of ${smallest}–${largest}`;
+        dom.groupPreview.textContent = smallest === largest ? `${groups} × ${smallest}` : `${groups} groups of ${smallest}–${largest}`;
+      }
+
+      function showValidation(message, type) {
+        dom.validationMessage.className = `validation show ${type}`;
+        dom.validationMessage.textContent = message;
       }
 
       function updateInputState() {
         const names = parseNames();
         const unique = uniqueNames(names);
         const duplicates = findDuplicates(names);
-        nameCount.textContent = `${unique.length} ${unique.length === 1 ? 'student' : 'students'}`;
-        generateButton.disabled = unique.length < 2;
+        syncAttendance();
+        const eligible = getEligibleStudents();
+        dom.nameCount.textContent = settings.attendance
+          ? `${eligible.length} present · ${unique.length} enrolled`
+          : `${unique.length} ${unique.length === 1 ? 'student' : 'students'}`;
+        dom.generateButton.disabled = eligible.length < 2;
 
-        validationMessage.className = 'validation';
-        validationMessage.textContent = '';
+        dom.validationMessage.className = 'validation';
+        dom.validationMessage.textContent = '';
         if (duplicates.length) {
-          validationMessage.classList.add('show', 'warning');
-          validationMessage.textContent = `Duplicate ${duplicates.length === 1 ? 'name' : 'names'} will only be used once: ${duplicates.join(', ')}`;
+          showValidation(`Duplicate ${duplicates.length === 1 ? 'name' : 'names'} will only be used once: ${duplicates.join(', ')}`, 'danger-message');
         } else if (unique.length >= 2) {
-          validationMessage.classList.add('show', 'success');
-          validationMessage.textContent = 'Class list ready.';
+          showValidation('Class list ready.', 'success');
         }
 
+        renderAttendance();
+        renderRuleSelectors();
         updateGroupOptions();
+      }
+
+      function renderAttendance() {
+        const students = getAllStudents();
+        dom.attendanceList.innerHTML = '';
+        students.forEach(student => {
+          const label = document.createElement('label');
+          label.className = `attendance-item${student.present ? '' : ' absent'}`;
+          const text = document.createElement('span');
+          text.textContent = student.name;
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = student.present;
+          checkbox.setAttribute('aria-label', `${student.name} is present`);
+          checkbox.addEventListener('change', () => {
+            attendance.set(student.id, checkbox.checked);
+            persistActiveRosterExtras();
+            updateInputState();
+          });
+          label.append(text, checkbox);
+          dom.attendanceList.appendChild(label);
+        });
+        const present = students.filter(student => student.present).length;
+        dom.attendanceSummary.textContent = `${present} present · ${students.length - present} absent`;
+      }
+
+      function renderRuleSelectors() {
+        const students = getAllStudents();
+        const previousA = dom.ruleStudentA.value;
+        const previousB = dom.ruleStudentB.value;
+        [dom.ruleStudentA, dom.ruleStudentB].forEach(select => {
+          select.innerHTML = '';
+          students.forEach(student => {
+            const option = document.createElement('option');
+            option.value = student.id;
+            option.textContent = student.name;
+            select.appendChild(option);
+          });
+        });
+        if (students.some(student => student.id === previousA)) dom.ruleStudentA.value = previousA;
+        if (students.some(student => student.id === previousB)) dom.ruleStudentB.value = previousB;
+        if (!dom.ruleStudentB.value && students.length > 1) dom.ruleStudentB.selectedIndex = 1;
+      }
+
+      function addRule() {
+        const a = dom.ruleStudentA.value;
+        const b = dom.ruleStudentB.value;
+        const type = dom.ruleTypeSelect.value;
+        if (!a || !b || a === b) {
+          showRuleNotice('Choose two different students.', 'danger-message');
+          return;
+        }
+        const duplicate = rules.some(rule => rule.type === type && new Set([rule.a, rule.b]).size === 2 && rule.a === a && rule.b === b || rule.type === type && rule.a === b && rule.b === a);
+        if (duplicate) {
+          showRuleNotice('That rule is already listed.', 'warning');
+          return;
+        }
+        rules.push({ id: createId('rule'), type, a, b });
+        persistActiveRosterExtras();
+        renderRules();
+        showRuleNotice('Rule added.', 'success');
+      }
+
+      function showRuleNotice(message, type) {
+        dom.ruleNotice.className = `notice show ${type}`;
+        dom.ruleNotice.textContent = message;
+      }
+
+      function renderRules() {
+        const studentMap = new Map(getAllStudents().map(student => [student.id, student.name]));
+        dom.ruleList.innerHTML = '';
+        rules = rules.filter(rule => studentMap.has(rule.a) && studentMap.has(rule.b));
+        rules.forEach(rule => {
+          const item = document.createElement('div');
+          item.className = 'rule-item';
+          const copy = document.createElement('span');
+          copy.textContent = `${rule.type === 'together' ? 'Together' : 'Apart'}: ${studentMap.get(rule.a)} + ${studentMap.get(rule.b)}`;
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'remove-button';
+          remove.textContent = '×';
+          remove.setAttribute('aria-label', `Remove rule for ${studentMap.get(rule.a)} and ${studentMap.get(rule.b)}`);
+          remove.addEventListener('click', () => {
+            rules = rules.filter(itemRule => itemRule.id !== rule.id);
+            persistActiveRosterExtras();
+            renderRules();
+          });
+          item.append(copy, remove);
+          dom.ruleList.appendChild(item);
+        });
+      }
+
+      function renderRoles() {
+        dom.builtInRoles.innerHTML = '';
+        BUILT_IN_ROLES.forEach(role => {
+          const label = document.createElement('label');
+          label.className = 'check-row';
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = settings.builtInRoles[role] !== false;
+          checkbox.addEventListener('change', () => {
+            settings.builtInRoles[role] = checkbox.checked;
+            saveSettings();
+            if (currentGroups.length) { assignRoles(); renderGroups(); }
+          });
+          const text = document.createElement('span');
+          text.textContent = role;
+          label.append(checkbox, text);
+          dom.builtInRoles.appendChild(label);
+        });
+
+        dom.customRoleList.innerHTML = '';
+        settings.customRoles.forEach(role => {
+          const item = document.createElement('div');
+          item.className = 'custom-role-item';
+          const label = document.createElement('label');
+          label.style.display = 'flex';
+          label.style.alignItems = 'center';
+          label.style.gap = '8px';
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = role.enabled !== false;
+          checkbox.addEventListener('change', () => {
+            role.enabled = checkbox.checked;
+            saveSettings();
+            if (currentGroups.length) { assignRoles(); renderGroups(); }
+          });
+          const text = document.createElement('span');
+          text.textContent = role.label;
+          label.append(checkbox, text);
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'remove-button';
+          remove.textContent = '×';
+          remove.setAttribute('aria-label', `Remove ${role.label}`);
+          remove.addEventListener('click', () => {
+            settings.customRoles = settings.customRoles.filter(itemRole => itemRole.id !== role.id);
+            saveSettings();
+            renderRoles();
+          });
+          item.append(label, remove);
+          dom.customRoleList.appendChild(item);
+        });
+      }
+
+      function addCustomRole() {
+        const label = dom.customRoleInput.value.trim();
+        if (!label) return;
+        const exists = [...BUILT_IN_ROLES, ...settings.customRoles.map(role => role.label)]
+          .some(role => role.toLocaleLowerCase('en-AU') === label.toLocaleLowerCase('en-AU'));
+        if (exists) return;
+        settings.customRoles.push({ id: createId('role'), label, enabled: true });
+        dom.customRoleInput.value = '';
+        saveSettings();
+        renderRoles();
+      }
+
+      function selectedRoles() {
+        if (!settings.roles) return [];
+        return [
+          ...BUILT_IN_ROLES.filter(role => settings.builtInRoles[role] !== false),
+          ...settings.customRoles.filter(role => role.enabled !== false).map(role => role.label)
+        ];
+      }
+
+      function assignRoles() {
+        roleAssignments = new Map();
+        const roles = selectedRoles();
+        if (!roles.length) return;
+        currentGroups.forEach(group => {
+          const students = settings.randomiseRoles ? secureShuffle(group) : [...group];
+          students.slice(0, roles.length).forEach((student, index) => roleAssignments.set(student.id, roles[index]));
+        });
       }
 
       function secureShuffle(items) {
         const array = [...items];
-        const randomValues = new Uint32Array(array.length);
-        if (window.crypto?.getRandomValues) {
-          window.crypto.getRandomValues(randomValues);
-        }
+        const randomValues = new Uint32Array(Math.max(1, array.length));
+        const secure = Boolean(window.crypto?.getRandomValues);
+        if (secure) window.crypto.getRandomValues(randomValues);
         for (let i = array.length - 1; i > 0; i -= 1) {
-          const random = window.crypto?.getRandomValues
-            ? randomValues[i] / 4294967296
-            : Math.random();
+          const random = secure ? randomValues[i] / 4294967296 : Math.random();
           const j = Math.floor(random * (i + 1));
           [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
       }
 
-      function buildGroups() {
-        const students = secureShuffle(uniqueNames(parseNames()));
-        if (students.length < 2) return;
+      class UnionFind {
+        constructor(ids) {
+          this.parent = new Map(ids.map(id => [id, id]));
+        }
+        find(id) {
+          const parent = this.parent.get(id);
+          if (parent !== id) this.parent.set(id, this.find(parent));
+          return this.parent.get(id);
+        }
+        union(a, b) {
+          const rootA = this.find(a);
+          const rootB = this.find(b);
+          if (rootA !== rootB) this.parent.set(rootB, rootA);
+        }
+      }
 
-        const numberOfGroups = getGroupCount(students.length);
-        currentGroups = Array.from({ length: numberOfGroups }, () => []);
+      function getPairHistoryCounts() {
+        if (!settings.history) return new Map();
+        const depth = Number(settings.historyDepth) || 3;
+        const source = activeRoster()?.history || sessionHistory;
+        const histories = source.slice(-depth);
+        const counts = new Map();
+        histories.forEach(grouping => grouping.forEach(group => {
+          for (let i = 0; i < group.length; i += 1) {
+            for (let j = i + 1; j < group.length; j += 1) {
+              const key = pairKey(group[i], group[j]);
+              counts.set(key, (counts.get(key) || 0) + 1);
+            }
+          }
+        }));
+        return counts;
+      }
 
-        students.forEach((student, index) => {
-          currentGroups[index % numberOfGroups].push(student);
+      function pairKey(a, b) {
+        return a < b ? `${a}|${b}` : `${b}|${a}`;
+      }
+
+      function buildFixedAssignments(eligibleIds, numberOfGroups, preserveLocks) {
+        const fixed = new Map();
+        if (!settings.locks || !preserveLocks || currentGroups.length !== numberOfGroups) return fixed;
+        currentGroups.forEach((group, groupIndex) => {
+          group.forEach(student => {
+            if (eligibleIds.has(student.id) && (groupLocks.has(groupIndex) || studentLocks.has(student.id))) {
+              fixed.set(student.id, groupIndex);
+            }
+          });
+        });
+        return fixed;
+      }
+
+      function makeCandidate(students, numberOfGroups, preserveLocks) {
+        const studentMap = new Map(students.map(student => [student.id, student]));
+        const ids = students.map(student => student.id);
+        const idSet = new Set(ids);
+        const union = new UnionFind(ids);
+        const activeRules = settings.rules ? rules.filter(rule => idSet.has(rule.a) && idSet.has(rule.b)) : [];
+        activeRules.filter(rule => rule.type === 'together').forEach(rule => union.union(rule.a, rule.b));
+
+        const apartRules = activeRules.filter(rule => rule.type === 'apart');
+        const conflict = apartRules.find(rule => union.find(rule.a) === union.find(rule.b));
+        if (conflict) return { error: 'A keep-apart rule conflicts with a keep-together rule.' };
+
+        const fixed = buildFixedAssignments(idSet, numberOfGroups, preserveLocks);
+        const components = new Map();
+        ids.forEach(id => {
+          const root = union.find(id);
+          if (!components.has(root)) components.set(root, []);
+          components.get(root).push(id);
         });
 
+        const units = [...components.values()].map(unitIds => {
+          const fixedGroups = [...new Set(unitIds.filter(id => fixed.has(id)).map(id => fixed.get(id)))];
+          return { ids: unitIds, fixedGroup: fixedGroups.length === 1 ? fixedGroups[0] : null, conflict: fixedGroups.length > 1 };
+        });
+        if (units.some(unit => unit.conflict)) return { error: 'Locked students in a keep-together rule are fixed to different groups.' };
+
+        const historyCounts = getPairHistoryCounts();
+        const maxSize = getMode() === 'size' ? Number(dom.groupValue.value) : Math.ceil(students.length / numberOfGroups);
+        let best = null;
+        const attempts = settings.rules || settings.history || settings.locks ? 280 : 40;
+
+        for (let attempt = 0; attempt < attempts; attempt += 1) {
+          const candidate = Array.from({ length: numberOfGroups }, () => []);
+          const fixedUnits = units.filter(unit => unit.fixedGroup !== null);
+          const freeUnits = secureShuffle(units.filter(unit => unit.fixedGroup === null));
+          fixedUnits.forEach(unit => candidate[unit.fixedGroup].push(...unit.ids));
+
+          freeUnits.forEach(unit => {
+            const groupOrder = secureShuffle([...Array(numberOfGroups).keys()]);
+            let chosen = groupOrder[0];
+            let bestPlacement = Infinity;
+            groupOrder.forEach(groupIndex => {
+              const group = candidate[groupIndex];
+              const projected = group.length + unit.ids.length;
+              const over = Math.max(0, projected - maxSize);
+              let score = projected * projected + over * 800;
+              unit.ids.forEach(id => {
+                group.forEach(existingId => {
+                  if (apartRules.some(rule => pairKey(rule.a, rule.b) === pairKey(id, existingId))) score += 1000000;
+                  score += (historyCounts.get(pairKey(id, existingId)) || 0) * 35;
+                });
+              });
+              score += Math.random();
+              if (score < bestPlacement) {
+                bestPlacement = score;
+                chosen = groupIndex;
+              }
+            });
+            candidate[chosen].push(...unit.ids);
+          });
+
+          const evaluated = evaluateCandidate(candidate, apartRules, historyCounts, maxSize);
+          if (!best || evaluated.score < best.score) best = { groups: candidate, ...evaluated };
+          if (best.apartViolations === 0 && best.overSize === 0 && best.repeatScore === 0) break;
+        }
+
+        if (!best) return { error: 'Groups could not be generated.' };
+        return {
+          groups: best.groups.map(group => secureShuffle(group.map(id => studentMap.get(id)))),
+          warnings: [
+            best.apartViolations ? `${best.apartViolations} keep-apart rule could not be satisfied.` : '',
+            best.overSize ? 'A group-size limit could not be maintained because of locks or keep-together rules.' : '',
+            settings.history && best.repeatScore ? 'Repeated pairings were minimised, but could not be completely avoided.' : ''
+          ].filter(Boolean)
+        };
+      }
+
+      function evaluateCandidate(candidate, apartRules, historyCounts, maxSize) {
+        let apartViolations = 0;
+        let repeatScore = 0;
+        let overSize = 0;
+        candidate.forEach(group => {
+          overSize += Math.max(0, group.length - maxSize);
+          for (let i = 0; i < group.length; i += 1) {
+            for (let j = i + 1; j < group.length; j += 1) {
+              const key = pairKey(group[i], group[j]);
+              if (apartRules.some(rule => pairKey(rule.a, rule.b) === key)) apartViolations += 1;
+              repeatScore += historyCounts.get(key) || 0;
+            }
+          }
+        });
+        const sizes = candidate.map(group => group.length);
+        const spread = Math.max(...sizes) - Math.min(...sizes);
+        return {
+          score: apartViolations * 1000000 + overSize * 100000 + spread * 1000 + repeatScore * 35,
+          apartViolations,
+          repeatScore,
+          overSize
+        };
+      }
+
+      function generateGroups(preserveLocks) {
+        const students = getEligibleStudents();
+        if (students.length < 2) return;
+        const numberOfGroups = getGroupCount(students.length);
+        if (!preserveLocks || currentGroups.length !== numberOfGroups) clearLocks();
+
+        const result = makeCandidate(students, numberOfGroups, preserveLocks);
+        if (result.error) {
+          showGenerationNotice(result.error, 'danger-message');
+          return;
+        }
+
+        currentGroups = result.groups;
+        assignRoles();
+        recordHistory();
         renderGroups();
+        if (result.warnings.length) showGenerationNotice(result.warnings.join(' '), 'warning');
+        else showGenerationNotice('All active grouping settings were applied.', 'success');
+      }
+
+      function showGenerationNotice(message, type) {
+        dom.generationNotice.className = `notice show ${type}`;
+        dom.generationNotice.textContent = message;
+      }
+
+      function recordHistory() {
+        const grouping = currentGroups.map(group => group.map(student => student.id));
+        const roster = activeRoster();
+        if (roster) {
+          roster.history = Array.isArray(roster.history) ? roster.history : [];
+          roster.history.push(grouping);
+          roster.history = roster.history.slice(-20);
+          saveRosters();
+        } else {
+          sessionHistory.push(grouping);
+          sessionHistory = sessionHistory.slice(-20);
+        }
+        updateHistorySummary();
+      }
+
+      function clearHistory() {
+        const roster = activeRoster();
+        if (roster) {
+          roster.history = [];
+          saveRosters();
+        } else {
+          sessionHistory = [];
+        }
+        updateHistorySummary();
+      }
+
+      function updateHistorySummary() {
+        const count = (activeRoster()?.history || sessionHistory).length;
+        dom.historySummary.textContent = count ? `${count} grouping${count === 1 ? '' : 's'} stored` : 'No saved groupings';
       }
 
       function initials(name) {
         const parts = name.split(' ').filter(Boolean);
-        return parts.length === 1
-          ? parts[0].slice(0, 2).toUpperCase()
-          : `${parts[0][0]}${parts.at(-1)[0]}`.toUpperCase();
+        return parts.length === 1 ? parts[0].slice(0, 2).toUpperCase() : `${parts[0][0]}${parts.at(-1)[0]}`.toUpperCase();
       }
 
       function renderGroups() {
-        emptyState.hidden = true;
-        resultsHeader.classList.add('show');
-        groupsGrid.innerHTML = '';
-
+        dom.emptyState.hidden = true;
+        dom.resultsHeader.classList.add('show');
+        dom.timerPanel.classList.add('show');
+        dom.groupsGrid.innerHTML = '';
         const studentTotal = currentGroups.reduce((total, group) => total + group.length, 0);
-        resultsSummary.textContent = `${studentTotal} students across ${currentGroups.length} balanced groups. Drag names to make adjustments.`;
+        const classLabel = activeRoster() ? `${rosterLabel(activeRoster())} · ` : '';
+        dom.resultsSummary.textContent = `${classLabel}${studentTotal} students across ${currentGroups.length} groups.`;
 
         currentGroups.forEach((group, groupIndex) => {
           const card = document.createElement('article');
@@ -825,19 +1793,42 @@
 
           const title = document.createElement('div');
           title.className = 'group-title';
-          title.innerHTML = `
-            <div style="display:flex;align-items:center;gap:10px;min-width:0">
-              <span class="group-number">${groupIndex + 1}</span>
-              <h3>Group ${groupIndex + 1}</h3>
-            </div>
-            <span class="group-count">${group.length} ${group.length === 1 ? 'student' : 'students'}</span>
-          `;
+          const left = document.createElement('div');
+          left.className = 'group-title-left';
+          const number = document.createElement('span');
+          number.className = 'group-number';
+          number.textContent = String(groupIndex + 1);
+          const heading = document.createElement('h3');
+          heading.textContent = `Group ${groupIndex + 1}`;
+          left.append(number, heading);
+
+          const actions = document.createElement('div');
+          actions.className = 'group-actions';
+          const count = document.createElement('span');
+          count.className = 'group-count';
+          count.textContent = `${group.length} ${group.length === 1 ? 'student' : 'students'}`;
+          actions.appendChild(count);
+
+          if (settings.locks) {
+            const lock = document.createElement('button');
+            lock.type = 'button';
+            lock.className = `lock-button${groupLocks.has(groupIndex) ? ' active' : ''}`;
+            lock.textContent = groupLocks.has(groupIndex) ? '🔒' : '🔓';
+            lock.setAttribute('aria-label', `${groupLocks.has(groupIndex) ? 'Unlock' : 'Lock'} Group ${groupIndex + 1}`);
+            lock.addEventListener('click', () => {
+              if (groupLocks.has(groupIndex)) groupLocks.delete(groupIndex);
+              else groupLocks.add(groupIndex);
+              renderGroups();
+            });
+            actions.appendChild(lock);
+          }
+          title.append(left, actions);
 
           const list = document.createElement('ul');
           list.className = 'member-list';
           list.dataset.groupIndex = String(groupIndex);
-
           list.addEventListener('dragover', event => {
+            if (settings.locks && groupLocks.has(groupIndex)) return;
             event.preventDefault();
             list.classList.add('drag-over');
           });
@@ -848,20 +1839,61 @@
             if (!draggedStudent) return;
             const targetGroup = Number(list.dataset.groupIndex);
             const sourceGroup = draggedStudent.groupIndex;
+            const lockedMove = settings.locks && (groupLocks.has(targetGroup) || groupLocks.has(sourceGroup) || studentLocks.has(draggedStudent.studentId));
+            if (lockedMove) {
+              showGenerationNotice('Unlock the student and both groups before moving them.', 'warning');
+              return;
+            }
             if (targetGroup !== sourceGroup) {
-              const [student] = currentGroups[sourceGroup].splice(draggedStudent.studentIndex, 1);
+              const studentIndex = currentGroups[sourceGroup].findIndex(student => student.id === draggedStudent.studentId);
+              const [student] = currentGroups[sourceGroup].splice(studentIndex, 1);
               currentGroups[targetGroup].push(student);
+              assignRoles();
               renderGroups();
             }
           });
 
-          group.forEach((student, studentIndex) => {
+          group.forEach(student => {
             const member = document.createElement('li');
-            member.className = 'member';
-            member.draggable = true;
-            member.innerHTML = `<span class="initial">${initials(student)}</span><span>${escapeHtml(student)}</span>`;
+            const isLocked = settings.locks && (studentLocks.has(student.id) || groupLocks.has(groupIndex));
+            member.className = `member${isLocked ? ' locked' : ''}`;
+            member.draggable = !isLocked;
+
+            const initial = document.createElement('span');
+            initial.className = 'initial';
+            initial.textContent = initials(student.name);
+            const copy = document.createElement('span');
+            copy.className = 'member-copy';
+            const name = document.createElement('span');
+            name.className = 'member-name';
+            name.textContent = student.name;
+            copy.appendChild(name);
+            const role = roleAssignments.get(student.id);
+            if (role) {
+              const roleLabel = document.createElement('span');
+              roleLabel.className = 'member-role';
+              roleLabel.textContent = role;
+              copy.appendChild(roleLabel);
+            }
+            member.append(initial, copy);
+
+            if (settings.locks) {
+              const lock = document.createElement('button');
+              lock.type = 'button';
+              lock.className = `lock-button${studentLocks.has(student.id) ? ' active' : ''}`;
+              lock.textContent = studentLocks.has(student.id) ? '🔒' : '🔓';
+              lock.setAttribute('aria-label', `${studentLocks.has(student.id) ? 'Unlock' : 'Lock'} ${student.name}`);
+              lock.disabled = groupLocks.has(groupIndex);
+              lock.addEventListener('click', () => {
+                if (studentLocks.has(student.id)) studentLocks.delete(student.id);
+                else studentLocks.add(student.id);
+                renderGroups();
+              });
+              member.appendChild(lock);
+            }
+
             member.addEventListener('dragstart', () => {
-              draggedStudent = { groupIndex, studentIndex };
+              draggedStudent = { groupIndex, studentId: student.id };
               member.classList.add('dragging');
             });
             member.addEventListener('dragend', () => {
@@ -872,121 +1904,331 @@
           });
 
           card.append(title, list);
-          groupsGrid.appendChild(card);
+          dom.groupsGrid.appendChild(card);
         });
       }
 
-      function escapeHtml(value) {
-        return value.replace(/[&<>'"]/g, character => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-        })[character]);
+      function clearLocks() {
+        studentLocks = new Set();
+        groupLocks = new Set();
+        if (currentGroups.length) renderGroups();
       }
 
       function copyGroups() {
         if (!currentGroups.length) return;
-        const text = currentGroups
-          .map((group, index) => `Group ${index + 1}\n${group.join('\n')}`)
-          .join('\n\n');
-
-        navigator.clipboard.writeText(text)
-          .then(() => {
-            const oldText = copyButton.textContent;
-            copyButton.textContent = '✓ Copied';
-            setTimeout(() => { copyButton.textContent = oldText; }, 1400);
-          })
-          .catch(() => {
-            const helper = document.createElement('textarea');
-            helper.value = text;
-            document.body.appendChild(helper);
-            helper.select();
-            document.execCommand('copy');
-            helper.remove();
+        const text = currentGroups.map((group, index) => {
+          const lines = group.map(student => {
+            const role = roleAssignments.get(student.id);
+            return role ? `${student.name} — ${role}` : student.name;
           });
+          return `Group ${index + 1}\n${lines.join('\n')}`;
+        }).join('\n\n');
+
+        navigator.clipboard.writeText(text).then(() => flashButton(dom.copyButton, '✓ Copied')).catch(() => {
+          const helper = document.createElement('textarea');
+          helper.value = text;
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand('copy');
+          helper.remove();
+          flashButton(dom.copyButton, '✓ Copied');
+        });
       }
 
-      function saveRoster() {
-        const names = uniqueNames(parseNames());
-        if (!names.length) return;
-        localStorage.setItem('scisims-random-group-roster', names.join('\n'));
-        const oldText = saveRosterButton.textContent;
-        saveRosterButton.textContent = '✓ Saved';
-        setTimeout(() => { saveRosterButton.textContent = oldText; }, 1400);
+      function clampTimerInputs() {
+        const minutes = Math.max(0, Math.min(180, Number.parseInt(dom.timerMinutes.value, 10) || 0));
+        const seconds = Math.max(0, Math.min(59, Number.parseInt(dom.timerSeconds.value, 10) || 0));
+        dom.timerMinutes.value = String(minutes);
+        dom.timerSeconds.value = String(seconds);
+        return Math.max(1, minutes * 60 + seconds);
       }
 
-      function clearAll() {
-        namesInput.value = '';
+      function formatTimer(totalSeconds) {
+        const safe = Math.max(0, Math.ceil(totalSeconds));
+        const hours = Math.floor(safe / 3600);
+        const minutes = Math.floor((safe % 3600) / 60);
+        const seconds = safe % 60;
+        return hours > 0
+          ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+          : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+
+      function syncTimerInputs(totalSeconds) {
+        const safe = Math.max(1, Math.round(totalSeconds));
+        dom.timerMinutes.value = String(Math.floor(safe / 60));
+        dom.timerSeconds.value = String(safe % 60);
+      }
+
+      function updateTimerDisplay() {
+        dom.timerDisplay.textContent = formatTimer(timerRemainingSeconds);
+        dom.timerDisplay.setAttribute('aria-label', `${Math.max(0, Math.ceil(timerRemainingSeconds))} seconds remaining`);
+        const percentage = timerDurationSeconds > 0
+          ? Math.max(0, Math.min(100, (timerRemainingSeconds / timerDurationSeconds) * 100))
+          : 0;
+        dom.timerProgressBar.style.width = `${percentage}%`;
+        dom.timerPanel.classList.toggle('running', timerRunning);
+        dom.timerPanel.classList.toggle('finished', timerRemainingSeconds <= 0);
+        dom.timerStartButton.textContent = timerRunning ? 'Ⅱ Pause' : (timerRemainingSeconds <= 0 ? '↻ Restart' : '▶ Start');
+      }
+
+      function stopTimerInterval() {
+        if (timerInterval) window.clearInterval(timerInterval);
+        timerInterval = null;
+      }
+
+      function updateTimerFromClock() {
+        if (!timerRunning) return;
+        timerRemainingSeconds = Math.max(0, (timerEndAt - Date.now()) / 1000);
+        if (timerRemainingSeconds <= 0) {
+          timerRemainingSeconds = 0;
+          timerRunning = false;
+          stopTimerInterval();
+          dom.timerStatus.textContent = 'Time is up.';
+          playTimerSound();
+        }
+        updateTimerDisplay();
+      }
+
+      function setTimerDuration() {
+        timerDurationSeconds = clampTimerInputs();
+        settings.timerSeconds = timerDurationSeconds;
+        writeJSON(STORAGE.settings, settings);
+        timerRunning = false;
+        stopTimerInterval();
+        timerRemainingSeconds = timerDurationSeconds;
+        dom.timerStatus.textContent = `Timer set for ${formatTimer(timerDurationSeconds)}.`;
+        updateTimerDisplay();
+      }
+
+      function toggleTimer() {
+        if (timerRunning) {
+          updateTimerFromClock();
+          timerRunning = false;
+          stopTimerInterval();
+          dom.timerStatus.textContent = `Timer paused at ${formatTimer(timerRemainingSeconds)}.`;
+          updateTimerDisplay();
+          return;
+        }
+        if (timerRemainingSeconds <= 0) timerRemainingSeconds = timerDurationSeconds;
+        timerRunning = true;
+        timerEndAt = Date.now() + timerRemainingSeconds * 1000;
+        dom.timerStatus.textContent = 'Timer started.';
+        stopTimerInterval();
+        timerInterval = window.setInterval(updateTimerFromClock, 250);
+        updateTimerDisplay();
+      }
+
+      function resetTimer() {
+        timerRunning = false;
+        stopTimerInterval();
+        timerRemainingSeconds = timerDurationSeconds;
+        dom.timerStatus.textContent = 'Timer reset.';
+        updateTimerDisplay();
+      }
+
+      function addTimerMinute() {
+        timerDurationSeconds += 60;
+        timerRemainingSeconds += 60;
+        settings.timerSeconds = timerDurationSeconds;
+        writeJSON(STORAGE.settings, settings);
+        syncTimerInputs(timerDurationSeconds);
+        if (timerRunning) timerEndAt += 60000;
+        dom.timerStatus.textContent = 'One minute added.';
+        updateTimerDisplay();
+      }
+
+      function playTimerSound() {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          timerAudioContext = timerAudioContext || new AudioContextClass();
+          const now = timerAudioContext.currentTime;
+          [0, 0.28, 0.56].forEach((offset, index) => {
+            const oscillator = timerAudioContext.createOscillator();
+            const gain = timerAudioContext.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(index === 2 ? 660 : 880, now + offset);
+            gain.gain.setValueAtTime(0.0001, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.16, now + offset + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.20);
+            oscillator.connect(gain);
+            gain.connect(timerAudioContext.destination);
+            oscillator.start(now + offset);
+            oscillator.stop(now + offset + 0.22);
+          });
+        } catch {
+          // The visual timer still completes if audio is unavailable.
+        }
+      }
+
+      function initialiseTimer() {
+        timerDurationSeconds = Math.max(1, Number(settings.timerSeconds) || 300);
+        timerRemainingSeconds = timerDurationSeconds;
+        syncTimerInputs(timerDurationSeconds);
+        updateTimerDisplay();
+      }
+
+      function flashButton(button, text) {
+        const oldText = button.textContent;
+        button.textContent = text;
+        setTimeout(() => { button.textContent = oldText; }, 1400);
+      }
+
+      function resetResults() {
         currentGroups = [];
-        groupsGrid.innerHTML = '';
-        resultsHeader.classList.remove('show');
-        emptyState.hidden = false;
+        roleAssignments = new Map();
+        dom.groupsGrid.innerHTML = '';
+        dom.resultsHeader.classList.remove('show');
+        dom.timerPanel.classList.remove('show');
+        resetTimer();
+        dom.emptyState.hidden = false;
+        dom.generationNotice.className = 'notice';
+        dom.generationNotice.textContent = '';
         if (document.body.classList.contains('groups-focus')) setGroupsFocus(false);
+      }
+
+      function clearNames() {
+        dom.namesInput.value = '';
+        attendance = new Map();
+        rules = [];
+        clearLocks();
+        resetResults();
         updateInputState();
-        namesInput.focus();
+        renderRules();
+        dom.namesInput.focus();
+      }
+
+      function saveSettings() {
+        settings.attendance = dom.attendanceToggle.checked;
+        settings.locks = dom.locksToggle.checked;
+        settings.rules = dom.rulesToggle.checked;
+        settings.history = dom.historyToggle.checked;
+        settings.roles = dom.rolesToggle.checked;
+        settings.historyDepth = Number(dom.historyDepthSelect.value);
+        settings.randomiseRoles = dom.randomiseRolesCheckbox.checked;
+        settings.hideRolesFocus = dom.hideRolesFocusCheckbox.checked;
+        writeJSON(STORAGE.settings, settings);
+        updateFeaturePanels();
+      }
+
+      function applySettings() {
+        dom.attendanceToggle.checked = Boolean(settings.attendance);
+        dom.locksToggle.checked = Boolean(settings.locks);
+        dom.rulesToggle.checked = Boolean(settings.rules);
+        dom.historyToggle.checked = Boolean(settings.history);
+        dom.rolesToggle.checked = Boolean(settings.roles);
+        dom.historyDepthSelect.value = String(settings.historyDepth || 3);
+        dom.randomiseRolesCheckbox.checked = settings.randomiseRoles !== false;
+        dom.hideRolesFocusCheckbox.checked = Boolean(settings.hideRolesFocus);
+        updateFeaturePanels();
+        renderRoles();
+      }
+
+      function updateFeaturePanels() {
+        dom.attendanceBody.hidden = !dom.attendanceToggle.checked;
+        dom.locksBody.hidden = !dom.locksToggle.checked;
+        dom.rulesBody.hidden = !dom.rulesToggle.checked;
+        dom.historyBody.hidden = !dom.historyToggle.checked;
+        dom.rolesBody.hidden = !dom.rolesToggle.checked;
+        document.body.classList.toggle('hide-focus-roles', dom.hideRolesFocusCheckbox.checked);
+        updateInputState();
+        if (currentGroups.length) {
+          if (!dom.locksToggle.checked) clearLocks();
+          assignRoles();
+          renderGroups();
+        }
       }
 
       function setTheme(theme) {
         const dark = theme === 'dark';
         document.body.classList.toggle('dark', dark);
-        themeButton.innerHTML = dark ? '☀️ <span>Light mode</span>' : '🌙 <span>Dark mode</span>';
-        themeButton.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-        localStorage.setItem('scisims-random-group-theme', theme);
+        dom.themeButton.innerHTML = dark ? '☀️ <span>Light mode</span>' : '🌙 <span>Dark mode</span>';
+        dom.themeButton.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        localStorage.setItem(STORAGE.theme, theme);
       }
 
       function updateFocusButton(active) {
-        focusButton.setAttribute('aria-pressed', String(active));
-        focusButton.textContent = active ? '↙ Exit full screen' : '⛶ Full-screen groups';
+        dom.focusButton.setAttribute('aria-pressed', String(active));
+        dom.focusButton.textContent = active ? '↙ Exit full screen' : '⛶ Full-screen groups';
       }
 
       async function setGroupsFocus(active) {
         document.body.classList.toggle('groups-focus', active);
         updateFocusButton(active);
-
         try {
           if (active && !document.fullscreenElement && document.documentElement.requestFullscreen) {
             await document.documentElement.requestFullscreen();
           } else if (!active && document.fullscreenElement && document.exitFullscreen) {
             await document.exitFullscreen();
           }
-        } catch (error) {
-          // The expanded groups layout still works if the browser blocks true full screen.
+        } catch {
+          // Expanded layout still works if true browser full screen is blocked.
         }
       }
 
-      namesInput.addEventListener('input', updateInputState);
-      groupValue.addEventListener('change', updatePreview);
-      document.querySelectorAll('input[name="groupMode"]').forEach(radio => {
-        radio.addEventListener('change', updateGroupOptions);
-      });
-      generateButton.addEventListener('click', buildGroups);
-      reshuffleButton.addEventListener('click', buildGroups);
-      copyButton.addEventListener('click', copyGroups);
-      printButton.addEventListener('click', () => window.print());
-      focusButton.addEventListener('click', () => {
-        setGroupsFocus(!document.body.classList.contains('groups-focus'));
-      });
+      dom.namesInput.addEventListener('input', updateInputState);
+      dom.groupValue.addEventListener('change', updatePreview);
+      document.querySelectorAll('input[name="groupMode"]').forEach(radio => radio.addEventListener('change', updateGroupOptions));
+      dom.generateButton.addEventListener('click', () => generateGroups(false));
+      dom.reshuffleButton.addEventListener('click', () => generateGroups(true));
+      dom.copyButton.addEventListener('click', copyGroups);
+      dom.printButton.addEventListener('click', () => window.print());
+      dom.focusButton.addEventListener('click', () => setGroupsFocus(!document.body.classList.contains('groups-focus')));
+      dom.timerSetButton.addEventListener('click', setTimerDuration);
+      dom.timerStartButton.addEventListener('click', toggleTimer);
+      dom.timerResetButton.addEventListener('click', resetTimer);
+      dom.timerAddMinuteButton.addEventListener('click', addTimerMinute);
+      [dom.timerMinutes, dom.timerSeconds].forEach(input => input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') setTimerDuration();
+      }));
       document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement && document.body.classList.contains('groups-focus')) {
           document.body.classList.remove('groups-focus');
           updateFocusButton(false);
         }
       });
-      saveRosterButton.addEventListener('click', saveRoster);
-      loadExampleButton.addEventListener('click', () => {
-        namesInput.value = exampleNames.join('\n');
+
+      dom.saveRosterButton.addEventListener('click', saveRoster);
+      dom.newRosterButton.addEventListener('click', newRoster);
+      dom.deleteRosterButton.addEventListener('click', deleteRoster);
+      dom.savedRosterSelect.addEventListener('change', () => {
+        if (dom.savedRosterSelect.value) loadRoster(dom.savedRosterSelect.value);
+        else newRoster();
+      });
+      dom.loadExampleButton.addEventListener('click', () => {
+        dom.namesInput.value = exampleNames.join('\n');
         updateInputState();
       });
-      clearButton.addEventListener('click', clearAll);
-      themeButton.addEventListener('click', () => {
-        setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-      });
+      dom.clearButton.addEventListener('click', clearNames);
 
-      const savedTheme = localStorage.getItem('scisims-random-group-theme');
+      [dom.attendanceToggle, dom.locksToggle, dom.rulesToggle, dom.historyToggle, dom.rolesToggle,
+       dom.randomiseRolesCheckbox, dom.hideRolesFocusCheckbox].forEach(control => control.addEventListener('change', saveSettings));
+      dom.historyDepthSelect.addEventListener('change', saveSettings);
+      dom.markAllPresentButton.addEventListener('click', () => {
+        getAllStudents().forEach(student => attendance.set(student.id, true));
+        persistActiveRosterExtras();
+        updateInputState();
+      });
+      dom.clearLocksButton.addEventListener('click', clearLocks);
+      dom.addRuleButton.addEventListener('click', addRule);
+      dom.clearHistoryButton.addEventListener('click', clearHistory);
+      dom.addCustomRoleButton.addEventListener('click', addCustomRole);
+      dom.customRoleInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') { event.preventDefault(); addCustomRole(); }
+      });
+      dom.themeButton.addEventListener('click', () => setTheme(document.body.classList.contains('dark') ? 'light' : 'dark'));
+
+      const savedTheme = localStorage.getItem(STORAGE.theme);
       const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
       setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
 
-      const savedRoster = localStorage.getItem('scisims-random-group-roster');
-      if (savedRoster) namesInput.value = savedRoster;
-      updateInputState();
+      renderRosterOptions();
+      applySettings();
+      initialiseTimer();
+      if (activeRosterId && rosters.some(roster => roster.id === activeRosterId)) loadRoster(activeRosterId);
+      else updateInputState();
+      renderRules();
+      updateHistorySummary();
     })();
   </script>
 </body>
