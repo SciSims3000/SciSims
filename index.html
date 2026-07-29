@@ -97,6 +97,15 @@
       margin-bottom:10px;
     }
 
+    .hero-text .page-version{
+      margin:-2px 0 12px;
+      color:#475569;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
     .hero-image{
       width:100%;
       height:210px;
@@ -185,11 +194,30 @@
     }
 
     .dashboard{
+      position:sticky;
+      top:8px;
+      z-index:50;
       display:grid;
       grid-template-columns:1fr;
       gap:16px;
       margin-bottom:26px;
     }
+
+    .dashboard.is-stuck .toolbar{
+      padding:10px 12px;
+      box-shadow:0 10px 30px rgba(15,23,42,.16);
+    }
+
+    .dashboard.is-stuck #contentsLinks{display:none;}
+
+    .dashboard.is-stuck #filterButtons{
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      padding-bottom:3px;
+      scrollbar-width:thin;
+    }
+
+    .dashboard.is-stuck #filterButtons .filter-button{flex:0 0 auto;}
 
     .toolbar{
       background:var(--panel);
@@ -266,6 +294,7 @@
 
     .section{
       margin-top:30px;
+      scroll-margin-top:185px;
     }
 
     .section-header{
@@ -328,10 +357,10 @@
     }
 
     .sim-card-top{
-      display:flex;
-      justify-content:space-between;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
       gap:12px;
-      align-items:flex-start;
+      align-items:start;
     }
 
     .sim-title{
@@ -341,6 +370,67 @@
       margin:0;
       line-height:1.2;
     }
+
+    .card-top-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:7px;
+    }
+
+    .resource-type{
+      display:inline-flex;
+      align-items:center;
+      min-height:27px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      background:#f8fafc;
+      color:#334155;
+      font-size:11px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      text-transform:uppercase;
+      letter-spacing:.035em;
+    }
+
+    .resource-type.teacher-tool{background:#e0f7fa;border-color:#80deea;color:#0e6473;}
+    .resource-type.game,.resource-type.revision-game{background:#fce7f3;border-color:#f9a8d4;color:#9d174d;}
+    .resource-type.activity,.resource-type.archived-activity{background:#f1f5f9;border-color:#cbd5e1;color:#475569;}
+    .resource-type.simulation{background:#e0ecff;border-color:#bfdbfe;color:#1d4ed8;}
+
+    .favourite-button{
+      width:30px;
+      height:30px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      background:#ffffff;
+      color:#64748b;
+      font-size:18px;
+      line-height:1;
+      cursor:pointer;
+    }
+
+    .favourite-button:hover{background:#f8fafc;color:#0f172a;}
+    .favourite-button.is-favourite{background:#fef9c3;border-color:#fde047;color:#a16207;}
+
+    .release-meta{
+      min-height:16px;
+      margin:-5px 0 0;
+      overflow:hidden;
+      color:#64748b;
+      font-size:11px;
+      font-weight:800;
+      line-height:1.3;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .release-meta .release-status{color:#0f766e;}
 
     .sim-description{
       color:#475569;
@@ -393,6 +483,108 @@
       margin-top:auto;
     }
 
+    .quick-access{
+      margin:0 0 26px;
+      padding:18px;
+      background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .quick-access-heading{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:14px;
+    }
+
+    .quick-access-heading h2{font-size:22px;margin-bottom:4px;}
+    .quick-access-heading p{margin:0;color:var(--muted);font-size:13px;}
+
+    .clear-recent-button{
+      flex:0 0 auto;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:8px 10px;
+      background:#ffffff;
+      color:#334155;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .clear-recent-button:hover{background:#f1f5f9;}
+
+    .quick-access-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .quick-group h3{font-size:14px;margin-bottom:9px;color:#334155;}
+
+    .quick-list{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .quick-item{
+      display:block;
+      min-width:0;
+      padding:9px 10px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#ffffff;
+      color:#0f172a;
+      text-decoration:none;
+    }
+
+    .quick-item:hover{border-color:#93c5fd;background:#eff6ff;}
+
+    .quick-item-title{
+      display:block;
+      overflow:hidden;
+      font-size:13px;
+      font-weight:900;
+      line-height:1.25;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .quick-item-type{
+      display:block;
+      margin-top:3px;
+      color:#64748b;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .quick-empty{margin:0;color:var(--muted);font-size:13px;}
+
+    .back-to-top{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:60;
+      border:0;
+      border-radius:999px;
+      padding:11px 15px;
+      background:#0f172a;
+      color:#ffffff;
+      font-weight:900;
+      box-shadow:0 8px 24px rgba(15,23,42,.25);
+      cursor:pointer;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(8px);
+      transition:opacity .16s ease,transform .16s ease,background .16s ease;
+    }
+
+    .back-to-top:hover{background:#1e293b;}
+    .back-to-top.is-visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+
     .open-link:hover{background:var(--button-hover);}
 
     .empty-message{
@@ -428,13 +620,20 @@
       .toolbar-grid{grid-template-columns:1fr;}
       .counter{justify-self:start;}
       .cards{grid-template-columns:1fr;}
+      .quick-access-grid{grid-template-columns:1fr;}
+      .quick-list{grid-template-columns:1fr;}
+      .dashboard{top:6px;}
     }
 
     @media (max-width:560px){
       h1{font-size:34px;}
       h2{font-size:24px;}
       .contents a,.filter-button{width:100%;}
-      .sim-card-top{display:block;}
+      .sim-card-top{grid-template-columns:1fr;}
+      .card-top-actions{justify-content:flex-start;}
+      .quick-access-heading{flex-direction:column;}
+      .clear-recent-button{width:100%;}
+      .back-to-top{right:12px;bottom:12px;}
     }
   </style>
 </head>
@@ -443,6 +642,7 @@
     <div class="hero-top">
       <div class="hero-text">
         <h1>SciSims</h1>
+        <p class="page-version">Version 1.1</p>
         <p>A collection of classroom science simulations for practical inquiry, modelling, data analysis and concept development.</p>
              <p> </p>
         <p>When you enter each sim, it is recommended that you go into full-screen mode in the browser.</p>
@@ -473,18 +673,31 @@
       <div class="toolbar-grid">
         <label for="searchInput" class="sr-only">Search tools and simulations</label>
         <input id="searchInput" class="search-box" type="search" placeholder="Search tools and sims by name, topic or keyword..." autocomplete="off" />
-        <div id="simCounter" class="counter">0 items</div>
+        <div id="simCounter" class="counter" aria-live="polite">0 items</div>
       </div>
-      <div class="contents" id="filterButtons" aria-label="Filter simulations"></div>
+      <div class="contents" id="filterButtons" aria-label="Filter resources"></div>
       <nav class="contents" aria-label="SciSims contents" id="contentsLinks"></nav>
     </div>
   </section>
 
+  <section id="quickAccess" class="quick-access" aria-labelledby="quickAccessTitle" hidden>
+    <div class="quick-access-heading">
+      <div>
+        <h2 id="quickAccessTitle">Quick access</h2>
+        <p>Favourites and recently opened resources are stored only on this device.</p>
+      </div>
+      <button id="clearRecentButton" class="clear-recent-button" type="button">Clear recently opened</button>
+    </div>
+    <div id="quickAccessGrid" class="quick-access-grid"></div>
+  </section>
+
   <main id="catalogue"></main>
 
-  <div id="emptyMessage" class="empty-message">No tools or simulations matched your search. Try a broader keyword such as groups, genetics, forces, data, claims, fair test, reaction, disease or light.</div>
+  <div id="emptyMessage" class="empty-message" role="status">No tools or simulations matched your search. Try a broader keyword such as groups, genetics, forces, data, claims, fair test, reaction, disease or light.</div>
 
-  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a teacher tool, simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new item:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. The page will automatically place it in the correct section and make it searchable.</p>
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">↑ Back to top</button>
+
+  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a teacher tool, simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new item:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. Optional <code>type</code>, <code>version</code>, <code>added</code> and <code>updated</code> fields provide teacher-facing release information. The page will automatically place it in the correct section and make it searchable.</p>
 
 <script>
   'use strict';
@@ -576,12 +789,15 @@
     "title": "Random Group Maker",
     "description": "Paste a class list and quickly generate balanced random groups by group count or maximum group size. Includes reshuffling, roster saving, drag-and-drop adjustments, copying, printing and a full-screen classroom display.",
     "path": "TeacherSims/GroupMaker/",
+    "type": "Teacher Tool",
+    "version": "1.2",
+    "added": "29/07/2026",
+    "updated": "29/07/2026",
     "tags": [
       "Teacher tool",
       "Random groups",
       "Classroom organisation",
-      "Student grouping",
-      "Version 1.2"
+      "Student grouping"
     ]
   },
   {
@@ -2809,8 +3025,22 @@
   const searchInput = document.getElementById('searchInput');
   const simCounter = document.getElementById('simCounter');
   const emptyMessage = document.getElementById('emptyMessage');
+  const dashboard = document.querySelector('.dashboard');
+  const quickAccess = document.getElementById('quickAccess');
+  const quickAccessGrid = document.getElementById('quickAccessGrid');
+  const clearRecentButton = document.getElementById('clearRecentButton');
+  const backToTop = document.getElementById('backToTop');
+
+  const STORAGE_KEYS = {
+    favourites:'scisims-favourites-v1',
+    recent:'scisims-recent-v1'
+  };
 
   let activeFilter = 'all';
+  let favourites = new Set(loadStoredArray(STORAGE_KEYS.favourites));
+  let recentItems = loadStoredArray(STORAGE_KEYS.recent)
+    .filter(item => item && typeof item.path === 'string')
+    .slice(0,8);
 
   const SECTION_ORDER = new Map(SECTIONS.map((section,index)=>[section.id,index]));
 
@@ -2827,6 +3057,23 @@
     brainbreak:['Science Games','Reaction and Focus Games'],
     interestingsims:['Mathematical and Cross-topic Models']
   };
+
+  function loadStoredArray(key){
+    try{
+      const value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveStoredArray(key,value){
+    try{
+      localStorage.setItem(key,JSON.stringify(value));
+    }catch(error){
+      // The catalogue still works when browser storage is unavailable.
+    }
+  }
 
   function groupRank(sim){
     const groups = GROUP_ORDER[sim.section] || [];
@@ -2855,25 +3102,146 @@
     return SECTIONS.find(section => section.id === sectionId);
   }
 
-  function matchesSearch(sim, query){
+  function getSimByPath(path){
+    return SIMS.find(sim => sim.path === path);
+  }
+
+  function matchesSearch(sim,query){
     if(!query) return true;
-    const searchable = [sim.title, sim.description, sim.group, sim.section, ...sim.tags].join(' ');
+    const searchable = [
+      sim.title,
+      sim.description,
+      sim.group,
+      sim.section,
+      sim.type || '',
+      sim.version || '',
+      ...(sim.tags || [])
+    ].join(' ');
     return normalise(searchable).includes(query);
   }
 
   function matchesFilter(sim){
-    return activeFilter === 'all' || sim.section === activeFilter;
+    if(activeFilter === 'all') return true;
+    if(activeFilter === 'favourites') return favourites.has(sim.path);
+    return sim.section === activeFilter;
   }
 
-  function createTextElement(tagName, className, text){
+  function createTextElement(tagName,className,text){
     const element = document.createElement(tagName);
     if(className) element.className = className;
     element.textContent = text;
     return element;
   }
 
+  function getResourceType(sim){
+    if(sim.type) return sim.type;
+
+    const tagText = normalise((sim.tags || []).join(' '));
+    const titleText = normalise(sim.title);
+
+    if(sim.section === 'teachertools') return 'Teacher Tool';
+    if(sim.section === 'stage6games') return 'Revision Game';
+    if(tagText.includes('flash')) return 'Archived Activity';
+    if(sim.section === 'brainbreak') return titleText.includes('science web') ? 'Activity' : 'Game';
+    if(tagText.includes('game') || titleText.includes(' game')) return 'Game';
+    return 'Simulation';
+  }
+
+  function typeClass(type){
+    return normalise(type).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+
+  function getActionLabel(type){
+    if(type === 'Teacher Tool') return 'Open tool';
+    if(type === 'Game' || type === 'Revision Game') return 'Play game';
+    if(type === 'Activity' || type === 'Archived Activity') return 'Open activity';
+    return 'Open sim';
+  }
+
+  function parseAustralianDate(value){
+    if(!value) return null;
+    const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value);
+    if(!match) return null;
+    const date = new Date(Number(match[3]),Number(match[2]) - 1,Number(match[1]));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function daysSince(value){
+    const date = parseAustralianDate(value);
+    if(!date) return null;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return Math.floor((today - date) / 86400000);
+  }
+
+  function getReleaseMeta(sim){
+    const parts = [];
+    if(sim.version) parts.push(`Version ${sim.version}`);
+    if(sim.updated) parts.push(`Updated ${sim.updated}`);
+
+    const addedAge = daysSince(sim.added);
+    const updatedAge = daysSince(sim.updated);
+    let status = '';
+
+    if(addedAge !== null && addedAge >= 0 && addedAge <= 30){
+      status = 'NEW';
+    }else if(updatedAge !== null && updatedAge >= 0 && updatedAge <= 14){
+      status = 'UPDATED';
+    }
+
+    return {text:parts.join(' · '),status};
+  }
+
+  function createFavouriteButton(sim){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'favourite-button';
+    button.dataset.path = sim.path;
+    updateFavouriteButton(button,sim);
+
+    button.addEventListener('click',()=>{
+      if(favourites.has(sim.path)) favourites.delete(sim.path);
+      else favourites.add(sim.path);
+
+      saveStoredArray(STORAGE_KEYS.favourites,[...favourites]);
+      updateFavouriteButton(button,sim);
+      renderFilters();
+      renderQuickAccess();
+
+      if(activeFilter === 'favourites') renderCatalogue();
+      else updateAllFavouriteButtons(sim.path);
+    });
+
+    return button;
+  }
+
+  function updateFavouriteButton(button,sim){
+    const isFavourite = favourites.has(sim.path);
+    button.classList.toggle('is-favourite',isFavourite);
+    button.textContent = isFavourite ? '★' : '☆';
+    button.setAttribute('aria-pressed',String(isFavourite));
+    button.setAttribute('aria-label',`${isFavourite ? 'Remove' : 'Add'} ${sim.title} ${isFavourite ? 'from' : 'to'} favourites`);
+    button.title = isFavourite ? 'Remove from favourites' : 'Add to favourites';
+  }
+
+  function updateAllFavouriteButtons(path){
+    document.querySelectorAll(`.favourite-button[data-path="${CSS.escape(path)}"]`).forEach(button=>{
+      const sim = getSimByPath(path);
+      if(sim) updateFavouriteButton(button,sim);
+    });
+  }
+
+  function recordRecent(sim){
+    recentItems = [
+      {path:sim.path,openedAt:Date.now()},
+      ...recentItems.filter(item => item.path !== sim.path)
+    ].slice(0,8);
+    saveStoredArray(STORAGE_KEYS.recent,recentItems);
+  }
+
   function createCard(sim){
     const section = getSection(sim.section);
+    const type = getResourceType(sim);
     const card = document.createElement('article');
     card.className = 'sim-card';
 
@@ -2881,7 +3249,25 @@
     top.className = 'sim-card-top';
 
     const title = createTextElement('h3','sim-title',sim.title);
-    top.appendChild(title);
+
+    const topActions = document.createElement('div');
+    topActions.className = 'card-top-actions';
+    const typeBadge = createTextElement('span',`resource-type ${typeClass(type)}`,type);
+    topActions.append(typeBadge,createFavouriteButton(sim));
+    top.append(title,topActions);
+
+    const release = getReleaseMeta(sim);
+    let releaseMeta = null;
+    if(release.text || release.status){
+      releaseMeta = document.createElement('p');
+      releaseMeta.className = 'release-meta';
+      if(release.text) releaseMeta.append(document.createTextNode(release.text));
+      if(release.status){
+        if(release.text) releaseMeta.append(document.createTextNode(' · '));
+        const status = createTextElement('span','release-status',release.status);
+        releaseMeta.appendChild(status);
+      }
+    }
 
     const description = createTextElement('p','sim-description',sim.description);
 
@@ -2893,7 +3279,7 @@
       tagRow.appendChild(sectionTag);
     }
 
-    sim.tags.forEach(tagText => {
+    (sim.tags || []).forEach(tagText=>{
       const tag = createTextElement('span','tag',tagText);
       tagRow.appendChild(tag);
     });
@@ -2901,9 +3287,12 @@
     const link = document.createElement('a');
     link.className = 'open-link';
     link.href = sim.path;
-    link.textContent = sim.section === 'teachertools' ? 'Open tool' : 'Open sim';
+    link.textContent = getActionLabel(type);
+    link.addEventListener('click',()=>recordRecent(sim));
 
-    card.append(top,description,tagRow,link);
+    card.appendChild(top);
+    if(releaseMeta) card.appendChild(releaseMeta);
+    card.append(description,tagRow,link);
     return card;
   }
 
@@ -2917,7 +3306,7 @@
 
   function renderContents(){
     contentsLinks.innerHTML = '';
-    SECTIONS.forEach(section => {
+    SECTIONS.forEach(section=>{
       const link = document.createElement('a');
       link.href = `#${section.id}`;
       link.textContent = section.title;
@@ -2925,41 +3314,86 @@
     });
   }
 
+  function makeFilterButton(filter,label){
+    const button = document.createElement('button');
+    button.className = 'filter-button secondary';
+    button.type = 'button';
+    button.dataset.filter = filter;
+    button.textContent = label;
+    button.classList.toggle('active',activeFilter === filter);
+    return button;
+  }
+
   function renderFilters(){
     filterButtons.innerHTML = '';
+    filterButtons.appendChild(makeFilterButton('all','All resources'));
+    filterButtons.appendChild(makeFilterButton('favourites',`★ Favourites (${favourites.size})`));
 
-    const allButton = document.createElement('button');
-    allButton.className = 'filter-button secondary active';
-    allButton.type = 'button';
-    allButton.dataset.filter = 'all';
-    allButton.textContent = 'All sims';
-    filterButtons.appendChild(allButton);
+    SECTIONS.forEach(section=>{
+      filterButtons.appendChild(makeFilterButton(section.id,section.title));
+    });
+  }
 
-    SECTIONS.forEach(section => {
-      const button = document.createElement('button');
-      button.className = 'filter-button secondary';
-      button.type = 'button';
-      button.dataset.filter = section.id;
-      button.textContent = section.title;
-      filterButtons.appendChild(button);
+  function createQuickGroup(title,sims){
+    const group = document.createElement('div');
+    group.className = 'quick-group';
+    group.appendChild(createTextElement('h3','',title));
+
+    if(!sims.length){
+      group.appendChild(createTextElement('p','quick-empty',title === 'Favourites' ? 'Select a star on any resource card.' : 'Opened resources will appear here.'));
+      return group;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'quick-list';
+
+    sims.forEach(sim=>{
+      const link = document.createElement('a');
+      link.className = 'quick-item';
+      link.href = sim.path;
+      link.append(
+        createTextElement('span','quick-item-title',sim.title),
+        createTextElement('span','quick-item-type',getResourceType(sim))
+      );
+      link.addEventListener('click',()=>recordRecent(sim));
+      list.appendChild(link);
     });
 
-    filterButtons.addEventListener('click', event => {
-      const button = event.target.closest('button[data-filter]');
-      if(!button) return;
-      activeFilter = button.dataset.filter;
-      filterButtons.querySelectorAll('button').forEach(btn => btn.classList.toggle('active', btn === button));
-      renderCatalogue();
-    });
+    group.appendChild(list);
+    return group;
+  }
+
+  function renderQuickAccess(){
+    const favouriteSims = [...favourites]
+      .map(getSimByPath)
+      .filter(Boolean)
+      .sort((a,b)=>a.title.localeCompare(b.title,undefined,{numeric:true,sensitivity:'base'}))
+      .slice(0,6);
+
+    const recentSims = recentItems
+      .map(item=>getSimByPath(item.path))
+      .filter(Boolean)
+      .slice(0,6);
+
+    const shouldShow = favouriteSims.length > 0 || recentSims.length > 0;
+    quickAccess.hidden = !shouldShow;
+    if(!shouldShow) return;
+
+    quickAccessGrid.innerHTML = '';
+    quickAccessGrid.append(
+      createQuickGroup('Favourites',favouriteSims),
+      createQuickGroup('Recently opened',recentSims)
+    );
+    clearRecentButton.hidden = recentSims.length === 0;
   }
 
   function renderCatalogue(){
     const query = normalise(searchInput.value.trim());
-    const visibleSims = SIMS.filter(sim => matchesFilter(sim) && matchesSearch(sim,query)).sort(compareSims);
+    const visibleSims = SIMS.filter(sim=>matchesFilter(sim) && matchesSearch(sim,query)).sort(compareSims);
     catalogue.innerHTML = '';
 
-    SECTIONS.forEach(section => {
-      const simsForSection = visibleSims.filter(sim => sim.section === section.id);
+    SECTIONS.forEach(section=>{
+      const simsForSection = visibleSims.filter(sim=>sim.section === section.id);
       if(!simsForSection.length) return;
 
       const sectionElement = document.createElement('section');
@@ -2973,14 +3407,15 @@
       const intro = createTextElement('p','section-intro',section.intro);
       const banner = document.createElement('img');
       banner.src = section.banner;
-      banner.alt = `${section.title} simulations banner`;
+      banner.alt = `${section.title} resources banner`;
       banner.className = 'section-banner';
+      banner.loading = 'lazy';
 
       header.append(title,intro,banner);
       sectionElement.appendChild(header);
 
       const grouped = groupSims(simsForSection);
-      Object.keys(grouped).forEach(groupName => {
+      Object.keys(grouped).forEach(groupName=>{
         const subsection = document.createElement('div');
         subsection.className = 'subsection';
 
@@ -2988,7 +3423,7 @@
         const cards = document.createElement('div');
         cards.className = 'cards';
 
-        grouped[groupName].forEach(sim => cards.appendChild(createCard(sim)));
+        grouped[groupName].forEach(sim=>cards.appendChild(createCard(sim)));
         subsection.append(groupTitle,cards);
         sectionElement.appendChild(subsection);
       });
@@ -2996,15 +3431,39 @@
       catalogue.appendChild(sectionElement);
     });
 
-    simCounter.textContent = `${visibleSims.length} item${visibleSims.length === 1 ? '' : 's'}`;
+    simCounter.textContent = `${visibleSims.length} resource${visibleSims.length === 1 ? '' : 's'}`;
     emptyMessage.style.display = visibleSims.length ? 'none' : 'block';
   }
 
-  searchInput.addEventListener('input', renderCatalogue);
+  function updateScrollControls(){
+    dashboard.classList.toggle('is-stuck',window.scrollY > dashboard.offsetTop - 8);
+    backToTop.classList.toggle('is-visible',window.scrollY > 650);
+  }
+
+  filterButtons.addEventListener('click',event=>{
+    const button = event.target.closest('button[data-filter]');
+    if(!button) return;
+    activeFilter = button.dataset.filter;
+    renderFilters();
+    renderCatalogue();
+  });
+
+  searchInput.addEventListener('input',renderCatalogue);
+
+  clearRecentButton.addEventListener('click',()=>{
+    recentItems = [];
+    saveStoredArray(STORAGE_KEYS.recent,recentItems);
+    renderQuickAccess();
+  });
+
+  backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  window.addEventListener('scroll',updateScrollControls,{passive:true});
 
   renderContents();
   renderFilters();
+  renderQuickAccess();
   renderCatalogue();
+  updateScrollControls();
 </script>
 </body>
 </html>
