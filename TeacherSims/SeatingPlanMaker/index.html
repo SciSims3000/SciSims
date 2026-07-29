@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<!-- TeacherSims | SeatingPlan | Version 1.3.1 -->
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create, plan, save, print and project flexible classroom seating plans directly in the browser.">
+  <title>Seating Plan Maker | TeacherSims</title>
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <style>
+    :root{
+      color-scheme:light;
+      --bg:#eef4f8;
+      --panel:rgba(255,255,255,.97);
+      --panel-strong:#fff;
+      --text:#17324d;
+      --muted:#5d7185;
+      --border:#cbd9e6;
+      --accent:#136f8a;
+      --accent-2:#27a39d;
+      --accent-soft:#dff4f2;
+      --danger:#b42318;
+      --danger-soft:#ffebe8;
+      --success:#18794e;
+      --success-soft:#e6f6ed;
+      --warning:#8a5300;
+      --warning-soft:#fff3d6;
+      --shadow:0 16px 40px rgba(29,61,89,.12);
+      --radius:20px;
+      --plan-accent:#136f8a;
+      --highlight:#f59e0b;
+      --sticky-offset:10px;
+    }
+    body.dark{
+      color-scheme:dark;
+      --bg:#0d1823;
+      --panel:rgba(20,35,49,.97);
+      --panel-strong:#162536;
+      --text:#edf6fb;
+      --muted:#a8bdcc;
+      --border:#31495d;
+      --accent:#55bdd0;
+      --accent-2:#63d1c7;
+      --accent-soft:#173d43;
+      --danger:#ff8c84;
+      --danger-soft:#4a2425;
+      --success:#7fdbac;
+      --success-soft:#183b2d;
+      --warning:#ffd285;
+      --warning-soft:#493717;
+      --shadow:0 18px 50px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left,rgba(39,163,157,.18),transparent 30rem),
+        radial-gradient(circle at top right,rgba(19,111,138,.17),transparent 34rem),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    button,input,select,textarea{font:inherit}
+    button,select,input[type="checkbox"],input[type="radio"],input[type="color"]{cursor:pointer}
+    input,select,textarea{
+      width:100%;min-height:42px;border:1px solid var(--border);border-radius:12px;
+      background:var(--panel-strong);color:var(--text);padding:9px 11px;outline:none;
+    }
+    textarea{min-height:160px;resize:vertical;line-height:1.45}
+    input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:2px}
+    .app-shell{width:min(1540px,calc(100% - 28px));margin:0 auto;padding:16px 0 40px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:10px}
+    .nav-link,.icon-button,.button{
+      border:1px solid var(--border);border-radius:12px;background:var(--panel);color:var(--text);
+      min-height:42px;padding:9px 14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      text-decoration:none;font-weight:800;box-shadow:0 5px 18px rgba(29,61,89,.08);
+      transition:transform .14s ease,border-color .14s ease,background .14s ease;
+    }
+    .nav-link:hover,.icon-button:hover,.button:hover{transform:translateY(-1px);border-color:var(--accent)}
+    .button.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
+    .button.secondary{background:var(--panel-strong)}
+    .button.danger{color:var(--danger)}
+    .button.warning{color:var(--warning);background:var(--warning-soft)}
+    .button.small{min-height:36px;padding:7px 10px;font-size:.86rem}
+    .button.icon{width:38px;padding:0;flex:0 0 38px}
+    .button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .hero{
+      position:relative;overflow:hidden;border:1px solid var(--border);border-radius:28px;
+      padding:clamp(28px,4vw,50px);background:linear-gradient(135deg,rgba(19,111,138,.98),rgba(39,163,157,.94));
+      color:#fff;box-shadow:var(--shadow);margin-bottom:18px;
+    }
+    .hero:after{content:"";position:absolute;width:340px;height:340px;right:-110px;top:-160px;border-radius:50%;border:44px solid rgba(255,255,255,.09)}
+    .hero h1{margin:0 0 8px;font-size:clamp(2.2rem,5vw,4.5rem);line-height:.98;letter-spacing:-.045em;position:relative;z-index:1}
+    .hero>p{margin:0;max-width:820px;color:rgba(255,255,255,.92);line-height:1.5;position:relative;z-index:1}
+    .version-wrap{position:relative;width:fit-content;margin:0 0 14px;z-index:2}
+    .version-button{
+      border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(255,255,255,.16);color:#fff;
+      padding:6px 11px;font-size:.86rem;font-weight:900;letter-spacing:.03em;text-transform:uppercase;
+    }
+    .version-button:after{content:" ▾"}.version-button[aria-expanded="true"]:after{content:" ▴"}
+    .version-tooltip{position:absolute;left:0;bottom:calc(100% + 8px);width:max-content;max-width:230px;padding:7px 9px;border-radius:8px;background:#0f172a;color:#fff;font-size:.75rem;font-weight:700;opacity:0;pointer-events:none;transform:translateY(4px);transition:.14s}
+    .version-wrap:hover .version-tooltip,.version-button:focus-visible+.version-tooltip{opacity:1;transform:none}
+    .version-notes{max-width:760px;margin:0 0 14px;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:#17324d;font-size:.88rem;line-height:1.45;box-shadow:0 8px 22px rgba(15,23,42,.18);position:relative;z-index:2}
+    .version-notes strong{display:block;margin-bottom:4px;color:#0f172a}
+    .planning-banner{
+      position:sticky;top:8px;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:14px;
+      margin:0 0 14px;padding:11px 14px;border:2px solid #f59e0b;border-radius:14px;background:#fff7db;color:#7c4b00;
+      box-shadow:0 10px 28px rgba(124,75,0,.18);font-weight:850;
+    }
+    body.dark .planning-banner{background:#473713;color:#ffe4a8}
+    .workspace{display:grid;grid-template-columns:minmax(330px,460px) minmax(0,1fr);gap:18px;align-items:start}
+    .panel{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}
+    .controls{padding:20px;position:sticky;top:var(--sticky-offset);max-height:calc(100vh - var(--sticky-offset) - 10px);overflow:auto}
+    .plan-panel{padding:20px;min-height:680px}
+    .panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+    h2,h3,h4,p{margin-top:0}h2{font-size:1.35rem}h3{font-size:1.05rem}h4{font-size:.95rem}
+    .subtle,.hint{color:var(--muted);line-height:1.45}.subtle{margin:5px 0 0}.hint{font-size:.84rem;margin:6px 0 0}
+    .field-label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:850;margin-bottom:7px}
+    .count-badge{font-size:.8rem;color:var(--muted)}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid.three{grid-template-columns:repeat(3,1fr)}
+    .mini-actions,.action-row,.display-actions,.tab-actions,.timer-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .control-section{border-top:1px solid var(--border);margin-top:18px;padding-top:18px}
+    details.control-section{padding-top:0}details.control-section>summary{padding-top:18px;font-weight:900;cursor:pointer}
+    .status{margin-top:9px;padding:9px 11px;border-radius:10px;font-size:.86rem;line-height:1.4}
+    .status.success{background:var(--success-soft);color:var(--success)}.status.warning{background:var(--warning-soft);color:var(--warning)}.status.error{background:var(--danger-soft);color:var(--danger)}
+    .attendance-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:220px;overflow:auto}
+    .attendance-item{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--border);border-radius:10px;background:var(--panel-strong);font-weight:700;font-size:.88rem}
+    .attendance-item input{width:auto;min-height:auto}.attendance-item.absent{opacity:.56;text-decoration:line-through}
+    .layout-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+    .layout-option{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--panel-strong)}
+    .layout-option:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+    .layout-option input{width:auto;min-height:auto}.layout-option strong{display:block}.layout-option small{display:block;color:var(--muted);line-height:1.25}
+    .switch-row{display:flex;align-items:center;gap:9px;font-weight:750;padding:9px 0}.switch-row input{width:auto;min-height:auto}
+    .tab-strip{display:flex;gap:7px;overflow-x:auto;padding:4px 0 9px;margin-bottom:12px;scrollbar-width:thin}
+    .workspace-tab{flex:0 0 auto;display:flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);color:var(--text);padding:8px 11px;font-weight:850;cursor:pointer}
+    .workspace-tab.active{background:var(--accent);color:#fff;border-color:transparent}.workspace-tab small{opacity:.75;font-weight:700}
+    .plan-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+    .plan-title-line{display:flex;flex-wrap:wrap;align-items:center;gap:9px}.summary-chip{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.82rem;font-weight:900}
+    .display-dashboard{position:sticky;top:var(--sticky-offset);z-index:30;display:grid;grid-template-columns:minmax(280px,1fr) minmax(240px,.8fr);gap:10px;margin-bottom:12px}
+    .display-card{border:1px solid var(--border);border-radius:14px;background:var(--panel-strong);padding:11px 12px;box-shadow:0 6px 18px rgba(15,23,42,.08)}
+    .timer-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.timer-display{font-variant-numeric:tabular-nums;font-size:clamp(1.8rem,4vw,3rem);font-weight:950;line-height:1;color:var(--plan-accent)}
+    .timer-display.finished{color:var(--danger);animation:pulse .8s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.04)}}
+    .timer-progress{height:8px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:8px}.timer-progress>span{display:block;height:100%;width:100%;background:var(--plan-accent);transition:width .3s linear}
+    .picker-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,.85fr);align-items:start;gap:12px}.picker-name{font-size:clamp(1.1rem,2.7vw,1.65rem);font-weight:950;color:var(--plan-accent);white-space:normal;overflow-wrap:anywhere;line-height:1.15}.picker-name.cycling{animation:pickerNamePulse .32s ease-in-out infinite alternate}@keyframes pickerNamePulse{to{transform:scale(1.025);opacity:.78}}
+    .picker-controls{min-width:0}.picker-speed-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.picker-reset-row{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap;margin-top:7px}.picker-remove-row{margin-top:8px;padding:8px 9px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--panel-strong) 92%,var(--plan-accent));font-size:.82rem}.picker-tally{grid-column:1/-1;border-top:1px solid var(--border);padding-top:10px}.picker-tally-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.picker-tally-heading strong{font-size:.84rem}.picker-tally-summary{color:var(--muted);font-size:.75rem;font-weight:800}.picker-tally-list{display:flex;flex-wrap:wrap;gap:6px;max-height:105px;overflow:auto}.picker-tally-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid color-mix(in srgb,var(--plan-accent) 30%,var(--border));border-radius:999px;background:color-mix(in srgb,var(--plan-accent) 9%,var(--panel-strong));font-size:.75rem;font-weight:850}.picker-tally-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--plan-accent);color:#fff;font-size:.67rem}.picker-tally-empty{color:var(--muted);font-size:.78rem}
+    .room-shell{position:relative;border:2px solid color-mix(in srgb,var(--plan-accent) 45%,var(--border));border-radius:18px;background:color-mix(in srgb,var(--panel-strong) 94%,var(--plan-accent));padding:14px;overflow:hidden}
+    .front-marker{text-align:center;border-radius:10px;padding:8px;background:color-mix(in srgb,var(--plan-accent) 16%,var(--panel-strong));color:var(--plan-accent);font-weight:900;border:1px solid color-mix(in srgb,var(--plan-accent) 35%,var(--border));margin-bottom:10px}
+    .front-marker.bottom{margin:10px 0 0}
+    .seat-grid{display:grid;gap:10px;min-height:440px;align-content:start}
+    .seat-grid.exam-layout{gap:18px}.seat-grid.u-layout{display:block;position:relative;min-height:560px}
+    .seat-grid.u-layout .seat{position:absolute;width:min(150px,18%);transform:translate(-50%,-50%)}
+    .quick-table-grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+    .quick-table{position:relative;display:grid;gap:8px;padding:34px 10px 10px;border:2px solid color-mix(in srgb,var(--plan-accent) 34%,var(--border));border-radius:15px;background:color-mix(in srgb,var(--plan-accent) 7%,var(--panel-strong))}
+    .quick-table.pair{grid-template-columns:repeat(2,1fr)}.quick-table.pod-4{grid-template-columns:repeat(2,1fr)}.quick-table.pod-6{grid-template-columns:repeat(3,1fr)}.quick-table.lab-bench{grid-template-columns:repeat(4,1fr)}
+    .quick-table-label{position:absolute;top:8px;left:10px;color:var(--plan-accent);font-size:.76rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .seat{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"number lock" "name name" "role role" "state state";align-content:center;align-items:center;gap:4px 7px;min-height:78px;padding:9px 10px;border:1px solid var(--border);border-radius:12px;background:var(--panel-strong);color:var(--text);cursor:pointer;user-select:none}
+    .seat:hover{border-color:var(--plan-accent);background:color-mix(in srgb,var(--plan-accent) 7%,var(--panel-strong))}.seat.empty{opacity:.75}.seat.locked{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--warning) 48%,transparent)}.seat.selected{outline:3px solid var(--plan-accent)}.seat.picked{outline:4px solid var(--highlight);box-shadow:0 0 0 6px color-mix(in srgb,var(--highlight) 22%,transparent);animation:pickerPulse .65s ease-in-out 4 alternate}@keyframes pickerPulse{to{transform:scale(1.025)}}
+    .seat-number{grid-area:number;font-size:.67rem;color:var(--muted);font-weight:850}.student-name{grid-area:name;font-size:.96rem;font-weight:950;line-height:1.15;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}.student-role{grid-area:role;color:var(--muted);font-size:.72rem;font-weight:750;line-height:1.2;white-space:normal;overflow-wrap:anywhere}.lock-button{grid-area:lock;width:30px;height:30px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);color:var(--text);padding:0}.seat.locked .lock-button{border-color:color-mix(in srgb,var(--warning) 65%,var(--border));background:var(--warning-soft);color:var(--warning)}.seat-state{grid-area:state;display:none;width:fit-content;margin-top:3px;padding:3px 7px;border-radius:999px;font-size:.61rem;font-weight:950;letter-spacing:.055em;text-transform:uppercase}.seat-state.is-locked{background:var(--warning-soft);color:var(--warning);border:1px solid color-mix(in srgb,var(--warning) 36%,var(--border))}.seat-state.is-unlocked{background:var(--success-soft);color:var(--success);border:1px solid color-mix(in srgb,var(--success) 32%,var(--border))}
+    body.planning-active .seat-state{display:inline-flex}body.planning-active .seat.locked{border:3px solid var(--warning);background:color-mix(in srgb,var(--warning-soft) 68%,var(--panel-strong));box-shadow:0 0 0 4px color-mix(in srgb,var(--warning) 18%,transparent)}body.planning-active .seat:not(.locked){border:2px solid color-mix(in srgb,var(--success) 58%,var(--border))}body.student-focus .seat-state{display:none!important}
+    .custom-room-scroll{overflow:auto;border:1px solid var(--border);border-radius:14px;background:var(--bg)}
+    .custom-room-canvas{position:relative;width:980px;height:650px;min-width:980px;min-height:650px;background-image:linear-gradient(to right,color-mix(in srgb,var(--border) 48%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--border) 48%,transparent) 1px,transparent 1px);background-size:40px 40px;overflow:hidden}
+    .custom-room-canvas.no-grid{background-image:none}.custom-move-tip{position:absolute;left:10px;top:10px;z-index:12;max-width:360px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--panel-strong) 92%,transparent);color:var(--muted);font-size:.76rem;font-weight:800;line-height:1.35;box-shadow:0 5px 15px rgba(29,61,89,.1);pointer-events:none}body.student-focus .custom-move-tip{display:none}
+    .zone{position:absolute;z-index:1;border:3px dashed color-mix(in srgb,var(--zone-color) 72%,#fff);border-radius:18px;background:color-mix(in srgb,var(--zone-color) 14%,transparent);padding:10px;min-width:130px;min-height:100px;transform:translate(-50%,-50%)}
+    .zone-label{display:inline-flex;padding:5px 8px;border-radius:999px;background:var(--zone-color);color:#fff;font-size:.72rem;font-weight:900;cursor:grab;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.zone-role-list{margin-top:6px;font-size:.7rem;color:var(--text);line-height:1.35}
+    .room-object{position:absolute;z-index:20;transform:translate(-50%,-50%);display:grid;place-items:center;border:2px solid color-mix(in srgb,var(--object-color) 70%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--object-color) 18%,var(--panel-strong));color:var(--text);font-size:.76rem;font-weight:900;text-align:center;padding:7px;cursor:grab;user-select:none;touch-action:none;isolation:isolate}.room-object.locked{cursor:not-allowed}.room-object:hover,.room-object:focus-within,.room-object.is-front{z-index:420}.room-object-actions{position:absolute;right:-8px;top:-10px;z-index:440;display:flex;gap:3px;pointer-events:auto}.mini-round{position:relative;z-index:1;width:25px;height:25px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);padding:0;font-size:.72rem;box-shadow:0 4px 12px rgba(15,23,42,.18)}
+    .custom-table{position:absolute;z-index:30;transform:translate(-50%,-50%);width:320px;height:210px;isolation:isolate}.custom-table:hover,.custom-table:focus-within,.custom-table.is-front{z-index:400}.custom-table.vertical{width:210px;height:320px}.custom-table.diagonal{width:300px;height:300px}
+    .custom-table-surface{position:absolute;z-index:1;inset:42px 55px;border:3px solid color-mix(in srgb,var(--table-color) 76%,var(--border));border-radius:18px;background:color-mix(in srgb,var(--table-color) 22%,var(--panel-strong));display:grid;place-items:center;color:var(--text);cursor:grab;touch-action:none}.custom-table.vertical .custom-table-surface{inset:55px 42px}.custom-table.diagonal .custom-table-surface{inset:auto;left:50%;top:50%;width:210px;height:126px;transform:translate(-50%,-50%) rotate(var(--table-angle,45deg))}.custom-table-surface:active{cursor:grabbing}
+    .custom-table-handle{max-width:120px;padding:6px 8px;border-radius:999px;background:var(--table-color);color:#fff;font-size:.72rem;font-weight:900;text-align:center;cursor:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+    .custom-table-actions{position:absolute;right:5px;top:5px;z-index:460;display:flex;gap:4px;pointer-events:auto}.table-action{position:relative;z-index:1;width:29px;height:29px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);color:var(--text);padding:0;box-shadow:0 4px 12px rgba(15,23,42,.18)}.table-action.danger{color:var(--danger)}
+    .custom-seat{position:absolute;z-index:8;width:136px;min-height:78px;transform:translate(-50%,-50%);font-size:.86rem}.custom-seat .seat-number{font-size:.62rem}.custom-seat .student-name{font-size:1rem}.custom-seat .lock-button{width:28px;height:28px;font-size:.74rem}
+    .unseated{margin-top:13px;padding:12px;border:1px dashed var(--border);border-radius:14px;background:color-mix(in srgb,var(--panel-strong) 90%,var(--plan-accent))}.student-pool{display:flex;flex-wrap:wrap;gap:7px;min-height:39px}.student-chip{border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);color:var(--text);padding:7px 10px;font-weight:800}.student-chip.selected{background:var(--plan-accent);color:#fff}.empty-pool{margin:0;color:var(--muted)}
+    .rules-list,.zone-list,.object-list{display:grid;gap:7px;margin-top:9px}.rule-row,.zone-editor,.object-editor{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid var(--border);border-radius:10px;background:var(--panel-strong);font-size:.84rem}.rule-row.together{border-left:5px solid var(--success)}.rule-row.apart{border-left:5px solid var(--danger)}
+    .colour-row{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:9px;align-items:end}.colour-input{padding:2px;min-height:42px}
+    .role-chip-list{display:flex;flex-wrap:wrap;gap:6px}.role-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);font-size:.76rem;font-weight:800}.role-chip button{border:0;background:transparent;color:var(--danger);padding:0}
+    .empty-state{min-height:620px;display:grid;place-items:center;text-align:center;color:var(--muted);border:2px dashed var(--border);border-radius:18px}.empty-icon{font-size:3rem;margin-bottom:12px}
+
+    .save-state{display:inline-flex;align-items:center;width:fit-content;margin-top:8px;padding:6px 9px;border:1px solid var(--border);border-radius:999px;background:var(--panel-strong);font-size:.78rem;font-weight:900;color:var(--muted)}
+    .save-state.saved{background:var(--success-soft);color:var(--success);border-color:color-mix(in srgb,var(--success) 30%,var(--border))}
+    .save-state.dirty{background:var(--warning-soft);color:var(--warning);border-color:color-mix(in srgb,var(--warning) 35%,var(--border))}
+    .save-state.recovered{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,var(--border))}
+    .roles-status{display:block;margin-top:7px;font-size:.8rem;font-weight:850;color:var(--muted)}
+    .roles-status.warning{color:var(--warning)}
+    .table-zone-name{display:block;margin-top:2px;font-size:.67rem;font-weight:800;opacity:.78}
+    .editor-dialog{width:min(520px,calc(100% - 24px));border:1px solid var(--border);border-radius:18px;background:var(--panel-strong);color:var(--text);padding:0;box-shadow:0 24px 70px rgba(15,23,42,.35)}
+    .editor-dialog::backdrop{background:rgba(15,23,42,.48)}
+    .editor-dialog-inner{padding:20px}.editor-dialog-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.dialog-close{border:0;background:transparent;color:var(--muted);font-size:1.5rem;cursor:pointer}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+    body:not(.planning-active) .custom-table-actions,body:not(.planning-active) .room-object-actions{display:none!important}
+    body:not(.planning-active) .zone-label{cursor:default}
+
+    .footer-note{text-align:center;color:var(--muted);margin-top:18px;font-size:.84rem}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    body.student-focus{overflow:auto;background:var(--bg)}
+    body.student-focus .app-shell{width:100%;max-width:none;padding:10px}
+    body.student-focus .topbar,body.student-focus .hero,body.student-focus .controls,body.student-focus .footer-note,body.student-focus .planning-banner,body.student-focus .unseated,body.student-focus .plan-toolbar .display-actions .edit-only,body.student-focus .tab-actions{display:none!important}
+    body.student-focus .workspace{display:block}.student-focus .plan-panel{min-height:calc(100vh - 20px);border-radius:16px;padding:14px}.student-focus .display-dashboard{top:4px}.student-focus .room-shell{min-height:calc(100vh - 150px)}.student-focus .seat{font-size:clamp(.95rem,1.25vw,1.15rem);min-height:72px}.student-focus .custom-room-scroll{overflow:hidden}.student-focus .custom-room-canvas{min-width:980px;min-height:650px;transform:scale(var(--room-scale,1));transform-origin:top left}.student-focus .custom-table-actions,.student-focus .room-object-actions,.student-focus .lock-button{display:none!important}.student-focus .custom-table-handle,.student-focus .zone-label,.student-focus .room-object{cursor:default}
+    @media(max-width:1050px){.workspace{grid-template-columns:1fr}.controls{position:static;max-height:none}.display-dashboard{grid-template-columns:1fr}.form-grid.three{grid-template-columns:1fr 1fr}.attendance-list{grid-template-columns:1fr 1fr}}
+    @media(max-width:650px){.app-shell{width:calc(100% - 14px)}.topbar{align-items:stretch;flex-direction:column}.nav-links{display:grid;grid-template-columns:1fr 1fr}.nav-link{font-size:.82rem}.form-grid,.form-grid.three,.layout-mode-grid{grid-template-columns:1fr}.attendance-list{grid-template-columns:1fr}.plan-toolbar{flex-direction:column}.display-actions{width:100%}.display-actions .button{flex:1}.timer-card{align-items:flex-start;flex-direction:column}.picker-card{grid-template-columns:1fr}.picker-speed-actions{grid-template-columns:1fr}.custom-room-canvas{min-width:880px}.seat-grid.u-layout .seat{width:23%}}
+    @media print{body{background:#fff;color:#000}.topbar,.hero,.controls,.display-actions,.footer-note,.planning-banner,.unseated,.display-dashboard{display:none!important}.app-shell{width:100%;padding:0}.workspace{display:block}.plan-panel{border:0;box-shadow:none;padding:0}.room-shell{border-color:#444;background:#fff}.seat,.quick-table,.custom-table-surface{background:#fff!important;color:#000;border-color:#777}.custom-room-scroll{border:0;overflow:visible}.custom-room-canvas{min-width:0;min-height:180mm;background-image:none}.custom-table-actions,.room-object-actions,.lock-button{display:none!important}.zone{background:transparent!important}.front-marker{color:#000;border-color:#777;background:#eee}}
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <nav class="topbar" aria-label="Page navigation">
+      <div class="nav-links">
+        <a class="nav-link" href="../../index.html">← Back to main SciSims page</a>
+        <a class="nav-link" href="../../HSCindex.html">Go to HSC index →</a>
+      </div>
+      <button class="icon-button" id="themeButton" type="button" aria-label="Switch to dark mode">🌙 <span>Dark mode</span></button>
+    </nav>
+
+    <header class="hero">
+      <h1>Seating Plan Maker</h1>
+      <div class="version-wrap">
+        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.3.1</button>
+        <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
+      </div>
+      <div id="versionNotes" class="version-notes" hidden>
+        <strong>Latest changes</strong>
+        Added optional picker sounds: cycling clicks follow the changing names and slow with the animation, followed by a distinct final-selection chime. The sound can be muted independently of the activity timer.
+      </div>
+      <p>Plan, save and project flexible classroom seating arrangements. Classes, plans, room tabs and planning information remain on this device unless you export a JSON backup.</p>
+    </header>
+
+    <div id="planningBanner" class="planning-banner" hidden>
+      <span>⚠ Planning mode is active — teacher-only constraints, notes and editing controls are visible.</span>
+      <button id="exitPlanningButton" class="button small warning" type="button">Exit planning mode</button>
+    </div>
+
+    <section class="workspace">
+      <aside class="panel controls" aria-labelledby="setupHeading">
+        <div class="panel-heading"><div><h2 id="setupHeading">Class and plan setup</h2><p class="subtle">Saved locally. Nothing is uploaded.</p></div></div>
+
+        <label class="field-label" for="savedClassSelect"><span>Saved class</span></label>
+        <select id="savedClassSelect"><option value="">New class list</option></select>
+        <div class="form-grid three" style="margin-top:10px">
+          <label><span class="field-label">Year</span><select id="yearSelect"><option>Year 7</option><option>Year 8</option><option>Year 9</option><option>Year 10</option><option>Year 11</option><option>Year 12</option><option>Other</option></select></label>
+          <label><span class="field-label">Course</span><select id="courseSelect"><option>Science</option><option>Biology</option><option>Chemistry</option><option>Earth and Environmental Science</option><option>Investigating Science</option><option>Physics</option><option>Science Extension</option><option>Other</option></select></label>
+          <label><span class="field-label">Class code</span><input id="classCodeInput" type="text" placeholder="9SCI2" maxlength="24"></label>
+        </div>
+        <label id="customCourseWrap" hidden style="display:block;margin-top:10px"><span class="field-label">Custom course</span><input id="customCourseInput" type="text" placeholder="Course name" maxlength="60"></label>
+        <label class="field-label" for="namesInput" style="margin-top:13px"><span>Student names</span><span id="studentCount" class="count-badge">0 students</span></label>
+        <textarea id="namesInput" spellcheck="false" placeholder="Alex Morgan&#10;Bailey Chen&#10;Charlie Singh&#10;Dakota Williams"></textarea>
+        <p class="hint">One name per line. Commas, semicolons and copied spreadsheet columns also work.</p>
+        <div class="mini-actions" style="margin-top:10px"><button class="button primary" id="saveClassButton" type="button">Save class</button><button class="button secondary" id="newClassButton" type="button">New class</button><button class="button danger" id="deleteClassButton" type="button" disabled>Delete</button></div>
+        <div id="classStatus" aria-live="polite"></div>
+
+        <details class="control-section" open>
+          <summary>Attendance</summary>
+          <p class="hint" style="margin-top:10px"><strong>This is not an official record.</strong> Its purpose is for randomly selecting students.</p>
+          <div class="field-label" style="margin-top:10px"><span>Present students</span><button class="button small secondary" id="allPresentButton" type="button">Mark all present</button></div>
+          <div id="attendanceList" class="attendance-list"></div>
+        </details>
+
+        <div class="control-section">
+          <label class="field-label" for="savedPlanSelect"><span>Saved plan workspace</span></label>
+          <select id="savedPlanSelect"><option value="">New plan workspace</option></select>
+          <label style="display:block;margin-top:9px"><span class="field-label">Workspace name</span><input id="planNameInput" type="text" placeholder="Term 3 classroom plans" maxlength="60"></label><div id="saveStateBadge" class="save-state">Unsaved workspace</div>
+          <div class="mini-actions" style="margin-top:10px"><button class="button primary" id="savePlanButton" type="button">Save workspace</button><button class="button secondary" id="newPlanButton" type="button">New workspace</button><button class="button secondary" id="duplicatePlanButton" type="button">Duplicate</button><button class="button danger" id="deletePlanButton" type="button" disabled>Delete</button></div>
+          <div class="mini-actions" style="margin-top:8px"><button class="button small secondary" id="exportButton" type="button">Export JSON</button><button class="button small secondary" id="importButton" type="button">Import JSON</button><input id="importInput" class="sr-only" type="file" accept="application/json,.json"></div>
+          <div id="planStatus" aria-live="polite"></div>
+        </div>
+
+        <details class="control-section" open>
+          <summary>Room and colour</summary>
+          <div class="layout-mode-grid" style="margin-top:10px">
+            <label class="layout-option"><input type="radio" name="layoutMode" value="quick" checked><span><strong>Quick layout</strong><small>Ready-made rows, pairs, pods, U-shape, exam or lab.</small></span></label>
+            <label class="layout-option"><input type="radio" name="layoutMode" value="custom"><span><strong>Custom room</strong><small>Movable and rotatable tables, learning zones and room objects.</small></span></label>
+          </div>
+          <div id="quickLayoutControls" style="margin-top:10px">
+            <label><span class="field-label">Quick layout</span><select id="quickLayoutSelect"><option value="traditional">Traditional rows</option><option value="pairs">Pairs</option><option value="pods4">Groups of four</option><option value="pods6">Groups of six</option><option value="ushape">U-shape</option><option value="exam">Exam spacing</option><option value="lab">Lab benches</option></select></label>
+            <div class="form-grid" style="margin-top:9px"><label><span class="field-label">Rows</span><select id="rowsSelect"></select></label><label><span class="field-label">Columns</span><select id="columnsSelect"></select></label></div>
+          </div>
+          <div id="customLayoutControls" hidden style="margin-top:10px">
+            <p class="hint">Drag tables from their coloured centre surface and drag room objects directly. In Planning mode, use the rotate button or table editor to angle tables in 45° steps for open-plan arrangements.</p>
+            <div class="form-grid"><label><span class="field-label">New table size</span><select id="tableCapacitySelect"><option value="2">2 seats</option><option value="4" selected>4 seats</option><option value="6">6 seats</option></select></label><label class="switch-row"><input id="snapTablesInput" type="checkbox" checked><span>Snap items to grid</span></label></div>
+            <div class="mini-actions"><button class="button small primary" id="addTableButton" type="button">＋ Add table</button><button class="button small secondary" id="arrangeTablesButton" type="button">Arrange tables</button><button class="button small danger" id="clearTablesButton" type="button">Clear tables</button></div>
+          </div>
+          <label style="display:block;margin-top:9px"><span class="field-label">Front of room</span><select id="frontSelect"><option value="top">Top</option><option value="bottom">Bottom</option></select></label>
+          <div class="colour-row" style="margin-top:9px"><label><span class="field-label">Plan accent colour</span><select id="accentPreset"><option value="#136f8a">Teal</option><option value="#2563eb">Blue</option><option value="#16a34a">Green</option><option value="#7c3aed">Purple</option><option value="#ea580c">Orange</option><option value="#dc2626">Red</option><option value="#334155">Slate</option><option value="custom">Custom</option></select></label><input id="accentColourInput" class="colour-input" type="color" value="#136f8a" aria-label="Custom plan accent colour"></div>
+          <div class="colour-row" style="margin-top:9px"><label><span class="field-label">Picker highlight colour</span><span class="hint">Used when a student is selected randomly.</span></label><input id="highlightColourInput" class="colour-input" type="color" value="#f59e0b" aria-label="Picker highlight colour"></div>
+        </details>
+
+        <details id="planningDetails" class="control-section">
+          <summary>Planning mode and seating rules</summary>
+          <label class="switch-row" style="margin-top:10px"><input id="planningModeInput" type="checkbox"><span>Enable planning mode</span></label>
+          <p class="hint">Planning notes and rules are teacher-only and hidden from the full-screen student display. Notes are stored locally but are not encrypted.</p>
+          <label style="display:block;margin-top:9px"><span class="field-label">Planning notes</span><textarea id="planningNotesInput" style="min-height:90px" placeholder="Support considerations, room limitations, behaviour notes or lesson-specific reminders..."></textarea></label>
+          <div class="form-grid" style="margin-top:9px"><label><span class="field-label">Student A</span><select id="ruleStudentA"></select></label><label><span class="field-label">Student B</span><select id="ruleStudentB"></select></label></div>
+          <div class="mini-actions"><button class="button small primary" id="addTogetherButton" type="button">Keep together</button><button class="button small danger" id="addApartButton" type="button">Keep apart</button></div>
+          <div id="rulesList" class="rules-list"></div>
+          <label class="switch-row"><input id="avoidHistoryInput" type="checkbox"><span>Minimise repeated neighbours/table partners</span></label>
+          <label id="historyDepthWrap" hidden><span class="field-label">Use last</span><select id="historyDepthSelect"><option value="3">3 arrangements</option><option value="5">5 arrangements</option><option value="10">10 arrangements</option></select></label>
+          <button class="button small secondary" id="clearHistoryButton" type="button" style="margin-top:8px">Clear seating history</button>
+        </details>
+
+        <details id="zonesDetails" class="control-section">
+          <summary>Learning zones and roles</summary>
+          <p class="hint">Custom-room tables can be assigned to coloured learning zones. Roles are distributed among students seated in each zone.</p>
+          <div class="form-grid" style="margin-top:10px"><label><span class="field-label">Zone name</span><input id="zoneNameInput" type="text" placeholder="Investigation station" maxlength="36"></label><label><span class="field-label">Zone colour</span><input id="zoneColourInput" class="colour-input" type="color" value="#7c3aed"></label></div>
+          <div class="mini-actions"><button class="button small primary" id="addZoneButton" type="button">＋ Add zone</button><button class="button small secondary" id="assignRolesButton" type="button">Assign zone roles</button><button class="button small secondary" id="clearRolesButton" type="button">Clear roles</button></div><span id="rolesStatus" class="roles-status">No roles assigned.</span>
+          <div id="zoneList" class="zone-list"></div>
+          <label style="display:block;margin-top:10px"><span class="field-label">Add a role</span><div class="form-grid"><input id="newRoleInput" type="text" placeholder="e.g. Equipment manager" maxlength="32"><button class="button small secondary" id="addRoleButton" type="button">Add role</button></div></label>
+          <div id="roleChipList" class="role-chip-list" style="margin-top:8px"></div>
+        </details>
+
+        <details id="objectsDetails" class="control-section">
+          <summary>Room objects</summary>
+          <div class="form-grid" style="margin-top:10px"><label><span class="field-label">Object</span><select id="objectTypeSelect"><option value="board">Whiteboard</option><option value="teacher">Teacher desk</option><option value="door">Door</option><option value="window">Window</option><option value="sink">Sink</option><option value="equipment">Equipment station</option><option value="storage">Storage</option><option value="screen">Projector screen</option></select></label><label><span class="field-label">Colour</span><input id="objectColourInput" class="colour-input" type="color" value="#64748b"></label></div>
+          <button class="button small primary" id="addObjectButton" type="button" style="margin-top:8px">＋ Add room object</button>
+          <div id="objectList" class="object-list"></div>
+        </details>
+
+        <details class="control-section" open>
+          <summary>Seating actions</summary>
+          <div class="action-row" style="margin-top:10px"><button class="button secondary" id="alphabetiseButton" type="button">A–Z order</button><button class="button primary" id="randomiseButton" type="button">🎲 Randomise unlocked</button><button class="button secondary" id="randomiseAllButton" type="button">Randomise everyone</button><button class="button secondary" id="clearSeatsButton" type="button">Clear unlocked</button><button class="button secondary" id="unlockAllButton" type="button">Unlock all</button></div>
+          <div class="mini-actions" style="margin-top:8px"><button class="button small secondary" id="undoButton" type="button" disabled>↶ Undo</button><button class="button small secondary" id="redoButton" type="button" disabled>↷ Redo</button><button class="button small secondary" id="exampleButton" type="button">Use example</button></div>
+        </details>
+      </aside>
+
+      <section class="panel plan-panel" aria-labelledby="planHeading">
+        <div id="planContent" hidden>
+          <div class="plan-toolbar">
+            <div><div class="plan-title-line"><h2 id="planHeading">Seating plan</h2><span id="planSummary" class="summary-chip"></span></div><p id="planSubtitle" class="subtle"></p></div>
+            <div class="display-actions"><button class="button secondary edit-only" id="printButton" type="button">Print</button><button class="button secondary" id="focusButton" type="button" aria-pressed="false">⛶ Student display</button></div>
+          </div>
+
+          <div class="tab-strip" id="tabStrip" aria-label="Room and setting tabs"></div>
+          <div class="tab-actions"><button class="button small secondary" id="addTabButton" type="button">＋ New tab</button><button class="button small secondary" id="duplicateTabButton" type="button">Duplicate tab</button><button class="button small secondary" id="renameTabButton" type="button">Rename tab</button><button class="button small danger" id="deleteTabButton" type="button">Delete tab</button><span id="tabLimitText" class="hint">Up to 5 tabs</span></div>
+
+          <div class="display-dashboard">
+            <section class="display-card timer-card" aria-labelledby="timerHeading">
+              <div style="min-width:150px"><h3 id="timerHeading">Activity timer</h3><div id="timerDisplay" class="timer-display">10:00</div><div class="timer-progress"><span id="timerProgressBar"></span></div></div>
+              <div style="flex:1"><div class="form-grid"><label><span class="field-label">Mode</span><select id="timerModeSelect"><option value="down">Countdown</option><option value="up">Count up</option></select></label><label><span class="field-label">Minutes</span><input id="timerMinutesInput" type="number" min="0" max="180" value="10"></label></div><div class="timer-actions" style="margin-top:7px"><button class="button small primary" id="timerStartButton" type="button">Start</button><button class="button small secondary" id="timerResetButton" type="button">Reset</button><button class="button small secondary" id="timerAddButton" type="button">+1 min</button><button class="button small secondary" id="timerSoundButton" type="button" aria-pressed="true">🔔 Sound</button></div></div>
+            </section>
+            <section class="display-card picker-card" aria-labelledby="pickerHeading">
+              <div style="min-width:0"><h3 id="pickerHeading">Random student picker</h3><div id="pickerName" class="picker-name" aria-live="polite">Ready</div><p id="pickerHistoryText" class="hint">No student selected yet.</p></div>
+              <div class="picker-controls">
+                <label><span class="field-label">Picker pool</span><select id="pickerPoolSelect"><option value="seated">Seated students only</option><option value="present">All present students</option></select></label>
+                <label class="switch-row picker-remove-row"><input id="pickerRemoveInput" type="checkbox" checked> Remove selected students until reset</label>
+                <div class="picker-speed-actions"><button class="button small primary" id="pickFastButton" type="button">Fast pick · 5 s</button><button class="button small secondary" id="pickSlowButton" type="button">Slow pick · 10 s</button></div>
+                <div class="picker-reset-row"><button class="button small secondary" id="pickerSoundButton" type="button" aria-pressed="true">🔊 Picker sound</button><button class="button small secondary" id="resetPickerButton" type="button">Reset picker</button></div>
+              </div>
+              <div class="picker-tally" aria-labelledby="pickerTallyHeading">
+                <div class="picker-tally-heading"><strong id="pickerTallyHeading">Selection tally</strong><span id="pickerTallySummary" class="picker-tally-summary">0 selections</span></div>
+                <div id="pickerTallyList" class="picker-tally-list"><span class="picker-tally-empty">No one has been picked yet.</span></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="room-shell">
+            <div id="frontTop" class="front-marker top">Front of room / board</div>
+            <div id="seatGrid" class="seat-grid" aria-live="polite"></div>
+            <div id="customRoomScroll" class="custom-room-scroll" hidden><div id="customRoomCanvas" class="custom-room-canvas" aria-live="polite"></div></div>
+            <div id="frontBottom" class="front-marker bottom" hidden>Front of room / board</div>
+          </div>
+
+          <section id="unseatedArea" class="unseated" aria-labelledby="unseatedHeading">
+            <h3 id="unseatedHeading">Unseated students</h3><div id="studentPool" class="student-pool"></div>
+            <p class="hint">Click a student and then a seat, or drag names between seats. Click this box to return a selected student to the pool.</p>
+          </section>
+        </div>
+        <div id="emptyState" class="empty-state"><div><div class="empty-icon" aria-hidden="true">🪑</div><p>Add or load a class list to create a seating plan.</p></div></div>
+      </section>
+    </section>
+    <p class="footer-note">Classes, workspaces, up to five room tabs, attendance, planning rules, seating history, timers, colours, zones and room objects are saved locally. Export JSON to move or restore them.</p>
+  </main>
+  <dialog id="tableEditorDialog" class="editor-dialog">
+    <div class="editor-dialog-inner">
+      <div class="editor-dialog-header"><h2>Edit table</h2><button id="tableEditorClose" class="dialog-close" type="button" aria-label="Close table editor">×</button></div>
+      <div class="form-grid">
+        <label><span class="field-label">Table name</span><input id="tableEditorName" type="text" maxlength="36"></label>
+        <label><span class="field-label">Table colour</span><input id="tableEditorColour" class="colour-input" type="color"></label>
+        <label><span class="field-label">Seat capacity</span><select id="tableEditorCapacity"><option value="2">2 seats</option><option value="4">4 seats</option><option value="6">6 seats</option></select></label>
+        <label><span class="field-label">Rotation</span><select id="tableEditorRotation"><option value="0">0° — horizontal</option><option value="45">45° — diagonal</option><option value="90">90° — vertical</option><option value="135">135° — diagonal</option><option value="180">180° — horizontal</option><option value="225">225° — diagonal</option><option value="270">270° — vertical</option><option value="315">315° — diagonal</option></select></label>
+      </div>
+      <label style="display:block;margin-top:10px"><span class="field-label">Learning zone</span><select id="tableEditorZone"><option value="">No learning zone</option></select></label>
+      <p class="hint">Moving a table into a learning zone will also assign it automatically.</p>
+      <div class="dialog-actions"><button id="tableEditorCancel" class="button secondary" type="button">Cancel</button><button id="tableEditorSave" class="button primary" type="button">Save table</button></div>
+    </div>
+  </dialog>
+
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE = {
+    classes:'teachersims-seating-classes-v2',
+    plans:'teachersims-seating-plans-v2',
+    draft:'teachersims-seating-draft-v2',
+    theme:'teachersims-seating-theme'
+  };
+  const DEFAULT_ROLES = ['Coordinator','Recorder','Equipment manager','Reporter','Timekeeper','Safety officer'];
+  const EXAMPLE_NAMES = ['Aarav','Amelia','Archer','Ava','Charlotte','Ethan','Grace','Harper','Henry','Isla','Jack','Lachlan','Leo','Mia','Noah','Olivia','Ruby','Sienna','Sofia','Thomas','William','Zoe'];
+  const $ = id => document.getElementById(id);
+  const refs = {};
+  [
+    'savedClassSelect','yearSelect','courseSelect','classCodeInput','customCourseWrap','customCourseInput','namesInput','studentCount','saveClassButton','newClassButton','deleteClassButton','classStatus','attendanceList','allPresentButton',
+    'savedPlanSelect','planNameInput','saveStateBadge','savePlanButton','newPlanButton','duplicatePlanButton','deletePlanButton','exportButton','importButton','importInput','planStatus',
+    'quickLayoutControls','customLayoutControls','quickLayoutSelect','rowsSelect','columnsSelect','tableCapacitySelect','snapTablesInput','addTableButton','arrangeTablesButton','clearTablesButton','frontSelect','accentPreset','accentColourInput','highlightColourInput',
+    'planningModeInput','planningNotesInput','ruleStudentA','ruleStudentB','addTogetherButton','addApartButton','rulesList','avoidHistoryInput','historyDepthWrap','historyDepthSelect','clearHistoryButton','planningBanner','exitPlanningButton',
+    'zoneNameInput','zoneColourInput','addZoneButton','assignRolesButton','clearRolesButton','rolesStatus','zoneList','newRoleInput','addRoleButton','roleChipList','objectTypeSelect','objectColourInput','addObjectButton','objectList',
+    'alphabetiseButton','randomiseButton','randomiseAllButton','clearSeatsButton','unlockAllButton','undoButton','redoButton','exampleButton','planContent','emptyState','planSummary','planSubtitle','tabStrip','addTabButton','duplicateTabButton','renameTabButton','deleteTabButton','tabLimitText',
+    'timerDisplay','timerProgressBar','timerModeSelect','timerMinutesInput','timerStartButton','timerResetButton','timerAddButton','timerSoundButton','pickerName','pickerHistoryText','pickerPoolSelect','pickerRemoveInput','pickFastButton','pickSlowButton','pickerSoundButton','resetPickerButton','pickerTallySummary','pickerTallyList',
+    'frontTop','frontBottom','seatGrid','customRoomScroll','customRoomCanvas','studentPool','unseatedArea','printButton','focusButton','themeButton','versionButton','versionNotes','tableEditorDialog','tableEditorClose','tableEditorName','tableEditorColour','tableEditorCapacity','tableEditorRotation','tableEditorZone','tableEditorCancel','tableEditorSave'
+  ].forEach(id => refs[id] = $(id));
+  const layoutModeInputs = [...document.querySelectorAll('input[name="layoutMode"]')];
+
+  let classes = loadArray(STORAGE.classes);
+  let plans = loadArray(STORAGE.plans);
+  let activeClassId = '';
+  let activePlanId = '';
+  let workspace = createWorkspace();
+  let activeTabId = workspace.tabs[0].id;
+  let selected = null;
+  let dragged = null;
+  let undoStack = [];
+  let redoStack = [];
+  let timerInterval = null;
+  let editingTableId = '';
+  let lastSavedSignature = '';
+  let draftRecovered = false;
+
+  function loadArray(key){
+    try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}catch(error){return []}
+  }
+  function loadObject(key){
+    try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:null}catch(error){return null}
+  }
+  function saveValue(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(error){/* storage unavailable */}}
+  function uid(prefix){return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`}
+  function deepClone(value){return JSON.parse(JSON.stringify(value))}
+  const TABLE_ROTATIONS=[0,45,90,135,180,225,270,315];
+  function normaliseName(value){return String(value||'').trim().replace(/\s+/g,' ')}
+  function normaliseTableRotation(value){const angle=((Number(value)||0)%360+360)%360;return TABLE_ROTATIONS.reduce((closest,candidate)=>Math.abs(candidate-angle)<Math.abs(closest-angle)?candidate:closest,0)}
+  function parseNames(){
+    const seen=new Set();
+    return refs.namesInput.value.split(/[\n,;\t]+/).map(normaliseName).filter(Boolean).filter(name=>{const key=name.toLocaleLowerCase('en-AU');if(seen.has(key))return false;seen.add(key);return true});
+  }
+  function currentCourse(){return refs.courseSelect.value==='Other'?(refs.customCourseInput.value.trim()||'Other'):refs.courseSelect.value}
+  function classLabel(record){return [record.year,record.course,record.classCode].filter(Boolean).join(' — ')}
+  function setStatus(target,message,type='success'){target.innerHTML='';if(!message)return;const box=document.createElement('div');box.className=`status ${type}`;box.textContent=message;target.appendChild(box)}
+  function sharedStudents(){return Array.isArray(workspace.students)?workspace.students:[]}
+  function presentNames(){return sharedStudents().filter(student=>student.present).map(student=>student.name)}
+  function activeTab(){return workspace.tabs.find(tab=>tab.id===activeTabId)||workspace.tabs[0]}
+  function syncSharedStudentsToTabs(){
+    const students=sharedStudents().map(student=>({...student}));
+    const allowed=new Set(students.map(student=>student.name));
+    workspace.tabs.forEach(tab=>{
+      tab.students=students.map(student=>({...student}));
+      tab.seats=Array.isArray(tab.seats)?tab.seats.map(name=>allowed.has(name)?name:null):[];
+      tab.picker.history=(tab.picker?.history||[]).filter(name=>allowed.has(name));
+      tab.picker.counts=Object.fromEntries(Object.entries(tab.picker?.counts||{}).filter(([name])=>allowed.has(name)));
+      if(tab.picker&&!allowed.has(tab.picker.current))tab.picker.current='';
+      tab.planning.together=(tab.planning?.together||[]).filter(pair=>pair.every(name=>allowed.has(name)));
+      tab.planning.apart=(tab.planning?.apart||[]).filter(pair=>pair.every(name=>allowed.has(name)));
+      ensureSeatArrays(tab);
+    });
+  }
+
+  function createTab(title='Room 1'){
+    return {
+      id:uid('tab'),title,students:[],mode:'quick',quickLayout:'traditional',rows:5,columns:6,front:'top',accent:'#136f8a',highlight:'#f59e0b',
+      seats:Array(30).fill(null),locks:Array(30).fill(false),tables:[],zones:[],objects:[],snap:true,
+      planning:{enabled:false,notes:'',together:[],apart:[],avoidHistory:false,historyDepth:5},history:[],roles:[...DEFAULT_ROLES],roleAssignments:{},rolesDirty:false,
+      picker:{history:[],counts:{},current:'',pool:'seated',removePicked:true,sound:true},timer:{mode:'down',duration:600,elapsed:0,remaining:600,running:false,sound:true,startedAt:null}
+    };
+  }
+  function createWorkspace(){const first=createTab();return {id:'',classId:'',name:'',updated:'',students:[],tabs:[first],activeTabId:first.id}}
+  function hydrateTab(raw,index=0){
+    const base=createTab(raw?.title||`Room ${index+1}`);
+    const tab={...base,...deepClone(raw||{})};
+    tab.id=raw?.id||uid('tab');tab.students=Array.isArray(raw?.students)?raw.students.map(s=>({name:normaliseName(s.name),present:s.present!==false})).filter(s=>s.name):[];
+    tab.tables=Array.isArray(raw?.tables)?raw.tables.map(t=>({id:t.id||uid('table'),name:t.name||'Table',capacity:[2,4,6].includes(Number(t.capacity))?Number(t.capacity):4,x:Number(t.x)||50,y:Number(t.y)||50,rotation:normaliseTableRotation(t.rotation),color:t.color||'#136f8a',zoneId:t.zoneId||''})):[];
+    tab.zones=Array.isArray(raw?.zones)?raw.zones.map(z=>({id:z.id||uid('zone'),name:z.name||'Learning zone',x:Number(z.x)||50,y:Number(z.y)||50,w:Number(z.w)||38,h:Number(z.h)||30,color:z.color||'#7c3aed',roles:Array.isArray(z.roles)?z.roles:[]})):[];
+    tab.objects=Array.isArray(raw?.objects)?raw.objects.map(o=>({id:o.id||uid('object'),type:o.type||'board',label:o.label||objectLabel(o.type),x:Number(o.x)||50,y:Number(o.y)||12,w:Number(o.w)||18,h:Number(o.h)||8,rotation:Number(o.rotation)||0,color:o.color||'#64748b',locked:Boolean(o.locked)})):[];
+    tab.planning={...base.planning,...(raw?.planning||{})};tab.planning.together=Array.isArray(tab.planning.together)?tab.planning.together:[];tab.planning.apart=Array.isArray(tab.planning.apart)?tab.planning.apart:[];
+    tab.history=Array.isArray(raw?.history)?raw.history:[];tab.roles=Array.isArray(raw?.roles)&&raw.roles.length?raw.roles:[...DEFAULT_ROLES];tab.roleAssignments=raw?.roleAssignments&&typeof raw.roleAssignments==='object'?raw.roleAssignments:{};tab.rolesDirty=Boolean(raw?.rolesDirty);
+    tab.picker={...base.picker,...(raw?.picker||{})};tab.picker.history=Array.isArray(tab.picker.history)?tab.picker.history:[];tab.picker.counts=tab.picker.counts&&typeof tab.picker.counts==='object'&&!Array.isArray(tab.picker.counts)?tab.picker.counts:{};tab.picker.pool=tab.picker.pool==='present'?'present':'seated';tab.picker.removePicked=tab.picker.removePicked!==false;tab.picker.sound=tab.picker.sound!==false;
+    tab.timer={...base.timer,...(raw?.timer||{}),running:false,startedAt:null};
+    ensureSeatArrays(tab);return tab;
+  }
+  function hydrateWorkspace(raw){
+    const next={...createWorkspace(),...deepClone(raw||{})};
+    next.tabs=Array.isArray(raw?.tabs)&&raw.tabs.length?raw.tabs.slice(0,5).map(hydrateTab):[createTab()];
+    const sourceStudents=Array.isArray(raw?.students)?raw.students:(next.tabs[0]?.students||[]);
+    next.students=sourceStudents.map(student=>({name:normaliseName(student.name),present:student.present!==false})).filter(student=>student.name);
+    next.activeTabId=next.tabs.some(t=>t.id===raw?.activeTabId)?raw.activeTabId:next.tabs[0].id;
+    next.tabs.forEach(tab=>{tab.students=next.students.map(student=>({...student}));ensureSeatArrays(tab)});
+    return next;
+  }
+
+  function seatCount(tab=activeTab()){
+    return tab.mode==='custom'?tab.tables.reduce((sum,table)=>sum+Number(table.capacity||0),0):Number(tab.rows)*Number(tab.columns);
+  }
+  function ensureSeatArrays(tab=activeTab()){
+    const count=seatCount(tab);
+    tab.seats=Array.isArray(tab.seats)?tab.seats.slice(0,count):[];tab.locks=Array.isArray(tab.locks)?tab.locks.slice(0,count):[];
+    while(tab.seats.length<count)tab.seats.push(null);while(tab.locks.length<count)tab.locks.push(false);
+    const source=Array.isArray(tab.students)&&tab.students.length?tab.students:sharedStudents();const allowed=new Set(source.map(s=>s.name));tab.seats=tab.seats.map(name=>allowed.has(name)?name:null);
+  }
+  function tableSeatOffset(tab,tableIndex){return tab.tables.slice(0,tableIndex).reduce((sum,t)=>sum+Number(t.capacity||0),0)}
+  function seatTableIndex(tab,seatIndex){let offset=0;for(let i=0;i<tab.tables.length;i+=1){const cap=tab.tables[i].capacity;if(seatIndex>=offset&&seatIndex<offset+cap)return i;offset+=cap}return -1}
+  function groupIdForSeat(tab,index){
+    if(tab.mode==='custom'){const tableIndex=seatTableIndex(tab,index);return tableIndex>=0?`table-${tableIndex}`:`seat-${index}`}
+    const sizes={pairs:2,pods4:4,pods6:6,lab:4};
+    if(sizes[tab.quickLayout])return `group-${Math.floor(index/sizes[tab.quickLayout])}`;
+    return `seat-${index}`;
+  }
+  function seatCoordinate(tab,index){
+    if(tab.mode==='custom'){
+      const tableIndex=seatTableIndex(tab,index),table=tab.tables[tableIndex];
+      if(!table)return {x:index,y:0};
+      const local=index-tableSeatOffset(tab,tableIndex),pos=seatPositions(table.capacity,table.rotation)[local]||{x:50,y:50};
+      return {x:table.x+(pos.x-50)*0.16,y:table.y+(pos.y-50)*0.16};
+    }
+    if(tab.quickLayout==='ushape')return uPositions(tab.seats.length)[index]||{x:0,y:0};
+    if(['pairs','pods4','pods6','lab'].includes(tab.quickLayout)){
+      const sizes={pairs:2,pods4:4,pods6:6,lab:4},size=sizes[tab.quickLayout],group=Math.floor(index/size),local=index%size;
+      const cols=Math.max(1,Math.ceil(Math.sqrt(Math.ceil(tab.seats.length/size))));
+      const gx=group%cols,gy=Math.floor(group/cols),localCols=size===6?3:2;
+      return {x:gx*5+(local%localCols),y:gy*5+Math.floor(local/localCols)};
+    }
+    return {x:index%tab.columns,y:Math.floor(index/tab.columns)};
+  }
+  function seatsAreRelated(tab,aIndex,bIndex){
+    if(aIndex===bIndex)return true;
+    if(groupIdForSeat(tab,aIndex)===groupIdForSeat(tab,bIndex)&&!groupIdForSeat(tab,aIndex).startsWith('seat-'))return true;
+    const a=seatCoordinate(tab,aIndex),b=seatCoordinate(tab,bIndex);
+    if(tab.mode==='custom')return Math.hypot(a.x-b.x,a.y-b.y)<=18;
+    if(tab.quickLayout==='ushape')return Math.hypot(a.x-b.x,a.y-b.y)<=26;
+    if(tab.quickLayout==='traditional'||tab.quickLayout==='exam')return Math.abs(a.x-b.x)+Math.abs(a.y-b.y)===1;
+    return false;
+  }
+  function relatedPairKeys(tab){
+    const pairs=[];
+    for(let i=0;i<tab.seats.length;i+=1){const a=tab.seats[i];if(!a)continue;for(let j=i+1;j<tab.seats.length;j+=1){const b=tab.seats[j];if(b&&seatsAreRelated(tab,i,j))pairs.push(pairKey(a,b))}}
+    return pairs;
+  }
+  function pairKey(a,b){return [a,b].sort((x,y)=>x.localeCompare(y)).join('|||')}
+
+  function snapshot(){return JSON.stringify({workspace,activeTabId})}
+  function restoreSnapshot(serialised){
+    const data=JSON.parse(serialised);workspace=hydrateWorkspace(data.workspace);activeTabId=workspace.tabs.some(t=>t.id===data.activeTabId)?data.activeTabId:workspace.tabs[0].id;workspace.activeTabId=activeTabId;stopTimer();syncControlsFromTab();renderAll();saveDraft();
+  }
+  function comparableSignature(){
+    const copy=workspaceForStorage();delete copy.activeTabId;
+    copy.tabs.forEach(tab=>{tab.timer={mode:tab.timer.mode,duration:tab.timer.duration,sound:tab.timer.sound};tab.picker={pool:tab.picker.pool,removePicked:tab.picker.removePicked!==false,sound:tab.picker.sound!==false};delete tab.students});
+    return JSON.stringify({workspace:copy,students:sharedStudents(),year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()});
+  }
+  function renderSaveState(){
+    if(!refs.saveStateBadge)return;
+    refs.saveStateBadge.className='save-state';
+    if(draftRecovered){refs.saveStateBadge.classList.add('recovered');refs.saveStateBadge.textContent='Auto-recovered draft';return}
+    if(activePlanId&&lastSavedSignature&&comparableSignature()===lastSavedSignature){refs.saveStateBadge.classList.add('saved');refs.saveStateBadge.textContent='Saved';return}
+    refs.saveStateBadge.classList.add('dirty');refs.saveStateBadge.textContent=activePlanId?'Unsaved changes':'Unsaved workspace';
+  }
+  function touchEdit(){draftRecovered=false;renderSaveState()}
+  function confirmUnsavedChanges(){return !(activePlanId&&refs.saveStateBadge?.classList.contains('dirty'))||window.confirm('This saved workspace has unsaved changes. Continue without saving them?')}
+  function invalidateRoles(tab=activeTab()){
+    const hadAssignments=Object.keys(tab.roleAssignments||{}).length>0;
+    tab.roleAssignments={};
+    if(hadAssignments)tab.rolesDirty=true;
+  }
+  function beginMutation(){undoStack.push(snapshot());if(undoStack.length>50)undoStack.shift();redoStack=[];touchEdit();updateUndoButtons()}
+  function undo(){if(!undoStack.length)return;redoStack.push(snapshot());restoreSnapshot(undoStack.pop());touchEdit();updateUndoButtons()}
+  function redo(){if(!redoStack.length)return;undoStack.push(snapshot());restoreSnapshot(redoStack.pop());touchEdit();updateUndoButtons()}
+  function updateUndoButtons(){refs.undoButton.disabled=!undoStack.length;refs.redoButton.disabled=!redoStack.length}
+
+  function syncStudentsFromInput({mutate=false}={}){
+    const names=parseNames(),previous=sharedStudents(),presence=new Map(previous.map(s=>[s.name.toLocaleLowerCase('en-AU'),s.present]));
+    const rosterChanged=names.length!==previous.length||names.some((name,index)=>name!==previous[index]?.name);
+    if(mutate&&rosterChanged)beginMutation();
+    workspace.students=names.map(name=>({name,present:presence.has(name.toLocaleLowerCase('en-AU'))?presence.get(name.toLocaleLowerCase('en-AU')):true}));
+    syncSharedStudentsToTabs();if(rosterChanged)workspace.tabs.forEach(invalidateRoles);selected=null;renderAll();saveDraft();
+  }
+  function updateStudentCount(){const students=sharedStudents(),present=students.filter(s=>s.present).length;refs.studentCount.textContent=`${students.length} ${students.length===1?'student':'students'} · ${present} present`}
+  function renderAttendance(){
+    const students=sharedStudents();refs.attendanceList.innerHTML='';updateStudentCount();
+    if(!students.length){refs.attendanceList.innerHTML='<p class="hint">Add names to manage attendance.</p>';return}
+    students.forEach((student,index)=>{const label=document.createElement('label');label.className=`attendance-item${student.present?'':' absent'}`;const box=document.createElement('input');box.type='checkbox';box.checked=student.present;box.addEventListener('change',()=>{beginMutation();workspace.students[index].present=box.checked;workspace.tabs.forEach(tab=>{tab.students[index].present=box.checked;if(!box.checked)tab.seats=tab.seats.map(name=>name===student.name?null:name);invalidateRoles(tab)});renderAll();saveDraft()});const text=document.createElement('span');text.textContent=student.name;label.append(box,text);refs.attendanceList.appendChild(label)});
+  }
+  function renderRuleSelectors(){
+    const names=sharedStudents().map(s=>s.name);[refs.ruleStudentA,refs.ruleStudentB].forEach(select=>{const old=select.value;select.innerHTML='<option value="">Select student</option>';names.forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option)});select.value=names.includes(old)?old:''});
+  }
+
+  function fillNumberSelect(select,min,max,value){select.innerHTML='';for(let n=min;n<=max;n+=1){const option=document.createElement('option');option.value=String(n);option.textContent=String(n);select.appendChild(option)}select.value=String(value)}
+  function setLayoutMode(mode){const tab=activeTab();beginMutation();tab.mode=mode==='custom'?'custom':'quick';if(tab.mode==='custom'&&!tab.tables.length)initialiseCustomTables(tab);ensureSeatArrays(tab);selected=null;syncControlsFromTab();renderAll();saveDraft()}
+  function initialiseCustomTables(tab){
+    const previous=[...tab.seats];const target=Math.max(previous.filter(Boolean).length,presentNames(tab).length,4);const cap=Number(refs.tableCapacitySelect.value)||4;tab.tables=[];tab.seats=[];tab.locks=[];for(let i=0;i<Math.ceil(target/cap);i+=1)addTableToTab(tab,cap,{silent:true});previous.slice(0,tab.seats.length).forEach((name,i)=>tab.seats[i]=name);arrangeTables(tab,{silent:true});
+  }
+  function addTableToTab(tab,capacity=4,{silent=false}={}){
+    const index=tab.tables.length;const table={id:uid('table'),name:`Table ${index+1}`,capacity:[2,4,6].includes(Number(capacity))?Number(capacity):4,x:20+(index%4)*22,y:24+Math.floor(index/4)*28,rotation:0,color:tab.accent,zoneId:''};tab.tables.push(table);for(let i=0;i<table.capacity;i+=1){tab.seats.push(null);tab.locks.push(false)}autoAssignTableZone(table,tab);if(!silent){renderAll();saveDraft()}return table;
+  }
+  function arrangeTables(tab=activeTab(),{silent=false}={}){const count=tab.tables.length;if(!count)return;const cols=Math.ceil(Math.sqrt(count*1.35));const rows=Math.ceil(count/cols);tab.tables.forEach((table,i)=>{const col=i%cols,row=Math.floor(i/cols);table.x=cols===1?50:15+col*70/Math.max(1,cols-1);table.y=rows===1?50:18+row*64/Math.max(1,rows-1)});autoAssignAllTablesToZones(tab);if(!silent){renderAll();saveDraft()}}
+  function deleteTable(index){const tab=activeTab();const table=tab.tables[index];if(!table)return;beginMutation();const offset=tableSeatOffset(tab,index);tab.seats.splice(offset,table.capacity);tab.locks.splice(offset,table.capacity);tab.tables.splice(index,1);invalidateRoles(tab);selected=null;renderAll();saveDraft()}
+
+  function unseatedNames(tab=activeTab()){const seated=new Set(tab.seats.filter(Boolean));return presentNames(tab).filter(name=>!seated.has(name))}
+  function secureShuffle(values){const a=[...values];for(let i=a.length-1;i>0;i-=1){let r=Math.random();if(window.crypto?.getRandomValues){const b=new Uint32Array(1);window.crypto.getRandomValues(b);r=b[0]/4294967296}const j=Math.floor(r*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+  function seatingScore(tab,assignment){
+    const seatIndex=new Map();assignment.forEach((name,index)=>{if(name)seatIndex.set(name,index)});let score=0;
+    tab.planning.apart.forEach(([a,b])=>{if(!seatIndex.has(a)||!seatIndex.has(b))return;const ia=seatIndex.get(a),ib=seatIndex.get(b);if(seatsAreRelated(tab,ia,ib))score+=1000});
+    tab.planning.together.forEach(([a,b])=>{if(!seatIndex.has(a)||!seatIndex.has(b)){score+=250;return}const ia=seatIndex.get(a),ib=seatIndex.get(b);if(!seatsAreRelated(tab,ia,ib))score+=300});
+    if(tab.planning.avoidHistory){const recent=tab.history.slice(-Number(tab.planning.historyDepth||5));const counts=new Map();recent.flat().forEach(key=>counts.set(key,(counts.get(key)||0)+1));const test={...tab,seats:assignment};relatedPairKeys(test).forEach(key=>score+=(counts.get(key)||0)*8)}
+    return score;
+  }
+  function randomiseSeating({all=false}={}){
+    const tab=activeTab();ensureSeatArrays(tab);beginMutation();const lockedNames=new Set();tab.seats.forEach((name,index)=>{if(!all&&tab.locks[index]&&name)lockedNames.add(name);else{tab.seats[index]=null;if(all)tab.locks[index]=false}});
+    const candidates=tab.students.filter(s=>s.present&&!lockedNames.has(s.name)).map(s=>s.name);const available=tab.seats.map((name,index)=>(all||!tab.locks[index])?index:-1).filter(i=>i>=0);
+    let best=null,bestScore=Infinity;const attempts=Math.min(500,Math.max(80,candidates.length*14));for(let attempt=0;attempt<attempts;attempt+=1){const trial=[...tab.seats];secureShuffle(candidates).slice(0,available.length).forEach((name,i)=>trial[available[i]]=name);const score=seatingScore(tab,trial);if(score<bestScore){best=trial;bestScore=score;if(score===0)break}}
+    tab.seats=best||tab.seats;invalidateRoles(tab);tab.history.push(relatedPairKeys(tab));tab.history=tab.history.slice(-10);selected=null;renderAll();saveDraft();const extras=Math.max(0,candidates.length-available.length);setStatus(refs.planStatus,extras?`${extras} present ${extras===1?'student remains':'students remain'} unseated because there are not enough available seats.`:`Seating randomised${bestScore>0?' with the best available match to the planning rules':''}.`,extras?'warning':'success');
+  }
+  function alphabetiseSeating(){
+    const tab=activeTab();ensureSeatArrays(tab);beginMutation();
+    const lockedNames=new Set(tab.seats.filter((name,index)=>tab.locks[index]&&name));
+    const candidates=tab.students.filter(student=>student.present&&!lockedNames.has(student.name)).map(student=>student.name).sort((a,b)=>a.localeCompare(b,'en-AU',{sensitivity:'base',numeric:true}));
+    const available=tab.seats.map((name,index)=>tab.locks[index]?-1:index).filter(index=>index>=0);
+    available.forEach(index=>{tab.seats[index]=null});
+    candidates.slice(0,available.length).forEach((name,index)=>{tab.seats[available[index]]=name});
+    invalidateRoles(tab);selected=null;renderAll();saveDraft();
+    const extras=Math.max(0,candidates.length-available.length);
+    setStatus(refs.planStatus,extras?`${extras} present ${extras===1?'student remains':'students remain'} unseated because there are not enough unlocked seats.`:'Students placed in alphabetical order across the unlocked seats.',extras?'warning':'success');
+  }
+  function clearSeats(){const tab=activeTab();beginMutation();tab.seats=tab.seats.map((name,index)=>tab.locks[index]?name:null);invalidateRoles(tab);selected=null;renderAll();saveDraft()}
+  function selectStudent(name,sourceIndex){const tab=activeTab();if(sourceIndex!==null&&tab.locks[sourceIndex])return;selected=selected?.name===name?null:{name,sourceIndex};renderPlan()}
+  function moveSelectedTo(targetIndex){const tab=activeTab();if(!selected||tab.locks[targetIndex])return;beginMutation();const occupant=tab.seats[targetIndex];if(selected.sourceIndex!==null)tab.seats[selected.sourceIndex]=occupant||null;tab.seats[targetIndex]=selected.name;invalidateRoles(tab);selected=null;renderAll();saveDraft()}
+  function moveNameTo(name,sourceIndex,targetIndex){const tab=activeTab();if(tab.locks[targetIndex]||(sourceIndex!==null&&tab.locks[sourceIndex]))return;beginMutation();const occupant=tab.seats[targetIndex];if(sourceIndex!==null)tab.seats[sourceIndex]=occupant||null;tab.seats[targetIndex]=name;invalidateRoles(tab);selected=null;renderAll();saveDraft()}
+  function moveSelectedToPool(){const tab=activeTab();if(!selected)return;if(selected.sourceIndex!==null&&!tab.locks[selected.sourceIndex]){beginMutation();tab.seats[selected.sourceIndex]=null;invalidateRoles(tab)}selected=null;renderAll();saveDraft()}
+
+  function createSeat(index,name,extra=''){
+    const tab=activeTab();const seat=document.createElement('div');seat.className=`seat ${extra}${name?'':' empty'}${tab.locks[index]?' locked':''}${selected?.sourceIndex===index?' selected':''}${tab.picker.current===name?' picked':''}`.trim();if(name)seat.dataset.student=name;seat.draggable=Boolean(name&&!tab.locks[index]);seat.setAttribute('role','button');seat.setAttribute('aria-label',name?`Seat ${index+1}, ${name}`:`Seat ${index+1}, empty`);
+    const number=document.createElement('span');number.className='seat-number';number.textContent=`Seat ${index+1}`;const main=document.createElement('span');main.className='student-name';main.textContent=name||'';main.title=name||`Seat ${index+1}`;
+    const lock=document.createElement('button');lock.type='button';lock.className='lock-button';lock.textContent=tab.locks[index]?'🔒':'🔓';lock.title=tab.locks[index]?'Unlock seat':'Lock seat';lock.setAttribute('aria-label',tab.locks[index]?`Unlock seat ${index+1}`:`Lock seat ${index+1}`);lock.addEventListener('click',event=>{event.stopPropagation();beginMutation();tab.locks[index]=!tab.locks[index];selected=null;renderAll();saveDraft()});
+    const state=document.createElement('span');state.className=`seat-state ${tab.locks[index]?'is-locked':'is-unlocked'}`;state.textContent=tab.locks[index]?'Locked':'Unlocked';
+    seat.append(number,main,lock);if(name&&tab.roleAssignments[name]){const role=document.createElement('span');role.className='student-role';role.textContent=tab.roleAssignments[name];seat.appendChild(role)}seat.appendChild(state);
+    seat.addEventListener('click',event=>{if(event.target.closest('.lock-button'))return;if(selected)moveSelectedTo(index);else if(name)selectStudent(name,index)});
+    seat.addEventListener('dragstart',()=>{dragged=name?{name,sourceIndex:index}:null});seat.addEventListener('dragend',()=>{dragged=null});seat.addEventListener('dragover',event=>{if(dragged&&!tab.locks[index])event.preventDefault()});seat.addEventListener('drop',event=>{event.preventDefault();if(dragged)moveNameTo(dragged.name,dragged.sourceIndex,index);dragged=null});return seat;
+  }
+  function uPositions(count){if(!count)return[];const bottom=Math.max(2,Math.ceil(count*.46));const side=Math.max(0,count-bottom),left=Math.ceil(side/2),right=side-left,pos=[];for(let i=0;i<left;i++)pos.push({x:10,y:left===1?50:14+i*68/(left-1)});for(let i=0;i<bottom;i++)pos.push({x:bottom===1?50:14+i*72/(bottom-1),y:88});for(let i=0;i<right;i++)pos.push({x:90,y:right===1?50:82-i*68/(right-1)});return pos.slice(0,count)}
+  function renderQuick(){
+    const tab=activeTab();refs.customRoomScroll.hidden=true;refs.seatGrid.hidden=false;refs.seatGrid.innerHTML='';refs.seatGrid.className='seat-grid';refs.seatGrid.removeAttribute('style');
+    if(tab.quickLayout==='traditional'||tab.quickLayout==='exam'){refs.seatGrid.classList.toggle('exam-layout',tab.quickLayout==='exam');refs.seatGrid.style.gridTemplateColumns=`repeat(${tab.columns},minmax(96px,1fr))`;tab.seats.forEach((name,index)=>refs.seatGrid.appendChild(createSeat(index,name)));return}
+    if(tab.quickLayout==='ushape'){refs.seatGrid.classList.add('u-layout');uPositions(tab.seats.length).forEach((pos,index)=>{const seat=createSeat(index,tab.seats[index]);seat.style.left=`${pos.x}%`;seat.style.top=`${pos.y}%`;refs.seatGrid.appendChild(seat)});return}
+    refs.seatGrid.classList.add('quick-table-grid');const settings={pairs:{size:2,cls:'pair',label:'Pair'},pods4:{size:4,cls:'pod-4',label:'Table'},pods6:{size:6,cls:'pod-6',label:'Table'},lab:{size:4,cls:'lab-bench',label:'Lab bench'}}[tab.quickLayout]||{size:4,cls:'pod-4',label:'Table'};
+    for(let start=0;start<tab.seats.length;start+=settings.size){const table=document.createElement('section');table.className=`quick-table ${settings.cls}`;const label=document.createElement('span');label.className='quick-table-label';label.textContent=`${settings.label} ${Math.floor(start/settings.size)+1}`;table.appendChild(label);tab.seats.slice(start,start+settings.size).forEach((name,i)=>table.appendChild(createSeat(start+i,name)));refs.seatGrid.appendChild(table)}
+  }
+  function seatPositions(capacity,rotation){const angle=normaliseTableRotation(rotation),diagonal=angle%90!==0;const base=diagonal?(capacity===2?[{x:50,y:14},{x:50,y:86}]:capacity===6?[{x:30,y:14},{x:70,y:14},{x:30,y:86},{x:70,y:86},{x:12,y:50},{x:88,y:50}]:[{x:30,y:14},{x:70,y:14},{x:30,y:86},{x:70,y:86}]):(capacity===2?[{x:50,y:5},{x:50,y:95}]:capacity===6?[{x:27,y:5},{x:73,y:5},{x:27,y:95},{x:73,y:95},{x:5,y:50},{x:95,y:50}]:[{x:27,y:5},{x:73,y:5},{x:27,y:95},{x:73,y:95}]);if(angle===0)return base;const radians=angle*Math.PI/180,cos=Math.cos(radians),sin=Math.sin(radians);return base.map(point=>{const dx=point.x-50,dy=point.y-50;return{x:50+dx*cos-dy*sin,y:50+dx*sin+dy*cos}})}
+  function zoneForPoint(tab,x,y){
+    return tab.zones.filter(zone=>x>=zone.x-zone.w/2&&x<=zone.x+zone.w/2&&y>=zone.y-zone.h/2&&y<=zone.y+zone.h/2).sort((a,b)=>a.w*a.h-b.w*b.h)[0]||null;
+  }
+  function autoAssignTableZone(table,tab=activeTab()){
+    const zone=zoneForPoint(tab,table.x,table.y),nextId=zone?.id||'';
+    if(table.zoneId!==nextId){table.zoneId=nextId;invalidateRoles(tab);return true}
+    return false;
+  }
+  function autoAssignAllTablesToZones(tab=activeTab()){let changed=false;tab.tables.forEach(table=>{if(autoAssignTableZone(table,tab))changed=true});return changed}
+  function populateTableZoneOptions(selected=''){
+    const tab=activeTab();refs.tableEditorZone.innerHTML='<option value="">No learning zone</option>';
+    tab.zones.forEach(zone=>{const option=document.createElement('option');option.value=zone.id;option.textContent=zone.name;refs.tableEditorZone.appendChild(option)});
+    refs.tableEditorZone.value=tab.zones.some(zone=>zone.id===selected)?selected:'';
+  }
+  function openTableEditor(table){
+    editingTableId=table.id;refs.tableEditorName.value=table.name;refs.tableEditorColour.value=table.color;refs.tableEditorCapacity.value=String(table.capacity);refs.tableEditorRotation.value=String(table.rotation);populateTableZoneOptions(table.zoneId);refs.tableEditorDialog.showModal();refs.tableEditorName.focus();
+  }
+  function closeTableEditor(){editingTableId='';refs.tableEditorDialog.close()}
+  function saveTableEditor(){
+    const tab=activeTab(),tableIndex=tab.tables.findIndex(table=>table.id===editingTableId);if(tableIndex<0){closeTableEditor();return}
+    beginMutation();const table=tab.tables[tableIndex],oldCapacity=table.capacity,newCapacity=Number(refs.tableEditorCapacity.value)||oldCapacity,offset=tableSeatOffset(tab,tableIndex);
+    if(newCapacity!==oldCapacity){const oldSeats=tab.seats.splice(offset,oldCapacity),oldLocks=tab.locks.splice(offset,oldCapacity);const nextSeats=Array(newCapacity).fill(null),nextLocks=Array(newCapacity).fill(false);for(let i=0;i<Math.min(oldCapacity,newCapacity);i+=1){nextSeats[i]=oldSeats[i]||null;nextLocks[i]=Boolean(oldLocks[i])}tab.seats.splice(offset,0,...nextSeats);tab.locks.splice(offset,0,...nextLocks);table.capacity=newCapacity}
+    table.name=normaliseName(refs.tableEditorName.value)||table.name;table.color=refs.tableEditorColour.value;table.rotation=normaliseTableRotation(refs.tableEditorRotation.value);table.zoneId=tab.zones.some(zone=>zone.id===refs.tableEditorZone.value)?refs.tableEditorZone.value:'';invalidateRoles(tab);closeTableEditor();renderAll();saveDraft();
+  }
+  function bringCustomItemToFront(element){refs.customRoomCanvas.querySelectorAll('.custom-table.is-front,.room-object.is-front').forEach(item=>item.classList.remove('is-front'));element.classList.add('is-front')}
+  function attachDrag(handle,element,item,{minX=5,maxX=95,minY=5,maxY=95,onEnd=()=>{}}={}){
+    handle.addEventListener('pointerdown',event=>{
+      bringCustomItemToFront(element);
+      if(event.button!==undefined&&event.button!==0)return;
+      if(item.locked||document.body.classList.contains('student-focus')||activeTab().mode!=='custom')return;
+      if(event.target.closest('button,input,select,textarea,a'))return;
+      event.preventDefault();
+      beginMutation();
+      const rect=refs.customRoomCanvas.getBoundingClientRect(),pointerId=event.pointerId,sx=event.clientX,sy=event.clientY,ox=item.x,oy=item.y;
+      handle.setPointerCapture?.(pointerId);
+      const move=e=>{
+        if(e.pointerId!==pointerId)return;
+        e.preventDefault();
+        let x=Math.max(minX,Math.min(maxX,ox+(e.clientX-sx)/rect.width*100));
+        let y=Math.max(minY,Math.min(maxY,oy+(e.clientY-sy)/rect.height*100));
+        if(activeTab().snap){x=Math.round(x/2.5)*2.5;y=Math.round(y/2.5)*2.5}
+        item.x=x;item.y=y;element.style.left=`${x}%`;element.style.top=`${y}%`;
+      };
+      const end=e=>{
+        if(e.pointerId!==pointerId)return;
+        document.removeEventListener('pointermove',move);
+        document.removeEventListener('pointerup',end);
+        document.removeEventListener('pointercancel',end);
+        try{handle.releasePointerCapture?.(pointerId)}catch(error){}
+        onEnd();
+        saveDraft();
+      };
+      document.addEventListener('pointermove',move,{passive:false});
+      document.addEventListener('pointerup',end);
+      document.addEventListener('pointercancel',end);
+    });
+  }
+  function renderCustom(){
+    const tab=activeTab();refs.seatGrid.hidden=true;refs.customRoomScroll.hidden=false;refs.customRoomCanvas.classList.toggle('no-grid',!tab.snap);refs.customRoomCanvas.innerHTML='';const moveTip=document.createElement('div');moveTip.className='custom-move-tip';moveTip.textContent='Move tables by dragging their coloured centre surface. In Planning mode, use ↻ to rotate tables by 45°. Move room objects by dragging the object itself.';refs.customRoomCanvas.appendChild(moveTip);
+    tab.zones.forEach((zone,index)=>{const div=document.createElement('section');div.className='zone';div.style.setProperty('--zone-color',zone.color);div.style.left=`${zone.x}%`;div.style.top=`${zone.y}%`;div.style.width=`${zone.w}%`;div.style.height=`${zone.h}%`;const label=document.createElement('div');label.className='zone-label';label.textContent=zone.name;attachDrag(label,div,zone,{minX:8,maxX:92,minY:8,maxY:92,onEnd:()=>{autoAssignAllTablesToZones(tab);renderAll()}});const roles=document.createElement('div');roles.className='zone-role-list';roles.textContent=zone.roles.length?`Roles: ${zone.roles.join(', ')}`:'No roles selected';div.append(label,roles);refs.customRoomCanvas.appendChild(div)});
+    tab.objects.forEach((object,index)=>{const div=document.createElement('div');div.className=`room-object${object.locked?' locked':''}`;div.style.setProperty('--object-color',object.color);div.style.left=`${object.x}%`;div.style.top=`${object.y}%`;div.style.width=`${object.w}%`;div.style.height=`${object.h}%`;div.style.transform=`translate(-50%,-50%) rotate(${object.rotation}deg)`;div.textContent=object.label;div.addEventListener('pointerdown',()=>bringCustomItemToFront(div));const actions=document.createElement('div');actions.className='room-object-actions';const lock=document.createElement('button');lock.className='mini-round';lock.type='button';lock.textContent=object.locked?'🔒':'🔓';lock.addEventListener('click',event=>{event.stopPropagation();beginMutation();object.locked=!object.locked;renderAll();saveDraft()});const remove=document.createElement('button');remove.className='mini-round';remove.type='button';remove.textContent='×';remove.addEventListener('click',event=>{event.stopPropagation();beginMutation();tab.objects.splice(index,1);renderAll();saveDraft()});actions.append(lock,remove);div.appendChild(actions);attachDrag(div,div,object,{onEnd:renderObjectEditors});refs.customRoomCanvas.appendChild(div)});
+    tab.tables.forEach((table,tableIndex)=>{const offset=tableSeatOffset(tab,tableIndex),angle=normaliseTableRotation(table.rotation),vertical=angle===90||angle===270,diagonal=angle%90!==0;table.rotation=angle;const element=document.createElement('section');element.className=`custom-table${vertical?' vertical':''}${diagonal?' diagonal':''}`;element.style.left=`${table.x}%`;element.style.top=`${table.y}%`;element.style.setProperty('--table-color',table.color);element.style.setProperty('--table-angle',`${angle}deg`);element.addEventListener('pointerdown',()=>bringCustomItemToFront(element));const surface=document.createElement('div');surface.className='custom-table-surface';const handle=document.createElement('div');handle.className='custom-table-handle';handle.textContent=table.name;if(diagonal)handle.style.transform=`rotate(${-angle}deg)`;surface.appendChild(handle);const zone=tab.zones.find(item=>item.id===table.zoneId);if(zone){const zoneName=document.createElement('span');zoneName.className='table-zone-name';zoneName.textContent=zone.name;handle.appendChild(zoneName)}const halfWidth=(diagonal?150:(vertical?105:160))/980*100+1,halfHeight=(diagonal?150:(vertical?160:105))/650*100+1;attachDrag(surface,element,table,{minX:halfWidth,maxX:100-halfWidth,minY:halfHeight,maxY:100-halfHeight,onEnd:()=>{autoAssignTableZone(table,tab);renderAll()}});const actions=document.createElement('div');actions.className='custom-table-actions';const edit=document.createElement('button');edit.type='button';edit.className='table-action';edit.textContent='✎';edit.title='Edit table';edit.addEventListener('click',event=>{event.stopPropagation();openTableEditor(table)});const rotate=document.createElement('button');rotate.type='button';rotate.className='table-action';rotate.textContent='↻';rotate.title='Rotate table 45°';rotate.addEventListener('click',event=>{event.stopPropagation();beginMutation();table.rotation=(angle+45)%360;invalidateRoles(tab);renderAll();saveDraft()});const remove=document.createElement('button');remove.type='button';remove.className='table-action danger';remove.textContent='×';remove.addEventListener('click',event=>{event.stopPropagation();deleteTable(tableIndex)});actions.append(edit,rotate,remove);element.append(surface,actions);seatPositions(table.capacity,angle).forEach((pos,local)=>{const index=offset+local,seat=createSeat(index,tab.seats[index],'custom-seat');seat.style.left=`${pos.x}%`;seat.style.top=`${pos.y}%`;element.appendChild(seat)});refs.customRoomCanvas.appendChild(element)});
+    fitCustomRoom();
+  }
+  function fitCustomRoom(){
+    if(!document.body.classList.contains('student-focus')||activeTab().mode!=='custom'){document.documentElement.style.setProperty('--room-scale','1');refs.customRoomScroll.style.height='';return}
+    const width=Math.max(280,refs.customRoomScroll.clientWidth),scale=Math.min(1,width/980);document.documentElement.style.setProperty('--room-scale',String(scale));refs.customRoomScroll.style.height=`${Math.ceil(650*scale)}px`;
+  }
+
+  function renderPlan(){
+    const tab=activeTab(),has=sharedStudents().length>0;refs.planContent.hidden=!has;refs.emptyState.hidden=has;if(!has)return;ensureSeatArrays(tab);document.documentElement.style.setProperty('--plan-accent',tab.accent);document.documentElement.style.setProperty('--highlight',tab.highlight);
+    const present=presentNames().length,seated=tab.seats.filter(Boolean).length;refs.planSummary.textContent=`${seated}/${present} seated · ${seatCount(tab)} seats`;refs.planSubtitle.textContent=`${refs.yearSelect.value} ${currentCourse()}${refs.classCodeInput.value.trim()?` — ${refs.classCodeInput.value.trim()}`:''}${refs.planNameInput.value.trim()?` · ${refs.planNameInput.value.trim()}`:''} · ${tab.title}`;
+    refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';tab.mode==='custom'?renderCustom():renderQuick();renderStudentPool();renderTimer();renderPicker();
+  }
+  function renderStudentPool(){const tab=activeTab();refs.studentPool.innerHTML='';const pool=unseatedNames(tab);if(!pool.length){refs.studentPool.innerHTML='<p class="empty-pool">All present students are seated.</p>';return}pool.forEach(name=>{const chip=document.createElement('button');chip.type='button';chip.className=`student-chip${selected?.name===name&&selected.sourceIndex===null?' selected':''}`;chip.textContent=name;chip.draggable=true;chip.addEventListener('click',event=>{event.stopPropagation();selectStudent(name,null)});chip.addEventListener('dragstart',()=>{dragged={name,sourceIndex:null}});chip.addEventListener('dragend',()=>dragged=null);refs.studentPool.appendChild(chip)})}
+
+  function renderTabs(){refs.tabStrip.innerHTML='';workspace.tabs.forEach((tab,index)=>{const button=document.createElement('button');button.type='button';button.className=`workspace-tab${tab.id===activeTabId?' active':''}`;button.innerHTML=`<span>${escapeHtml(tab.title)}</span><small>${index+1}</small>`;button.addEventListener('click',()=>switchTab(tab.id));refs.tabStrip.appendChild(button)});refs.addTabButton.disabled=workspace.tabs.length>=5;refs.duplicateTabButton.disabled=workspace.tabs.length>=5;refs.deleteTabButton.disabled=workspace.tabs.length<=1;refs.tabLimitText.textContent=`${workspace.tabs.length}/5 tabs`}
+  function switchTab(id){if(id===activeTabId)return;stopTimer();activeTabId=id;workspace.activeTabId=id;selected=null;undoStack=[];redoStack=[];syncControlsFromTab();renderAll();saveDraft()}
+  function addTab(){if(workspace.tabs.length>=5)return;const title=window.prompt('Name this room or setting',`Room ${workspace.tabs.length+1}`);if(title===null)return;beginMutation();const tab=createTab(normaliseName(title)||`Room ${workspace.tabs.length+1}`);tab.students=activeTab().students.map(s=>({...s}));workspace.tabs.push(tab);activeTabId=tab.id;workspace.activeTabId=tab.id;syncControlsFromTab();renderAll();saveDraft()}
+  function duplicateTab(){if(workspace.tabs.length>=5)return;const source=activeTab();const title=window.prompt('Name the duplicate tab',`${source.title} copy`);if(title===null)return;beginMutation();const copy=hydrateTab({...deepClone(source),id:uid('tab'),title:normaliseName(title)||`${source.title} copy`},workspace.tabs.length);workspace.tabs.push(copy);activeTabId=copy.id;workspace.activeTabId=copy.id;syncControlsFromTab();renderAll();saveDraft()}
+  function renameTab(){const tab=activeTab();const title=window.prompt('Rename this tab',tab.title);if(title===null)return;beginMutation();tab.title=normaliseName(title)||tab.title;renderAll();saveDraft()}
+  function deleteTab(){if(workspace.tabs.length<=1)return;if(!window.confirm(`Delete the tab “${activeTab().title}”?`))return;beginMutation();workspace.tabs=workspace.tabs.filter(t=>t.id!==activeTabId);activeTabId=workspace.tabs[0].id;workspace.activeTabId=activeTabId;syncControlsFromTab();renderAll();saveDraft()}
+
+  function renderRules(){const tab=activeTab();refs.rulesList.innerHTML='';const add=(pair,type,index)=>{const row=document.createElement('div');row.className=`rule-row ${type}`;const text=document.createElement('span');text.textContent=`${pair[0]} ${type==='together'?'with':'apart from'} ${pair[1]}`;const remove=document.createElement('button');remove.type='button';remove.className='button small danger';remove.textContent='Remove';remove.addEventListener('click',()=>{beginMutation();tab.planning[type].splice(index,1);renderRules();saveDraft()});row.append(text,remove);refs.rulesList.appendChild(row)};tab.planning.together.forEach((p,i)=>add(p,'together',i));tab.planning.apart.forEach((p,i)=>add(p,'apart',i));if(!refs.rulesList.children.length)refs.rulesList.innerHTML='<p class="hint">No together/apart rules added.</p>';refs.planningBanner.hidden=!tab.planning.enabled;document.body.classList.toggle('planning-active',tab.planning.enabled);refs.planningModeInput.checked=tab.planning.enabled;refs.planningNotesInput.value=tab.planning.notes||'';refs.avoidHistoryInput.checked=tab.planning.avoidHistory;refs.historyDepthWrap.hidden=!tab.planning.avoidHistory;refs.historyDepthSelect.value=String(tab.planning.historyDepth||5);updateStickyOffset()}
+  function updateStickyOffset(){requestAnimationFrame(()=>{const offset=activeTab().planning.enabled?refs.planningBanner.offsetHeight+18:10;document.documentElement.style.setProperty('--sticky-offset',`${offset}px`)})}
+  function addRule(type){const a=refs.ruleStudentA.value,b=refs.ruleStudentB.value;if(!a||!b||a===b){setStatus(refs.planStatus,'Select two different students for the rule.','warning');return}const tab=activeTab();const key=pairKey(a,b);if([...tab.planning.together,...tab.planning.apart].some(pair=>pairKey(...pair)===key)){setStatus(refs.planStatus,'A rule already exists for those students.','warning');return}beginMutation();tab.planning[type].push([a,b]);renderRules();saveDraft()}
+
+  function renderRoles(){const tab=activeTab();refs.roleChipList.innerHTML='';tab.roles.forEach((role,index)=>{const chip=document.createElement('span');chip.className='role-chip';chip.append(document.createTextNode(role));const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.title='Remove role';remove.addEventListener('click',()=>{beginMutation();tab.roles.splice(index,1);tab.zones.forEach(z=>z.roles=z.roles.filter(r=>r!==role));invalidateRoles(tab);renderAll();saveDraft()});chip.appendChild(remove);refs.roleChipList.appendChild(chip)});const assigned=Object.keys(tab.roleAssignments||{}).length;refs.rolesStatus.className=`roles-status${tab.rolesDirty?' warning':''}`;refs.rolesStatus.textContent=tab.rolesDirty?'Roles need reassignment after the seating or zone change.':assigned?`${assigned} student role${assigned===1?'':'s'} currently assigned.`:'No roles assigned.'}
+  function renderZoneEditors(){
+    const tab=activeTab();refs.zoneList.innerHTML='';tab.zones.forEach((zone,index)=>{const row=document.createElement('div');row.className='zone-editor';const left=document.createElement('div');const title=document.createElement('strong');title.textContent=zone.name;const meta=document.createElement('div');meta.className='hint';meta.textContent=`${Math.round(zone.w)}% × ${Math.round(zone.h)}% · ${zone.roles.length?zone.roles.join(', '):'no roles'}`;left.append(title,meta);const actions=document.createElement('div');actions.className='mini-actions';const edit=document.createElement('button');edit.type='button';edit.className='button small secondary';edit.textContent='Edit';edit.addEventListener('click',()=>editZone(zone));const remove=document.createElement('button');remove.type='button';remove.className='button small danger';remove.textContent='Delete';remove.addEventListener('click',()=>{beginMutation();tab.zones.splice(index,1);tab.tables.forEach(t=>{if(t.zoneId===zone.id)t.zoneId='' });invalidateRoles(tab);renderAll();saveDraft()});actions.append(edit,remove);row.append(left,actions);refs.zoneList.appendChild(row)});if(!tab.zones.length)refs.zoneList.innerHTML='<p class="hint">No learning zones added.</p>'}
+  function editZone(zone){const tab=activeTab();const name=window.prompt('Zone name',zone.name);if(name===null)return;const width=window.prompt('Zone width as a percentage (15–90)',String(zone.w));if(width===null)return;const height=window.prompt('Zone height as a percentage (12–80)',String(zone.h));if(height===null)return;const colour=window.prompt('Zone colour (hex)',zone.color);if(colour===null)return;const selected=window.prompt(`Comma-separated roles for this zone\nAvailable: ${tab.roles.join(', ')}`,zone.roles.join(', '));if(selected===null)return;beginMutation();zone.name=normaliseName(name)||zone.name;zone.w=Math.max(15,Math.min(90,Number(width)||zone.w));zone.h=Math.max(12,Math.min(80,Number(height)||zone.h));if(/^#[0-9a-f]{6}$/i.test(colour))zone.color=colour;zone.roles=selected.split(',').map(normaliseName).filter(role=>tab.roles.includes(role));autoAssignAllTablesToZones(tab);invalidateRoles(tab);renderAll();saveDraft()}
+  function addZone(){const tab=activeTab();if(tab.mode!=='custom'){setStatus(refs.planStatus,'Switch to Custom room before adding learning zones.','warning');return}beginMutation();tab.zones.push({id:uid('zone'),name:normaliseName(refs.zoneNameInput.value)||`Learning zone ${tab.zones.length+1}`,x:50,y:50,w:38,h:30,color:refs.zoneColourInput.value,roles:tab.roles.slice(0,Math.min(4,tab.roles.length))});refs.zoneNameInput.value='';autoAssignAllTablesToZones(tab);invalidateRoles(tab);renderAll();saveDraft()}
+  function assignRoles(){const tab=activeTab();beginMutation();tab.roleAssignments={};tab.rolesDirty=false;tab.zones.forEach(zone=>{const students=[];tab.tables.forEach((table,tableIndex)=>{if(table.zoneId!==zone.id)return;const offset=tableSeatOffset(tab,tableIndex);tab.seats.slice(offset,offset+table.capacity).filter(Boolean).forEach(name=>students.push(name))});const shuffled=secureShuffle(students);zone.roles.forEach((role,index)=>{if(shuffled[index])tab.roleAssignments[shuffled[index]]=role});if(shuffled.length>zone.roles.length&&zone.roles.length){shuffled.slice(zone.roles.length).forEach((name,index)=>tab.roleAssignments[name]=zone.roles[index%zone.roles.length])}});renderAll();saveDraft();setStatus(refs.planStatus,'Roles assigned to students in each configured learning zone.','success')}
+
+  function objectLabel(type){return {board:'Whiteboard',teacher:'Teacher desk',door:'Door',window:'Window',sink:'Sink',equipment:'Equipment station',storage:'Storage',screen:'Projector screen'}[type]||'Room object'}
+  function addObject(){const tab=activeTab();if(tab.mode!=='custom'){setStatus(refs.planStatus,'Switch to Custom room before adding room objects.','warning');return}const type=refs.objectTypeSelect.value;beginMutation();tab.objects.push({id:uid('object'),type,label:objectLabel(type),x:50,y:type==='board'||type==='screen'?8:20+tab.objects.length*8,w:type==='board'||type==='screen'?32:18,h:type==='door'?16:8,rotation:0,color:refs.objectColourInput.value,locked:false});renderAll();saveDraft()}
+  function renderObjectEditors(){const tab=activeTab();refs.objectList.innerHTML='';tab.objects.forEach((object,index)=>{const row=document.createElement('div');row.className='object-editor';row.innerHTML=`<span><strong>${escapeHtml(object.label)}</strong><br><span class="hint">${object.locked?'Locked':'Movable'}</span></span>`;const remove=document.createElement('button');remove.type='button';remove.className='button small danger';remove.textContent='Delete';remove.addEventListener('click',()=>{beginMutation();tab.objects.splice(index,1);renderAll();saveDraft()});row.appendChild(remove);refs.objectList.appendChild(row)});if(!tab.objects.length)refs.objectList.innerHTML='<p class="hint">No room objects added.</p>'}
+
+  function timerNow(tab=activeTab()){
+    const timer=tab.timer;if(!timer.running||!timer.startedAt)return timer.mode==='down'?timer.remaining:timer.elapsed;const elapsed=Math.max(0,Math.floor((Date.now()-timer.startedAt)/1000));return timer.mode==='down'?Math.max(0,timer.remaining-elapsed):timer.elapsed+elapsed;
+  }
+  function renderTimer(){const tab=activeTab(),timer=tab.timer,value=timerNow(tab);refs.timerDisplay.textContent=formatTime(value);refs.timerDisplay.classList.toggle('finished',timer.mode==='down'&&value<=0);refs.timerModeSelect.value=timer.mode;refs.timerMinutesInput.value=String(Math.max(0,Math.round(timer.duration/60)));refs.timerStartButton.textContent=timer.running?'Pause':'Start';refs.timerSoundButton.setAttribute('aria-pressed',String(timer.sound));refs.timerSoundButton.textContent=timer.sound?'🔔 Sound':'🔕 Muted';const progress=timer.mode==='down'&&timer.duration?value/timer.duration:Math.min(1,value/Math.max(timer.duration,1));refs.timerProgressBar.style.width=`${Math.max(0,Math.min(100,progress*100))}%`}
+  function formatTime(seconds){const value=Math.max(0,Math.floor(seconds));return `${String(Math.floor(value/60)).padStart(2,'0')}:${String(value%60).padStart(2,'0')}`}
+  function startPauseTimer(){const tab=activeTab(),timer=tab.timer;if(timer.running){commitTimer(tab);stopTimer()}else{if(timer.mode==='down'&&timer.remaining<=0)timer.remaining=timer.duration;if(timer.mode==='up'&&timer.elapsed<0)timer.elapsed=0;timer.running=true;timer.startedAt=Date.now();startTimerInterval()}renderTimer();saveDraft()}
+  function commitTimer(tab=activeTab()){const timer=tab.timer;if(!timer.running||!timer.startedAt)return;const elapsed=Math.max(0,Math.floor((Date.now()-timer.startedAt)/1000));if(timer.mode==='down')timer.remaining=Math.max(0,timer.remaining-elapsed);else timer.elapsed+=elapsed;timer.startedAt=null}
+  function startTimerInterval(){stopTimer(false);timerInterval=setInterval(()=>{const tab=activeTab(),value=timerNow(tab);renderTimer();if(tab.timer.mode==='down'&&tab.timer.running&&value<=0){tab.timer.remaining=0;tab.timer.running=false;tab.timer.startedAt=null;stopTimer();if(tab.timer.sound)playChime();renderTimer();saveDraft()}},250)}
+  function stopTimer(commit=true){if(commit&&workspace.tabs?.length)commitTimer(activeTab());if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+  function resetTimer(){const tab=activeTab();stopTimer();beginMutation();tab.timer.running=false;tab.timer.startedAt=null;tab.timer.duration=Math.max(0,Number(refs.timerMinutesInput.value)||0)*60;tab.timer.remaining=tab.timer.duration;tab.timer.elapsed=0;renderTimer();saveDraft()}
+  function addMinute(){const tab=activeTab();touchEdit();commitTimer(tab);tab.timer.duration+=60;tab.timer.remaining+=60;renderTimer();saveDraft();if(tab.timer.running){tab.timer.startedAt=Date.now();startTimerInterval()}}
+  function playChime(){try{const AudioContext=window.AudioContext||window.webkitAudioContext;const ctx=new AudioContext();[0,.18,.36].forEach((delay,index)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.frequency.value=[660,880,990][index];gain.gain.setValueAtTime(.0001,ctx.currentTime+delay);gain.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+delay+.02);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+delay+.35);osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+.4)})}catch(error){/* sound unavailable */}}
+
+  let pickerAudioContext=null;
+  function getPickerAudioContext(){
+    try{
+      const AudioContext=window.AudioContext||window.webkitAudioContext;
+      if(!AudioContext)return null;
+      if(!pickerAudioContext)pickerAudioContext=new AudioContext();
+      if(pickerAudioContext.state==='suspended')pickerAudioContext.resume().catch(()=>{});
+      return pickerAudioContext;
+    }catch(error){return null}
+  }
+  function playPickerTick(progress=0){
+    if(activeTab().picker.sound===false)return;
+    const ctx=getPickerAudioContext();if(!ctx)return;
+    const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type='square';osc.frequency.setValueAtTime(920-(Math.max(0,Math.min(1,progress))*260),now);
+    gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.038,now+.004);gain.gain.exponentialRampToValueAtTime(.0001,now+.034);
+    osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+.04);
+  }
+  function playPickerFinal(tab){
+    if(tab.picker.sound===false)return;
+    const ctx=getPickerAudioContext();if(!ctx)return;
+    [523.25,659.25,783.99].forEach((frequency,index)=>{
+      const delay=index*.1,now=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type='sine';osc.frequency.setValueAtTime(frequency,now);
+      gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.13,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+.32);
+      osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+.36);
+    });
+  }
+
+  let pickerRunToken=0;
+  let pickerRunning=false;
+  let pickerRunTabId='';
+
+  function pickerPool(tab=activeTab()){
+    const present=presentNames();
+    const seated=[...new Set(tab.seats.filter(name=>name&&present.includes(name)))];
+    return tab.picker.pool==='present'?present:seated;
+  }
+  function pickerAvailable(tab,pool){return tab.picker.removePicked?pool.filter(name=>!(Number(tab.picker.counts?.[name])>0)):[...pool]}
+  function updatePickerHighlight(name){document.querySelectorAll('.seat.picked').forEach(seat=>seat.classList.remove('picked'));if(!name)return;document.querySelectorAll('.seat[data-student]').forEach(seat=>{if(seat.dataset.student===name)seat.classList.add('picked')})}
+  function setPickerControlsDisabled(disabled){refs.pickerPoolSelect.disabled=disabled;refs.pickerRemoveInput.disabled=disabled;refs.pickFastButton.disabled=disabled;refs.pickSlowButton.disabled=disabled;refs.resetPickerButton.disabled=disabled}
+  function renderPickerTally(){
+    const picker=activeTab().picker;
+    const entries=Object.entries(picker.counts||{}).filter(([,count])=>Number(count)>0).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true,sensitivity:'base'}));
+    const total=entries.reduce((sum,[,count])=>sum+Number(count),0);
+    refs.pickerTallySummary.textContent=`${total} ${total===1?'selection':'selections'} · ${entries.length} ${entries.length===1?'student':'students'}`;
+    refs.pickerTallyList.innerHTML='';
+    if(!entries.length){const empty=document.createElement('span');empty.className='picker-tally-empty';empty.textContent='No one has been picked yet.';refs.pickerTallyList.appendChild(empty);return}
+    entries.forEach(([name,count])=>{const chip=document.createElement('span');chip.className='picker-tally-chip';const label=document.createElement('span');label.textContent=name;const tally=document.createElement('span');tally.className='picker-tally-count';tally.textContent=String(count);chip.append(label,tally);refs.pickerTallyList.appendChild(chip)})
+  }
+  function renderPicker(){
+    const tab=activeTab(),picker=tab.picker,pool=pickerPool(tab),remaining=pickerAvailable(tab,pool).length;
+    refs.pickerPoolSelect.value=picker.pool==='present'?'present':'seated';refs.pickerRemoveInput.checked=picker.removePicked!==false;refs.pickerSoundButton.setAttribute('aria-pressed',String(picker.sound!==false));refs.pickerSoundButton.textContent=picker.sound!==false?'🔊 Picker sound':'🔇 Picker muted';refs.pickerName.textContent=picker.current||'Ready';refs.pickerName.classList.toggle('cycling',pickerRunning&&pickerRunTabId===tab.id);setPickerControlsDisabled(pickerRunning);const exhausted=!pool.length||(picker.removePicked&&remaining===0&&Object.keys(picker.counts||{}).length>0);refs.pickFastButton.disabled=pickerRunning||exhausted;refs.pickSlowButton.disabled=pickerRunning||exhausted;
+    if(pickerRunning&&pickerRunTabId===tab.id)refs.pickerHistoryText.textContent='Cycling through the available students…';
+    else if(!pool.length)refs.pickerHistoryText.textContent=picker.pool==='present'?'No present students are available.':'No seated students are available.';
+    else if(picker.removePicked&&remaining===0&&Object.keys(picker.counts||{}).length)refs.pickerHistoryText.textContent='Everyone in the current picker pool has had a turn. Reset the picker to begin again.';
+    else if(picker.current&&!tab.seats.includes(picker.current))refs.pickerHistoryText.textContent=`${picker.current} is currently unseated.${picker.removePicked?` ${remaining} remaining before reset.`:''}`;
+    else if(picker.current)refs.pickerHistoryText.textContent=picker.removePicked?`${remaining} ${remaining===1?'student remains':'students remain'} before reset.`:`Recent: ${picker.history.slice(-4).reverse().join(' · ')}`;
+    else refs.pickerHistoryText.textContent=picker.removePicked?`${remaining} ${remaining===1?'student is':'students are'} available.`:'No student selected yet.';
+    renderPickerTally();
+  }
+  function cancelPickerAnimation(){pickerRunToken+=1;pickerRunning=false;pickerRunTabId='';refs.pickerName.classList.remove('cycling');setPickerControlsDisabled(false)}
+  function finishPickerSelection(tab,name,runToken){
+    if(runToken!==pickerRunToken||activeTab().id!==tab.id)return;
+    pickerRunning=false;pickerRunTabId='';tab.picker.current=name;tab.picker.history.push(name);tab.picker.history=tab.picker.history.slice(-200);tab.picker.counts[name]=(Number(tab.picker.counts[name])||0)+1;playPickerFinal(tab);renderPlan();renderPicker();const seat=refs.seatGrid.querySelector('.seat.picked')||refs.customRoomCanvas.querySelector('.seat.picked');seat?.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});saveDraft()
+  }
+  function startPicker(durationMs){
+    if(pickerRunning)return;
+    const tab=activeTab(),pool=pickerPool(tab);
+    if(!pool.length){tab.picker.current='';renderPicker();return}
+    const available=pickerAvailable(tab,pool);
+    if(!available.length){tab.picker.current='';renderPicker();return}
+    const target=secureShuffle(available)[0],cycle=secureShuffle(available),runToken=++pickerRunToken,start=performance.now();
+    let cycleIndex=0,lastChange=0;
+    if(tab.picker.sound!==false)getPickerAudioContext();
+    pickerRunning=true;pickerRunTabId=tab.id;renderPicker();
+    function step(now){
+      if(runToken!==pickerRunToken||activeTab().id!==tab.id){cancelPickerAnimation();renderPicker();return}
+      const elapsed=now-start,progress=Math.min(1,elapsed/durationMs),interval=45+Math.pow(progress,2.8)*(durationMs<=5000?560:820);
+      if(progress<1&&now-lastChange>=interval){const candidate=cycle[cycleIndex%cycle.length];cycleIndex+=1;lastChange=now;tab.picker.current=candidate;refs.pickerName.textContent=candidate;updatePickerHighlight(candidate);playPickerTick(progress)}
+      if(progress>=1){finishPickerSelection(tab,target,runToken);return}
+      requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+  function resetPicker(){cancelPickerAnimation();const tab=activeTab(),pool=tab.picker.pool,removePicked=tab.picker.removePicked!==false,sound=tab.picker.sound!==false;tab.picker={history:[],counts:{},current:'',pool,removePicked,sound};renderPlan();renderPicker();saveDraft()}
+
+  function renderClassOptions(){const old=activeClassId;refs.savedClassSelect.innerHTML='<option value="">New class list</option>';[...classes].sort((a,b)=>classLabel(a).localeCompare(classLabel(b))).forEach(record=>{const option=document.createElement('option');option.value=record.id;option.textContent=classLabel(record)||'Unnamed class';refs.savedClassSelect.appendChild(option)});refs.savedClassSelect.value=classes.some(c=>c.id===old)?old:'';refs.deleteClassButton.disabled=!activeClassId}
+  function renderPlanOptions(){const old=activePlanId;refs.savedPlanSelect.innerHTML='<option value="">New plan workspace</option>';plans.filter(p=>!activeClassId||p.classId===activeClassId).sort((a,b)=>String(a.name).localeCompare(String(b.name))).forEach(record=>{const option=document.createElement('option');option.value=record.id;option.textContent=`${record.name}${record.updated?` · ${record.updated}`:''}`;refs.savedPlanSelect.appendChild(option)});refs.savedPlanSelect.value=plans.some(p=>p.id===old)?old:'';refs.deletePlanButton.disabled=!activePlanId}
+  function saveClass(){syncStudentsFromInput();const students=sharedStudents();if(!students.length){setStatus(refs.classStatus,'Add at least one student before saving the class.','error');return}const record={id:activeClassId||uid('class'),year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),names:students.map(s=>s.name)};const index=classes.findIndex(c=>c.id===record.id);if(index>=0)classes[index]=record;else classes.push(record);activeClassId=record.id;workspace.classId=record.id;saveValue(STORAGE.classes,classes);renderClassOptions();renderPlanOptions();setStatus(refs.classStatus,`Saved ${classLabel(record)}.`);saveDraft()}
+  function loadClass(id){const record=classes.find(c=>c.id===id);if(!record){newClass();return}activeClassId=record.id;refs.yearSelect.value=record.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===record.course&&record.course!=='Other');refs.courseSelect.value=standard?record.course:'Other';refs.customCourseInput.value=standard?'':record.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=record.classCode||'';refs.namesInput.value=(record.names||[]).join('\n');workspace=createWorkspace();workspace.classId=record.id;workspace.students=(record.names||[]).map(name=>({name,present:true}));syncSharedStudentsToTabs();activeTabId=workspace.tabs[0].id;activePlanId='';lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderClassOptions();renderPlanOptions();renderAll();saveDraft()}
+  function newClass(){stopTimer();activeClassId='';activePlanId='';refs.yearSelect.value='Year 7';refs.courseSelect.value='Science';refs.customCourseInput.value='';refs.customCourseWrap.hidden=true;refs.classCodeInput.value='';refs.namesInput.value='';workspace=createWorkspace();activeTabId=workspace.tabs[0].id;lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderClassOptions();renderPlanOptions();renderAll();setStatus(refs.classStatus,'');setStatus(refs.planStatus,'');saveDraft();refs.namesInput.focus()}
+  function deleteClass(){const record=classes.find(c=>c.id===activeClassId);if(!record)return;if(!window.confirm(`Delete ${classLabel(record)} and its saved plan workspaces?`))return;classes=classes.filter(c=>c.id!==activeClassId);plans=plans.filter(p=>p.classId!==activeClassId);saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);newClass()}
+
+  function workspaceForStorage(){const copy=deepClone(workspace);copy.activeTabId=activeTabId;copy.tabs.forEach((saved,index)=>{const original=workspace.tabs[index];if(!original)return;const value=timerNow(original);if(original.timer.mode==='down')saved.timer.remaining=value;else saved.timer.elapsed=value;saved.timer.running=false;saved.timer.startedAt=null});return copy}
+  function workspaceRecord(){const stored=workspaceForStorage();return {id:activePlanId||uid('plan'),classId:activeClassId,name:refs.planNameInput.value.trim()||'Seating plan workspace',updated:new Date().toLocaleDateString('en-AU'),students:stored.students,tabs:stored.tabs,activeTabId}}
+  function savePlan(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before saving.','error');return}if(!activeClassId){setStatus(refs.planStatus,'Save the class list first.','warning');return}const record=workspaceRecord();const index=plans.findIndex(p=>p.id===record.id);if(index>=0)plans[index]=record;else plans.push(record);activePlanId=record.id;workspace.id=record.id;workspace.classId=record.classId;workspace.name=record.name;workspace.updated=record.updated;saveValue(STORAGE.plans,plans);draftRecovered=false;lastSavedSignature=comparableSignature();renderPlanOptions();renderSaveState();setStatus(refs.planStatus,`Saved “${record.name}” with ${record.tabs.length} tab${record.tabs.length===1?'':'s'}.`);saveDraft()}
+  function loadPlan(id){const record=plans.find(p=>p.id===id);if(!record){newPlan();return}if(record.classId&&record.classId!==activeClassId){const cls=classes.find(c=>c.id===record.classId);if(cls){activeClassId=cls.id;refs.yearSelect.value=cls.year||'Year 7';refs.classCodeInput.value=cls.classCode||'';const standard=[...refs.courseSelect.options].some(o=>o.value===cls.course&&cls.course!=='Other');refs.courseSelect.value=standard?cls.course:'Other';refs.customCourseInput.value=standard?'':cls.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.namesInput.value=(cls.names||[]).join('\n')}}activePlanId=record.id;workspace=hydrateWorkspace(record);activeTabId=workspace.activeTabId;refs.planNameInput.value=record.name||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');undoStack=[];redoStack=[];syncControlsFromTab();draftRecovered=false;lastSavedSignature=comparableSignature();renderClassOptions();renderPlanOptions();renderAll();setStatus(refs.planStatus,`Loaded “${record.name}”.`);saveDraft()}
+  function newPlan(){stopTimer();activePlanId='';const names=parseNames();workspace=createWorkspace();workspace.classId=activeClassId;workspace.students=names.map(name=>({name,present:true}));syncSharedStudentsToTabs();activeTabId=workspace.tabs[0].id;refs.planNameInput.value='';lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderPlanOptions();renderAll();setStatus(refs.planStatus,'');saveDraft()}
+  function duplicatePlan(){const source=activePlanId?plans.find(p=>p.id===activePlanId):workspaceRecord();if(!source)return;const name=window.prompt('Name the duplicated workspace',`${source.name||'Seating plan'} copy`);if(name===null)return;const copy=hydrateWorkspace({...deepClone(source),id:'',name:normaliseName(name)||`${source.name} copy`,updated:''});copy.tabs=copy.tabs.slice(0,5).map(tab=>({...tab,id:uid('tab')}));copy.activeTabId=copy.tabs[0].id;workspace=copy;activePlanId='';activeTabId=copy.activeTabId;lastSavedSignature='';draftRecovered=false;refs.planNameInput.value=copy.name;syncControlsFromTab();renderPlanOptions();renderAll();setStatus(refs.planStatus,'Duplicate created. Save it as a new workspace.');saveDraft()}
+  function deletePlan(){const record=plans.find(p=>p.id===activePlanId);if(!record)return;if(!window.confirm(`Delete “${record.name}”?`))return;plans=plans.filter(p=>p.id!==activePlanId);saveValue(STORAGE.plans,plans);newPlan()}
+
+  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.3.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`TeacherSims-SeatingPlan-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
+  async function importBackup(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload||!Array.isArray(payload.classes)||!Array.isArray(payload.plans))throw new Error('Invalid backup');if(!window.confirm('Import and merge this backup with the items already stored on this device?'))return;const classMap=new Map(classes.map(i=>[i.id,i]));payload.classes.forEach(i=>{if(i?.id&&Array.isArray(i.names))classMap.set(i.id,i)});classes=[...classMap.values()];const planMap=new Map(plans.map(i=>[i.id,i]));payload.plans.forEach(i=>{if(i?.id&&Array.isArray(i.tabs))planMap.set(i.id,i)});plans=[...planMap.values()];saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);renderClassOptions();renderPlanOptions();setStatus(refs.planStatus,'Backup imported and merged successfully.')}catch(error){setStatus(refs.planStatus,'That file is not a valid Seating Plan Maker backup.','error')}finally{refs.importInput.value=''}}
+  function saveDraft(){saveValue(STORAGE.draft,{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim(),savedAt:Date.now()});renderSaveState()}
+  function loadDraft(){const draft=loadObject(STORAGE.draft);if(!draft?.workspace)return false;workspace=hydrateWorkspace(draft.workspace);activeClassId=draft.activeClassId||'';activePlanId=draft.activePlanId||'';activeTabId=workspace.tabs.some(t=>t.id===draft.activeTabId)?draft.activeTabId:workspace.activeTabId;refs.yearSelect.value=draft.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===draft.course&&draft.course!=='Other');refs.courseSelect.value=standard?draft.course:'Other';refs.customCourseInput.value=standard?'':draft.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=draft.classCode||'';refs.planNameInput.value=draft.planName||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');draftRecovered=true;lastSavedSignature='';return true}
+
+
+  function migrateLegacyData(){
+    if(!classes.length){
+      const legacyClasses=loadArray('teachersims-seating-classes-v1');
+      if(legacyClasses.length){classes=legacyClasses;saveValue(STORAGE.classes,classes)}
+    }
+    if(!plans.length){
+      const legacyPlans=loadArray('teachersims-seating-plans-v1');
+      if(legacyPlans.length){
+        plans=legacyPlans.map((record,index)=>{
+          const tab=createTab(record.name||`Room ${index+1}`);
+          tab.students=Array.isArray(record.students)?record.students.map(student=>({name:normaliseName(student.name),present:student.present!==false})).filter(student=>student.name):[];
+          tab.mode=record.layoutMode==='custom'?'custom':'quick';
+          tab.quickLayout=record.quickLayout||'traditional';tab.rows=Number(record.rows)||5;tab.columns=Number(record.columns)||6;tab.front=record.front==='bottom'?'bottom':'top';tab.snap=record.snapTables!==false;
+          tab.tables=Array.isArray(record.customTables)?record.customTables.map((table,tableIndex)=>({id:table.id||uid('table'),name:table.name||`Table ${tableIndex+1}`,capacity:[2,4,6].includes(Number(table.capacity))?Number(table.capacity):4,x:Number(table.x)||50,y:Number(table.y)||50,rotation:normaliseTableRotation(table.rotation),color:'#136f8a',zoneId:''})):[];
+          tab.seats=Array.isArray(record.seats)?[...record.seats]:[];tab.locks=Array.isArray(record.locks)?[...record.locks]:[];ensureSeatArrays(tab);
+          return {id:record.id||uid('plan'),classId:record.classId||'',name:record.name||'Imported seating plan',updated:record.updated||'',tabs:[tab],activeTabId:tab.id};
+        });
+        saveValue(STORAGE.plans,plans);
+      }
+    }
+  }
+
+  function syncControlsFromTab(){const tab=activeTab();layoutModeInputs.forEach(input=>input.checked=input.value===tab.mode);refs.quickLayoutControls.hidden=tab.mode!=='quick';refs.customLayoutControls.hidden=tab.mode!=='custom';refs.quickLayoutSelect.value=tab.quickLayout;refs.rowsSelect.value=String(tab.rows);refs.columnsSelect.value=String(tab.columns);refs.snapTablesInput.checked=tab.snap;refs.frontSelect.value=tab.front;refs.accentColourInput.value=tab.accent;refs.highlightColourInput.value=tab.highlight;refs.accentPreset.value=[...refs.accentPreset.options].some(o=>o.value===tab.accent)?tab.accent:'custom';refs.timerModeSelect.value=tab.timer.mode;refs.timerMinutesInput.value=String(Math.round(tab.timer.duration/60));refs.pickerPoolSelect.value=tab.picker.pool;refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');renderRuleSelectors()}
+  function renderAll(){renderAttendance();renderRuleSelectors();renderRules();renderRoles();renderZoneEditors();renderObjectEditors();renderTabs();renderPlan();renderSaveState();updateUndoButtons()}
+  function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+
+  async function setStudentFocus(active){document.body.classList.toggle('student-focus',active);refs.focusButton.setAttribute('aria-pressed',String(active));refs.focusButton.textContent=active?'↙ Exit student display':'⛶ Student display';fitCustomRoom();try{if(active&&!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else if(!active&&document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(error){/* expanded layout still works */}setTimeout(fitCustomRoom,80)}
+  function setTheme(theme){const dark=theme==='dark';document.body.classList.toggle('dark',dark);refs.themeButton.innerHTML=dark?'☀️ <span>Light mode</span>':'🌙 <span>Dark mode</span>';refs.themeButton.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem(STORAGE.theme,theme)}catch(error){}}
+
+  refs.namesInput.addEventListener('change',()=>syncStudentsFromInput({mutate:true}));refs.namesInput.addEventListener('blur',()=>syncStudentsFromInput());
+  refs.courseSelect.addEventListener('change',()=>{touchEdit();refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';renderPlan();saveDraft()});[refs.yearSelect,refs.classCodeInput,refs.customCourseInput,refs.planNameInput].forEach(control=>control.addEventListener('input',()=>{touchEdit();renderPlan();saveDraft()}));
+  refs.savedClassSelect.addEventListener('change',()=>{const next=refs.savedClassSelect.value;if(!confirmUnsavedChanges()){refs.savedClassSelect.value=activeClassId;return}loadClass(next)});refs.saveClassButton.addEventListener('click',saveClass);refs.newClassButton.addEventListener('click',()=>{if(confirmUnsavedChanges())newClass()});refs.deleteClassButton.addEventListener('click',deleteClass);refs.allPresentButton.addEventListener('click',()=>{beginMutation();workspace.students.forEach(s=>s.present=true);syncSharedStudentsToTabs();renderAll();saveDraft()});
+  refs.savedPlanSelect.addEventListener('change',()=>{const next=refs.savedPlanSelect.value;if(!confirmUnsavedChanges()){refs.savedPlanSelect.value=activePlanId;return}loadPlan(next)});refs.savePlanButton.addEventListener('click',savePlan);refs.newPlanButton.addEventListener('click',()=>{if(confirmUnsavedChanges())newPlan()});refs.duplicatePlanButton.addEventListener('click',duplicatePlan);refs.deletePlanButton.addEventListener('click',deletePlan);refs.exportButton.addEventListener('click',exportBackup);refs.importButton.addEventListener('click',()=>refs.importInput.click());refs.importInput.addEventListener('change',()=>importBackup(refs.importInput.files?.[0]));
+  layoutModeInputs.forEach(input=>input.addEventListener('change',()=>setLayoutMode(input.value)));refs.quickLayoutSelect.addEventListener('change',()=>{beginMutation();const tab=activeTab();tab.quickLayout=refs.quickLayoutSelect.value;renderAll();saveDraft()});refs.rowsSelect.addEventListener('change',()=>{beginMutation();activeTab().rows=Number(refs.rowsSelect.value);ensureSeatArrays();renderAll();saveDraft()});refs.columnsSelect.addEventListener('change',()=>{beginMutation();activeTab().columns=Number(refs.columnsSelect.value);ensureSeatArrays();renderAll();saveDraft()});refs.snapTablesInput.addEventListener('change',()=>{beginMutation();activeTab().snap=refs.snapTablesInput.checked;renderAll();saveDraft()});refs.frontSelect.addEventListener('change',()=>{beginMutation();activeTab().front=refs.frontSelect.value;renderPlan();saveDraft()});
+  refs.addTableButton.addEventListener('click',()=>{beginMutation();addTableToTab(activeTab(),Number(refs.tableCapacitySelect.value)||4);renderAll()});refs.arrangeTablesButton.addEventListener('click',()=>{beginMutation();arrangeTables()});refs.clearTablesButton.addEventListener('click',()=>{if(!window.confirm('Remove all custom tables and their seat assignments?'))return;beginMutation();const tab=activeTab();tab.tables=[];tab.seats=[];tab.locks=[];invalidateRoles(tab);renderAll();saveDraft()});
+  refs.accentPreset.addEventListener('change',()=>{if(refs.accentPreset.value==='custom')return;beginMutation();activeTab().accent=refs.accentPreset.value;refs.accentColourInput.value=activeTab().accent;renderAll();saveDraft()});refs.accentColourInput.addEventListener('change',()=>{beginMutation();activeTab().accent=refs.accentColourInput.value;refs.accentPreset.value='custom';renderPlan();saveDraft()});refs.highlightColourInput.addEventListener('change',()=>{beginMutation();activeTab().highlight=refs.highlightColourInput.value;renderPlan();saveDraft()});
+  refs.planningModeInput.addEventListener('change',()=>{beginMutation();activeTab().planning.enabled=refs.planningModeInput.checked;renderRules();saveDraft()});refs.exitPlanningButton.addEventListener('click',()=>{beginMutation();activeTab().planning.enabled=false;renderRules();saveDraft()});refs.planningNotesInput.addEventListener('input',()=>{touchEdit();activeTab().planning.notes=refs.planningNotesInput.value;saveDraft()});refs.addTogetherButton.addEventListener('click',()=>addRule('together'));refs.addApartButton.addEventListener('click',()=>addRule('apart'));refs.avoidHistoryInput.addEventListener('change',()=>{beginMutation();activeTab().planning.avoidHistory=refs.avoidHistoryInput.checked;renderRules();saveDraft()});refs.historyDepthSelect.addEventListener('change',()=>{beginMutation();activeTab().planning.historyDepth=Number(refs.historyDepthSelect.value);saveDraft()});refs.clearHistoryButton.addEventListener('click',()=>{beginMutation();activeTab().history=[];setStatus(refs.planStatus,'Seating history cleared.');saveDraft()});
+  refs.addZoneButton.addEventListener('click',addZone);refs.assignRolesButton.addEventListener('click',assignRoles);refs.clearRolesButton.addEventListener('click',()=>{beginMutation();const tab=activeTab();tab.roleAssignments={};tab.rolesDirty=false;renderAll();saveDraft()});refs.addRoleButton.addEventListener('click',()=>{const role=normaliseName(refs.newRoleInput.value);if(!role||activeTab().roles.includes(role))return;beginMutation();activeTab().roles.push(role);refs.newRoleInput.value='';renderAll();saveDraft()});refs.addObjectButton.addEventListener('click',addObject);
+  refs.alphabetiseButton.addEventListener('click',alphabetiseSeating);refs.randomiseButton.addEventListener('click',()=>randomiseSeating({all:false}));refs.randomiseAllButton.addEventListener('click',()=>randomiseSeating({all:true}));refs.clearSeatsButton.addEventListener('click',clearSeats);refs.unlockAllButton.addEventListener('click',()=>{beginMutation();activeTab().locks=activeTab().locks.map(()=>false);renderAll();saveDraft()});refs.undoButton.addEventListener('click',undo);refs.redoButton.addEventListener('click',redo);refs.exampleButton.addEventListener('click',()=>{beginMutation();refs.namesInput.value=EXAMPLE_NAMES.join('\n');syncStudentsFromInput();renderAll();saveDraft()});
+  refs.addTabButton.addEventListener('click',addTab);refs.duplicateTabButton.addEventListener('click',duplicateTab);refs.renameTabButton.addEventListener('click',renameTab);refs.deleteTabButton.addEventListener('click',deleteTab);
+  refs.timerStartButton.addEventListener('click',startPauseTimer);refs.timerResetButton.addEventListener('click',resetTimer);refs.timerAddButton.addEventListener('click',addMinute);refs.timerSoundButton.addEventListener('click',()=>{touchEdit();activeTab().timer.sound=!activeTab().timer.sound;renderTimer();saveDraft()});refs.timerModeSelect.addEventListener('change',()=>{stopTimer();beginMutation();const timer=activeTab().timer;timer.mode=refs.timerModeSelect.value;timer.running=false;timer.startedAt=null;timer.elapsed=0;timer.remaining=timer.duration;renderTimer();saveDraft()});refs.timerMinutesInput.addEventListener('change',resetTimer);
+  refs.pickerPoolSelect.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();const tab=activeTab();tab.picker.pool=refs.pickerPoolSelect.value==='present'?'present':'seated';tab.picker.history=[];tab.picker.counts={};tab.picker.current='';renderPlan();renderPicker();saveDraft()});refs.pickerRemoveInput.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();activeTab().picker.removePicked=refs.pickerRemoveInput.checked;renderPicker();saveDraft()});refs.pickerSoundButton.addEventListener('click',()=>{touchEdit();const picker=activeTab().picker;picker.sound=picker.sound===false;if(picker.sound){getPickerAudioContext();playPickerTick(.5)}renderPicker();saveDraft()});refs.pickFastButton.addEventListener('click',()=>startPicker(5000));refs.pickSlowButton.addEventListener('click',()=>startPicker(10000));refs.resetPickerButton.addEventListener('click',resetPicker);
+  refs.unseatedArea.addEventListener('click',event=>{if(event.target.closest('.student-chip'))return;moveSelectedToPool()});refs.printButton.addEventListener('click',()=>window.print());refs.focusButton.addEventListener('click',()=>setStudentFocus(!document.body.classList.contains('student-focus')));document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('student-focus')){document.body.classList.remove('student-focus');refs.focusButton.setAttribute('aria-pressed','false');refs.focusButton.textContent='⛶ Student display';fitCustomRoom()}});
+  refs.themeButton.addEventListener('click',()=>setTheme(document.body.classList.contains('dark')?'light':'dark'));refs.versionButton.addEventListener('click',event=>{event.stopPropagation();const open=refs.versionNotes.hidden;refs.versionNotes.hidden=!open;refs.versionButton.setAttribute('aria-expanded',String(open))});document.addEventListener('click',event=>{if(!event.target.closest('.version-wrap')&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});
+  refs.tableEditorClose.addEventListener('click',closeTableEditor);refs.tableEditorCancel.addEventListener('click',closeTableEditor);refs.tableEditorSave.addEventListener('click',saveTableEditor);refs.tableEditorDialog.addEventListener('click',event=>{if(event.target===refs.tableEditorDialog)closeTableEditor()});refs.tableEditorDialog.addEventListener('close',()=>{editingTableId=''});window.addEventListener('resize',()=>{fitCustomRoom();updateStickyOffset()},{passive:true});window.addEventListener('beforeunload',()=>{cancelPickerAnimation();stopTimer();saveDraft()});
+
+  fillNumberSelect(refs.rowsSelect,2,10,5);fillNumberSelect(refs.columnsSelect,2,10,6);
+  let savedTheme='';try{savedTheme=localStorage.getItem(STORAGE.theme)||''}catch(error){}setTheme(savedTheme||(window.matchMedia?.('(prefers-color-scheme: dark)').matches?'dark':'light'));
+  migrateLegacyData();loadDraft();renderClassOptions();renderPlanOptions();syncControlsFromTab();renderAll();
+})();
+</script>
+</body>
+</html>
