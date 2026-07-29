@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<!-- TeacherSims | GroupMaker | Version 1.2 -->
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create balanced random student groups directly in the browser.">
+  <title>Random Group Maker | TeacherSims</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef4f8;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-strong: #ffffff;
+      --text: #17324d;
+      --muted: #5d7185;
+      --border: #cbd9e6;
+      --accent: #136f8a;
+      --accent-2: #27a39d;
+      --accent-soft: #dff4f2;
+      --danger: #b42318;
+      --danger-soft: #ffebe8;
+      --success: #18794e;
+      --success-soft: #e6f6ed;
+      --shadow: 0 16px 40px rgba(29, 61, 89, 0.12);
+      --radius: 20px;
+    }
+
+    body.dark {
+      color-scheme: dark;
+      --bg: #0d1823;
+      --panel: rgba(20, 35, 49, 0.96);
+      --panel-strong: #162536;
+      --text: #edf6fb;
+      --muted: #a8bdcc;
+      --border: #31495d;
+      --accent: #55bdd0;
+      --accent-2: #63d1c7;
+      --accent-soft: #173d43;
+      --danger: #ff8c84;
+      --danger-soft: #4a2425;
+      --success: #7fdbac;
+      --success-soft: #183b2d;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(39, 163, 157, 0.18), transparent 30rem),
+        radial-gradient(circle at top right, rgba(19, 111, 138, 0.17), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background 180ms ease, color 180ms ease;
+    }
+
+    button, textarea, input, select { font: inherit; }
+    button, select, input[type="radio"] { cursor: pointer; }
+
+    .app-shell {
+      width: min(1460px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 40px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .back-link,
+    .icon-button,
+    .button {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--text);
+      min-height: 44px;
+      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 750;
+      box-shadow: 0 5px 18px rgba(29, 61, 89, 0.08);
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .back-link:hover,
+    .icon-button:hover,
+    .button:hover { transform: translateY(-1px); border-color: var(--accent); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: clamp(28px, 5vw, 58px);
+      background: linear-gradient(135deg, rgba(19, 111, 138, 0.98), rgba(39, 163, 157, 0.94));
+      color: white;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      right: -100px;
+      top: -150px;
+      border-radius: 50%;
+      border: 44px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.1rem, 5vw, 4.4rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+      max-width: 900px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.5;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .version-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin: 0 0 16px !important;
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,0.32);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: white !important;
+      font-size: 0.88rem !important;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 22px;
+      position: sticky;
+      top: 14px;
+    }
+
+    .results-panel { padding: 22px; min-height: 520px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2, h3 { margin: 0; }
+    h2 { font-size: 1.35rem; }
+    h3 { font-size: 1.05rem; }
+
+    .subtle {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 5px 0 0;
+    }
+
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .count-badge {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 255px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 14px;
+      line-height: 1.5;
+      outline: none;
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    textarea:focus,
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(39, 163, 157, 0.14);
+    }
+
+    .hint {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 7px 0 0;
+    }
+
+    .validation {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .validation.show { display: block; }
+    .validation.warning { color: var(--danger); background: var(--danger-soft); }
+    .validation.success { color: var(--success); background: var(--success-soft); }
+
+    .control-section {
+      border-top: 1px solid var(--border);
+      margin-top: 18px;
+      padding-top: 18px;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mode-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel-strong);
+    }
+
+    .mode-card:has(input:checked) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .mode-card strong { display: block; margin-bottom: 2px; }
+    .mode-card small { color: var(--muted); line-height: 1.3; display: block; }
+
+    .number-row {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 12px;
+      align-items: end;
+      margin-top: 14px;
+    }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    .mini-actions,
+    .primary-actions,
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .mini-actions { margin-top: 12px; }
+    .primary-actions { margin-top: 18px; }
+
+    .button { border-radius: 12px; flex: 1 1 auto; }
+    .button.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+      font-size: 1rem;
+    }
+    .button.secondary { background: var(--panel-strong); }
+    .button.danger { color: var(--danger); }
+    .button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
+
+    .empty-state {
+      min-height: 440px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 30px;
+      border: 2px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 2.7rem;
+      transform: rotate(-4deg);
+    }
+
+    .results-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .results-header.show { display: flex; }
+
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 800;
+      padding: 8px 11px;
+      white-space: nowrap;
+    }
+
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 14px;
+    }
+
+    .group-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: var(--panel-strong);
+      overflow: hidden;
+      animation: rise 260ms ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .group-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      background: linear-gradient(135deg, rgba(19,111,138,0.12), rgba(39,163,157,0.14));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .group-number {
+      min-width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .group-count { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+    .member-list {
+      min-height: 74px;
+      list-style: none;
+      padding: 9px;
+      margin: 0;
+    }
+
+    .member {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 8px 9px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .member:hover { background: var(--accent-soft); }
+    .member.dragging { opacity: 0.42; }
+    .member-list.drag-over { outline: 2px dashed var(--accent); outline-offset: -5px; background: var(--accent-soft); }
+
+    .initial {
+      width: 27px;
+      height: 27px;
+      flex: 0 0 27px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 18px;
+      font-size: 0.85rem;
+    }
+
+    body.groups-focus {
+      overflow: auto;
+    }
+
+    body.groups-focus .app-shell {
+      width: 100%;
+      max-width: none;
+      padding: 12px;
+    }
+
+    body.groups-focus .topbar,
+    body.groups-focus .hero,
+    body.groups-focus .controls,
+    body.groups-focus .footer-note {
+      display: none !important;
+    }
+
+    body.groups-focus .workspace {
+      display: block;
+    }
+
+    body.groups-focus .results-panel {
+      min-height: calc(100vh - 24px);
+      border-radius: 18px;
+      padding: clamp(16px, 2vw, 28px);
+    }
+
+    body.groups-focus .groups-grid {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: clamp(14px, 1.5vw, 22px);
+    }
+
+    body.groups-focus .group-card {
+      font-size: clamp(1rem, 1.25vw, 1.2rem);
+    }
+
+    body.groups-focus .member {
+      min-height: 50px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 920px) {
+      .workspace { grid-template-columns: 1fr; }
+      .controls { position: static; }
+    }
+
+    @media (max-width: 560px) {
+      .app-shell { width: min(100% - 18px, 1460px); padding-top: 9px; }
+      .topbar { align-items: stretch; }
+      .back-link span.long { display: none; }
+      .hero { border-radius: 20px; }
+      .controls, .results-panel { padding: 16px; }
+      .mode-grid, .number-row { grid-template-columns: 1fr; }
+      .results-header { align-items: flex-start; flex-direction: column; }
+      .result-actions { width: 100%; }
+      .result-actions .button { flex: 1; }
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      .topbar, .hero, .controls, .result-actions, .footer-note { display: none !important; }
+      .app-shell { width: 100%; margin: 0; padding: 0; }
+      .workspace { display: block; }
+      .results-panel { border: 0; box-shadow: none; padding: 0; }
+      .results-header { display: flex !important; }
+      .summary-chip { color: black; background: #eee; }
+      .groups-grid { grid-template-columns: repeat(3, 1fr); gap: 8mm; }
+      .group-card { break-inside: avoid; border-color: #888; }
+      .group-title { background: #eee; }
+      .group-number { background: #333; }
+      .member { min-height: 9mm; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <nav class="topbar" aria-label="Page controls">
+      <a class="back-link" href="../../index.html" aria-label="Back to the main SciSims page">
+        <span aria-hidden="true">←</span>
+        <span class="long">Back to main SciSims page</span>
+        <span class="sr-only">Back to main SciSims page</span>
+      </a>
+      <button class="icon-button" id="themeButton" type="button" aria-label="Switch to dark mode">🌙 <span>Dark mode</span></button>
+    </nav>
+
+    <header class="hero">
+      <h1>Random Group Maker</h1>
+      <p class="version-label">Version 1.2</p>
+      <p>Paste a class list, choose how the groups should be formed, and create balanced random groups in seconds.</p>
+    </header>
+
+    <section class="workspace">
+      <aside class="panel controls" aria-labelledby="setupHeading">
+        <div class="panel-heading">
+          <div>
+            <h2 id="setupHeading">Class setup</h2>
+            <p class="subtle">Names stay on this device and are never uploaded.</p>
+          </div>
+        </div>
+
+        <label class="field-label" for="namesInput">
+          <span>Student names</span>
+          <span class="count-badge" id="nameCount">0 students</span>
+        </label>
+        <textarea id="namesInput" spellcheck="false" placeholder="Alex Morgan&#10;Bailey Chen&#10;Charlie Singh&#10;Dakota Williams"></textarea>
+        <p class="hint">Use one name per line. Commas, semicolons and copied spreadsheet columns also work.</p>
+        <div class="validation" id="validationMessage" role="status" aria-live="polite"></div>
+
+        <div class="mini-actions">
+          <button class="button secondary" id="saveRosterButton" type="button">Save roster</button>
+          <button class="button secondary" id="loadExampleButton" type="button">Use example</button>
+          <button class="button danger" id="clearButton" type="button">Clear</button>
+        </div>
+
+        <div class="control-section">
+          <h3>Make groups by</h3>
+          <div class="mode-grid">
+            <label class="mode-card">
+              <input type="radio" name="groupMode" value="count" checked>
+              <span><strong>Number of groups</strong><small>Choose how many groups to create.</small></span>
+            </label>
+            <label class="mode-card">
+              <input type="radio" name="groupMode" value="size">
+              <span><strong>Students per group</strong><small>Set the maximum group size.</small></span>
+            </label>
+          </div>
+
+          <div class="number-row">
+            <label for="groupValue">
+              <span class="field-label" id="groupValueLabel">Number of groups</span>
+              <select id="groupValue" aria-describedby="groupPreview"></select>
+            </label>
+            <div>
+              <span class="field-label">Preview</span>
+              <div class="summary-chip" id="groupPreview">Add names</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="primary-actions">
+          <button class="button primary" id="generateButton" type="button" disabled>🎲 Make groups</button>
+        </div>
+      </aside>
+
+      <section class="panel results-panel" aria-labelledby="resultsHeading">
+        <div class="results-header" id="resultsHeader">
+          <div>
+            <h2 id="resultsHeading">Your groups</h2>
+            <p class="subtle" id="resultsSummary"></p>
+          </div>
+          <div class="result-actions">
+            <button class="button secondary" id="reshuffleButton" type="button">↻ Reshuffle</button>
+            <button class="button secondary" id="copyButton" type="button">Copy</button>
+            <button class="button secondary" id="printButton" type="button">Print</button>
+            <button class="button secondary" id="focusButton" type="button" aria-pressed="false">⛶ Full-screen groups</button>
+          </div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <div>
+            <div class="empty-icon" aria-hidden="true">👥</div>
+            <p>Paste at least two names, choose your settings and select <strong>Make groups</strong>.</p>
+          </div>
+        </div>
+
+        <div class="groups-grid" id="groupsGrid" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <p class="footer-note">Tip: after generating groups, drag students between groups to make any necessary adjustments.</p>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const namesInput = document.getElementById('namesInput');
+      const nameCount = document.getElementById('nameCount');
+      const validationMessage = document.getElementById('validationMessage');
+      const groupValue = document.getElementById('groupValue');
+      const groupValueLabel = document.getElementById('groupValueLabel');
+      const groupPreview = document.getElementById('groupPreview');
+      const generateButton = document.getElementById('generateButton');
+      const saveRosterButton = document.getElementById('saveRosterButton');
+      const loadExampleButton = document.getElementById('loadExampleButton');
+      const clearButton = document.getElementById('clearButton');
+      const resultsHeader = document.getElementById('resultsHeader');
+      const resultsSummary = document.getElementById('resultsSummary');
+      const emptyState = document.getElementById('emptyState');
+      const groupsGrid = document.getElementById('groupsGrid');
+      const reshuffleButton = document.getElementById('reshuffleButton');
+      const copyButton = document.getElementById('copyButton');
+      const printButton = document.getElementById('printButton');
+      const focusButton = document.getElementById('focusButton');
+      const themeButton = document.getElementById('themeButton');
+
+      const exampleNames = [
+        'Aarav', 'Amelia', 'Archer', 'Ava', 'Charlotte', 'Ethan',
+        'Grace', 'Harper', 'Henry', 'Isla', 'Jack', 'Lachlan',
+        'Leo', 'Mia', 'Noah', 'Olivia', 'Ruby', 'Sienna',
+        'Sofia', 'Thomas', 'William', 'Zoe'
+      ];
+
+      let currentGroups = [];
+      let draggedStudent = null;
+
+      function normaliseName(name) {
+        return name.trim().replace(/\s+/g, ' ');
+      }
+
+      function parseNames() {
+        return namesInput.value
+          .split(/[\n,;\t]+/)
+          .map(normaliseName)
+          .filter(Boolean);
+      }
+
+      function uniqueNames(names) {
+        const seen = new Set();
+        return names.filter(name => {
+          const key = name.toLocaleLowerCase('en-AU');
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      }
+
+      function findDuplicates(names) {
+        const seen = new Set();
+        const duplicates = new Set();
+        names.forEach(name => {
+          const key = name.toLocaleLowerCase('en-AU');
+          if (seen.has(key)) duplicates.add(name);
+          seen.add(key);
+        });
+        return [...duplicates];
+      }
+
+      function getMode() {
+        return document.querySelector('input[name="groupMode"]:checked').value;
+      }
+
+      function getGroupCount(studentCount) {
+        const selected = Number(groupValue.value) || 2;
+        return getMode() === 'count'
+          ? Math.min(selected, studentCount)
+          : Math.ceil(studentCount / selected);
+      }
+
+      function updateGroupOptions() {
+        const names = uniqueNames(parseNames());
+        const count = names.length;
+        const mode = getMode();
+        const previous = Number(groupValue.value);
+        const maximum = mode === 'count'
+          ? Math.max(2, Math.min(12, count || 12))
+          : Math.max(2, Math.min(10, count || 10));
+
+        groupValue.innerHTML = '';
+        for (let value = 2; value <= maximum; value += 1) {
+          const option = document.createElement('option');
+          option.value = String(value);
+          option.textContent = String(value);
+          groupValue.appendChild(option);
+        }
+
+        const preferred = previous >= 2 && previous <= maximum ? previous : (mode === 'count' ? Math.min(4, maximum) : Math.min(4, maximum));
+        groupValue.value = String(preferred);
+        groupValueLabel.textContent = mode === 'count' ? 'Number of groups' : 'Maximum group size';
+        updatePreview();
+      }
+
+      function updatePreview() {
+        const count = uniqueNames(parseNames()).length;
+        if (count < 2) {
+          groupPreview.textContent = 'Add names';
+          return;
+        }
+        const groups = getGroupCount(count);
+        const smallest = Math.floor(count / groups);
+        const largest = Math.ceil(count / groups);
+        groupPreview.textContent = smallest === largest
+          ? `${groups} × ${smallest}`
+          : `${groups} groups of ${smallest}–${largest}`;
+      }
+
+      function updateInputState() {
+        const names = parseNames();
+        const unique = uniqueNames(names);
+        const duplicates = findDuplicates(names);
+        nameCount.textContent = `${unique.length} ${unique.length === 1 ? 'student' : 'students'}`;
+        generateButton.disabled = unique.length < 2;
+
+        validationMessage.className = 'validation';
+        validationMessage.textContent = '';
+        if (duplicates.length) {
+          validationMessage.classList.add('show', 'warning');
+          validationMessage.textContent = `Duplicate ${duplicates.length === 1 ? 'name' : 'names'} will only be used once: ${duplicates.join(', ')}`;
+        } else if (unique.length >= 2) {
+          validationMessage.classList.add('show', 'success');
+          validationMessage.textContent = 'Class list ready.';
+        }
+
+        updateGroupOptions();
+      }
+
+      function secureShuffle(items) {
+        const array = [...items];
+        const randomValues = new Uint32Array(array.length);
+        if (window.crypto?.getRandomValues) {
+          window.crypto.getRandomValues(randomValues);
+        }
+        for (let i = array.length - 1; i > 0; i -= 1) {
+          const random = window.crypto?.getRandomValues
+            ? randomValues[i] / 4294967296
+            : Math.random();
+          const j = Math.floor(random * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function buildGroups() {
+        const students = secureShuffle(uniqueNames(parseNames()));
+        if (students.length < 2) return;
+
+        const numberOfGroups = getGroupCount(students.length);
+        currentGroups = Array.from({ length: numberOfGroups }, () => []);
+
+        students.forEach((student, index) => {
+          currentGroups[index % numberOfGroups].push(student);
+        });
+
+        renderGroups();
+      }
+
+      function initials(name) {
+        const parts = name.split(' ').filter(Boolean);
+        return parts.length === 1
+          ? parts[0].slice(0, 2).toUpperCase()
+          : `${parts[0][0]}${parts.at(-1)[0]}`.toUpperCase();
+      }
+
+      function renderGroups() {
+        emptyState.hidden = true;
+        resultsHeader.classList.add('show');
+        groupsGrid.innerHTML = '';
+
+        const studentTotal = currentGroups.reduce((total, group) => total + group.length, 0);
+        resultsSummary.textContent = `${studentTotal} students across ${currentGroups.length} balanced groups. Drag names to make adjustments.`;
+
+        currentGroups.forEach((group, groupIndex) => {
+          const card = document.createElement('article');
+          card.className = 'group-card';
+          card.style.animationDelay = `${groupIndex * 35}ms`;
+
+          const title = document.createElement('div');
+          title.className = 'group-title';
+          title.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;min-width:0">
+              <span class="group-number">${groupIndex + 1}</span>
+              <h3>Group ${groupIndex + 1}</h3>
+            </div>
+            <span class="group-count">${group.length} ${group.length === 1 ? 'student' : 'students'}</span>
+          `;
+
+          const list = document.createElement('ul');
+          list.className = 'member-list';
+          list.dataset.groupIndex = String(groupIndex);
+
+          list.addEventListener('dragover', event => {
+            event.preventDefault();
+            list.classList.add('drag-over');
+          });
+          list.addEventListener('dragleave', () => list.classList.remove('drag-over'));
+          list.addEventListener('drop', event => {
+            event.preventDefault();
+            list.classList.remove('drag-over');
+            if (!draggedStudent) return;
+            const targetGroup = Number(list.dataset.groupIndex);
+            const sourceGroup = draggedStudent.groupIndex;
+            if (targetGroup !== sourceGroup) {
+              const [student] = currentGroups[sourceGroup].splice(draggedStudent.studentIndex, 1);
+              currentGroups[targetGroup].push(student);
+              renderGroups();
+            }
+          });
+
+          group.forEach((student, studentIndex) => {
+            const member = document.createElement('li');
+            member.className = 'member';
+            member.draggable = true;
+            member.innerHTML = `<span class="initial">${initials(student)}</span><span>${escapeHtml(student)}</span>`;
+            member.addEventListener('dragstart', () => {
+              draggedStudent = { groupIndex, studentIndex };
+              member.classList.add('dragging');
+            });
+            member.addEventListener('dragend', () => {
+              draggedStudent = null;
+              member.classList.remove('dragging');
+            });
+            list.appendChild(member);
+          });
+
+          card.append(title, list);
+          groupsGrid.appendChild(card);
+        });
+      }
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>'"]/g, character => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        })[character]);
+      }
+
+      function copyGroups() {
+        if (!currentGroups.length) return;
+        const text = currentGroups
+          .map((group, index) => `Group ${index + 1}\n${group.join('\n')}`)
+          .join('\n\n');
+
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            const oldText = copyButton.textContent;
+            copyButton.textContent = '✓ Copied';
+            setTimeout(() => { copyButton.textContent = oldText; }, 1400);
+          })
+          .catch(() => {
+            const helper = document.createElement('textarea');
+            helper.value = text;
+            document.body.appendChild(helper);
+            helper.select();
+            document.execCommand('copy');
+            helper.remove();
+          });
+      }
+
+      function saveRoster() {
+        const names = uniqueNames(parseNames());
+        if (!names.length) return;
+        localStorage.setItem('scisims-random-group-roster', names.join('\n'));
+        const oldText = saveRosterButton.textContent;
+        saveRosterButton.textContent = '✓ Saved';
+        setTimeout(() => { saveRosterButton.textContent = oldText; }, 1400);
+      }
+
+      function clearAll() {
+        namesInput.value = '';
+        currentGroups = [];
+        groupsGrid.innerHTML = '';
+        resultsHeader.classList.remove('show');
+        emptyState.hidden = false;
+        if (document.body.classList.contains('groups-focus')) setGroupsFocus(false);
+        updateInputState();
+        namesInput.focus();
+      }
+
+      function setTheme(theme) {
+        const dark = theme === 'dark';
+        document.body.classList.toggle('dark', dark);
+        themeButton.innerHTML = dark ? '☀️ <span>Light mode</span>' : '🌙 <span>Dark mode</span>';
+        themeButton.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        localStorage.setItem('scisims-random-group-theme', theme);
+      }
+
+      function updateFocusButton(active) {
+        focusButton.setAttribute('aria-pressed', String(active));
+        focusButton.textContent = active ? '↙ Exit full screen' : '⛶ Full-screen groups';
+      }
+
+      async function setGroupsFocus(active) {
+        document.body.classList.toggle('groups-focus', active);
+        updateFocusButton(active);
+
+        try {
+          if (active && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen();
+          } else if (!active && document.fullscreenElement && document.exitFullscreen) {
+            await document.exitFullscreen();
+          }
+        } catch (error) {
+          // The expanded groups layout still works if the browser blocks true full screen.
+        }
+      }
+
+      namesInput.addEventListener('input', updateInputState);
+      groupValue.addEventListener('change', updatePreview);
+      document.querySelectorAll('input[name="groupMode"]').forEach(radio => {
+        radio.addEventListener('change', updateGroupOptions);
+      });
+      generateButton.addEventListener('click', buildGroups);
+      reshuffleButton.addEventListener('click', buildGroups);
+      copyButton.addEventListener('click', copyGroups);
+      printButton.addEventListener('click', () => window.print());
+      focusButton.addEventListener('click', () => {
+        setGroupsFocus(!document.body.classList.contains('groups-focus'));
+      });
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && document.body.classList.contains('groups-focus')) {
+          document.body.classList.remove('groups-focus');
+          updateFocusButton(false);
+        }
+      });
+      saveRosterButton.addEventListener('click', saveRoster);
+      loadExampleButton.addEventListener('click', () => {
+        namesInput.value = exampleNames.join('\n');
+        updateInputState();
+      });
+      clearButton.addEventListener('click', clearAll);
+      themeButton.addEventListener('click', () => {
+        setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+      });
+
+      const savedTheme = localStorage.getItem('scisims-random-group-theme');
+      const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+      setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+      const savedRoster = localStorage.getItem('scisims-random-group-roster');
+      if (savedRoster) namesInput.value = savedRoster;
+      updateInputState();
+    })();
+  </script>
+</body>
+</html>
