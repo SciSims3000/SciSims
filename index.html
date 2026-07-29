@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SciSims main index | Version 1.3 -->
+<!-- SciSims main index | Version 1.3.3 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8" />
@@ -180,9 +180,23 @@
 
     .hero-text .version-notes strong{
       display:block;
-      margin-bottom:3px;
+      margin-bottom:6px;
       color:#0f172a;
     }
+
+    .version-history{
+      margin:0;
+      padding-left:20px;
+      color:#334155;
+    }
+
+    .version-history li{
+      margin:0 0 6px;
+    }
+
+    .version-history li:last-child{margin-bottom:0;}
+
+    .version-history b{color:#0f172a;}
 
     .hero-image{
       width:100%;
@@ -301,6 +315,65 @@
 
     .filter-toolbar .contents:first-child{
       margin-top:0;
+    }
+
+    .favourites-backup{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-top:16px;
+      padding-top:15px;
+      border-top:1px solid var(--line);
+    }
+
+    .favourites-backup-copy strong{
+      display:block;
+      margin-bottom:3px;
+      color:#0f172a;
+      font-size:14px;
+    }
+
+    .favourites-backup-copy span{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .favourites-backup-actions{
+      display:flex;
+      flex:0 0 auto;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:8px;
+    }
+
+    .backup-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:8px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#ffffff;
+      color:#0f172a;
+      font-size:13px;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .backup-button:hover{background:#f1f5f9;border-color:#94a3b8;}
+    .backup-button:disabled{opacity:.5;cursor:not-allowed;}
+
+    .favourites-status{
+      flex-basis:100%;
+      margin:0;
+      color:#0f766e;
+      font-size:12px;
+      font-weight:800;
+      text-align:right;
     }
 
     .toolbar-grid{
@@ -709,6 +782,10 @@
       .card-top-actions{justify-content:flex-start;}
       .quick-access-heading{flex-direction:column;}
       .clear-recent-button{width:100%;}
+      .favourites-backup{align-items:stretch;flex-direction:column;}
+      .favourites-backup-actions{justify-content:stretch;}
+      .backup-button{flex:1 1 150px;}
+      .favourites-status{text-align:left;}
       .back-to-top{right:12px;bottom:12px;}
     }
   </style>
@@ -719,12 +796,16 @@
       <div class="hero-text">
         <h1>SciSims</h1>
         <div class="version-control">
-          <button id="versionButton" class="page-version" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.3.2</button>
-          <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
+          <button id="versionButton" class="page-version" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.3.3</button>
+          <span class="version-tooltip" role="tooltip">Click for the three most recent changes</span>
         </div>
         <div id="versionNotes" class="version-notes" hidden>
-          <strong>Latest changes</strong>
-          Fixed the release-notes contrast so the latest changes remain clearly readable, while retaining the sticky search and split-screen-friendly controls.
+          <strong>Recent changes</strong>
+          <ol class="version-history">
+            <li><b>Version 1.3.3</b> — Added portable save/load files for favourites and expanded this panel to show the three most recent releases.</li>
+            <li><b>Version 1.3.2</b> — Corrected the release-notes contrast so the text remains clearly readable.</li>
+            <li><b>Version 1.3.0</b> — Made the version label interactive, with concise release notes available on click.</li>
+          </ol>
         </div>
         <p>A collection of classroom science simulations for practical inquiry, modelling, data analysis and concept development.</p>
              <p> </p>
@@ -763,6 +844,18 @@
     <div class="toolbar filter-toolbar">
       <div class="contents" id="filterButtons" aria-label="Filter resources"></div>
       <nav class="contents" aria-label="SciSims contents" id="contentsLinks"></nav>
+      <div class="favourites-backup" aria-labelledby="favouritesBackupTitle">
+        <div class="favourites-backup-copy">
+          <strong id="favouritesBackupTitle">Favourites backup</strong>
+          <span>Save your favourites to a JSON file, then load them on another browser or device.</span>
+        </div>
+        <div class="favourites-backup-actions">
+          <button id="saveFavouritesButton" class="backup-button" type="button">Save favourites</button>
+          <button id="loadFavouritesButton" class="backup-button" type="button">Load favourites</button>
+          <input id="loadFavouritesInput" type="file" accept=".json,application/json" hidden>
+        </div>
+        <p id="favouritesStatus" class="favourites-status" role="status" aria-live="polite"></p>
+      </div>
     </div>
   </section>
 
@@ -770,7 +863,7 @@
     <div class="quick-access-heading">
       <div>
         <h2 id="quickAccessTitle">Quick access</h2>
-        <p>Favourites and recently opened resources are stored only on this device.</p>
+        <p>Favourites can be backed up and moved between devices; recently opened resources remain stored only on this device.</p>
       </div>
       <button id="clearRecentButton" class="clear-recent-button" type="button">Clear recently opened</button>
     </div>
@@ -3117,6 +3210,10 @@
   const backToTop = document.getElementById('backToTop');
   const versionButton = document.getElementById('versionButton');
   const versionNotes = document.getElementById('versionNotes');
+  const saveFavouritesButton = document.getElementById('saveFavouritesButton');
+  const loadFavouritesButton = document.getElementById('loadFavouritesButton');
+  const loadFavouritesInput = document.getElementById('loadFavouritesInput');
+  const favouritesStatus = document.getElementById('favouritesStatus');
 
   const STORAGE_KEYS = {
     favourites:'scisims-favourites-v1',
@@ -3159,6 +3256,74 @@
       localStorage.setItem(key,JSON.stringify(value));
     }catch(error){
       // The catalogue still works when browser storage is unavailable.
+    }
+  }
+
+  function setFavouritesStatus(message,isError=false){
+    favouritesStatus.textContent = message;
+    favouritesStatus.style.color = isError ? '#b42318' : '#0f766e';
+    window.clearTimeout(setFavouritesStatus.timeoutId);
+    setFavouritesStatus.timeoutId = window.setTimeout(()=>{
+      favouritesStatus.textContent = '';
+    },4000);
+  }
+
+  function exportFavourites(){
+    const selected = [...favourites]
+      .map(path=>getSimByPath(path))
+      .filter(Boolean)
+      .map(sim=>({path:sim.path,title:sim.title,type:getResourceType(sim)}));
+
+    const payload = {
+      app:'SciSims',
+      format:'favourites-backup',
+      formatVersion:1,
+      catalogueVersion:'1.3.3',
+      exportedAt:new Date().toISOString(),
+      favourites:selected
+    };
+
+    const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const date = new Date().toISOString().slice(0,10);
+    link.href = url;
+    link.download = `scisims-favourites-${date}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setFavouritesStatus(`Saved ${selected.length} favourite${selected.length === 1 ? '' : 's'}.`);
+  }
+
+  async function importFavourites(file){
+    if(!file) return;
+
+    try{
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const entries = Array.isArray(data) ? data : data?.favourites;
+      if(!Array.isArray(entries)) throw new Error('No favourites list was found in this file.');
+
+      const importedPaths = entries
+        .map(entry=>typeof entry === 'string' ? entry : entry?.path)
+        .filter(path=>typeof path === 'string' && getSimByPath(path));
+
+      const uniqueImported = [...new Set(importedPaths)];
+      if(!uniqueImported.length && entries.length){
+        throw new Error('None of the saved favourites match resources in this catalogue.');
+      }
+
+      favourites = new Set(uniqueImported);
+      saveStoredArray(STORAGE_KEYS.favourites,[...favourites]);
+      renderFilters();
+      renderQuickAccess();
+      renderCatalogue();
+      setFavouritesStatus(`Loaded ${uniqueImported.length} favourite${uniqueImported.length === 1 ? '' : 's'}.`);
+    }catch(error){
+      setFavouritesStatus(error instanceof Error ? error.message : 'The favourites file could not be loaded.',true);
+    }finally{
+      loadFavouritesInput.value = '';
     }
   }
 
@@ -3535,6 +3700,10 @@
   });
 
   searchInput.addEventListener('input',renderCatalogue);
+
+  saveFavouritesButton.addEventListener('click',exportFavourites);
+  loadFavouritesButton.addEventListener('click',()=>loadFavouritesInput.click());
+  loadFavouritesInput.addEventListener('change',()=>importFavourites(loadFavouritesInput.files?.[0]));
 
   clearRecentButton.addEventListener('click',()=>{
     recentItems = [];
