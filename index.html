@@ -23,6 +23,7 @@
       --soft-pink:#fce7f3;
       --soft-yellow:#fef9c3;
       --soft-stage6:#e0f2fe;
+      --soft-teacher:#e0f7fa;
       --shadow:0 4px 14px rgba(0,0,0,0.08);
       --radius:16px;
     }
@@ -372,6 +373,7 @@
     .tag.math{background:var(--soft-yellow);border-color:#fde68a;color:#854d0e;}
     .tag.working{background:#fef3c7;border-color:#fde68a;color:#92400e;}
     .tag.invsci{background:var(--soft-teal);border-color:#99f6e4;color:#115e59;}
+    .tag.teacher{background:var(--soft-teacher);border-color:#80deea;color:#0e6473;}
     .tag.stage6{background:var(--soft-stage6);border-color:#7dd3fc;color:#075985;}
     .tag.interesting{background:#e2e8f0;border-color:#cbd5e1;color:#334155;}
     .tag.brainbreak{background:var(--soft-pink);border-color:#fbcfe8;color:#9d174d;}
@@ -469,9 +471,9 @@
   <section class="dashboard" aria-label="SciSims controls">
     <div class="toolbar">
       <div class="toolbar-grid">
-        <label for="searchInput" class="sr-only">Search simulations</label>
-        <input id="searchInput" class="search-box" type="search" placeholder="Search sims by name, topic or keyword..." autocomplete="off" />
-        <div id="simCounter" class="counter">0 sims</div>
+        <label for="searchInput" class="sr-only">Search tools and simulations</label>
+        <input id="searchInput" class="search-box" type="search" placeholder="Search tools and sims by name, topic or keyword..." autocomplete="off" />
+        <div id="simCounter" class="counter">0 items</div>
       </div>
       <div class="contents" id="filterButtons" aria-label="Filter simulations"></div>
       <nav class="contents" aria-label="SciSims contents" id="contentsLinks"></nav>
@@ -480,14 +482,21 @@
 
   <main id="catalogue"></main>
 
-  <div id="emptyMessage" class="empty-message">No simulations matched your search. Try a broader keyword such as genetics, forces, data, claims, fair test, reaction, disease or light.</div>
+  <div id="emptyMessage" class="empty-message">No tools or simulations matched your search. Try a broader keyword such as groups, genetics, forces, data, claims, fair test, reaction, disease or light.</div>
 
-  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new sim:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. The page will automatically place it in the correct section and make it searchable.</p>
+  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a teacher tool, simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new item:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. The page will automatically place it in the correct section and make it searchable.</p>
 
 <script>
   'use strict';
 
   const SECTIONS = [
+    {
+      id:'teachertools',
+      title:'Teacher Tools',
+      intro:'Practical classroom utilities for organising students, managing activities and supporting day-to-day teaching.',
+      banner:'teachertools.png',
+      tagClass:'teacher'
+    },
     {
       id:'workingscientifically',
       title:'Working Scientifically',
@@ -561,6 +570,20 @@
   ];
 
     const SIMS = [
+  {
+    "section": "teachertools",
+    "group": "Classroom Organisation",
+    "title": "Random Group Maker",
+    "description": "Paste a class list and quickly generate balanced random groups by group count or maximum group size. Includes reshuffling, roster saving, drag-and-drop adjustments, copying, printing and a full-screen classroom display.",
+    "path": "TeacherSims/GroupMaker/",
+    "tags": [
+      "Teacher tool",
+      "Random groups",
+      "Classroom organisation",
+      "Student grouping",
+      "Version 1.2"
+    ]
+  },
   {
     "section": "workingscientifically",
     "group": "Variables and Fair Testing",
@@ -2792,6 +2815,7 @@
   const SECTION_ORDER = new Map(SECTIONS.map((section,index)=>[section.id,index]));
 
   const GROUP_ORDER = {
+    teachertools:['Classroom Organisation'],
     workingscientifically:['Variables and Fair Testing'],
     invsci:['Module 5: Scientific Investigations','Module 6: Technologies'],
     stage6games:['Biology','Chemistry','Earth and Environmental Science','Investigating Science','Physics','Science Extension'],
@@ -2877,7 +2901,7 @@
     const link = document.createElement('a');
     link.className = 'open-link';
     link.href = sim.path;
-    link.textContent = 'Open sim';
+    link.textContent = sim.section === 'teachertools' ? 'Open tool' : 'Open sim';
 
     card.append(top,description,tagRow,link);
     return card;
@@ -2972,7 +2996,7 @@
       catalogue.appendChild(sectionElement);
     });
 
-    simCounter.textContent = `${visibleSims.length} sim${visibleSims.length === 1 ? '' : 's'}`;
+    simCounter.textContent = `${visibleSims.length} item${visibleSims.length === 1 ? '' : 's'}`;
     emptyMessage.style.display = visibleSims.length ? 'none' : 'block';
   }
 
