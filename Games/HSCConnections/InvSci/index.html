@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investigating Science HSC Connections Engine</title>
-<link rel="icon" href="../../../favicon.ico">
+<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.1.0">
+<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.1.0">
+<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.1.0">
 <style>
 :root{
   --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
@@ -21,6 +23,7 @@ body{margin:0;background:linear-gradient(180deg,var(--bg),#fbfdff);color:var(--i
 .back{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:850;border:1px solid var(--line);box-shadow:0 5px 14px rgba(31,81,120,.10)}
 .hero{margin-top:14px;padding:24px 28px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
 .hero h1{margin:0 0 5px;font-size:clamp(2rem,4vw,3.5rem);line-height:1}
+.hero .version{display:inline-flex;margin:8px 0 2px;padding:5px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.14);font-size:.82rem;font-weight:850;letter-spacing:.03em}
 .hero p{margin:7px 0 0;max-width:980px;line-height:1.5}
 .layout{display:grid;grid-template-columns:minmax(280px,350px) 1fr;gap:18px;margin-top:18px;align-items:start}
 .card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
@@ -100,6 +103,7 @@ body[data-complexity="master"] #hintBtn{display:none}
   </nav>
   <header class="hero">
     <h1>Investigating Science<br><span style="font-size:.55em;font-weight:760">HSC Connections Engine</span></h1>
+    <div class="version" aria-label="Version 1.1.0">Version 1.1.0</div>
     <p>Dynamic HSC revision boards assembled from independent connection groups. Every new board uses a fresh combination of scientific ideas rather than a fixed puzzle list.</p>
   </header>
   <main class="layout">
