@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investigating Science HSC Connections Engine</title>
-<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.2.0">
-<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.2.0">
-<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.2.0">
+<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.2.1">
+<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.2.1">
+<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.2.1">
 <style>
 :root{
   --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
@@ -51,7 +51,8 @@ button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var
 .turn-banner strong{color:var(--accent);font-size:1.08rem}
 .team-scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
 .team-score{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:center;transition:transform .15s,border-color .15s}
-.team-score.active{border:2px solid var(--accent);transform:translateY(-2px);box-shadow:0 5px 14px color-mix(in srgb,var(--accent) 18%,transparent)}
+.team-score.active{background:#ffeb3b;border:3px solid #c58a00;color:#2b2400;transform:translateY(-2px);box-shadow:0 6px 16px rgba(160,110,0,.28)}
+.team-score.active .points{color:#2b2400}
 .team-score strong,.team-score small{display:block}
 .team-score .points{font-size:1.35rem;color:var(--accent);font-weight:900;margin-top:2px}
 .team-tally-actions{display:flex;justify-content:center;margin-top:10px}
@@ -106,7 +107,7 @@ body[data-complexity="master"] #hintBtn{display:none}
   </nav>
   <header class="hero">
     <h1>Investigating Science<br><span style="font-size:.55em;font-weight:760">HSC Connections Engine</span></h1>
-    <div class="version" aria-label="Version 1.2.0">Version 1.2.0</div>
+    <div class="version" aria-label="Version 1.2.1">Version 1.2.1</div>
     <p>Dynamic HSC revision boards assembled from independent connection groups. Every new board uses a fresh combination of scientific ideas rather than a fixed puzzle list.</p>
   </header>
   <main class="layout">
