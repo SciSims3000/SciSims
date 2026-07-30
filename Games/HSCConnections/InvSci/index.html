@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investigating Science HSC Connections Engine</title>
-<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.1.0">
-<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.1.0">
-<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.1.0">
+<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.2.0">
+<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.2.0">
+<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.2.0">
 <style>
 :root{
   --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
@@ -50,10 +50,13 @@ button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var
 .turn-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;padding:10px 12px;border-radius:12px;background:#fff;border:2px solid var(--accent)}
 .turn-banner strong{color:var(--accent);font-size:1.08rem}
 .team-scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
-.team-score{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;transition:transform .15s,border-color .15s}
+.team-score{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:center;transition:transform .15s,border-color .15s}
 .team-score.active{border:2px solid var(--accent);transform:translateY(-2px);box-shadow:0 5px 14px color-mix(in srgb,var(--accent) 18%,transparent)}
 .team-score strong,.team-score small{display:block}
 .team-score .points{font-size:1.35rem;color:var(--accent);font-weight:900;margin-top:2px}
+.team-tally-actions{display:flex;justify-content:center;margin-top:10px}
+.team-tally-actions button{width:100%}
+.team-setup small{display:block;margin-top:8px}
 .board-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
 .board-head p{margin:4px 0 0;color:var(--muted)}
 .life-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
@@ -103,7 +106,7 @@ body[data-complexity="master"] #hintBtn{display:none}
   </nav>
   <header class="hero">
     <h1>Investigating Science<br><span style="font-size:.55em;font-weight:760">HSC Connections Engine</span></h1>
-    <div class="version" aria-label="Version 1.1.0">Version 1.1.0</div>
+    <div class="version" aria-label="Version 1.2.0">Version 1.2.0</div>
     <p>Dynamic HSC revision boards assembled from independent connection groups. Every new board uses a fresh combination of scientific ideas rather than a fixed puzzle list.</p>
   </header>
   <main class="layout">
@@ -126,7 +129,10 @@ body[data-complexity="master"] #hintBtn{display:none}
           <option value="6">6 teams</option>
         </select>
         <div id="teamNameInputs" class="team-name-grid"></div>
-        <small>Team names are retained; scores reset when a new or reset puzzle begins.</small>
+        <div class="team-tally-actions">
+          <button id="resetTallyBtn" class="secondary" type="button">Reset team tally</button>
+        </div>
+        <small>Team names and the overall tally are saved in this browser and continue across puzzles, topics and play modes.</small>
       </div>
       <label for="bank">Content bank</label>
       <select id="bank">
@@ -158,7 +164,7 @@ body[data-complexity="master"] #hintBtn{display:none}
         <div class="stat"><strong id="timerStat" class="timer-running">0:00</strong>Time</div>
       </div>
       <div id="infoBank" class="info-bank"></div>
-      <div class="help"><strong>Support:</strong> Easy shows connection titles and explanations; Hard shows connection titles only; Insane uses a 24-term board with six hidden connections; Master is a timed, mixed-module daily challenge with no hints and only one mistake allowed.<br><br><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. Every new board is generated from independent groups and avoids duplicate terms.<br><br><strong>Team mode:</strong> teams take alternating turns. A correct connection earns one point. Every submitted guess passes play to the next team.</div>
+      <div class="help"><strong>Support:</strong> Easy shows connection titles and explanations; Hard shows connection titles only; Insane uses a 24-term board with six hidden connections; Master is a timed, mixed-module daily challenge with no hints and only one mistake allowed.<br><br><strong>How to play:</strong> select exactly four terms, then submit. Correct groups are removed. Every new board is generated from independent groups and avoids duplicate terms.<br><br><strong>Team mode:</strong> teams take alternating turns. A correct connection earns one point. Every submitted guess passes play to the next team. The overall tally is retained until Reset team tally is selected.</div>
     </aside>
     <section class="card">
       <div class="board-head">
@@ -167,7 +173,7 @@ body[data-complexity="master"] #hintBtn{display:none}
       </div>
       <div id="teamPanel" class="team-panel" hidden>
         <div class="turn-banner"><span>Current turn</span><strong id="activeTeam">Team 1</strong></div>
-        <div id="teamScoreboard" class="team-scoreboard"></div>
+        <div id="teamScoreboard" class="team-scoreboard" aria-label="Overall team tally"></div>
       </div>
       <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
       <div id="groupsFound" class="groups-found"></div>
@@ -194,6 +200,7 @@ let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,fin
 let teams=[],activeTeamIndex=0;
 let timerId=null,startTime=0,elapsedSeconds=0;
 const maxMistakes={easy:4,hard:3,insane:3,master:1};
+const TEAM_STORAGE_KEY="scisims-is-connections-team-tally-v1";
 const boardHistory={},groupUseCount={},recentGroups={};
 
 function shuffle(array,rng=Math.random){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -251,41 +258,101 @@ function renderTimer(){const mins=Math.floor(elapsedSeconds/60),secs=elapsedSeco
 function starCount(){if(revealed)return 0;if(hintsUsed===0)return 3;if(hintsUsed===1)return 2;return 1;}
 function starText(){const n=starCount();return "★".repeat(n)+"☆".repeat(3-n);}
 function isTeamMode(){return gameModeEl.value==="team";}
+function normaliseTeam(raw,i){
+  return {
+    name:String(raw&&raw.name||"Team "+(i+1)).trim()||"Team "+(i+1),
+    score:Math.max(0,Number(raw&&raw.score)||0),
+    attempts:Math.max(0,Number(raw&&raw.attempts)||0),
+    correct:Math.max(0,Number(raw&&raw.correct)||0)
+  };
+}
+function loadTeamState(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY)||"null");
+    if(!saved||!Array.isArray(saved.teams))return;
+    const count=Math.min(6,Math.max(2,Number(saved.teamCount)||saved.teams.length||2));
+    teamCountEl.value=String(count);
+    teams=saved.teams.slice(0,count).map(normaliseTeam);
+    while(teams.length<count)teams.push(normaliseTeam(null,teams.length));
+    activeTeamIndex=Math.min(Math.max(0,Number(saved.activeTeamIndex)||0),teams.length-1);
+    if(saved.gameMode==="team"||saved.gameMode==="solo")gameModeEl.value=saved.gameMode;
+  }catch(error){
+    console.warn("Saved team tally could not be loaded.",error);
+  }
+}
+function saveTeamState(){
+  try{
+    localStorage.setItem(TEAM_STORAGE_KEY,JSON.stringify({
+      gameMode:gameModeEl.value,
+      teamCount:Number(teamCountEl.value),
+      activeTeamIndex,
+      teams
+    }));
+  }catch(error){
+    console.warn("Team tally could not be saved.",error);
+  }
+}
 function rebuildTeamInputs(){
-  const box=document.getElementById("teamNameInputs"),count=Number(teamCountEl.value),old=[...box.querySelectorAll("input")].map(input=>input.value);
+  const box=document.getElementById("teamNameInputs"),count=Number(teamCountEl.value),typed=[...box.querySelectorAll("input")].map(input=>input.value);
+  const existing=teams.map(t=>({...t}));
+  teams=Array.from({length:count},(_,i)=>normaliseTeam(existing[i],i));
   box.innerHTML="";
   for(let i=0;i<count;i++){
     const label=document.createElement("label"),input=document.createElement("input");
-    label.textContent="Team "+(i+1);input.type="text";input.maxLength=24;input.value=old[i]||"Team "+(i+1);input.dataset.teamIndex=String(i);
-    input.addEventListener("input",()=>{if(teams[i]){teams[i].name=input.value.trim()||"Team "+(i+1);renderTeamPanel();}});
+    label.textContent="Team "+(i+1);input.type="text";input.maxLength=24;
+    input.value=typed[i]||teams[i].name||"Team "+(i+1);input.dataset.teamIndex=String(i);
+    teams[i].name=input.value.trim()||"Team "+(i+1);
+    input.addEventListener("input",()=>{
+      teams[i].name=input.value.trim()||"Team "+(i+1);
+      saveTeamState();renderTeamPanel();
+    });
     label.appendChild(input);box.appendChild(label);
   }
+  if(activeTeamIndex>=teams.length)activeTeamIndex=0;
+  saveTeamState();
 }
-function initialiseTeams(){
-  if(!isTeamMode()){teams=[];activeTeamIndex=0;return;}
-  const inputs=[...document.querySelectorAll("#teamNameInputs input")];
-  teams=inputs.map((input,i)=>({name:input.value.trim()||"Team "+(i+1),score:0,attempts:0,correct:0}));
+function syncTeamsFromInputs(){
+  const count=Number(teamCountEl.value),inputs=[...document.querySelectorAll("#teamNameInputs input")],existing=teams.map(t=>({...t}));
+  teams=Array.from({length:count},(_,i)=>{
+    const team=normaliseTeam(existing[i],i);
+    team.name=(inputs[i]&&inputs[i].value.trim())||team.name||"Team "+(i+1);
+    return team;
+  });
+  if(activeTeamIndex>=teams.length)activeTeamIndex=0;
+  saveTeamState();
+}
+function resetTeamTally(){
+  syncTeamsFromInputs();
+  teams=teams.map((team,i)=>({name:team.name||"Team "+(i+1),score:0,attempts:0,correct:0}));
   activeTeamIndex=0;
+  saveTeamState();renderTeamPanel();
+  setMessage("Team tally reset. "+(isTeamMode()&&currentTeam()?currentTeam().name+" begins.":""),"");
 }
 function currentTeam(){return teams[activeTeamIndex]||null;}
-function advanceTurn(){if(isTeamMode()&&teams.length)activeTeamIndex=(activeTeamIndex+1)%teams.length;}
+function advanceTurn(){
+  if(isTeamMode()&&teams.length){
+    activeTeamIndex=(activeTeamIndex+1)%teams.length;
+    saveTeamState();
+  }
+}
 function renderTeamPanel(){
   const panel=document.getElementById("teamPanel"),board=document.getElementById("teamScoreboard"),active=document.getElementById("activeTeam");
   panel.hidden=!isTeamMode();teamSetup.hidden=!isTeamMode();
   if(!isTeamMode())return;
-  const team=currentTeam();active.textContent=finished?"Game complete":(team?team.name:"Team 1");
+  syncTeamsFromInputs();
+  const team=currentTeam();active.textContent=finished?"Board complete":(team?team.name:"Team 1");
   board.innerHTML=teams.map((t,i)=>`<div class="team-score${!finished&&i===activeTeamIndex?" active":""}"><strong>${escapeHtml(t.name)}</strong><span class="points">${t.score} point${t.score===1?"":"s"}</span><small>${t.correct} group${t.correct===1?"":"s"} · ${t.attempts} guess${t.attempts===1?"":"es"}</small></div>`).join("");
 }
-function winnerText(){
+function leaderText(){
   if(!isTeamMode()||!teams.length)return "";
-  const best=Math.max(...teams.map(t=>t.score)),winners=teams.filter(t=>t.score===best).map(t=>t.name);
-  if(winners.length===1)return winners[0]+" wins with "+best+" point"+(best===1?"":"s")+".";
-  return "Draw between "+winners.join(", ")+" with "+best+" point"+(best===1?"":"s")+" each.";
+  const best=Math.max(...teams.map(t=>t.score)),leaders=teams.filter(t=>t.score===best).map(t=>t.name);
+  if(leaders.length===1)return leaders[0]+" leads the overall tally with "+best+" point"+(best===1?"":"s")+".";
+  return "The overall tally is level between "+leaders.join(", ")+" on "+best+" point"+(best===1?"":"s")+".";
 }
 
 function startPuzzle(useCurrent=false){
   try{puzzle=useCurrent&&puzzle?puzzle:generatePuzzle();}catch(error){setMessage(error.message,"bad");return;}
-  selected=[];solved=[];mistakes=0;guesses=0;finished=false;hintsUsed=0;revealed=false;initialiseTeams();
+  selected=[];solved=[];mistakes=0;guesses=0;finished=false;hintsUsed=0;revealed=false;syncTeamsFromInputs();
   const rng=isMaster()?seededRng(hashSeed("IS-MASTER-TERMS-"+dateKey())):Math.random;
   remainingTerms=shuffle(puzzle.groups.flatMap(g=>g.terms),rng);
   document.body.dataset.complexity=puzzle.complexity;document.body.dataset.bank=isMaster()?"master":puzzle.bank;
@@ -305,13 +372,13 @@ function toggleTerm(term){if(finished)return;if(selected.includes(term))selected
 function submitGroup(){
   if(finished)return;if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
   const playingTeam=currentTeam(),teamName=playingTeam?playingTeam.name:"";
-  guesses++;if(playingTeam)playingTeam.attempts++;
+  guesses++;if(playingTeam){playingTeam.attempts++;saveTeamState();}
   const target=puzzle.groups.find(g=>!solved.some(s=>s.id===g.id)&&selected.every(t=>g.terms.includes(t)));
   if(target){
     solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
-    if(playingTeam){playingTeam.score++;playingTeam.correct++;}
+    if(playingTeam){playingTeam.score++;playingTeam.correct++;saveTeamState();}
     grid.classList.remove("compacting");void grid.offsetWidth;grid.classList.add("compacting");
-    if(solved.length===puzzle.groups.length){render();finish(true);return;}
+    if(solved.length===puzzle.groups.length){advanceTurn();render();finish(true);return;}
     advanceTurn();render();setMessage((teamName?teamName+" scores! ":"")+"Correct connection: "+target.connection+"."+(isTeamMode()?" "+currentTeam().name+" is next.":""),"good");return;
   }
   mistakes++;let best=0;puzzle.groups.filter(g=>!solved.some(s=>s.id===g.id)).forEach(g=>best=Math.max(best,selected.filter(t=>g.terms.includes(t)).length));
@@ -320,7 +387,7 @@ function submitGroup(){
   setMessage((teamName?teamName+": ":"")+feedback+(isTeamMode()&&mistakes<maxMistakes[complexityEl.value]?" "+currentTeam().name+" is next.":""),best===3?"near":"bad");
   if(mistakes>=maxMistakes[complexityEl.value])finish(false);
 }
-function finish(won){finished=true;stopTimer();const result=winnerText();if(!won){setMessage((isMaster()?"Master challenge ended after one incorrect group. ":"No mistakes remaining. ")+(result?result+" ":"")+"The complete solution is shown below.","bad");showSolution();}else{setMessage(`Board complete in ${guesses} guesses and ${formatTime(elapsedSeconds)} — ${starText()}.`+(result?" "+result:""),"good");showSolution();}renderTeamPanel();updateStats();}
+function finish(won){finished=true;stopTimer();const result=leaderText();if(!won){setMessage((isMaster()?"Master challenge ended after one incorrect group. ":"No mistakes remaining. ")+(result?result+" ":"")+"The complete solution is shown below.","bad");showSolution();}else{setMessage(`Board complete in ${guesses} guesses and ${formatTime(elapsedSeconds)} — ${starText()}.`+(result?" "+result:""),"good");showSolution();}renderTeamPanel();updateStats();}
 function formatTime(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 function showSolution(){const reveal=document.getElementById("reveal"),box=document.getElementById("revealGrid");box.innerHTML=puzzle.groups.map(g=>`<div class="reveal-item"><strong>${escapeHtml(g.connection)}</strong><br>${g.terms.map(escapeHtml).join(" · ")}<br><small>${escapeHtml(g.explanation)}</small></div>`).join("");reveal.classList.add("show");}
 function hint(){
@@ -344,11 +411,14 @@ document.getElementById("deselectBtn").addEventListener("click",()=>{selected=[]
 document.getElementById("shuffleBtn").addEventListener("click",()=>{remainingTerms=shuffle(remainingTerms);render();});
 document.getElementById("hintBtn").addEventListener("click",hint);
 document.getElementById("revealBtn").addEventListener("click",()=>{if(finished)return;revealed=true;finished=true;stopTimer();showSolution();renderTeamPanel();updateStats();setMessage("Solution revealed — star rating forfeited."+(isTeamMode()?" Team scores are shown above.":""),"near");});
-gameModeEl.addEventListener("change",()=>{teamSetup.hidden=!isTeamMode();startPuzzle(true);});
+gameModeEl.addEventListener("change",()=>{teamSetup.hidden=!isTeamMode();syncTeamsFromInputs();saveTeamState();startPuzzle(true);});
 teamCountEl.addEventListener("change",()=>{rebuildTeamInputs();if(isTeamMode())startPuzzle(true);});
+document.getElementById("resetTallyBtn").addEventListener("click",resetTeamTally);
 bankEl.addEventListener("change",()=>startPuzzle(false));
 complexityEl.addEventListener("change",()=>{bankEl.disabled=isMaster();startPuzzle(false);});
+loadTeamState();
 rebuildTeamInputs();
+teamSetup.hidden=!isTeamMode();
 startPuzzle(false);
 </script>
 </body>
