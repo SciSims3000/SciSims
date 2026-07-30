@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TeacherSims | SeatingPlan | Version 1.4.3 -->
+<!-- TeacherSims | SeatingPlan | Version 1.5.0 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8">
@@ -238,6 +238,77 @@
     body.student-focus .app-shell{width:100%;max-width:none;padding:10px}
     body.student-focus .topbar,body.student-focus .hero,body.student-focus .controls,body.student-focus .footer-note,body.student-focus .planning-banner,body.student-focus .unseated,body.student-focus .plan-toolbar .display-actions .edit-only,body.student-focus .tab-actions{display:none!important}
     body.student-focus .workspace{display:block}.student-focus .plan-panel{min-height:calc(100vh - 12px);border-radius:14px;padding:8px}.student-focus .room-shell{min-height:calc(100vh - 205px)}.student-focus .seat{font-size:clamp(.95rem,1.25vw,1.15rem);min-height:72px}.student-focus .custom-room-scroll{overflow:hidden}.student-focus .custom-room-canvas{min-width:980px;min-height:650px;transform:none;transform-origin:top left}.student-focus.fit-screen-active .room-shell{min-height:0}.student-focus.fit-screen-active .custom-room-scroll{display:flex;justify-content:center;align-items:flex-start}.student-focus .custom-table-actions,.student-focus .room-object-actions,.student-focus .lock-button{display:none!important}.student-focus .custom-table-handle,.student-focus .zone-label,.student-focus .room-object{cursor:default}
+
+    body.split-focus{overflow:auto;background:var(--bg)}
+    body.split-focus .app-shell{width:100%;max-width:none;padding:6px}
+    body.split-focus .topbar,
+    body.split-focus .hero,
+    body.split-focus .controls,
+    body.split-focus .footer-note,
+    body.split-focus .planning-banner,
+    body.split-focus .unseated,
+    body.split-focus .plan-toolbar .display-actions .edit-only,
+    body.split-focus .tab-actions{display:none!important}
+    body.split-focus .workspace{display:block}
+    body.split-focus .plan-panel{min-height:calc(100vh - 12px);border-radius:12px;padding:6px}
+    body.split-focus .plan-toolbar{min-height:38px;margin-bottom:2px}
+    body.split-focus .plan-toolbar>div:first-child{display:none}
+    body.split-focus .plan-toolbar .display-actions{position:fixed;top:6px;right:8px;z-index:210;align-items:center;justify-content:flex-end}
+    body.split-focus #focusButton,
+    body.split-focus #fitScreenButton{display:none!important}
+    body.split-focus #splitScreenButton{min-height:36px;padding:6px 11px;border-radius:999px;background:#374151;color:#fff;border-color:transparent;box-shadow:0 5px 16px rgba(15,23,42,.18);font-size:.76rem;white-space:nowrap}
+    body.split-focus .tab-strip{margin:0 126px 4px 0;padding:0 0 2px}
+    body.split-focus .workspace-tab{padding:5px 8px;font-size:.74rem}
+    body.split-focus .display-dashboard{position:static;display:grid;grid-template-columns:minmax(145px,.4fr) minmax(0,.6fr);gap:5px;margin-bottom:5px}
+    body.split-focus .display-card{padding:5px 7px;border-radius:10px;box-shadow:0 3px 9px rgba(15,23,42,.06)}
+    body.split-focus .display-card h3{font-size:.78rem;margin-bottom:1px}
+    body.split-focus .timer-card{grid-column:1;grid-row:1;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px}
+    body.split-focus .timer-main{min-width:86px}
+    body.split-focus .timer-display{font-size:1.55rem}
+    body.split-focus .timer-progress{height:4px;margin-top:3px}
+    body.split-focus .timer-config{display:none}
+    body.split-focus .timer-actions{gap:3px!important;margin-top:0!important}
+    body.split-focus .timer-actions .button{min-height:27px;padding:3px 6px;font-size:.66rem}
+    body.split-focus .lesson-task-card{grid-column:2;grid-row:1;min-height:0}
+    body.split-focus .lesson-task-header{margin-bottom:2px}
+    body.split-focus .lesson-task-count{padding:2px 5px;font-size:.58rem}
+    body.split-focus .lesson-task-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 12px;max-height:46px;overflow:auto;padding-left:1.05rem;font-size:.72rem;line-height:1.18}
+    body.split-focus .picker-card{grid-column:1/-1;grid-row:2;grid-template-columns:minmax(90px,.3fr) minmax(0,.7fr);gap:5px;align-items:center}
+    body.split-focus .display-dashboard:not(:has(.lesson-task-card:not([hidden]))) .picker-card{grid-column:2;grid-row:1}
+    body.split-focus .picker-name{font-size:1rem}
+    body.split-focus .picker-card .hint{font-size:.64rem;margin:1px 0 0}
+    body.split-focus .picker-config,
+    body.split-focus .picker-remove-row{display:none}
+    body.split-focus .picker-speed-actions{gap:3px;margin-top:0}
+    body.split-focus .picker-reset-row{gap:3px;margin-top:3px}
+    body.split-focus .picker-controls .button{min-height:27px;padding:3px 6px;font-size:.65rem}
+    body.split-focus .picker-tally{padding-top:3px}
+    body.split-focus .picker-tally-heading{margin:0}
+    body.split-focus .picker-tally-list{display:none}
+    body.split-focus .picker-tally-heading strong{font-size:.68rem}
+    body.split-focus .picker-tally-summary{font-size:.64rem}
+    body.split-focus .room-shell{min-height:0}
+    body.split-focus .custom-room-scroll{overflow:hidden}
+    body.split-focus .custom-room-canvas{min-width:980px;min-height:650px;transform:none;transform-origin:top left}
+    body.split-focus.fit-screen-active .room-shell{min-height:0}
+    body.split-focus .seat-state,
+    body.split-focus .custom-table-actions,
+    body.split-focus .room-object-actions,
+    body.split-focus .lock-button{display:none!important}
+    body.split-focus .custom-table-handle,
+    body.split-focus .zone-label,
+    body.split-focus .room-object{cursor:default}
+    @media(max-width:720px){
+      body.split-focus .display-dashboard{grid-template-columns:1fr}
+      body.split-focus .timer-card,
+      body.split-focus .lesson-task-card,
+      body.split-focus .picker-card,
+      body.split-focus .display-dashboard:not(:has(.lesson-task-card:not([hidden]))) .picker-card{grid-column:1;grid-row:auto}
+      body.split-focus .lesson-task-list{grid-template-columns:1fr;max-height:38px}
+      body.split-focus .picker-card{grid-template-columns:1fr}
+      body.split-focus .tab-strip{margin-right:116px}
+    }
+
     @media(max-width:1180px){body.student-focus .display-dashboard{grid-template-columns:repeat(2,minmax(280px,1fr))}body.student-focus .picker-card{grid-column:1/-1}}
     @media(max-width:760px){body.student-focus .display-dashboard{grid-template-columns:1fr}body.student-focus .picker-card{grid-column:auto;grid-template-columns:1fr}body.student-focus .lesson-task-list{grid-template-columns:1fr}}
     @media(max-width:1050px){.workspace{grid-template-columns:1fr}.controls{position:static;max-height:none}.display-dashboard{grid-template-columns:1fr}.form-grid.three{grid-template-columns:1fr 1fr}.attendance-list{grid-template-columns:1fr 1fr}}
@@ -258,12 +329,12 @@
     <header class="hero">
       <h1>Seating Plan Maker</h1>
       <div class="version-wrap">
-        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.4.3</button>
+        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.5.0</button>
         <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
       </div>
       <div id="versionNotes" class="version-notes" hidden>
         <strong>Latest changes</strong>
-        Added a Fit to screen option that scales the complete seating plan to the available Student Display area. Fill from front, compact projected controls and shareable workspace JSON remain available.
+        Added a dedicated split-screen view that removes the editing sidebar, keeps the timer, lesson task and random picker compact, and automatically fits the complete seating plan into a half-screen browser window. Full-screen Student Display and shareable workspace JSON remain available.
       </div>
       <p>Plan, save and project flexible classroom seating arrangements. Classes, plans, room tabs and planning information remain on this device unless you export a JSON backup.</p>
     </header>
@@ -383,7 +454,7 @@
         <div id="planContent" hidden>
           <div class="plan-toolbar">
             <div><div class="plan-title-line"><h2 id="planHeading">Seating plan</h2><span id="planSummary" class="summary-chip"></span></div><p id="planSubtitle" class="subtle"></p></div>
-            <div class="display-actions"><button class="button secondary edit-only" id="printButton" type="button">Print</button><button class="button secondary" id="fitScreenButton" type="button" aria-pressed="false">↔ Fit to screen</button><button class="button secondary" id="focusButton" type="button" aria-pressed="false">⛶ Student display</button></div>
+            <div class="display-actions"><button class="button secondary edit-only" id="printButton" type="button">Print</button><button class="button secondary" id="splitScreenButton" type="button" aria-pressed="false" title="Use this compact view, then snap the browser to one half of the screen">▥ Split-screen view</button><button class="button secondary" id="fitScreenButton" type="button" aria-pressed="false">↔ Fit to screen</button><button class="button secondary" id="focusButton" type="button" aria-pressed="false">⛶ Student display</button></div>
           </div>
 
           <div class="tab-strip" id="tabStrip" aria-label="Room and setting tabs"></div>
@@ -468,7 +539,7 @@
     'zoneNameInput','zoneColourInput','addZoneButton','assignRolesButton','clearRolesButton','rolesStatus','zoneList','newRoleInput','addRoleButton','roleChipList','objectTypeSelect','objectColourInput','addObjectButton','objectList',
     'alphabetiseButton','fillFrontButton','randomiseButton','randomiseAllButton','clearSeatsButton','unlockAllButton','undoButton','redoButton','exampleButton','planContent','emptyState','planSummary','planSubtitle','tabStrip','addTabButton','duplicateTabButton','renameTabButton','deleteTabButton','tabLimitText',
     'timerDisplay','timerProgressBar','timerModeSelect','timerMinutesInput','timerStartButton','timerResetButton','timerAddButton','timerSoundButton','lessonTaskCard','lessonTaskHeading','lessonTaskCount','lessonTaskList','pickerName','pickerHistoryText','pickerPoolSelect','pickerRemoveInput','pickFastButton','pickSlowButton','pickerSoundButton','resetPickerButton','pickerTallySummary','pickerTallyList',
-    'frontTop','frontBottom','seatGrid','customRoomScroll','customRoomCanvas','roomShell','studentPool','unseatedArea','printButton','fitScreenButton','focusButton','themeButton','versionButton','versionNotes','tableEditorDialog','tableEditorClose','tableEditorName','tableEditorColour','tableEditorCapacity','tableEditorRotation','tableEditorZone','tableEditorCancel','tableEditorSave'
+    'frontTop','frontBottom','seatGrid','customRoomScroll','customRoomCanvas','roomShell','studentPool','unseatedArea','printButton','splitScreenButton','fitScreenButton','focusButton','themeButton','versionButton','versionNotes','tableEditorDialog','tableEditorClose','tableEditorName','tableEditorColour','tableEditorCapacity','tableEditorRotation','tableEditorZone','tableEditorCancel','tableEditorSave'
   ].forEach(id => refs[id] = $(id));
   const layoutModeInputs = [...document.querySelectorAll('input[name="layoutMode"]')];
 
@@ -834,9 +905,11 @@
     updateFitScreenButton();
     clearFitStyles();
     const inStudentDisplay=document.body.classList.contains('student-focus');
-    const enabled=inStudentDisplay&&Boolean(activeTab().display?.fitToScreen);
+    const inSplitDisplay=document.body.classList.contains('split-focus');
+    const inDisplay=inStudentDisplay||inSplitDisplay;
+    const enabled=inDisplay&&(inSplitDisplay||Boolean(activeTab().display?.fitToScreen));
     document.body.classList.toggle('fit-screen-active',enabled);
-    if(!inStudentDisplay)return;
+    if(!inDisplay)return;
 
     const roomTop=refs.roomShell.getBoundingClientRect().top;
     const availableHeight=Math.max(250,window.innerHeight-roomTop-12);
@@ -1024,9 +1097,9 @@
 
   function safeFilePart(value){return String(value||'Seating-Workspace').trim().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'').slice(0,70)||'Seating-Workspace'}
   function downloadJson(payload,fileName){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=fileName;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href)}
-  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.4.3',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
+  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.5.0',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
   async function importSharedWorkspace(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload?.workspace||!Array.isArray(payload.workspace.tabs))throw new Error('Invalid shared workspace');if(!window.confirm('Open this shared workspace? It will replace the current unsaved workspace, but it will not overwrite saved classes or plans until you choose Save.'))return;cancelPickerAnimation();stopTimer();workspace=hydrateWorkspace(payload.workspace);activeTabId=workspace.tabs.some(tab=>tab.id===payload.activeTabId)?payload.activeTabId:workspace.activeTabId;workspace.activeTabId=activeTabId;activeClassId='';activePlanId='';const classInfo=payload.class||{};refs.yearSelect.value=classInfo.year||'Year 7';const course=classInfo.course||'Science';const standard=[...refs.courseSelect.options].some(option=>option.value===course&&course!=='Other');refs.courseSelect.value=standard?course:'Other';refs.customCourseInput.value=standard?'':course;refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=classInfo.classCode||'';refs.namesInput.value=sharedStudents().map(student=>student.name).join('\n');refs.planNameInput.value=payload.planName||'Imported shared workspace';lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderClassOptions();renderPlanOptions();renderAll();saveDraft();setStatus(refs.planStatus,'Shared workspace opened. Review it, then save the class and workspace locally if required.')}catch(error){setStatus(refs.planStatus,'That file is not a valid shared Seating Plan Maker workspace.','error')}finally{refs.importWorkspaceInput.value=''}}
-  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.4.3',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
+  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.5.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
   async function importBackup(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload||!Array.isArray(payload.classes)||!Array.isArray(payload.plans))throw new Error('Invalid backup');if(!window.confirm('Import and merge this backup with the items already stored on this device?'))return;const classMap=new Map(classes.map(i=>[i.id,i]));payload.classes.forEach(i=>{if(i?.id&&Array.isArray(i.names))classMap.set(i.id,i)});classes=[...classMap.values()];const planMap=new Map(plans.map(i=>[i.id,i]));payload.plans.forEach(i=>{if(i?.id&&Array.isArray(i.tabs))planMap.set(i.id,i)});plans=[...planMap.values()];saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);renderClassOptions();renderPlanOptions();setStatus(refs.planStatus,'Backup imported and merged successfully.')}catch(error){setStatus(refs.planStatus,'That file is not a valid Seating Plan Maker backup.','error')}finally{refs.importInput.value=''}}
   function saveDraft(){saveValue(STORAGE.draft,{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim(),savedAt:Date.now()});renderSaveState()}
   function loadDraft(){const draft=loadObject(STORAGE.draft);if(!draft?.workspace)return false;workspace=hydrateWorkspace(draft.workspace);activeClassId=draft.activeClassId||'';activePlanId=draft.activePlanId||'';activeTabId=workspace.tabs.some(t=>t.id===draft.activeTabId)?draft.activeTabId:workspace.activeTabId;refs.yearSelect.value=draft.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===draft.course&&draft.course!=='Other');refs.courseSelect.value=standard?draft.course:'Other';refs.customCourseInput.value=standard?'':draft.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=draft.classCode||'';refs.planNameInput.value=draft.planName||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');draftRecovered=true;lastSavedSignature='';return true}
@@ -1058,7 +1131,31 @@
   function renderAll(){renderAttendance();renderRuleSelectors();renderRules();renderRoles();renderZoneEditors();renderObjectEditors();renderTabs();renderPlan();renderSaveState();updateUndoButtons()}
   function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 
-  async function setStudentFocus(active){document.body.classList.toggle('student-focus',active);refs.focusButton.setAttribute('aria-pressed',String(active));refs.focusButton.textContent=active?'↙ Exit student display':'⛶ Student display';applyFitToScreen();try{if(active&&!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else if(!active&&document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(error){/* expanded layout still works */}setTimeout(applyFitToScreen,80)}
+  function updateSplitScreenButton(active){refs.splitScreenButton.setAttribute('aria-pressed',String(active));refs.splitScreenButton.textContent=active?'× Exit split view':'▥ Split-screen view'}
+  async function setSplitFocus(active){
+    if(active&&document.body.classList.contains('student-focus')){
+      document.body.classList.remove('student-focus');
+      refs.focusButton.setAttribute('aria-pressed','false');
+      refs.focusButton.textContent='⛶ Student display';
+      try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(error){}
+    }
+    document.body.classList.toggle('split-focus',active);
+    updateSplitScreenButton(active);
+    applyFitToScreen();
+    setTimeout(applyFitToScreen,80);
+  }
+  async function setStudentFocus(active){
+    if(active&&document.body.classList.contains('split-focus')){
+      document.body.classList.remove('split-focus');
+      updateSplitScreenButton(false);
+    }
+    document.body.classList.toggle('student-focus',active);
+    refs.focusButton.setAttribute('aria-pressed',String(active));
+    refs.focusButton.textContent=active?'↙ Exit student display':'⛶ Student display';
+    applyFitToScreen();
+    try{if(active&&!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else if(!active&&document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(error){/* expanded layout still works */}
+    setTimeout(applyFitToScreen,80);
+  }
   function setTheme(theme){const dark=theme==='dark';document.body.classList.toggle('dark',dark);refs.themeButton.innerHTML=dark?'☀️ <span>Light mode</span>':'🌙 <span>Dark mode</span>';refs.themeButton.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem(STORAGE.theme,theme)}catch(error){}}
 
   refs.namesInput.addEventListener('change',()=>syncStudentsFromInput({mutate:true}));refs.namesInput.addEventListener('blur',()=>syncStudentsFromInput());
@@ -1075,8 +1172,8 @@
   refs.addTabButton.addEventListener('click',addTab);refs.duplicateTabButton.addEventListener('click',duplicateTab);refs.renameTabButton.addEventListener('click',renameTab);refs.deleteTabButton.addEventListener('click',deleteTab);
   refs.timerStartButton.addEventListener('click',startPauseTimer);refs.timerResetButton.addEventListener('click',resetTimer);refs.timerAddButton.addEventListener('click',addMinute);refs.timerSoundButton.addEventListener('click',()=>{touchEdit();activeTab().timer.sound=!activeTab().timer.sound;renderTimer();saveDraft()});refs.timerModeSelect.addEventListener('change',()=>{stopTimer();beginMutation();const timer=activeTab().timer;timer.mode=refs.timerModeSelect.value;timer.running=false;timer.startedAt=null;timer.elapsed=0;timer.remaining=timer.duration;renderTimer();saveDraft()});refs.timerMinutesInput.addEventListener('change',resetTimer);
   refs.pickerPoolSelect.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();const tab=activeTab();tab.picker.pool=refs.pickerPoolSelect.value==='present'?'present':'seated';tab.picker.history=[];tab.picker.counts={};tab.picker.current='';renderPlan();renderPicker();saveDraft()});refs.pickerRemoveInput.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();activeTab().picker.removePicked=refs.pickerRemoveInput.checked;renderPicker();saveDraft()});refs.pickerSoundButton.addEventListener('click',()=>{touchEdit();const picker=activeTab().picker;picker.sound=picker.sound===false;if(picker.sound){getPickerAudioContext();playPickerTick(.5)}renderPicker();saveDraft()});refs.pickFastButton.addEventListener('click',()=>startPicker(5000));refs.pickSlowButton.addEventListener('click',()=>startPicker(10000));refs.resetPickerButton.addEventListener('click',resetPicker);
-  refs.unseatedArea.addEventListener('click',event=>{if(event.target.closest('.student-chip'))return;moveSelectedToPool()});refs.printButton.addEventListener('click',()=>window.print());refs.fitScreenButton.addEventListener('click',()=>{touchEdit();const tab=activeTab();tab.display=tab.display||{fitToScreen:false};tab.display.fitToScreen=!tab.display.fitToScreen;applyFitToScreen();saveDraft()});refs.focusButton.addEventListener('click',()=>setStudentFocus(!document.body.classList.contains('student-focus')));document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('student-focus')){document.body.classList.remove('student-focus');refs.focusButton.setAttribute('aria-pressed','false');refs.focusButton.textContent='⛶ Student display';applyFitToScreen()}});
-  refs.themeButton.addEventListener('click',()=>setTheme(document.body.classList.contains('dark')?'light':'dark'));refs.versionButton.addEventListener('click',event=>{event.stopPropagation();const open=refs.versionNotes.hidden;refs.versionNotes.hidden=!open;refs.versionButton.setAttribute('aria-expanded',String(open))});document.addEventListener('click',event=>{if(!event.target.closest('.version-wrap')&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});
+  refs.unseatedArea.addEventListener('click',event=>{if(event.target.closest('.student-chip'))return;moveSelectedToPool()});refs.printButton.addEventListener('click',()=>window.print());refs.splitScreenButton.addEventListener('click',()=>setSplitFocus(!document.body.classList.contains('split-focus')));refs.fitScreenButton.addEventListener('click',()=>{touchEdit();const tab=activeTab();tab.display=tab.display||{fitToScreen:false};tab.display.fitToScreen=!tab.display.fitToScreen;applyFitToScreen();saveDraft()});refs.focusButton.addEventListener('click',()=>setStudentFocus(!document.body.classList.contains('student-focus')));document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('student-focus')){document.body.classList.remove('student-focus');refs.focusButton.setAttribute('aria-pressed','false');refs.focusButton.textContent='⛶ Student display';applyFitToScreen()}});
+  refs.themeButton.addEventListener('click',()=>setTheme(document.body.classList.contains('dark')?'light':'dark'));refs.versionButton.addEventListener('click',event=>{event.stopPropagation();const open=refs.versionNotes.hidden;refs.versionNotes.hidden=!open;refs.versionButton.setAttribute('aria-expanded',String(open))});document.addEventListener('click',event=>{if(!event.target.closest('.version-wrap')&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}else if(event.key==='Escape'&&document.body.classList.contains('split-focus')){setSplitFocus(false)}});
   refs.tableEditorClose.addEventListener('click',closeTableEditor);refs.tableEditorCancel.addEventListener('click',closeTableEditor);refs.tableEditorSave.addEventListener('click',saveTableEditor);refs.tableEditorDialog.addEventListener('click',event=>{if(event.target===refs.tableEditorDialog)closeTableEditor()});refs.tableEditorDialog.addEventListener('close',()=>{editingTableId=''});window.addEventListener('resize',()=>{applyFitToScreen();updateStickyOffset()},{passive:true});window.addEventListener('beforeunload',()=>{cancelPickerAnimation();stopTimer();saveDraft()});
 
   fillNumberSelect(refs.rowsSelect,2,10,5);fillNumberSelect(refs.columnsSelect,2,10,6);
