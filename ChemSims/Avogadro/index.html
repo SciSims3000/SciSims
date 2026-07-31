@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive SciSims model of Avogadro's Law showing the direct relationship between gas volume and amount of substance at constant temperature and pressure.">
+  <title>SciSims: Avogadro's Law</title>
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --panel-soft:#f8fafc;
+      --text:#172033;
+      --muted:#5d6b82;
+      --line:#d8e1ee;
+      --primary:#6d28d9;
+      --primary-dark:#4c1d95;
+      --secondary:#0891b2;
+      --secondary-dark:#0e7490;
+      --success:#15803d;
+      --warning:#b45309;
+      --danger:#b91c1c;
+      --chem-soft:#f3e8ff;
+      --blue-soft:#e0f2fe;
+      --green-soft:#dcfce7;
+      --orange-soft:#ffedd5;
+      --shadow:0 14px 34px rgba(15,23,42,0.11);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box;}
+
+    html{scroll-behaviour:smooth;}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    button,input,select{font:inherit;}
+    button{cursor:pointer;}
+
+    .page{
+      width:min(1280px,94vw);
+      margin:0 auto;
+      padding:22px 0 48px;
+    }
+
+    .hero{
+      color:white;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(255,255,255,.18), transparent 27%),
+        linear-gradient(135deg,#312e81 0%,#6d28d9 48%,#0891b2 100%);
+      border-radius:28px;
+      padding:24px 28px 30px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .nav-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.32);
+      color:#fff;
+      font-weight:800;
+      text-decoration:none;
+      backdrop-filter:blur(4px);
+    }
+
+    .nav-link:hover,.nav-link:focus-visible{background:rgba(255,255,255,.26);}
+
+    .eyebrow{
+      margin:0 0 5px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-size:.82rem;
+      font-weight:900;
+      color:#e9d5ff;
+    }
+
+    .hero h1{
+      margin:0;
+      max-width:900px;
+      font-size:clamp(2.25rem,5.7vw,5rem);
+      line-height:.98;
+      letter-spacing:-.055em;
+    }
+
+    .version-button{
+      margin:11px 0 12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(17,24,39,.22);
+      color:#fff;
+      font-size:.86rem;
+      font-weight:850;
+    }
+
+    .hero-copy{
+      max-width:850px;
+      margin:0;
+      font-size:1.12rem;
+      color:rgba(255,255,255,.93);
+    }
+
+    .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+    .tag{
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.27);
+      border-radius:999px;
+      background:rgba(255,255,255,.13);
+      font-weight:800;
+      font-size:.9rem;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .li-sc{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin:18px 0;
+    }
+
+    .li-sc h2,.card h2,.card h3{margin:0 0 8px;line-height:1.18;}
+    .li-sc p,.card p{margin:0;color:var(--muted);}
+
+    .mode-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px;
+      padding:12px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:0 8px 20px rgba(15,23,42,.07);
+    }
+
+    .mode-button{
+      flex:1 1 160px;
+      min-height:46px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      color:#334155;
+      background:#f8fafc;
+      font-weight:900;
+    }
+
+    .mode-button.active{
+      color:#fff;
+      border-color:var(--primary);
+      background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+      box-shadow:0 8px 18px rgba(109,40,217,.24);
+    }
+
+    .sim-grid{
+      display:grid;
+      grid-template-columns:repeat(12,minmax(0,1fr));
+      gap:18px;
+      align-items:start;
+    }
+
+    .panel{
+      grid-column:1/-1;
+      position:static;
+      display:grid;
+      grid-template-columns:minmax(250px,1.3fr) minmax(235px,1.2fr) minmax(190px,1fr) minmax(190px,1fr) minmax(225px,1.08fr);
+      gap:10px;
+      padding:14px;
+      align-items:start;
+    }
+    .controls-heading{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:2px;
+    }
+    .controls-heading h2{margin:0;}
+
+    .description-switch{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:6px;
+      padding:5px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#f1f5f9;
+    }
+    .description-switch-label{
+      padding:0 5px 0 7px;
+      color:#475569;
+      font-size:.82rem;
+      font-weight:900;
+    }
+    .description-button{
+      min-height:32px;
+      padding:5px 10px;
+      border:1px solid transparent;
+      border-radius:999px;
+      background:transparent;
+      color:#475569;
+      font-size:.8rem;
+      font-weight:900;
+    }
+    .description-button.active{
+      color:#fff;
+      background:var(--secondary-dark);
+      box-shadow:0 4px 10px rgba(14,116,144,.2);
+    }
+
+    .panel > .control-group,
+    .panel > .investigation-panel,
+    .panel > .challenge-panel,
+    .panel > .status-box{
+      margin:0;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--panel-soft);
+    }
+
+    .control-group{
+      padding:10px 12px;
+      border-top:0;
+    }
+    .control-group:first-of-type{padding-top:10px;}
+
+    .panel > .gas-control{grid-column:1;}
+    .panel > .amount-control{grid-column:2;}
+    .panel > .temperature-control{grid-column:3;}
+    .panel > .pressure-control{grid-column:4;}
+    .panel > .motion-control{grid-column:5;}
+    .panel > .status-box{grid-column:1/-1;}
+    .panel > .investigation-panel,
+    .panel > .challenge-panel{grid-column:1/-1;}
+
+    label,.control-label{display:block;font-weight:850;color:#263247;margin-bottom:6px;}
+
+    .readout-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:7px;
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .readout{
+      color:var(--primary-dark);
+      font-weight:900;
+      font-variant-numeric:tabular-nums;
+    }
+
+    input[type="range"]{width:100%;accent-color:var(--primary);}
+
+    select,input[type="number"]{
+      width:100%;
+      min-height:44px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:9px 10px;
+      color:var(--text);
+      background:#fff;
+    }
+
+    select:focus,input:focus,button:focus-visible,a:focus-visible{
+      outline:3px solid rgba(8,145,178,.28);
+      outline-offset:2px;
+    }
+
+    .locked-note{
+      margin-top:8px;
+      padding:9px 10px;
+      border-radius:10px;
+      background:var(--blue-soft);
+      color:#0c4a6e;
+      font-size:.88rem;
+      font-weight:700;
+      transition:padding .18s ease,font-size .18s ease,margin .18s ease;
+    }
+
+    body[data-descriptions="compact"] .panel .locked-note{
+      margin-top:5px;
+      padding:5px 7px;
+      font-size:.74rem;
+      line-height:1.25;
+    }
+    body[data-descriptions="compact"] .panel .status-box{padding:7px 10px;}
+    body[data-descriptions="compact"] .panel .status-box strong{font-size:.86rem;margin-bottom:1px;}
+    body[data-descriptions="compact"] .panel .status-box p{font-size:.76rem;line-height:1.25;}
+    body[data-descriptions="hidden"] .panel .control-description{display:none;}
+
+    .button-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+      margin-top:2px;
+    }
+
+    .motion-control .button-grid{grid-template-columns:repeat(2,minmax(88px,1fr));}
+    .motion-control .button{
+      min-width:0;
+      padding-inline:7px;
+      font-size:.92rem;
+      white-space:nowrap;
+    }
+
+    .button{
+      min-height:44px;
+      border:0;
+      border-radius:11px;
+      padding:9px 12px;
+      font-weight:900;
+      color:#fff;
+      background:var(--primary);
+    }
+    .button:hover{filter:brightness(.96);transform:translateY(-1px);}
+    .button.secondary{background:var(--secondary);}
+    .button.neutral{color:#334155;background:#e2e8f0;}
+    .button.danger{background:var(--danger);}
+    .button.full{grid-column:1/-1;}
+
+    .status-box{
+      margin-top:0;
+      border-radius:14px;
+      padding:12px;
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+    }
+    .status-box strong{display:block;margin-bottom:4px;}
+    .status-box p{margin:0;font-size:.92rem;}
+
+    .sim-stage{
+      grid-column:1/-1;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+      align-items:start;
+    }
+
+    .canvas-card{padding:0;overflow:hidden;}
+    .canvas-heading{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 18px 0;
+    }
+    .canvas-heading h2{margin:0;}
+    .canvas-heading p{margin:4px 0 0;font-size:.9rem;}
+
+    .live-badge{
+      flex:0 0 auto;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#f1f5f9;
+      color:#475569;
+      font-size:.84rem;
+      font-weight:900;
+    }
+    .live-badge::before{
+      content:"";
+      width:9px;height:9px;border-radius:50%;background:#94a3b8;
+    }
+    .live-badge.running{background:var(--green-soft);color:#166534;}
+    .live-badge.running::before{background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.15);}
+
+    canvas{display:block;width:100%;height:auto;}
+    #gasCanvas{min-height:340px;background:linear-gradient(#eff6ff,#f8fafc);}
+    #graphCanvas{background:#fff;}
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      padding:0 18px 18px;
+    }
+
+    .result{
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#fff;
+      padding:11px;
+      min-width:0;
+    }
+    .result span{display:block;color:var(--muted);font-size:.8rem;font-weight:800;}
+    .result strong{display:block;margin-top:2px;font-size:1.15rem;color:#30245d;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+
+    .equation-banner{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:14px;
+      margin:0 18px 18px;
+      padding:13px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--chem-soft),var(--blue-soft));
+      border:1px solid #d8b4fe;
+      color:#3b0764;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .investigation-panel,.challenge-panel{display:none;}
+    body[data-mode="investigate"] .investigation-panel{display:block;}
+    body[data-mode="challenge"] .challenge-panel{display:block;}
+    body[data-mode="challenge"] .learn-investigate-only{display:none;}
+
+    .prediction-row,.challenge-answer-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:9px;
+      align-items:end;
+      margin-top:12px;
+    }
+
+    .feedback{
+      min-height:24px;
+      margin-top:9px!important;
+      font-weight:800;
+    }
+    .feedback.good{color:var(--success);}
+    .feedback.bad{color:var(--danger);}
+
+    .challenge-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+    .score-chip{
+      flex:0 0 auto;
+      padding:7px 10px;
+      border-radius:999px;
+      background:var(--chem-soft);
+      color:var(--primary-dark);
+      font-weight:900;
+    }
+    .challenge-question{
+      border-left:5px solid var(--primary);
+      padding:12px 14px;
+      border-radius:0 12px 12px 0;
+      background:#faf5ff;
+      color:#3b0764!important;
+      font-weight:800;
+    }
+
+    .graph-card .canvas-heading{padding-bottom:8px;}
+    .graph-card{height:100%;}
+
+    .data-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding:0 18px 14px;
+    }
+    .data-controls .button{min-height:40px;padding:8px 11px;}
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      margin-top:12px;
+    }
+    table{width:100%;border-collapse:collapse;min-width:840px;background:#fff;}
+    th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem;}
+    th{background:#f1f5f9;color:#334155;font-weight:900;position:sticky;top:0;}
+    td{font-variant-numeric:tabular-nums;}
+    .valid{color:var(--success);font-weight:850;}
+    .invalid{color:var(--danger);font-weight:850;}
+
+    .lower-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    details{
+      border-top:1px solid var(--line);
+      padding:11px 0;
+    }
+    details:first-of-type{border-top:0;}
+    summary{cursor:pointer;font-weight:900;color:#334155;}
+    details p,details li{color:var(--muted);}
+    details ul{padding-left:20px;margin-bottom:0;}
+
+    .teacher-note{background:#fff7ed;border-color:#fed7aa;}
+    .teacher-note p,.teacher-note li{color:#7c2d12;}
+
+    .save-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    .save-row .button{min-height:40px;}
+
+    .source-list{margin:9px 0 0;padding-left:20px;color:var(--muted);}
+    .source-list a{color:#5b21b6;}
+
+    dialog{
+      width:min(560px,92vw);
+      border:0;
+      border-radius:18px;
+      padding:0;
+      box-shadow:0 26px 80px rgba(15,23,42,.32);
+    }
+    dialog::backdrop{background:rgba(15,23,42,.64);}
+    .dialog-inner{padding:22px;}
+    .dialog-inner h2{margin:0 0 8px;}
+    .dialog-inner ul{color:var(--muted);}
+
+    .sr-only{
+      position:absolute!important;
+      width:1px!important;height:1px!important;
+      padding:0!important;margin:-1px!important;
+      overflow:hidden!important;clip:rect(0,0,0,0)!important;
+      white-space:nowrap!important;border:0!important;
+    }
+
+    @media (max-width:1220px){
+      .panel{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .panel > .gas-control,
+      .panel > .amount-control,
+      .panel > .temperature-control,
+      .panel > .pressure-control{grid-column:auto;}
+      .panel > .motion-control{grid-column:1/-1;}
+      .motion-control .button-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+      .motion-control .button.full{grid-column:auto;}
+    }
+
+    @media (max-width:980px){
+      .sim-grid{grid-template-columns:1fr;}
+      .panel{position:static;}
+      .sim-stage{grid-template-columns:1fr;}
+      .results{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .lower-grid{grid-template-columns:1fr;}
+    }
+
+    @media (max-width:660px){
+      .page{width:min(96vw,1280px);padding-top:10px;}
+      .hero{padding:18px;border-radius:20px;}
+      .hero-nav{display:grid;grid-template-columns:1fr;}
+      .nav-link{width:100%;}
+      .li-sc{grid-template-columns:1fr;}
+      .mode-strip{display:grid;grid-template-columns:1fr;}
+      .controls-heading{align-items:flex-start;}
+      .description-switch{width:100%;justify-content:center;border-radius:14px;}
+      .panel{grid-template-columns:1fr;}
+      .panel > .gas-control,
+      .panel > .amount-control,
+      .panel > .temperature-control,
+      .panel > .pressure-control,
+      .panel > .motion-control{grid-column:1/-1;}
+      .motion-control .button-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .motion-control .button.full{grid-column:1/-1;}
+      .results{grid-template-columns:1fr 1fr;padding:0 12px 12px;}
+      .canvas-heading{padding:14px 12px 0;}
+      .equation-banner{margin:0 12px 12px;}
+      .data-controls{padding:0 12px 12px;}
+      .button-grid{grid-template-columns:1fr;}
+      .button.full{grid-column:auto;}
+      .prediction-row,.challenge-answer-row{grid-template-columns:1fr;}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behaviour:auto!important;transition:none!important;animation:none!important;}
+    }
+  </style>
+</head>
+<body data-mode="learn">
+  <main class="page">
+    <header class="hero">
+      <nav class="hero-nav" aria-label="SciSims navigation">
+        <a class="nav-link" href="../../index.html">← Back to main SciSims page</a>
+        <a class="nav-link" href="../../HSCindex.html">Go to HSC index</a>
+      </nav>
+      <p class="eyebrow">SciSims Chemistry</p>
+      <h1>Avogadro’s Law</h1>
+      <button class="version-button" id="versionButton" type="button" aria-haspopup="dialog">Version 1.0.3</button>
+      <p class="hero-copy">Explore why adding more gas particles increases the volume of a gas when temperature and pressure remain constant.</p>
+      <div class="tag-row" aria-label="Simulation tags">
+        <span class="tag">Chemistry</span>
+        <span class="tag">Gas laws</span>
+        <span class="tag">Direct proportion</span>
+        <span class="tag">Particle model</span>
+        <span class="tag">Data and graphs</span>
+      </div>
+    </header>
+
+    <section class="li-sc" aria-label="Learning intention and success criteria">
+      <article class="card">
+        <h2>Learning intention</h2>
+        <p>Understand how the amount of an ideal gas affects its volume when temperature and pressure are controlled.</p>
+      </article>
+      <article class="card">
+        <h2>Success criteria</h2>
+        <p>Describe the direct relationship between volume and amount, interpret a volume–moles graph, and use <strong>V₁/n₁ = V₂/n₂</strong> to make predictions.</p>
+      </article>
+    </section>
+
+    <nav class="mode-strip" aria-label="Simulation mode">
+      <button class="mode-button active" type="button" data-mode-button="learn">Learn</button>
+      <button class="mode-button" type="button" data-mode-button="investigate">Investigate</button>
+      <button class="mode-button" type="button" data-mode-button="challenge">Challenge</button>
+    </nav>
+
+    <section class="sim-grid" aria-label="Avogadro's Law simulation">
+      <aside class="card panel">
+        <div class="controls-heading">
+          <h2>Controls</h2>
+          <div class="description-switch" role="group" aria-label="Control description size">
+            <span class="description-switch-label">Descriptions</span>
+            <button class="description-button active" type="button" data-description-button="full" aria-pressed="true">Full</button>
+            <button class="description-button" type="button" data-description-button="compact" aria-pressed="false">Compact</button>
+            <button class="description-button" type="button" data-description-button="hidden" aria-pressed="false">Hidden</button>
+          </div>
+        </div>
+
+        <div class="control-group gas-control">
+          <label for="gasSelect">Gas sample</label>
+          <select id="gasSelect">
+            <option value="N2">Nitrogen, N₂</option>
+            <option value="O2">Oxygen, O₂</option>
+            <option value="He">Helium, He</option>
+            <option value="CO2">Carbon dioxide, CO₂</option>
+          </select>
+          <div class="locked-note control-description">For an ideal gas, gas identity does not change the Avogadro relationship.</div>
+        </div>
+
+        <div class="control-group amount-control learn-investigate-only">
+          <label for="molesSlider">Amount of gas, n</label>
+          <div class="readout-row"><span>0.50 mol</span><strong class="readout"><span id="molesReadout">1.00</span> mol</strong><span>5.00 mol</span></div>
+          <input id="molesSlider" type="range" min="0.5" max="5" value="1" step="0.1">
+        </div>
+
+        <div class="control-group temperature-control learn-investigate-only">
+          <label for="temperatureSlider">Temperature, T</label>
+          <div class="readout-row"><span>273 K</span><strong class="readout"><span id="temperatureReadout">298</span> K</strong><span>373 K</span></div>
+          <input id="temperatureSlider" type="range" min="273" max="373" value="298" step="1">
+          <div class="locked-note control-description" id="temperatureNote">Locked in Learn mode so only the amount of gas changes.</div>
+        </div>
+
+        <div class="control-group pressure-control learn-investigate-only">
+          <label for="pressureSlider">Pressure, P</label>
+          <div class="readout-row"><span>80 kPa</span><strong class="readout"><span id="pressureReadout">100</span> kPa</strong><span>160 kPa</span></div>
+          <input id="pressureSlider" type="range" min="80" max="160" value="100" step="1">
+          <div class="locked-note control-description" id="pressureNote">Locked in Learn mode so only the amount of gas changes.</div>
+        </div>
+
+        <div class="control-group motion-control learn-investigate-only">
+          <span class="control-label">Particle motion</span>
+          <div class="button-grid">
+            <button class="button" id="startPauseButton" type="button">Start</button>
+            <button class="button secondary" id="replayButton" type="button">Replay</button>
+            <button class="button neutral full" id="resetButton" type="button">Reset simulation</button>
+          </div>
+        </div>
+
+        <div class="status-box control-description learn-investigate-only" aria-live="polite">
+          <strong id="relationshipHeading">Direct proportion</strong>
+          <p id="relationshipText">At constant temperature and pressure, doubling the amount of gas doubles its volume.</p>
+        </div>
+
+        <section class="investigation-panel control-group" aria-labelledby="predictionHeading">
+          <h3 id="predictionHeading">Make a prediction</h3>
+          <p>Predict the volume for the current amount, temperature and pressure before checking the model.</p>
+          <div class="prediction-row">
+            <div>
+              <label for="predictionInput">Predicted volume (L)</label>
+              <input id="predictionInput" type="number" min="0" step="0.1" inputmode="decimal">
+            </div>
+            <button class="button secondary" id="checkPredictionButton" type="button">Check</button>
+          </div>
+          <p class="feedback" id="predictionFeedback" aria-live="polite"></p>
+        </section>
+
+        <section class="challenge-panel control-group" aria-labelledby="challengeHeading">
+          <div class="challenge-header">
+            <div>
+              <h3 id="challengeHeading">Avogadro challenge</h3>
+              <p>Use the direct proportion. Temperature and pressure are unchanged.</p>
+            </div>
+            <span class="score-chip" id="scoreChip">0 / 0</span>
+          </div>
+          <p class="challenge-question" id="challengeQuestion"></p>
+          <div class="challenge-answer-row">
+            <div>
+              <label for="challengeInput">Your answer (<span id="challengeUnit">L</span>)</label>
+              <input id="challengeInput" type="number" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <button class="button" id="checkChallengeButton" type="button">Check answer</button>
+          </div>
+          <p class="feedback" id="challengeFeedback" aria-live="polite"></p>
+          <div class="button-grid">
+            <button class="button secondary" id="nextChallengeButton" type="button">New question</button>
+            <button class="button neutral" id="resetScoreButton" type="button">Reset score</button>
+          </div>
+        </section>
+      </aside>
+
+      <div class="sim-stage">
+        <article class="card canvas-card">
+          <div class="canvas-heading">
+            <div>
+              <h2>Gas cylinder model</h2>
+              <p>The molecule symbols are representative; they are not a literal count of the particles in a mole.</p>
+            </div>
+            <span class="live-badge" id="motionBadge">Paused</span>
+          </div>
+          <canvas id="gasCanvas" width="760" height="430" aria-label="Animated gas particles in a cylinder with a movable piston"></canvas>
+          <div class="results" aria-live="polite">
+            <div class="result"><span>Amount</span><strong id="amountResult">1.00 mol</strong></div>
+            <div class="result"><span>Volume</span><strong id="volumeResult">24.78 L</strong></div>
+            <div class="result"><span>Molar volume, V/n</span><strong id="molarVolumeResult">24.78 L mol⁻¹</strong></div>
+            <div class="result"><span>Particles represented</span><strong id="particlesResult">6.022 × 10²³</strong></div>
+          </div>
+          <div class="equation-banner">
+            <span>V ∝ n</span>
+            <span>V/n = constant</span>
+            <span>V₁/n₁ = V₂/n₂</span>
+          </div>
+        </article>
+
+        <article class="card canvas-card graph-card learn-investigate-only">
+          <div class="canvas-heading">
+            <div>
+              <h2>Volume–amount graph</h2>
+              <p>The line passes through the origin when temperature and pressure are constant.</p>
+            </div>
+          </div>
+          <canvas id="graphCanvas" width="760" height="360" aria-label="Graph of gas volume against amount in moles"></canvas>
+          <div class="data-controls">
+            <button class="button" id="recordButton" type="button">Record trial</button>
+            <button class="button secondary" id="downloadCsvButton" type="button">Download CSV</button>
+            <button class="button neutral" id="clearDataButton" type="button">Clear data</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <article class="card learn-investigate-only">
+        <h2>Investigation data</h2>
+        <p>For a valid Avogadro’s Law comparison, temperature and pressure must match the first recorded trial.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Trial</th><th>Gas</th><th>n (mol)</th><th>T (K)</th><th>P (kPa)</th><th>V (L)</th><th>V/n (L mol⁻¹)</th><th>Controlled?</th></tr>
+            </thead>
+            <tbody id="dataBody"><tr><td colspan="8">No trials recorded.</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>How the model works</h2>
+        <details open>
+          <summary>What should I notice?</summary>
+          <p>As the amount of gas increases, the piston rises and the gas occupies a larger volume. At fixed temperature and pressure, the ratio V/n stays constant.</p>
+        </details>
+        <details>
+          <summary>Why does the piston move?</summary>
+          <p>Adding gas would increase collision frequency and pressure if the container stayed rigid. The freely moving piston rises until the gas pressure returns to the external pressure.</p>
+        </details>
+        <details>
+          <summary>What is idealised?</summary>
+          <p>The model treats the gas as ideal and the piston as frictionless. The displayed particles are a scaled visual representation. Real gases can deviate from ideal behaviour, especially at high pressure or low temperature.</p>
+        </details>
+        <details>
+          <summary>What does the slope mean?</summary>
+          <p>The gradient of the V–n graph is the molar volume under the selected conditions: RT/P.</p>
+        </details>
+      </article>
+
+      <article class="card">
+        <h2>Save or move your work</h2>
+        <p>Your current settings, challenge score and recorded trials are saved automatically in this browser.</p>
+        <div class="save-row">
+          <button class="button secondary" id="exportJsonButton" type="button">Export JSON</button>
+          <button class="button neutral" id="importJsonButton" type="button">Import JSON</button>
+          <input class="sr-only" id="importJsonInput" type="file" accept="application/json,.json">
+          <button class="button danger" id="clearSavedButton" type="button">Clear saved state</button>
+        </div>
+        <p class="feedback" id="saveFeedback" aria-live="polite"></p>
+      </article>
+
+      <article class="card teacher-note">
+        <h2>Teacher notes</h2>
+        <ul>
+          <li>Begin in Learn mode and ask students to compare 1.0 mol, 2.0 mol and 4.0 mol.</li>
+          <li>In Investigate mode, students can deliberately change temperature or pressure and identify why those trials are not a controlled Avogadro comparison.</li>
+          <li>The visual particle count is representative. The calculated entity count uses the exact SI value of the Avogadro constant.</li>
+          <li>Challenge mode retains its score when students move between modes or reopen the page.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Scientific basis and sources</h2>
+        <p>The model calculates ideal-gas volume using <strong>PV = nRT</strong>, then displays the Avogadro relationship at controlled temperature and pressure.</p>
+        <ul class="source-list">
+          <li><a href="https://openstax.org/books/chemistry/pages/9-2-relating-pressure-volume-amount-and-temperature-the-ideal-gas-law" target="_blank" rel="noopener">OpenStax Chemistry: Ideal Gas Law and Avogadro’s Law</a></li>
+          <li><a href="https://goldbook.iupac.org/terms/view/I02935" target="_blank" rel="noopener">IUPAC Gold Book: ideal gas</a></li>
+          <li><a href="https://www.bipm.org/en/si-base-units/mole" target="_blank" rel="noopener">BIPM: SI definition of the mole and Avogadro constant</a></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="versionDialog">
+    <div class="dialog-inner">
+      <h2>Avogadro’s Law — Version 1.0.3</h2>
+      <p>Released 31/07/2026 • Responsive controls update</p>
+      <ul>
+        <li>Learn, Investigate and Challenge modes.</li>
+        <li>Animated representative particle model with a movable piston.</li>
+        <li>Live ideal-gas calculations and volume–amount graph.</li>
+        <li>Prediction checking, data recording and CSV download.</li>
+        <li>Automatic local saving plus JSON export and import.</li>
+        <li>Responsive SciSims navigation and favicon support.</li>
+        <li>Full, compact and hidden control-description settings, saved in the browser.</li>
+        <li>Responsive five-column control layout with fully visible particle-motion buttons.</li>
+      </ul>
+      <button class="button" id="closeVersionButton" type="button">Close</button>
+    </div>
+  </dialog>
+
+  <script>
+    'use strict';
+
+    const VERSION = '1.0.3';
+    const STORAGE_KEY = 'scisims-avogadros-law-v1';
+    const R = 8.314462618; // kPa·L·mol⁻¹·K⁻¹
+    const AVOGADRO = 6.02214076e23;
+
+    const defaultState = {
+      version: VERSION,
+      mode: 'learn',
+      descriptionMode: 'full',
+      gas: 'N2',
+      moles: 1,
+      temperature: 298,
+      pressure: 100,
+      running: false,
+      data: [],
+      score: {correct:0, attempted:0},
+      challenge: null
+    };
+
+    let state = loadState();
+    let particles = [];
+    let lastFrame = performance.now();
+    let animationFrameId = null;
+
+    const els = {
+      body: document.body,
+      modeButtons:[...document.querySelectorAll('[data-mode-button]')],
+      descriptionButtons:[...document.querySelectorAll('[data-description-button]')],
+      gasSelect:document.getElementById('gasSelect'),
+      molesSlider:document.getElementById('molesSlider'),
+      temperatureSlider:document.getElementById('temperatureSlider'),
+      pressureSlider:document.getElementById('pressureSlider'),
+      molesReadout:document.getElementById('molesReadout'),
+      temperatureReadout:document.getElementById('temperatureReadout'),
+      pressureReadout:document.getElementById('pressureReadout'),
+      temperatureNote:document.getElementById('temperatureNote'),
+      pressureNote:document.getElementById('pressureNote'),
+      startPauseButton:document.getElementById('startPauseButton'),
+      replayButton:document.getElementById('replayButton'),
+      resetButton:document.getElementById('resetButton'),
+      motionBadge:document.getElementById('motionBadge'),
+      gasCanvas:document.getElementById('gasCanvas'),
+      graphCanvas:document.getElementById('graphCanvas'),
+      amountResult:document.getElementById('amountResult'),
+      volumeResult:document.getElementById('volumeResult'),
+      molarVolumeResult:document.getElementById('molarVolumeResult'),
+      particlesResult:document.getElementById('particlesResult'),
+      relationshipHeading:document.getElementById('relationshipHeading'),
+      relationshipText:document.getElementById('relationshipText'),
+      predictionInput:document.getElementById('predictionInput'),
+      checkPredictionButton:document.getElementById('checkPredictionButton'),
+      predictionFeedback:document.getElementById('predictionFeedback'),
+      recordButton:document.getElementById('recordButton'),
+      downloadCsvButton:document.getElementById('downloadCsvButton'),
+      clearDataButton:document.getElementById('clearDataButton'),
+      dataBody:document.getElementById('dataBody'),
+      challengeQuestion:document.getElementById('challengeQuestion'),
+      challengeInput:document.getElementById('challengeInput'),
+      challengeUnit:document.getElementById('challengeUnit'),
+      checkChallengeButton:document.getElementById('checkChallengeButton'),
+      nextChallengeButton:document.getElementById('nextChallengeButton'),
+      resetScoreButton:document.getElementById('resetScoreButton'),
+      challengeFeedback:document.getElementById('challengeFeedback'),
+      scoreChip:document.getElementById('scoreChip'),
+      exportJsonButton:document.getElementById('exportJsonButton'),
+      importJsonButton:document.getElementById('importJsonButton'),
+      importJsonInput:document.getElementById('importJsonInput'),
+      clearSavedButton:document.getElementById('clearSavedButton'),
+      saveFeedback:document.getElementById('saveFeedback'),
+      versionButton:document.getElementById('versionButton'),
+      versionDialog:document.getElementById('versionDialog'),
+      closeVersionButton:document.getElementById('closeVersionButton')
+    };
+
+    const gasStyles = {
+      N2:{name:'Nitrogen', colours:['#2563eb','#2563eb'], spacing:6},
+      O2:{name:'Oxygen', colours:['#ef4444','#ef4444'], spacing:6},
+      He:{name:'Helium', colours:['#f59e0b'], spacing:0},
+      CO2:{name:'Carbon dioxide', colours:['#ef4444','#374151','#ef4444'], spacing:7}
+    };
+
+    function safeNumber(value,fallback){
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function normaliseState(candidate){
+      const clean = structuredClone(defaultState);
+      if(!candidate || typeof candidate !== 'object') return clean;
+      clean.mode = ['learn','investigate','challenge'].includes(candidate.mode) ? candidate.mode : clean.mode;
+      clean.descriptionMode = ['full','compact','hidden'].includes(candidate.descriptionMode) ? candidate.descriptionMode : clean.descriptionMode;
+      clean.gas = gasStyles[candidate.gas] ? candidate.gas : clean.gas;
+      clean.moles = Math.min(5,Math.max(.5,safeNumber(candidate.moles,1)));
+      clean.temperature = Math.min(373,Math.max(273,safeNumber(candidate.temperature,298)));
+      clean.pressure = Math.min(160,Math.max(80,safeNumber(candidate.pressure,100)));
+      clean.running = false;
+      clean.data = Array.isArray(candidate.data) ? candidate.data.slice(0,100).map((row,index)=>({
+        trial:index+1,
+        gas:gasStyles[row.gas] ? row.gas : 'N2',
+        moles:safeNumber(row.moles,1),
+        temperature:safeNumber(row.temperature,298),
+        pressure:safeNumber(row.pressure,100),
+        volume:safeNumber(row.volume,24.78),
+        molarVolume:safeNumber(row.molarVolume,24.78),
+        controlled:Boolean(row.controlled)
+      })) : [];
+      clean.score = {
+        correct:Math.max(0,Math.floor(safeNumber(candidate.score?.correct,0))),
+        attempted:Math.max(0,Math.floor(safeNumber(candidate.score?.attempted,0)))
+      };
+      if(clean.score.correct > clean.score.attempted) clean.score.correct = clean.score.attempted;
+      clean.challenge = candidate.challenge && typeof candidate.challenge === 'object' ? candidate.challenge : null;
+      return clean;
+    }
+
+    function loadState(){
+      try{
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? normaliseState(JSON.parse(saved)) : structuredClone(defaultState);
+      }catch(error){
+        console.warn('Could not load saved state',error);
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState(){
+      try{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify({...state,running:false}));
+      }catch(error){
+        console.warn('Could not save state',error);
+      }
+    }
+
+    function volumeFor(moles=state.moles,temperature=state.temperature,pressure=state.pressure){
+      return moles * R * temperature / pressure;
+    }
+
+    function molarVolume(){return R * state.temperature / state.pressure;}
+
+    function formatEntities(moles){
+      const value = moles * AVOGADRO;
+      const exponent = Math.floor(Math.log10(value));
+      const coefficient = value / Math.pow(10,exponent);
+      return `${coefficient.toFixed(3)} × 10${toSuperscript(exponent)}`;
+    }
+
+    function toSuperscript(number){
+      const map={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+      return String(number).split('').map(char=>map[char]||char).join('');
+    }
+
+    function setDescriptionMode(mode){
+      state.descriptionMode = ['full','compact','hidden'].includes(mode) ? mode : 'full';
+      els.body.dataset.descriptions = state.descriptionMode;
+      els.descriptionButtons.forEach(button=>{
+        const active = button.dataset.descriptionButton === state.descriptionMode;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',String(active));
+      });
+      saveState();
+    }
+
+    function setMode(mode){
+      state.mode = mode;
+      if(mode === 'learn'){
+        state.temperature = 298;
+        state.pressure = 100;
+      }
+      state.running = false;
+      els.body.dataset.mode = mode;
+      els.modeButtons.forEach(button=>button.classList.toggle('active',button.dataset.modeButton === mode));
+      els.temperatureSlider.disabled = mode === 'learn';
+      els.pressureSlider.disabled = mode === 'learn';
+      els.temperatureNote.textContent = mode === 'learn'
+        ? 'Locked in Learn mode so only the amount of gas changes.'
+        : 'Keep this unchanged between trials for a controlled comparison.';
+      els.pressureNote.textContent = mode === 'learn'
+        ? 'Locked in Learn mode so only the amount of gas changes.'
+        : 'Keep this unchanged between trials for a controlled comparison.';
+      if(mode === 'challenge' && !state.challenge) generateChallenge();
+      updateAll(true);
+    }
+
+    function syncControls(){
+      els.gasSelect.value = state.gas;
+      els.molesSlider.value = state.moles;
+      els.temperatureSlider.value = state.temperature;
+      els.pressureSlider.value = state.pressure;
+    }
+
+    function updateAll(resetParticles=false){
+      syncControls();
+      els.molesReadout.textContent = state.moles.toFixed(2);
+      els.temperatureReadout.textContent = Math.round(state.temperature);
+      els.pressureReadout.textContent = Math.round(state.pressure);
+
+      const volume = volumeFor();
+      const vm = molarVolume();
+      els.amountResult.textContent = `${state.moles.toFixed(2)} mol`;
+      els.volumeResult.textContent = `${volume.toFixed(2)} L`;
+      els.molarVolumeResult.textContent = `${vm.toFixed(2)} L mol⁻¹`;
+      els.particlesResult.textContent = formatEntities(state.moles);
+
+      els.startPauseButton.textContent = state.running ? 'Pause' : 'Start';
+      els.motionBadge.textContent = state.running ? 'Particles moving' : 'Paused';
+      els.motionBadge.classList.toggle('running',state.running);
+
+      const multiplier = state.moles / 1;
+      if(Math.abs(multiplier-1) < .005){
+        els.relationshipHeading.textContent = 'Reference sample';
+        els.relationshipText.textContent = `At these conditions, each mole occupies ${vm.toFixed(2)} L.`;
+      }else if(multiplier > 1){
+        els.relationshipHeading.textContent = `${multiplier.toFixed(1)}× as much gas`;
+        els.relationshipText.textContent = `Compared with 1.00 mol at the same conditions, the volume is also ${multiplier.toFixed(1)}× as large.`;
+      }else{
+        els.relationshipHeading.textContent = 'Less gas, smaller volume';
+        els.relationshipText.textContent = `The amount and volume change by the same factor because V/n remains ${vm.toFixed(2)} L mol⁻¹.`;
+      }
+
+      if(resetParticles) initialiseParticles();
+      renderDataTable();
+      drawGas();
+      drawGraph();
+      updateChallengeDisplay();
+      saveState();
+    }
+
+    function initialiseParticles(){
+      const count = Math.max(6, Math.round(state.moles * 12));
+      const bounds = gasBounds();
+      particles = Array.from({length:count},()=>({
+        x:randomBetween(bounds.left+14,bounds.right-14),
+        y:randomBetween(bounds.pistonY+18,bounds.bottom-16),
+        vx:randomBetween(-1,1) || .5,
+        vy:randomBetween(-1,1) || -.5,
+        phase:Math.random()*Math.PI*2
+      }));
+    }
+
+    function ensureParticleCount(){
+      const target = Math.max(6, Math.round(state.moles * 12));
+      const bounds = gasBounds();
+      while(particles.length < target){
+        particles.push({
+          x:randomBetween(bounds.left+14,bounds.right-14),
+          y:randomBetween(bounds.pistonY+18,bounds.bottom-16),
+          vx:randomBetween(-1,1) || .5,
+          vy:randomBetween(-1,1) || -.5,
+          phase:Math.random()*Math.PI*2
+        });
+      }
+      if(particles.length > target) particles.length = target;
+      particles.forEach(p=>{
+        p.x=Math.min(bounds.right-13,Math.max(bounds.left+13,p.x));
+        p.y=Math.min(bounds.bottom-14,Math.max(bounds.pistonY+15,p.y));
+      });
+    }
+
+    function gasBounds(){
+      const width = els.gasCanvas.width;
+      const height = els.gasCanvas.height;
+      const left = width * .2;
+      const right = width * .8;
+      const top = 52;
+      const bottom = height - 54;
+      const maxVolume = 200;
+      const fraction = Math.min(.98,Math.max(.04,volumeFor()/maxVolume));
+      const pistonY = bottom - fraction*(bottom-top);
+      return {left,right,top,bottom,pistonY,width,height};
+    }
+
+    function randomBetween(min,max){return min+Math.random()*(max-min);}
+
+    function animate(now){
+      const dt = Math.min(2.2,(now-lastFrame)/16.67);
+      lastFrame = now;
+      if(state.running && state.mode !== 'challenge') moveParticles(dt);
+      drawGas();
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    function moveParticles(dt){
+      ensureParticleCount();
+      const bounds = gasBounds();
+      const speed = .75 + (state.temperature-273)/100*.45;
+      particles.forEach(p=>{
+        p.x += p.vx*speed*dt*2.05;
+        p.y += p.vy*speed*dt*2.05;
+        p.phase += .025*dt;
+        if(p.x < bounds.left+11){p.x=bounds.left+11;p.vx=Math.abs(p.vx);}
+        if(p.x > bounds.right-11){p.x=bounds.right-11;p.vx=-Math.abs(p.vx);}
+        if(p.y < bounds.pistonY+12){p.y=bounds.pistonY+12;p.vy=Math.abs(p.vy);}
+        if(p.y > bounds.bottom-11){p.y=bounds.bottom-11;p.vy=-Math.abs(p.vy);}
+      });
+    }
+
+    function drawGas(){
+      const canvas=els.gasCanvas;
+      const ctx=canvas.getContext('2d');
+      const b=gasBounds();
+      ensureParticleCount();
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      const bg=ctx.createLinearGradient(0,b.pistonY,0,b.bottom);
+      bg.addColorStop(0,'rgba(125,211,252,.22)');
+      bg.addColorStop(1,'rgba(196,181,253,.28)');
+      ctx.fillStyle=bg;
+      ctx.fillRect(b.left,b.pistonY,b.right-b.left,b.bottom-b.pistonY);
+
+      // cylinder frame
+      ctx.lineWidth=7;
+      ctx.strokeStyle='#334155';
+      ctx.beginPath();
+      ctx.moveTo(b.left,b.top);
+      ctx.lineTo(b.left,b.bottom);
+      ctx.lineTo(b.right,b.bottom);
+      ctx.lineTo(b.right,b.top);
+      ctx.stroke();
+
+      // piston rod
+      ctx.lineWidth=12;
+      ctx.strokeStyle='#64748b';
+      ctx.beginPath();
+      ctx.moveTo((b.left+b.right)/2,b.top-35);
+      ctx.lineTo((b.left+b.right)/2,b.pistonY);
+      ctx.stroke();
+
+      // piston
+      ctx.fillStyle='#94a3b8';
+      ctx.strokeStyle='#334155';
+      ctx.lineWidth=4;
+      roundRect(ctx,b.left-4,b.pistonY-9,b.right-b.left+8,20,6,true,true);
+
+      // external pressure arrows
+      ctx.fillStyle='#475569';
+      ctx.font='800 16px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText(`External pressure: ${state.pressure.toFixed(0)} kPa`,(b.left+b.right)/2,24);
+      for(let x=b.left+55;x<b.right;x+=85){
+        drawArrow(ctx,x,30,x,b.pistonY-14,'#64748b',2.2,8);
+      }
+
+      // volume scale
+      ctx.textAlign='left';
+      ctx.font='800 15px system-ui';
+      ctx.fillStyle='#312e81';
+      ctx.fillText(`${volumeFor().toFixed(2)} L`,b.right+20,b.pistonY+6);
+      ctx.strokeStyle='#8b5cf6';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(b.right+4,b.pistonY);ctx.lineTo(b.right+15,b.pistonY);ctx.stroke();
+
+      // particles
+      particles.forEach(p=>drawMolecule(ctx,p.x,p.y,state.gas,p.phase));
+
+      // labels
+      ctx.fillStyle='#334155';
+      ctx.font='800 14px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText(`${gasStyles[state.gas].name} — representative molecules`,(b.left+b.right)/2,b.bottom+32);
+
+      ctx.fillStyle='rgba(255,255,255,.88)';
+      roundRect(ctx,18,78,128,74,12,true,false);
+      ctx.fillStyle='#334155';ctx.textAlign='left';ctx.font='800 13px system-ui';
+      ctx.fillText('Controlled',31,100);
+      ctx.font='700 12px system-ui';
+      ctx.fillText(`T = ${state.temperature.toFixed(0)} K`,31,120);
+      ctx.fillText(`P = ${state.pressure.toFixed(0)} kPa`,31,139);
+    }
+
+    function drawMolecule(ctx,x,y,gas,phase){
+      const style=gasStyles[gas];
+      const angle=phase*.35;
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.rotate(angle);
+      const radius=5.2;
+      const centres=[];
+      if(style.colours.length===1) centres.push(0);
+      if(style.colours.length===2) centres.push(-style.spacing/2,style.spacing/2);
+      if(style.colours.length===3) centres.push(-style.spacing,0,style.spacing);
+      if(centres.length>1){
+        ctx.strokeStyle='rgba(51,65,85,.7)';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(centres[0],0);ctx.lineTo(centres[centres.length-1],0);ctx.stroke();
+      }
+      centres.forEach((cx,index)=>{
+        ctx.beginPath();ctx.arc(cx,0,radius,0,Math.PI*2);
+        ctx.fillStyle=style.colours[index];ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1;ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function drawGraph(){
+      const canvas=els.graphCanvas;
+      const ctx=canvas.getContext('2d');
+      const w=canvas.width,h=canvas.height;
+      const margin={left:72,right:24,top:25,bottom:58};
+      const pw=w-margin.left-margin.right;
+      const ph=h-margin.top-margin.bottom;
+      const xMax=5;
+      const theoreticalMax=volumeFor(5,state.temperature,state.pressure);
+      const dataMax=state.data.reduce((max,row)=>Math.max(max,row.volume),0);
+      const yMax=Math.ceil(Math.max(60,theoreticalMax*1.12,dataMax*1.1)/20)*20;
+      const xScale=x=>margin.left+(x/xMax)*pw;
+      const yScale=y=>margin.top+ph-(y/yMax)*ph;
+
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+      ctx.font='12px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';
+      for(let y=0;y<=yMax;y+=20){
+        const py=yScale(y);
+        ctx.strokeStyle='#e2e8f0';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(margin.left,py);ctx.lineTo(w-margin.right,py);ctx.stroke();
+        ctx.fillStyle='#64748b';ctx.fillText(String(y),margin.left-10,py);
+      }
+      ctx.textAlign='center';ctx.textBaseline='top';
+      for(let x=0;x<=xMax;x+=.5){
+        const px=xScale(x);
+        ctx.strokeStyle=x%1===0?'#e2e8f0':'#f1f5f9';
+        ctx.beginPath();ctx.moveTo(px,margin.top);ctx.lineTo(px,margin.top+ph);ctx.stroke();
+        if(x%1===0){ctx.fillStyle='#64748b';ctx.fillText(String(x),px,margin.top+ph+9);}
+      }
+      ctx.strokeStyle='#334155';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(margin.left,margin.top);ctx.lineTo(margin.left,margin.top+ph);ctx.lineTo(w-margin.right,margin.top+ph);ctx.stroke();
+
+      ctx.save();ctx.translate(18,margin.top+ph/2);ctx.rotate(-Math.PI/2);
+      ctx.fillStyle='#334155';ctx.font='800 14px system-ui';ctx.textAlign='center';ctx.fillText('Volume, V (L)',0,0);ctx.restore();
+      ctx.fillStyle='#334155';ctx.font='800 14px system-ui';ctx.textAlign='center';ctx.fillText('Amount of gas, n (mol)',margin.left+pw/2,h-24);
+
+      // theoretical line
+      ctx.strokeStyle='#6d28d9';ctx.lineWidth=4;
+      ctx.beginPath();ctx.moveTo(xScale(0),yScale(0));ctx.lineTo(xScale(5),yScale(theoreticalMax));ctx.stroke();
+
+      // recorded points
+      state.data.forEach(row=>{
+        const valid=state.data.length===0||row.controlled;
+        ctx.beginPath();ctx.arc(xScale(row.moles),yScale(row.volume),6,0,Math.PI*2);
+        ctx.fillStyle=valid?'#0891b2':'#dc2626';ctx.fill();
+        ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      });
+
+      // current point
+      ctx.beginPath();ctx.arc(xScale(state.moles),yScale(volumeFor()),8,0,Math.PI*2);
+      ctx.fillStyle='#f59e0b';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+
+      ctx.textAlign='left';ctx.textBaseline='middle';ctx.font='800 12px system-ui';
+      drawLegendItem(ctx,w-220,36,'#6d28d9','Theoretical line');
+      drawLegendItem(ctx,w-220,56,'#f59e0b','Current setting');
+      if(state.data.length) drawLegendItem(ctx,w-220,76,'#0891b2','Recorded trial');
+    }
+
+    function drawLegendItem(ctx,x,y,colour,label){
+      ctx.fillStyle=colour;ctx.fillRect(x,y-4,18,8);ctx.fillStyle='#475569';ctx.fillText(label,x+25,y);
+    }
+
+    function drawArrow(ctx,x1,y1,x2,y2,colour,width,head){
+      const angle=Math.atan2(y2-y1,x2-x1);
+      ctx.strokeStyle=colour;ctx.fillStyle=colour;ctx.lineWidth=width;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-head*Math.cos(angle-Math.PI/6),y2-head*Math.sin(angle-Math.PI/6));ctx.lineTo(x2-head*Math.cos(angle+Math.PI/6),y2-head*Math.sin(angle+Math.PI/6));ctx.closePath();ctx.fill();
+    }
+
+    function roundRect(ctx,x,y,w,h,r,fill,stroke){
+      const radius=Math.min(r,w/2,h/2);
+      ctx.beginPath();ctx.roundRect(x,y,w,h,radius);
+      if(fill)ctx.fill();if(stroke)ctx.stroke();
+    }
+
+    function recordTrial(){
+      const baseline=state.data[0];
+      const controlled=!baseline || (baseline.temperature===state.temperature && baseline.pressure===state.pressure);
+      state.data.push({
+        trial:state.data.length+1,
+        gas:state.gas,
+        moles:Number(state.moles.toFixed(2)),
+        temperature:state.temperature,
+        pressure:state.pressure,
+        volume:Number(volumeFor().toFixed(3)),
+        molarVolume:Number(molarVolume().toFixed(3)),
+        controlled
+      });
+      updateAll(false);
+    }
+
+    function renderDataTable(){
+      if(!state.data.length){
+        els.dataBody.innerHTML='<tr><td colspan="8">No trials recorded.</td></tr>';
+        return;
+      }
+      els.dataBody.innerHTML=state.data.map(row=>`<tr>
+        <td>${row.trial}</td>
+        <td>${escapeHtml(row.gas)}</td>
+        <td>${row.moles.toFixed(2)}</td>
+        <td>${row.temperature.toFixed(0)}</td>
+        <td>${row.pressure.toFixed(0)}</td>
+        <td>${row.volume.toFixed(2)}</td>
+        <td>${row.molarVolume.toFixed(2)}</td>
+        <td class="${row.controlled?'valid':'invalid'}">${row.controlled?'Yes':'No — T or P changed'}</td>
+      </tr>`).join('');
+    }
+
+    function escapeHtml(value){
+      return String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    }
+
+    function checkPrediction(){
+      const value=Number(els.predictionInput.value);
+      els.predictionFeedback.className='feedback';
+      if(!Number.isFinite(value)){
+        els.predictionFeedback.textContent='Enter a predicted volume first.';
+        els.predictionFeedback.classList.add('bad');
+        return;
+      }
+      const answer=volumeFor();
+      const difference=Math.abs(value-answer);
+      if(difference<=Math.max(.2,answer*.01)){
+        els.predictionFeedback.textContent=`Correct — the model gives ${answer.toFixed(2)} L.`;
+        els.predictionFeedback.classList.add('good');
+      }else{
+        els.predictionFeedback.textContent=`Not quite. Use V = nRT/P. The model gives ${answer.toFixed(2)} L.`;
+        els.predictionFeedback.classList.add('bad');
+      }
+    }
+
+    function generateChallenge(){
+      const possible=[.5,1,1.5,2,2.5,3,4];
+      const n1=possible[Math.floor(Math.random()*possible.length)];
+      let n2=possible[Math.floor(Math.random()*possible.length)];
+      if(n2===n1) n2=n1===4?2:n1+.5;
+      const vm=[20,22.4,24,25,30][Math.floor(Math.random()*5)];
+      const v1=n1*vm;
+      const v2=n2*vm;
+      const type=Math.random()<.72?'volume':'moles';
+      state.challenge={type,n1,n2,v1,v2,answered:false};
+      els.challengeInput.value='';
+      els.challengeFeedback.textContent='';
+      els.challengeFeedback.className='feedback';
+      saveState();
+      updateChallengeDisplay();
+    }
+
+    function updateChallengeDisplay(){
+      els.scoreChip.textContent=`${state.score.correct} / ${state.score.attempted}`;
+      if(!state.challenge) return;
+      const q=state.challenge;
+      if(q.type==='volume'){
+        els.challengeQuestion.textContent=`A ${q.n1.toFixed(1)} mol gas sample occupies ${q.v1.toFixed(1)} L. What volume will ${q.n2.toFixed(1)} mol occupy at the same temperature and pressure?`;
+        els.challengeUnit.textContent='L';
+      }else{
+        els.challengeQuestion.textContent=`A ${q.n1.toFixed(1)} mol gas sample occupies ${q.v1.toFixed(1)} L. How many moles would occupy ${q.v2.toFixed(1)} L at the same temperature and pressure?`;
+        els.challengeUnit.textContent='mol';
+      }
+      els.checkChallengeButton.disabled=Boolean(q.answered);
+    }
+
+    function checkChallenge(){
+      const value=Number(els.challengeInput.value);
+      els.challengeFeedback.className='feedback';
+      if(!Number.isFinite(value)){
+        els.challengeFeedback.textContent='Enter an answer first.';
+        els.challengeFeedback.classList.add('bad');
+        return;
+      }
+      if(state.challenge.answered) return;
+      const answer=state.challenge.type==='volume'?state.challenge.v2:state.challenge.n2;
+      const tolerance=state.challenge.type==='volume'?.15:.03;
+      const correct=Math.abs(value-answer)<=tolerance;
+      state.score.attempted+=1;
+      if(correct) state.score.correct+=1;
+      state.challenge.answered=true;
+      els.challengeFeedback.textContent=correct
+        ? `Correct. The ratio V/n stays constant, so the answer is ${answer.toFixed(state.challenge.type==='volume'?1:2)} ${state.challenge.type==='volume'?'L':'mol'}.`
+        : `Not quite. V₁/n₁ = V₂/n₂ gives ${answer.toFixed(state.challenge.type==='volume'?1:2)} ${state.challenge.type==='volume'?'L':'mol'}.`;
+      els.challengeFeedback.classList.add(correct?'good':'bad');
+      updateChallengeDisplay();
+      saveState();
+    }
+
+    function downloadFile(filename,text,type){
+      const blob=new Blob([text],{type});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+
+    function downloadCsv(){
+      const headers=['Trial','Gas','Amount (mol)','Temperature (K)','Pressure (kPa)','Volume (L)','V/n (L mol-1)','Controlled comparison'];
+      const rows=state.data.map(row=>[row.trial,row.gas,row.moles,row.temperature,row.pressure,row.volume,row.molarVolume,row.controlled?'Yes':'No']);
+      const csv=[headers,...rows].map(row=>row.map(value=>`"${String(value).replaceAll('"','""')}"`).join(',')).join('\n');
+      downloadFile('avogadros-law-data.csv',csv,'text/csv;charset=utf-8');
+    }
+
+    function exportJson(){
+      const payload={
+        app:'SciSims Avogadro\'s Law',
+        version:VERSION,
+        exported:new Date().toISOString(),
+        state:{...state,running:false}
+      };
+      downloadFile('avogadros-law-state.json',JSON.stringify(payload,null,2),'application/json');
+      showSaveFeedback('JSON state exported.',true);
+    }
+
+    async function importJson(file){
+      try{
+        const text=await file.text();
+        const parsed=JSON.parse(text);
+        state=normaliseState(parsed.state??parsed);
+        initialiseParticles();
+        setDescriptionMode(state.descriptionMode);
+        setMode(state.mode);
+        showSaveFeedback('JSON state imported.',true);
+      }catch(error){
+        console.error(error);
+        showSaveFeedback('That file could not be imported.',false);
+      }finally{
+        els.importJsonInput.value='';
+      }
+    }
+
+    function showSaveFeedback(message,good){
+      els.saveFeedback.textContent=message;
+      els.saveFeedback.className=`feedback ${good?'good':'bad'}`;
+    }
+
+    // Event wiring
+    els.modeButtons.forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.modeButton)));
+    els.descriptionButtons.forEach(button=>button.addEventListener('click',()=>setDescriptionMode(button.dataset.descriptionButton)));
+    els.gasSelect.addEventListener('change',()=>{state.gas=els.gasSelect.value;initialiseParticles();updateAll(false);});
+    els.molesSlider.addEventListener('input',()=>{state.moles=Number(els.molesSlider.value);ensureParticleCount();updateAll(false);});
+    els.temperatureSlider.addEventListener('input',()=>{state.temperature=Number(els.temperatureSlider.value);updateAll(false);});
+    els.pressureSlider.addEventListener('input',()=>{state.pressure=Number(els.pressureSlider.value);updateAll(false);});
+    els.startPauseButton.addEventListener('click',()=>{state.running=!state.running;updateAll(false);});
+    els.replayButton.addEventListener('click',()=>{initialiseParticles();state.running=true;updateAll(false);});
+    els.resetButton.addEventListener('click',()=>{
+      const preserved={data:state.data,score:state.score,mode:state.mode,descriptionMode:state.descriptionMode};
+      state={...structuredClone(defaultState),...preserved,running:false};
+      if(state.mode==='learn'){state.temperature=298;state.pressure=100;}
+      initialiseParticles();updateAll(false);
+    });
+    els.checkPredictionButton.addEventListener('click',checkPrediction);
+    els.predictionInput.addEventListener('keydown',event=>{if(event.key==='Enter')checkPrediction();});
+    els.recordButton.addEventListener('click',recordTrial);
+    els.clearDataButton.addEventListener('click',()=>{state.data=[];updateAll(false);});
+    els.downloadCsvButton.addEventListener('click',downloadCsv);
+    els.checkChallengeButton.addEventListener('click',checkChallenge);
+    els.challengeInput.addEventListener('keydown',event=>{if(event.key==='Enter')checkChallenge();});
+    els.nextChallengeButton.addEventListener('click',generateChallenge);
+    els.resetScoreButton.addEventListener('click',()=>{state.score={correct:0,attempted:0};generateChallenge();});
+    els.exportJsonButton.addEventListener('click',exportJson);
+    els.importJsonButton.addEventListener('click',()=>els.importJsonInput.click());
+    els.importJsonInput.addEventListener('change',()=>{const file=els.importJsonInput.files?.[0];if(file)importJson(file);});
+    els.clearSavedButton.addEventListener('click',()=>{
+      localStorage.removeItem(STORAGE_KEY);
+      state=structuredClone(defaultState);
+      initialiseParticles();setDescriptionMode('full');setMode('learn');
+      showSaveFeedback('Saved state cleared and simulation reset.',true);
+    });
+    els.versionButton.addEventListener('click',()=>els.versionDialog.showModal());
+    els.closeVersionButton.addEventListener('click',()=>els.versionDialog.close());
+    els.versionDialog.addEventListener('click',event=>{if(event.target===els.versionDialog)els.versionDialog.close();});
+
+    window.addEventListener('resize',()=>{drawGas();drawGraph();});
+
+    // Initial render: animations deliberately begin paused.
+    initialiseParticles();
+    setDescriptionMode(state.descriptionMode);
+    setMode(state.mode);
+    if(!state.challenge) generateChallenge();
+    animationFrameId=requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
