@@ -33,9 +33,15 @@
       padding: 22px clamp(18px, 4vw, 48px) 12px;
     }
 
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 16px 0;
+    }
+
     .home-link {
       display: inline-block;
-      margin: 0 0 16px 0;
       padding: 10px 14px;
       background: #e0ecff;
       color: #1d4ed8;
@@ -47,6 +53,26 @@
 
     .home-link:hover {
       background: #c7ddff;
+    }
+
+    .version-details {
+      display: inline-block;
+      margin: 4px 0 9px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .version-details summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: #334155;
+      width: fit-content;
+    }
+
+    .version-details ul {
+      margin: 7px 0 0 18px;
+      padding: 0;
+      line-height: 1.45;
     }
 
     h1 {
@@ -141,6 +167,65 @@
     .green { background: var(--accent2); color: white; border-color: var(--accent2); }
     .purple { background: var(--purple); color: white; border-color: var(--purple); }
     .ghost { background: #f8fafc; }
+
+    .learning-panel {
+      margin-top: 15px;
+      padding: 13px;
+      border: 1px solid #bfdbfe;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #eff6ff, #f8fbff);
+    }
+
+    .learning-panel h3 {
+      margin: 0 0 5px;
+      color: #17469e;
+    }
+
+    .learning-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.38;
+      font-size: 0.88rem;
+    }
+
+    .learning-speed {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(140px, 0.9fr);
+      gap: 10px;
+      align-items: end;
+      margin-top: 10px;
+    }
+
+    .learning-speed label {
+      margin: 0 0 6px;
+    }
+
+    .learning-speed-note {
+      color: #334155;
+      font-size: 0.8rem;
+      font-weight: 750;
+      line-height: 1.25;
+      padding-bottom: 10px;
+      text-align: right;
+    }
+
+    .learning-progress {
+      margin-top: 10px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .learning-progress-text {
+      color: #334155;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .learning-progress progress {
+      width: 100%;
+      height: 10px;
+      accent-color: var(--accent);
+    }
 
     .button-row {
       display: grid;
@@ -280,6 +365,11 @@
       animation: pulseMove 0.8s ease-in-out infinite alternate;
     }
 
+    .electron.new-electron {
+      outline: 4px solid rgba(34, 197, 94, 0.28);
+      animation: newElectronPop 0.95s ease-out both;
+    }
+
     .transfer-electron {
       position: fixed;
       z-index: 2000;
@@ -290,6 +380,19 @@
     @keyframes pulseMove {
       from { transform: translate(-50%, -50%) scale(1); }
       to { transform: translate(-50%, -50%) scale(1.22); }
+    }
+
+    @keyframes newElectronPop {
+      0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0.2; }
+      55% { transform: translate(-50%, -50%) scale(1.65); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .electron.moving,
+      .electron.new-electron {
+        animation: none;
+      }
     }
 
     .status-grid {
@@ -317,6 +420,33 @@
       font-weight: 900;
       font-size: 1.15rem;
       line-height: 1.2;
+    }
+
+    .result-indicator {
+      display: inline-block;
+      border-radius: 10px;
+      padding: 6px 9px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .result-indicator.result-stable {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .result-indicator.result-unstable {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .result-indicator.result-neutral {
+      background: transparent;
+      color: inherit;
+      border: 1px solid transparent;
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .explain {
@@ -405,13 +535,26 @@
       .visual { min-height: 360px; }
       .status-grid { grid-template-columns: 1fr; }
       .mode-tabs { grid-template-columns: 1fr; }
+      .learning-speed { grid-template-columns: 1fr; }
+      .learning-speed-note { padding-bottom: 0; text-align: left; }
     }
   </style>
 </head>
 <body>
   <header>
-    <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+    <nav class="nav-links" aria-label="SciSims navigation">
+      <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
+      <a class="home-link" href="/SciSims/HSCindex.html">Go to HSC index</a>
+    </nav>
     <h1>Electron Shell Bonding Simulator</h1>
+    <details class="version-details">
+      <summary title="Open release notes">Version 1.1.1</summary>
+      <ul>
+        <li>Added an adjustable Learning mode speed control.</li>
+        <li>Added a guided H–Ar learning sequence with highlighted new electrons.</li>
+        <li>Added red and green stability feedback in Build one atom.</li>
+      </ul>
+    </details>
     <p class="subtitle">Model how atoms gain, lose or share electrons to achieve a stable outer shell. Use the diagrams as a digital version of counters on electron shell mats.</p>
   </header>
 
@@ -434,6 +577,34 @@
           <button class="primary" id="loseBtn">Lose 1 e⁻</button>
         </div>
         <button class="ghost" id="resetSingleBtn">Reset atom</button>
+
+        <div class="learning-panel">
+          <h3>Learning mode</h3>
+          <p>Play the first 18 elements in atomic-number order. Each neutral atom appears at your chosen speed and its newest electron is highlighted.</p>
+          <div class="learning-speed">
+            <div>
+              <label for="learningSpeed">Animation speed</label>
+              <select id="learningSpeed">
+                <option value="3000">Very slow — 3 s per atom</option>
+                <option value="2000">Slow — 2 s per atom</option>
+                <option value="1500">Slower — 1.5 s per atom</option>
+                <option value="1000" selected>Normal — 1 s per atom</option>
+                <option value="500">Fast — 0.5 s per atom</option>
+                <option value="250">Very fast — 0.25 s per atom</option>
+              </select>
+            </div>
+            <div class="learning-speed-note" id="learningSpeedNote">1 second per atom</div>
+          </div>
+          <button class="green" id="learningBtn">▶ Play H → Ar</button>
+          <div class="button-row">
+            <button class="ghost" id="previousElementBtn">← Previous</button>
+            <button class="ghost" id="nextElementBtn">Next →</button>
+          </div>
+          <div class="learning-progress" aria-live="polite">
+            <span class="learning-progress-text" id="learningProgressText">Element 6 of 18</span>
+            <progress id="learningProgress" max="18" value="6">6 of 18</progress>
+          </div>
+        </div>
       </div>
 
       <div id="ionicControls" hidden>
@@ -487,7 +658,7 @@
         </div>
         <div class="stat">
           <div class="label" id="statLabelC">Model result</div>
-          <div class="value" id="resultStat">Neutral atom</div>
+          <div class="value result-indicator result-neutral" id="resultStat">Neutral atom</div>
         </div>
       </div>
 
@@ -543,10 +714,17 @@
       ionicAnimationToken: 0,
       covalentKey: "H2O",
       covalentPhase: "initial",
-      covalentAnimationToken: 0
+      covalentAnimationToken: 0,
+      learningPlaying: false,
+      learningHasStarted: false,
+      learningIndex: 5,
+      learningIntervalMs: 1000,
+      highlightAddedElectron: false
     };
 
     const shellCap = [2, 8, 8];
+    const elementOrder = Object.keys(elements);
+    let learningTimerId = null;
 
     const modeSelect = document.getElementById("modeSelect");
     const singleAtom = document.getElementById("singleAtom");
@@ -580,6 +758,16 @@
     const promptBox = document.getElementById("promptBox");
     const transferBtn = document.getElementById("transferBtn");
     const animateCovalentBtn = document.getElementById("animateCovalentBtn");
+    const gainBtn = document.getElementById("gainBtn");
+    const loseBtn = document.getElementById("loseBtn");
+    const resetSingleBtn = document.getElementById("resetSingleBtn");
+    const learningBtn = document.getElementById("learningBtn");
+    const learningSpeed = document.getElementById("learningSpeed");
+    const learningSpeedNote = document.getElementById("learningSpeedNote");
+    const previousElementBtn = document.getElementById("previousElementBtn");
+    const nextElementBtn = document.getElementById("nextElementBtn");
+    const learningProgress = document.getElementById("learningProgress");
+    const learningProgressText = document.getElementById("learningProgressText");
 
     function fillSelects() {
       Object.entries(elements).forEach(([symbol, el]) => {
@@ -609,6 +797,25 @@
 
     function cloneShells(symbol) {
       return [...elements[symbol].shells];
+    }
+
+    function totalElectrons(shells) {
+      return shells.reduce((sum, count) => sum + count, 0);
+    }
+
+    function chargeFor(symbol, shells) {
+      return elements[symbol].z - totalElectrons(shells);
+    }
+
+    function formatCharge(charge) {
+      if (charge === 0) return "neutral";
+      const magnitude = Math.abs(charge);
+      return `${magnitude}${charge > 0 ? "+" : "−"}`;
+    }
+
+    function setResultTone(tone = "neutral") {
+      resultStat.classList.remove("result-stable", "result-unstable", "result-neutral");
+      resultStat.classList.add(`result-${tone}`);
     }
 
     function valence(shells) {
@@ -755,8 +962,11 @@
         const movingClass = options.movingOuter &&
           position.shellIndex === shells.length - 1 &&
           position.electronIndex >= count - options.movingOuter ? " moving" : "";
+        const addedClass = options.highlightAdded &&
+          position.shellIndex === shells.length - 1 &&
+          position.electronIndex === count - 1 ? " new-electron" : "";
 
-        dot.className = `electron${outerClass}${movingClass}`;
+        dot.className = `electron${outerClass}${movingClass}${addedClass}`;
         dot.dataset.shellIndex = position.shellIndex;
         dot.dataset.electronIndex = position.electronIndex;
         dot.style.left = `${position.x}px`;
@@ -1030,8 +1240,82 @@
       wrapper.appendChild(legend);
     }
 
+    function stopLearningSequence() {
+      if (learningTimerId !== null) {
+        window.clearInterval(learningTimerId);
+        learningTimerId = null;
+      }
+      state.learningPlaying = false;
+    }
+
+    function showLearningElement(index, highlight = true) {
+      const safeIndex = Math.max(0, Math.min(elementOrder.length - 1, index));
+      state.learningIndex = safeIndex;
+      state.singleSymbol = elementOrder[safeIndex];
+      state.currentShells = cloneShells(state.singleSymbol);
+      state.highlightAddedElectron = highlight;
+      singleAtom.value = state.singleSymbol;
+      render();
+    }
+
+    function advanceLearningSequence() {
+      const nextIndex = state.learningIndex + 1;
+      if (nextIndex >= elementOrder.length) {
+        stopLearningSequence();
+        render();
+        return;
+      }
+
+      showLearningElement(nextIndex, true);
+      if (nextIndex === elementOrder.length - 1) {
+        stopLearningSequence();
+        render();
+      }
+    }
+
+    function scheduleLearningSequence() {
+      if (learningTimerId !== null) window.clearInterval(learningTimerId);
+      learningTimerId = window.setInterval(advanceLearningSequence, state.learningIntervalMs);
+    }
+
+    function startOrPauseLearning() {
+      if (state.learningPlaying) {
+        stopLearningSequence();
+        render();
+        return;
+      }
+
+      if (!state.learningHasStarted || state.learningIndex >= elementOrder.length - 1) {
+        state.learningIndex = 0;
+      }
+
+      state.learningHasStarted = true;
+      state.learningPlaying = true;
+      showLearningElement(state.learningIndex, true);
+      scheduleLearningSequence();
+    }
+
+    function stepLearning(direction) {
+      stopLearningSequence();
+      state.learningHasStarted = true;
+      const currentIndex = elementOrder.indexOf(state.singleSymbol);
+      showLearningElement(currentIndex + direction, true);
+    }
+
+    function learningShellMessage(symbol) {
+      const z = elements[symbol].z;
+      if (z === 1) return "Hydrogen begins the sequence with one electron in the first shell.";
+      if (z === 2) return "Helium adds the second electron and completes the first shell.";
+      if (z === 3) return "Lithium starts a new second shell after the first shell is full.";
+      if (z === 10) return "Neon adds the eighth electron to the second shell, completing it.";
+      if (z === 11) return "Sodium starts a new third shell after the second shell is full.";
+      if (z === 18) return "Argon adds the eighth electron to the third shell, completing the H–Ar sequence.";
+      return `Electron ${z} is added to shell ${elements[symbol].shells.length}.`;
+    }
+
     function setMode(mode) {
       const enteringCovalent = mode === "covalent" && state.mode !== "covalent";
+      if (mode !== "single") stopLearningSequence();
       state.mode = mode;
       if (enteringCovalent) {
         state.covalentAnimationToken++;
@@ -1054,22 +1338,69 @@
     function renderSingle() {
       setVisualLayout(false);
       resetStatLabels();
-      titleA.textContent = `${elements[state.singleSymbol].name} atom`;
-      drawAtom(atomStageA, state.singleSymbol, state.currentShells);
+
+      const el = elements[state.singleSymbol];
+      const stable = isStable(state.currentShells);
+      const charge = chargeFor(state.singleSymbol, state.currentShells);
+      const particleName = charge === 0 ? "atom" : "ion";
+      const currentIndex = elementOrder.indexOf(state.singleSymbol);
+      const isNeutralConfiguration = totalElectrons(state.currentShells) === el.z;
+
+      titleA.textContent = state.learningPlaying
+        ? `Learning mode: ${el.name} atom`
+        : `${el.name} ${particleName}`;
+      drawAtom(atomStageA, state.singleSymbol, state.currentShells, {
+        charge: charge === 0 ? null : formatCharge(charge),
+        highlightAdded: state.highlightAddedElectron && isNeutralConfiguration
+      });
 
       arrangementStat.textContent = arrangement(state.currentShells);
       valenceStat.textContent = valence(state.currentShells);
-      resultStat.textContent = isStable(state.currentShells) ? "Stable outer shell" : "Not full yet";
+      resultStat.textContent = stable
+        ? charge === 0 ? "Stable neutral atom" : `Stable ion (${formatCharge(charge)})`
+        : charge === 0 ? "Outer shell not stable" : `Ion not stable (${formatCharge(charge)})`;
+      setResultTone(stable ? "stable" : "unstable");
 
-      const el = elements[state.singleSymbol];
+      learningProgress.value = currentIndex + 1;
+      learningProgress.textContent = `${currentIndex + 1} of ${elementOrder.length}`;
+      learningProgressText.textContent = `Element ${currentIndex + 1} of ${elementOrder.length}: ${el.name} (${state.singleSymbol})`;
+      const speedSeconds = state.learningIntervalMs / 1000;
+      learningSpeed.value = String(state.learningIntervalMs);
+      learningSpeedNote.textContent = `${Number.isInteger(speedSeconds) ? speedSeconds : speedSeconds.toFixed(2).replace(/0$/, "")} second${speedSeconds === 1 ? "" : "s"} per atom`;
+      learningBtn.textContent = state.learningPlaying
+        ? "❚❚ Pause sequence"
+        : state.learningHasStarted && currentIndex < elementOrder.length - 1
+          ? "▶ Continue sequence"
+          : currentIndex === elementOrder.length - 1 && state.learningHasStarted
+            ? "↻ Replay H → Ar"
+            : "▶ Play H → Ar";
+      previousElementBtn.disabled = currentIndex === 0;
+      nextElementBtn.disabled = currentIndex === elementOrder.length - 1;
+      singleAtom.disabled = state.learningPlaying;
+      gainBtn.disabled = state.learningPlaying;
+      loseBtn.disabled = state.learningPlaying;
+      resetSingleBtn.disabled = state.learningPlaying;
+
       const v = valence(state.currentShells);
-      explainBox.innerHTML = `<strong>${el.name}</strong> has the electron arrangement <strong>${arrangement(state.currentShells)}</strong>. The outer shell contains <strong>${v}</strong> valence electron${v === 1 ? "" : "s"}. A stable outer shell is usually modelled as 2 electrons for the first shell or 8 electrons for shells two and three.`;
-      promptBox.textContent = "Use gain and lose to test how the valence shell changes.";
+      const chargeSentence = charge === 0
+        ? `It has <strong>${totalElectrons(state.currentShells)}</strong> electrons, matching its atomic number.`
+        : `It has <strong>${totalElectrons(state.currentShells)}</strong> electrons and a <strong>${formatCharge(charge)}</strong> charge.`;
+      const learningSentence = state.learningHasStarted && isNeutralConfiguration
+        ? `<br><strong>Learning sequence:</strong> ${learningShellMessage(state.singleSymbol)} The highlighted electron is the newest electron in this atom.`
+        : "";
+
+      explainBox.innerHTML = `<strong>${el.name}</strong> has the electron arrangement <strong>${arrangement(state.currentShells)}</strong>. The outer shell contains <strong>${v}</strong> valence electron${v === 1 ? "" : "s"}. ${chargeSentence} A stable outer shell is modelled as 2 electrons for the first shell or 8 electrons for shells two and three.${learningSentence}`;
+      promptBox.textContent = state.learningPlaying
+        ? "Watch the highlighted electron. Notice when a shell fills and the next shell begins."
+        : state.learningHasStarted && isNeutralConfiguration
+          ? "Use Previous, Next or Continue to compare how electron arrangements change across H–Ar."
+          : "Use gain and lose to test how the valence shell changes. Green means stable; red means the outer shell is not stable.";
     }
 
     function renderIonic() {
       setVisualLayout(true);
       resetStatLabels();
+      setResultTone("neutral");
 
       const ex = ionicExamples[state.ionicKey];
       const metal = elements[ex.metal];
@@ -1217,6 +1548,7 @@
 
     function renderCovalent() {
       setVisualLayout(false);
+      setResultTone("neutral");
 
       const ex = covalentExamples[state.covalentKey];
       const phase = state.covalentPhase;
@@ -1263,25 +1595,47 @@
     tabs.covalent.addEventListener("click", () => setMode("covalent"));
 
     singleAtom.addEventListener("change", e => {
+      stopLearningSequence();
+      state.learningHasStarted = false;
       state.singleSymbol = e.target.value;
+      state.learningIndex = elementOrder.indexOf(state.singleSymbol);
       state.currentShells = cloneShells(state.singleSymbol);
+      state.highlightAddedElectron = false;
       render();
     });
 
-    document.getElementById("gainBtn").addEventListener("click", () => {
+    gainBtn.addEventListener("click", () => {
+      stopLearningSequence();
+      state.learningHasStarted = false;
+      state.highlightAddedElectron = false;
       state.currentShells = addElectron(state.currentShells);
       render();
     });
 
-    document.getElementById("loseBtn").addEventListener("click", () => {
+    loseBtn.addEventListener("click", () => {
+      stopLearningSequence();
+      state.learningHasStarted = false;
+      state.highlightAddedElectron = false;
       state.currentShells = removeElectron(state.currentShells);
       render();
     });
 
-    document.getElementById("resetSingleBtn").addEventListener("click", () => {
+    resetSingleBtn.addEventListener("click", () => {
+      stopLearningSequence();
+      state.learningHasStarted = false;
+      state.highlightAddedElectron = false;
       state.currentShells = cloneShells(state.singleSymbol);
       render();
     });
+
+    learningBtn.addEventListener("click", startOrPauseLearning);
+    learningSpeed.addEventListener("change", e => {
+      state.learningIntervalMs = Number(e.target.value) || 1000;
+      if (state.learningPlaying) scheduleLearningSequence();
+      render();
+    });
+    previousElementBtn.addEventListener("click", () => stepLearning(-1));
+    nextElementBtn.addEventListener("click", () => stepLearning(1));
 
     ionicExample.addEventListener("change", e => {
       state.ionicKey = e.target.value;
@@ -1329,7 +1683,9 @@
     });
 
     fillSelects();
+    setResultTone("neutral");
     render();
+    window.addEventListener("beforeunload", stopLearningSequence);
     window.addEventListener("resize", () => {
       if (state.mode === "covalent" && state.covalentPhase === "animate") {
         state.covalentAnimationToken++;
