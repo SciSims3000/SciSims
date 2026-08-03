@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investigating Science HSC Connections Engine</title>
-<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.2.1">
-<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.2.1">
-<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.2.1">
+<link rel="icon" type="image/png" href="/SciSims/favicon.png?v=1.2.3">
+<link rel="shortcut icon" type="image/png" href="/SciSims/favicon.png?v=1.2.3">
+<link rel="apple-touch-icon" href="/SciSims/favicon.png?v=1.2.3">
 <style>
 :root{
   --bg:#eaf6ef;--card:#fff;--ink:#193b31;--muted:#587067;--line:#c9ded4;
@@ -49,6 +49,9 @@ button:focus-visible,.term:focus-visible{outline:4px solid color-mix(in srgb,var
 .team-panel{margin:0 0 14px;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
 .turn-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;padding:10px 12px;border-radius:12px;background:#fff;border:2px solid var(--accent)}
 .turn-banner strong{color:var(--accent);font-size:1.08rem}
+.turn-current,.turn-timer{display:flex;align-items:baseline;gap:7px}
+.turn-timer{margin-left:auto;padding-left:12px;border-left:1px solid var(--line);white-space:nowrap}
+.turn-timer span{color:var(--muted);font-size:.82rem;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
 .team-scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
 .team-score{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:center;transition:transform .15s,border-color .15s}
 .team-score.active{background:#ffeb3b;border:3px solid #c58a00;color:#2b2400;transform:translateY(-2px);box-shadow:0 6px 16px rgba(160,110,0,.28)}
@@ -107,7 +110,7 @@ body[data-complexity="master"] #hintBtn{display:none}
   </nav>
   <header class="hero">
     <h1>Investigating Science<br><span style="font-size:.55em;font-weight:760">HSC Connections Engine</span></h1>
-    <div class="version" aria-label="Version 1.2.1">Version 1.2.1</div>
+    <div class="version" aria-label="Version 1.2.3">Version 1.2.3</div>
     <p>Dynamic HSC revision boards assembled from independent connection groups. Every new board uses a fresh combination of scientific ideas rather than a fixed puzzle list.</p>
   </header>
   <main class="layout">
@@ -173,7 +176,7 @@ body[data-complexity="master"] #hintBtn{display:none}
         <button id="shuffleBtn" class="secondary">Shuffle</button>
       </div>
       <div id="teamPanel" class="team-panel" hidden>
-        <div class="turn-banner"><span>Current turn</span><strong id="activeTeam">Team 1</strong></div>
+        <div class="turn-banner"><div class="turn-current"><span>Current turn</span><strong id="activeTeam">Team 1</strong></div><div class="turn-timer" aria-label="Puzzle timer"><span>Turn time</span><strong id="turnTimer" class="timer-running">0:00</strong></div></div>
         <div id="teamScoreboard" class="team-scoreboard" aria-label="Overall team tally"></div>
       </div>
       <div class="life-row"><strong>Mistakes remaining:</strong><div id="lives"></div></div>
@@ -199,7 +202,7 @@ const gameModeEl=document.getElementById("gameMode"),teamCountEl=document.getEle
 const grid=document.getElementById("grid"),groupsFound=document.getElementById("groupsFound"),message=document.getElementById("message");
 let puzzle=null,selected=[],remainingTerms=[],solved=[],mistakes=0,guesses=0,finished=false,boardsGenerated=0,hintsUsed=0,revealed=false;
 let teams=[],activeTeamIndex=0;
-let timerId=null,startTime=0,elapsedSeconds=0;
+let timerId=null,startTime=0,elapsedSeconds=0,turnStartTime=0,turnElapsedSeconds=0;
 const maxMistakes={easy:4,hard:3,insane:3,master:1};
 const TEAM_STORAGE_KEY="scisims-is-connections-team-tally-v1";
 const boardHistory={},groupUseCount={},recentGroups={};
@@ -253,9 +256,10 @@ function generatePuzzle(){
   const groups=chooseGroups();boardsGenerated++;
   return {id:"generated-"+Date.now(),bank:isMaster()?"mixed":bankEl.value,complexity:complexityEl.value,title:isMaster()?"Daily Master Challenge — "+dateKey():bankEl.options[bankEl.selectedIndex].text+" — Generated Board "+boardsGenerated,groups};
 }
-function startTimer(){stopTimer();elapsedSeconds=0;startTime=Date.now();timerId=setInterval(()=>{elapsedSeconds=Math.floor((Date.now()-startTime)/1000);renderTimer();},250);renderTimer();}
-function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}if(startTime)elapsedSeconds=Math.floor((Date.now()-startTime)/1000);renderTimer();}
-function renderTimer(){const mins=Math.floor(elapsedSeconds/60),secs=elapsedSeconds%60;document.getElementById("timerStat").textContent=mins+":"+String(secs).padStart(2,"0");}
+function startTimer(){stopTimer();elapsedSeconds=0;turnElapsedSeconds=0;startTime=Date.now();turnStartTime=startTime;timerId=setInterval(()=>{const now=Date.now();elapsedSeconds=Math.floor((now-startTime)/1000);turnElapsedSeconds=Math.floor((now-turnStartTime)/1000);renderTimer();},250);renderTimer();}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}const now=Date.now();if(startTime)elapsedSeconds=Math.floor((now-startTime)/1000);if(turnStartTime)turnElapsedSeconds=Math.floor((now-turnStartTime)/1000);renderTimer();}
+function resetTurnTimer(){turnElapsedSeconds=0;turnStartTime=Date.now();renderTimer();}
+function renderTimer(){const mins=Math.floor(elapsedSeconds/60),secs=elapsedSeconds%60,timeText=mins+":"+String(secs).padStart(2,"0");document.getElementById("timerStat").textContent=timeText;const turnMins=Math.floor(turnElapsedSeconds/60),turnSecs=turnElapsedSeconds%60,turnText=turnMins+":"+String(turnSecs).padStart(2,"0");const turnTimer=document.getElementById("turnTimer");if(turnTimer)turnTimer.textContent=turnText;}
 function starCount(){if(revealed)return 0;if(hintsUsed===0)return 3;if(hintsUsed===1)return 2;return 1;}
 function starText(){const n=starCount();return "★".repeat(n)+"☆".repeat(3-n);}
 function isTeamMode(){return gameModeEl.value==="team";}
@@ -374,6 +378,7 @@ function submitGroup(){
   if(finished)return;if(selected.length!==4){setMessage("Select exactly four terms before submitting.","bad");return;}
   const playingTeam=currentTeam(),teamName=playingTeam?playingTeam.name:"";
   guesses++;if(playingTeam){playingTeam.attempts++;saveTeamState();}
+  resetTurnTimer();
   const target=puzzle.groups.find(g=>!solved.some(s=>s.id===g.id)&&selected.every(t=>g.terms.includes(t)));
   if(target){
     solved.push(target);remainingTerms=remainingTerms.filter(t=>!target.terms.includes(t));selected=[];
