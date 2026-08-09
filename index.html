@@ -1,0 +1,3623 @@
+<!DOCTYPE html>
+<!-- SciSims main index | Version 1.4.0 -->
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciSims</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="shared/scisims-nav.css">
+  <script defer src="shared/scisims-nav.js"></script>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --button:#2563eb;
+      --button-hover:#1d4ed8;
+      --soft-blue:#e0ecff;
+      --soft-green:#dcfce7;
+      --soft-purple:#ede9fe;
+      --soft-orange:#ffedd5;
+      --soft-slate:#f1f5f9;
+      --soft-teal:#ccfbf1;
+      --soft-pink:#fce7f3;
+      --soft-yellow:#fef9c3;
+      --soft-stage6:#e0f2fe;
+      --soft-teacher:#e0f7fa;
+      --shadow:0 4px 14px rgba(0,0,0,0.08);
+      --radius:16px;
+    }
+
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      max-width:1300px;
+      margin:40px auto;
+      padding:20px;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    h1,h2,h3,p{margin-top:0;}
+
+    h1{
+      font-size:44px;
+      margin-bottom:8px;
+      color:#0f172a;
+      line-height:1.05;
+    }
+
+    h2{
+      font-size:28px;
+      margin-bottom:8px;
+      color:#0f172a;
+    }
+
+    h3{
+      font-size:18px;
+      margin-bottom:8px;
+      color:#0f172a;
+    }
+
+    p{line-height:1.5;}
+    a{color:inherit;}
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#ffffff 0%,#eef5ff 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px;
+      margin-bottom:22px;
+    }
+
+    .hero-top{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 320px;
+      gap:20px;
+      align-items:center;
+    }
+
+    .hero-text p{
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    .version-control{
+      position:relative;
+      width:fit-content;
+      margin:-2px 0 12px;
+    }
+
+    .page-version{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin:0;
+      padding:5px 9px;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      color:#475569;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.04em;
+      line-height:1.2;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:background .15s ease,border-color .15s ease,transform .15s ease;
+    }
+
+    .page-version:hover,
+    .page-version:focus-visible{
+      background:#ffffff;
+      border-color:#94a3b8;
+      transform:translateY(-1px);
+    }
+
+    .page-version::after{
+      content:'▾';
+      font-size:10px;
+      transition:transform .15s ease;
+    }
+
+    .page-version[aria-expanded="true"]::after{transform:rotate(180deg);}
+
+    .version-tooltip{
+      position:absolute;
+      left:0;
+      bottom:calc(100% + 8px);
+      z-index:10;
+      width:max-content;
+      max-width:240px;
+      padding:7px 9px;
+      border-radius:8px;
+      background:#0f172a;
+      color:#ffffff;
+      font-size:12px;
+      font-weight:700;
+      line-height:1.3;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(4px);
+      transition:opacity .14s ease,transform .14s ease;
+    }
+
+    .version-control:hover .version-tooltip,
+    .page-version:focus-visible + .version-tooltip{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .version-notes{
+      max-width:620px;
+      margin:0 0 15px;
+      padding:11px 13px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      background:#f8fafc;
+      color:#334155;
+      box-shadow:0 4px 12px rgba(15,23,42,.08);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .version-notes strong{
+      display:block;
+      margin-bottom:3px;
+      color:#0f172a;
+    }
+
+    .hero-image{
+      width:100%;
+      height:210px;
+      object-fit:cover;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      background:#dbe4f0;
+    }
+
+    .fullscreen-tip{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px 14px;
+      color:#334155;
+      margin-top:16px;
+    }
+
+    .worksheet-link-wrap{
+      margin-top:12px;
+    }
+
+    .worksheet-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 15px;
+      border-radius:10px;
+      background:#0f766e;
+      color:#ffffff;
+      text-decoration:none;
+      font-weight:900;
+      box-shadow:0 4px 10px rgba(15,118,110,.18);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    .worksheet-link:hover{
+      background:#115e59;
+      transform:translateY(-1px);
+      box-shadow:0 7px 16px rgba(15,118,110,.24);
+    }
+
+    .hsc-index-panel{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:22px;
+      padding:18px 20px;
+      margin-bottom:22px;
+      background:linear-gradient(135deg,#eff6ff 0%,#ffffff 62%,#ecfeff 100%);
+      border:1px solid #bfdbfe;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .hsc-index-copy h2{
+      margin-bottom:5px;
+      font-size:22px;
+    }
+
+    .hsc-index-copy p{
+      margin:0;
+      color:#475569;
+    }
+
+    .hsc-index-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      padding:12px 18px;
+      border-radius:12px;
+      background:var(--button);
+      color:#ffffff;
+      text-decoration:none;
+      font-weight:900;
+      white-space:nowrap;
+      box-shadow:0 4px 10px rgba(37,99,235,.2);
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    .hsc-index-link:hover{
+      background:var(--button-hover);
+      transform:translateY(-1px);
+      box-shadow:0 7px 16px rgba(37,99,235,.25);
+    }
+
+    .dashboard{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-bottom:26px;
+    }
+
+    .toolbar{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .search-toolbar{
+      position:sticky;
+      top:8px;
+      z-index:50;
+      padding:10px 12px;
+      box-shadow:0 10px 30px rgba(15,23,42,.16);
+    }
+
+    .filter-toolbar{
+      position:relative;
+      z-index:1;
+    }
+
+    .filter-toolbar .contents:first-child{
+      margin-top:0;
+    }
+
+    .toolbar-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:14px;
+      align-items:center;
+    }
+
+    .search-box{
+      width:100%;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:16px;
+      background:#ffffff;
+      color:var(--text);
+    }
+
+    .counter{
+      color:#475569;
+      font-weight:800;
+      white-space:nowrap;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 14px;
+    }
+
+    .contents{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .contents a,
+    .filter-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:none;
+      padding:10px 14px;
+      background:var(--button);
+      color:#ffffff;
+      text-decoration:none;
+      border-radius:10px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    .contents a:hover,
+    .filter-button:hover{background:var(--button-hover);}
+
+    .filter-button.secondary{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    .filter-button.secondary:hover{background:#cbd5e1;}
+
+    .filter-button.active{
+      background:#0f172a;
+      color:#ffffff;
+    }
+
+    .section{
+      margin-top:30px;
+      scroll-margin-top:92px;
+    }
+
+    .section-header{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .section-banner{
+      width:100%;
+      height:125px;
+      object-fit:cover;
+      border-radius:var(--radius);
+      display:block;
+      box-shadow:var(--shadow);
+      background:#dbe4f0;
+    }
+
+    .section-intro{
+      color:var(--muted);
+      margin-bottom:0;
+    }
+
+    .subsection{
+      margin:18px 0 10px;
+    }
+
+    .subsection-title{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#ffffff;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      border-radius:999px;
+      padding:8px 12px;
+      color:#334155;
+      font-size:14px;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sim-card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:190px;
+    }
+
+    .sim-card-top{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;
+      align-items:start;
+    }
+
+    .sim-title{
+      font-size:19px;
+      font-weight:900;
+      color:#0f172a;
+      margin:0;
+      line-height:1.2;
+    }
+
+    .card-top-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:7px;
+    }
+
+    .resource-type{
+      display:inline-flex;
+      align-items:center;
+      min-height:27px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      background:#f8fafc;
+      color:#334155;
+      font-size:11px;
+      font-weight:900;
+      line-height:1;
+      white-space:nowrap;
+      text-transform:uppercase;
+      letter-spacing:.035em;
+    }
+
+    .resource-type.teacher-tool{background:#e0f7fa;border-color:#80deea;color:#0e6473;}
+    .resource-type.game,.resource-type.revision-game{background:#fce7f3;border-color:#f9a8d4;color:#9d174d;}
+    .resource-type.activity,.resource-type.archived-activity{background:#f1f5f9;border-color:#cbd5e1;color:#475569;}
+    .resource-type.simulation{background:#e0ecff;border-color:#bfdbfe;color:#1d4ed8;}
+
+    .favourite-button{
+      width:30px;
+      height:30px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      background:#ffffff;
+      color:#64748b;
+      font-size:18px;
+      line-height:1;
+      cursor:pointer;
+    }
+
+    .favourite-button:hover{background:#f8fafc;color:#0f172a;}
+    .favourite-button.is-favourite{background:#fef9c3;border-color:#fde047;color:#a16207;}
+
+    .release-meta{
+      min-height:16px;
+      margin:-5px 0 0;
+      overflow:hidden;
+      color:#64748b;
+      font-size:11px;
+      font-weight:800;
+      line-height:1.3;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .release-meta .release-status{color:#0f766e;}
+
+    .sim-description{
+      color:#475569;
+      margin:0;
+      flex:1;
+    }
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:#334155;
+      background:#f1f5f9;
+      border:1px solid #e2e8f0;
+    }
+
+    .tag.bio{background:var(--soft-green);border-color:#bbf7d0;color:#166534;}
+    .tag.chem{background:var(--soft-purple);border-color:#ddd6fe;color:#5b21b6;}
+    .tag.earth{background:var(--soft-orange);border-color:#fed7aa;color:#9a3412;}
+    .tag.physics{background:var(--soft-blue);border-color:#bfdbfe;color:#1d4ed8;}
+    .tag.math{background:var(--soft-yellow);border-color:#fde68a;color:#854d0e;}
+    .tag.working{background:#fef3c7;border-color:#fde68a;color:#92400e;}
+    .tag.invsci{background:var(--soft-teal);border-color:#99f6e4;color:#115e59;}
+    .tag.teacher{background:var(--soft-teacher);border-color:#80deea;color:#0e6473;}
+    .tag.stage6{background:var(--soft-stage6);border-color:#7dd3fc;color:#075985;}
+    .tag.interesting{background:#e2e8f0;border-color:#cbd5e1;color:#334155;}
+    .tag.brainbreak{background:var(--soft-pink);border-color:#fbcfe8;color:#9d174d;}
+
+    .open-link{
+      align-self:flex-start;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 14px;
+      background:var(--button);
+      color:#ffffff;
+      text-decoration:none;
+      border-radius:10px;
+      font-weight:900;
+      white-space:nowrap;
+      margin-top:auto;
+    }
+
+    .quick-access{
+      margin:0 0 26px;
+      padding:18px;
+      background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .quick-access-heading{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:14px;
+    }
+
+    .quick-access-heading h2{font-size:22px;margin-bottom:4px;}
+    .quick-access-heading p{margin:0;color:var(--muted);font-size:13px;}
+
+    .clear-recent-button{
+      flex:0 0 auto;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:8px 10px;
+      background:#ffffff;
+      color:#334155;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .clear-recent-button:hover{background:#f1f5f9;}
+
+    .quick-access-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .quick-group h3{font-size:14px;margin-bottom:9px;color:#334155;}
+
+    .quick-list{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .quick-item{
+      display:block;
+      min-width:0;
+      padding:9px 10px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#ffffff;
+      color:#0f172a;
+      text-decoration:none;
+    }
+
+    .quick-item:hover{border-color:#93c5fd;background:#eff6ff;}
+
+    .quick-item-title{
+      display:block;
+      overflow:hidden;
+      font-size:13px;
+      font-weight:900;
+      line-height:1.25;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .quick-item-type{
+      display:block;
+      margin-top:3px;
+      color:#64748b;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .quick-empty{margin:0;color:var(--muted);font-size:13px;}
+
+    .back-to-top{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:60;
+      border:0;
+      border-radius:999px;
+      padding:11px 15px;
+      background:#0f172a;
+      color:#ffffff;
+      font-weight:900;
+      box-shadow:0 8px 24px rgba(15,23,42,.25);
+      cursor:pointer;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(8px);
+      transition:opacity .16s ease,transform .16s ease,background .16s ease;
+    }
+
+    .back-to-top:hover{background:#1e293b;}
+    .back-to-top.is-visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+    .open-link:hover{background:var(--button-hover);}
+
+    .empty-message{
+      background:#ffffff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      color:var(--muted);
+      display:none;
+    }
+
+    .footer-note{
+      color:var(--muted);
+      font-size:0.95rem;
+      margin-top:36px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+    }
+
+    @media (max-width:960px){
+      body{
+        margin:20px auto;
+        padding:14px;
+      }
+
+      .hero-top{grid-template-columns:1fr;}
+      .hero-image{height:170px;}
+      .hsc-index-panel{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .cards{grid-template-columns:1fr;}
+      .quick-access-grid{grid-template-columns:1fr;}
+      .quick-list{grid-template-columns:1fr;}
+      .search-toolbar{top:6px;}
+    }
+
+    @media (max-width:560px){
+      h1{font-size:34px;}
+      h2{font-size:24px;}
+      .toolbar-grid{grid-template-columns:1fr;}
+      .counter{justify-self:start;}
+      .contents a,.filter-button{width:100%;}
+      .sim-card-top{grid-template-columns:1fr;}
+      .card-top-actions{justify-content:flex-start;}
+      .quick-access-heading{flex-direction:column;}
+      .clear-recent-button{width:100%;}
+      .back-to-top{right:12px;bottom:12px;}
+    }
+  </style>
+</head>
+<body>
+  <div id="scisimsSiteNav"></div>
+  <header class="hero">
+    <div class="hero-top">
+      <div class="hero-text">
+        <h1>SciSims</h1>
+        <div class="version-control">
+          <button id="versionButton" class="page-version" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.4.0</button>
+          <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
+        </div>
+        <div id="versionNotes" class="version-notes" hidden>
+          <strong>Latest changes</strong>
+          Added the shared SciSims navigation and dedicated Stage 4, Stage 5, Stage 6, Teacher Tools and More indexes.
+        </div>
+        <p>A collection of classroom science simulations for practical inquiry, modelling, data analysis and concept development.</p>
+             <p> </p>
+        <p>When you enter each sim, it is recommended that you go into full-screen mode in the browser.</p>
+        <p> </p>
+        <p>Some of these Sims are emulations of old Flash files from the old days of the Internet.</p>
+      </div>
+      <img src="mainbanner.png" alt="Science simulations banner" class="hero-image" />
+    </div>
+    <p class="fullscreen-tip"><strong>Fullscreen tip:</strong> In Chrome, press <strong>F11</strong> on Windows/Linux, <strong>Control + Command + F</strong> on Mac, or the <strong>Full screen</strong> key on a Chromebook. Press the same shortcut again to exit fullscreen.</p>
+    <div class="worksheet-link-wrap">
+      <a class="worksheet-link" href="Worksheets/SciSims_Generic_Student_Worksheet.docx" download>
+        Download the generic SciSims student worksheet
+      </a>
+           <p>Modify this however you wish.</p>
+    </div>
+  </header>
+  <section class="dashboard" aria-label="SciSims controls">
+    <div class="toolbar search-toolbar">
+      <div class="toolbar-grid">
+        <label for="searchInput" class="sr-only">Search tools and simulations</label>
+        <input id="searchInput" class="search-box" type="search" placeholder="Search tools and sims by name, topic or keyword..." autocomplete="off" />
+        <div id="simCounter" class="counter" aria-live="polite">0 items</div>
+      </div>
+    </div>
+
+    <div class="toolbar filter-toolbar">
+      <div class="contents" id="filterButtons" aria-label="Filter resources"></div>
+      <nav class="contents" aria-label="SciSims contents" id="contentsLinks"></nav>
+    </div>
+  </section>
+
+  <section id="quickAccess" class="quick-access" aria-labelledby="quickAccessTitle" hidden>
+    <div class="quick-access-heading">
+      <div>
+        <h2 id="quickAccessTitle">Quick access</h2>
+        <p>Favourites and recently opened resources are stored only on this device.</p>
+      </div>
+      <button id="clearRecentButton" class="clear-recent-button" type="button">Clear recently opened</button>
+    </div>
+    <div id="quickAccessGrid" class="quick-access-grid"></div>
+  </section>
+
+  <main id="catalogue"></main>
+
+  <div id="emptyMessage" class="empty-message" role="status">No tools or simulations matched your search. Try a broader keyword such as groups, genetics, forces, data, claims, fair test, reaction, disease or light.</div>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">↑ Back to top</button>
+
+  <p class="footer-note"><strong>Catalogue audit:</strong> every repository folder containing a teacher tool, simulation or game <code>index.html</code> is represented in this catalogue. <strong>Adding a new item:</strong> add one new object to the <code>SIMS</code> list in the script, including its section, subgroup, title, description, path and tags. Optional <code>type</code>, <code>version</code>, <code>added</code> and <code>updated</code> fields provide teacher-facing release information. The page will automatically place it in the correct section and make it searchable.</p>
+
+<script>
+  'use strict';
+
+  const SECTIONS = [
+    {
+      id:'teachertools',
+      title:'Teacher Tools',
+      intro:'Practical classroom utilities for organising students, managing activities and supporting day-to-day teaching.',
+      banner:'teachertools.png',
+      tagClass:'teacher'
+    },
+    {
+      id:'workingscientifically',
+      title:'Working Scientifically',
+      intro:'Inquiry and practical investigation simulations for fair testing, variables, data collection and experimental design.',
+      banner:'WS.png',
+      tagClass:'working'
+    },
+    {
+      id:'invsci',
+      title:'Investigating Science',
+      intro:'HSC Investigating Science simulations for evidence, claims, data analysis, modelling, validity, reliability and scientific argumentation.',
+      banner:'invsci.png',
+      tagClass:'invsci'
+    },
+    {
+      id:'stage6games',
+      title:'Stage 6 Revision Games',
+      intro:'Course-specific Connections, Word Match and Chain Reaction games for HSC Biology, Chemistry, Earth and Environmental Science, Investigating Science, Physics and Science Extension.',
+      banner:'invsci.png',
+      tagClass:'stage6'
+    },
+    {
+      id:'biosims',
+      title:'BioSims',
+      intro:'Biology simulations for modelling living systems, disease, growth, inheritance and change.',
+      banner:'biosims.png',
+      tagClass:'bio'
+    },
+    {
+      id:'chemsims',
+      title:'ChemSims',
+      intro:'Chemistry simulations and games for atoms, elements, ions, bonding and chemical models.',
+      banner:'chemsims.png',
+      tagClass:'chem'
+    },
+    {
+      id:'earthsims',
+      title:'Earth Science',
+      intro:'Earth and space simulations for geology, weather, climate, resources and planetary systems.',
+      banner:'earthsims.png',
+      tagClass:'earth'
+    },
+    {
+      id:'physicssims',
+      title:'Physics',
+      intro:'Physics simulations for forces, motion, energy, waves, electricity and light.',
+      banner:'physicssims.png',
+      tagClass:'physics'
+    },
+    {
+      id:'mathsims',
+      title:'Maths',
+      intro:'Mathematics simulations for probability, statistics, chance, distributions, randomness and data modelling.',
+      banner:'mathsims.png',
+      tagClass:'math'
+    },
+    {
+      id:'brainbreak',
+      title:'Brain Break',
+      intro:'Simple classroom-friendly games for short breaks, focus activities, quick data collection and informal skill challenges.',
+      banner:'brainbreak.png',
+      tagClass:'brainbreak'
+    },
+    {
+      id:'interestingsims',
+      title:'Interesting Sims',
+      intro:'Cross-topic, unusual or experimental simulations that do not fit neatly into one science area.',
+      banner:'interestingsims.png',
+      tagClass:'interesting'
+    }
+  ];
+
+    const SIMS = [
+  {
+    "section": "teachertools",
+    "group": "Classroom Organisation",
+    "title": "Random Group Maker",
+    "description": "Create balanced classroom groups using saved class lists, attendance controls, student and group locks, grouping rules, recent-pairing avoidance and optional roles. Includes drag-and-drop adjustments, copying, printing, a full-screen display and an activity timer.",
+    "path": "TeacherSims/GroupMaker/",
+    "type": "Teacher Tool",
+    "version": "1.4",
+    "added": "29/07/2026",
+    "updated": "29/07/2026",
+    "tags": [
+      "Teacher tool",
+      "Random groups",
+      "Classroom organisation",
+      "Student grouping"
+    ]
+  },
+  {
+    "section": "teachertools",
+    "group": "Classroom Organisation",
+    "title": "Seating Plan Maker",
+    "description": "Create, save and project flexible classroom seating plans using quick layouts or movable custom tables. Includes attendance controls, planning rules, learning zones, roles, timers, a suspense-style random student picker, custom colours, multiple room tabs and JSON backup.",
+    "path": "TeacherSims/SeatingPlanMaker/",
+    "type": "Teacher Tool",
+    "version": "1.3.1",
+    "added": "29/07/2026",
+    "updated": "29/07/2026",
+    "tags": [
+      "Teacher tool",
+      "Seating plans",
+      "Classroom organisation",
+      "Random student picker",
+      "Learning zones",
+      "Saved plans"
+    ]
+  },
+  {
+    "section": "workingscientifically",
+    "group": "Variables and Fair Testing",
+    "title": "Experimental Variables Sorter",
+    "description": "Identify independent variables, dependent variables, controlled variables and irrelevant factors using a drag-and-drop fair testing activity.",
+    "path": "WorkingScientifically/Variables/",
+    "tags": [
+      "Variables",
+      "Fair testing",
+      "Drag and drop"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Accuracy, Reliability and Validity Lab",
+    "description": "Generate experimental datasets by adjusting sample size, equipment precision, random error, systematic error and controlled variables, then interpret graphs and data tables to judge accuracy, reliability and validity.",
+    "path": "InvSci/VAR/",
+    "tags": [
+      "Accuracy",
+      "Reliability",
+      "Validity",
+      "Experimental design",
+      "Data analysis",
+      "Scientific investigations"
+    ]
+  },
+      {
+  "section": "chemsims",
+  "group": "Chemical Reactions",
+  "title": "Chemical Reaction Reactor",
+  "description": "Explore synthesis, decomposition, displacement, combustion and acid–base reactions using particle models, laboratory observations, balanced equations and evidence of chemical change.",
+  "path": "ChemSims/ChemicalReactionReactor/",
+  "tags": [
+    "Chemical reactions",
+    "Synthesis",
+    "Decomposition",
+    "Single displacement",
+    "Double displacement",
+    "Combustion",
+    "Neutralisation",
+    "Balanced equations",
+    "Conservation of atoms",
+    "Particle model",
+    "Chemistry"
+  ]
+},
+{
+  "section": "physicssims",
+  "group": "Nuclear and Atomic Physics",
+  "title": "Nuclear Decay and Half-Life Simulator",
+  "description": "Watch individual nuclei decay randomly while a predictable exponential half-life curve emerges across a large sample. Compare real isotopes, sample sizes, theoretical and experimental curves, decay constants and logarithmic graphs.",
+  "path": "PhySims/NuclearDecayHalfLife/",
+  "tags": [
+    "Physics",
+    "Nuclear physics",
+    "Radioactivity",
+    "Radioactive decay",
+    "Half-life",
+    "Exponential decay",
+    "Decay constant",
+    "Isotopes",
+    "Probability",
+    "Randomness",
+    "Graphing",
+    "Data analysis",
+    "Year 9",
+    "HSC Physics"
+  ]
+},
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Doppler Effect Simulator",
+    "description": "Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.",
+    "path": "PhySims/Doppler/",
+    "tags": [
+      "Doppler effect",
+      "Waves",
+      "Frequency",
+      "Wavelength",
+      "Relative motion",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Eratosthenes Experiment Simulator",
+    "description": "Model Eratosthenes’ method for estimating Earth’s circumference by comparing shadow angles and distance between locations, including NSW town examples and measurement uncertainty.",
+    "path": "InvSci/Eratosthenes/",
+    "tags": [
+      "Eratosthenes",
+      "Earth circumference",
+      "Scientific models",
+      "Measurement uncertainty",
+      "Angles",
+      "Data analysis"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Fair Test Builder",
+    "description": "Build valid investigations by identifying independent, dependent and controlled variables across plant growth, pendulum motion, friction, reaction time and dissolving rate scenarios.",
+    "path": "InvSci/FairTest/",
+    "tags": [
+      "Fair testing",
+      "Variables",
+      "Validity",
+      "Reliability",
+      "Experimental design"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Marshall and Warren: Peptic Ulcer Evidence Simulator",
+    "description": "Investigate how evidence changed the scientific explanation for peptic ulcers by comparing stress and acid explanations with evidence for H. pylori infection, NSAID use, treatment outcomes and scientific consensus.",
+    "path": "InvSci/Helicobacter/",
+    "tags": [
+      "Marshall and Warren",
+      "H. pylori",
+      "Helicobacter pylori",
+      "Peptic ulcers",
+      "Scientific evidence",
+      "Scientific models",
+      "Scientific consensus",
+      "Medical science",
+      "Australian science",
+      "Confounding variables"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Priestley’s Air Experiments Simulator",
+    "description": "Explore Priestley’s candle, plant, animal and mercuric oxide experiments to compare historical interpretations of “air” with the modern oxygen model.",
+    "path": "InvSci/Priestley/",
+    "tags": [
+      "Investigating Science",
+      "Module 5",
+      "Scientific investigations",
+      "Priestley",
+      "Oxygen",
+      "Combustion",
+      "Respiration",
+      "Plants",
+      "Phlogiston theory",
+      "Scientific models",
+      "Changing theories",
+      "Evidence"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 5: Scientific Investigations",
+    "title": "Van Helmont Willow Tree Experiment Simulator",
+    "description": "Recreate Van Helmont’s willow tree experiment, compare plant and soil mass changes, and evaluate how historical interpretations differed from modern explanations of plant growth.",
+    "path": "InvSci/VanH/",
+    "tags": [
+      "Van Helmont",
+      "Willow tree experiment",
+      "Historical science",
+      "Observations",
+      "Inferences",
+      "Plant growth",
+      "Mass balance",
+      "Water",
+      "Carbon dioxide",
+      "Photosynthesis",
+      "Validity",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "DNA X-ray Diffraction Evidence Builder",
+    "description": "Test DNA structure models against evidence from chemical composition, Chargaff’s ratios, X-ray diffraction, Photograph 51-style patterns, model building and ethical acknowledgement.",
+    "path": "InvSci/DNAXRay/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "DNA",
+      "X-ray diffraction",
+      "Photograph 51",
+      "Rosalind Franklin",
+      "Chargaff’s ratios",
+      "Double helix",
+      "Model building",
+      "Evidence",
+      "Scientific models",
+      "Ethics"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Earth History Evidence Builder",
+    "description": "Build a model of Earth’s geological history by adding technology-based evidence layers, including fossils, seafloor mapping, magnetic striping, radiometric dating, GPS, computer reconstruction, tomography and palaeoclimate data.",
+    "path": "InvSci/EarthEvidence/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Earth history",
+      "Geological models",
+      "Plate tectonics",
+      "Continental drift",
+      "Seafloor spreading",
+      "Computer models",
+      "Evidence",
+      "Radiometric dating",
+      "GPS",
+      "Seismic tomography",
+      "Palaeoclimate",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Gas Laws Technology Simulator",
+    "description": "Use a virtual syringe, pressure sensor and temperature control to investigate Boyle’s Law, Charles’ Law and the Combined Gas Law, including graphing, data collection and sensor uncertainty.",
+    "path": "InvSci/GasLaws/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Gas laws",
+      "Boyle’s Law",
+      "Charles’ Law",
+      "Combined Gas Law",
+      "Pressure",
+      "Volume",
+      "Temperature",
+      "Sensors",
+      "Graphing",
+      "Experimental uncertainty",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Large Hadron Collider Model Simulator",
+    "description": "Model how counter-rotating particle beams are steered by magnets, collide inside detectors, and produce event data selected by a trigger system.",
+    "path": "InvSci/LHC/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Large Hadron Collider",
+      "Particle accelerator",
+      "Particle physics",
+      "Magnetic fields",
+      "Detectors",
+      "Trigger systems",
+      "Event data",
+      "Scientific models",
+      "Data selection",
+      "Experimental uncertainty"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Medical Imaging Comparison Simulator",
+    "description": "Compare X-ray, CT, MRI and ultrasound in different medical scenarios, weighing image detail, cost, risk, radiation exposure, accessibility and ethical considerations.",
+    "path": "InvSci/MedScan/",
+    "tags": [
+      "Medical imaging",
+      "X-ray",
+      "CT",
+      "MRI",
+      "Ultrasound",
+      "Radiation",
+      "Technology",
+      "Risk-benefit",
+      "Ethics",
+      "Health",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Optical Instrument Technology Builder",
+    "description": "Use reflection, refraction, lens models and mirror models to design and compare microscopes, refracting telescopes, reflecting telescopes and optical fibres. Includes ray models, law matching, performance metrics, trial data, graphing, CSV export and CER response prompts.",
+    "path": "InvSci/OpticalTech/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Optics",
+      "Optical instruments",
+      "Reflection",
+      "Refraction",
+      "Lenses",
+      "Mirrors",
+      "Microscopes",
+      "Telescopes",
+      "Optical fibres",
+      "Total internal reflection",
+      "Scientific models",
+      "CER"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Radioactivity Detector Evidence Builder",
+    "description": "Explore how radiation detection technologies made invisible radiation measurable, allowing scientists to classify radiation types and develop models of atomic structure, decay and the nuclear atom.",
+    "path": "InvSci/RadioactivityEvidence/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Radioactivity",
+      "Radiation detection",
+      "Atomic theory",
+      "Nuclear atom",
+      "Alpha radiation",
+      "Beta radiation",
+      "Gamma radiation",
+      "Geiger counter",
+      "Cloud chamber",
+      "Scintillation screen",
+      "Rutherford model",
+      "Evidence",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Speed vs Distance Investigation Simulator",
+    "description": "Design a practical investigation using available technologies to measure speed and distance travelled, collect quantitative data, repeat trials, calculate means and evaluate measurement uncertainty.",
+    "path": "InvSci/SpeedVDist/",
+    "tags": [
+      "Speed",
+      "Distance travelled",
+      "Quantitative data",
+      "Independent variable",
+      "Dependent variable",
+      "Photogate",
+      "Motion sensor",
+      "Technology",
+      "Practical investigation",
+      "Physics",
+      "Scientific investigations"
+    ]
+  },
+  {
+    "section": "invsci",
+    "group": "Module 6: Technologies",
+    "title": "Temperature and Reaction Rate Simulator",
+    "description": "Investigate how temperature affects reaction rate using a virtual reaction vessel, particle collisions, graphing, data collection and model evaluation.",
+    "path": "InvSci/TempRate/",
+    "tags": [
+      "Investigating Science",
+      "Module 6",
+      "Technologies",
+      "Reaction rate",
+      "Temperature",
+      "Collision theory",
+      "Particle model",
+      "Successful collisions",
+      "Activation energy",
+      "Catalyst",
+      "Concentration",
+      "Graphing",
+      "Experimental uncertainty",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Build-a-Cell Sorter",
+    "description": "Sort cell structures into plant, animal, fungal and bacterial cells. Includes an easy Plant vs Animal mode and a standard four-cell classification challenge.",
+    "path": "BioSims/CellSorter/",
+    "tags": [
+      "Cells",
+      "Classification",
+      "Cell structure",
+      "Organelles",
+      "Plant cells",
+      "Animal cells",
+      "Fungal cells",
+      "Bacterial cells",
+      "Prokaryotes",
+      "Eukaryotes"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Characteristics of Living Things",
+    "description": "Use MRS GREN evidence to classify examples as living, once-living or non-living.",
+    "path": "BioSims/CharacteristicsLivingThings/",
+    "tags": [
+      "Classification",
+      "Living things",
+      "MRS GREN",
+      "Life processes",
+      "Evidence",
+      "Year 7",
+      "Cells and classification"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Cells and Classification",
+    "title": "Organising the Diversity of Life on Earth",
+    "description": "Use observable characteristics to classify organisms into major groups such as animals, plants, fungi, protists and bacteria.",
+    "path": "BioSims/OrganisingDiversity/",
+    "tags": [
+      "Classification",
+      "Diversity of life",
+      "Animals",
+      "Plants",
+      "Fungi",
+      "Protists",
+      "Bacteria",
+      "Shared characteristics",
+      "Year 7",
+      "Cells and classification"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Cell Siege",
+    "description": "Defend the body in a Space Invaders-style immune system game by using antibodies, macrophages, killer T cells, complement, fever and immune memory against pathogens and infected cells.",
+    "path": "BioSims/CellSiege/",
+    "tags": [
+      "Biology",
+      "Immune system",
+      "Pathogens",
+      "Antibodies",
+      "White blood cells",
+      "Vaccines",
+      "Disease",
+      "Infected cells",
+      "Scientific models",
+      "Data collection",
+      "Science games"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Marshall and Warren: Peptic Ulcer Evidence Simulator",
+    "description": "Investigate how H. pylori evidence, treatment outcomes and confounding factors changed the scientific explanation for many peptic ulcers.",
+    "path": "InvSci/Helicobacter/",
+    "tags": [
+      "Biology",
+      "Disease",
+      "Microbes",
+      "H. pylori",
+      "Helicobacter pylori",
+      "Peptic ulcers",
+      "Marshall and Warren",
+      "Australian science"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Pandemic Simulation",
+    "description": "Model how an infectious disease can spread through a population.",
+    "path": "BioSims/Pandemic/",
+    "tags": [
+      "Disease",
+      "Pandemic",
+      "Biosecurity",
+      "Population model"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Biosecurity and Ecosystems",
+    "title": "Biosecurity Outbreak Simulator",
+    "description": "Respond to an invasive species or agricultural disease outbreak. Choose monitoring, quarantine, treatment, culling, public communication and research strategies while balancing uncertainty, economic impacts, ecological effects and public trust.",
+    "path": "BioSims/BiosecurityOutbreak/",
+    "tags": [
+      "Biology",
+      "Biosecurity",
+      "Invasive species",
+      "Agricultural disease",
+      "Disease control",
+      "Quarantine",
+      "Monitoring",
+      "Evidence",
+      "Uncertainty",
+      "Ecosystems",
+      "Agriculture",
+      "Systems thinking"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Petri Dish Bacterial Growth Simulator",
+    "description": "Explore how bacteria grow in a petri dish under different conditions.",
+    "path": "BioSims/PetriBacteria/",
+    "tags": [
+      "Bacteria",
+      "Growth",
+      "Microbes"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Sneeze: Infection Spread Game",
+    "description": "Run an archived Flash-based disease transmission game using Ruffle. Students explore how an infection can spread through a population depending on movement, timing, contact and transmission.",
+    "path": "BioSims/Sneeze/",
+    "tags": [
+      "Biology",
+      "Disease",
+      "Infection",
+      "Transmission",
+      "Virus",
+      "Sneeze",
+      "Population spread",
+      "Outbreaks",
+      "Flash",
+      "Ruffle",
+      "Archived resource",
+      "Routes",
+      "Channel 4",
+      "Wellcome Trust"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "DNA Profiling Gel Electrophoresis Simulator",
+    "description": "Compare DNA banding patterns from a mother, child and possible fathers to identify the biological father.",
+    "path": "BioSims/DNAProfiling/",
+    "tags": [
+      "DNA",
+      "Gel electrophoresis",
+      "Genetics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Drag-and-Drop Punnett Square",
+    "description": "Build simple genetic crosses and compare predicted genotype and phenotype ratios with simulated offspring data.",
+    "path": "BioSims/PunnettSq/",
+    "tags": [
+      "Genetics",
+      "Punnett squares",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Ginger Dawn: Genetics Game",
+    "description": "Run an archived Flash-based genetics game using Ruffle. Students explore inheritance, variation, recessive traits and population genetics through a simple arcade-style model.",
+    "path": "BioSims/GingerDawn/",
+    "tags": [
+      "Biology",
+      "Genetics",
+      "Inheritance",
+      "Recessive traits",
+      "Variation",
+      "Population genetics",
+      "Ginger Dawn",
+      "Routes",
+      "Flash",
+      "Ruffle",
+      "Archived resource"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Pedigree Simulator",
+    "description": "Explore family pedigrees to identify affected individuals, carriers and likely inheritance patterns.",
+    "path": "BioSims/Pedigree/",
+    "tags": [
+      "Genetics",
+      "Pedigree",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Inheritance",
+    "title": "Punnett Square Simulator",
+    "description": "Practise completing Punnett squares by dragging allele tiles into the correct offspring boxes.",
+    "path": "BioSims/PunnettSq2/",
+    "tags": [
+      "Genetics",
+      "Alleles",
+      "Inheritance"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Genetics and Evolution",
+    "title": "Lick Your Rats",
+    "description": "Explore how maternal licking and grooming in rats can affect gene expression, brain development and stress responses through epigenetic changes.",
+    "path": "BioSims/Rats/",
+    "tags": [
+      "Epigenetics",
+      "Gene expression",
+      "Inheritance",
+      "Environment",
+      "Stress response",
+      "Rats",
+      "Maternal care",
+      "Biology",
+      "Genetics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Evolution Timeline Table",
+    "description": "Complete a table showing how life on Earth has changed in complexity and diversity over geological time.",
+    "path": "BioSims/EvolutionTimeline/",
+    "tags": [
+      "Evolution",
+      "Geological time",
+      "Timeline"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Measuring Abundance Simulator",
+    "description": "Compare quadrat sampling and capture-mark-recapture methods for estimating population size.",
+    "path": "BioSims/Abundance/",
+    "tags": [
+      "Ecology",
+      "Abundance",
+      "Sampling"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Predator–Prey Population Simulator",
+    "description": "Model prey, predator and plant populations while adjusting food supply, reproduction and hunting pressure. Explore population cycles, carrying capacity, limiting factors, feedback loops and ecosystem stability, then export the data as CSV.",
+    "path": "BioSims/PredPrey/",
+    "tags": [
+      "Ecology",
+      "Predator–prey",
+      "Population cycles",
+      "Carrying capacity",
+      "Limiting factors",
+      "Feedback loops",
+      "Ecosystem stability",
+      "Data",
+      "CSV"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Peppered Moth Evolution Simulator",
+    "description": "Model natural selection as the environment changes from clean to polluted, and back again.",
+    "path": "BioSims/Moths/",
+    "tags": [
+      "Evolution",
+      "Natural selection",
+      "Data"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Evolution and Populations",
+    "title": "Who Wants to Live a Million Years?",
+    "description": "Run the original Flash-based natural selection game using Ruffle. Students investigate variation, selection pressures, survival and how populations can change over long periods of time.",
+    "path": "BioSims/Darwin/",
+    "tags": [
+      "Biology",
+      "Evolution",
+      "Natural selection",
+      "Variation",
+      "Selection pressure",
+      "Adaptation",
+      "Populations",
+      "Flash",
+      "Ruffle"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Negative Feedback System Challenge",
+    "description": "Respond to random events and maintain homeostasis in temperature, glucose and water balance systems.",
+    "path": "BioSims/NegativeFeedback/",
+    "tags": [
+      "Homeostasis",
+      "Negative feedback",
+      "Human body"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Reaction Time Challenge",
+    "description": "Measure and compare student reaction times across repeated trials, including false starts, mean reaction time, best time, range and CSV export.",
+    "path": "BioSims/ReactionTime/",
+    "tags": [
+      "Reaction time",
+      "Nervous system",
+      "Data"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Reproduction Race: Fertilisation Simulation",
+    "description": "Run an archived Flash-based educational game about fertilisation using Ruffle. Students explore specialised reproductive cells, survival challenges and the biological process leading to fertilisation.",
+    "path": "BioSims/GreatSpermRace/",
+    "tags": [
+      "Biology",
+      "Reproduction",
+      "Fertilisation",
+      "Specialised cells",
+      "Human body",
+      "Flash",
+      "Ruffle",
+      "Archived resource"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Elements and Atomic Structure",
+    "title": "Cations and Anions Simulator",
+    "description": "Model how atoms gain or lose electrons to form positive and negative ions.",
+    "path": "ChemSims/CationsAnions/",
+    "tags": [
+      "Ions",
+      "Electrons",
+      "Cations",
+      "Anions"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Elements and Atomic Structure",
+    "title": "Ion Formation Simulator",
+    "description": "Visualise how atoms from the first 20 elements gain or lose electrons to form ions. Watch electron transfer animations, compare neutral atoms with ions and explore charge formation in light or dark mode.",
+    "path": "ChemSims/IonForm/",
+    "tags": [
+      "Chemistry",
+      "Ion formation",
+      "Electrons",
+      "Cations",
+      "Anions",
+      "Atomic structure",
+      "First 20 elements"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Elements and Atomic Structure",
+    "title": "Element Symbol and Name Matching Game",
+    "description": "Match chemical symbols to their correct element names.",
+    "path": "ChemSims/Element_Game/",
+    "tags": [
+      "Elements",
+      "Symbols",
+      "Matching"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Bonding Simulator",
+    "description": "Explore how atoms interact through ionic and covalent bonding.",
+    "path": "ChemSims/Bonding/",
+    "tags": [
+      "Bonding",
+      "Ionic",
+      "Covalent"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Chemical Bonding: Structure & Property Test Lab",
+    "description": "Build bonding models, test unknown materials and use evidence from conductivity, melting point, solubility and molten-state tests to identify ionic, covalent molecular, covalent network and metallic bonding models.",
+    "path": "ChemSims/BondTestLab/",
+    "tags": [
+      "Chemical bonding",
+      "Ionic bonding",
+      "Covalent bonding",
+      "Metallic bonding",
+      "Conductivity",
+      "Melting point",
+      "Solubility",
+      "Properties",
+      "Chemistry"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Reactions",
+    "title": "Chemical Equation Balancer",
+    "description": "Learn and practise balancing chemical equations using guided examples that increase in difficulty, then complete challenge questions with immediate feedback while preserving atoms on both sides of each equation.",
+    "path": "ChemSims/EquationBalancer/",
+    "tags": [
+      "Chemistry",
+      "Chemical equations",
+      "Balancing equations",
+      "Conservation of atoms",
+      "Coefficients",
+      "Learn mode",
+      "Challenge mode"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Equilibrium",
+    "title": "Equilibrium Explorer: Open and Closed Systems",
+    "description": "Model dynamic equilibrium using a reversible A ⇌ B particle system. Compare open and closed systems, concentration changes, reaction events and product loss.",
+    "path": "ChemSims/EquilibriumExplorer/",
+    "tags": [
+      "Chemical equilibrium",
+      "Dynamic equilibrium",
+      "Open system",
+      "Closed system",
+      "Reversible reactions",
+      "Concentration",
+      "Reaction rates",
+      "Chemistry models"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Alkane Formula Builder",
+    "description": "Build straight-chain alkane models from methane to octane, identify carbon counts, predict molecular formulas and complete condensed structural formulas using the CnH2n+2 pattern.",
+    "path": "ChemSims/AlkaneFormulaBuilder/",
+    "tags": [
+      "Alkanes",
+      "Organic chemistry",
+      "Hydrocarbons",
+      "Molecular formula",
+      "Condensed structural formula",
+      "Methane",
+      "Ethane",
+      "Propane",
+      "Butane"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Fractional Distillation Simulator",
+    "description": "Heat crude oil and observe how different fractions vaporise, move through a cooler fractionating column, and collect according to boiling point range. Includes a prediction check and live collection data.",
+    "path": "ChemSims/FracDist/",
+    "tags": [
+      "Fractional distillation",
+      "Crude oil",
+      "Hydrocarbons",
+      "Boiling point",
+      "Separation techniques",
+      "Organic chemistry",
+      "Fuels",
+      "Refinery"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Organic Chemistry",
+    "title": "Organic Pattern Builder",
+    "description": "Build and compare straight-chain organic molecules up to ten carbons, including alkanes, alkenes, alkynes and common functional groups. Students connect structure, bonding, molecular formulae, condensed structural formulae, locants and IUPAC-style names.",
+    "path": "ChemSims/OrganicPatternBuilder/",
+    "tags": [
+      "Organic chemistry",
+      "Hydrocarbons",
+      "Alkanes",
+      "Alkenes",
+      "Alkynes",
+      "Functional groups",
+      "Alcohols",
+      "Haloalkanes",
+      "Aldehydes",
+      "Ketones",
+      "Carboxylic acids",
+      "Amines",
+      "Amides",
+      "Esters",
+      "IUPAC nomenclature",
+      "Structural formulae",
+      "Molecular formula",
+      "Isomers"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Climate and Energy Balance",
+    "title": "El Niño and La Niña Simulator",
+    "description": "Explore how trade winds, warm surface water, ocean upwelling, rainfall and atmospheric circulation change during neutral, El Niño and La Niña conditions across the tropical Pacific.",
+    "path": "EarthSims/ElNino/",
+    "tags": [
+      "Earth science",
+      "Climate",
+      "El Niño",
+      "La Niña",
+      "ENSO",
+      "Trade winds",
+      "Ocean currents",
+      "Upwelling",
+      "Rainfall",
+      "Pacific Ocean",
+      "Climate systems"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Climate and Energy Balance",
+    "title": "Greenhouse Effect Energy Balance Simulator",
+    "description": "Model how incoming sunlight, reflected energy, outgoing infrared radiation and greenhouse gases affect Earth’s surface temperature.",
+    "path": "EarthSims/GreenHouse/",
+    "tags": [
+      "Climate",
+      "Greenhouse effect",
+      "Energy balance"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Earthquakes and Geology",
+    "title": "Seismograph Simulator",
+    "description": "Model how a seismograph records earthquake waves. Compare P-wave and S-wave arrival times, read the S–P interval, and estimate distance to the epicentre.",
+    "path": "EarthSims/Seismograph/",
+    "tags": [
+      "Earth science",
+      "Earthquakes",
+      "Seismograph",
+      "Seismogram",
+      "P-waves",
+      "S-waves",
+      "Epicentre",
+      "Geology"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Energy and Sustainability",
+    "title": "Renewable Energy Grid Simulator",
+    "description": "Balance electricity demand with solar, wind, battery storage and backup power. Explore renewable variability, storage limits, cost, emissions, reliability, grid faults and trade-offs in a continuously running electricity grid model.",
+    "path": "EarthSims/RenewableGrid/",
+    "tags": [
+      "Earth science",
+      "Energy",
+      "Electricity",
+      "Renewable energy",
+      "Solar",
+      "Wind",
+      "Battery storage",
+      "Fossil fuels",
+      "Electricity grid",
+      "Emissions",
+      "Reliability",
+      "Cost",
+      "Sustainability",
+      "Trade-offs"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Earthquakes and Geology",
+    "title": "Earthquake Building Protection Simulator",
+    "description": "Test engineering devices designed to reduce earthquake damage. Compare base isolation, cross bracing, dampers, shear walls and tuned mass dampers using roof sway, acceleration, damage risk and collapse behaviour.",
+    "path": "EarthSims/QuakeForces/",
+    "tags": [
+      "Earth science",
+      "Earthquakes",
+      "Engineering",
+      "Buildings",
+      "Base isolation",
+      "Dampers",
+      "Shear walls",
+      "Resonance",
+      "Forces"
+    ]
+  },
+  {
+    "section": "earthsims",
+    "group": "Water and Climate",
+    "title": "Water Management Simulator",
+    "description": "Manage a Sydney NSW-style water system week by week across multiple years. Balance reservoir storage, rainfall, demand, restrictions, recycling, environmental flow, flood risk, cost and long-term resilience.",
+    "path": "EarthSims/WaterManage/",
+    "tags": [
+      "Earth science",
+      "Water management",
+      "Sydney",
+      "Climate",
+      "Drought",
+      "Floods",
+      "Catchments",
+      "Reservoirs",
+      "Sustainability",
+      "Environmental flows"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Air Flow Around Objects Simulator",
+    "description": "Explore how object shape, size, angle and flow speed affect particle paths, wake patterns and visible flow disruption.",
+    "path": "PhySims/AirFlow/",
+    "tags": [
+      "Forces",
+      "Motion",
+      "Air flow"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Changing the Magnitude of Force",
+    "description": "Investigate how changing a lever or pulley setup affects the effort force needed to lift the same load. Students run repeated trials, calculate averages, compare range and graph the average force for each setup.",
+    "path": "PhySims/MagForce2/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Simple Machines",
+      "Levers",
+      "Pulleys",
+      "Mechanical Advantage",
+      "Scientific Investigation"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Lift the Load: Simple Machines Challenge",
+    "description": "Compare levers, pulleys, ramps, wheels and axles, wedges and screws by lifting the same load. Students explore effort force, load force, distance, work, efficiency and mechanical advantage.",
+    "path": "PhySims/SimpleMachines/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Simple Machines",
+      "Mechanical Advantage",
+      "Work",
+      "Energy"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton’s Cradle Simulator",
+    "description": "Investigate momentum and energy transfer through a virtual Newton’s cradle. Change the number of released balls, observe collisions and compare motion and energy graphs over the full running time.",
+    "path": "PhySims/NewtonsCradle/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Motion",
+      "Newton’s cradle",
+      "Momentum",
+      "Kinetic energy",
+      "Collisions",
+      "Conservation of momentum",
+      "Energy transfer",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton's Laws Explorer",
+    "description": "Start with guided explainer animations, then switch to prediction mode to test inertia, F = ma and action-reaction force pairs using carts, forces, mass, friction and graphs.",
+    "path": "PhySims/NewtonsLaws/",
+    "tags": [
+      "Physics",
+      "Forces",
+      "Motion",
+      "Newton’s laws",
+      "Inertia",
+      "F = ma",
+      "Action-reaction",
+      "Net force",
+      "Mass",
+      "Acceleration",
+      "Prediction",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "SUVAT Prediction Explorer",
+    "description": "Predict final velocity and displacement for constant-acceleration motion, then run the model to compare the prediction with SUVAT equations, graphs and actual results.",
+    "path": "PhySims/SUVAT/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Kinematics",
+      "SUVAT",
+      "Constant acceleration",
+      "Prediction",
+      "Displacement",
+      "Velocity",
+      "Acceleration",
+      "Graphs"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Newton's Angry Apples",
+    "description": "Launch apples using angle, launch power, gravity, wind and air resistance to solve projectile-motion puzzles, complete guided missions and collect modelled science data.",
+    "path": "PhySims/NewtonsApples/",
+    "tags": [
+      "Science games",
+      "Physics",
+      "Projectile motion",
+      "Forces",
+      "Gravity",
+      "Energy",
+      "Motion",
+      "Air resistance",
+      "Wind",
+      "Data collection",
+      "Scientific models",
+      "Brain break"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Parachute Drop Parameter Simulator",
+    "description": "Change mass, drop height, parachute size, air density and gravity to investigate drag force, terminal velocity and impact speed.",
+    "path": "PhySims/Parachute/",
+    "tags": [
+      "Forces",
+      "Motion",
+      "Drag"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Projectile Panic",
+    "description": "A projectile motion challenge where students adjust launch angle, initial velocity, gravity and target distance, then launch to test their calculations. Results and data appear only after landing to encourage prediction before trial-and-error.",
+    "path": "PhySims/ProjectilePanic/",
+    "tags": [
+      "Physics",
+      "Projectile motion",
+      "Kinematics",
+      "Motion",
+      "Gravity",
+      "Data"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Fields",
+    "title": "Magnetic Field Visualiser",
+    "description": "Visualise the magnetic field around a bar magnet using compass needles, field lines, an iron filings view and a movable field probe.",
+    "path": "PhySims/MagField/",
+    "tags": [
+      "Magnets",
+      "Fields",
+      "Forces",
+      "Compass"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Fields",
+    "title": "Magnetic Force Visualiser",
+    "description": "Explore attraction, repulsion and how magnetic force changes with distance by adjusting magnet strength, pole arrangement and the gap between magnets.",
+    "path": "PhySims/MagForce/",
+    "tags": [
+      "Magnets",
+      "Forces",
+      "Fields",
+      "Distance"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity",
+    "title": "Ohm’s Law Simulator",
+    "description": "Investigate voltage, current and resistance by comparing ohmic and non-ohmic components, including resistors, filament lamps, diodes, thermistors, LEDs and unknown challenge components.",
+    "path": "PhySims/Ohm/",
+    "tags": [
+      "Electricity",
+      "Ohm’s law",
+      "Circuits"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Electromagnet Simulator",
+    "description": "Investigate how current, coil turns and core material affect the strength, polarity and magnetic field pattern of an electromagnet.",
+    "path": "PhySims/Electromag/",
+    "tags": [
+      "Magnetism",
+      "Electromagnets",
+      "Fields",
+      "Circuits"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Al’s Relativistic Adventures",
+    "description": "Run the original Flash-based relativity adventure using Ruffle. Students explore ideas linked to special relativity through an interactive story-based simulation.",
+    "path": "PhySims/Al/",
+    "tags": [
+      "Physics",
+      "Relativity",
+      "Special relativity",
+      "Light",
+      "Time dilation",
+      "Modern physics",
+      "Flash",
+      "Ruffle"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Doppler Effect Simulator",
+    "description": "Visualise how waves bunch together or spread out when a source moves, then investigate how relative motion changes observed frequency and wavelength.",
+    "path": "PhySims/Doppler/",
+    "tags": [
+      "Physics",
+      "Doppler effect",
+      "Waves",
+      "Frequency",
+      "Wavelength",
+      "Relative motion",
+      "Scientific models"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Einstein Train Thought Experiment Simulator",
+    "description": "Explore the relativity of simultaneity using a moving train, two lightning strikes, observer frames, wavefronts and an event timeline.",
+    "path": "PhySims/RelTrain/",
+    "tags": [
+      "Relativity",
+      "Simultaneity",
+      "Modern physics",
+      "Light"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Optics Ray Diagram Simulator",
+    "description": "Explore convex, concave and bifocal lenses by moving an object, changing focal length, tracing ray diagrams and identifying real, virtual, upright, inverted, enlarged and reduced images.",
+    "path": "PhySims/Optics/",
+    "tags": [
+      "Optics",
+      "Lenses",
+      "Ray diagrams"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Microscope Focus and Magnification Explorer",
+    "description": "Explore how a compound light microscope uses lenses, light, focus and magnification. Practise centring a specimen, adjusting focus and comparing field of view at different magnifications.",
+    "path": "PhySims/Microscope/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Lenses",
+      "Microscopes",
+      "Magnification",
+      "Focus",
+      "Field of view",
+      "Cells",
+      "Scientific equipment"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Photoelectric Effect Simulator",
+    "description": "Change metal threshold frequency, light intensity and stopping potential to investigate photoelectron emission.",
+    "path": "PhySims/PhotoElectric/",
+    "tags": [
+      "Light",
+      "Photoelectric effect",
+      "Modern physics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Reflection and Refraction Law Simulator",
+    "description": "Investigate the law of reflection, Snell’s law and total internal reflection by changing angles, materials, refractive indices and measurement uncertainty.",
+    "path": "PhySims/LightLaws/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Waves",
+      "Reflection",
+      "Refraction",
+      "Snell’s law",
+      "Total internal reflection",
+      "Critical angle",
+      "Refractive index",
+      "Ray diagrams",
+      "Optics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Special Relativity Light Clock Simulator",
+    "description": "Explore time dilation using a moving light clock by comparing the traveller frame with a stationary observer frame and graphing the Lorentz factor.",
+    "path": "PhySims/SpecRel/",
+    "tags": [
+      "Light",
+      "Relativity",
+      "Time dilation",
+      "Modern physics"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Spectrometer Simulator",
+    "description": "Explore continuous, emission and absorption spectra by measuring wavelengths, comparing spectral lines and identifying unknown elements.",
+    "path": "PhySims/Spectrometer/",
+    "tags": [
+      "Light",
+      "Spectra",
+      "Waves"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Telescope Light Path Explorer",
+    "description": "Explore how refracting and reflecting telescopes collect, focus and magnify light. Compare aperture, eyepiece focal length, focus, brightness and image quality.",
+    "path": "PhySims/Telescope/",
+    "tags": [
+      "Physics",
+      "Light",
+      "Waves",
+      "Telescopes",
+      "Optics",
+      "Reflection",
+      "Refraction",
+      "Concave mirrors",
+      "Lenses",
+      "Focal length",
+      "Magnification",
+      "Aperture"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Nuclear and Atomic Physics",
+    "title": "Nuclear Reactor Simulator",
+    "description": "Model a controlled nuclear fission reactor. Adjust control rods, coolant flow and turbine load to manage neutron activity, core temperature, electrical output, safety margin and random fault events.",
+    "path": "PhySims/NuclearReactor/",
+    "tags": [
+      "Physics",
+      "Nuclear",
+      "Fission",
+      "Chain reaction",
+      "Control rods",
+      "Coolant",
+      "Reactor",
+      "Energy transfer",
+      "Electricity"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Gravity Slingshot Challenge",
+    "description": "Launch a probe past a planet and collect data on launch angle, speed, gravity strength, trajectory and closest distance to a target.",
+    "path": "BrainBreak/GravitySlingshot/",
+    "tags": [
+      "Gravity",
+      "Forces",
+      "Motion",
+      "Trajectory",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Immune Defender: Pathogen Chase",
+    "description": "Control a white blood cell, remove pathogens and avoid toxins while comparing how immune protection mode affects response data.",
+    "path": "BrainBreak/ImmuneDefender/",
+    "tags": [
+      "Immune system",
+      "Pathogens",
+      "Vaccination",
+      "White blood cells",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Mystery Science Word",
+    "description": "Guess hidden Years 7–10 science vocabulary using clues before the mystery meter fills. Choose individual modules, complete Year Review banks, or attempt the bright-pink Mega Mix containing words from every available module.",
+    "path": "Games/MysteryScienceWord/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Brain break",
+      "Word game",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Word Match",
+    "description": "Match Years 7–10 science terms with their meanings or descriptions. Choose individual modules, Year Review banks or the Mega Mix, then play rounds of four, six or eight vocabulary pairs.",
+    "path": "Games/ScienceWordMatch/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Matching game",
+      "Brain break",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Element Connections",
+    "description": "Sort 16 element-related terms into four connected groups. Use available information and complexity settings to explore periodic-table categories, properties and relationships.",
+    "path": "ChemSims/ElementConnections/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Connections game",
+      "Elements",
+      "Concept relationships",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Science keywords",
+      "Periodic Table"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Connections",
+    "description": "Sort 16 science terms into four connected groups of four. Choose individual modules, Year Review banks or the Mega Mix, then identify the scientific relationship linking each group.",
+    "path": "Games/ScienceConnections/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Connections game",
+      "Classification",
+      "Concept relationships",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Science keywords"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Odd One Out",
+    "description": "Choose the science term that does not belong with the other three, then review the shared connection and the meaning of every term. Includes module, Year Review and Mega Mix modes.",
+    "path": "Games/OddOneOut/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Odd one out",
+      "Classification",
+      "Scientific reasoning",
+      "Module revision",
+      "Year review",
+      "Mega Mix",
+      "Definitions"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Chain Reactions",
+    "description": "Use two connected science reasoning modes: arrange vocabulary into valid scientific sequences, or build the longest possible chain by linking terms through accepted scientific relationships.",
+    "path": "Games/ChainReactions/",
+    "tags": [
+      "Science vocabulary",
+      "Years 7–10",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Cause and effect",
+      "Module revision",
+      "Year review",
+      "Mega Mix"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Particle Panic: Kinetic Energy Challenge",
+    "description": "Control a particle, collect tokens and avoid high-energy particles while investigating how temperature affects particle motion, collisions and survival time.",
+    "path": "BrainBreak/ParticlePanic/",
+    "tags": [
+      "Particles",
+      "Kinetic energy",
+      "Temperature",
+      "Collisions",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Classic Pong Focus Challenge",
+    "description": "Play classic Pong against the computer and collect repeated trial data on score, best rally, difficulty and performance.",
+    "path": "BrainBreak/Pong/",
+    "tags": [
+      "Pong",
+      "Reaction time",
+      "Focus",
+      "Practice",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Colour-Word Interference Challenge",
+    "description": "Name the ink colour rather than the written word, then collect data on accuracy, errors and mean response time.",
+    "path": "BrainBreak/Stroop/",
+    "tags": [
+      "Stroop effect",
+      "Reaction time",
+      "Focus",
+      "Interference",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Reaction and Accuracy Target Lab",
+    "description": "Click targets under timed conditions, collect repeated trial data and compare scores, hits per second, best score and mean performance.",
+    "path": "BrainBreak/Target/",
+    "tags": [
+      "Reaction time",
+      "Accuracy",
+      "Focus",
+      "Data"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Reaction and Focus Games",
+    "title": "Snake Decision-Time Challenge",
+    "description": "Guide the snake, collect food and record score and survival time to investigate practice, attention, decision-making and repeated trial data.",
+    "path": "BrainBreak/Snake/",
+    "tags": [
+      "Decision-making",
+      "Reaction time",
+      "Practice",
+      "Data"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Data, Models and Decisions",
+    "title": "Lemonade Stand Lab",
+    "description": "Run a virtual lemonade stand and investigate how price, stock, advertising, weather and random variation affect sales and profit. Use controlled comparisons, repeated trials, graphs, CSV export and a CER scaffold to justify an evidence-based strategy.",
+    "path": "InterestingSims/LemStand/",
+    "tags": [
+      "Data science",
+      "Working scientifically",
+      "Variables",
+      "Fair testing",
+      "Repeated trials",
+      "Reliability",
+      "Modelling",
+      "Decision making",
+      "CSV",
+      "CER"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Sound and Interactive Media",
+    "title": "Dual Oscillator Stereo Simulator — Advanced",
+    "description": "Generate and compare two independent tones using frequency, waveform, level, stereo panning and phase controls. Visualise individual, combined and superposition waveforms, investigate beats and use a dedicated binaural-beat mode.",
+    "path": "InterestingSims/DualOsc/",
+    "tags": [
+      "Sound",
+      "Waves",
+      "Oscillators",
+      "Frequency",
+      "Superposition",
+      "Beats",
+      "Binaural beats",
+      "Stereo",
+      "Phase",
+      "Waveforms"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Sound and Interactive Media",
+    "title": "Dual Oscillator Stereo Simulator — Standard",
+    "description": "Explore two independent tone generators with live waveform displays, stereo panning, phase offsets and waveform selection. Compare stereo output with the mathematical sum and investigate beats produced by nearby frequencies.",
+    "path": "InterestingSims/TwoToneOsc/",
+    "tags": [
+      "Sound",
+      "Waves",
+      "Oscillators",
+      "Frequency",
+      "Superposition",
+      "Beats",
+      "Stereo",
+      "Phase",
+      "Waveforms"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Sound and Interactive Media",
+    "title": "Touch Pad Synth Simulator",
+    "description": "Use an X–Y touch pad to control scale-quantised pitch and filter brightness. Explore keys, scales, octaves, timbre, delay and envelope release, then record and replay short performance loops.",
+    "path": "InterestingSims/KOAS/",
+    "tags": [
+      "Sound",
+      "Synthesiser",
+      "Frequency",
+      "Pitch",
+      "Timbre",
+      "Scales",
+      "Audio technology",
+      "Interactive media",
+      "Loop recording"
+    ]
+  },
+  {
+    "section": "interestingsims",
+    "group": "Mathematical and Cross-topic Models",
+    "title": "Fractal Infinite Zoom Simulator",
+    "description": "Explore the Mandelbrot set using guided zoom, infinite zoom, preset fractal regions, colour palettes and live coordinate data.",
+    "path": "InterestingSims/Fractal/",
+    "tags": [
+      "Fractals",
+      "Mathematics",
+      "Patterns",
+      "Visual model"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Car Motion and Ticker Tape Simulator",
+    "description": "Model car motion and generate matching ticker-timer tape. Compare constant speed, acceleration, braking, delayed starts and two-car motion using measurable dot patterns.",
+    "path": "PhySims/Cars/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Speed",
+      "Acceleration",
+      "Ticker tape",
+      "Average speed",
+      "Data analysis"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Forces and Motion",
+    "title": "Ticker Timer Simulator",
+    "description": "Generate ticker-timer tapes at 50 Hz and analyse the spacing between dots. Compare constant speed, acceleration and slowing-down motion using one or two virtual tapes.",
+    "path": "PhySims/TickerTimer/",
+    "tags": [
+      "Physics",
+      "Motion",
+      "Ticker timer",
+      "Speed",
+      "Acceleration",
+      "Data analysis",
+      "CSV export"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Magnetic Field Around a Wire",
+    "description": "Explore the circular magnetic field produced by a straight current-carrying wire. Change current and wire position, then use a probe to compare distance, direction and relative field strength.",
+    "path": "PhySims/StaticWire/",
+    "tags": [
+      "Physics",
+      "Magnetism",
+      "Current",
+      "Magnetic field",
+      "Right-hand rule",
+      "Field strength"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Electricity and Magnetism",
+    "title": "Magnetic Field Around Two Wires",
+    "description": "Explore how magnetic fields from two current-carrying wires combine. Compare same-direction and opposite-direction currents using resultant field arrows and a probe point.",
+    "path": "PhySims/TwoWire/",
+    "tags": [
+      "Physics",
+      "Magnetism",
+      "Current",
+      "Magnetic fields",
+      "Superposition",
+      "Vector addition"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Cathode Ray Oscilloscope and Audio Oscillator",
+    "description": "Generate audio tones and view their waveform on a simulated oscilloscope. Adjust frequency, volume and presets, then compare wave period, pitch and signal shape.",
+    "path": "PhySims/CRO/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Sound",
+      "Frequency",
+      "Oscilloscope",
+      "Waveform",
+      "Period"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Longitudinal Wave Simulator",
+    "description": "Model a longitudinal wave by showing particles moving left and right as compressions and rarefactions travel through the medium.",
+    "path": "PhySims/LongWave/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Longitudinal waves",
+      "Compression",
+      "Rarefaction",
+      "Sound"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Sound Wave Generator",
+    "description": "Generate sine, square, sawtooth and triangle waves in the browser. Adjust frequency and volume, use preset tones and compare waveform shape on a live scope.",
+    "path": "PhySims/SoundGen/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Waves",
+      "Frequency",
+      "Pitch",
+      "Waveform",
+      "Oscillator"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Transverse Wave Simulator",
+    "description": "Model a transverse wave by changing amplitude, wavelength, frequency and wave speed. Toggle labels and vectors to compare crests, troughs and particle motion.",
+    "path": "PhySims/TransWave/",
+    "tags": [
+      "Physics",
+      "Waves",
+      "Transverse waves",
+      "Amplitude",
+      "Wavelength",
+      "Frequency"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Disease and Microbes",
+    "title": "Zombie Outbreak Model",
+    "description": "Use a fictional outbreak model to explore how contact rate, infection rate, response rate, safe zones and removal affect the spread of an infection-like population system.",
+    "path": "BioSims/Zombie/",
+    "tags": [
+      "Biology",
+      "Disease modelling",
+      "Population model",
+      "Outbreak",
+      "Infection spread",
+      "Compartment model",
+      "Data"
+    ]
+  },
+  {
+    "section": "mathsims",
+    "group": "Probability and Statistics",
+    "title": "Galton Board Simulator",
+    "description": "Drop balls through a Galton board to model random pathways, binomial distributions, variation, repeated trials and the emergence of a bell-shaped pattern.",
+    "path": "Math/Galton/",
+    "tags": [
+      "Maths",
+      "Probability",
+      "Statistics",
+      "Galton board",
+      "Binomial distribution",
+      "Randomness",
+      "Data"
+    ]
+  },
+  {
+    "section": "mathsims",
+    "group": "Probability and Statistics",
+    "title": "Lottery Probability Simulator",
+    "description": "Model lottery-style random draws to compare combinations, odds, rare events and the difference between possible outcomes and likely outcomes.",
+    "path": "Math/Lottery/",
+    "tags": [
+      "Maths",
+      "Probability",
+      "Combinations",
+      "Randomness",
+      "Odds",
+      "Statistics"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Path of Light Through the Eye",
+    "description": "Trace light rays through the cornea, pupil, lens and retina. Compare normal vision, myopia, hyperopia, accommodation, pupil size and corrective lenses.",
+    "path": "BioSims/Eye/",
+    "tags": [
+      "Biology",
+      "Human body",
+      "Eye",
+      "Vision",
+      "Light",
+      "Refraction",
+      "Lens",
+      "Retina",
+      "Myopia",
+      "Hyperopia",
+      "Correction lenses"
+    ]
+  },
+  {
+    "section": "biosims",
+    "group": "Human Body and Homeostasis",
+    "title": "Sound Through the Ear",
+    "description": "Follow sound as it travels through the outer ear, ear canal, eardrum, ossicles and cochlea, then becomes nerve signals. Includes frequency, amplitude, pathway steps and a cochlear hair-cell damage-risk model.",
+    "path": "BioSims/Ear/",
+    "tags": [
+      "Biology",
+      "Human body",
+      "Ear",
+      "Hearing",
+      "Sound",
+      "Waves",
+      "Cochlea",
+      "Eardrum",
+      "Ossicles",
+      "Auditory nerve",
+      "Hair cells"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Compare Drum Sizes",
+    "description": "Compare two drums by changing diameter, membrane tension, damping and strike position. Strike the drums to see vibration patterns, wave traces and estimated pitch.",
+    "path": "PhySims/DrumSizes/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Vibration",
+      "Frequency",
+      "Pitch",
+      "Drums",
+      "Damping",
+      "Tension",
+      "Waves"
+    ]
+  },
+  {
+    "section": "physicssims",
+    "group": "Light and Waves",
+    "title": "Guitar String Vibration",
+    "description": "Pluck a virtual guitar string and explore how frequency, pluck position, damping, harmonics and brightness affect string shape, sustain, tone and sound.",
+    "path": "PhySims/GuitarString/",
+    "tags": [
+      "Physics",
+      "Sound",
+      "Waves",
+      "Guitar",
+      "String vibration",
+      "Frequency",
+      "Pitch",
+      "Harmonics",
+      "Standing waves",
+      "Nodes",
+      "Damping"
+    ]
+  },
+  {
+    "section": "chemsims",
+    "group": "Chemical Bonding",
+    "title": "Virtual Molecular Model Kit",
+    "description": "Build, check and inspect common molecules using an interactive virtual molecular model kit. Add atoms, create bonds, rotate models freely or automatically, and compare clear space-filling three-dimensional structures.",
+    "path": "ChemSims/MolMod/",
+    "tags": [
+      "Molecular models",
+      "Covalent bonding",
+      "Molecular shape",
+      "Space-filling model",
+      "3D model",
+      "Atoms",
+      "Molymod"
+    ]
+  },
+      {
+  section: "chemsims",
+  group: "Chemical Bonding",
+  title: "Lewis Structure Builder",
+  description: "Build Lewis electron-dot structures for atoms, molecules and polyatomic ions. Explore valence electrons, lone pairs, multiple bonds, resonance, octets and formal charge.",
+  path: "ChemSims/LewisStructure/",
+  tags: [
+    "Chemistry",
+    "Chemical bonding",
+    "Lewis structures",
+    "Valence electrons",
+    "Covalent bonding",
+    "Lone pairs",
+    "Multiple bonds",
+    "Formal charge",
+    "Resonance",
+    "Molecules",
+    "Polyatomic ions"
+  ]
+},
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Biology",
+    "title": "Stage 6 Biology Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Biology/",
+    "tags": [
+      "Biology",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Chemistry",
+    "title": "Stage 6 Chemistry Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Chemistry/",
+    "tags": [
+      "Chemistry",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Earth and Environmental Science",
+    "title": "Stage 6 Earth and Environmental Science Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/EarthEnvironmentalScience/",
+    "tags": [
+      "Earth and Environmental Science",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Investigating Science",
+    "title": "Stage 6 Investigating Science Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/InvSci/",
+    "tags": [
+      "Investigating Science",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Physics",
+    "title": "Stage 6 Physics Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/Physics/",
+    "tags": [
+      "Physics",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Connections",
+    "description": "Sort 16 course terms into four connected groups. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCConnections/ScienceExtension/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Connections game",
+      "Concept relationships",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Word Match",
+    "description": "Match Stage 6 course terms with concise scientific definitions. Select individual modules, the syllabus glossary, whole-course review or a mixed expert challenge.",
+    "path": "Games/HSCWordMatch/ScienceExtension/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Vocabulary",
+      "Word matching",
+      "Module revision",
+      "Whole-course review"
+    ]
+  },
+  {
+    "section": "stage6games",
+    "group": "Science Extension",
+    "title": "Stage 6 Science Extension Chain Reaction",
+    "description": "Use Science Sequence and Chain Reaction modes to order course concepts or build the longest defensible chain of accepted scientific relationships.",
+    "path": "Games/Stage6ChainReaction/SciX/",
+    "tags": [
+      "Science Extension",
+      "Stage 6",
+      "Science sequence",
+      "Chain reaction",
+      "Systems thinking",
+      "Module revision"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
+    "title": "Science Web — Years 7–12",
+    "description": "Build, explain and share interactive science concept maps using module banks from Years 7–10 and every Stage 6 science course. Add relationship labels, explanations and examples, then export or import editable JSON webs.",
+    "path": "Games/ScienceWeb/",
+    "tags": [
+      "Science Web",
+      "Concept mapping",
+      "Years 7–10",
+      "Stage 6",
+      "Revision",
+      "Scientific connections",
+      "Systems thinking",
+      "JSON sharing"
+    ]
+  }
+];
+
+  const catalogue = document.getElementById('catalogue');
+  const contentsLinks = document.getElementById('contentsLinks');
+  const filterButtons = document.getElementById('filterButtons');
+  const searchInput = document.getElementById('searchInput');
+  const simCounter = document.getElementById('simCounter');
+  const emptyMessage = document.getElementById('emptyMessage');
+  const quickAccess = document.getElementById('quickAccess');
+  const quickAccessGrid = document.getElementById('quickAccessGrid');
+  const clearRecentButton = document.getElementById('clearRecentButton');
+  const backToTop = document.getElementById('backToTop');
+  const versionButton = document.getElementById('versionButton');
+  const versionNotes = document.getElementById('versionNotes');
+
+  const STORAGE_KEYS = {
+    favourites:'scisims-favourites-v1',
+    recent:'scisims-recent-v1'
+  };
+
+  let activeFilter = 'all';
+  let favourites = new Set(loadStoredArray(STORAGE_KEYS.favourites));
+  let recentItems = loadStoredArray(STORAGE_KEYS.recent)
+    .filter(item => item && typeof item.path === 'string')
+    .slice(0,8);
+
+  const SECTION_ORDER = new Map(SECTIONS.map((section,index)=>[section.id,index]));
+
+  const GROUP_ORDER = {
+    teachertools:['Classroom Organisation'],
+    workingscientifically:['Variables and Fair Testing'],
+    invsci:['Module 5: Scientific Investigations','Module 6: Technologies'],
+    stage6games:['Biology','Chemistry','Earth and Environmental Science','Investigating Science','Physics','Science Extension'],
+    biosims:['Cells and Classification','Disease and Microbes','Biosecurity and Ecosystems','Genetics and Inheritance','Genetics and Evolution','Evolution and Populations','Human Body and Homeostasis'],
+    chemsims:['Elements and Atomic Structure','Chemical Bonding','Chemical Reactions','Chemical Equilibrium','Organic Chemistry'],
+    earthsims:['Climate and Energy Balance','Energy and Sustainability','Earthquakes and Geology','Water and Climate'],
+    physicssims:['Forces and Motion','Forces and Fields','Electricity','Electricity and Magnetism','Light and Waves','Nuclear and Atomic Physics'],
+    mathsims:['Probability and Statistics'],
+    brainbreak:['Science Games','Reaction and Focus Games'],
+    interestingsims:['Mathematical and Cross-topic Models']
+  };
+
+  function loadStoredArray(key){
+    try{
+      const value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    }catch(error){
+      return [];
+    }
+  }
+
+  function saveStoredArray(key,value){
+    try{
+      localStorage.setItem(key,JSON.stringify(value));
+    }catch(error){
+      // The catalogue still works when browser storage is unavailable.
+    }
+  }
+
+  function groupRank(sim){
+    const groups = GROUP_ORDER[sim.section] || [];
+    const rank = groups.indexOf(sim.group);
+    return rank === -1 ? 999 : rank;
+  }
+
+  function compareSims(a,b){
+    const sectionDifference = (SECTION_ORDER.get(a.section) ?? 999) - (SECTION_ORDER.get(b.section) ?? 999);
+    if(sectionDifference) return sectionDifference;
+
+    const groupDifference = groupRank(a) - groupRank(b);
+    if(groupDifference) return groupDifference;
+
+    const groupNameDifference = a.group.localeCompare(b.group);
+    if(groupNameDifference) return groupNameDifference;
+
+    return a.title.localeCompare(b.title, undefined, {numeric:true, sensitivity:'base'});
+  }
+
+  function normalise(text){
+    return String(text).toLowerCase();
+  }
+
+  function getSection(sectionId){
+    return SECTIONS.find(section => section.id === sectionId);
+  }
+
+  function getSimByPath(path){
+    return SIMS.find(sim => sim.path === path);
+  }
+
+  function matchesSearch(sim,query){
+    if(!query) return true;
+    const searchable = [
+      sim.title,
+      sim.description,
+      sim.group,
+      sim.section,
+      sim.type || '',
+      sim.version || '',
+      ...(sim.tags || [])
+    ].join(' ');
+    return normalise(searchable).includes(query);
+  }
+
+  function matchesFilter(sim){
+    if(activeFilter === 'all') return true;
+    if(activeFilter === 'favourites') return favourites.has(sim.path);
+    return sim.section === activeFilter;
+  }
+
+  function createTextElement(tagName,className,text){
+    const element = document.createElement(tagName);
+    if(className) element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  function getResourceType(sim){
+    if(sim.type) return sim.type;
+
+    const tagText = normalise((sim.tags || []).join(' '));
+    const titleText = normalise(sim.title);
+
+    if(sim.section === 'teachertools') return 'Teacher Tool';
+    if(sim.section === 'stage6games') return 'Revision Game';
+    if(tagText.includes('flash')) return 'Archived Activity';
+    if(sim.section === 'brainbreak') return titleText.includes('science web') ? 'Activity' : 'Game';
+    if(tagText.includes('game') || titleText.includes(' game')) return 'Game';
+    return 'Simulation';
+  }
+
+  function typeClass(type){
+    return normalise(type).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+
+  function getActionLabel(type){
+    if(type === 'Teacher Tool') return 'Open tool';
+    if(type === 'Game' || type === 'Revision Game') return 'Play game';
+    if(type === 'Activity' || type === 'Archived Activity') return 'Open activity';
+    return 'Open sim';
+  }
+
+  function parseAustralianDate(value){
+    if(!value) return null;
+    const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value);
+    if(!match) return null;
+    const date = new Date(Number(match[3]),Number(match[2]) - 1,Number(match[1]));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function daysSince(value){
+    const date = parseAustralianDate(value);
+    if(!date) return null;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return Math.floor((today - date) / 86400000);
+  }
+
+  function getReleaseMeta(sim){
+    const parts = [];
+    if(sim.version) parts.push(`Version ${sim.version}`);
+    if(sim.updated) parts.push(`Updated ${sim.updated}`);
+
+    const addedAge = daysSince(sim.added);
+    const updatedAge = daysSince(sim.updated);
+    let status = '';
+
+    if(addedAge !== null && addedAge >= 0 && addedAge <= 30){
+      status = 'NEW';
+    }else if(updatedAge !== null && updatedAge >= 0 && updatedAge <= 14){
+      status = 'UPDATED';
+    }
+
+    return {text:parts.join(' · '),status};
+  }
+
+  function createFavouriteButton(sim){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'favourite-button';
+    button.dataset.path = sim.path;
+    updateFavouriteButton(button,sim);
+
+    button.addEventListener('click',()=>{
+      if(favourites.has(sim.path)) favourites.delete(sim.path);
+      else favourites.add(sim.path);
+
+      saveStoredArray(STORAGE_KEYS.favourites,[...favourites]);
+      updateFavouriteButton(button,sim);
+      renderFilters();
+      renderQuickAccess();
+
+      if(activeFilter === 'favourites') renderCatalogue();
+      else updateAllFavouriteButtons(sim.path);
+    });
+
+    return button;
+  }
+
+  function updateFavouriteButton(button,sim){
+    const isFavourite = favourites.has(sim.path);
+    button.classList.toggle('is-favourite',isFavourite);
+    button.textContent = isFavourite ? '★' : '☆';
+    button.setAttribute('aria-pressed',String(isFavourite));
+    button.setAttribute('aria-label',`${isFavourite ? 'Remove' : 'Add'} ${sim.title} ${isFavourite ? 'from' : 'to'} favourites`);
+    button.title = isFavourite ? 'Remove from favourites' : 'Add to favourites';
+  }
+
+  function updateAllFavouriteButtons(path){
+    document.querySelectorAll(`.favourite-button[data-path="${CSS.escape(path)}"]`).forEach(button=>{
+      const sim = getSimByPath(path);
+      if(sim) updateFavouriteButton(button,sim);
+    });
+  }
+
+  function recordRecent(sim){
+    recentItems = [
+      {path:sim.path,openedAt:Date.now()},
+      ...recentItems.filter(item => item.path !== sim.path)
+    ].slice(0,8);
+    saveStoredArray(STORAGE_KEYS.recent,recentItems);
+  }
+
+  function createCard(sim){
+    const section = getSection(sim.section);
+    const type = getResourceType(sim);
+    const card = document.createElement('article');
+    card.className = 'sim-card';
+
+    const top = document.createElement('div');
+    top.className = 'sim-card-top';
+
+    const title = createTextElement('h3','sim-title',sim.title);
+
+    const topActions = document.createElement('div');
+    topActions.className = 'card-top-actions';
+    const typeBadge = createTextElement('span',`resource-type ${typeClass(type)}`,type);
+    topActions.append(typeBadge,createFavouriteButton(sim));
+    top.append(title,topActions);
+
+    const release = getReleaseMeta(sim);
+    let releaseMeta = null;
+    if(release.text || release.status){
+      releaseMeta = document.createElement('p');
+      releaseMeta.className = 'release-meta';
+      if(release.text) releaseMeta.append(document.createTextNode(release.text));
+      if(release.status){
+        if(release.text) releaseMeta.append(document.createTextNode(' · '));
+        const status = createTextElement('span','release-status',release.status);
+        releaseMeta.appendChild(status);
+      }
+    }
+
+    const description = createTextElement('p','sim-description',sim.description);
+
+    const tagRow = document.createElement('div');
+    tagRow.className = 'tag-row';
+
+    if(section){
+      const sectionTag = createTextElement('span',`tag ${section.tagClass}`,section.title);
+      tagRow.appendChild(sectionTag);
+    }
+
+    (sim.tags || []).forEach(tagText=>{
+      const tag = createTextElement('span','tag',tagText);
+      tagRow.appendChild(tag);
+    });
+
+    const link = document.createElement('a');
+    link.className = 'open-link';
+    link.href = sim.path;
+    link.textContent = getActionLabel(type);
+    link.addEventListener('click',()=>recordRecent(sim));
+
+    card.appendChild(top);
+    if(releaseMeta) card.appendChild(releaseMeta);
+    card.append(description,tagRow,link);
+    return card;
+  }
+
+  function groupSims(sims){
+    return sims.reduce((groups,sim)=>{
+      if(!groups[sim.group]) groups[sim.group] = [];
+      groups[sim.group].push(sim);
+      return groups;
+    },{});
+  }
+
+  function renderContents(){
+    contentsLinks.innerHTML = '';
+    SECTIONS.forEach(section=>{
+      const link = document.createElement('a');
+      link.href = `#${section.id}`;
+      link.textContent = section.title;
+      contentsLinks.appendChild(link);
+    });
+  }
+
+  function makeFilterButton(filter,label){
+    const button = document.createElement('button');
+    button.className = 'filter-button secondary';
+    button.type = 'button';
+    button.dataset.filter = filter;
+    button.textContent = label;
+    button.classList.toggle('active',activeFilter === filter);
+    return button;
+  }
+
+  function renderFilters(){
+    filterButtons.innerHTML = '';
+    filterButtons.appendChild(makeFilterButton('all','All resources'));
+    filterButtons.appendChild(makeFilterButton('favourites',`★ Favourites (${favourites.size})`));
+
+    SECTIONS.forEach(section=>{
+      filterButtons.appendChild(makeFilterButton(section.id,section.title));
+    });
+  }
+
+  function createQuickGroup(title,sims){
+    const group = document.createElement('div');
+    group.className = 'quick-group';
+    group.appendChild(createTextElement('h3','',title));
+
+    if(!sims.length){
+      group.appendChild(createTextElement('p','quick-empty',title === 'Favourites' ? 'Select a star on any resource card.' : 'Opened resources will appear here.'));
+      return group;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'quick-list';
+
+    sims.forEach(sim=>{
+      const link = document.createElement('a');
+      link.className = 'quick-item';
+      link.href = sim.path;
+      link.append(
+        createTextElement('span','quick-item-title',sim.title),
+        createTextElement('span','quick-item-type',getResourceType(sim))
+      );
+      link.addEventListener('click',()=>recordRecent(sim));
+      list.appendChild(link);
+    });
+
+    group.appendChild(list);
+    return group;
+  }
+
+  function renderQuickAccess(){
+    const favouriteSims = [...favourites]
+      .map(getSimByPath)
+      .filter(Boolean)
+      .sort((a,b)=>a.title.localeCompare(b.title,undefined,{numeric:true,sensitivity:'base'}))
+      .slice(0,6);
+
+    const recentSims = recentItems
+      .map(item=>getSimByPath(item.path))
+      .filter(Boolean)
+      .slice(0,6);
+
+    const shouldShow = favouriteSims.length > 0 || recentSims.length > 0;
+    quickAccess.hidden = !shouldShow;
+    if(!shouldShow) return;
+
+    quickAccessGrid.innerHTML = '';
+    quickAccessGrid.append(
+      createQuickGroup('Favourites',favouriteSims),
+      createQuickGroup('Recently opened',recentSims)
+    );
+    clearRecentButton.hidden = recentSims.length === 0;
+  }
+
+  function renderCatalogue(){
+    const query = normalise(searchInput.value.trim());
+    const visibleSims = SIMS.filter(sim=>matchesFilter(sim) && matchesSearch(sim,query)).sort(compareSims);
+    catalogue.innerHTML = '';
+
+    SECTIONS.forEach(section=>{
+      const simsForSection = visibleSims.filter(sim=>sim.section === section.id);
+      if(!simsForSection.length) return;
+
+      const sectionElement = document.createElement('section');
+      sectionElement.className = 'section';
+      sectionElement.id = section.id;
+
+      const header = document.createElement('div');
+      header.className = 'section-header';
+
+      const title = createTextElement('h2','',section.title);
+      const intro = createTextElement('p','section-intro',section.intro);
+      const banner = document.createElement('img');
+      banner.src = section.banner;
+      banner.alt = `${section.title} resources banner`;
+      banner.className = 'section-banner';
+      banner.loading = 'lazy';
+
+      header.append(title,intro,banner);
+      sectionElement.appendChild(header);
+
+      const grouped = groupSims(simsForSection);
+      Object.keys(grouped).forEach(groupName=>{
+        const subsection = document.createElement('div');
+        subsection.className = 'subsection';
+
+        const groupTitle = createTextElement('div','subsection-title',groupName);
+        const cards = document.createElement('div');
+        cards.className = 'cards';
+
+        grouped[groupName].forEach(sim=>cards.appendChild(createCard(sim)));
+        subsection.append(groupTitle,cards);
+        sectionElement.appendChild(subsection);
+      });
+
+      catalogue.appendChild(sectionElement);
+    });
+
+    simCounter.textContent = `${visibleSims.length} resource${visibleSims.length === 1 ? '' : 's'}`;
+    emptyMessage.style.display = visibleSims.length ? 'none' : 'block';
+  }
+
+  function updateScrollControls(){
+    backToTop.classList.toggle('is-visible',window.scrollY > 650);
+  }
+
+  filterButtons.addEventListener('click',event=>{
+    const button = event.target.closest('button[data-filter]');
+    if(!button) return;
+    activeFilter = button.dataset.filter;
+    renderFilters();
+    renderCatalogue();
+  });
+
+  searchInput.addEventListener('input',renderCatalogue);
+
+  clearRecentButton.addEventListener('click',()=>{
+    recentItems = [];
+    saveStoredArray(STORAGE_KEYS.recent,recentItems);
+    renderQuickAccess();
+  });
+
+  backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  window.addEventListener('scroll',updateScrollControls,{passive:true});
+
+  function setVersionNotes(open){
+    versionNotes.hidden = !open;
+    versionButton.setAttribute('aria-expanded',String(open));
+  }
+
+  versionButton.addEventListener('click',event=>{
+    event.stopPropagation();
+    setVersionNotes(versionNotes.hidden);
+  });
+
+  document.addEventListener('click',event=>{
+    if(!versionNotes.hidden && !event.target.closest('.version-control') && !event.target.closest('#versionNotes')){
+      setVersionNotes(false);
+    }
+  });
+
+  document.addEventListener('keydown',event=>{
+    if(event.key === 'Escape' && !versionNotes.hidden){
+      setVersionNotes(false);
+      versionButton.focus();
+    }
+  });
+
+  renderContents();
+  renderFilters();
+  renderQuickAccess();
+  renderCatalogue();
+  updateScrollControls();
+</script>
+</body>
+</html>

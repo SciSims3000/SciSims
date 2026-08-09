@@ -1,0 +1,16 @@
+SciSims navigation package — version 1
+
+Root files:
+- index.html
+- Stage4index.html
+- Stage5index.html
+- Stage6index.html
+- TeacherToolsindex.html
+- Moreindex.html
+- HSCindex.html (temporary redirect)
+- NAVIGATION_INSTALL.md
+
+Shared files:
+- shared/scisims-nav.css
+- shared/scisims-nav.js
+- shared/scisims-index-pages.css
