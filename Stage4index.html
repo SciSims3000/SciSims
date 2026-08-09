@@ -8,99 +8,97 @@
   <link rel="stylesheet" href="shared/scisims-nav.css">
   <link rel="stylesheet" href="shared/scisims-index-pages.css">
   <script defer src="shared/scisims-nav.js"></script>
+  <script defer src="shared/stage45-data.js"></script>
+  <script defer src="shared/stage45-index.js"></script>
 </head>
-<body>
+<body data-stage="4">
   <div id="scisimsSiteNav"></div>
+
   <header class="hero">
     <span class="eyebrow">NSW Science 7–10 (2023)</span>
     <h1>Stage 4 Science Index</h1>
-    <p>Browse SciSims resources using the confirmed teaching sequence. Resources can be shared across focus areas, stages and Stage 6 courses without duplicating the simulation itself.</p>
-    <span class="version-pill">Version 0.1.0</span>
+    <p>Browse SciSims resources using the confirmed Year 7 and Year 8 teaching sequence. A resource may appear in several focus areas while continuing to link to one original simulation.</p>
+    <div class="summary-row" aria-label="Stage 4 index summary">
+      <div class="summary-stat"><strong id="mappedResourceCount">0</strong><span>mapped resources shown</span></div>
+      <div class="summary-stat"><strong id="curriculumLinkCount">0</strong><span>focus-area links shown</span></div>
+      <div class="summary-stat"><strong id="depthStudyCount">0</strong><span>depth-study options</span></div>
+    </div>
+    <span class="version-pill">Version 0.2.0</span>
   </header>
+
+  <div class="mapping-disclaimer" role="note">
+    <strong>Curriculum mapping note:</strong> these are curated teaching connections to the NSW Science 7–10 Syllabus (2023), not official NESA endorsements. “Core” indicates a close match to the focus-area outcome; “Supporting” indicates a useful extension, application or Working scientifically connection.
+  </div>
 
   <section class="info-grid" aria-label="Cross-curriculum organisation">
     <article class="info-card">
       <h2>Working scientifically</h2>
-      <p>Working scientifically applies across every focus area. It will be represented through resource tags and filters rather than as a separate content module.</p>
+      <p>Working scientifically applies across every focus area. Use the filter below to find resources that support a particular process.</p>
     </article>
     <article class="info-card">
       <h2>Depth study</h2>
-      <p>Depth studies may draw from one or more focus areas. Suitable resources will be marked as depth-study options rather than placed in a separate module.</p>
+      <p>Depth studies may draw from one or more focus areas. Use the depth-study filter to surface resources suited to investigation, modelling, evidence analysis and decision-making.</p>
     </article>
   </section>
 
-  <div class="year-grid">
-    <section class="year-panel">
-      <h2>Year 7</h2>
-      <p>Resources organised in the teaching sequence used for this SciSims index.</p>
-      <div class="module-links"><a class="module-link" href="#module-7-1"><span class="module-code">7.1</span><span>Observing the Universe</span></a><a class="module-link" href="#module-7-2"><span class="module-code">7.2</span><span>Forces</span></a><a class="module-link" href="#module-7-3"><span class="module-code">7.3</span><span>Cells and classification</span></a><a class="module-link" href="#module-7-4"><span class="module-code">7.4</span><span>Solutions and mixtures</span></a></div>
-    </section>
-    <section class="year-panel">
-      <h2>Year 8</h2>
-      <p>Resources organised in the teaching sequence used for this SciSims index.</p>
-      <div class="module-links"><a class="module-link" href="#module-8-1"><span class="module-code">8.1</span><span>Living systems</span></a><a class="module-link" href="#module-8-2"><span class="module-code">8.2</span><span>Periodic table and atomic structure</span></a><a class="module-link" href="#module-8-3"><span class="module-code">8.3</span><span>Change</span></a><a class="module-link" href="#module-8-4"><span class="module-code">8.4</span><span>Data science 1</span></a></div>
-    </section>
-  </div>
+  <section class="catalogue-dashboard" aria-label="Stage 4 resource filters">
+    <div class="dashboard-heading">
+      <div>
+        <h2>Search and filter</h2>
+        <p>Filters apply across all eight Stage 4 focus areas.</p>
+      </div>
+      <button id="resetButton" class="filter-action" type="button">Reset filters</button>
+    </div>
+    <div class="filter-grid">
+      <div class="filter-field search-field">
+        <label for="searchInput">Search</label>
+        <input id="searchInput" type="search" placeholder="Search resource, concept, outcome or keyword…" autocomplete="off">
+      </div>
+      <div class="filter-field">
+        <label for="relevanceSelect">Curriculum relevance</label>
+        <select id="relevanceSelect">
+          <option value="">Core and supporting</option>
+          <option value="Core">Core</option>
+          <option value="Supporting">Supporting</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="typeSelect">Resource type</label>
+        <select id="typeSelect"><option value="">All resource types</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="wsSelect">Working scientifically</label>
+        <select id="wsSelect"><option value="">All processes</option></select>
+      </div>
+      <button id="depthStudyButton" class="filter-action" type="button" aria-pressed="false">Depth study resources</button>
+    </div>
+    <p id="resultsSummary" class="results-summary" aria-live="polite"></p>
+  </section>
 
-  <main>
-  <section id="module-7-1" class="module-section" style="--module-colour:#0b2f6f">
-    <div class="module-heading">
-      <h2>7.1 Observing the Universe</h2>
-      <span class="module-label">Year 7</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-7-2" class="module-section" style="--module-colour:#164a9b">
-    <div class="module-heading">
-      <h2>7.2 Forces</h2>
-      <span class="module-label">Year 7</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-7-3" class="module-section" style="--module-colour:#2563eb">
-    <div class="module-heading">
-      <h2>7.3 Cells and classification</h2>
-      <span class="module-label">Year 7</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-7-4" class="module-section" style="--module-colour:#0f766e">
-    <div class="module-heading">
-      <h2>7.4 Solutions and mixtures</h2>
-      <span class="module-label">Year 7</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-8-1" class="module-section" style="--module-colour:#7c3aed">
-    <div class="module-heading">
-      <h2>8.1 Living systems</h2>
-      <span class="module-label">Year 8</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-8-2" class="module-section" style="--module-colour:#b45309">
-    <div class="module-heading">
-      <h2>8.2 Periodic table and atomic structure</h2>
-      <span class="module-label">Year 8</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-8-3" class="module-section" style="--module-colour:#be123c">
-    <div class="module-heading">
-      <h2>8.3 Change</h2>
-      <span class="module-label">Year 8</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  <section id="module-8-4" class="module-section" style="--module-colour:#0369a1">
-    <div class="module-heading">
-      <h2>8.4 Data science 1</h2>
-      <span class="module-label">Year 8</span>
-    </div>
-    <div class="empty-state">Mapped simulations and activities will be added here. A resource may appear in more than one focus area or stage while continuing to link to its single original file.</div>
-  </section>
-  </main>
+  <div id="yearGrid" class="year-grid"></div>
 
-  <p class="footer-note"><strong>Maintaining this page:</strong> add resource cards to the relevant focus-area section. The same resource may be listed under several sections because every card links back to the original simulation folder.</p>
+  <section class="collection-section" aria-labelledby="revisionToolsHeading">
+    <div class="collection-section-heading">
+      <div>
+        <h2 id="revisionToolsHeading">Module revision and concept-mapping tools</h2>
+        <p>These tools contain individual Years 7–10 module banks, year-review modes or editable concept maps.</p>
+      </div>
+    </div>
+    <div id="sharedToolsGrid" class="compact-resource-grid"></div>
+  </section>
+
+  <section class="collection-section" aria-labelledby="wsToolkitHeading">
+    <div class="collection-section-heading">
+      <div>
+        <h2 id="wsToolkitHeading">Working scientifically toolkit</h2>
+        <p>Cross-module resources for variables, fair testing, repeated trials, models and evidence-based conclusions.</p>
+      </div>
+    </div>
+    <div id="wsToolkitGrid" class="compact-resource-grid"></div>
+  </section>
+
+  <main id="moduleResults"></main>
+
+  <p class="footer-note"><strong>Maintaining this page:</strong> Stage 4 and Stage 5 mappings are stored together in <code>shared/stage45-data.js</code>. Add a resource once, then attach one or more focus-area mappings. The renderer automatically updates section counts, filters and duplicate appearances.</p>
 </body>
 </html>
