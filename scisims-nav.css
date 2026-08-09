@@ -1,0 +1,166 @@
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
+
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
