@@ -1,3 +1,63 @@
+# SciSims Stage Navigation and Curriculum Mapping
+
+## Files to place in the repository root
+
+- `index.html`
+- `Stage4index.html`
+- `Stage5index.html`
+- `Stage6index.html`
+- `TeacherToolsindex.html`
+- `Moreindex.html`
+- `HSCindex.html` — temporary redirect only
+- `shared/scisims-nav.css`
+- `shared/scisims-nav.js`
+- `shared/scisims-index-pages.css`
+- `shared/stage45-data.js`
+- `shared/stage45-index.js`
+
+Keep the existing image files, favicon, simulation folders and worksheet folders in their current locations.
+
+## Navigation
+
+The shared sticky menu contains:
+
+**SciSims | Stage 4 | Stage 5 | Stage 6 | Teacher Tools | More**
+
+The menu is generated from the two shared navigation files. Future menu changes therefore need to be made only once.
+
+## Stage 4 and Stage 5 mapping
+
+The two junior indexes now share one mapping database:
+
+`shared/stage45-data.js`
+
+The renderer:
+
+`shared/stage45-index.js`
+
+uses that database to generate:
+
+- the confirmed 7.1–10.4 teaching sequence
+- focus-area counts
+- Core and Supporting curriculum links
+- resource-type filters
+- Working scientifically filters
+- depth-study filtering
+- repeated appearances of shared simulations without duplicating the actual simulation files
+- module revision and concept-mapping tools
+- a Working scientifically toolkit
+
+To update a mapping, edit the resource or its `mappings` entries in `stage45-data.js`. Both Stage 4 and Stage 5 pages update automatically.
+
+## Temporary HSC redirect
+
+`HSCindex.html` redirects old links to `Stage6index.html`. It is deliberately temporary and can be removed after old bookmarks and internal links have been migrated.
+
+## Audit
+
+See `STAGE45_MAPPING_AUDIT.md` for the complete module-by-module mapping summary and current catalogue gaps.
+
+
 # SciSims stage-index and navigation update
 
 Upload the contents of this folder to the root of the SciSims repository while preserving the `shared` folder.
