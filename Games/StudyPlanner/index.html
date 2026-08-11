@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSC Study Planner</title>
+  <meta name="description" content="A personalised HSC exam countdown and evidence-based study planner for NSW students.">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    :root{
+      --navy:#17365d;
+      --blue:#246aa5;
+      --sky:#eaf5fb;
+      --mint:#dff4ea;
+      --sand:#fff6dc;
+      --rose:#fff0f0;
+      --ink:#1f2937;
+      --muted:#687386;
+      --line:#d9e1ea;
+      --card:#ffffff;
+      --bg:#f4f7fa;
+      --good:#2f7d5b;
+      --warn:#a66b00;
+      --accent:#246aa5;
+      --theme-main:#17365d;
+      --theme-accent:#246aa5;
+      --theme-soft:#eaf5fb;
+      --shadow:0 8px 24px rgba(26,44,70,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behaviour:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    .topbar{
+      position:sticky; top:0; z-index:20;
+      background:var(--theme-main); color:white;
+      box-shadow:0 2px 10px rgba(0,0,0,.12);
+    }
+    .topbar-inner{
+      max-width:1240px; margin:auto; padding:10px 18px;
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .brand{font-weight:800; margin-right:auto; letter-spacing:.2px}
+    .navlink{
+      text-decoration:none; color:white; border:1px solid rgba(255,255,255,.3);
+      border-radius:10px; padding:7px 10px; font-size:.9rem;
+    }
+    .navlink:hover{background:rgba(255,255,255,.1)}
+    .wrap{max-width:1240px;margin:0 auto;padding:22px 18px 50px}
+    .hero{
+      background:linear-gradient(135deg,var(--theme-main) 0%,var(--theme-accent) 100%);
+      color:white; border-radius:22px; padding:24px; box-shadow:var(--shadow);
+      display:grid; grid-template-columns:1.3fr .7fr; gap:18px; align-items:center;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(1.7rem,4vw,2.8rem)}
+    .hero p{margin:0;opacity:.92;line-height:1.55}
+    .hero-badge{
+      justify-self:end; background:rgba(255,255,255,.12); padding:16px 18px;
+      border:2px solid rgba(255,255,255,.45); border-radius:18px; text-align:right;
+      min-width:220px; transition:background .5s ease, box-shadow .5s ease, transform .25s ease;
+    }
+    .hero-badge strong{display:block;font-size:2rem;line-height:1.05;margin:4px 0}
+    .allocation-row{
+      display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:14px;
+      align-items:center;padding:12px 0;border-bottom:1px solid var(--line)
+    }
+    .allocation-row:last-child{border-bottom:0}
+    .allocation-input{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+    .allocation-input input{width:78px;text-align:center}
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(10,24,43,.58);z-index:100;
+      display:flex;align-items:center;justify-content:center;padding:20px
+    }
+    .tip-modal{
+      width:min(520px,100%);background:white;border-radius:22px;padding:24px;
+      box-shadow:0 24px 70px rgba(0,0,0,.28);border:1px solid var(--line)
+    }
+    .tip-icon{font-size:2rem;margin-bottom:8px}
+    .tip-modal h2{margin:0 0 8px}
+    .strategy-chip{
+      display:inline-block;margin-top:6px;padding:4px 8px;border-radius:999px;
+      background:var(--theme-soft);color:var(--theme-main);font-size:.74rem;
+      font-weight:800;letter-spacing:.02em;text-transform:none
+    }
+    .plan-builder{
+      display:grid;grid-template-columns:1.1fr .8fr .7fr .7fr auto;gap:10px;align-items:end
+    }
+    .planned-task{
+      display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+      padding:12px 0;border-bottom:1px solid var(--line)
+    }
+    .planned-task:last-child{border-bottom:0}
+    .planned-task.done{opacity:.62}
+    .planned-task.done .task-title{text-decoration:line-through}
+    .task-check{width:20px;height:20px}
+    .task-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+    .task-pill{
+      padding:4px 7px;border-radius:999px;background:var(--theme-soft);
+      color:var(--theme-main);font-size:.75rem;font-weight:750
+    }
+    .task-custom{background:#f4e7c3;color:#6f4f00}
+    .day-summary{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap
+    }
+    @media(max-width:900px){
+      .plan-builder{grid-template-columns:1fr 1fr}
+      .plan-builder .wide{grid-column:1/-1}
+      .plan-builder .action{grid-column:1/-1}
+    }
+    @media(max-width:600px){
+      .allocation-row{grid-template-columns:1fr}
+      .allocation-input{justify-content:flex-start}
+      .plan-builder{grid-template-columns:1fr}
+      .planned-task{grid-template-columns:auto 1fr}
+      .planned-task .task-actions{grid-column:2}
+    }
+    .tabs{
+      display:flex; gap:8px; flex-wrap:wrap; margin:18px 0;
+      background:white; padding:8px; border-radius:16px; box-shadow:var(--shadow);
+    }
+    .tab{
+      border:0; background:transparent; color:var(--muted); padding:10px 14px;
+      border-radius:10px; font-weight:700;
+    }
+    .tab.active{background:var(--theme-main);color:white}
+    .panel{display:none}
+    .panel.active{display:block}
+    .grid{display:grid;gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:18px;
+      padding:18px; box-shadow:var(--shadow);
+    }
+    .card h2,.card h3{margin-top:0}
+    .muted{color:var(--muted)}
+    .small{font-size:.88rem}
+    .callout{
+      border-left:5px solid var(--accent); background:var(--sky);
+      padding:14px 16px; border-radius:12px;
+    }
+    .positive{border-left-color:var(--good);background:var(--mint)}
+    .warning{border-left-color:#d69e2e;background:var(--sand)}
+    .btn{
+      border:0; background:var(--theme-main); color:white; padding:10px 14px;
+      border-radius:11px; font-weight:750;
+    }
+    .btn.secondary{background:white;color:var(--navy);border:1px solid var(--line)}
+    .btn.good{background:var(--good)}
+    .btn.ghost{background:transparent;color:var(--navy);border:1px dashed var(--line)}
+    .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    label{font-weight:700}
+    input[type="number"],input[type="text"],input[type="date"],input[type="time"],select{
+      width:100%; border:1px solid var(--line); border-radius:10px; padding:9px 10px;
+      background:white; color:var(--ink);
+    }
+    .field{display:grid;gap:5px}
+    .subject-list{display:grid;gap:10px;max-height:520px;overflow:auto;padding-right:5px}
+    .subject-row{
+      display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center;
+      border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fff;
+    }
+    .subject-row input[type="checkbox"]{width:18px;height:18px}
+    .confidence{display:flex;gap:4px}
+    .confidence button{
+      border:1px solid var(--line); background:#fff; border-radius:8px; padding:5px 8px;
+      font-size:.8rem;
+    }
+    .confidence button.selected{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .exam-strip{
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;
+    }
+    .exam-card{
+      border:1px solid var(--line); border-radius:16px; padding:14px; background:white;
+      position:relative; overflow:hidden;
+    }
+    .exam-card.next{border:2px solid var(--accent);background:var(--sky)}
+    .exam-card.done{opacity:.64}
+    .countdown{font-size:2rem;font-weight:900;color:var(--navy);line-height:1}
+    .progress-track{height:10px;background:#e8edf3;border-radius:99px;overflow:hidden;margin-top:10px}
+    .progress-fill{height:100%;background:var(--accent);border-radius:99px}
+    .session{
+      display:grid; grid-template-columns:95px 1fr auto; gap:14px; align-items:center;
+      padding:14px 0; border-bottom:1px solid var(--line);
+    }
+    .session:last-child{border-bottom:0}
+    .minutes{
+      background:var(--sky); color:var(--navy); border-radius:12px; text-align:center;
+      padding:10px 6px; font-weight:900;
+    }
+    .strategy{font-size:.82rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+    .resource{
+      margin-top:8px; padding:9px 10px; background:var(--mint); border-radius:10px; font-size:.9rem;
+    }
+    .resource a{color:var(--navy);font-weight:800}
+    .plan-day{border-left:4px solid var(--blue)}
+    .plan-day.today{border-left-color:var(--good);background:#fbfffd}
+    .plan-items{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      padding:7px 9px;border-radius:999px;background:var(--sky);color:var(--navy);font-size:.83rem;font-weight:750;
+    }
+    .strategy-bars{display:grid;gap:10px}
+    .bar-row{display:grid;grid-template-columns:150px 1fr 42px;align-items:center;gap:10px}
+    .bar{height:11px;border-radius:99px;background:#e8edf3;overflow:hidden}
+    .bar > div{height:100%;background:var(--blue)}
+    canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .break-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px}
+    .break-option{
+      border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 8px;text-align:center;font-weight:750;
+    }
+    .break-option.selected{background:var(--mint);border-color:var(--good)}
+    .break-option span{display:block;font-size:1.55rem;margin-bottom:4px}
+    .history-item{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+    .history-item:last-child{border-bottom:0}
+    .footer{
+      margin-top:24px;color:var(--muted);font-size:.82rem;text-align:center;line-height:1.5
+    }
+    .hidden{display:none!important}
+    .version{font-size:.78rem;opacity:.8}
+    @media(max-width:800px){
+      .hero{grid-template-columns:1fr}
+      .hero-badge{justify-self:start;text-align:left}
+      .grid.two,.grid.three{grid-template-columns:1fr}
+      .session{grid-template-columns:76px 1fr}
+      .session .btn{grid-column:1/-1}
+      .bar-row{grid-template-columns:110px 1fr 36px}
+    }
+  
+    .profile-chip{
+      display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.25);padding:6px 10px;border-radius:999px
+    }
+    .profile-avatar{
+      width:38px;height:38px;border-radius:50%;object-fit:cover;display:grid;place-items:center;
+      background:white;color:var(--theme-main);font-weight:900;overflow:hidden;flex:0 0 auto
+    }
+    .profile-avatar.large{width:76px;height:76px;font-size:1.7rem}
+    .avatar-grid{display:flex;gap:8px;flex-wrap:wrap}
+    .avatar-choice{
+      width:48px;height:48px;border:2px solid var(--line);border-radius:50%;
+      background:white;font-size:1.5rem
+    }
+    .avatar-choice.selected{border-color:var(--theme-accent);box-shadow:0 0 0 3px var(--theme-soft)}
+    .theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+    .theme-choice{
+      border:2px solid var(--line);border-radius:14px;padding:12px;background:white;text-align:left
+    }
+    .theme-choice.selected{border-color:var(--theme-accent);box-shadow:0 0 0 3px var(--theme-soft)}
+    .theme-swatch{height:24px;border-radius:999px;margin-bottom:8px}
+    .quick-adjust{display:flex;gap:4px;align-items:center}
+    .quick-adjust button{
+      border:1px solid var(--line);background:white;color:var(--theme-main);border-radius:8px;
+      padding:6px 9px;font-weight:800;min-width:52px
+    }
+    .quick-adjust input{width:70px!important}
+    .assessment-badge{
+      display:inline-block;border-radius:999px;padding:3px 8px;font-size:.72rem;font-weight:800;
+      background:#f4e7c3;color:#6f4f00;margin-bottom:5px
+    }
+    .hsc-badge{
+      display:inline-block;border-radius:999px;padding:3px 8px;font-size:.72rem;font-weight:800;
+      background:var(--theme-soft);color:var(--theme-main);margin-bottom:5px
+    }
+
+  
+    .calendar-toolbar{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap
+    }
+    .view-toggle{display:flex;gap:6px;flex-wrap:wrap}
+    .view-toggle button{
+      border:1px solid var(--line);background:white;color:var(--theme-main);
+      border-radius:9px;padding:8px 11px;font-weight:800
+    }
+    .view-toggle button.active{background:var(--theme-main);color:white;border-color:var(--theme-main)}
+    .calendar-nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .calendar-nav button{
+      border:1px solid var(--line);background:white;color:var(--theme-main);
+      border-radius:9px;padding:8px 10px;font-weight:800
+    }
+    .calendar-summary{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px
+    }
+    .calendar-stat{
+      background:var(--theme-soft);border-radius:14px;padding:12px
+    }
+    .calendar-stat strong{display:block;font-size:1.15rem}
+    .week-grid{
+      display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:14px
+    }
+    .week-day{
+      border:1px solid var(--line);border-radius:14px;background:white;min-height:230px;
+      padding:10px;display:flex;flex-direction:column;gap:8px
+    }
+    .week-day.today{border:2px solid var(--good);background:#fbfffd}
+    .week-day.outside{opacity:.55}
+    .day-head{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+    .day-number{
+      width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+      font-weight:900;background:var(--theme-soft);color:var(--theme-main)
+    }
+    .day-number.today{background:var(--good);color:white}
+    .calendar-task{
+      border-radius:10px;padding:7px 8px;font-size:.76rem;line-height:1.25;
+      border-left:4px solid var(--subject-colour,var(--theme-accent));
+      background:#f8fafc
+    }
+    .calendar-task.suggested{
+      background:transparent;border:1px dashed var(--line);
+      border-left:4px dashed var(--subject-colour,var(--theme-accent));opacity:.78
+    }
+    .calendar-task.done{opacity:.52;text-decoration:line-through}
+    .calendar-task strong{display:block;font-size:.78rem;margin-bottom:2px}
+    .calendar-task .meta{color:var(--muted);font-size:.7rem}
+    .calendar-more{
+      border:0;background:transparent;color:var(--theme-main);padding:2px 0;
+      font-weight:800;text-align:left;font-size:.75rem
+    }
+    .month-grid{
+      display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:14px
+    }
+    .month-head{
+      text-align:center;font-size:.75rem;font-weight:800;color:var(--muted);padding:4px
+    }
+    .month-day{
+      border:1px solid var(--line);border-radius:12px;background:white;min-height:108px;
+      padding:8px;cursor:pointer
+    }
+    .month-day.today{border:2px solid var(--good)}
+    .month-day.outside{opacity:.4}
+    .month-day:hover{background:var(--theme-soft)}
+    .month-mini{
+      margin-top:8px;font-size:.72rem;color:var(--muted);line-height:1.35
+    }
+    .subject-dots{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+    .subject-dot{width:9px;height:9px;border-radius:50%}
+    .day-detail{
+      margin-top:14px;border-top:1px solid var(--line);padding-top:14px
+    }
+    .list-calendar .card{box-shadow:none}
+    .legend{
+      display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:.76rem;color:var(--muted)
+    }
+    .legend-sample{
+      display:inline-flex;align-items:center;gap:5px
+    }
+    .legend-box{
+      width:20px;height:12px;border-radius:4px;background:#f8fafc;border-left:4px solid var(--theme-accent)
+    }
+    .legend-box.suggested{background:transparent;border:1px dashed var(--line);border-left:4px dashed var(--theme-accent)}
+    @media(max-width:1000px){
+      .week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .calendar-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:700px){
+      .week-grid{grid-template-columns:1fr 1fr}
+      .month-grid{grid-template-columns:repeat(7,minmax(42px,1fr));font-size:.72rem}
+      .month-day{min-height:78px;padding:5px}
+      .month-mini{font-size:.65rem}
+    }
+    @media(max-width:500px){
+      .week-grid{grid-template-columns:1fr}
+      .calendar-summary{grid-template-columns:1fr 1fr}
+      .month-grid{display:none}
+      #monthMobileNotice{display:block!important}
+    }
+
+  
+    .planner-builder-grid{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:18px
+    }
+    .choice-title{font-weight:800;margin-bottom:8px}
+    .choice-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .choice-btn{
+      border:1px solid var(--line);background:white;color:var(--ink);
+      border-radius:10px;padding:9px 11px;font-weight:750;text-align:left
+    }
+    .choice-btn.selected{
+      background:var(--theme-main);color:white;border-color:var(--theme-main)
+    }
+    .choice-btn small{
+      display:block;font-weight:500;opacity:.78;margin-top:2px
+    }
+    .technique-btn{
+      min-width:135px
+    }
+    .builder-controls{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px
+    }
+    .bulk-toggle{
+      border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff
+    }
+    .bulk-toggle.active{
+      border-color:var(--theme-accent);background:var(--theme-soft)
+    }
+    .builder-note{
+      margin-top:10px;font-size:.83rem;color:var(--muted)
+    }
+    .mini-chart{
+      display:grid;gap:8px
+    }
+    .mini-row{
+      display:grid;grid-template-columns:125px 1fr 42px;gap:8px;align-items:center
+    }
+    .mini-track{
+      height:10px;border-radius:999px;background:#e7ebf0;overflow:hidden
+    }
+    .mini-fill{
+      height:100%;border-radius:999px;background:var(--theme-accent)
+    }
+    .balance-warning{
+      margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--sand);
+      border-left:4px solid var(--warn);font-size:.84rem
+    }
+    .balance-good{
+      margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--mint);
+      border-left:4px solid var(--good);font-size:.84rem
+    }
+    .session-preview{
+      margin-top:14px;padding:12px;border-radius:12px;background:var(--theme-soft)
+    }
+    @media(max-width:900px){
+      .planner-builder-grid{grid-template-columns:1fr}
+      .mini-row{grid-template-columns:110px 1fr 38px}
+    }
+
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">HSC Study Planner <span class="version">v1.6.0</span></div>
+      <div id="topProfile" class="profile-chip">
+        <div id="topAvatar" class="profile-avatar">H</div>
+        <div><strong id="topName">My Planner</strong></div>
+      </div>
+      <a class="navlink" href="index.html">Main SciSims</a>
+      <a class="navlink" href="Stage6index.html">Stage 6</a>
+      <a class="navlink" href="TeacherTools.html">Teacher Tools</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Plan realistically. Study effectively.</h1>
+        <p>Choose your HSC exams, build an adaptive study plan, use evidence-based learning strategies, track your progress and remember to clear your head.</p>
+      </div>
+      <div class="hero-badge">
+        <span class="small"><strong style="font-size:.92rem">NEXT ASSESSMENT / EXAM</strong></span>
+        <strong id="heroCountdown">Set up planner</strong>
+        <span id="heroExam" class="small">Choose your subjects below</span>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Planner sections">
+      <button class="tab active" data-tab="setup">Setup & Save</button>
+      <button class="tab" data-tab="plan">Plan</button>
+      <button class="tab" data-tab="today">Today</button>
+      <button class="tab" data-tab="exams">Exams</button>
+      <button class="tab" data-tab="breaks">Brain Break</button>
+      <button class="tab" data-tab="progress">Progress</button>
+    </nav>
+
+    <section id="today" class="panel">
+      <div id="gentleMessage" class="callout positive"></div>
+      <div class="grid two" style="margin-top:16px">
+        <div class="card">
+          <h2>Today's study plan</h2>
+          <p class="muted small">Today follows the work you committed in Plan. If you still have study time available, the planner offers extra 20-minute suggestions.</p>
+          <div class="callout" style="margin-bottom:12px">
+            <strong id="todayAvailable">0 min available</strong><br>
+            <span class="small" id="todayAllocationStatus">Your planned work will appear below.</span>
+          </div>
+          <div id="todaySessions"></div>
+          <div id="todaySuggestions" style="margin-top:14px"></div>
+          <div id="emptyToday" class="callout warning hidden">Complete Setup & Save first so I can build today's study plan.</div>
+        </div>
+        <div class="card">
+          <h2>Your exam countdown</h2>
+          <div id="examStripToday" class="exam-strip"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Study smarter today</h3>
+        <p id="strategyHint" class="muted"></p>
+        <div class="btnrow">
+          <button class="btn secondary" data-open-tab="breaks">Take a brain break</button>
+          <button class="btn secondary" data-open-tab="progress">See my progress</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="plan" class="panel">
+      <div class="card">
+        <div class="calendar-toolbar">
+          <div>
+            <h2 style="margin-bottom:4px">Plan ahead</h2>
+            <p class="muted small" style="margin:0">See the shape of your week or month, then add or adjust specific tasks.</p>
+          </div>
+          <div class="view-toggle" aria-label="Calendar view">
+            <button type="button" data-calendar-view="week" class="active">Week</button>
+            <button type="button" data-calendar-view="month">Month</button>
+            <button type="button" data-calendar-view="list">List</button>
+          </div>
+        </div>
+
+        <div class="calendar-nav" style="margin-top:14px">
+          <button id="calendarPrev" type="button">←</button>
+          <button id="calendarToday" type="button">Today</button>
+          <button id="calendarNext" type="button">→</button>
+          <strong id="calendarTitle" style="margin-left:4px"></strong>
+        </div>
+
+        <div id="calendarSummary" class="calendar-summary"></div>
+
+        <div class="legend">
+          <span class="legend-sample"><span class="legend-box"></span>Planned / committed</span>
+          <span class="legend-sample"><span class="legend-box suggested"></span>Suggested</span>
+        </div>
+
+        <div id="calendarView" style="margin-top:10px"></div>
+        <div id="monthMobileNotice" class="callout warning hidden">Month view is condensed on small screens. Switch to Week or List for full task detail.</div>
+        <div id="calendarDayDetail" class="day-detail hidden"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="planner-builder-grid">
+          <div>
+            <h2>Add planned work</h2>
+            <p class="muted small">Build a focused study block by choosing the subject, purpose and cognitive strategy. Normal sessions default to 20 minutes; use Bulk study when a longer single-subject session is genuinely useful.</p>
+
+            <div class="field" style="max-width:220px;margin-bottom:14px">
+              <label for="planDate">Date</label>
+              <input id="planDate" type="date">
+            </div>
+
+            <div class="choice-title">1. Choose a subject</div>
+            <div id="planSubjectChoices" class="choice-grid"></div>
+
+            <div class="choice-title" style="margin-top:16px">2. Choose what you are doing</div>
+            <div id="planPurposeChoices" class="choice-grid"></div>
+
+            <div class="choice-title" style="margin-top:16px">3. Choose how you will study</div>
+            <div id="planTechniqueChoices" class="choice-grid"></div>
+
+            <div class="builder-controls">
+              <div class="field">
+                <label for="planMinutes">Study time</label>
+                <select id="planMinutes">
+                  <option value="20" selected>20 min</option>
+                  <option value="40">40 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min</option>
+                </select>
+              </div>
+              <div>
+                <label>Session style</label>
+                <button id="bulkStudyToggle" class="bulk-toggle" type="button" style="width:100%;margin-top:5px">
+                  <strong>Normal study</strong><br>
+                  <span class="small muted">20-minute blocks</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:14px">
+              <label for="planTask">What will you do?</label>
+              <input id="planTask" type="text" placeholder="e.g. Retrieval questions on equilibrium">
+            </div>
+
+            <div id="sessionPreview" class="session-preview"></div>
+
+            <div class="btnrow" style="margin-top:12px">
+              <button id="addPlannedTask" class="btn good" type="button">Add 20-minute block</button>
+              <button id="clearBuilder" class="btn secondary" type="button">Clear</button>
+            </div>
+            <div id="builderGuidance" class="builder-note"></div>
+          </div>
+
+          <div>
+            <h2>Planning balance</h2>
+            <p class="muted small">These update as you add work in the visible calendar period.</p>
+
+            <h3>Time by subject</h3>
+            <div id="miniSubjectChart" class="mini-chart"></div>
+
+            <h3 style="margin-top:18px">Study techniques</h3>
+            <div id="miniTechniqueChart" class="mini-chart"></div>
+
+            <div id="techniqueCoverageNote"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="exams" class="panel">
+      <div class="card">
+        <h2>HSC exam countdown</h2>
+        <p class="muted small">2026 written exam dates are based on the published NESA timetable. Always check your personalised Students Online timetable.</p>
+        <div id="examStripAll" class="exam-strip"></div>
+      </div>
+    </section>
+
+    <section id="progress" class="panel">
+      <div class="card" style="margin-bottom:16px">
+        <div class="btnrow" style="justify-content:space-between">
+          <div>
+            <h2 style="margin-bottom:4px">Progress view</h2>
+            <p class="muted small" style="margin:0">Choose the period you want to review.</p>
+          </div>
+          <div class="field" style="min-width:180px">
+            <label for="progressPeriod">Show</label>
+            <select id="progressPeriod">
+              <option value="week" selected>This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h2>Study progress by subject</h2>
+          <p class="muted small">Completed study minutes for each selected subject. Use it to notice balance, not to compete with yourself.</p>
+          <canvas id="progressChart" width="760" height="300" aria-label="Study minutes by selected subject"></canvas>
+        </div>
+        <div class="card">
+          <h2 id="periodHeading">This Week</h2>
+          <div class="grid three">
+            <div class="callout"><strong id="weekMinutes">0 min</strong><br><span class="small">study completed</span></div>
+            <div class="callout"><strong id="weekSessions">0</strong><br><span class="small">sessions completed</span></div>
+            <div class="callout"><strong id="weekBreaks">0 min</strong><br><span class="small">brain breaks</span></div>
+          </div>
+          <h3 style="margin-top:18px">Strategies used</h3>
+          <div id="strategyBars" class="strategy-bars"></div>
+        </div>
+      </div>
+      <div class="grid two" style="margin-top:16px">
+        <div class="card">
+          <h2>Subjects revisited</h2>
+          <div id="subjectProgress"></div>
+        </div>
+        <div class="card">
+          <h2>Positive progress note</h2>
+          <div id="progressNote" class="callout positive"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="breaks" class="panel">
+      <div class="grid two">
+        <div class="card">
+          <h2>Brain Break</h2>
+          <p class="muted">Step away from study for a while. Choose what helped you clear your head.</p>
+          <div id="breakOptions" class="break-grid"></div>
+          <div class="grid two" style="margin-top:14px">
+            <div class="field">
+              <label for="breakMinutes">How long?</label>
+              <select id="breakMinutes">
+                <option value="5">5 minutes</option>
+                <option value="10" selected>10 minutes</option>
+                <option value="20">20 minutes</option>
+                <option value="30">30+ minutes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="breakFeeling">How do you feel now? <span class="muted small">(optional)</span></label>
+              <select id="breakFeeling">
+                <option value="">Skip this</option>
+                <option value="1">😣 Still overloaded</option>
+                <option value="2">😐 A bit clearer</option>
+                <option value="3">🙂 Ready to continue</option>
+              </select>
+            </div>
+          </div>
+          <button id="saveBreak" class="btn good" style="margin-top:14px">Record brain break</button>
+        </div>
+        <div class="card">
+          <h2>Recent brain breaks</h2>
+          <div id="breakHistory"></div>
+          <div id="breakSummary" class="callout positive" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="panel active">
+      <div class="grid">
+        <div class="card">
+          <h2>Personalise your planner</h2>
+          <div class="grid two">
+            <div>
+              <div class="field">
+                <label for="profileName">Your name or nickname</label>
+                <input id="profileName" type="text" placeholder="e.g. Alex">
+              </div>
+              <div style="margin-top:14px">
+                <label>Choose an avatar</label>
+                <div id="avatarChoices" class="avatar-grid" style="margin-top:8px"></div>
+              </div>
+              <div style="margin-top:14px">
+                <label for="avatarUpload">Or upload an image</label>
+                <input id="avatarUpload" type="file" accept="image/*" style="margin-top:8px">
+                <p class="muted small">The image is resized and saved locally in your planner data.</p>
+              </div>
+            </div>
+            <div>
+              <label>Colour scheme</label>
+              <div id="themeChoices" class="theme-grid" style="margin-top:8px"></div>
+              <p class="muted small" style="margin-top:10px">Urgency warnings stay green → orange → red regardless of theme.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>1. Choose your HSC subjects</h2>
+          <div class="field" style="margin-bottom:10px">
+            <label for="subjectSearch">Find a subject</label>
+            <input id="subjectSearch" type="text" placeholder="e.g. Chemistry">
+          </div>
+          <div id="subjectList" class="subject-list"></div>
+        </div>
+
+        <div class="card">
+          <h2>2. Add in-school assessments</h2>
+          <p class="muted small">Add upcoming school assessment tasks so the planner can account for deadlines before the HSC examinations.</p>
+          <div class="grid two">
+            <div class="field">
+              <label for="assessmentSubject">Subject</label>
+              <select id="assessmentSubject"></select>
+            </div>
+            <div class="field">
+              <label for="assessmentName">Assessment task</label>
+              <input id="assessmentName" type="text" placeholder="e.g. Trial examination">
+            </div>
+            <div class="field">
+              <label for="customDate">Due / exam date</label>
+              <input id="customDate" type="date">
+            </div>
+            <div class="field">
+              <label for="customTime">Time</label>
+              <input id="customTime" type="time" value="09:00">
+            </div>
+          </div>
+          <button id="addAssessment" class="btn secondary" style="margin-top:12px">Add assessment</button>
+          <div id="assessmentList" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card">
+          <h2>3. Set your study time</h2>
+          <div class="grid two">
+            <div class="field">
+              <label for="weekdayMinutes">Weekday study time</label>
+              <select id="weekdayMinutes">
+                <option value="30">30 min</option><option value="60" selected>60 min</option>
+                <option value="90">90 min</option><option value="120">120 min</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="weekendMinutes">Weekend study time</label>
+              <select id="weekendMinutes">
+                <option value="60">60 min</option><option value="90">90 min</option>
+                <option value="120" selected>120 min</option><option value="180">180 min</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <label>Rest days</label>
+            <div id="restDays" class="btnrow" style="margin-top:8px"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>4. Save your planner</h2>
+          <p class="muted small">Your planner autosaves in this browser. Export a JSON backup if you want to move it to another device or keep a copy.</p>
+          <div class="btnrow">
+            <button id="saveSetup" class="btn good">Save & build plan</button>
+            <button id="exportJson" class="btn secondary">Export JSON</button>
+            <label class="btn secondary" for="importJson" style="display:inline-block">Import JSON</label>
+            <input id="importJson" class="hidden" type="file" accept=".json,application/json">
+            <button id="resetData" class="btn ghost">Reset planner</button>
+          </div>
+          <div id="saveStatus" class="callout positive hidden" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      HSC Study Planner v1.6.0 • 2026 written exam dates sourced from NESA/NSW Government. Students should always check their personalised timetable.<br>
+      Study suggestions use the six strategies popularised by The Learning Scientists: spaced practice, retrieval practice, elaboration, interleaving, concrete examples and dual coding. Students can also add and complete their own planned work using Week, Month and List calendar views.
+    </div>
+  </main>
+
+  <div id="studyTipModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="studyTipTitle">
+    <div class="tip-modal">
+      <div class="tip-icon">🧠</div>
+      <div class="strategy" id="studyTipStrategy">Study tip</div>
+      <h2 id="studyTipTitle">A quick study tip</h2>
+      <p id="studyTipText" class="muted"></p>
+      <div class="btnrow" style="justify-content:flex-end;margin-top:16px">
+        <button id="closeStudyTip" class="btn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const VERSION = "1.6.0";
+const STORAGE_KEY = "hscStudyPlanner_v1";
+
+const STRATEGIES = {
+  retrieval: {
+    name:"Retrieval practice",
+    hint:"Close your notes and bring the information to mind first. Check afterwards, not during.",
+    prompts:[
+      "Answer five questions from memory before checking your notes.",
+      "Write everything you can remember about this topic for five minutes, then check for gaps.",
+      "Create a mini quiz for yourself and answer it without notes."
+    ]
+  },
+  spacing: {
+    name:"Spaced practice",
+    hint:"Return to material after some time has passed rather than doing it all at once.",
+    prompts:[
+      "Revisit a topic you studied several days ago and retrieve the key ideas.",
+      "Return to an older topic for a short refresh before moving to something newer.",
+      "Use this session to strengthen material you have not seen recently."
+    ]
+  },
+  elaboration: {
+    name:"Elaboration",
+    hint:"Ask how and why. Explain ideas in your own words and connect them to what you already know.",
+    prompts:[
+      "Explain why this idea works, then connect it with another part of the course.",
+      "Teach the concept aloud as if you were explaining it to a classmate.",
+      "For each key idea, ask 'how?' and 'why?' and answer in your own words."
+    ]
+  },
+  interleaving: {
+    name:"Interleaving",
+    hint:"Mix related problem types or topics so you practise choosing the right approach.",
+    prompts:[
+      "Complete a mixed set of questions from at least three different topics.",
+      "Alternate between two related topics rather than doing one block of each.",
+      "Mix question types and identify which method is needed before solving each one."
+    ]
+  },
+  examples: {
+    name:"Concrete examples",
+    hint:"Connect abstract ideas to specific examples, then check that the example really fits.",
+    prompts:[
+      "Find or create two concrete examples of the key idea and explain why each fits.",
+      "Connect an abstract rule to a real case, experiment, text or problem.",
+      "Compare one example and one non-example of the concept."
+    ]
+  },
+  dual: {
+    name:"Dual coding",
+    hint:"Combine words with useful visuals such as diagrams, timelines, models or flow charts.",
+    prompts:[
+      "Turn the topic into a labelled diagram or flow chart from memory.",
+      "Sketch a visual representation, then add only the words needed to explain it.",
+      "Convert your notes into a diagram and use it to explain the idea aloud."
+    ]
+  }
+};
+
+const SCIENCE_RESOURCES = {
+  "Biology":[
+    {label:"SciSims Biology tools", url:"BioSims.html"},
+    {label:"Use a SciSim to visualise a process, then retrieve it from memory.", url:"BioSims.html"}
+  ],
+  "Chemistry":[
+    {label:"SciSims Chemistry tools", url:"ChemSims.html"},
+    {label:"Try a chemistry simulation, predict first, then explain what happened.", url:"ChemSims.html"}
+  ],
+  "Physics":[
+    {label:"SciSims Physics tools", url:"PhysicsSims.html"},
+    {label:"Use a physics simulation and compare your prediction with the model.", url:"PhysicsSims.html"}
+  ],
+  "Investigating Science":[
+    {label:"Stage 6 / Investigating Science tools", url:"Stage6index.html"},
+    {label:"Practise Working Scientifically with a SciSims tool.", url:"Stage6index.html"}
+  ],
+  "Science Extension":[
+    {label:"Stage 6 Science tools", url:"Stage6index.html"}
+  ],
+  "Earth and Environmental Science":[
+    {label:"SciSims Earth & Environmental tools", url:"EarthSims.html"}
+  ]
+};
+
+// Common 2026 written examinations. Multiple papers are stored separately.
+const EXAMS = [
+  {id:"eng-adv-p1",subject:"English Advanced",paper:"Paper 1 – Texts and Human Experiences",date:"2026-10-13",time:"09:50"},
+  {id:"eng-adv-p2",subject:"English Advanced",paper:"Paper 2 – Modules",date:"2026-10-14",time:"09:25"},
+  {id:"eng-std-p1",subject:"English Standard",paper:"Paper 1 – Texts and Human Experiences",date:"2026-10-13",time:"09:50"},
+  {id:"eng-std-p2",subject:"English Standard",paper:"Paper 2 – Modules",date:"2026-10-14",time:"09:25"},
+  {id:"eng-studies",subject:"English Studies",paper:"Written examination",date:"2026-10-13",time:"09:50"},
+  {id:"eald-p1",subject:"English EAL/D",paper:"Paper 1 – Module A and Focus on Writing",date:"2026-10-13",time:"09:50"},
+  {id:"eald-p2",subject:"English EAL/D",paper:"Paper 2 – Module B and Module C",date:"2026-10-14",time:"09:25"},
+  {id:"earth",subject:"Earth and Environmental Science",paper:"Written examination",date:"2026-10-15",time:"09:25"},
+  {id:"modern",subject:"Modern History",paper:"Written examination",date:"2026-10-16",time:"09:25"},
+  {id:"math-adv",subject:"Mathematics Advanced",paper:"Written examination",date:"2026-10-19",time:"09:20"},
+  {id:"math-s1",subject:"Mathematics Standard 1",paper:"Written examination",date:"2026-10-19",time:"09:20"},
+  {id:"math-s2",subject:"Mathematics Standard 2",paper:"Written examination",date:"2026-10-19",time:"09:20"},
+  {id:"math-e2",subject:"Mathematics Extension 2",paper:"Written examination",date:"2026-10-19",time:"13:50"},
+  {id:"eng-studies2",subject:"Engineering Studies",paper:"Written examination",date:"2026-10-20",time:"09:25"},
+  {id:"biology",subject:"Biology",paper:"Written examination",date:"2026-10-21",time:"09:25"},
+  {id:"sor1",subject:"Studies of Religion I",paper:"Written examination",date:"2026-10-22",time:"09:25"},
+  {id:"sor2",subject:"Studies of Religion II",paper:"Written examination",date:"2026-10-22",time:"09:25"},
+  {id:"ancient",subject:"Ancient History",paper:"Written examination",date:"2026-10-23",time:"09:25"},
+  {id:"math-e1",subject:"Mathematics Extension 1",paper:"Written examination",date:"2026-10-23",time:"13:50"},
+  {id:"business",subject:"Business Studies",paper:"Written examination",date:"2026-10-26",time:"09:25"},
+  {id:"science-ext",subject:"Science Extension",paper:"Written examination",date:"2026-10-26",time:"13:50"},
+  {id:"software",subject:"Software Engineering",paper:"Written examination",date:"2026-10-27",time:"09:50"},
+  {id:"economics",subject:"Economics",paper:"Written examination",date:"2026-10-27",time:"13:55"},
+  {id:"hms",subject:"Health and Movement Science",paper:"Written examination",date:"2026-10-28",time:"09:20"},
+  {id:"eng-ext1",subject:"English Extension 1",paper:"Written examination",date:"2026-10-28",time:"13:50"},
+  {id:"chemistry",subject:"Chemistry",paper:"Written examination",date:"2026-10-30",time:"09:25"},
+  {id:"legal",subject:"Legal Studies",paper:"Written examination",date:"2026-11-02",time:"09:25"},
+  {id:"geography",subject:"Geography",paper:"Written examination",date:"2026-11-02",time:"13:50"},
+  {id:"cafs",subject:"Community and Family Studies",paper:"Written examination",date:"2026-11-03",time:"09:25"},
+  {id:"invsci",subject:"Investigating Science",paper:"Written examination",date:"2026-11-03",time:"13:55"},
+  {id:"foodtech",subject:"Food Technology",paper:"Written examination",date:"2026-11-04",time:"09:25"},
+  {id:"industrial",subject:"Industrial Technology",paper:"Written examination",date:"2026-11-04",time:"13:55"},
+  {id:"physics",subject:"Physics",paper:"Written examination",date:"2026-11-05",time:"09:25"}
+];
+
+const BREAK_TYPES = [
+  ["walk","🚶","Walk"],["exercise","🏃","Exercise"],["outside","🌳","Outside"],
+  ["music","🎵","Music"],["creative","🎨","Creative"],["people","👥","Friends/family"],
+  ["pet","🐕","Pet time"],["quiet","🧘","Quiet time"],["rest","😴","Rest"],
+  ["reading","📖","Reading for fun"],["water","💧","Water/snack"],["other","✨","Other"]
+];
+
+const AVATARS = ["🧠","🔬","🧪","⚛️","🧬","🚀","🌏","📚"];
+
+const THEMES = {
+  ocean:{name:"Ocean Blue",main:"#17365d",accent:"#246aa5",soft:"#eaf5fb"},
+  forest:{name:"Forest",main:"#244b36",accent:"#3b7f5a",soft:"#e8f4ec"},
+  purple:{name:"Purple",main:"#4b326b",accent:"#7650a4",soft:"#f0eafd"},
+  teal:{name:"Teal",main:"#145b63",accent:"#21818d",soft:"#e6f5f6"},
+  rose:{name:"Rose",main:"#6b3948",accent:"#a55570",soft:"#f9eaf0"},
+  sunset:{name:"Sunset",main:"#6a3c24",accent:"#b96b38",soft:"#fbefe5"},
+  dark:{name:"Dark",main:"#232936",accent:"#475569",soft:"#eef1f4"},
+  contrast:{name:"High Contrast",main:"#111111",accent:"#005fcc",soft:"#eef5ff"}
+};
+
+const daysShort = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const subjectNames = [...new Set(EXAMS.map(e=>e.subject))].sort((a,b)=>a.localeCompare(b));
+
+let state = loadState() || {
+  version: VERSION,
+  settings:{weekdayMinutes:60,weekendMinutes:120,restDays:[]},
+  subjects:{},
+  customExams:[],
+  studySessions:[],
+  brainBreaks:[],
+  dailyAllocations:{},
+  profile:{name:"",avatarType:"emoji",avatarValue:"🧠",theme:"ocean"},
+  ui:{lastTipDate:""},
+  plannedTasks:[],
+  calendar:{view:"week",anchorDate:null,selectedDate:null},
+  builder:{subject:"",purpose:"study",strategy:"retrieval",bulk:false}
+};
+state.customExams = state.customExams || [];
+state.studySessions = state.studySessions || [];
+state.brainBreaks = state.brainBreaks || [];
+state.dailyAllocations = state.dailyAllocations || {};
+state.profile = state.profile || {name:"",avatarType:"emoji",avatarValue:"🧠",theme:"ocean"};
+state.ui = state.ui || {lastTipDate:""};
+state.plannedTasks = state.plannedTasks || [];
+state.calendar = state.calendar || {view:"week",anchorDate:null,selectedDate:null};
+state.builder = state.builder || {subject:"",purpose:"study",strategy:"retrieval",bulk:false};
+let selectedBreak = "walk";
+
+function applyTheme(){
+  const theme=THEMES[state.profile.theme] || THEMES.ocean;
+  const root=document.documentElement;
+  root.style.setProperty("--theme-main",theme.main);
+  root.style.setProperty("--theme-accent",theme.accent);
+  root.style.setProperty("--theme-soft",theme.soft);
+  root.style.setProperty("--navy",theme.main);
+  root.style.setProperty("--blue",theme.accent);
+  root.style.setProperty("--sky",theme.soft);
+}
+function renderProfile(){
+  applyTheme();
+  const name=(state.profile.name||"").trim() || "My Planner";
+  document.getElementById("topName").textContent=name;
+  const top=document.getElementById("topAvatar");
+  top.innerHTML="";
+  if(state.profile.avatarType==="image" && state.profile.avatarValue){
+    const img=document.createElement("img");
+    img.src=state.profile.avatarValue;img.alt="Student avatar";
+    img.style.width="100%";img.style.height="100%";img.style.objectFit="cover";
+    top.appendChild(img);
+  } else {
+    top.textContent=state.profile.avatarValue || "🧠";
+  }
+}
+function saveState(){
+  state.version=VERSION;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function loadState(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY));}catch(e){return null}
+}
+function formatDate(d){
+  return new Intl.DateTimeFormat("en-AU",{day:"2-digit",month:"2-digit",year:"numeric"}).format(d);
+}
+function formatDateShort(d){
+  return new Intl.DateTimeFormat("en-AU",{weekday:"short",day:"numeric",month:"short"}).format(d);
+}
+function examDateTime(e){
+  return new Date(`${e.date}T${e.time || "09:00"}:00`);
+}
+function selectedExams(){
+  const base = EXAMS.filter(e=>state.subjects[e.subject]?.selected);
+  return [...base,...state.customExams.filter(e=>e.selected!==false)].sort((a,b)=>examDateTime(a)-examDateTime(b));
+}
+function upcomingExams(from=new Date()){
+  return selectedExams().filter(e=>examDateTime(e)>from);
+}
+function daysUntil(e, from=new Date()){
+  const a=new Date(from.getFullYear(),from.getMonth(),from.getDate());
+  const d=examDateTime(e);
+  const b=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  return Math.ceil((b-a)/86400000);
+}
+function subjectConfidence(subject){
+  return state.subjects[subject]?.confidence || 2; // 1 needs work, 2 ok, 3 confident
+}
+function isRestDay(date){
+  return state.settings.restDays.includes(date.getDay());
+}
+function availableMinutes(date){
+  if(isRestDay(date)) return 0;
+  const w=date.getDay();
+  return (w===0||w===6)?Number(state.settings.weekendMinutes):Number(state.settings.weekdayMinutes);
+}
+function recentMinutes(subject, days=7, ref=new Date()){
+  const cutoff=new Date(ref); cutoff.setDate(cutoff.getDate()-days);
+  return state.studySessions.filter(s=>s.subject===subject && s.completed && new Date(s.date)>=cutoff)
+    .reduce((a,s)=>a+Number(s.completedMinutes||0),0);
+}
+function lastStudiedDays(subject, ref=new Date()){
+  const items=state.studySessions.filter(s=>s.subject===subject && s.completed).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!items.length) return 99;
+  return Math.max(0,Math.floor((ref-new Date(items[0].date))/86400000));
+}
+function chooseStrategy(subject, date, index){
+  const order=["retrieval","spacing","elaboration","interleaving","examples","dual"];
+  const offset=(date.getDate()+date.getMonth())%order.length;
+  return order[(offset+index)%order.length];
+}
+function nextExamForSubject(subject,date){
+  return selectedExams().filter(e=>e.subject===subject && examDateTime(e)>date).sort((a,b)=>examDateTime(a)-examDateTime(b))[0];
+}
+function weightedSubjects(date){
+  const subjects=Object.keys(state.subjects).filter(s=>state.subjects[s].selected && nextExamForSubject(s,date));
+  return subjects.map(subject=>{
+    const e=nextExamForSubject(subject,date);
+    const days=Math.max(1,daysUntil(e,date));
+    const confidence=subjectConfidence(subject);
+    const confidenceWeight={1:1.65,2:1.2,3:.85}[confidence];
+    const proximity=1/Math.sqrt(days);
+    const lag=Math.min(1.4,1+(lastStudiedDays(subject,date)*.05));
+    const recentPenalty=1/(1+recentMinutes(subject,4,date)/80);
+    return {subject,score:confidenceWeight*proximity*lag*recentPenalty,exam:e};
+  }).sort((a,b)=>b.score-a.score);
+}
+function generateDayPlan(date,targetMinutes=null){
+  const total=targetMinutes===null ? availableMinutes(date) : Math.max(0,Number(targetMinutes||0));
+  const blockCount=Math.floor(total/20);
+  if(blockCount<=0) return [];
+
+  const candidates=weightedSubjects(date);
+  if(!candidates.length) return [];
+
+  const plans=[];
+  const usable=candidates.slice(0,Math.min(candidates.length,3));
+
+  for(let i=0;i<blockCount;i++){
+    let chosen;
+    if(usable.length===1){
+      chosen=usable[0];
+    } else if(i===0){
+      chosen=usable[0];
+    } else if(i===1){
+      chosen=usable[1];
+    } else {
+      chosen=usable[i%usable.length];
+    }
+
+    const strategy=chooseStrategy(chosen.subject,date,i+date.getDate());
+    const prompts=STRATEGIES[strategy].prompts;
+    plans.push({
+      id:`${localDateKey(date)}-${chosen.subject}-${i}`,
+      date:localDateKey(date),
+      subject:chosen.subject,
+      minutes:20,
+      strategy,
+      prompt:prompts[(date.getDate()+i)%prompts.length],
+      resource:SCIENCE_RESOURCES[chosen.subject]?.[(date.getDate()+i)%SCIENCE_RESOURCES[chosen.subject].length] || null
+    });
+  }
+  return plans;
+}
+function sessionCompleted(id){
+  return state.studySessions.find(s=>s.planId===id && s.completed);
+}
+function markSession(plan){
+  const existing=state.studySessions.find(s=>s.planId===plan.id);
+  if(existing){existing.completed=true;existing.completedMinutes=plan.minutes;}
+  else state.studySessions.push({
+    planId:plan.id,date:plan.date,subject:plan.subject,strategy:plan.strategy,
+    plannedMinutes:plan.minutes,completedMinutes:plan.minutes,completed:true
+  });
+  saveState(); renderAll();
+}
+function renderTabs(){
+  document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>openTab(btn.dataset.tab)));
+  document.querySelectorAll("[data-open-tab]").forEach(btn=>btn.addEventListener("click",()=>openTab(btn.dataset.openTab)));
+}
+function openTab(id){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===id));
+  if(id==="progress") setTimeout(drawProgressChart,50);
+}
+function renderSetup(){
+  const profileName=document.getElementById("profileName");
+  if(profileName) profileName.value=state.profile.name||"";
+
+  const avatarBox=document.getElementById("avatarChoices");
+  if(avatarBox){
+    avatarBox.innerHTML="";
+    AVATARS.forEach(av=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="avatar-choice"+(state.profile.avatarType==="emoji"&&state.profile.avatarValue===av?" selected":"");
+      b.textContent=av;
+      b.addEventListener("click",()=>{
+        state.profile.avatarType="emoji";state.profile.avatarValue=av;
+        saveState();renderSetup();renderProfile();
+      });
+      avatarBox.appendChild(b);
+    });
+  }
+
+  const themeBox=document.getElementById("themeChoices");
+  if(themeBox){
+    themeBox.innerHTML="";
+    Object.entries(THEMES).forEach(([id,t])=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="theme-choice"+(state.profile.theme===id?" selected":"");
+      b.innerHTML=`<div class="theme-swatch" style="background:linear-gradient(90deg,${t.main},${t.accent})"></div><strong>${t.name}</strong>`;
+      b.addEventListener("click",()=>{
+        state.profile.theme=id;saveState();applyTheme();renderSetup();renderAll();
+      });
+      themeBox.appendChild(b);
+    });
+  }
+
+  const search=document.getElementById("subjectSearch");
+  const q=(search?.value||"").toLowerCase();
+  const list=document.getElementById("subjectList");
+  list.innerHTML="";
+  subjectNames.filter(s=>s.toLowerCase().includes(q)).forEach(subject=>{
+    if(!state.subjects[subject]) state.subjects[subject]={selected:false,confidence:2};
+    const row=document.createElement("div"); row.className="subject-row";
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=!!state.subjects[subject].selected;
+    cb.addEventListener("change",()=>{
+      state.subjects[subject].selected=cb.checked;
+      saveState();renderSetup();renderAll();
+    });
+    const info=document.createElement("div");
+    const papers=EXAMS.filter(e=>e.subject===subject);
+    info.innerHTML=`<strong>${subject}</strong><div class="small muted">${papers.map(e=>`${formatDate(examDateTime(e))}${papers.length>1?` · ${e.paper}`:""}`).join("<br>")}</div>`;
+    const conf=document.createElement("div"); conf.className="confidence";
+    [[1,"🔴"],[2,"🟡"],[3,"🟢"]].forEach(([v,label])=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=label; b.title=v===1?"Needs work":v===2?"OK":"Confident";
+      b.classList.toggle("selected",state.subjects[subject].confidence===v);
+      b.addEventListener("click",()=>{state.subjects[subject].confidence=v;saveState();renderSetup();});
+      conf.appendChild(b);
+    });
+    row.append(cb,info,conf); list.appendChild(row);
+  });
+
+  const selectedSubjects=Object.keys(state.subjects).filter(s=>state.subjects[s].selected);
+
+  const assessmentSelect=document.getElementById("assessmentSubject");
+  if(assessmentSelect){
+    assessmentSelect.innerHTML=selectedSubjects.length
+      ? selectedSubjects.map(s=>`<option value="${s}">${s}</option>`).join("")
+      : `<option value="">Choose HSC subjects above first</option>`;
+  }
+
+  const assessmentList=document.getElementById("assessmentList");
+  if(assessmentList){
+    assessmentList.innerHTML="";
+    if(!state.customExams.length) assessmentList.innerHTML='<span class="muted small">No in-school assessments added yet.</span>';
+    [...state.customExams].sort((a,b)=>examDateTime(a)-examDateTime(b)).forEach(e=>{
+      const row=document.createElement("div");row.className="history-item";
+      row.innerHTML=`<span><strong>${e.subject}</strong> · ${e.paper}<br><span class="small muted">${formatDate(examDateTime(e))} · ${e.time}</span></span>`;
+      const del=document.createElement("button");del.className="btn ghost";del.type="button";del.textContent="Remove";
+      del.addEventListener("click",()=>{state.customExams=state.customExams.filter(x=>x.id!==e.id);saveState();renderSetup();renderAll();});
+      row.appendChild(del);assessmentList.appendChild(row);
+    });
+  }
+
+  document.getElementById("weekdayMinutes").value=state.settings.weekdayMinutes;
+  document.getElementById("weekendMinutes").value=state.settings.weekendMinutes;
+  renderRestDays();
+}
+function renderRestDays(){
+  const el=document.getElementById("restDays"); el.innerHTML="";
+  [1,2,3,4,5,6,0].forEach(day=>{
+    const b=document.createElement("button");b.type="button";b.className="btn secondary";
+    b.textContent=daysShort[day];
+    if(state.settings.restDays.includes(day)){b.style.background="var(--navy)";b.style.color="#fff";}
+    b.addEventListener("click",()=>{
+      const i=state.settings.restDays.indexOf(day);
+      if(i>=0) state.settings.restDays.splice(i,1); else state.settings.restDays.push(day);
+      saveState();renderRestDays();renderAll();
+    });
+    el.appendChild(b);
+  });
+}
+function renderExamCards(targetId,limit){
+  const el=document.getElementById(targetId);el.innerHTML="";
+  const now=new Date();const exams=selectedExams();
+  if(!exams.length){el.innerHTML='<div class="muted">No exams selected yet.</div>';return;}
+  const next=upcomingExams(now)[0];
+  exams.slice(0,limit||999).forEach(e=>{
+    const days=daysUntil(e,now); const done=examDateTime(e)<now;
+    const card=document.createElement("div");card.className="exam-card"+(next?.id===e.id?" next":"")+(done?" done":"");
+    const countdown=done?"✓":days===0?"TODAY":days;
+    const label=done?"Complete":days===0?"Exam day":"days";
+    const badge=e.type==="school-assessment"?'<span class="assessment-badge">IN-SCHOOL ASSESSMENT</span>':'<span class="hsc-badge">HSC EXAM</span>';
+    card.innerHTML=`${badge}<div class="small muted">${e.subject}</div><div class="countdown">${countdown}</div><strong>${label}</strong><div class="small" style="margin-top:8px">${e.paper}</div><div class="small muted">${formatDate(examDateTime(e))} · ${e.time}</div>`;
+    el.appendChild(card);
+  });
+}
+function renderHero(){
+  const e=upcomingExams()[0];
+  const a=document.getElementById("heroCountdown"),b=document.getElementById("heroExam");
+  const badge=document.querySelector(".hero-badge");
+  if(!e){
+    a.textContent=selectedExams().length?"All done!":"Set up planner";
+    b.textContent=selectedExams().length?"Written exams complete":"Choose your subjects below";
+    badge.style.background="rgba(255,255,255,.12)";
+    badge.style.boxShadow="none";
+    return;
+  }
+  const d=daysUntil(e);
+  a.textContent=d===0?"Today":`${d} day${d===1?"":"s"}`;
+  b.textContent=`${e.subject} · ${formatDate(examDateTime(e))}`;
+
+  let hue;
+  if(d<=7) hue=0;
+  else if(d<=30) hue=((d-7)/23)*30;
+  else hue=30+(Math.min(d,60)-30)/30*90;
+  hue=Math.max(0,Math.min(120,hue));
+  badge.style.background=`hsl(${hue} 58% 36% / .96)`;
+  badge.style.boxShadow=`0 10px 30px hsl(${hue} 60% 25% / .28)`;
+}
+function gentleMessage(){
+  const today=new Date();
+  const completedToday=state.studySessions.filter(s=>s.completed && s.date===today.toISOString().slice(0,10));
+  const mins=completedToday.reduce((a,s)=>a+Number(s.completedMinutes||0),0);
+  const e=upcomingExams(today)[0];
+  if(!selectedExams().length) return "Start by choosing your subjects. A few minutes setting up now will make the rest much easier.";
+  if(mins>0) return `Nice work — ${mins} minutes completed today. Small, focused sessions add up.`;
+  if(isRestDay(today)) return "Today is one of your rest days. Recovery is part of a sustainable study plan.";
+  if(e && daysUntil(e,today)<=7) return `${e.subject} is getting close. Today's plan gives your nearest exams a little more attention — one session at a time.`;
+  return "You do not need to do everything today. Complete the next useful session, then reassess.";
+}
+function selectedSubjectList(){
+  return Object.keys(state.subjects).filter(s=>state.subjects[s].selected);
+}
+function subjectColour(subject){
+  const palette=["#2f80ed","#27ae60","#9b51e0","#f2994a","#eb5757","#219653","#56ccf2","#bb6bd9","#6c5ce7","#00a8a8"];
+  const list=selectedSubjectList();
+  const idx=Math.max(0,list.indexOf(subject));
+  return palette[idx%palette.length];
+}
+function localDateKey(date){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,"0");
+  const d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function dateFromKey(key){
+  return new Date(key+"T12:00:00");
+}
+function startOfWeek(date){
+  const d=new Date(date);d.setHours(12,0,0,0);
+  const day=d.getDay();
+  const diff=(day===0?-6:1-day);
+  d.setDate(d.getDate()+diff);
+  return d;
+}
+function endOfWeek(date){
+  const d=startOfWeek(date);d.setDate(d.getDate()+6);return d;
+}
+function formatRangeTitle(start,end){
+  const sameMonth=start.getMonth()===end.getMonth()&&start.getFullYear()===end.getFullYear();
+  if(sameMonth){
+    return `${start.getDate()}–${end.getDate()} ${new Intl.DateTimeFormat("en-AU",{month:"long",year:"numeric"}).format(start)}`;
+  }
+  return `${formatDateShort(start)} – ${formatDateShort(end)}`;
+}
+function calendarAnchor(){
+  if(!state.calendar.anchorDate) return new Date();
+  return dateFromKey(state.calendar.anchorDate);
+}
+function setCalendarAnchor(date){
+  state.calendar.anchorDate=localDateKey(date);
+  saveState();
+}
+function calendarItemsForDate(date){
+  const key=localDateKey(date);
+  const committed=plannedTasksForDate(key);
+  const committedMinutes=committed.reduce((a,t)=>a+Number(t.minutes||0),0);
+  const remaining=Math.max(0,availableMinutes(date)-committedMinutes);
+
+  const suggestions=generateDayPlan(date,remaining).map(s=>({
+    id:s.id,
+    date:key,
+    subject:s.subject,
+    minutes:s.minutes,
+    type:"study",
+    title:s.subject,
+    detail:s.prompt,
+    prompt:s.prompt,
+    completed:false,
+    source:"suggestion",
+    strategy:s.strategy,
+    suggested:true
+  }));
+
+  return [...committed.map(t=>({...t,suggested:false})),...suggestions];
+}
+function renderCalendarTask(item,compact=false){
+  const div=document.createElement("div");
+  div.className="calendar-task"+(item.suggested?" suggested":"")+(item.completed?" done":"");
+  div.style.setProperty("--subject-colour",subjectColour(item.subject));
+
+  let title;
+  if(item.suggested || item.source==="suggestion"){
+    title=item.subject;
+  } else if(item.source==="student-plan" && item.type==="study" && item.title?.startsWith(STRATEGIES[item.strategy]?.name||"__")){
+    title=item.subject;
+  } else {
+    title=item.title || item.subject;
+  }
+
+  const technique=STRATEGIES[item.strategy]?.name;
+  const purpose=taskTypeLabel(item.type);
+  const metaParts=[`${item.minutes} min`];
+  if(technique) metaParts.push(technique);
+  if(!compact && item.type && item.type!=="study") metaParts.push(purpose);
+
+  div.innerHTML=`<strong>${title}</strong><div class="meta">${metaParts.join(" · ")}</div>`;
+  return div;
+}
+function calendarPeriodDates(){
+  const anchor=calendarAnchor();
+  if(state.calendar.view==="month"){
+    const first=new Date(anchor.getFullYear(),anchor.getMonth(),1,12);
+    const start=startOfWeek(first);
+    const last=new Date(anchor.getFullYear(),anchor.getMonth()+1,0,12);
+    const end=endOfWeek(last);
+    const dates=[];for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1))dates.push(new Date(d));
+    return dates;
+  }
+  const start=startOfWeek(anchor);
+  const dates=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);dates.push(d);}
+  return dates;
+}
+function renderCalendarSummary(){
+  const el=document.getElementById("calendarSummary");if(!el)return;
+  const dates=calendarPeriodDates();
+  const start=dates[0],end=dates[dates.length-1];
+  const allItems=dates.flatMap(d=>calendarItemsForDate(d));
+  const committed=allItems.filter(x=>!x.suggested);
+  const suggestions=allItems.filter(x=>x.suggested);
+  const plannedMinutes=committed.reduce((a,x)=>a+Number(x.minutes||0),0);
+  const completedMinutes=committed.filter(x=>x.completed).reduce((a,x)=>a+Number(x.minutes||0),0);
+  const uniqueSubjects=new Set(committed.map(x=>x.subject).filter(Boolean)).size;
+  const suggestionMinutes=suggestions.reduce((a,x)=>a+Number(x.minutes||0),0);
+
+  el.innerHTML=`
+    <div class="calendar-stat"><span class="small muted">Planned</span><strong>${plannedMinutes} min</strong></div>
+    <div class="calendar-stat"><span class="small muted">Completed</span><strong>${completedMinutes} min</strong></div>
+    <div class="calendar-stat"><span class="small muted">Subjects</span><strong>${uniqueSubjects}</strong></div>
+    <div class="calendar-stat"><span class="small muted">Still suggested</span><strong>${suggestionMinutes} min</strong></div>
+  `;
+}
+function renderCalendar(){
+  const view=state.calendar.view||"week";
+  document.querySelectorAll("[data-calendar-view]").forEach(b=>b.classList.toggle("active",b.dataset.calendarView===view));
+  renderCalendarSummary();
+  const container=document.getElementById("calendarView");if(!container)return;
+  container.innerHTML="";
+  document.getElementById("calendarDayDetail").classList.add("hidden");
+
+  const anchor=calendarAnchor();
+
+  if(view==="week"){
+    const start=startOfWeek(anchor),end=endOfWeek(anchor);
+    document.getElementById("calendarTitle").textContent=formatRangeTitle(start,end);
+    const grid=document.createElement("div");grid.className="week-grid";
+    const todayKey=localDateKey(new Date());
+
+    for(let i=0;i<7;i++){
+      const d=new Date(start);d.setDate(start.getDate()+i);
+      const key=localDateKey(d);
+      const items=calendarItemsForDate(d);
+      const day=document.createElement("div");day.className="week-day"+(key===todayKey?" today":"");
+      const head=document.createElement("div");head.className="day-head";
+      head.innerHTML=`<div><div class="small muted">${new Intl.DateTimeFormat("en-AU",{weekday:"short"}).format(d)}</div><div class="day-number ${key===todayKey?"today":""}">${d.getDate()}</div></div><div class="small muted">${items.filter(x=>!x.suggested).reduce((a,x)=>a+Number(x.minutes||0),0)} min</div>`;
+      day.appendChild(head);
+
+      items.slice(0,4).forEach(item=>day.appendChild(renderCalendarTask(item,true)));
+      if(items.length>4){
+        const more=document.createElement("button");more.type="button";more.className="calendar-more";
+        more.textContent=`+${items.length-4} more`;
+        more.addEventListener("click",()=>showCalendarDayDetail(d));
+        day.appendChild(more);
+      }
+      day.addEventListener("dblclick",()=>showCalendarDayDetail(d));
+      grid.appendChild(day);
+    }
+    container.appendChild(grid);
+
+  } else if(view==="month"){
+    const first=new Date(anchor.getFullYear(),anchor.getMonth(),1,12);
+    document.getElementById("calendarTitle").textContent=new Intl.DateTimeFormat("en-AU",{month:"long",year:"numeric"}).format(first);
+
+    const grid=document.createElement("div");grid.className="month-grid";
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(x=>{
+      const h=document.createElement("div");h.className="month-head";h.textContent=x;grid.appendChild(h);
+    });
+    const dates=calendarPeriodDates();
+    const todayKey=localDateKey(new Date());
+
+    dates.forEach(d=>{
+      const key=localDateKey(d),items=calendarItemsForDate(d);
+      const cell=document.createElement("div");
+      cell.className="month-day"+(key===todayKey?" today":"")+(d.getMonth()!==first.getMonth()?" outside":"");
+      const committed=items.filter(x=>!x.suggested);
+      const minutes=committed.reduce((a,x)=>a+Number(x.minutes||0),0);
+      const subjects=[...new Set(items.map(x=>x.subject).filter(Boolean))];
+      cell.innerHTML=`<strong>${d.getDate()}</strong>
+        <div class="month-mini">${committed.length?`${committed.length} planned · ${minutes} min`:(items.length?`${items.length} suggested`:"")}</div>`;
+      const dots=document.createElement("div");dots.className="subject-dots";
+      subjects.slice(0,5).forEach(s=>{
+        const dot=document.createElement("span");dot.className="subject-dot";dot.style.background=subjectColour(s);dot.title=s;dots.appendChild(dot);
+      });
+      cell.appendChild(dots);
+      cell.addEventListener("click",()=>showCalendarDayDetail(d));
+      grid.appendChild(cell);
+    });
+    container.appendChild(grid);
+
+  } else {
+    const start=startOfWeek(anchor),end=endOfWeek(anchor);
+    document.getElementById("calendarTitle").textContent=formatRangeTitle(start,end);
+    const list=document.createElement("div");list.className="list-calendar grid";
+    for(let i=0;i<7;i++){
+      const d=new Date(start);d.setDate(start.getDate()+i);
+      const items=calendarItemsForDate(d);
+      const card=document.createElement("div");card.className="card plan-day"+(localDateKey(d)===localDateKey(new Date())?" today":"");
+      const committed=items.filter(x=>!x.suggested),suggested=items.filter(x=>x.suggested);
+      card.innerHTML=`<div class="day-summary"><strong>${formatDateShort(d)}</strong><span class="small muted">${committed.reduce((a,x)=>a+Number(x.minutes||0),0)} min committed</span></div>`;
+      if(committed.length){
+        const h=document.createElement("div");h.className="small muted";h.style.marginTop="10px";h.textContent="Planned";
+        card.appendChild(h);
+        committed.forEach(item=>card.appendChild(renderCalendarTask(item)));
+      }
+      if(suggested.length){
+        const h=document.createElement("div");h.className="small muted";h.style.marginTop="10px";h.textContent="Suggestions";
+        card.appendChild(h);
+        suggested.forEach(item=>card.appendChild(renderCalendarTask(item)));
+        const b=document.createElement("button");b.type="button";b.className="btn secondary";b.style.marginTop="10px";b.textContent="Add suggestions to plan";
+        b.addEventListener("click",()=>addSuggestionsToPlan(d,generateDayPlan(d)));
+        card.appendChild(b);
+      }
+      list.appendChild(card);
+    }
+    container.appendChild(list);
+  }
+  renderMiniPlanningCharts();
+}
+function showCalendarDayDetail(date){
+  const detail=document.getElementById("calendarDayDetail");
+  const items=calendarItemsForDate(date);
+  const suggestions=items.filter(x=>x.suggested);
+  const committed=items.filter(x=>!x.suggested);
+  detail.innerHTML=`<div class="day-summary"><div><h3 style="margin:0">${formatDateShort(date)}</h3><div class="small muted">${committed.reduce((a,x)=>a+Number(x.minutes||0),0)} min committed</div></div></div>`;
+
+  if(committed.length){
+    const h=document.createElement("div");h.className="small muted";h.style.marginTop="12px";h.textContent="Planned work";
+    detail.appendChild(h);
+    committed.forEach(task=>{
+      const row=document.createElement("div");row.className="planned-task"+(task.completed?" done":"");
+      const cb=document.createElement("input");cb.type="checkbox";cb.className="task-check";cb.checked=!!task.completed;
+      cb.addEventListener("change",()=>togglePlannedTask(task.id,cb.checked));
+      const info=document.createElement("div");
+      const displayTitle=task.source==="suggestion"?task.subject:(task.title||task.subject);
+      const detailText=task.detail||"";
+      info.innerHTML=`<div class="task-title"><strong>${displayTitle}</strong></div>
+        ${detailText?`<div class="small muted" style="margin-top:3px">${detailText}</div>`:""}
+        <div class="task-meta">
+          <span class="task-pill">${task.subject}</span>
+          <span class="task-pill">${task.minutes} min</span>
+          <span class="task-pill">${STRATEGIES[task.strategy]?.name||"Study"}</span>
+          <span class="task-pill task-custom">${taskTypeLabel(task.type)}</span>
+        </div>`;
+      const actions=document.createElement("div");actions.className="task-actions";
+      const del=document.createElement("button");del.type="button";del.className="btn ghost";del.textContent="Remove";
+      del.addEventListener("click",()=>deletePlannedTask(task.id));
+      actions.appendChild(del);
+      row.append(cb,info,actions);detail.appendChild(row);
+    });
+  }
+
+  if(suggestions.length){
+    const h=document.createElement("div");h.className="small muted";h.style.marginTop="12px";h.textContent="Suggested study";
+    detail.appendChild(h);
+    suggestions.forEach(item=>detail.appendChild(renderCalendarTask(item)));
+    const b=document.createElement("button");b.type="button";b.className="btn secondary";b.style.marginTop="10px";b.textContent="Add suggestions to plan";
+    b.addEventListener("click",()=>addSuggestionsToPlan(date,generateDayPlan(date)));
+    detail.appendChild(b);
+  }
+
+  detail.classList.remove("hidden");
+  detail.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function renderBuilder(){
+  const subjects=selectedSubjectList();
+  if(!state.builder.subject || !subjects.includes(state.builder.subject)){
+    state.builder.subject=subjects[0]||"";
+  }
+  if(!state.builder.strategy || !STRATEGIES[state.builder.strategy]){
+    state.builder.strategy="retrieval";
+  }
+  if(!state.builder.purpose){
+    state.builder.purpose="study";
+  }
+
+  const subjectBox=document.getElementById("planSubjectChoices");
+  if(subjectBox){
+    subjectBox.innerHTML="";
+    subjects.forEach(subject=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="choice-btn"+(state.builder.subject===subject?" selected":"");
+      b.style.borderLeft=`5px solid ${subjectColour(subject)}`;
+      b.innerHTML=`${subject}<small>${subjectConfidence(subject)===1?"Needs work":subjectConfidence(subject)===2?"Going OK":"Confident"}</small>`;
+      b.addEventListener("click",()=>{
+        state.builder.subject=subject;
+        saveState();renderBuilder();
+      });
+      subjectBox.appendChild(b);
+    });
+    if(!subjects.length){
+      subjectBox.innerHTML='<span class="muted small">Choose HSC subjects in Setup & Save first.</span>';
+    }
+  }
+
+  const purposeBox=document.getElementById("planPurposeChoices");
+  if(purposeBox){
+    purposeBox.innerHTML="";
+    [
+      ["study","Revision"],
+      ["research","Research"],
+      ["drafting","Writing / drafting"],
+      ["practice","Practice questions"],
+      ["assessment","Assessment prep"],
+      ["other","Other"]
+    ].forEach(([key,label])=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="choice-btn"+(state.builder.purpose===key?" selected":"");
+      b.textContent=label;
+      b.addEventListener("click",()=>{
+        state.builder.purpose=key;
+        saveState();renderBuilder();
+      });
+      purposeBox.appendChild(b);
+    });
+  }
+
+  const techniqueBox=document.getElementById("planTechniqueChoices");
+  if(techniqueBox){
+    techniqueBox.innerHTML="";
+    Object.entries(STRATEGIES).forEach(([key,s])=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="choice-btn technique-btn"+(state.builder.strategy===key?" selected":"");
+      b.innerHTML=`${s.name}<small>${s.hint}</small>`;
+      b.addEventListener("click",()=>{
+        state.builder.strategy=key;
+        saveState();renderBuilder();
+      });
+      techniqueBox.appendChild(b);
+    });
+  }
+
+  const bulk=document.getElementById("bulkStudyToggle");
+  if(bulk){
+    bulk.classList.toggle("active",!!state.builder.bulk);
+    bulk.innerHTML=state.builder.bulk
+      ? '<strong>Bulk study</strong><br><span class="small muted">Longer single-subject session</span>'
+      : '<strong>Normal study</strong><br><span class="small muted">20-minute blocks</span>';
+  }
+
+  const minutes=document.getElementById("planMinutes");
+  const addBtn=document.getElementById("addPlannedTask");
+  if(minutes && addBtn){
+    if(!state.builder.bulk && Number(minutes.value)!==20){
+      minutes.value="20";
+    }
+    const mins=Number(minutes.value||20);
+    addBtn.textContent=state.builder.bulk?`Add ${mins}-minute bulk session`:`Add ${mins}-minute block`;
+  }
+
+  const preview=document.getElementById("sessionPreview");
+  if(preview){
+    const subject=state.builder.subject||"Choose a subject";
+    const strategy=STRATEGIES[state.builder.strategy]?.name||"Choose a technique";
+    const mins=Number(document.getElementById("planMinutes")?.value||20);
+    preview.innerHTML=`<strong>${subject}</strong><br><span class="small">${mins} min · ${taskTypeLabel(state.builder.purpose)} · ${strategy}${state.builder.bulk?" · Bulk study":""}</span>`;
+  }
+
+  const guidance=document.getElementById("builderGuidance");
+  if(guidance){
+    guidance.textContent=state.builder.bulk
+      ? "Bulk study is useful before an exam or assessment, but avoid making every session a long single-subject block."
+      : "Default: 20 minutes. For a 60-minute study hour, aim to cover at least two subjects rather than spending the whole hour on one.";
+  }
+
+  renderMiniPlanningCharts();
+}
+
+function visibleCalendarDateKeys(){
+  return calendarPeriodDates().map(localDateKey);
+}
+
+function renderMiniPlanningCharts(){
+  const subjectBox=document.getElementById("miniSubjectChart");
+  const techniqueBox=document.getElementById("miniTechniqueChart");
+  const note=document.getElementById("techniqueCoverageNote");
+  if(!subjectBox || !techniqueBox || !note) return;
+
+  const keys=new Set(visibleCalendarDateKeys());
+  const tasks=state.plannedTasks.filter(t=>keys.has(t.date));
+  const subjects=selectedSubjectList();
+
+  const subjectTotals={};
+  subjects.forEach(s=>subjectTotals[s]=0);
+  tasks.forEach(t=>subjectTotals[t.subject]=(subjectTotals[t.subject]||0)+Number(t.minutes||0));
+  const subjectMax=Math.max(1,...Object.values(subjectTotals));
+
+  subjectBox.innerHTML="";
+  subjects.forEach(s=>{
+    const v=subjectTotals[s]||0;
+    subjectBox.innerHTML+=`
+      <div class="mini-row">
+        <span class="small">${s}</span>
+        <div class="mini-track"><div class="mini-fill" style="width:${(v/subjectMax)*100}%;background:${subjectColour(s)}"></div></div>
+        <strong class="small">${v}</strong>
+      </div>`;
+  });
+
+  const techniqueTotals={};
+  Object.keys(STRATEGIES).forEach(k=>techniqueTotals[k]=0);
+  tasks.forEach(t=>{
+    if(t.strategy && techniqueTotals[t.strategy]!==undefined){
+      techniqueTotals[t.strategy]+=Number(t.minutes||0);
+    }
+  });
+  const techMax=Math.max(1,...Object.values(techniqueTotals));
+  techniqueBox.innerHTML="";
+  Object.entries(STRATEGIES).forEach(([k,s])=>{
+    const v=techniqueTotals[k]||0;
+    techniqueBox.innerHTML+=`
+      <div class="mini-row">
+        <span class="small">${s.name}</span>
+        <div class="mini-track"><div class="mini-fill" style="width:${(v/techMax)*100}%"></div></div>
+        <strong class="small">${v}</strong>
+      </div>`;
+  });
+
+  const used=Object.values(techniqueTotals).filter(v=>v>0).length;
+  if(used>=6){
+    note.className="balance-good";
+    note.textContent="Excellent variety — all six study techniques are represented in this planning period.";
+  } else if(used>=4){
+    note.className="balance-good";
+    note.textContent=`Good variety — ${used} of 6 study techniques are represented. Try to include the remaining ones over time.`;
+  } else {
+    note.className="balance-warning";
+    note.textContent=`Only ${used} of 6 study techniques are represented. Aim for broader variety over time rather than relying on one technique.`;
+  }
+}
+
+function plannedTasksForDate(date){
+  const key=typeof date==="string" ? date : date.toISOString().slice(0,10);
+  return state.plannedTasks
+    .filter(t=>t.date===key)
+    .sort((a,b)=>(a.completed===b.completed?0:a.completed?1:-1));
+}
+function addPlannedTask(){
+  const date=document.getElementById("planDate").value;
+  const subject=state.builder.subject;
+  const strategy=state.builder.strategy;
+  const purpose=state.builder.purpose||"study";
+  const minutes=Math.max(5,Number(document.getElementById("planMinutes").value||20));
+  const detail=document.getElementById("planTask").value.trim();
+
+  if(!date || !subject || !strategy){
+    alert("Choose a date, subject and study technique first.");
+    return;
+  }
+
+  const title=detail || `${taskTypeLabel(purpose)} — ${subject}`;
+
+  state.plannedTasks.push({
+    id:"task-"+Date.now(),
+    date,
+    subject,
+    minutes,
+    type:purpose,
+    title,
+    detail,
+    completed:false,
+    completedAt:null,
+    source:"student-plan",
+    strategy,
+    bulk:!!state.builder.bulk
+  });
+
+  document.getElementById("planTask").value="";
+  if(!state.builder.bulk){
+    document.getElementById("planMinutes").value="20";
+  }
+
+  saveState();
+  renderCalendar();
+  renderToday();
+  renderBuilder();
+}
+function togglePlannedTask(id,checked){
+  const task=state.plannedTasks.find(t=>t.id===id);
+  if(!task)return;
+  task.completed=checked;
+  task.completedAt=checked?new Date().toISOString():null;
+  if(checked){
+    const already=state.studySessions.find(s=>s.planId===id);
+    if(!already){
+      state.studySessions.push({
+        planId:id,
+        date:task.date,
+        subject:task.subject,
+        strategy:task.strategy||"retrieval",
+        plannedMinutes:task.minutes,
+        completedMinutes:task.minutes,
+        completed:true,
+        customTask:true,
+        taskType:task.type,
+        taskTitle:task.title
+      });
+    }
+  } else {
+    state.studySessions=state.studySessions.filter(s=>s.planId!==id);
+  }
+  saveState();renderAll();
+}
+function deletePlannedTask(id){
+  state.plannedTasks=state.plannedTasks.filter(t=>t.id!==id);
+  state.studySessions=state.studySessions.filter(s=>s.planId!==id);
+  saveState();renderAll();
+}
+function taskTypeLabel(type){
+  const labels={
+    study:"Study / revision",research:"Research",drafting:"Drafting / writing",
+    practice:"Practice questions",assessment:"Assessment preparation",other:"Other"
+  };
+  return labels[type]||"Other";
+}
+
+function allocationKey(date){
+  return date.toISOString().slice(0,10);
+}
+function selectedSubjectsForDate(date){
+  return Object.keys(state.subjects).filter(s=>state.subjects[s].selected && nextExamForSubject(s,date));
+}
+function suggestedAllocation(date){
+  const total=availableMinutes(date);
+  const ranked=weightedSubjects(date).map(x=>x.subject);
+  const result={};
+  selectedSubjectsForDate(date).forEach(s=>result[s]=0);
+  if(!ranked.length || total<=0) return result;
+  let remaining=total, i=0;
+  while(remaining>0){
+    const block=Math.min(20,remaining);
+    const subject=ranked[i%ranked.length];
+    result[subject]=(result[subject]||0)+block;
+    remaining-=block;i++;
+  }
+  return result;
+}
+function getAllocation(date){
+  const key=allocationKey(date);
+  const selected=selectedSubjectsForDate(date);
+  if(!state.dailyAllocations[key]) state.dailyAllocations[key]=suggestedAllocation(date);
+  const current=state.dailyAllocations[key];
+  selected.forEach(s=>{if(current[s]===undefined)current[s]=0});
+  Object.keys(current).forEach(s=>{if(!selected.includes(s))delete current[s]});
+  return current;
+}
+function setSuggestedAllocation(date){
+  state.dailyAllocations[allocationKey(date)]=suggestedAllocation(date);
+  saveState();renderToday();
+}
+function todayManualPlans(date){
+  const allocation=getAllocation(date);
+  const subjects=selectedSubjectsForDate(date);
+  return subjects.filter(s=>Number(allocation[s])>0).map((subject,i)=>{
+    const strategy=chooseStrategy(subject,date,i);
+    const prompts=STRATEGIES[strategy].prompts;
+    return {
+      id:`${allocationKey(date)}-${subject}`,
+      date:allocationKey(date),
+      subject,
+      minutes:Number(allocation[subject]),
+      strategy,
+      prompt:prompts[(date.getDate()+i)%prompts.length],
+      resource:SCIENCE_RESOURCES[subject]?.[(date.getDate()+i)%SCIENCE_RESOURCES[subject].length] || null
+    };
+  });
+}
+function renderToday(){
+  document.getElementById("gentleMessage").textContent=gentleMessage();
+  const today=new Date();
+  const key=localDateKey(today);
+  const available=availableMinutes(today);
+  const committed=plannedTasksForDate(key);
+  const plannedMinutes=committed.reduce((a,t)=>a+Number(t.minutes||0),0);
+  const completedMinutes=committed.filter(t=>t.completed).reduce((a,t)=>a+Number(t.minutes||0),0);
+  const remaining=Math.max(0,available-plannedMinutes);
+  const suggestions=generateDayPlan(today,remaining);
+
+  document.getElementById("todayAvailable").textContent=`${available} min available today`;
+  const status=document.getElementById("todayAllocationStatus");
+  if(isRestDay(today) && committed.length===0){
+    status.textContent="This is a planned rest day. Nothing has been added to today's plan.";
+  } else if(plannedMinutes===0){
+    status.textContent=`Nothing committed yet. ${suggestions.length?`${suggestions.length} × 20-minute blocks are suggested below.`:"Open Plan to add work."}`;
+  } else if(plannedMinutes<available){
+    status.textContent=`${plannedMinutes} min committed · ${completedMinutes} min completed · ${remaining} min still available.`;
+  } else {
+    status.textContent=`${plannedMinutes} min committed · ${completedMinutes} min completed.`;
+  }
+
+  const box=document.getElementById("todaySessions");
+  const suggestionBox=document.getElementById("todaySuggestions");
+  const empty=document.getElementById("emptyToday");
+  box.innerHTML="";
+  suggestionBox.innerHTML="";
+  empty.classList.toggle("hidden",selectedExams().length>0 || committed.length>0);
+
+  if(committed.length){
+    const heading=document.createElement("h3");
+    heading.textContent="Committed for today";
+    box.appendChild(heading);
+
+    committed.forEach(task=>{
+      const row=document.createElement("div");
+      row.className="planned-task"+(task.completed?" done":"");
+
+      const cb=document.createElement("input");
+      cb.type="checkbox";cb.className="task-check";cb.checked=!!task.completed;
+      cb.addEventListener("change",()=>togglePlannedTask(task.id,cb.checked));
+
+      const info=document.createElement("div");
+      const technique=STRATEGIES[task.strategy]?.name||"Study";
+      const detail=task.detail || (task.source==="suggestion" ? task.title : "");
+      info.innerHTML=`<div class="task-title"><strong>${task.source==="suggestion"?task.subject:task.title}</strong></div>
+        ${detail && detail!==task.subject?`<div class="small muted" style="margin-top:3px">${detail}</div>`:""}
+        <div class="task-meta">
+          <span class="task-pill">${task.subject}</span>
+          <span class="task-pill">${task.minutes} min</span>
+          <span class="task-pill">${technique}</span>
+          <span class="task-pill task-custom">${taskTypeLabel(task.type)}</span>
+        </div>
+        ${SCIENCE_RESOURCES[task.subject] ? `<div class="resource">🔬 Science option: <a href="${SCIENCE_RESOURCES[task.subject][0].url}">${SCIENCE_RESOURCES[task.subject][0].label}</a></div>` : ""}`;
+
+      const del=document.createElement("button");
+      del.type="button";del.className="btn ghost";del.textContent="Remove";
+      del.addEventListener("click",()=>deletePlannedTask(task.id));
+      row.append(cb,info,del);box.appendChild(row);
+    });
+  } else if(selectedExams().length){
+    box.innerHTML='<div class="callout warning">No work is committed for today yet.</div>';
+  }
+
+  if(suggestions.length){
+    const h=document.createElement("h3");
+    h.textContent="Suggested to fill your remaining time";
+    suggestionBox.appendChild(h);
+
+    suggestions.forEach(s=>{
+      const row=document.createElement("div");row.className="session";
+      row.innerHTML=`<div class="minutes">20 min</div>
+        <div><div class="strategy">${STRATEGIES[s.strategy].name}</div><strong>${s.subject}</strong>
+        <div class="small muted" style="margin-top:4px">${s.prompt}</div>
+        ${s.resource?`<div class="resource">🔬 Science option: <a href="${s.resource.url}">${s.resource.label}</a></div>`:""}</div>`;
+      suggestionBox.appendChild(row);
+    });
+
+    const add=document.createElement("button");
+    add.type="button";add.className="btn secondary";add.style.marginTop="10px";
+    add.textContent="Add these suggestions to today's plan";
+    add.addEventListener("click",()=>addSuggestionsToPlan(today,suggestions));
+    suggestionBox.appendChild(add);
+  }
+
+  const first=committed.find(t=>!t.completed) || suggestions[0];
+  document.getElementById("strategyHint").textContent=first?.strategy && STRATEGIES[first.strategy]
+    ? `${STRATEGIES[first.strategy].name}: ${STRATEGIES[first.strategy].hint}`
+    : "Use a mix of the six cognitive strategies across your week rather than relying on one approach.";
+  renderExamCards("examStripToday",4);
+}
+function addSuggestionsToPlan(date, suggestions){
+  const dateKey=localDateKey(date);
+  let added=0;
+
+  suggestions.forEach((s,i)=>{
+    const exists=state.plannedTasks.some(t =>
+      t.date===dateKey &&
+      t.subject===s.subject &&
+      t.minutes===s.minutes &&
+      t.strategy===s.strategy &&
+      t.source==="suggestion"
+    );
+
+    if(!exists){
+      state.plannedTasks.push({
+        id:`suggestion-${dateKey}-${s.subject}-${Date.now()}-${i}`,
+        date:dateKey,
+        subject:s.subject,
+        minutes:s.minutes,
+        type:"study",
+        title:s.subject,
+        detail:s.prompt,
+        completed:false,
+        completedAt:null,
+        source:"suggestion",
+        strategy:s.strategy,
+        bulk:false
+      });
+      added++;
+    }
+  });
+
+  saveState();
+  renderWeek();
+  renderToday();
+  renderBuilder();
+
+  if(added===0){
+    alert("Those suggestions are already in your plan.");
+  }
+}
+
+function renderWeek(){
+  renderCalendar();
+}
+function progressRange(){
+  const mode=document.getElementById("progressPeriod")?.value || "week";
+  const now=new Date();
+  let start;
+  if(mode==="month"){
+    start=new Date(now.getFullYear(),now.getMonth(),1,0,0,0,0);
+  } else if(mode==="year"){
+    start=new Date(now.getFullYear(),0,1,0,0,0,0);
+  } else {
+    start=new Date(now);
+    start.setDate(now.getDate()-6);
+    start.setHours(0,0,0,0);
+  }
+  return {mode,start,now};
+}
+function periodLabel(mode){
+  return mode==="month" ? "This Month" : mode==="year" ? "This Year" : "This Week";
+}
+function renderProgress(){
+  const {mode,start}=progressRange();
+  document.getElementById("periodHeading").textContent=periodLabel(mode);
+
+  const periodSessions=state.studySessions.filter(s=>s.completed && new Date(s.date+"T12:00:00")>=start);
+  const periodBreaks=state.brainBreaks.filter(b=>new Date(b.date)>=start);
+
+  document.getElementById("weekMinutes").textContent=`${periodSessions.reduce((a,s)=>a+Number(s.completedMinutes||0),0)} min`;
+  document.getElementById("weekSessions").textContent=periodSessions.length;
+  document.getElementById("weekBreaks").textContent=`${periodBreaks.reduce((a,b)=>a+Number(b.minutes||0),0)} min`;
+
+  const counts={retrieval:0,spacing:0,elaboration:0,interleaving:0,examples:0,dual:0};
+  periodSessions.forEach(s=>{if(counts[s.strategy]!==undefined)counts[s.strategy]++});
+  const max=Math.max(1,...Object.values(counts));
+  const sb=document.getElementById("strategyBars");sb.innerHTML="";
+  Object.entries(counts).forEach(([k,v])=>{
+    sb.innerHTML+=`<div class="bar-row"><span class="small">${STRATEGIES[k].name}</span><div class="bar"><div style="width:${v/max*100}%"></div></div><strong>${v}</strong></div>`;
+  });
+
+  const sp=document.getElementById("subjectProgress");sp.innerHTML="";
+  const subjects=Object.keys(state.subjects).filter(s=>state.subjects[s].selected);
+  if(!subjects.length) sp.innerHTML='<span class="muted">Choose subjects in Setup.</span>';
+  subjects.forEach(s=>{
+    const n=periodSessions.filter(x=>x.subject===s).length;
+    sp.innerHTML+=`<div class="history-item"><span>${s}</span><strong>${n} session${n===1?"":"s"}</strong></div>`;
+  });
+
+  const total=periodSessions.reduce((a,s)=>a+Number(s.completedMinutes||0),0);
+  let note=`Your ${periodLabel(mode).toLowerCase()} view will build as you complete sessions. Aim for consistency rather than perfection.`;
+  if(total>=60) note=`You've logged ${Math.floor(total/60)} h ${total%60} min of focused study in this period. Keep using short, purposeful sessions and revisit material over time.`;
+  if(total>=600) note=`You've built more than ${Math.floor(total/60)} hours of recorded study in this period. The most useful next step is to keep balancing subjects and strategies, not simply chasing more hours.`;
+  document.getElementById("progressNote").textContent=note;
+  drawProgressChart();
+}
+function drawProgressChart(){
+  const c=document.getElementById("progressChart"); if(!c || !c.offsetParent) return;
+  const ctx=c.getContext("2d");
+  const dpr=window.devicePixelRatio||1;
+  const rect=c.getBoundingClientRect(); c.width=rect.width*dpr; c.height=280*dpr; ctx.scale(dpr,dpr);
+  const w=rect.width,h=280,pad={l:48,r:18,t:20,b:58};
+  ctx.clearRect(0,0,w,h);
+  const styles=getComputedStyle(document.documentElement);
+  const line=styles.getPropertyValue("--line").trim(), accent=styles.getPropertyValue("--blue").trim(), ink=styles.getPropertyValue("--ink").trim(), muted=styles.getPropertyValue("--muted").trim();
+
+  const subjects=Object.keys(state.subjects).filter(s=>state.subjects[s].selected);
+  if(!subjects.length){
+    ctx.fillStyle=muted;ctx.font="14px system-ui";ctx.textAlign="center";
+    ctx.fillText("Choose subjects in Setup to start your progress chart.",w/2,h/2);return;
+  }
+  const {start}=progressRange();
+  const periodSessions=state.studySessions.filter(s=>s.completed && new Date(s.date+"T12:00:00")>=start);
+  const data=subjects.map(subject=>({
+    subject,
+    minutes:periodSessions.filter(s=>s.subject===subject).reduce((a,s)=>a+Number(s.completedMinutes||0),0)
+  }));
+  const max=Math.max(30,...data.map(d=>d.minutes));
+  ctx.strokeStyle=line;ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+(h-pad.t-pad.b)*i/4;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();
+    ctx.fillStyle=muted;ctx.font="11px system-ui";ctx.textAlign="right";
+    ctx.fillText(Math.round(max*(1-i/4)),pad.l-7,y+4);
+  }
+
+  const plotW=w-pad.l-pad.r;
+  const slot=plotW/data.length;
+  const barW=Math.min(68,slot*.62);
+  data.forEach((d,i)=>{
+    const x=pad.l+slot*i+(slot-barW)/2;
+    const bh=(h-pad.t-pad.b)*(d.minutes/max);
+    const y=h-pad.b-bh;
+    ctx.fillStyle=accent;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x,y,barW,Math.max(2,bh),7);
+    else ctx.rect(x,y,barW,Math.max(2,bh));
+    ctx.fill();
+
+    ctx.fillStyle=ink;ctx.font="12px system-ui";ctx.textAlign="center";
+    ctx.fillText(`${d.minutes} min`,x+barW/2,Math.max(14,y-7));
+
+    const label=d.subject.length>15?d.subject.slice(0,14)+"…":d.subject;
+    ctx.save();ctx.translate(x+barW/2,h-pad.b+12);ctx.rotate(-0.42);
+    ctx.fillStyle=ink;ctx.font="11px system-ui";ctx.textAlign="right";ctx.fillText(label,0,0);ctx.restore();
+  });
+}
+function renderBreaks(){
+  const opts=document.getElementById("breakOptions");opts.innerHTML="";
+  BREAK_TYPES.forEach(([id,icon,name])=>{
+    const b=document.createElement("button");b.type="button";b.className="break-option"+(selectedBreak===id?" selected":"");
+    b.innerHTML=`<span>${icon}</span>${name}`;b.addEventListener("click",()=>{selectedBreak=id;renderBreaks()});opts.appendChild(b);
+  });
+  const hist=document.getElementById("breakHistory");hist.innerHTML="";
+  const recent=[...state.brainBreaks].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+  if(!recent.length) hist.innerHTML='<span class="muted">No brain breaks recorded yet.</span>';
+  recent.forEach(b=>{
+    const t=BREAK_TYPES.find(x=>x[0]===b.type)||["other","✨","Other"];
+    hist.innerHTML+=`<div class="history-item"><span>${t[1]} ${t[2]} <span class="muted small">· ${formatDateShort(new Date(b.date))}</span></span><strong>${b.minutes} min</strong></div>`;
+  });
+  const total=state.brainBreaks.reduce((a,b)=>a+Number(b.minutes||0),0);
+  document.getElementById("breakSummary").textContent=total?`You've recorded ${total} minutes away from study. Breaks are part of the plan, not time lost.`:"Use this tab to notice what actually helps you reset between study sessions.";
+}
+function renderAll(){
+  renderHero();renderToday();renderWeek();renderExamCards("examStripAll");renderProgress();renderBreaks();
+}
+
+document.getElementById("subjectSearch").addEventListener("input",renderSetup);
+document.getElementById("weekdayMinutes").addEventListener("change",e=>{state.settings.weekdayMinutes=Number(e.target.value);saveState();renderAll()});
+document.getElementById("weekendMinutes").addEventListener("change",e=>{state.settings.weekendMinutes=Number(e.target.value);saveState();renderAll()});
+document.getElementById("saveSetup").addEventListener("click",()=>{
+  state.settings.weekdayMinutes=Number(document.getElementById("weekdayMinutes").value);
+  state.settings.weekendMinutes=Number(document.getElementById("weekendMinutes").value);
+  saveState();renderAll();
+  const s=document.getElementById("saveStatus");s.textContent="Saved. Your plan has been rebuilt from today.";s.classList.remove("hidden");
+  setTimeout(()=>s.classList.add("hidden"),2500);openTab("today");
+});
+document.getElementById("addAssessment").addEventListener("click",()=>{
+  const subject=document.getElementById("assessmentSubject").value;
+  const name=document.getElementById("assessmentName").value.trim();
+  const date=document.getElementById("customDate").value;
+  const time=document.getElementById("customTime").value||"09:00";
+  if(!subject||!name||!date){alert("Choose a subject and add the assessment name and date first.");return;}
+  const id="assessment-"+Date.now();
+  state.customExams.push({id,subject,paper:name,date,time,selected:true,type:"school-assessment"});
+  saveState();
+  document.getElementById("assessmentName").value="";
+  document.getElementById("customDate").value="";
+  renderSetup();renderAll();
+});
+document.getElementById("saveBreak").addEventListener("click",()=>{
+  const mins=Number(document.getElementById("breakMinutes").value),feeling=document.getElementById("breakFeeling").value;
+  state.brainBreaks.push({date:new Date().toISOString(),type:selectedBreak,minutes:mins,feeling:feeling?Number(feeling):null});
+  saveState();renderAll();
+});
+document.getElementById("exportJson").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`HSC-Study-Planner-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
+});
+document.getElementById("importJson").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!data.settings||!data.subjects)throw new Error("Invalid planner file");
+    state=data;
+    state.customExams=state.customExams||[];
+    state.studySessions=state.studySessions||[];
+    state.brainBreaks=state.brainBreaks||[];
+    state.dailyAllocations=state.dailyAllocations||{};
+    state.profile=state.profile||{name:"",avatarType:"emoji",avatarValue:"🧠",theme:"ocean"};
+    state.ui=state.ui||{lastTipDate:""};
+    state.plannedTasks=state.plannedTasks||[];
+    state.calendar=state.calendar||{view:"week",anchorDate:null,selectedDate:null};
+    state.builder=state.builder||{subject:"",purpose:"study",strategy:"retrieval",bulk:false};
+    saveState();renderSetup();renderProfile();renderAll();renderBuilder();alert("Planner imported successfully.");
+  }catch(err){alert("That JSON file could not be imported.");}
+  e.target.value="";
+});
+document.getElementById("resetData").addEventListener("click",()=>{
+  if(!confirm("Reset this planner and remove locally saved study data?"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
+document.querySelectorAll("[data-calendar-view]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    state.calendar.view=btn.dataset.calendarView;
+    saveState();renderCalendar();
+  });
+});
+document.getElementById("calendarPrev").addEventListener("click",()=>{
+  const d=calendarAnchor();
+  if(state.calendar.view==="month") d.setMonth(d.getMonth()-1);
+  else d.setDate(d.getDate()-7);
+  setCalendarAnchor(d);renderCalendar();
+});
+document.getElementById("calendarNext").addEventListener("click",()=>{
+  const d=calendarAnchor();
+  if(state.calendar.view==="month") d.setMonth(d.getMonth()+1);
+  else d.setDate(d.getDate()+7);
+  setCalendarAnchor(d);renderCalendar();
+});
+document.getElementById("calendarToday").addEventListener("click",()=>{
+  setCalendarAnchor(new Date());renderCalendar();
+});
+
+document.getElementById("bulkStudyToggle").addEventListener("click",()=>{
+  state.builder.bulk=!state.builder.bulk;
+  if(!state.builder.bulk) document.getElementById("planMinutes").value="20";
+  saveState();renderBuilder();
+});
+document.getElementById("planMinutes").addEventListener("change",()=>{
+  renderBuilder();
+});
+document.getElementById("clearBuilder").addEventListener("click",()=>{
+  state.builder.purpose="study";
+  state.builder.strategy="retrieval";
+  state.builder.bulk=false;
+  document.getElementById("planMinutes").value="20";
+  document.getElementById("planTask").value="";
+  saveState();renderBuilder();
+});
+document.getElementById("addPlannedTask").addEventListener("click",addPlannedTask);
+document.getElementById("planTask").addEventListener("keydown",e=>{
+  if(e.key==="Enter") addPlannedTask();
+});
+const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+document.getElementById("planDate").value=tomorrow.toISOString().slice(0,10);
+
+document.getElementById("profileName").addEventListener("input",e=>{
+  state.profile.name=e.target.value;
+  saveState();renderProfile();
+});
+
+document.getElementById("avatarUpload").addEventListener("change",e=>{
+  const file=e.target.files?.[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const size=128;
+      const canvas=document.createElement("canvas");canvas.width=size;canvas.height=size;
+      const ctx=canvas.getContext("2d");
+      const scale=Math.max(size/img.width,size/img.height);
+      const w=img.width*scale,h=img.height*scale;
+      ctx.drawImage(img,(size-w)/2,(size-h)/2,w,h);
+      state.profile.avatarType="image";
+      state.profile.avatarValue=canvas.toDataURL("image/jpeg",0.82);
+      saveState();renderProfile();renderSetup();
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+
+const tipKeys=Object.keys(STRATEGIES);
+const tipKey=tipKeys[Math.floor(Math.random()*tipKeys.length)];
+document.getElementById("studyTipStrategy").textContent=STRATEGIES[tipKey].name;
+document.getElementById("studyTipText").textContent=STRATEGIES[tipKey].hint;
+document.getElementById("closeStudyTip").addEventListener("click",()=>{
+  state.ui.lastTipDate=new Date().toISOString().slice(0,10);
+  saveState();
+  document.getElementById("studyTipModal").classList.add("hidden");
+});
+
+document.getElementById("progressPeriod").addEventListener("change",renderProgress);
+
+window.addEventListener("resize",()=>{clearTimeout(window._chartTimer);window._chartTimer=setTimeout(drawProgressChart,120)});
+
+renderTabs();
+renderSetup();
+renderProfile();
+renderAll();
+renderBuilder();
+const todayTipKey=new Date().toISOString().slice(0,10);
+if(state.ui.lastTipDate!==todayTipKey){
+  setTimeout(()=>document.getElementById("studyTipModal").classList.remove("hidden"),250);
+}
+</script>
+</body>
+</html>
