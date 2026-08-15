@@ -3,6 +3,17 @@
 
   const APP_VERSION = '1.0.2';
   const STORAGE_KEY = 'steam-web-engine-v1';
+  const TRAIN_PROGRESS_IMAGES = Array.from({ length: 8 }, (_, index) => `train-progress/phase-${index + 1}.webp`);
+  const TRAIN_PROGRESS_LABELS = [
+    'Track ready',
+    'Wheels and chassis installed',
+    'Boiler installed',
+    'Steam system installed',
+    'Driver cab installed',
+    'Tender installed',
+    'Final systems online',
+    'STEAM train complete'
+  ];
 
   const STATUS_OPTIONS = [
     { value: 'not-started', label: 'Not started' },
@@ -794,6 +805,8 @@
     memberGrid: document.getElementById('member-grid'),
     progressLabel: document.getElementById('progress-label'),
     progressFill: document.getElementById('progress-fill'),
+    trainProgressImage: document.getElementById('train-progress-image'),
+    trainBuildStatus: document.getElementById('train-build-status'),
     fileName: document.getElementById('file-name'),
     autosaveStatus: document.getElementById('autosave-status'),
     fileInput: document.getElementById('load-json-input'),
@@ -1012,6 +1025,7 @@
     dom.tabs.innerHTML = phaseConfigs.map((phase, index) => {
       const selected = state.activePhase === phase.id;
       const status = state.phases[phase.id].status;
+      const complete = status === 'complete';
       return `
         <button
           class="phase-tab"
@@ -1019,6 +1033,7 @@
           type="button"
           role="tab"
           aria-selected="${selected}"
+          aria-label="${escapeAttribute(phase.tabLabel)}${complete ? ', complete' : ''}"
           aria-controls="phase-content"
           data-phase-tab="${phase.id}"
           tabindex="${selected ? '0' : '-1'}"
@@ -1069,6 +1084,7 @@
         ${phase.sections.map((section) => renderSection(phase, section)).join('')}
         <div class="phase-nav" aria-label="Move between STEAM phases">
           <button type="button" class="button" data-go-phase="${phaseConfigs[Math.max(0, phaseIndex - 1)].id}" ${phaseIndex === 0 ? 'disabled' : ''}>← Previous phase</button>
+          <button type="button" class="button phase-complete-button ${phaseState.status === 'complete' ? 'is-complete' : ''}" data-complete-phase="${phase.id}" ${phaseState.status !== 'complete' && !isCompletionChecklistReady(phase.id) ? 'disabled title="Complete every item in the phase completion checklist first"' : ''}>${phaseState.status === 'complete' ? '✓ Phase complete' : '✓ Mark phase complete'}</button>
           <button type="button" class="button button-primary" data-go-phase="${phaseConfigs[Math.min(phaseConfigs.length - 1, phaseIndex + 1)].id}" ${phaseIndex === phaseConfigs.length - 1 ? 'disabled' : ''}>Next phase →</button>
         </div>
       </div>`;
@@ -1309,6 +1325,7 @@
       scheduleSave();
       renderTabs();
       updateProgress();
+      updateCompletionButton(target.dataset.phaseStatus);
       return;
     }
 
@@ -1318,6 +1335,7 @@
       const item = target.dataset.checklistItem;
       state.phases[phaseId][checklistId][item] = target.checked;
       scheduleSave();
+      updateCompletionButton(phaseId);
       return;
     }
 
@@ -1331,6 +1349,12 @@
     const tab = event.target.closest('[data-phase-tab]');
     if (tab) {
       setActivePhase(tab.dataset.phaseTab, true);
+      return;
+    }
+
+    const completeButton = event.target.closest('[data-complete-phase]');
+    if (completeButton && !completeButton.disabled) {
+      togglePhaseComplete(completeButton.dataset.completePhase);
       return;
     }
 
@@ -1350,6 +1374,36 @@
     if (deleteButton) {
       deleteTableRow(deleteButton.dataset.deleteRow, deleteButton.dataset.tableId, Number(deleteButton.dataset.rowIndex));
     }
+  }
+
+  function isCompletionChecklistReady(phaseId) {
+    const checklist = state.phases[phaseId]?.completionChecklist;
+    if (!checklist || typeof checklist !== 'object') return true;
+    const items = Object.values(checklist);
+    return items.length > 0 && items.every(Boolean);
+  }
+
+  function updateCompletionButton(phaseId) {
+    const button = document.querySelector(`[data-complete-phase="${phaseId}"]`);
+    if (!button) return;
+    const complete = state.phases[phaseId].status === 'complete';
+    button.disabled = !complete && !isCompletionChecklistReady(phaseId);
+    button.classList.toggle('is-complete', complete);
+    button.textContent = complete ? '✓ Phase complete' : '✓ Mark phase complete';
+    button.title = button.disabled ? 'Complete every item in the phase completion checklist first' : '';
+  }
+
+  function togglePhaseComplete(phaseId) {
+    const phaseState = state.phases[phaseId];
+    const wasComplete = phaseState.status === 'complete';
+    phaseState.status = wasComplete ? 'in-progress' : 'complete';
+    const statusSelect = document.querySelector(`[data-phase-status="${phaseId}"]`);
+    if (statusSelect) statusSelect.value = phaseState.status;
+    scheduleSave();
+    renderTabs();
+    updateProgress();
+    updateCompletionButton(phaseId);
+    showToast(wasComplete ? 'Phase reopened.' : 'Phase marked complete.');
   }
 
   function handleTabKeyboard(event) {
@@ -1591,6 +1645,11 @@
     const complete = phaseConfigs.filter((phase) => state.phases[phase.id].status === 'complete').length;
     dom.progressLabel.textContent = `${complete} of ${phaseConfigs.length} phases complete`;
     dom.progressFill.style.width = `${(complete / phaseConfigs.length) * 100}%`;
+    const trainIndex = Math.max(0, complete - 1);
+    const trainLabel = TRAIN_PROGRESS_LABELS[trainIndex];
+    dom.trainProgressImage.src = TRAIN_PROGRESS_IMAGES[trainIndex];
+    dom.trainBuildStatus.textContent = `${trainLabel} · ${complete} of ${phaseConfigs.length} phases complete`;
+    dom.trainProgressImage.parentElement.setAttribute('aria-label', `STEAM train build progress: ${trainLabel.toLowerCase()}, ${complete} of ${phaseConfigs.length} phases complete`);
   }
 
   function openPrintDialog() {

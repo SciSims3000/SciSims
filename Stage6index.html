@@ -817,7 +817,7 @@
   <section class="hsc-games-panel" aria-labelledby="hscGamesHeading">
     <div class="hsc-games-header">
       <div>
-        <h2 id="hscGamesHeading">HSC Revision Games</h2>
+        <h2 id="hscGamesHeading">Stage 6 Revision Games</h2>
         <p>Open a course-specific Word Match, Connections or Chain Reaction game directly.</p>
       </div>
       <span class="hsc-games-count">18 course games + Science Web</span>
@@ -825,10 +825,10 @@
 
     <div class="hsc-games-table-wrap">
       <table class="hsc-games-table">
-        <caption class="sr-only">HSC revision games arranged by course and game type</caption>
+        <caption class="sr-only">Stage 6 revision games arranged by course and game type</caption>
         <thead>
           <tr>
-            <th scope="col">HSC course</th>
+            <th scope="col">Stage 6 course</th>
             <th scope="col">Word Match</th>
             <th scope="col">Connections</th>
             <th scope="col">Chain Reactions</th>
@@ -850,7 +850,7 @@
   </div>
 
   <p class="footer-note">
-    <strong>Maintaining this page:</strong> each resource and its Stage 6 mappings are stored in the <code>STAGE6_SIMS</code> array near the bottom of this single file. Add a new resource object or add another mapping to an existing object; the course counts, filters and cards update automatically. Last reviewed: 18/07/2026. Predator–prey, oscillator, synthesiser and data-modelling resources added.</p>
+    <strong>Maintaining this page:</strong> each resource and its Stage 6 mappings are stored in the <code>STAGE6_SIMS</code> array near the bottom of this single file. Add a new resource object or add another mapping to an existing object; the course counts, filters and cards update automatically. Last reviewed: 16/08/2026. Year 11 revision-game mappings and catalogue coverage updated.</p>
 
 <script>
   'use strict';
@@ -8965,6 +8965,75 @@
     ]
   }
 ];
+
+  const YEAR11_REVISION_MODULES = {
+    "Biology":[
+      "Module 1: Cells as the Basis of Life",
+      "Module 2: Organisation of Living Things",
+      "Module 3: Biological Diversity",
+      "Module 4: Ecosystem Dynamics"
+    ],
+    "Chemistry":[
+      "Module 1: Properties and Structure of Matter",
+      "Module 2: Introduction to Quantitative Chemistry",
+      "Module 3: Reactive Chemistry",
+      "Module 4: Drivers of Reactions"
+    ],
+    "Earth and Environmental Science":[
+      "Module 1: Earth’s Resources",
+      "Module 2: Plate Tectonics",
+      "Module 3: Energy Transformations",
+      "Module 4: Human Impacts"
+    ],
+    "Investigating Science":[
+      "Module 1: Cause and Effect – Observing",
+      "Module 2: Cause and Effect – Inferences and Generalisations",
+      "Module 3: Scientific Models",
+      "Module 4: Theories and Laws"
+    ],
+    "Physics":[
+      "Module 1: Kinematics",
+      "Module 2: Dynamics",
+      "Module 3: Waves and Thermodynamics",
+      "Module 4: Electricity and Magnetism"
+    ]
+  };
+
+  STAGE6_SIMS
+    .filter(sim=>(sim.type || "Simulation") === "Revision game")
+    .forEach(sim=>{
+      const course=sim.mappings[0]?.course;
+      const modules=YEAR11_REVISION_MODULES[course];
+      if(!modules)return;
+
+      const uses=sim.id.includes("word-match")
+        ? ["Vocabulary development","Revision","Formative assessment"]
+        : sim.id.includes("chain-reaction")
+          ? ["Systems thinking","Sequencing","Revision","Formative assessment"]
+          : ["Concept relationships","Revision","Formative assessment"];
+      const focus=["Concept learning","Evidence and scientific reasoning","Revision and formative assessment"];
+      const moduleMappings=modules.map(module=>({
+        course,
+        year:"Year 11",
+        module,
+        relevance:"Core",
+        uses:[...uses],
+        note:"Includes a dedicated Year 11 module bank, plus whole-course review and mixed challenge modes.",
+        focus:[...focus],
+        syllabus:"2017"
+      }));
+      const reviewMapping={
+        course,
+        year:"Year 11",
+        module:"Whole-course review: Modules 1–4",
+        relevance:"Core",
+        uses:[...uses,"Whole-course review"],
+        note:"Designed for cumulative revision across the complete Year 11 course.",
+        focus:[...focus],
+        syllabus:"2017"
+      };
+      sim.mappings.unshift(...moduleMappings,reviewMapping);
+    });
 
   const SCIENCE_WEB_MAPPINGS = Array.from(
     new Map(
