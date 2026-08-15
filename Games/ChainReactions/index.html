@@ -32,10 +32,12 @@
     @media(max-width:900px){.main-grid{grid-template-columns:1fr}.learning-box{grid-template-columns:1fr}.candidate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:560px){h1{font-size:1.75rem}.status-strip{grid-template-columns:1fr}.candidate-grid{grid-template-columns:1fr}.definition-grid{grid-template-columns:1fr}.sequence-tile{grid-template-columns:38px minmax(0,1fr)}.move-buttons{grid-column:1/-1;justify-content:flex-end}}
   </style>
+  <link rel="stylesheet" href="../../shared/scisims-nav.css">
+  <script defer src="../../shared/scisims-nav.js"></script>
 </head>
 <body>
+  <div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
 <div class="page">
-  <a class="home-link" href="/SciSims/">← Back to main SciSims page</a>
   <header><h1 id="gameTitle">Chain Reactions</h1><p class="subtitle" id="gameSubtitle">Arrange scientific ideas in order or build the longest valid chain of connected concepts.</p></header>
 
   <section class="learning-box">

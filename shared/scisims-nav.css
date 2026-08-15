@@ -16,6 +16,22 @@
   margin:0 0 20px;
 }
 
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
 .scisims-site-nav{
   width:100%;
   border:1px solid var(--scisims-nav-border);
@@ -122,6 +138,12 @@
 
 @media (max-width:860px){
   #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
 
   .scisims-nav-inner{
     position:relative;

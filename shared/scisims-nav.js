@@ -4,6 +4,9 @@
 
   const mount = document.getElementById('scisimsSiteNav');
   if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
 
   const script = document.currentScript || Array.from(document.scripts).find(item =>
     item.src && item.src.split('?')[0].endsWith('/scisims-nav.js')
