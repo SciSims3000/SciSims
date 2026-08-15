@@ -316,12 +316,14 @@
     @media(max-width:650px){.app-shell{width:calc(100% - 14px)}.topbar{align-items:stretch;flex-direction:column}.nav-links{display:grid;grid-template-columns:1fr 1fr}.nav-link{font-size:.82rem}.form-grid,.form-grid.three,.layout-mode-grid{grid-template-columns:1fr}.attendance-list{grid-template-columns:1fr}.plan-toolbar{flex-direction:column}.display-actions{width:100%}.display-actions .button{flex:1}.timer-card{align-items:flex-start;flex-direction:column}.picker-card{grid-template-columns:1fr}.picker-speed-actions{grid-template-columns:1fr}.custom-room-canvas{min-width:880px}.seat-grid.u-layout .seat{width:23%}}
     @media print{body{background:#fff;color:#000}.topbar,.hero,.controls,.display-actions,.footer-note,.planning-banner,.unseated,.display-dashboard{display:none!important}.app-shell{width:100%;padding:0}.workspace{display:block}.plan-panel{border:0;box-shadow:none;padding:0}.room-shell{border-color:#444;background:#fff}.seat,.quick-table,.custom-table-surface{background:#fff!important;color:#000;border-color:#777}.custom-room-scroll{border:0;overflow:visible}.custom-room-canvas{min-width:0;min-height:180mm;background-image:none}.custom-table-actions,.room-object-actions,.lock-button{display:none!important}.zone{background:transparent!important}.front-marker{color:#000;border-color:#777;background:#eee}}
   </style>
+  <link rel="stylesheet" href="../../shared/scisims-nav.css">
+  <script defer src="../../shared/scisims-nav.js"></script>
 </head>
 <body>
+  <div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
   <main class="app-shell">
     <nav class="topbar" aria-label="Page navigation">
       <div class="nav-links">
-        <a class="nav-link" href="../../index.html">← Back to main SciSims page</a>
         <a class="nav-link" href="../../HSCindex.html">Go to HSC index →</a>
       </div>
       <button class="icon-button" id="themeButton" type="button" aria-label="Switch to dark mode">🌙 <span>Dark mode</span></button>
