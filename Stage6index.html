@@ -831,6 +831,7 @@
             <th scope="col">Stage 6 course</th>
             <th scope="col">Word Match</th>
             <th scope="col">Connections</th>
+            <th scope="col">Jeopardy</th>
             <th scope="col">Chain Reactions</th>
           </tr>
         </thead>
@@ -8093,6 +8094,44 @@
     ]
   },
   {
+    "id": "stage6-investigating-science-jeopardy",
+    "title": "Investigating Science Jeopardy v2.0",
+    "path": "Games/Jeopardy/InvSci/",
+    "area": "Investigating Science revision",
+    "type": "Revision game",
+    "description": "Build and run a teacher-led 6 × 5 Jeopardy board using Year 11, Year 12, Working Scientifically, glossary, review and custom question banks.",
+    "tags": [
+      "investigating science",
+      "stage 6",
+      "jeopardy",
+      "team game",
+      "formative assessment",
+      "whole-course review"
+    ],
+    "mappings": [
+      {
+        "course": "Investigating Science",
+        "year": "Year 11",
+        "module": "Whole-course review: Modules 1–4",
+        "relevance": "Core",
+        "uses": ["Team revision", "Questioning", "Formative assessment", "Whole-course review"],
+        "note": "Includes all Year 11 and Year 12 modules, Working Scientifically, glossary, review and Teacher Picks banks.",
+        "focus": ["Evidence and scientific reasoning", "Course concepts", "Revision and formative assessment"],
+        "syllabus": "2017"
+      },
+      {
+        "course": "Investigating Science",
+        "year": "Year 12",
+        "module": "Whole-course review: Modules 5–8",
+        "relevance": "Core",
+        "uses": ["Team revision", "Questioning", "Formative assessment", "Whole-course review"],
+        "note": "Includes escalating 100–500 point clues, stimulus questions, wagering and analytics.",
+        "focus": ["Evidence and scientific reasoning", "Course concepts", "Revision and formative assessment"],
+        "syllabus": "2017"
+      }
+    ]
+  },
+  {
     "id": "stage6-investigating-science-word-match",
     "title": "Stage 6 Investigating Science Word Match",
     "path": "Games/HSCWordMatch/InvSci/",
@@ -9171,6 +9210,7 @@
   const HSC_GAME_COLUMNS = [
     {key:"word-match",label:"Word Match",className:"word-match"},
     {key:"connections",label:"Connections",className:"connections"},
+    {key:"jeopardy",label:"Jeopardy",className:"connections"},
     {key:"chain-reaction",label:"Chain Reactions",className:"chain-reaction"}
   ];
 
@@ -9179,6 +9219,7 @@
     if(identity.includes("word-match")||identity.includes("word match")||identity.includes("hscwordmatch"))return "word-match";
     if(identity.includes("chain-reaction")||identity.includes("chain reaction")||identity.includes("stage6chainreaction"))return "chain-reaction";
     if(identity.includes("connections")||identity.includes("hscconnections"))return "connections";
+    if(identity.includes("jeopardy"))return "jeopardy";
     return "";
   }
 
@@ -9224,7 +9265,7 @@
         <th class="hsc-course-cell" scope="row" style="--course-colour:#0f766e">
           Science Web
         </th>
-        <td class="hsc-game-cell" colspan="3">
+        <td class="hsc-game-cell" colspan="4">
           <a class="hsc-game-link connections" href="${escapeHTML(scienceWeb.path)}"
             aria-label="Open Science Web for all Science courses">
             Open Science Web — all Science courses
@@ -9257,6 +9298,7 @@
             Download worksheet
           </a>
         </td>
+        <td class="hsc-game-cell"><span class="hsc-game-missing">Built-in analytics</span></td>
         <td class="hsc-game-cell">
           <a class="hsc-game-link hsc-worksheet-link"
             href="https://docs.google.com/document/d/1oJOyqhfDUlTUOo8eoirGtSl0LpMz7rMptdcD-S6Axvg/edit?usp=sharing"
@@ -9277,7 +9319,7 @@ const scienceWebWorksheetRow = `
       Download the student worksheet and modify it for your own use.
     </span>
   </th>
-  <td class="hsc-game-cell" colspan="3">
+  <td class="hsc-game-cell" colspan="4">
     <a class="hsc-game-link hsc-worksheet-link"
       href="https://docs.google.com/document/d/1lS_tVUBon0DKeqE7SlvdtpMChpH2hX0-u821wiTEuUU/edit?usp=sharing"
       target="_blank"
