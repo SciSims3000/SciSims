@@ -3697,6 +3697,17 @@ window.SCISIMS_STAGE45 = {
   ],
   "sharedTools": [
     {
+      "id": "games-revisionhub",
+      "title": "SciSims Revision Games",
+      "path": "Games/RevisionHub/",
+      "description": "Switch between five revision game modes using shared, curriculum-aligned banks for every year from 7 to 12.",
+      "type": "Game",
+      "tags": ["Science vocabulary", "Years 7–12", "Module revision", "Whole-course review", "Definitions"],
+      "workingScientifically": ["Observing", "Processing data and information", "Communicating"],
+      "depthStudy": false,
+      "mappings": []
+    },
+    {
       "id": "games-mysteryscienceword",
       "title": "Mystery Science Word",
       "path": "Games/MysteryScienceWord/",

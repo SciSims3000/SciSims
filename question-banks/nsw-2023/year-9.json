@@ -1,0 +1,3333 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "nsw-2023-year-9",
+  "jurisdiction": "NSW",
+  "syllabus": "Science 7–10 (2023)",
+  "label": "Year 9 Science",
+  "collections": [
+    {
+      "id": "nsw-2023-year-9-9-1-energy",
+      "label": "9.1 Energy",
+      "year": 9,
+      "stage": 5,
+      "course": "Year 9 Science",
+      "module": "9-1-energy",
+      "learningIntention": "Students will understand that energy vocabulary helps explain energy transfers, transformations, circuits, efficiency and future energy systems.",
+      "successCriteria": "Students can identify 9.1 Energy vocabulary from letter patterns, clues and definitions, then explain each term in a scientific context.",
+      "groups": [
+        {
+          "id": "basics",
+          "label": "Energy Basics",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-energy",
+              "term": "energy",
+              "clue": "The ability to do work or cause change.",
+              "definition": "Energy is the ability to do work or cause change, such as movement, heating, light or sound.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-conservation",
+              "term": "conservation",
+              "clue": "The idea that something remains constant overall.",
+              "definition": "Conservation means that a quantity remains constant, even if it changes form or location.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-law-of-conservation-of-energy",
+              "term": "law of conservation of energy",
+              "clue": "Energy cannot be created or destroyed.",
+              "definition": "The Law of Conservation of Energy states that energy cannot be created or destroyed, only transferred or transformed.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-closed-system",
+              "term": "closed system",
+              "clue": "A system where no energy enters or leaves.",
+              "definition": "A closed system is a defined system where no energy is added or removed from outside.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-transfer",
+              "term": "transfer",
+              "clue": "Energy moving from one object or place to another.",
+              "definition": "Transfer is the movement of energy between objects, places or systems.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-transformation",
+              "term": "transformation",
+              "clue": "Energy changing from one form into another.",
+              "definition": "Transformation occurs when energy changes from one form into another, such as electrical energy becoming light.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-kinetic-energy",
+              "term": "kinetic energy",
+              "clue": "The energy of movement.",
+              "definition": "Kinetic energy is the energy an object has because it is moving.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-potential-energy",
+              "term": "potential energy",
+              "clue": "Stored energy due to position or condition.",
+              "definition": "Potential energy is stored energy, often due to height, position, shape or chemical structure.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-gravitational-potential-energy",
+              "term": "gravitational potential energy",
+              "clue": "Stored energy due to height in a gravitational field.",
+              "definition": "Gravitational potential energy is energy stored because an object has been lifted above a lower position.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-internal-energy",
+              "term": "internal energy",
+              "clue": "Microscopic energy within particles.",
+              "definition": "Internal energy is the total microscopic energy of particles in a substance, often linked to heating.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-heat-energy",
+              "term": "heat energy",
+              "clue": "Energy transferred because of temperature difference.",
+              "definition": "Heat energy is energy transferred from hotter objects to cooler objects because of a temperature difference.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-sound-energy",
+              "term": "sound energy",
+              "clue": "Energy carried by vibrations through a medium.",
+              "definition": "Sound energy is energy carried by vibrating particles through solids, liquids or gases.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-work",
+              "term": "work",
+              "clue": "Energy transferred when a force moves an object.",
+              "definition": "Work is the transfer of energy when a force causes movement over a distance.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-power",
+              "term": "power",
+              "clue": "The rate at which energy is transferred or transformed.",
+              "definition": "Power is the rate at which energy is used, transferred or transformed.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-joule",
+              "term": "joule",
+              "clue": "The standard unit of energy.",
+              "definition": "The joule is the standard unit used to measure energy.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-watt",
+              "term": "watt",
+              "clue": "The unit used to measure power.",
+              "definition": "The watt is the unit of power, equal to one joule per second.",
+              "tags": [
+                "basics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-basics-kilowatt-hour",
+              "term": "kilowatt hour",
+              "clue": "A unit of energy commonly used on electricity bills.",
+              "definition": "A kilowatt-hour is a unit of energy often used to measure household electricity use.",
+              "tags": [
+                "basics"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "efficiency",
+          "label": "Efficiency",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-efficiency",
+              "term": "efficiency",
+              "clue": "How much input energy becomes useful output energy.",
+              "definition": "Efficiency is the proportion of input energy that is converted into useful output energy.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-input-energy",
+              "term": "input energy",
+              "clue": "Energy supplied to a system or device.",
+              "definition": "Input energy is the energy put into a system, machine or appliance.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-useful-output-energy",
+              "term": "useful output energy",
+              "clue": "The desired energy produced by a system.",
+              "definition": "Useful output energy is the energy transformed into the form wanted for the task.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-wasted-energy",
+              "term": "wasted energy",
+              "clue": "Energy transformed into unwanted forms.",
+              "definition": "Wasted energy is energy changed into less useful forms, such as unwanted heat or sound.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-friction",
+              "term": "friction",
+              "clue": "A force that opposes motion.",
+              "definition": "Friction is a force that opposes motion and often converts kinetic energy into heat.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-lubricant",
+              "term": "lubricant",
+              "clue": "A substance used to reduce friction.",
+              "definition": "A lubricant reduces friction between moving surfaces, improving efficiency.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-insulation",
+              "term": "insulation",
+              "clue": "Material used to reduce heat transfer.",
+              "definition": "Insulation slows heat transfer and helps reduce wasted energy.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-aerodynamics",
+              "term": "aerodynamics",
+              "clue": "Design features that reduce air resistance.",
+              "definition": "Aerodynamics is the study or design of objects to reduce air resistance.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-regenerative-braking",
+              "term": "regenerative braking",
+              "clue": "A braking system that recovers some kinetic energy.",
+              "definition": "Regenerative braking converts some kinetic energy into electrical energy during braking.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-energy-efficient-technology",
+              "term": "energy efficient technology",
+              "clue": "Devices designed to minimise wasted energy.",
+              "definition": "Energy-efficient technology provides the same useful output while using less input energy.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-power-rating",
+              "term": "power rating",
+              "clue": "How quickly a device uses or produces energy.",
+              "definition": "Power rating shows the rate at which a device uses or produces energy.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-calorimetry",
+              "term": "calorimetry",
+              "clue": "Using temperature change to estimate thermal energy.",
+              "definition": "Calorimetry is a method used to estimate thermal energy by measuring temperature change.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-control-variable",
+              "term": "control variable",
+              "clue": "A factor kept the same in a fair test.",
+              "definition": "A control variable is kept constant so an investigation tests the intended relationship.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-standby-power",
+              "term": "standby power",
+              "clue": "Energy used while an appliance is idle.",
+              "definition": "Standby power is energy used when an appliance is plugged in but not actively being used.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-inverter-technology",
+              "term": "inverter technology",
+              "clue": "Technology that adjusts power use to improve efficiency.",
+              "definition": "Inverter technology adjusts power output to improve energy efficiency.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-life-cycle-cost",
+              "term": "life cycle cost",
+              "clue": "The total cost of owning and running something over time.",
+              "definition": "Life-cycle cost includes purchase, operation, maintenance and energy costs across a product's life.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-energy-audit",
+              "term": "energy audit",
+              "clue": "A review of where and how energy is used.",
+              "definition": "An energy audit examines energy use to identify waste and possible improvements.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-demand-management",
+              "term": "demand management",
+              "clue": "Controlling when and how energy is used.",
+              "definition": "Demand management reduces pressure on energy systems by shifting or reducing energy use.",
+              "tags": [
+                "efficiency"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-efficiency-optimise",
+              "term": "optimise",
+              "clue": "To make the best or most efficient use of something.",
+              "definition": "To optimise energy use means to make energy use more efficient, effective or sustainable.",
+              "tags": [
+                "efficiency"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sources",
+          "label": "Energy Sources",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-energy-source",
+              "term": "energy source",
+              "clue": "The origin from which usable energy is obtained.",
+              "definition": "An energy source is the origin of energy used to perform work or generate electricity.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-renewable",
+              "term": "renewable",
+              "clue": "Can be naturally replaced within a short time.",
+              "definition": "Renewable resources can be naturally replenished on a useful human timescale.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-non-renewable",
+              "term": "non renewable",
+              "clue": "Cannot be replaced quickly once used.",
+              "definition": "Non-renewable resources take a very long time to form and cannot be replaced quickly.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-renewable-energy",
+              "term": "renewable energy",
+              "clue": "Energy from sources that naturally replenish.",
+              "definition": "Renewable energy comes from sources such as sunlight, wind, moving water and geothermal heat.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-non-renewable-energy",
+              "term": "non renewable energy",
+              "clue": "Energy from finite resources.",
+              "definition": "Non-renewable energy comes from resources such as coal, oil and natural gas.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-alternative-energy",
+              "term": "alternative energy",
+              "clue": "Energy sources used as alternatives to fossil fuels.",
+              "definition": "Alternative energy refers to non-fossil or lower-emission sources such as solar, wind and hydro.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-fossil-fuels",
+              "term": "fossil fuels",
+              "clue": "Fuels formed from ancient living matter.",
+              "definition": "Fossil fuels are coal, oil and gas formed from ancient organic matter over millions of years.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-solar-energy",
+              "term": "solar energy",
+              "clue": "Energy from the Sun.",
+              "definition": "Solar energy is energy from sunlight that can be converted into heat or electricity.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-wind-energy",
+              "term": "wind energy",
+              "clue": "Energy from moving air.",
+              "definition": "Wind energy is energy from moving air, often used to spin turbines.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-hydroelectric-energy",
+              "term": "hydroelectric energy",
+              "clue": "Energy from moving water.",
+              "definition": "Hydroelectric energy uses moving or falling water to generate electricity.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-geothermal-energy",
+              "term": "geothermal energy",
+              "clue": "Energy from heat inside Earth.",
+              "definition": "Geothermal energy comes from thermal energy stored beneath Earth's surface.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-biomass",
+              "term": "biomass",
+              "clue": "Energy from organic materials.",
+              "definition": "Biomass is organic material that can be used as a fuel or energy source.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-nuclear-fission",
+              "term": "nuclear fission",
+              "clue": "Splitting atoms to release energy.",
+              "definition": "Nuclear fission releases energy by splitting large atomic nuclei.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-carbon-dioxide",
+              "term": "carbon dioxide",
+              "clue": "A gas released when many fuels are burned.",
+              "definition": "Carbon dioxide is a greenhouse gas released by burning carbon-containing fuels.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-greenhouse-gas",
+              "term": "greenhouse gas",
+              "clue": "A gas that traps heat in the atmosphere.",
+              "definition": "Greenhouse gases trap heat in Earth's atmosphere and contribute to climate change.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-carbon-footprint",
+              "term": "carbon footprint",
+              "clue": "Total greenhouse gases linked to an activity.",
+              "definition": "A carbon footprint is the total amount of greenhouse gas emissions caused directly or indirectly.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-sustainability",
+              "term": "sustainability",
+              "clue": "Using resources responsibly for the future.",
+              "definition": "Sustainability means meeting present needs without harming future generations.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-energy-security",
+              "term": "energy security",
+              "clue": "Reliable and affordable access to energy.",
+              "definition": "Energy security means having reliable, affordable and safe access to energy supplies.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-incentive",
+              "term": "incentive",
+              "clue": "A policy or reward that encourages action.",
+              "definition": "An incentive encourages certain actions, such as investing in renewable energy.",
+              "tags": [
+                "sources"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-sources-innovation",
+              "term": "innovation",
+              "clue": "Developing new ideas or technologies.",
+              "definition": "Innovation is the development of new ideas, methods or technologies.",
+              "tags": [
+                "sources"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "circuits",
+          "label": "Electricity and Circuits",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-electricity",
+              "term": "electricity",
+              "clue": "A form of energy linked to electric charges.",
+              "definition": "Electricity involves electric charges and can transfer energy through circuits.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-electrical-energy",
+              "term": "electrical energy",
+              "clue": "Energy carried by moving electric charges.",
+              "definition": "Electrical energy is energy associated with moving electric charges.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-charge",
+              "term": "charge",
+              "clue": "A property carried by electrons and protons.",
+              "definition": "Charge is a property of matter carried by particles such as electrons and protons.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-current",
+              "term": "current",
+              "clue": "The flow of electric charge.",
+              "definition": "Current is the flow of electric charge through a conductor.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-voltage",
+              "term": "voltage",
+              "clue": "The push that drives charges around a circuit.",
+              "definition": "Voltage is the potential difference that pushes electric charges through a circuit.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-potential-difference",
+              "term": "potential difference",
+              "clue": "Another term for voltage.",
+              "definition": "Potential difference is the energy difference per unit charge between two points.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-resistance",
+              "term": "resistance",
+              "clue": "Opposition to the flow of current.",
+              "definition": "Resistance is how strongly a component or material opposes current flow.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-ohms-law",
+              "term": "Ohms law",
+              "clue": "A law linking voltage, current and resistance.",
+              "definition": "Ohm's Law describes the relationship between voltage, current and resistance in a circuit.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-ammeter",
+              "term": "ammeter",
+              "clue": "An instrument used to measure current.",
+              "definition": "An ammeter measures electric current and is connected in series.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-voltmeter",
+              "term": "voltmeter",
+              "clue": "An instrument used to measure voltage.",
+              "definition": "A voltmeter measures voltage and is connected in parallel across a component.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-amperes",
+              "term": "amperes",
+              "clue": "The unit used to measure current.",
+              "definition": "Amperes are the units used to measure electric current.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-battery",
+              "term": "battery",
+              "clue": "A device that converts chemical energy into electrical energy.",
+              "definition": "A battery stores chemical energy and converts it into electrical energy.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-generator",
+              "term": "generator",
+              "clue": "A machine that converts kinetic energy into electrical energy.",
+              "definition": "A generator converts motion into electrical energy.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-turbine",
+              "term": "turbine",
+              "clue": "A wheel with blades spun by wind, water or steam.",
+              "definition": "A turbine spins when moved by wind, water or steam and can drive a generator.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-photovoltaic-cell",
+              "term": "photovoltaic cell",
+              "clue": "A device that converts light into electricity.",
+              "definition": "A photovoltaic cell converts sunlight directly into electrical energy.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-circuit",
+              "term": "circuit",
+              "clue": "A path through which electric current can flow.",
+              "definition": "A circuit is a pathway that allows electric current to flow.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-complete-circuit",
+              "term": "complete circuit",
+              "clue": "A closed loop that allows current to flow.",
+              "definition": "A complete circuit is an unbroken path that allows current to flow.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-open-circuit",
+              "term": "open circuit",
+              "clue": "A broken path that stops current.",
+              "definition": "An open circuit has a break, so current cannot flow.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-closed-circuit",
+              "term": "closed circuit",
+              "clue": "A complete loop that allows current.",
+              "definition": "A closed circuit provides a complete pathway for current to flow.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-series-circuit",
+              "term": "series circuit",
+              "clue": "A circuit with one path for current.",
+              "definition": "A series circuit has components connected in one continuous path.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-parallel-circuit",
+              "term": "parallel circuit",
+              "clue": "A circuit with multiple branches.",
+              "definition": "A parallel circuit has components connected across separate branches.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-circuit-diagram",
+              "term": "circuit diagram",
+              "clue": "A drawing that uses symbols to represent a circuit.",
+              "definition": "A circuit diagram is a schematic drawing of a circuit using standard electrical symbols.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-conductor",
+              "term": "conductor",
+              "clue": "A material that allows electricity to pass easily.",
+              "definition": "A conductor is a material that allows electric charge to move through it easily.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-insulator",
+              "term": "insulator",
+              "clue": "A material that resists electric current.",
+              "definition": "An insulator is a material that does not allow electric charge to move through it easily.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-load",
+              "term": "load",
+              "clue": "A circuit component that uses electrical energy.",
+              "definition": "A load is a component that transforms electrical energy into another useful form.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-switch",
+              "term": "switch",
+              "clue": "A device that opens or closes a circuit.",
+              "definition": "A switch controls current by opening or closing a circuit.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-branch",
+              "term": "branch",
+              "clue": "A separate pathway in a parallel circuit.",
+              "definition": "A branch is one pathway for current in a parallel circuit.",
+              "tags": [
+                "circuits"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-circuits-resistor",
+              "term": "resistor",
+              "clue": "A component that limits current flow.",
+              "definition": "A resistor is a component that provides resistance in a circuit.",
+              "tags": [
+                "circuits"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "data",
+          "label": "Energy Ratings and Data",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-energy-star-rating",
+              "term": "Energy Star rating",
+              "clue": "A label system for comparing appliance efficiency.",
+              "definition": "Energy Star ratings help consumers compare the energy efficiency of appliances.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-appliance",
+              "term": "appliance",
+              "clue": "A household device that uses energy.",
+              "definition": "An appliance is a device such as a fridge, heater or washing machine that uses energy.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-star-rating",
+              "term": "star rating",
+              "clue": "A visual label showing relative efficiency.",
+              "definition": "A star rating shows how energy-efficient an appliance is compared with similar appliances.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-ratings",
+              "term": "ratings",
+              "clue": "Scores used to compare performance.",
+              "definition": "Ratings are values or labels used to compare features such as efficiency.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-criteria",
+              "term": "criteria",
+              "clue": "Standards used to make a judgement.",
+              "definition": "Criteria are standards used to evaluate or compare options.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-energy-consumption",
+              "term": "energy consumption",
+              "clue": "The total energy used by a device or system.",
+              "definition": "Energy consumption is the amount of energy used, often measured in kilowatt-hours.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-energy-label",
+              "term": "energy label",
+              "clue": "A label that helps compare appliance energy use.",
+              "definition": "An energy label shows information such as energy use and efficiency for an appliance.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-graph",
+              "term": "graph",
+              "clue": "A visual way to display data.",
+              "definition": "A graph displays data visually so patterns and trends can be identified.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-visualisation",
+              "term": "visualisation",
+              "clue": "The way data is shown visually.",
+              "definition": "Visualisation is the presentation of data in visual forms such as graphs or charts.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-distortion",
+              "term": "distortion",
+              "clue": "Changing presentation to mislead.",
+              "definition": "Distortion occurs when data or visuals are presented in a way that misleads.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-data",
+              "term": "data",
+              "clue": "Information collected from observations or measurements.",
+              "definition": "Data is information collected through observations, measurements or research.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-dataset",
+              "term": "dataset",
+              "clue": "A collection of related data.",
+              "definition": "A dataset is a collection of related data values used for analysis.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-evidence",
+              "term": "evidence",
+              "clue": "Information used to support or challenge a claim.",
+              "definition": "Evidence is data or observations used to support a scientific explanation or conclusion.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-claim",
+              "term": "claim",
+              "clue": "A statement that can be tested or evaluated.",
+              "definition": "A claim is a statement that can be supported or challenged using evidence.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-reasoning",
+              "term": "reasoning",
+              "clue": "The explanation linking evidence to a conclusion.",
+              "definition": "Reasoning explains how evidence supports a claim or conclusion.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-conclusion",
+              "term": "conclusion",
+              "clue": "The final judgement drawn from evidence.",
+              "definition": "A conclusion is an interpretation or judgement based on evidence and reasoning.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-bias",
+              "term": "bias",
+              "clue": "A preference that can affect interpretation.",
+              "definition": "Bias is a tendency to favour one view, result or explanation over others.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-representation",
+              "term": "representation",
+              "clue": "How information or data is shown.",
+              "definition": "Representation is the way data or ideas are displayed, such as in graphs or diagrams.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-cost",
+              "term": "cost",
+              "clue": "The amount of money needed.",
+              "definition": "Cost is an important factor when comparing energy sources and technologies.",
+              "tags": [
+                "data"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-data-economics",
+              "term": "economics",
+              "clue": "The financial side of decision-making.",
+              "definition": "Economics considers costs, benefits and resource use in decisions.",
+              "tags": [
+                "data"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "future",
+          "label": "Future Energy Systems",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-energy-demand",
+              "term": "energy demand",
+              "clue": "The total amount of energy required.",
+              "definition": "Energy demand is the total amount of energy needed by people, industries or societies.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-energy-mix",
+              "term": "energy mix",
+              "clue": "The combination of energy sources used.",
+              "definition": "An energy mix is the combination of different energy sources used in a region or country.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-smart-grid",
+              "term": "smart grid",
+              "clue": "A digital electricity network that manages power flow.",
+              "definition": "A smart grid uses digital systems to monitor and manage electricity supply and demand.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-net-zero",
+              "term": "net zero",
+              "clue": "A balance between emissions produced and emissions removed.",
+              "definition": "Net-zero means total greenhouse gas emissions are balanced by removals from the atmosphere.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-equity-in-energy",
+              "term": "equity in energy",
+              "clue": "Fair access to energy resources.",
+              "definition": "Equity in energy means fair and reliable access to energy for all people.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-operational-demand",
+              "term": "operational demand",
+              "clue": "Electricity demanded from the grid.",
+              "definition": "Operational demand is electricity demand supplied by the grid, excluding some behind-the-meter generation.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-behind-the-meter",
+              "term": "behind the meter",
+              "clue": "Generation or storage on the customer side.",
+              "definition": "Behind-the-meter systems include rooftop solar and batteries located at homes or businesses.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-renewables-share",
+              "term": "renewables share",
+              "clue": "The percentage of electricity from renewable sources.",
+              "definition": "Renewables share is the proportion of energy or electricity generated from renewable sources.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-energy-intensity",
+              "term": "energy intensity",
+              "clue": "Energy used per unit of economic output.",
+              "definition": "Energy intensity compares energy use with economic output or activity.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-energy-productivity",
+              "term": "energy productivity",
+              "clue": "Economic output per unit of energy used.",
+              "definition": "Energy productivity measures how much value is produced for each unit of energy used.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-scenario",
+              "term": "scenario",
+              "clue": "A possible future based on assumptions.",
+              "definition": "A scenario is a modelled pathway based on assumptions about policy, technology and behaviour.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-integrated-system-plan",
+              "term": "Integrated System Plan",
+              "clue": "A whole-of-system electricity roadmap.",
+              "definition": "The Integrated System Plan is a roadmap for planning future electricity infrastructure.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-base-load",
+              "term": "base load",
+              "clue": "The consistent level of electricity demand.",
+              "definition": "Base-load demand is the minimum continuous electricity demand that must be supplied.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-reliability",
+              "term": "reliability",
+              "clue": "How consistently an energy source or system can supply energy.",
+              "definition": "Reliability describes how dependable an energy source or system is over time.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-seasonal",
+              "term": "seasonal",
+              "clue": "Changing with the seasons.",
+              "definition": "Seasonal variation is change linked to different seasons, such as solar output across the year.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-trends",
+              "term": "trends",
+              "clue": "Patterns that show change over time.",
+              "definition": "Trends are patterns in data that show how something changes over time.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-variation",
+              "term": "variation",
+              "clue": "Differences or changes within data.",
+              "definition": "Variation describes differences or changes in data values.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-uncertainty",
+              "term": "uncertainty",
+              "clue": "A lack of complete confidence in data or predictions.",
+              "definition": "Uncertainty describes limits in how confident we can be about a result or prediction.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-storage",
+              "term": "storage",
+              "clue": "Keeping energy for later use.",
+              "definition": "Storage systems hold energy so it can be used later, such as batteries or pumped hydro.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-firming",
+              "term": "firming",
+              "clue": "Making variable renewables more dependable.",
+              "definition": "Firming uses storage, gas or other resources to make variable renewable energy more reliable.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-transmission",
+              "term": "transmission",
+              "clue": "Moving bulk electricity over long distances.",
+              "definition": "Transmission is the high-voltage network that moves electricity from generators to regions of use.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-electrification",
+              "term": "electrification",
+              "clue": "Shifting systems from fuels to electricity.",
+              "definition": "Electrification means replacing direct fuel use with electricity, such as electric vehicles or heat pumps.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-levelised-cost-of-energy",
+              "term": "Levelised Cost of Energy",
+              "clue": "Average lifetime cost of producing electricity.",
+              "definition": "Levelised Cost of Energy is the average cost of generating electricity over a technology's lifetime.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-capacity-versus-generation",
+              "term": "capacity versus generation",
+              "clue": "Installed ability compared with actual output.",
+              "definition": "Capacity is the maximum possible output, while generation is the actual energy produced.",
+              "tags": [
+                "future"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-1-energy-future-energy-transition-investment",
+              "term": "energy transition investment",
+              "clue": "Money spent moving toward cleaner energy systems.",
+              "definition": "Energy transition investment is capital used for clean power, grids, storage and related technologies.",
+              "tags": [
+                "future"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-9-9-2-disease",
+      "label": "9.2 Disease",
+      "year": 9,
+      "stage": 5,
+      "course": "Year 9 Science",
+      "module": "9-2-disease",
+      "learningIntention": "Students will understand how knowledge of disease causes supports prevention and management of disease spread.",
+      "successCriteria": "Students can classify diseases, explain transmission and immunity, and evaluate prevention and control strategies.",
+      "groups": [
+        {
+          "id": "causes",
+          "label": "Disease and Causes",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-disease",
+              "term": "disease",
+              "clue": "A condition that disrupts normal structure or function in an organism.",
+              "definition": "A condition that disrupts normal structure or function in an organism.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-infectious-disease",
+              "term": "infectious disease",
+              "clue": "A disease caused by a transmissible pathogen.",
+              "definition": "A disease caused by a transmissible pathogen.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-non-infectious-disease",
+              "term": "non infectious disease",
+              "clue": "A disease not caused by a transmissible pathogen.",
+              "definition": "A disease not caused by a transmissible pathogen.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-pathogen",
+              "term": "pathogen",
+              "clue": "A biological agent capable of causing disease.",
+              "definition": "A biological agent capable of causing disease.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-virus",
+              "term": "virus",
+              "clue": "A non-cellular infectious agent that replicates inside host cells.",
+              "definition": "A non-cellular infectious agent that replicates inside host cells.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-bacterium",
+              "term": "bacterium",
+              "clue": "A single-celled prokaryote, some species of which cause disease.",
+              "definition": "A single-celled prokaryote, some species of which cause disease.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-fungus",
+              "term": "fungus",
+              "clue": "A eukaryotic organism that can cause infections of tissues.",
+              "definition": "A eukaryotic organism that can cause infections of tissues.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-protozoan",
+              "term": "protozoan",
+              "clue": "A single-celled eukaryote, some of which are parasitic.",
+              "definition": "A single-celled eukaryote, some of which are parasitic.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-parasite",
+              "term": "parasite",
+              "clue": "An organism living on or in a host and obtaining resources at its expense.",
+              "definition": "An organism living on or in a host and obtaining resources at its expense.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-host",
+              "term": "host",
+              "clue": "An organism that supports a pathogen or parasite.",
+              "definition": "An organism that supports a pathogen or parasite.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-vector",
+              "term": "vector",
+              "clue": "An organism that transfers a pathogen between hosts.",
+              "definition": "An organism that transfers a pathogen between hosts.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-toxin",
+              "term": "toxin",
+              "clue": "A poisonous substance produced by an organism.",
+              "definition": "A poisonous substance produced by an organism.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-genetic-disease",
+              "term": "genetic disease",
+              "clue": "A disorder caused partly or wholly by genetic changes.",
+              "definition": "A disorder caused partly or wholly by genetic changes.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-deficiency-disease",
+              "term": "deficiency disease",
+              "clue": "A condition caused by insufficient supply of an essential nutrient.",
+              "definition": "A condition caused by insufficient supply of an essential nutrient.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-lifestyle-disease",
+              "term": "lifestyle disease",
+              "clue": "A condition influenced by behaviour and environmental factors.",
+              "definition": "A condition influenced by behaviour and environmental factors.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-symptom",
+              "term": "symptom",
+              "clue": "A disease effect experienced and reported by a patient.",
+              "definition": "A disease effect experienced and reported by a patient.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-sign",
+              "term": "sign",
+              "clue": "An observable or measurable indication of disease.",
+              "definition": "An observable or measurable indication of disease.",
+              "tags": [
+                "causes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-causes-diagnosis",
+              "term": "diagnosis",
+              "clue": "Identification of a disease using history, examination and tests.",
+              "definition": "Identification of a disease using history, examination and tests.",
+              "tags": [
+                "causes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transmission",
+          "label": "Transmission and Spread",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-transmission",
+              "term": "transmission",
+              "clue": "Movement of a pathogen from one host to another.",
+              "definition": "Movement of a pathogen from one host to another.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-direct-contact",
+              "term": "direct contact",
+              "clue": "Spread through physical contact or exchange of body fluids.",
+              "definition": "Spread through physical contact or exchange of body fluids.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-indirect-contact",
+              "term": "indirect contact",
+              "clue": "Spread through contaminated objects or surfaces.",
+              "definition": "Spread through contaminated objects or surfaces.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-droplet-transmission",
+              "term": "droplet transmission",
+              "clue": "Spread in respiratory droplets over short distances.",
+              "definition": "Spread in respiratory droplets over short distances.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-airborne-transmission",
+              "term": "airborne transmission",
+              "clue": "Spread in small particles that remain suspended in air.",
+              "definition": "Spread in small particles that remain suspended in air.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-waterborne-disease",
+              "term": "waterborne disease",
+              "clue": "Disease transmitted through contaminated water.",
+              "definition": "Disease transmitted through contaminated water.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-foodborne-disease",
+              "term": "foodborne disease",
+              "clue": "Disease transmitted through contaminated food or toxins.",
+              "definition": "Disease transmitted through contaminated food or toxins.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-fomite",
+              "term": "fomite",
+              "clue": "A contaminated object that transfers pathogens.",
+              "definition": "A contaminated object that transfers pathogens.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-reservoir",
+              "term": "reservoir",
+              "clue": "A habitat in which a pathogen normally persists.",
+              "definition": "A habitat in which a pathogen normally persists.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-zoonosis",
+              "term": "zoonosis",
+              "clue": "A disease transmitted from animals to humans.",
+              "definition": "A disease transmitted from animals to humans.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-incubation-period",
+              "term": "incubation period",
+              "clue": "The time between infection and the onset of symptoms.",
+              "definition": "The time between infection and the onset of symptoms.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-infectious-period",
+              "term": "infectious period",
+              "clue": "The time during which an infected host can transmit a disease.",
+              "definition": "The time during which an infected host can transmit a disease.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-carrier",
+              "term": "carrier",
+              "clue": "An infected individual who can transmit a pathogen, sometimes without symptoms.",
+              "definition": "An infected individual who can transmit a pathogen, sometimes without symptoms.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-contagious",
+              "term": "contagious",
+              "clue": "Able to spread readily from one host to another.",
+              "definition": "Able to spread readily from one host to another.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-outbreak",
+              "term": "outbreak",
+              "clue": "A local increase in disease cases above the expected level.",
+              "definition": "A local increase in disease cases above the expected level.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-epidemic",
+              "term": "epidemic",
+              "clue": "A substantial regional increase in disease occurrence.",
+              "definition": "A substantial regional increase in disease occurrence.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-pandemic",
+              "term": "pandemic",
+              "clue": "An epidemic spreading across many countries or continents.",
+              "definition": "An epidemic spreading across many countries or continents.",
+              "tags": [
+                "transmission"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-transmission-endemic",
+              "term": "endemic",
+              "clue": "Consistently present at an expected level in a population or region.",
+              "definition": "Consistently present at an expected level in a population or region.",
+              "tags": [
+                "transmission"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "immunity",
+          "label": "Immunity and Treatment",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-immune-system",
+              "term": "immune system",
+              "clue": "The body system that recognises and responds to pathogens and abnormal cells.",
+              "definition": "The body system that recognises and responds to pathogens and abnormal cells.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-innate-immunity",
+              "term": "innate immunity",
+              "clue": "Rapid, non-specific defence present from birth.",
+              "definition": "Rapid, non-specific defence present from birth.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-adaptive-immunity",
+              "term": "adaptive immunity",
+              "clue": "Specific defence that develops after exposure to an antigen.",
+              "definition": "Specific defence that develops after exposure to an antigen.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-antigen",
+              "term": "antigen",
+              "clue": "A molecule recognised by the immune system that may trigger a response.",
+              "definition": "A molecule recognised by the immune system that may trigger a response.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-antibody",
+              "term": "antibody",
+              "clue": "A protein that binds to a specific antigen.",
+              "definition": "A protein that binds to a specific antigen.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-lymphocyte",
+              "term": "lymphocyte",
+              "clue": "A white blood cell involved in specific immune responses.",
+              "definition": "A white blood cell involved in specific immune responses.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-phagocyte",
+              "term": "phagocyte",
+              "clue": "A cell that engulfs and digests pathogens or particles.",
+              "definition": "A cell that engulfs and digests pathogens or particles.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-inflammation",
+              "term": "inflammation",
+              "clue": "A local response that increases blood flow and recruits immune cells.",
+              "definition": "A local response that increases blood flow and recruits immune cells.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-fever",
+              "term": "fever",
+              "clue": "A regulated increase in body temperature during illness.",
+              "definition": "A regulated increase in body temperature during illness.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-immunity",
+              "term": "immunity",
+              "clue": "Protection against a particular disease or pathogen.",
+              "definition": "Protection against a particular disease or pathogen.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-vaccine",
+              "term": "vaccine",
+              "clue": "A preparation that safely stimulates immune memory.",
+              "definition": "A preparation that safely stimulates immune memory.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-vaccination",
+              "term": "vaccination",
+              "clue": "Administration of a vaccine to develop protection.",
+              "definition": "Administration of a vaccine to develop protection.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-booster",
+              "term": "booster",
+              "clue": "An additional vaccine dose that strengthens or renews immunity.",
+              "definition": "An additional vaccine dose that strengthens or renews immunity.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-herd-immunity",
+              "term": "herd immunity",
+              "clue": "Indirect protection produced when a high proportion of a population is immune.",
+              "definition": "Indirect protection produced when a high proportion of a population is immune.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-antibiotic",
+              "term": "antibiotic",
+              "clue": "A medicine that kills bacteria or inhibits their growth.",
+              "definition": "A medicine that kills bacteria or inhibits their growth.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-antiviral",
+              "term": "antiviral",
+              "clue": "A medicine that disrupts stages of viral replication.",
+              "definition": "A medicine that disrupts stages of viral replication.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-antibiotic-resistance",
+              "term": "antibiotic resistance",
+              "clue": "Reduced susceptibility of bacteria to an antibiotic.",
+              "definition": "Reduced susceptibility of bacteria to an antibiotic.",
+              "tags": [
+                "immunity"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-immunity-treatment",
+              "term": "treatment",
+              "clue": "An intervention used to cure, control or relieve a disease.",
+              "definition": "An intervention used to cure, control or relieve a disease.",
+              "tags": [
+                "immunity"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "public_health",
+          "label": "Prevention and Public Health",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-prevention",
+              "term": "prevention",
+              "clue": "Action taken to reduce the occurrence or spread of disease.",
+              "definition": "Action taken to reduce the occurrence or spread of disease.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-hygiene",
+              "term": "hygiene",
+              "clue": "Practices that reduce contamination and pathogen transmission.",
+              "definition": "Practices that reduce contamination and pathogen transmission.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-sanitation",
+              "term": "sanitation",
+              "clue": "Systems for safe water, sewage and waste management.",
+              "definition": "Systems for safe water, sewage and waste management.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-sterilisation",
+              "term": "sterilisation",
+              "clue": "Destruction or removal of all microorganisms from equipment or material.",
+              "definition": "Destruction or removal of all microorganisms from equipment or material.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-disinfection",
+              "term": "disinfection",
+              "clue": "Reduction of harmful microorganisms on surfaces or objects.",
+              "definition": "Reduction of harmful microorganisms on surfaces or objects.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-quarantine",
+              "term": "quarantine",
+              "clue": "Restricting movement of people who may have been exposed.",
+              "definition": "Restricting movement of people who may have been exposed.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-isolation",
+              "term": "isolation",
+              "clue": "Separating infected individuals to reduce transmission.",
+              "definition": "Separating infected individuals to reduce transmission.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-screening",
+              "term": "screening",
+              "clue": "Testing people to detect disease or risk before symptoms become obvious.",
+              "definition": "Testing people to detect disease or risk before symptoms become obvious.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-contact-tracing",
+              "term": "contact tracing",
+              "clue": "Identifying and following people exposed to an infected person.",
+              "definition": "Identifying and following people exposed to an infected person.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-surveillance",
+              "term": "surveillance",
+              "clue": "Systematic monitoring of disease occurrence and trends.",
+              "definition": "Systematic monitoring of disease occurrence and trends.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-epidemiology",
+              "term": "epidemiology",
+              "clue": "The study of disease distribution, causes and control in populations.",
+              "definition": "The study of disease distribution, causes and control in populations.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-incidence",
+              "term": "incidence",
+              "clue": "The number or rate of new cases during a specified time.",
+              "definition": "The number or rate of new cases during a specified time.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-prevalence",
+              "term": "prevalence",
+              "clue": "The total number or proportion of existing cases at a particular time.",
+              "definition": "The total number or proportion of existing cases at a particular time.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-mortality",
+              "term": "mortality",
+              "clue": "Death within a population, often expressed as a rate.",
+              "definition": "Death within a population, often expressed as a rate.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-morbidity",
+              "term": "morbidity",
+              "clue": "Illness or disease burden within a population.",
+              "definition": "Illness or disease burden within a population.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-risk-factor",
+              "term": "risk factor",
+              "clue": "A characteristic associated with increased likelihood of disease.",
+              "definition": "A characteristic associated with increased likelihood of disease.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-public-health",
+              "term": "public health",
+              "clue": "Organised action to prevent disease and improve population wellbeing.",
+              "definition": "Organised action to prevent disease and improve population wellbeing.",
+              "tags": [
+                "public_health"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-2-disease-public_health-health-campaign",
+              "term": "health campaign",
+              "clue": "Communication designed to encourage protective health behaviour.",
+              "definition": "Communication designed to encourage protective health behaviour.",
+              "tags": [
+                "public_health"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-9-9-3-materials",
+      "label": "9.3 Materials",
+      "year": 9,
+      "stage": 5,
+      "course": "Year 9 Science",
+      "module": "9-3-materials",
+      "learningIntention": "Students will understand how material properties influence selection, extraction, processing and use.",
+      "successCriteria": "Students can classify materials, compare properties, explain processing and assess suitability and impacts.",
+      "groups": [
+        {
+          "id": "properties",
+          "label": "Material Properties and Testing",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-material",
+              "term": "material",
+              "clue": "A substance selected to make an object, structure or product.",
+              "definition": "A substance selected to make an object, structure or product.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-physical-property",
+              "term": "physical property",
+              "clue": "A characteristic measured without forming a new substance.",
+              "definition": "A characteristic measured without forming a new substance.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-chemical-property",
+              "term": "chemical property",
+              "clue": "A characteristic describing how a material reacts chemically.",
+              "definition": "A characteristic describing how a material reacts chemically.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-strength",
+              "term": "strength",
+              "clue": "Ability to withstand applied force before failure.",
+              "definition": "Ability to withstand applied force before failure.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-hardness",
+              "term": "hardness",
+              "clue": "Resistance to scratching, indentation or surface wear.",
+              "definition": "Resistance to scratching, indentation or surface wear.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-toughness",
+              "term": "toughness",
+              "clue": "Ability to absorb energy before fracturing.",
+              "definition": "Ability to absorb energy before fracturing.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-brittleness",
+              "term": "brittleness",
+              "clue": "Tendency to fracture with little deformation.",
+              "definition": "Tendency to fracture with little deformation.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-elasticity",
+              "term": "elasticity",
+              "clue": "Ability to recover original shape after a force is removed.",
+              "definition": "Ability to recover original shape after a force is removed.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-plasticity",
+              "term": "plasticity",
+              "clue": "Ability to deform permanently without breaking.",
+              "definition": "Ability to deform permanently without breaking.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-ductility",
+              "term": "ductility",
+              "clue": "Ability to stretch into wire under tension.",
+              "definition": "Ability to stretch into wire under tension.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-malleability",
+              "term": "malleability",
+              "clue": "Ability to be shaped into sheets under compression.",
+              "definition": "Ability to be shaped into sheets under compression.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-density",
+              "term": "density",
+              "clue": "Mass per unit volume.",
+              "definition": "Mass per unit volume.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-porosity",
+              "term": "porosity",
+              "clue": "The proportion of empty spaces within a material.",
+              "definition": "The proportion of empty spaces within a material.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-permeability",
+              "term": "permeability",
+              "clue": "Ability to allow a fluid to pass through connected spaces.",
+              "definition": "Ability to allow a fluid to pass through connected spaces.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-thermal-conductivity",
+              "term": "thermal conductivity",
+              "clue": "Ability to transfer thermal energy.",
+              "definition": "Ability to transfer thermal energy.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-electrical-conductivity",
+              "term": "electrical conductivity",
+              "clue": "Ability to allow electric charge to move.",
+              "definition": "Ability to allow electric charge to move.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-corrosion-resistance",
+              "term": "corrosion resistance",
+              "clue": "Ability to resist chemical deterioration.",
+              "definition": "Ability to resist chemical deterioration.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-flammability",
+              "term": "flammability",
+              "clue": "Ease with which a material ignites and burns.",
+              "definition": "Ease with which a material ignites and burns.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-tensile-test",
+              "term": "tensile test",
+              "clue": "A test that pulls a sample to measure deformation and failure.",
+              "definition": "A test that pulls a sample to measure deformation and failure.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-stress",
+              "term": "stress",
+              "clue": "Force acting per unit cross-sectional area.",
+              "definition": "Force acting per unit cross-sectional area.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-properties-strain",
+              "term": "strain",
+              "clue": "Deformation compared with original dimensions.",
+              "definition": "Deformation compared with original dimensions.",
+              "tags": [
+                "properties"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "classes",
+          "label": "Classes of Materials",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-metal",
+              "term": "metal",
+              "clue": "A material with metallic bonding and generally high conductivity.",
+              "definition": "A material with metallic bonding and generally high conductivity.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-alloy",
+              "term": "alloy",
+              "clue": "A metallic mixture designed to modify properties.",
+              "definition": "A metallic mixture designed to modify properties.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-polymer",
+              "term": "polymer",
+              "clue": "A substance made of long chains or networks of repeating units.",
+              "definition": "A substance made of long chains or networks of repeating units.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-plastic",
+              "term": "plastic",
+              "clue": "A mouldable polymer material.",
+              "definition": "A mouldable polymer material.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-thermoplastic",
+              "term": "thermoplastic",
+              "clue": "A polymer that softens repeatedly when heated.",
+              "definition": "A polymer that softens repeatedly when heated.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-thermoset",
+              "term": "thermoset",
+              "clue": "A cross-linked polymer that does not readily remelt after curing.",
+              "definition": "A cross-linked polymer that does not readily remelt after curing.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-elastomer",
+              "term": "elastomer",
+              "clue": "A polymer able to undergo large elastic deformation.",
+              "definition": "A polymer able to undergo large elastic deformation.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-ceramic",
+              "term": "ceramic",
+              "clue": "An inorganic non-metallic material usually processed using heat.",
+              "definition": "An inorganic non-metallic material usually processed using heat.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-glass",
+              "term": "glass",
+              "clue": "An amorphous inorganic material without long-range crystal order.",
+              "definition": "An amorphous inorganic material without long-range crystal order.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-composite",
+              "term": "composite",
+              "clue": "A material combining distinct components to achieve selected properties.",
+              "definition": "A material combining distinct components to achieve selected properties.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-concrete",
+              "term": "concrete",
+              "clue": "A composite made from cement, water and aggregates.",
+              "definition": "A composite made from cement, water and aggregates.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-reinforced-concrete",
+              "term": "reinforced concrete",
+              "clue": "Concrete strengthened with steel bars, mesh or fibres.",
+              "definition": "Concrete strengthened with steel bars, mesh or fibres.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-fibreglass",
+              "term": "fibreglass",
+              "clue": "A composite containing glass fibres in a polymer matrix.",
+              "definition": "A composite containing glass fibres in a polymer matrix.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-carbon-fibre",
+              "term": "carbon fibre",
+              "clue": "A lightweight, high-strength fibre used in composites.",
+              "definition": "A lightweight, high-strength fibre used in composites.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-semiconductor",
+              "term": "semiconductor",
+              "clue": "A material with controllable electrical conductivity.",
+              "definition": "A material with controllable electrical conductivity.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-biomaterial",
+              "term": "biomaterial",
+              "clue": "A material designed to interact safely with biological systems.",
+              "definition": "A material designed to interact safely with biological systems.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-nanomaterial",
+              "term": "nanomaterial",
+              "clue": "A material with important structures at the nanometre scale.",
+              "definition": "A material with important structures at the nanometre scale.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-natural-material",
+              "term": "natural material",
+              "clue": "A material obtained directly from living things or Earth.",
+              "definition": "A material obtained directly from living things or Earth.",
+              "tags": [
+                "classes"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-classes-synthetic-material",
+              "term": "synthetic material",
+              "clue": "A human-made material produced through chemical processing.",
+              "definition": "A human-made material produced through chemical processing.",
+              "tags": [
+                "classes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "processing",
+          "label": "Resources and Processing",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-natural-resource",
+              "term": "natural resource",
+              "clue": "A useful substance or energy source obtained from nature.",
+              "definition": "A useful substance or energy source obtained from nature.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-ore",
+              "term": "ore",
+              "clue": "Rock containing enough valuable mineral for economical extraction.",
+              "definition": "Rock containing enough valuable mineral for economical extraction.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-mineral",
+              "term": "mineral",
+              "clue": "A naturally occurring inorganic solid with a defined composition and structure.",
+              "definition": "A naturally occurring inorganic solid with a defined composition and structure.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-mining",
+              "term": "mining",
+              "clue": "Extraction of valuable geological materials from Earth.",
+              "definition": "Extraction of valuable geological materials from Earth.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-quarrying",
+              "term": "quarrying",
+              "clue": "Surface extraction of stone, sand, clay or aggregates.",
+              "definition": "Surface extraction of stone, sand, clay or aggregates.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-extraction",
+              "term": "extraction",
+              "clue": "Removal of a useful substance from a raw resource.",
+              "definition": "Removal of a useful substance from a raw resource.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-smelting",
+              "term": "smelting",
+              "clue": "High-temperature extraction of metal from ore.",
+              "definition": "High-temperature extraction of metal from ore.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-electrolysis",
+              "term": "electrolysis",
+              "clue": "Use of electric current to drive a chemical change.",
+              "definition": "Use of electric current to drive a chemical change.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-refining",
+              "term": "refining",
+              "clue": "Purification of a raw or partly processed material.",
+              "definition": "Purification of a raw or partly processed material.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-fabrication",
+              "term": "fabrication",
+              "clue": "Making components by cutting, forming, joining or finishing.",
+              "definition": "Making components by cutting, forming, joining or finishing.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-casting",
+              "term": "casting",
+              "clue": "Shaping a material by pouring it into a mould.",
+              "definition": "Shaping a material by pouring it into a mould.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-forging",
+              "term": "forging",
+              "clue": "Shaping metal using compressive force.",
+              "definition": "Shaping metal using compressive force.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-extrusion",
+              "term": "extrusion",
+              "clue": "Forcing material through a shaped opening to form a continuous profile.",
+              "definition": "Forcing material through a shaped opening to form a continuous profile.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-additive-manufacturing",
+              "term": "additive manufacturing",
+              "clue": "Building an object layer by layer from digital instructions.",
+              "definition": "Building an object layer by layer from digital instructions.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-heat-treatment",
+              "term": "heat treatment",
+              "clue": "Controlled heating and cooling used to change material properties.",
+              "definition": "Controlled heating and cooling used to change material properties.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-tempering",
+              "term": "tempering",
+              "clue": "Heat treatment that reduces brittleness while retaining useful hardness.",
+              "definition": "Heat treatment that reduces brittleness while retaining useful hardness.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-recycling",
+              "term": "recycling",
+              "clue": "Processing used materials into new products.",
+              "definition": "Processing used materials into new products.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-downcycling",
+              "term": "downcycling",
+              "clue": "Reprocessing material into a product of lower quality or value.",
+              "definition": "Reprocessing material into a product of lower quality or value.",
+              "tags": [
+                "processing"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-processing-rehabilitation",
+              "term": "rehabilitation",
+              "clue": "Restoring stability and ecological function after resource extraction.",
+              "definition": "Restoring stability and ecological function after resource extraction.",
+              "tags": [
+                "processing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "selection",
+          "label": "Selection and Life Cycle",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-material-selection",
+              "term": "material selection",
+              "clue": "Choosing a material that best meets performance and impact requirements.",
+              "definition": "Choosing a material that best meets performance and impact requirements.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-design-criteria",
+              "term": "design criteria",
+              "clue": "Standards or goals that a design must satisfy.",
+              "definition": "Standards or goals that a design must satisfy.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-constraint",
+              "term": "constraint",
+              "clue": "A limit involving cost, resources, safety, time or manufacture.",
+              "definition": "A limit involving cost, resources, safety, time or manufacture.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-fitness-for-purpose",
+              "term": "fitness for purpose",
+              "clue": "Suitability for safe and effective performance in an intended use.",
+              "definition": "Suitability for safe and effective performance in an intended use.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-durability",
+              "term": "durability",
+              "clue": "Ability to retain function over a long period.",
+              "definition": "Ability to retain function over a long period.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-maintenance",
+              "term": "maintenance",
+              "clue": "Work required to preserve performance and prevent failure.",
+              "definition": "Work required to preserve performance and prevent failure.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-cost",
+              "term": "cost",
+              "clue": "Money, resources or energy required across a material’s life.",
+              "definition": "Money, resources or energy required across a material’s life.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-availability",
+              "term": "availability",
+              "clue": "How readily a material can be obtained in sufficient supply.",
+              "definition": "How readily a material can be obtained in sufficient supply.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-embodied-energy",
+              "term": "embodied energy",
+              "clue": "Energy used in extraction, processing, manufacture and transport.",
+              "definition": "Energy used in extraction, processing, manufacture and transport.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-carbon-footprint",
+              "term": "carbon footprint",
+              "clue": "Total greenhouse gas emissions associated with a product or activity.",
+              "definition": "Total greenhouse gas emissions associated with a product or activity.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-life-cycle-assessment",
+              "term": "life cycle assessment",
+              "clue": "Evaluation of impacts from raw material extraction to disposal.",
+              "definition": "Evaluation of impacts from raw material extraction to disposal.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-circular-economy",
+              "term": "circular economy",
+              "clue": "A system designed to keep products and materials in use.",
+              "definition": "A system designed to keep products and materials in use.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-renewable-resource",
+              "term": "renewable resource",
+              "clue": "A resource replenished on a useful human timescale.",
+              "definition": "A resource replenished on a useful human timescale.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-non-renewable-resource",
+              "term": "non renewable resource",
+              "clue": "A finite resource replaced only over very long times.",
+              "definition": "A finite resource replaced only over very long times.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-critical-mineral",
+              "term": "critical mineral",
+              "clue": "A technologically important mineral with significant supply risk.",
+              "definition": "A technologically important mineral with significant supply risk.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-ethical-sourcing",
+              "term": "ethical sourcing",
+              "clue": "Obtaining materials while considering labour, community and environmental impacts.",
+              "definition": "Obtaining materials while considering labour, community and environmental impacts.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-planned-obsolescence",
+              "term": "planned obsolescence",
+              "clue": "Designing a product with a deliberately limited useful life.",
+              "definition": "Designing a product with a deliberately limited useful life.",
+              "tags": [
+                "selection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-3-materials-selection-product-stewardship",
+              "term": "product stewardship",
+              "clue": "Shared responsibility for environmental impacts across a product life cycle.",
+              "definition": "Shared responsibility for environmental impacts across a product life cycle.",
+              "tags": [
+                "selection"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-9-9-4-environmental-sustainability",
+      "label": "9.4 Environmental Sustainability",
+      "year": 9,
+      "stage": 5,
+      "course": "Year 9 Science",
+      "module": "9-4-environmental-sustainability",
+      "learningIntention": "Students will understand and analyse the impacts of human activity on the natural world.",
+      "successCriteria": "Students can explain environmental processes, interpret impacts and evaluate evidence-based sustainability strategies.",
+      "groups": [
+        {
+          "id": "ecosystems",
+          "label": "Ecosystems and Biodiversity",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-environment",
+              "term": "environment",
+              "clue": "The living and non-living surroundings of organisms.",
+              "definition": "The living and non-living surroundings of organisms.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-ecosystem",
+              "term": "ecosystem",
+              "clue": "A community interacting with its physical environment.",
+              "definition": "A community interacting with its physical environment.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-biotic-factor",
+              "term": "biotic factor",
+              "clue": "A living component of an ecosystem.",
+              "definition": "A living component of an ecosystem.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-abiotic-factor",
+              "term": "abiotic factor",
+              "clue": "A non-living environmental condition such as light, water or temperature.",
+              "definition": "A non-living environmental condition such as light, water or temperature.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-habitat",
+              "term": "habitat",
+              "clue": "The place where an organism lives.",
+              "definition": "The place where an organism lives.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-niche",
+              "term": "niche",
+              "clue": "The role, resource use and interactions of a species.",
+              "definition": "The role, resource use and interactions of a species.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-population",
+              "term": "population",
+              "clue": "Members of one species living in an area.",
+              "definition": "Members of one species living in an area.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-community",
+              "term": "community",
+              "clue": "Populations of different species living and interacting together.",
+              "definition": "Populations of different species living and interacting together.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-biodiversity",
+              "term": "biodiversity",
+              "clue": "The variety of genes, species and ecosystems.",
+              "definition": "The variety of genes, species and ecosystems.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-species-richness",
+              "term": "species richness",
+              "clue": "The number of different species in an area.",
+              "definition": "The number of different species in an area.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-food-chain",
+              "term": "food chain",
+              "clue": "A sequence showing feeding relationships and energy transfer.",
+              "definition": "A sequence showing feeding relationships and energy transfer.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-food-web",
+              "term": "food web",
+              "clue": "A network of interconnected food chains.",
+              "definition": "A network of interconnected food chains.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-producer",
+              "term": "producer",
+              "clue": "An organism that makes organic food using light or chemical energy.",
+              "definition": "An organism that makes organic food using light or chemical energy.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-consumer",
+              "term": "consumer",
+              "clue": "An organism that obtains energy by eating other organisms.",
+              "definition": "An organism that obtains energy by eating other organisms.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-decomposer",
+              "term": "decomposer",
+              "clue": "An organism that breaks down dead material and recycles nutrients.",
+              "definition": "An organism that breaks down dead material and recycles nutrients.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-trophic-level",
+              "term": "trophic level",
+              "clue": "A feeding position in a food chain or web.",
+              "definition": "A feeding position in a food chain or web.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-keystone-species",
+              "term": "keystone species",
+              "clue": "A species with a disproportionately large effect on ecosystem structure.",
+              "definition": "A species with a disproportionately large effect on ecosystem structure.",
+              "tags": [
+                "ecosystems"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-ecosystems-ecosystem-service",
+              "term": "ecosystem service",
+              "clue": "A benefit people obtain from functioning ecosystems.",
+              "definition": "A benefit people obtain from functioning ecosystems.",
+              "tags": [
+                "ecosystems"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "impacts",
+          "label": "Human Impacts",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-human-activity",
+              "term": "human activity",
+              "clue": "An action by people that changes environmental systems.",
+              "definition": "An action by people that changes environmental systems.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-habitat-loss",
+              "term": "habitat loss",
+              "clue": "Destruction or removal of the living space needed by organisms.",
+              "definition": "Destruction or removal of the living space needed by organisms.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-fragmentation",
+              "term": "fragmentation",
+              "clue": "Division of continuous habitat into smaller isolated patches.",
+              "definition": "Division of continuous habitat into smaller isolated patches.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-deforestation",
+              "term": "deforestation",
+              "clue": "Large-scale removal of forest vegetation.",
+              "definition": "Large-scale removal of forest vegetation.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-land-clearing",
+              "term": "land clearing",
+              "clue": "Removal of native vegetation for agriculture, settlements or infrastructure.",
+              "definition": "Removal of native vegetation for agriculture, settlements or infrastructure.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-pollution",
+              "term": "pollution",
+              "clue": "Introduction of harmful substances or energy into the environment.",
+              "definition": "Introduction of harmful substances or energy into the environment.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-air-pollution",
+              "term": "air pollution",
+              "clue": "Contamination of the atmosphere by gases, particles or chemicals.",
+              "definition": "Contamination of the atmosphere by gases, particles or chemicals.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-water-pollution",
+              "term": "water pollution",
+              "clue": "Contamination that reduces the quality of water systems.",
+              "definition": "Contamination that reduces the quality of water systems.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-eutrophication",
+              "term": "eutrophication",
+              "clue": "Nutrient enrichment causing excessive algal or plant growth and oxygen loss.",
+              "definition": "Nutrient enrichment causing excessive algal or plant growth and oxygen loss.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-bioaccumulation",
+              "term": "bioaccumulation",
+              "clue": "Build-up of a persistent substance within an organism.",
+              "definition": "Build-up of a persistent substance within an organism.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-biomagnification",
+              "term": "biomagnification",
+              "clue": "Increase in contaminant concentration at higher trophic levels.",
+              "definition": "Increase in contaminant concentration at higher trophic levels.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-invasive-species",
+              "term": "invasive species",
+              "clue": "A non-native species that causes environmental, economic or social harm.",
+              "definition": "A non-native species that causes environmental, economic or social harm.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-overexploitation",
+              "term": "overexploitation",
+              "clue": "Use of a population or resource faster than it can recover.",
+              "definition": "Use of a population or resource faster than it can recover.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-soil-erosion",
+              "term": "soil erosion",
+              "clue": "Removal of topsoil by wind, water or human activity.",
+              "definition": "Removal of topsoil by wind, water or human activity.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-salinity",
+              "term": "salinity",
+              "clue": "Elevated salt concentration in soil or water.",
+              "definition": "Elevated salt concentration in soil or water.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-urbanisation",
+              "term": "urbanisation",
+              "clue": "Growth of cities and built environments that alters land and water systems.",
+              "definition": "Growth of cities and built environments that alters land and water systems.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-waste",
+              "term": "waste",
+              "clue": "Discarded material that can consume resources or cause pollution.",
+              "definition": "Discarded material that can consume resources or cause pollution.",
+              "tags": [
+                "impacts"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-impacts-microplastic",
+              "term": "microplastic",
+              "clue": "A plastic particle smaller than five millimetres.",
+              "definition": "A plastic particle smaller than five millimetres.",
+              "tags": [
+                "impacts"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "climate",
+          "label": "Climate and Earth Systems",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-climate",
+              "term": "climate",
+              "clue": "Long-term patterns and variation in weather conditions.",
+              "definition": "Long-term patterns and variation in weather conditions.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-weather",
+              "term": "weather",
+              "clue": "Short-term atmospheric conditions at a place and time.",
+              "definition": "Short-term atmospheric conditions at a place and time.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-greenhouse-effect",
+              "term": "greenhouse effect",
+              "clue": "Natural warming caused by gases absorbing and re-emitting infrared radiation.",
+              "definition": "Natural warming caused by gases absorbing and re-emitting infrared radiation.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-enhanced-greenhouse-effect",
+              "term": "enhanced greenhouse effect",
+              "clue": "Additional warming caused by increased greenhouse gas concentrations.",
+              "definition": "Additional warming caused by increased greenhouse gas concentrations.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-greenhouse-gas",
+              "term": "greenhouse gas",
+              "clue": "A gas that absorbs and emits infrared radiation.",
+              "definition": "A gas that absorbs and emits infrared radiation.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-carbon-dioxide",
+              "term": "carbon dioxide",
+              "clue": "A greenhouse gas released by respiration, combustion and industry.",
+              "definition": "A greenhouse gas released by respiration, combustion and industry.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-methane",
+              "term": "methane",
+              "clue": "A potent greenhouse gas from wetlands, agriculture, waste and fossil fuels.",
+              "definition": "A potent greenhouse gas from wetlands, agriculture, waste and fossil fuels.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-carbon-cycle",
+              "term": "carbon cycle",
+              "clue": "Movement of carbon among atmosphere, living things, oceans, soils and rocks.",
+              "definition": "Movement of carbon among atmosphere, living things, oceans, soils and rocks.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-carbon-sink",
+              "term": "carbon sink",
+              "clue": "A reservoir that absorbs more carbon than it releases.",
+              "definition": "A reservoir that absorbs more carbon than it releases.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-carbon-source",
+              "term": "carbon source",
+              "clue": "A process or reservoir that releases more carbon than it absorbs.",
+              "definition": "A process or reservoir that releases more carbon than it absorbs.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-climate-change",
+              "term": "climate change",
+              "clue": "Long-term change in climate patterns and extremes.",
+              "definition": "Long-term change in climate patterns and extremes.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-global-warming",
+              "term": "global warming",
+              "clue": "Long-term increase in average global surface temperature.",
+              "definition": "Long-term increase in average global surface temperature.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-sea-level-rise",
+              "term": "sea level rise",
+              "clue": "Increase in average ocean level caused by warming and land-ice melt.",
+              "definition": "Increase in average ocean level caused by warming and land-ice melt.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-ocean-acidification",
+              "term": "ocean acidification",
+              "clue": "Decrease in ocean pH caused by absorption of carbon dioxide.",
+              "definition": "Decrease in ocean pH caused by absorption of carbon dioxide.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-feedback-loop",
+              "term": "feedback loop",
+              "clue": "A process that amplifies or reduces an initial change.",
+              "definition": "A process that amplifies or reduces an initial change.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-mitigation",
+              "term": "mitigation",
+              "clue": "Action that reduces causes of climate or environmental change.",
+              "definition": "Action that reduces causes of climate or environmental change.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-adaptation",
+              "term": "adaptation",
+              "clue": "Adjustment that reduces vulnerability to expected impacts.",
+              "definition": "Adjustment that reduces vulnerability to expected impacts.",
+              "tags": [
+                "climate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-climate-resilience",
+              "term": "resilience",
+              "clue": "Capacity of a system to withstand disturbance and recover.",
+              "definition": "Capacity of a system to withstand disturbance and recover.",
+              "tags": [
+                "climate"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "management",
+          "label": "Sustainability and Management",
+          "items": [
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-sustainability",
+              "term": "sustainability",
+              "clue": "Meeting present needs without undermining future generations.",
+              "definition": "Meeting present needs without undermining future generations.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-sustainable-development",
+              "term": "sustainable development",
+              "clue": "Development that balances environmental, social and economic wellbeing.",
+              "definition": "Development that balances environmental, social and economic wellbeing.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-conservation",
+              "term": "conservation",
+              "clue": "Protection and careful management of biodiversity and natural resources.",
+              "definition": "Protection and careful management of biodiversity and natural resources.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-restoration",
+              "term": "restoration",
+              "clue": "Assisting recovery of a degraded ecosystem towards greater function and diversity.",
+              "definition": "Assisting recovery of a degraded ecosystem towards greater function and diversity.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-rehabilitation",
+              "term": "rehabilitation",
+              "clue": "Improving a damaged environment even if it is not fully returned to its original state.",
+              "definition": "Improving a damaged environment even if it is not fully returned to its original state.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-protected-area",
+              "term": "protected area",
+              "clue": "Land or water managed primarily for conservation.",
+              "definition": "Land or water managed primarily for conservation.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-sustainable-yield",
+              "term": "sustainable yield",
+              "clue": "A harvest rate that allows a renewable population to recover.",
+              "definition": "A harvest rate that allows a renewable population to recover.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-ecological-footprint",
+              "term": "ecological footprint",
+              "clue": "An estimate of the productive area needed to support consumption and waste.",
+              "definition": "An estimate of the productive area needed to support consumption and waste.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-circular-economy",
+              "term": "circular economy",
+              "clue": "A system that prioritises durability, reuse, repair and recycling.",
+              "definition": "A system that prioritises durability, reuse, repair and recycling.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-renewable-resource",
+              "term": "renewable resource",
+              "clue": "A resource naturally replenished on a useful timescale.",
+              "definition": "A resource naturally replenished on a useful timescale.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-environmental-monitoring",
+              "term": "environmental monitoring",
+              "clue": "Repeated measurement used to detect environmental change.",
+              "definition": "Repeated measurement used to detect environmental change.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-indicator-species",
+              "term": "indicator species",
+              "clue": "A species whose condition reflects environmental quality.",
+              "definition": "A species whose condition reflects environmental quality.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-environmental-impact-assessment",
+              "term": "environmental impact assessment",
+              "clue": "A study of likely impacts before a project proceeds.",
+              "definition": "A study of likely impacts before a project proceeds.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-policy",
+              "term": "policy",
+              "clue": "A guiding course of action established by an organisation or government.",
+              "definition": "A guiding course of action established by an organisation or government.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-regulation",
+              "term": "regulation",
+              "clue": "A legally enforceable rule or standard.",
+              "definition": "A legally enforceable rule or standard.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-stewardship",
+              "term": "stewardship",
+              "clue": "Responsible care for environments and resources.",
+              "definition": "Responsible care for environments and resources.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-country",
+              "term": "Country",
+              "clue": "Lands, waters, skies, living things and relationships in Aboriginal worldviews.",
+              "definition": "Lands, waters, skies, living things and relationships in Aboriginal worldviews.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-cultural-burning",
+              "term": "Cultural burning",
+              "clue": "Aboriginal fire practice guided by local Cultural Knowledge and responsibility for Country.",
+              "definition": "Aboriginal fire practice guided by local Cultural Knowledge and responsibility for Country.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-citizen-science",
+              "term": "citizen science",
+              "clue": "Public participation in collecting or analysing scientific information.",
+              "definition": "Public participation in collecting or analysing scientific information.",
+              "tags": [
+                "management"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-9-9-4-environmental-sustainability-management-evidence-based-decision",
+              "term": "evidence based decision",
+              "clue": "A choice informed by reliable data, scientific knowledge and relevant values.",
+              "definition": "A choice informed by reliable data, scientific knowledge and relevant values.",
+              "tags": [
+                "management"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2421 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "nsw-2023-year-8",
+  "jurisdiction": "NSW",
+  "syllabus": "Science 7–10 (2023)",
+  "label": "Year 8 Science",
+  "collections": [
+    {
+      "id": "nsw-2023-year-8-8-1-living-systems",
+      "label": "8.1 Living Systems",
+      "year": 8,
+      "stage": 4,
+      "course": "Year 8 Science",
+      "module": "8-1-living-systems",
+      "learningIntention": "Students will understand the structures, functions and interactions of living systems and their components.",
+      "successCriteria": "Students can identify major organ systems, explain transport and exchange, and connect structures with functions.",
+      "groups": [
+        {
+          "id": "organisation",
+          "label": "Organisation and Regulation",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-cell",
+              "term": "cell",
+              "clue": "The smallest structural and functional unit of life.",
+              "definition": "The smallest structural and functional unit of life.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-tissue",
+              "term": "tissue",
+              "clue": "A group of similar cells working together.",
+              "definition": "A group of similar cells working together.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-organ",
+              "term": "organ",
+              "clue": "A structure made of several tissue types working together.",
+              "definition": "A structure made of several tissue types working together.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-organ-system",
+              "term": "organ system",
+              "clue": "A group of organs carrying out a major body function.",
+              "definition": "A group of organs carrying out a major body function.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-organism",
+              "term": "organism",
+              "clue": "An individual living thing able to perform life processes.",
+              "definition": "An individual living thing able to perform life processes.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-structure",
+              "term": "structure",
+              "clue": "The form and arrangement of biological parts.",
+              "definition": "The form and arrangement of biological parts.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-function",
+              "term": "function",
+              "clue": "The role performed by a biological structure.",
+              "definition": "The role performed by a biological structure.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-specialisation",
+              "term": "specialisation",
+              "clue": "Adaptation of cells or structures for particular roles.",
+              "definition": "Adaptation of cells or structures for particular roles.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-homeostasis",
+              "term": "homeostasis",
+              "clue": "Maintenance of stable internal conditions.",
+              "definition": "Maintenance of stable internal conditions.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-stimulus",
+              "term": "stimulus",
+              "clue": "A detectable change that can trigger a response.",
+              "definition": "A detectable change that can trigger a response.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-response",
+              "term": "response",
+              "clue": "A change in activity caused by a stimulus.",
+              "definition": "A change in activity caused by a stimulus.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-receptor",
+              "term": "receptor",
+              "clue": "A cell or organ that detects a stimulus.",
+              "definition": "A cell or organ that detects a stimulus.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-effector",
+              "term": "effector",
+              "clue": "A muscle or gland that produces a response.",
+              "definition": "A muscle or gland that produces a response.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-feedback-mechanism",
+              "term": "feedback mechanism",
+              "clue": "A process that adjusts change within a system.",
+              "definition": "A process that adjusts change within a system.",
+              "tags": [
+                "organisation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-organisation-negative-feedback",
+              "term": "negative feedback",
+              "clue": "A response that reverses deviation from a normal range.",
+              "definition": "A response that reverses deviation from a normal range.",
+              "tags": [
+                "organisation"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "digestion",
+          "label": "Digestion and Excretion",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-digestive-system",
+              "term": "digestive system",
+              "clue": "The organ system that breaks down food and absorbs nutrients.",
+              "definition": "The organ system that breaks down food and absorbs nutrients.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-ingestion",
+              "term": "ingestion",
+              "clue": "Taking food or drink into the body.",
+              "definition": "Taking food or drink into the body.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-digestion",
+              "term": "digestion",
+              "clue": "Breaking food into smaller soluble molecules.",
+              "definition": "Breaking food into smaller soluble molecules.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-mechanical-digestion",
+              "term": "mechanical digestion",
+              "clue": "Physical breakdown of food without chemical change.",
+              "definition": "Physical breakdown of food without chemical change.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-chemical-digestion",
+              "term": "chemical digestion",
+              "clue": "Breakdown of food molecules using enzymes.",
+              "definition": "Breakdown of food molecules using enzymes.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-enzyme",
+              "term": "enzyme",
+              "clue": "A biological catalyst that speeds a specific reaction.",
+              "definition": "A biological catalyst that speeds a specific reaction.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-mouth",
+              "term": "mouth",
+              "clue": "The organ where chewing and digestion begin.",
+              "definition": "The organ where chewing and digestion begin.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-oesophagus",
+              "term": "oesophagus",
+              "clue": "The muscular tube carrying swallowed food to the stomach.",
+              "definition": "The muscular tube carrying swallowed food to the stomach.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-peristalsis",
+              "term": "peristalsis",
+              "clue": "Wave-like muscular contractions that move material through tubes.",
+              "definition": "Wave-like muscular contractions that move material through tubes.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-stomach",
+              "term": "stomach",
+              "clue": "A muscular organ that churns food with acid and enzymes.",
+              "definition": "A muscular organ that churns food with acid and enzymes.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-small-intestine",
+              "term": "small intestine",
+              "clue": "The main site of chemical digestion and nutrient absorption.",
+              "definition": "The main site of chemical digestion and nutrient absorption.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-villus",
+              "term": "villus",
+              "clue": "A finger-like projection that increases absorption surface area.",
+              "definition": "A finger-like projection that increases absorption surface area.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-large-intestine",
+              "term": "large intestine",
+              "clue": "The organ that absorbs water and forms faeces.",
+              "definition": "The organ that absorbs water and forms faeces.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-liver",
+              "term": "liver",
+              "clue": "An organ that processes nutrients and produces bile.",
+              "definition": "An organ that processes nutrients and produces bile.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-kidney",
+              "term": "kidney",
+              "clue": "An organ that filters blood and helps form urine.",
+              "definition": "An organ that filters blood and helps form urine.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-excretion",
+              "term": "excretion",
+              "clue": "Removal of metabolic wastes from an organism.",
+              "definition": "Removal of metabolic wastes from an organism.",
+              "tags": [
+                "digestion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-digestion-urinary-system",
+              "term": "urinary system",
+              "clue": "The organs that form, store and remove urine.",
+              "definition": "The organs that form, store and remove urine.",
+              "tags": [
+                "digestion"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transport",
+          "label": "Transport and Gas Exchange",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-circulatory-system",
+              "term": "circulatory system",
+              "clue": "The system that transports gases, nutrients, hormones and wastes.",
+              "definition": "The system that transports gases, nutrients, hormones and wastes.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-heart",
+              "term": "heart",
+              "clue": "A muscular organ that pumps blood through vessels.",
+              "definition": "A muscular organ that pumps blood through vessels.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-blood-vessel",
+              "term": "blood vessel",
+              "clue": "A tube that carries blood through the body.",
+              "definition": "A tube that carries blood through the body.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-artery",
+              "term": "artery",
+              "clue": "A vessel carrying blood away from the heart.",
+              "definition": "A vessel carrying blood away from the heart.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-vein",
+              "term": "vein",
+              "clue": "A vessel carrying blood towards the heart.",
+              "definition": "A vessel carrying blood towards the heart.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-capillary",
+              "term": "capillary",
+              "clue": "A microscopic vessel where exchange occurs with tissues.",
+              "definition": "A microscopic vessel where exchange occurs with tissues.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-blood",
+              "term": "blood",
+              "clue": "A transport tissue containing plasma, cells and platelets.",
+              "definition": "A transport tissue containing plasma, cells and platelets.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-plasma",
+              "term": "plasma",
+              "clue": "The liquid component carrying dissolved substances.",
+              "definition": "The liquid component carrying dissolved substances.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-red-blood-cell",
+              "term": "red blood cell",
+              "clue": "A cell containing haemoglobin and transporting oxygen.",
+              "definition": "A cell containing haemoglobin and transporting oxygen.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-white-blood-cell",
+              "term": "white blood cell",
+              "clue": "A cell involved in immune defence.",
+              "definition": "A cell involved in immune defence.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-platelet",
+              "term": "platelet",
+              "clue": "A cell fragment involved in blood clotting.",
+              "definition": "A cell fragment involved in blood clotting.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-respiratory-system",
+              "term": "respiratory system",
+              "clue": "The system that moves air and exchanges gases.",
+              "definition": "The system that moves air and exchanges gases.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-trachea",
+              "term": "trachea",
+              "clue": "The main airway leading towards the lungs.",
+              "definition": "The main airway leading towards the lungs.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-bronchus",
+              "term": "bronchus",
+              "clue": "A major airway entering a lung.",
+              "definition": "A major airway entering a lung.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-alveolus",
+              "term": "alveolus",
+              "clue": "A tiny air sac providing a large surface for gas exchange.",
+              "definition": "A tiny air sac providing a large surface for gas exchange.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-diaphragm",
+              "term": "diaphragm",
+              "clue": "A muscle that changes chest volume during breathing.",
+              "definition": "A muscle that changes chest volume during breathing.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-gas-exchange",
+              "term": "gas exchange",
+              "clue": "Movement of oxygen and carbon dioxide across a respiratory surface.",
+              "definition": "Movement of oxygen and carbon dioxide across a respiratory surface.",
+              "tags": [
+                "transport"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-transport-haemoglobin",
+              "term": "haemoglobin",
+              "clue": "A protein in red blood cells that binds oxygen.",
+              "definition": "A protein in red blood cells that binds oxygen.",
+              "tags": [
+                "transport"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "plants",
+          "label": "Plant Systems and Coordination",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-root-system",
+              "term": "root system",
+              "clue": "Plant structures that anchor and absorb water and minerals.",
+              "definition": "Plant structures that anchor and absorb water and minerals.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-shoot-system",
+              "term": "shoot system",
+              "clue": "Stems, leaves, buds and flowers above ground.",
+              "definition": "Stems, leaves, buds and flowers above ground.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-xylem",
+              "term": "xylem",
+              "clue": "Plant tissue transporting water and mineral ions.",
+              "definition": "Plant tissue transporting water and mineral ions.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-phloem",
+              "term": "phloem",
+              "clue": "Plant tissue transporting sugars and other dissolved organic substances.",
+              "definition": "Plant tissue transporting sugars and other dissolved organic substances.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-transpiration",
+              "term": "transpiration",
+              "clue": "Loss of water vapour from leaves.",
+              "definition": "Loss of water vapour from leaves.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-stoma",
+              "term": "stoma",
+              "clue": "A pore controlling gas exchange and water loss in a leaf.",
+              "definition": "A pore controlling gas exchange and water loss in a leaf.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-guard-cell",
+              "term": "guard cell",
+              "clue": "A cell that opens or closes a stomatal pore.",
+              "definition": "A cell that opens or closes a stomatal pore.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-photosynthesis",
+              "term": "photosynthesis",
+              "clue": "Production of glucose from carbon dioxide and water using light.",
+              "definition": "Production of glucose from carbon dioxide and water using light.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-translocation",
+              "term": "translocation",
+              "clue": "Movement of sugars and other solutes through phloem.",
+              "definition": "Movement of sugars and other solutes through phloem.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-tropism",
+              "term": "tropism",
+              "clue": "Directional plant growth in response to a stimulus.",
+              "definition": "Directional plant growth in response to a stimulus.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-phototropism",
+              "term": "phototropism",
+              "clue": "Growth in response to the direction of light.",
+              "definition": "Growth in response to the direction of light.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-gravitropism",
+              "term": "gravitropism",
+              "clue": "Growth in response to gravity.",
+              "definition": "Growth in response to gravity.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-nervous-system",
+              "term": "nervous system",
+              "clue": "A rapid communication system using electrical signals.",
+              "definition": "A rapid communication system using electrical signals.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-neuron",
+              "term": "neuron",
+              "clue": "A specialised cell that transmits nerve impulses.",
+              "definition": "A specialised cell that transmits nerve impulses.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-hormone",
+              "term": "hormone",
+              "clue": "A chemical messenger transported through an organism.",
+              "definition": "A chemical messenger transported through an organism.",
+              "tags": [
+                "plants"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-1-living-systems-plants-endocrine-system",
+              "term": "endocrine system",
+              "clue": "The system of hormone-producing glands.",
+              "definition": "The system of hormone-producing glands.",
+              "tags": [
+                "plants"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-8-8-2-periodic-table",
+      "label": "8.2 Periodic Table and Atomic Structure",
+      "year": 8,
+      "stage": 4,
+      "course": "Year 8 Science",
+      "module": "8-2-periodic-table",
+      "learningIntention": "Students will understand how atomic structure and periodic patterns explain the properties and uses of elements and compounds.",
+      "successCriteria": "Students can describe atoms, navigate the periodic table, distinguish substances and relate properties to uses.",
+      "groups": [
+        {
+          "id": "atomic",
+          "label": "Atomic Structure",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-atom",
+              "term": "atom",
+              "clue": "The smallest particle of an element retaining its chemical identity.",
+              "definition": "The smallest particle of an element retaining its chemical identity.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-nucleus",
+              "term": "nucleus",
+              "clue": "The dense central region containing protons and neutrons.",
+              "definition": "The dense central region containing protons and neutrons.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-proton",
+              "term": "proton",
+              "clue": "A positively charged particle in an atomic nucleus.",
+              "definition": "A positively charged particle in an atomic nucleus.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-neutron",
+              "term": "neutron",
+              "clue": "An uncharged particle in an atomic nucleus.",
+              "definition": "An uncharged particle in an atomic nucleus.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-electron",
+              "term": "electron",
+              "clue": "A negatively charged particle occupying regions around a nucleus.",
+              "definition": "A negatively charged particle occupying regions around a nucleus.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-atomic-number",
+              "term": "atomic number",
+              "clue": "The number of protons that identifies an element.",
+              "definition": "The number of protons that identifies an element.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-mass-number",
+              "term": "mass number",
+              "clue": "The total number of protons and neutrons in one atom.",
+              "definition": "The total number of protons and neutrons in one atom.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-isotope",
+              "term": "isotope",
+              "clue": "Atoms of one element with different numbers of neutrons.",
+              "definition": "Atoms of one element with different numbers of neutrons.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-ion",
+              "term": "ion",
+              "clue": "A charged atom or group formed by gaining or losing electrons.",
+              "definition": "A charged atom or group formed by gaining or losing electrons.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-cation",
+              "term": "cation",
+              "clue": "A positively charged ion formed by electron loss.",
+              "definition": "A positively charged ion formed by electron loss.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-anion",
+              "term": "anion",
+              "clue": "A negatively charged ion formed by electron gain.",
+              "definition": "A negatively charged ion formed by electron gain.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-electron-shell",
+              "term": "electron shell",
+              "clue": "A modelled energy level occupied by electrons.",
+              "definition": "A modelled energy level occupied by electrons.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-valence-electron",
+              "term": "valence electron",
+              "clue": "An electron in the outermost occupied shell.",
+              "definition": "An electron in the outermost occupied shell.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-electron-configuration",
+              "term": "electron configuration",
+              "clue": "The arrangement of electrons in energy levels.",
+              "definition": "The arrangement of electrons in energy levels.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-neutral-atom",
+              "term": "neutral atom",
+              "clue": "An atom with equal numbers of protons and electrons.",
+              "definition": "An atom with equal numbers of protons and electrons.",
+              "tags": [
+                "atomic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-atomic-nucleon",
+              "term": "nucleon",
+              "clue": "A proton or neutron found in an atomic nucleus.",
+              "definition": "A proton or neutron found in an atomic nucleus.",
+              "tags": [
+                "atomic"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "periodic",
+          "label": "Periodic Table",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-periodic-table",
+              "term": "periodic table",
+              "clue": "A chart arranging elements by atomic number and repeating properties.",
+              "definition": "A chart arranging elements by atomic number and repeating properties.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-element",
+              "term": "element",
+              "clue": "A pure substance defined by one proton number.",
+              "definition": "A pure substance defined by one proton number.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-chemical-symbol",
+              "term": "chemical symbol",
+              "clue": "A standard one- or two-letter abbreviation for an element.",
+              "definition": "A standard one- or two-letter abbreviation for an element.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-group",
+              "term": "group",
+              "clue": "A vertical column containing elements with related properties.",
+              "definition": "A vertical column containing elements with related properties.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-period",
+              "term": "period",
+              "clue": "A horizontal row whose atoms have the same number of occupied shells.",
+              "definition": "A horizontal row whose atoms have the same number of occupied shells.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-metal",
+              "term": "metal",
+              "clue": "An element usually conductive, lustrous, malleable and likely to form positive ions.",
+              "definition": "An element usually conductive, lustrous, malleable and likely to form positive ions.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-non-metal",
+              "term": "non metal",
+              "clue": "An element lacking typical metallic properties.",
+              "definition": "An element lacking typical metallic properties.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-metalloid",
+              "term": "metalloid",
+              "clue": "An element with a mixture of metallic and non-metallic properties.",
+              "definition": "An element with a mixture of metallic and non-metallic properties.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-alkali-metal",
+              "term": "alkali metal",
+              "clue": "A highly reactive Group 1 metal with one valence electron.",
+              "definition": "A highly reactive Group 1 metal with one valence electron.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-alkaline-earth-metal",
+              "term": "alkaline earth metal",
+              "clue": "A reactive Group 2 metal with two valence electrons.",
+              "definition": "A reactive Group 2 metal with two valence electrons.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-transition-metal",
+              "term": "transition metal",
+              "clue": "A central-block metal often showing variable ion charges.",
+              "definition": "A central-block metal often showing variable ion charges.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-halogen",
+              "term": "halogen",
+              "clue": "A reactive Group 17 non-metal with seven valence electrons.",
+              "definition": "A reactive Group 17 non-metal with seven valence electrons.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-noble-gas",
+              "term": "noble gas",
+              "clue": "A relatively unreactive Group 18 element with a full outer shell.",
+              "definition": "A relatively unreactive Group 18 element with a full outer shell.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-periodicity",
+              "term": "periodicity",
+              "clue": "Repeating trends in properties caused by repeating electron arrangements.",
+              "definition": "Repeating trends in properties caused by repeating electron arrangements.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-reactivity",
+              "term": "reactivity",
+              "clue": "The tendency of a substance to undergo chemical change.",
+              "definition": "The tendency of a substance to undergo chemical change.",
+              "tags": [
+                "periodic"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-periodic-atomic-radius",
+              "term": "atomic radius",
+              "clue": "A measure of the size of an atom.",
+              "definition": "A measure of the size of an atom.",
+              "tags": [
+                "periodic"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bonding",
+          "label": "Elements, Compounds and Bonding",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-molecule",
+              "term": "molecule",
+              "clue": "Two or more atoms joined by covalent bonds.",
+              "definition": "Two or more atoms joined by covalent bonds.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-compound",
+              "term": "compound",
+              "clue": "A pure substance made of chemically bonded elements in fixed proportions.",
+              "definition": "A pure substance made of chemically bonded elements in fixed proportions.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-mixture",
+              "term": "mixture",
+              "clue": "Substances physically combined in variable proportions.",
+              "definition": "Substances physically combined in variable proportions.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-chemical-formula",
+              "term": "chemical formula",
+              "clue": "Symbols and numbers showing the composition of a substance.",
+              "definition": "Symbols and numbers showing the composition of a substance.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-subscript",
+              "term": "subscript",
+              "clue": "A small number indicating atom ratio in a formula.",
+              "definition": "A small number indicating atom ratio in a formula.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-chemical-bond",
+              "term": "chemical bond",
+              "clue": "An attraction that holds atoms or ions together.",
+              "definition": "An attraction that holds atoms or ions together.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-ionic-bond",
+              "term": "ionic bond",
+              "clue": "Electrostatic attraction between oppositely charged ions.",
+              "definition": "Electrostatic attraction between oppositely charged ions.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-covalent-bond",
+              "term": "covalent bond",
+              "clue": "A bond formed when atoms share electron pairs.",
+              "definition": "A bond formed when atoms share electron pairs.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-metallic-bond",
+              "term": "metallic bond",
+              "clue": "Attraction between positive metal ions and delocalised electrons.",
+              "definition": "Attraction between positive metal ions and delocalised electrons.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-ionic-compound",
+              "term": "ionic compound",
+              "clue": "A repeating lattice of positive and negative ions.",
+              "definition": "A repeating lattice of positive and negative ions.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-covalent-substance",
+              "term": "covalent substance",
+              "clue": "A substance whose atoms are connected by shared electrons.",
+              "definition": "A substance whose atoms are connected by shared electrons.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-lattice",
+              "term": "lattice",
+              "clue": "A regular repeating arrangement of particles in a solid.",
+              "definition": "A regular repeating arrangement of particles in a solid.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-diatomic-molecule",
+              "term": "diatomic molecule",
+              "clue": "A molecule containing two atoms.",
+              "definition": "A molecule containing two atoms.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-conservation-of-atoms",
+              "term": "conservation of atoms",
+              "clue": "The principle that atoms are rearranged but not created or destroyed.",
+              "definition": "The principle that atoms are rearranged but not created or destroyed.",
+              "tags": [
+                "bonding"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-bonding-relative-atomic-mass",
+              "term": "relative atomic mass",
+              "clue": "The weighted average mass of an element’s naturally occurring atoms.",
+              "definition": "The weighted average mass of an element’s naturally occurring atoms.",
+              "tags": [
+                "bonding"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "properties",
+          "label": "Properties and Uses",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-conductivity",
+              "term": "conductivity",
+              "clue": "The ability to transfer electrical or thermal energy.",
+              "definition": "The ability to transfer electrical or thermal energy.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-electrical-conductor",
+              "term": "electrical conductor",
+              "clue": "A material that allows electric charge to move easily.",
+              "definition": "A material that allows electric charge to move easily.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-insulator",
+              "term": "insulator",
+              "clue": "A material that strongly resists electrical or thermal transfer.",
+              "definition": "A material that strongly resists electrical or thermal transfer.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-malleability",
+              "term": "malleability",
+              "clue": "The ability to be shaped into sheets without breaking.",
+              "definition": "The ability to be shaped into sheets without breaking.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-ductility",
+              "term": "ductility",
+              "clue": "The ability to be drawn into wire.",
+              "definition": "The ability to be drawn into wire.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-lustre",
+              "term": "lustre",
+              "clue": "The way a surface reflects light or appears shiny.",
+              "definition": "The way a surface reflects light or appears shiny.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-brittle",
+              "term": "brittle",
+              "clue": "Likely to fracture with little deformation.",
+              "definition": "Likely to fracture with little deformation.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-corrosion",
+              "term": "corrosion",
+              "clue": "Gradual chemical deterioration of a material.",
+              "definition": "Gradual chemical deterioration of a material.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-semiconductor",
+              "term": "semiconductor",
+              "clue": "A material with electrical conductivity that can be controlled.",
+              "definition": "A material with electrical conductivity that can be controlled.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-alloy",
+              "term": "alloy",
+              "clue": "A metallic mixture designed to improve selected properties.",
+              "definition": "A metallic mixture designed to improve selected properties.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-property",
+              "term": "property",
+              "clue": "A measurable or observable characteristic of a substance.",
+              "definition": "A measurable or observable characteristic of a substance.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-application",
+              "term": "application",
+              "clue": "A practical use chosen to match material properties.",
+              "definition": "A practical use chosen to match material properties.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-rare-earth-element",
+              "term": "rare earth element",
+              "clue": "A technologically important metal used in magnets and electronics.",
+              "definition": "A technologically important metal used in magnets and electronics.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-radioisotope",
+              "term": "radioisotope",
+              "clue": "An unstable isotope that emits ionising radiation.",
+              "definition": "An unstable isotope that emits ionising radiation.",
+              "tags": [
+                "properties"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-2-periodic-table-properties-periodic-trend",
+              "term": "periodic trend",
+              "clue": "A predictable change in properties across or down the table.",
+              "definition": "A predictable change in properties across or down the table.",
+              "tags": [
+                "properties"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-8-8-3-change",
+      "label": "8.3 Change",
+      "year": 8,
+      "stage": 4,
+      "course": "Year 8 Science",
+      "module": "8-3-change",
+      "learningIntention": "Students will understand how energy causes and influences geological and chemical change.",
+      "successCriteria": "Students can classify changes, recognise evidence of reactions and explain major geological processes.",
+      "groups": [
+        {
+          "id": "energy",
+          "label": "Energy and Change",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-change",
+              "term": "change",
+              "clue": "A difference in state, form, position or composition.",
+              "definition": "A difference in state, form, position or composition.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-energy-transfer",
+              "term": "energy transfer",
+              "clue": "Movement of energy between objects, regions or systems.",
+              "definition": "Movement of energy between objects, regions or systems.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-energy-transformation",
+              "term": "energy transformation",
+              "clue": "A change from one form of energy into another.",
+              "definition": "A change from one form of energy into another.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-heat",
+              "term": "heat",
+              "clue": "Energy transferred because of a temperature difference.",
+              "definition": "Energy transferred because of a temperature difference.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-temperature",
+              "term": "temperature",
+              "clue": "A measure related to the average kinetic energy of particles.",
+              "definition": "A measure related to the average kinetic energy of particles.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-thermal-expansion",
+              "term": "thermal expansion",
+              "clue": "Increase in size when heating raises average particle separation.",
+              "definition": "Increase in size when heating raises average particle separation.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-conduction",
+              "term": "conduction",
+              "clue": "Thermal energy transfer through particle interactions without bulk movement.",
+              "definition": "Thermal energy transfer through particle interactions without bulk movement.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-convection",
+              "term": "convection",
+              "clue": "Thermal energy transfer by movement of a liquid or gas.",
+              "definition": "Thermal energy transfer by movement of a liquid or gas.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-radiation",
+              "term": "radiation",
+              "clue": "Energy transfer by electromagnetic waves.",
+              "definition": "Energy transfer by electromagnetic waves.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-system",
+              "term": "system",
+              "clue": "A defined collection of interacting parts chosen for study.",
+              "definition": "A defined collection of interacting parts chosen for study.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-surroundings",
+              "term": "surroundings",
+              "clue": "Everything outside a selected system.",
+              "definition": "Everything outside a selected system.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-energy-conservation-of-energy",
+              "term": "conservation of energy",
+              "clue": "The principle that energy is transferred or transformed but not created or destroyed.",
+              "definition": "The principle that energy is transferred or transformed but not created or destroyed.",
+              "tags": [
+                "energy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chemical",
+          "label": "Chemical Change",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-physical-change",
+              "term": "physical change",
+              "clue": "A change of state, shape or arrangement without forming a new substance.",
+              "definition": "A change of state, shape or arrangement without forming a new substance.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-chemical-change",
+              "term": "chemical change",
+              "clue": "A change that produces one or more new substances.",
+              "definition": "A change that produces one or more new substances.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-chemical-reaction",
+              "term": "chemical reaction",
+              "clue": "A process in which atoms rearrange to form products.",
+              "definition": "A process in which atoms rearrange to form products.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-reactant",
+              "term": "reactant",
+              "clue": "A starting substance in a chemical reaction.",
+              "definition": "A starting substance in a chemical reaction.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-product",
+              "term": "product",
+              "clue": "A substance formed by a chemical reaction.",
+              "definition": "A substance formed by a chemical reaction.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-precipitate",
+              "term": "precipitate",
+              "clue": "An insoluble solid formed from substances in solution.",
+              "definition": "An insoluble solid formed from substances in solution.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-gas-production",
+              "term": "gas production",
+              "clue": "Formation of a gaseous product, often seen as bubbling.",
+              "definition": "Formation of a gaseous product, often seen as bubbling.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-colour-change",
+              "term": "colour change",
+              "clue": "An unexpected visible change that may indicate new substances.",
+              "definition": "An unexpected visible change that may indicate new substances.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-temperature-change",
+              "term": "temperature change",
+              "clue": "Heating or cooling that may provide evidence of energy transfer.",
+              "definition": "Heating or cooling that may provide evidence of energy transfer.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-reversible-change",
+              "term": "reversible change",
+              "clue": "A change that can be readily undone.",
+              "definition": "A change that can be readily undone.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-irreversible-change",
+              "term": "irreversible change",
+              "clue": "A change that cannot be easily reversed.",
+              "definition": "A change that cannot be easily reversed.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-combustion",
+              "term": "combustion",
+              "clue": "A rapid reaction with oxygen that releases energy.",
+              "definition": "A rapid reaction with oxygen that releases energy.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-oxidation",
+              "term": "oxidation",
+              "clue": "A reaction involving oxygen or electron loss.",
+              "definition": "A reaction involving oxygen or electron loss.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-corrosion",
+              "term": "corrosion",
+              "clue": "Chemical deterioration of a material through environmental reaction.",
+              "definition": "Chemical deterioration of a material through environmental reaction.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-rusting",
+              "term": "rusting",
+              "clue": "Corrosion of iron involving oxygen and water.",
+              "definition": "Corrosion of iron involving oxygen and water.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-exothermic",
+              "term": "exothermic",
+              "clue": "Describing a process that releases energy to the surroundings.",
+              "definition": "Describing a process that releases energy to the surroundings.",
+              "tags": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-chemical-endothermic",
+              "term": "endothermic",
+              "clue": "Describing a process that absorbs energy from the surroundings.",
+              "definition": "Describing a process that absorbs energy from the surroundings.",
+              "tags": [
+                "chemical"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "earth",
+          "label": "Earth Structure and Plate Tectonics",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-crust",
+              "term": "crust",
+              "clue": "Earth’s thin outer solid layer.",
+              "definition": "Earth’s thin outer solid layer.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-mantle",
+              "term": "mantle",
+              "clue": "The thick rocky layer beneath the crust that flows slowly over geological time.",
+              "definition": "The thick rocky layer beneath the crust that flows slowly over geological time.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-core",
+              "term": "core",
+              "clue": "Earth’s central metallic region, mainly iron and nickel.",
+              "definition": "Earth’s central metallic region, mainly iron and nickel.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-lithosphere",
+              "term": "lithosphere",
+              "clue": "The rigid outer shell divided into tectonic plates.",
+              "definition": "The rigid outer shell divided into tectonic plates.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-asthenosphere",
+              "term": "asthenosphere",
+              "clue": "A weak, slowly flowing layer beneath the lithosphere.",
+              "definition": "A weak, slowly flowing layer beneath the lithosphere.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-tectonic-plate",
+              "term": "tectonic plate",
+              "clue": "A large moving section of lithosphere.",
+              "definition": "A large moving section of lithosphere.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-plate-tectonics",
+              "term": "plate tectonics",
+              "clue": "The theory explaining movement and interaction of lithospheric plates.",
+              "definition": "The theory explaining movement and interaction of lithospheric plates.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-convection-current",
+              "term": "convection current",
+              "clue": "Circulating movement caused by temperature and density differences.",
+              "definition": "Circulating movement caused by temperature and density differences.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-divergent-boundary",
+              "term": "divergent boundary",
+              "clue": "A plate boundary where plates move apart.",
+              "definition": "A plate boundary where plates move apart.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-convergent-boundary",
+              "term": "convergent boundary",
+              "clue": "A plate boundary where plates move towards one another.",
+              "definition": "A plate boundary where plates move towards one another.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-transform-boundary",
+              "term": "transform boundary",
+              "clue": "A plate boundary where plates slide past each other.",
+              "definition": "A plate boundary where plates slide past each other.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-subduction",
+              "term": "subduction",
+              "clue": "The sinking of one tectonic plate beneath another.",
+              "definition": "The sinking of one tectonic plate beneath another.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-earthquake",
+              "term": "earthquake",
+              "clue": "Sudden ground movement caused by release of stored energy.",
+              "definition": "Sudden ground movement caused by release of stored energy.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-fault",
+              "term": "fault",
+              "clue": "A fracture in rock along which movement has occurred.",
+              "definition": "A fracture in rock along which movement has occurred.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-volcano",
+              "term": "volcano",
+              "clue": "An opening through which magma, gases and ash reach the surface.",
+              "definition": "An opening through which magma, gases and ash reach the surface.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-magma",
+              "term": "magma",
+              "clue": "Molten or partly molten rock below Earth’s surface.",
+              "definition": "Molten or partly molten rock below Earth’s surface.",
+              "tags": [
+                "earth"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-earth-lava",
+              "term": "lava",
+              "clue": "Molten rock that has reached Earth’s surface.",
+              "definition": "Molten rock that has reached Earth’s surface.",
+              "tags": [
+                "earth"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rocks",
+          "label": "Rocks and Surface Change",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-rock-cycle",
+              "term": "rock cycle",
+              "clue": "The continuous transformation among igneous, sedimentary and metamorphic rocks.",
+              "definition": "The continuous transformation among igneous, sedimentary and metamorphic rocks.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-igneous-rock",
+              "term": "igneous rock",
+              "clue": "Rock formed when magma or lava cools and solidifies.",
+              "definition": "Rock formed when magma or lava cools and solidifies.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-sedimentary-rock",
+              "term": "sedimentary rock",
+              "clue": "Rock formed from accumulated sediments or chemical precipitates.",
+              "definition": "Rock formed from accumulated sediments or chemical precipitates.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-metamorphic-rock",
+              "term": "metamorphic rock",
+              "clue": "Rock changed by heat and pressure without melting.",
+              "definition": "Rock changed by heat and pressure without melting.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-weathering",
+              "term": "weathering",
+              "clue": "Breakdown of rock at or near Earth’s surface.",
+              "definition": "Breakdown of rock at or near Earth’s surface.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-erosion",
+              "term": "erosion",
+              "clue": "Removal and transport of weathered material.",
+              "definition": "Removal and transport of weathered material.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-deposition",
+              "term": "deposition",
+              "clue": "Settling of transported sediment when energy decreases.",
+              "definition": "Settling of transported sediment when energy decreases.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-sediment",
+              "term": "sediment",
+              "clue": "Loose particles produced by weathering and erosion.",
+              "definition": "Loose particles produced by weathering and erosion.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-compaction",
+              "term": "compaction",
+              "clue": "Compression of sediment under overlying layers.",
+              "definition": "Compression of sediment under overlying layers.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-cementation",
+              "term": "cementation",
+              "clue": "Binding of sediment grains by precipitated minerals.",
+              "definition": "Binding of sediment grains by precipitated minerals.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-melting",
+              "term": "melting",
+              "clue": "Change of solid rock into molten material.",
+              "definition": "Change of solid rock into molten material.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-crystallisation",
+              "term": "crystallisation",
+              "clue": "Formation of solid crystals during cooling or precipitation.",
+              "definition": "Formation of solid crystals during cooling or precipitation.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-uplift",
+              "term": "uplift",
+              "clue": "Raising of crustal material towards Earth’s surface.",
+              "definition": "Raising of crustal material towards Earth’s surface.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-geological-time",
+              "term": "geological time",
+              "clue": "The vast timescale over which Earth processes operate.",
+              "definition": "The vast timescale over which Earth processes operate.",
+              "tags": [
+                "rocks"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-3-change-rocks-fossil",
+              "term": "fossil",
+              "clue": "Preserved remains, impressions or traces of past life.",
+              "definition": "Preserved remains, impressions or traces of past life.",
+              "tags": [
+                "rocks"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-8-8-4-data-science-1",
+      "label": "8.4 Data Science 1",
+      "year": 8,
+      "stage": 4,
+      "course": "Year 8 Science",
+      "module": "8-4-data-science-1",
+      "learningIntention": "Students will understand how scientists collect, represent and use data to model and predict phenomena.",
+      "successCriteria": "Students can distinguish data types, select representations, assess data quality and explain model-based predictions.",
+      "groups": [
+        {
+          "id": "collection",
+          "label": "Collecting Data",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-data",
+              "term": "data",
+              "clue": "Recorded observations, measurements or information used for analysis.",
+              "definition": "Recorded observations, measurements or information used for analysis.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-dataset",
+              "term": "dataset",
+              "clue": "An organised collection of related data values or observations.",
+              "definition": "An organised collection of related data values or observations.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-qualitative-data",
+              "term": "qualitative data",
+              "clue": "Descriptive information about qualities or categories.",
+              "definition": "Descriptive information about qualities or categories.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-quantitative-data",
+              "term": "quantitative data",
+              "clue": "Information expressed using numbers, counts or measurements.",
+              "definition": "Information expressed using numbers, counts or measurements.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-continuous-data",
+              "term": "continuous data",
+              "clue": "Measured values that can take any value within a range.",
+              "definition": "Measured values that can take any value within a range.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-discrete-data",
+              "term": "discrete data",
+              "clue": "Counted values with separate possible outcomes.",
+              "definition": "Counted values with separate possible outcomes.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-primary-data",
+              "term": "primary data",
+              "clue": "Information collected directly for a current investigation.",
+              "definition": "Information collected directly for a current investigation.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-secondary-data",
+              "term": "secondary data",
+              "clue": "Information collected previously by another source.",
+              "definition": "Information collected previously by another source.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-sample",
+              "term": "sample",
+              "clue": "A subset selected from a larger population.",
+              "definition": "A subset selected from a larger population.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-population",
+              "term": "population",
+              "clue": "The complete group about which conclusions are sought.",
+              "definition": "The complete group about which conclusions are sought.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-sampling",
+              "term": "sampling",
+              "clue": "The process of selecting observations from a population.",
+              "definition": "The process of selecting observations from a population.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-random-sample",
+              "term": "random sample",
+              "clue": "A sample selected by chance to reduce selection bias.",
+              "definition": "A sample selected by chance to reduce selection bias.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-variable",
+              "term": "variable",
+              "clue": "A factor or characteristic that can change or be measured.",
+              "definition": "A factor or characteristic that can change or be measured.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-measurement",
+              "term": "measurement",
+              "clue": "A value obtained by comparing a quantity with a standard.",
+              "definition": "A value obtained by comparing a quantity with a standard.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-unit",
+              "term": "unit",
+              "clue": "An agreed standard used to express a measurement.",
+              "definition": "An agreed standard used to express a measurement.",
+              "tags": [
+                "collection"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-collection-metadata",
+              "term": "metadata",
+              "clue": "Information describing how, when, where and by whom data was collected.",
+              "definition": "Information describing how, when, where and by whom data was collected.",
+              "tags": [
+                "collection"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "representation",
+          "label": "Representing Data",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-table",
+              "term": "table",
+              "clue": "Data arranged in labelled rows and columns.",
+              "definition": "Data arranged in labelled rows and columns.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-graph",
+              "term": "graph",
+              "clue": "A visual representation used to reveal patterns or relationships.",
+              "definition": "A visual representation used to reveal patterns or relationships.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-bar-graph",
+              "term": "bar graph",
+              "clue": "A graph comparing categories using separated bars.",
+              "definition": "A graph comparing categories using separated bars.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-line-graph",
+              "term": "line graph",
+              "clue": "A graph showing ordered or continuous change using connected points.",
+              "definition": "A graph showing ordered or continuous change using connected points.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-scatter-plot",
+              "term": "scatter plot",
+              "clue": "A graph displaying paired numerical values for two variables.",
+              "definition": "A graph displaying paired numerical values for two variables.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-histogram",
+              "term": "histogram",
+              "clue": "A graph showing frequencies across continuous numerical intervals.",
+              "definition": "A graph showing frequencies across continuous numerical intervals.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-pie-chart",
+              "term": "pie chart",
+              "clue": "A circular chart displaying proportions of a whole.",
+              "definition": "A circular chart displaying proportions of a whole.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-axis",
+              "term": "axis",
+              "clue": "A reference line showing a variable, unit and scale.",
+              "definition": "A reference line showing a variable, unit and scale.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-scale",
+              "term": "scale",
+              "clue": "The sequence and spacing of values marked on an axis.",
+              "definition": "The sequence and spacing of values marked on an axis.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-title",
+              "term": "title",
+              "clue": "A heading that states what a representation shows.",
+              "definition": "A heading that states what a representation shows.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-label",
+              "term": "label",
+              "clue": "Text identifying a variable, category or component.",
+              "definition": "Text identifying a variable, category or component.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-legend",
+              "term": "legend",
+              "clue": "A key explaining symbols, colours or data series.",
+              "definition": "A key explaining symbols, colours or data series.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-frequency",
+              "term": "frequency",
+              "clue": "The number of times a value or category occurs.",
+              "definition": "The number of times a value or category occurs.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-distribution",
+              "term": "distribution",
+              "clue": "The way values are spread across a dataset.",
+              "definition": "The way values are spread across a dataset.",
+              "tags": [
+                "representation"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-representation-visualisation",
+              "term": "visualisation",
+              "clue": "A visual form used to communicate data clearly.",
+              "definition": "A visual form used to communicate data clearly.",
+              "tags": [
+                "representation"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "analysis",
+          "label": "Analysing Data",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-mean",
+              "term": "mean",
+              "clue": "The sum of values divided by the number of values.",
+              "definition": "The sum of values divided by the number of values.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-median",
+              "term": "median",
+              "clue": "The middle value when data is arranged in order.",
+              "definition": "The middle value when data is arranged in order.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-mode",
+              "term": "mode",
+              "clue": "The value or category that occurs most often.",
+              "definition": "The value or category that occurs most often.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-range",
+              "term": "range",
+              "clue": "The difference between the highest and lowest values.",
+              "definition": "The difference between the highest and lowest values.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-trend",
+              "term": "trend",
+              "clue": "A general direction of increase, decrease or stability.",
+              "definition": "A general direction of increase, decrease or stability.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-pattern",
+              "term": "pattern",
+              "clue": "A repeated or systematic feature in observations.",
+              "definition": "A repeated or systematic feature in observations.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-relationship",
+              "term": "relationship",
+              "clue": "An association showing how variables change together.",
+              "definition": "An association showing how variables change together.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-correlation",
+              "term": "correlation",
+              "clue": "A statistical association that does not by itself prove causation.",
+              "definition": "A statistical association that does not by itself prove causation.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-outlier",
+              "term": "outlier",
+              "clue": "A value noticeably different from the main pattern.",
+              "definition": "A value noticeably different from the main pattern.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-interpolation",
+              "term": "interpolation",
+              "clue": "Estimating a value within the range of known data.",
+              "definition": "Estimating a value within the range of known data.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-extrapolation",
+              "term": "extrapolation",
+              "clue": "Predicting beyond the range of observed data.",
+              "definition": "Predicting beyond the range of observed data.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-uncertainty",
+              "term": "uncertainty",
+              "clue": "A limit on confidence caused by measurement, variation or incomplete information.",
+              "definition": "A limit on confidence caused by measurement, variation or incomplete information.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-error",
+              "term": "error",
+              "clue": "A difference between a measured and accepted value.",
+              "definition": "A difference between a measured and accepted value.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-accuracy",
+              "term": "accuracy",
+              "clue": "Closeness of a result to a true or accepted value.",
+              "definition": "Closeness of a result to a true or accepted value.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-precision",
+              "term": "precision",
+              "clue": "Closeness of repeated measurements to one another.",
+              "definition": "Closeness of repeated measurements to one another.",
+              "tags": [
+                "analysis"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-analysis-reliability",
+              "term": "reliability",
+              "clue": "Consistency of results when observations or investigations are repeated.",
+              "definition": "Consistency of results when observations or investigations are repeated.",
+              "tags": [
+                "analysis"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "models",
+          "label": "Models and Predictions",
+          "items": [
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-model",
+              "term": "model",
+              "clue": "A simplified representation of an object, system or phenomenon.",
+              "definition": "A simplified representation of an object, system or phenomenon.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-mathematical-model",
+              "term": "mathematical model",
+              "clue": "A representation using equations, numerical rules or relationships.",
+              "definition": "A representation using equations, numerical rules or relationships.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-conceptual-model",
+              "term": "conceptual model",
+              "clue": "A representation using ideas, diagrams or linked concepts.",
+              "definition": "A representation using ideas, diagrams or linked concepts.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-physical-model",
+              "term": "physical model",
+              "clue": "A tangible representation at a different scale or level of detail.",
+              "definition": "A tangible representation at a different scale or level of detail.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-computer-model",
+              "term": "computer model",
+              "clue": "A digital representation calculated using software.",
+              "definition": "A digital representation calculated using software.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-simulation",
+              "term": "simulation",
+              "clue": "An imitation of system behaviour using defined rules.",
+              "definition": "An imitation of system behaviour using defined rules.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-assumption",
+              "term": "assumption",
+              "clue": "A condition accepted when constructing or applying a model.",
+              "definition": "A condition accepted when constructing or applying a model.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-parameter",
+              "term": "parameter",
+              "clue": "A fixed or adjustable value controlling model behaviour.",
+              "definition": "A fixed or adjustable value controlling model behaviour.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-prediction",
+              "term": "prediction",
+              "clue": "An expected result generated from evidence or a model.",
+              "definition": "An expected result generated from evidence or a model.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-forecast",
+              "term": "forecast",
+              "clue": "A prediction about future conditions.",
+              "definition": "A prediction about future conditions.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-validation",
+              "term": "validation",
+              "clue": "Testing whether a model agrees with independent observations.",
+              "definition": "Testing whether a model agrees with independent observations.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-limitation",
+              "term": "limitation",
+              "clue": "A factor restricting the usefulness or accuracy of a model.",
+              "definition": "A factor restricting the usefulness or accuracy of a model.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-scenario",
+              "term": "scenario",
+              "clue": "A possible set of conditions used to explore outcomes.",
+              "definition": "A possible set of conditions used to explore outcomes.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-algorithm",
+              "term": "algorithm",
+              "clue": "A step-by-step procedure for processing information.",
+              "definition": "A step-by-step procedure for processing information.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-data-logger",
+              "term": "data logger",
+              "clue": "A device that records repeated measurements automatically.",
+              "definition": "A device that records repeated measurements automatically.",
+              "tags": [
+                "models"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-8-8-4-data-science-1-models-sensor",
+              "term": "sensor",
+              "clue": "A device that detects and measures a physical or chemical condition.",
+              "definition": "A device that detects and measures a physical or chemical condition.",
+              "tags": [
+                "models"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

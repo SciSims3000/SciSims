@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedFrom": "Existing verified SciSims revision banks",
+  "curricula": [
+    {
+      "id": "nsw-2023",
+      "label": "NSW Science 7–10 (2023)",
+      "banks": [
+        {
+          "id": "nsw-2023-year-7",
+          "label": "Year 7 Science",
+          "stage": 4,
+          "years": [
+            7
+          ],
+          "path": "nsw-2023/year-7.json",
+          "collections": 5
+        },
+        {
+          "id": "nsw-2023-year-8",
+          "label": "Year 8 Science",
+          "stage": 4,
+          "years": [
+            8
+          ],
+          "path": "nsw-2023/year-8.json",
+          "collections": 4
+        },
+        {
+          "id": "nsw-2023-year-9",
+          "label": "Year 9 Science",
+          "stage": 5,
+          "years": [
+            9
+          ],
+          "path": "nsw-2023/year-9.json",
+          "collections": 4
+        },
+        {
+          "id": "nsw-2023-year-10",
+          "label": "Year 10 Science",
+          "stage": 5,
+          "years": [
+            10
+          ],
+          "path": "nsw-2023/year-10.json",
+          "collections": 4
+        }
+      ]
+    },
+    {
+      "id": "nsw-2017",
+      "label": "NSW Stage 6 Science (2017)",
+      "banks": [
+        {
+          "id": "nsw-2017-biology",
+          "label": "Biology",
+          "stage": 6,
+          "years": [
+            11,
+            12
+          ],
+          "path": "nsw-2017/biology.json",
+          "collections": 9
+        },
+        {
+          "id": "nsw-2017-chemistry",
+          "label": "Chemistry",
+          "stage": 6,
+          "years": [
+            11,
+            12
+          ],
+          "path": "nsw-2017/chemistry.json",
+          "collections": 9
+        },
+        {
+          "id": "nsw-2017-earth-and-environmental-science",
+          "label": "Earth and Environmental Science",
+          "stage": 6,
+          "years": [
+            11,
+            12
+          ],
+          "path": "nsw-2017/earth-and-environmental-science.json",
+          "collections": 9
+        },
+        {
+          "id": "nsw-2017-investigating-science",
+          "label": "Investigating Science",
+          "stage": 6,
+          "years": [
+            11,
+            12
+          ],
+          "path": "nsw-2017/investigating-science.json",
+          "collections": 9
+        },
+        {
+          "id": "nsw-2017-physics",
+          "label": "Physics",
+          "stage": 6,
+          "years": [
+            11,
+            12
+          ],
+          "path": "nsw-2017/physics.json",
+          "collections": 9
+        },
+        {
+          "id": "nsw-2017-science-extension",
+          "label": "Science Extension",
+          "stage": 6,
+          "years": [
+            12
+          ],
+          "path": "nsw-2017/science-extension.json",
+          "collections": 5
+        }
+      ]
+    }
+  ]
+}

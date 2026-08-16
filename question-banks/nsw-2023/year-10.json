@@ -1,0 +1,2952 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "nsw-2023-year-10",
+  "jurisdiction": "NSW",
+  "syllabus": "Science 7–10 (2023)",
+  "label": "Year 10 Science",
+  "collections": [
+    {
+      "id": "nsw-2023-year-10-10-1-genetics-evolution",
+      "label": "10.1 Genetics and Evolutionary Change",
+      "year": 10,
+      "stage": 5,
+      "course": "Year 10 Science",
+      "module": "10-1-genetics-evolution",
+      "learningIntention": "Students will understand how DNA transmits heritable characteristics and how variation underpins evolutionary change.",
+      "successCriteria": "Students can explain inheritance, use genetic representations, describe evolution and evaluate genetic technologies.",
+      "groups": [
+        {
+          "id": "dna",
+          "label": "DNA, Genes and Chromosomes",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-dna",
+              "term": "DNA",
+              "clue": "The double-stranded molecule that stores genetic information.",
+              "definition": "The double-stranded molecule that stores genetic information.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-nucleotide",
+              "term": "nucleotide",
+              "clue": "The repeating unit of DNA containing sugar, phosphate and a base.",
+              "definition": "The repeating unit of DNA containing sugar, phosphate and a base.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-double-helix",
+              "term": "double helix",
+              "clue": "The twisted ladder shape formed by two DNA strands.",
+              "definition": "The twisted ladder shape formed by two DNA strands.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-base-pair",
+              "term": "base pair",
+              "clue": "Two complementary nitrogenous bases joined across a DNA molecule.",
+              "definition": "Two complementary nitrogenous bases joined across a DNA molecule.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-adenine",
+              "term": "adenine",
+              "clue": "A DNA base that pairs with thymine.",
+              "definition": "A DNA base that pairs with thymine.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-thymine",
+              "term": "thymine",
+              "clue": "A DNA base that pairs with adenine.",
+              "definition": "A DNA base that pairs with adenine.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-cytosine",
+              "term": "cytosine",
+              "clue": "A DNA base that pairs with guanine.",
+              "definition": "A DNA base that pairs with guanine.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-guanine",
+              "term": "guanine",
+              "clue": "A DNA base that pairs with cytosine.",
+              "definition": "A DNA base that pairs with cytosine.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-gene",
+              "term": "gene",
+              "clue": "A DNA sequence that contributes to a functional product.",
+              "definition": "A DNA sequence that contributes to a functional product.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-allele",
+              "term": "allele",
+              "clue": "An alternative version of a gene.",
+              "definition": "An alternative version of a gene.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-chromosome",
+              "term": "chromosome",
+              "clue": "A long DNA molecule packaged with proteins.",
+              "definition": "A long DNA molecule packaged with proteins.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-genome",
+              "term": "genome",
+              "clue": "The complete genetic material of an organism.",
+              "definition": "The complete genetic material of an organism.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-chromatin",
+              "term": "chromatin",
+              "clue": "DNA associated with proteins inside a cell nucleus.",
+              "definition": "DNA associated with proteins inside a cell nucleus.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-homologous-chromosomes",
+              "term": "homologous chromosomes",
+              "clue": "A chromosome pair carrying corresponding genes.",
+              "definition": "A chromosome pair carrying corresponding genes.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-locus",
+              "term": "locus",
+              "clue": "The position of a gene or DNA marker on a chromosome.",
+              "definition": "The position of a gene or DNA marker on a chromosome.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-protein-synthesis",
+              "term": "protein synthesis",
+              "clue": "Production of proteins using information encoded in genes.",
+              "definition": "Production of proteins using information encoded in genes.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-mutation",
+              "term": "mutation",
+              "clue": "A change in DNA sequence that can create new variation.",
+              "definition": "A change in DNA sequence that can create new variation.",
+              "tags": [
+                "dna"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-dna-gene-expression",
+              "term": "gene expression",
+              "clue": "Use of genetic information to produce RNA or protein.",
+              "definition": "Use of genetic information to produce RNA or protein.",
+              "tags": [
+                "dna"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "inheritance",
+          "label": "Inheritance",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-heredity",
+              "term": "heredity",
+              "clue": "Transmission of genetic characteristics between generations.",
+              "definition": "Transmission of genetic characteristics between generations.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-trait",
+              "term": "trait",
+              "clue": "A characteristic influenced by genes, environment or both.",
+              "definition": "A characteristic influenced by genes, environment or both.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-genotype",
+              "term": "genotype",
+              "clue": "The allele combination carried by an organism.",
+              "definition": "The allele combination carried by an organism.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-phenotype",
+              "term": "phenotype",
+              "clue": "The observable characteristics produced by genotype and environment.",
+              "definition": "The observable characteristics produced by genotype and environment.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-dominant-allele",
+              "term": "dominant allele",
+              "clue": "An allele expressed in a heterozygous genotype.",
+              "definition": "An allele expressed in a heterozygous genotype.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-recessive-allele",
+              "term": "recessive allele",
+              "clue": "An allele masked by a dominant allele in a heterozygote.",
+              "definition": "An allele masked by a dominant allele in a heterozygote.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-homozygous",
+              "term": "homozygous",
+              "clue": "Having two identical alleles at a gene locus.",
+              "definition": "Having two identical alleles at a gene locus.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-heterozygous",
+              "term": "heterozygous",
+              "clue": "Having two different alleles at a gene locus.",
+              "definition": "Having two different alleles at a gene locus.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-carrier",
+              "term": "carrier",
+              "clue": "A heterozygous individual carrying a recessive disease allele.",
+              "definition": "A heterozygous individual carrying a recessive disease allele.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-punnett-square",
+              "term": "Punnett square",
+              "clue": "A diagram predicting possible offspring allele combinations.",
+              "definition": "A diagram predicting possible offspring allele combinations.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-pedigree",
+              "term": "pedigree",
+              "clue": "A diagram showing inheritance of a trait through generations.",
+              "definition": "A diagram showing inheritance of a trait through generations.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-probability",
+              "term": "probability",
+              "clue": "The likelihood of a genetic outcome occurring.",
+              "definition": "The likelihood of a genetic outcome occurring.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-sexual-reproduction",
+              "term": "sexual reproduction",
+              "clue": "Reproduction involving fusion of gametes from two parents.",
+              "definition": "Reproduction involving fusion of gametes from two parents.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-asexual-reproduction",
+              "term": "asexual reproduction",
+              "clue": "Reproduction from one parent without gamete fusion.",
+              "definition": "Reproduction from one parent without gamete fusion.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-gamete",
+              "term": "gamete",
+              "clue": "A haploid reproductive cell carrying one chromosome set.",
+              "definition": "A haploid reproductive cell carrying one chromosome set.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-fertilisation",
+              "term": "fertilisation",
+              "clue": "Fusion of gametes to form a diploid zygote.",
+              "definition": "Fusion of gametes to form a diploid zygote.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-meiosis",
+              "term": "meiosis",
+              "clue": "Cell division producing genetically varied haploid cells.",
+              "definition": "Cell division producing genetically varied haploid cells.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-mitosis",
+              "term": "mitosis",
+              "clue": "Cell division producing genetically similar daughter cells.",
+              "definition": "Cell division producing genetically similar daughter cells.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-environmental-variation",
+              "term": "environmental variation",
+              "clue": "Phenotypic differences caused by environmental conditions.",
+              "definition": "Phenotypic differences caused by environmental conditions.",
+              "tags": [
+                "inheritance"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-inheritance-polygenic-trait",
+              "term": "polygenic trait",
+              "clue": "A characteristic influenced by multiple genes.",
+              "definition": "A characteristic influenced by multiple genes.",
+              "tags": [
+                "inheritance"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "evolution",
+          "label": "Evolutionary Change",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-evolution",
+              "term": "evolution",
+              "clue": "Change in inherited characteristics of populations over generations.",
+              "definition": "Change in inherited characteristics of populations over generations.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-variation",
+              "term": "variation",
+              "clue": "Differences among individuals within a population.",
+              "definition": "Differences among individuals within a population.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-natural-selection",
+              "term": "natural selection",
+              "clue": "Differential survival and reproduction caused by heritable variation.",
+              "definition": "Differential survival and reproduction caused by heritable variation.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-selection-pressure",
+              "term": "selection pressure",
+              "clue": "An environmental factor affecting reproductive success.",
+              "definition": "An environmental factor affecting reproductive success.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-adaptation",
+              "term": "adaptation",
+              "clue": "A heritable feature that increases fitness in a particular environment.",
+              "definition": "A heritable feature that increases fitness in a particular environment.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-fitness",
+              "term": "fitness",
+              "clue": "Relative success in surviving and producing fertile offspring.",
+              "definition": "Relative success in surviving and producing fertile offspring.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-population",
+              "term": "population",
+              "clue": "Members of one species living and breeding in an area.",
+              "definition": "Members of one species living and breeding in an area.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-gene-pool",
+              "term": "gene pool",
+              "clue": "All alleles present in a population.",
+              "definition": "All alleles present in a population.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-allele-frequency",
+              "term": "allele frequency",
+              "clue": "The proportion of a particular allele in a population.",
+              "definition": "The proportion of a particular allele in a population.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-speciation",
+              "term": "speciation",
+              "clue": "Formation of new species from diverging populations.",
+              "definition": "Formation of new species from diverging populations.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-reproductive-isolation",
+              "term": "reproductive isolation",
+              "clue": "Prevention of successful gene flow between populations.",
+              "definition": "Prevention of successful gene flow between populations.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-common-ancestor",
+              "term": "common ancestor",
+              "clue": "An ancestral species shared by two or more descendant groups.",
+              "definition": "An ancestral species shared by two or more descendant groups.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-fossil-record",
+              "term": "fossil record",
+              "clue": "Preserved evidence documenting life and change through time.",
+              "definition": "Preserved evidence documenting life and change through time.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-homologous-structure",
+              "term": "homologous structure",
+              "clue": "A body structure inherited from a common ancestor.",
+              "definition": "A body structure inherited from a common ancestor.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-analogous-structure",
+              "term": "analogous structure",
+              "clue": "A similar-function structure that evolved independently.",
+              "definition": "A similar-function structure that evolved independently.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-vestigial-structure",
+              "term": "vestigial structure",
+              "clue": "A reduced inherited feature with little or altered current function.",
+              "definition": "A reduced inherited feature with little or altered current function.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-comparative-anatomy",
+              "term": "comparative anatomy",
+              "clue": "Comparison of structures to infer biological relationships.",
+              "definition": "Comparison of structures to infer biological relationships.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-molecular-evidence",
+              "term": "molecular evidence",
+              "clue": "DNA or protein similarities used to infer common ancestry.",
+              "definition": "DNA or protein similarities used to infer common ancestry.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-phylogenetic-tree",
+              "term": "phylogenetic tree",
+              "clue": "A branching model representing evolutionary relationships.",
+              "definition": "A branching model representing evolutionary relationships.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-extinction",
+              "term": "extinction",
+              "clue": "Permanent loss of a species.",
+              "definition": "Permanent loss of a species.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-genetic-drift",
+              "term": "genetic drift",
+              "clue": "Random change in allele frequency, strongest in small populations.",
+              "definition": "Random change in allele frequency, strongest in small populations.",
+              "tags": [
+                "evolution"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-evolution-gene-flow",
+              "term": "gene flow",
+              "clue": "Movement of alleles between populations through migration and reproduction.",
+              "definition": "Movement of alleles between populations through migration and reproduction.",
+              "tags": [
+                "evolution"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "biotech",
+          "label": "Genetic Technologies and Ethics",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-biotechnology",
+              "term": "biotechnology",
+              "clue": "Use of living systems or biological information for practical applications.",
+              "definition": "Use of living systems or biological information for practical applications.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genetic-engineering",
+              "term": "genetic engineering",
+              "clue": "Direct modification of an organism’s DNA.",
+              "definition": "Direct modification of an organism’s DNA.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genetically-modified-organism",
+              "term": "genetically modified organism",
+              "clue": "An organism whose genetic material has been deliberately altered.",
+              "definition": "An organism whose genetic material has been deliberately altered.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-gene-editing",
+              "term": "gene editing",
+              "clue": "Targeted alteration of a chosen DNA sequence.",
+              "definition": "Targeted alteration of a chosen DNA sequence.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-crispr",
+              "term": "CRISPR",
+              "clue": "A programmable gene-editing system using guide RNA and associated enzymes.",
+              "definition": "A programmable gene-editing system using guide RNA and associated enzymes.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-recombinant-dna",
+              "term": "recombinant DNA",
+              "clue": "DNA formed by joining genetic material from different sources.",
+              "definition": "DNA formed by joining genetic material from different sources.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-cloning",
+              "term": "cloning",
+              "clue": "Production of genetically identical DNA, cells or organisms.",
+              "definition": "Production of genetically identical DNA, cells or organisms.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-selective-breeding",
+              "term": "selective breeding",
+              "clue": "Choosing parents to increase desired inherited characteristics.",
+              "definition": "Choosing parents to increase desired inherited characteristics.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genetic-screening",
+              "term": "genetic screening",
+              "clue": "Testing DNA or chromosomes for variants or conditions.",
+              "definition": "Testing DNA or chromosomes for variants or conditions.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genetic-counselling",
+              "term": "genetic counselling",
+              "clue": "Support that explains genetic risks, testing and choices.",
+              "definition": "Support that explains genetic risks, testing and choices.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-dna-profiling",
+              "term": "DNA profiling",
+              "clue": "Analysis of variable DNA regions for identification.",
+              "definition": "Analysis of variable DNA regions for identification.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genome-sequencing",
+              "term": "genome sequencing",
+              "clue": "Determining the order of bases across genetic material.",
+              "definition": "Determining the order of bases across genetic material.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-gene-therapy",
+              "term": "gene therapy",
+              "clue": "Treatment that adds, removes or changes genetic material in cells.",
+              "definition": "Treatment that adds, removes or changes genetic material in cells.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-stem-cell",
+              "term": "stem cell",
+              "clue": "An unspecialised cell able to self-renew and differentiate.",
+              "definition": "An unspecialised cell able to self-renew and differentiate.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-bioethics",
+              "term": "bioethics",
+              "clue": "Ethical analysis of biological research and technology.",
+              "definition": "Ethical analysis of biological research and technology.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-informed-consent",
+              "term": "informed consent",
+              "clue": "Voluntary agreement based on adequate information and understanding.",
+              "definition": "Voluntary agreement based on adequate information and understanding.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-privacy",
+              "term": "privacy",
+              "clue": "Control over access to personal and genetic information.",
+              "definition": "Control over access to personal and genetic information.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-genetic-discrimination",
+              "term": "genetic discrimination",
+              "clue": "Unfair treatment based on genetic information or risk.",
+              "definition": "Unfair treatment based on genetic information or risk.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-somatic-cell",
+              "term": "somatic cell",
+              "clue": "A non-reproductive body cell.",
+              "definition": "A non-reproductive body cell.",
+              "tags": [
+                "biotech"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-1-genetics-evolution-biotech-germline",
+              "term": "germline",
+              "clue": "Cells or genetic material that can be passed to offspring.",
+              "definition": "Cells or genetic material that can be passed to offspring.",
+              "tags": [
+                "biotech"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-10-10-2-reactions",
+      "label": "10.2 Reactions",
+      "year": 10,
+      "stage": 5,
+      "course": "Year 10 Science",
+      "module": "10-2-reactions",
+      "learningIntention": "Students will understand common chemical reaction types and factors that affect reaction rates.",
+      "successCriteria": "Students can interpret equations, classify reactions, explain collision theory and evaluate ways to control reaction rate.",
+      "groups": [
+        {
+          "id": "language",
+          "label": "Reaction Language and Equations",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-chemical-reaction",
+              "term": "chemical reaction",
+              "clue": "A process in which atoms rearrange to form new substances.",
+              "definition": "A process in which atoms rearrange to form new substances.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-reactant",
+              "term": "reactant",
+              "clue": "A starting substance consumed or changed during a reaction.",
+              "definition": "A starting substance consumed or changed during a reaction.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-product",
+              "term": "product",
+              "clue": "A substance formed during a reaction.",
+              "definition": "A substance formed during a reaction.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-word-equation",
+              "term": "word equation",
+              "clue": "A representation using substance names rather than formulas.",
+              "definition": "A representation using substance names rather than formulas.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-chemical-equation",
+              "term": "chemical equation",
+              "clue": "A symbolic representation using formulas and coefficients.",
+              "definition": "A symbolic representation using formulas and coefficients.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-coefficient",
+              "term": "coefficient",
+              "clue": "A number placed before a formula to show reacting ratios.",
+              "definition": "A number placed before a formula to show reacting ratios.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-subscript",
+              "term": "subscript",
+              "clue": "A small number showing atom ratio within a chemical formula.",
+              "definition": "A small number showing atom ratio within a chemical formula.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-balanced-equation",
+              "term": "balanced equation",
+              "clue": "An equation with equal numbers of each atom on both sides.",
+              "definition": "An equation with equal numbers of each atom on both sides.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-state-symbol",
+              "term": "state symbol",
+              "clue": "A symbol showing whether a substance is solid, liquid, gas or aqueous.",
+              "definition": "A symbol showing whether a substance is solid, liquid, gas or aqueous.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-aqueous",
+              "term": "aqueous",
+              "clue": "Dissolved in water.",
+              "definition": "Dissolved in water.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-conservation-of-mass",
+              "term": "conservation of mass",
+              "clue": "The principle that total mass remains constant in a closed system.",
+              "definition": "The principle that total mass remains constant in a closed system.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-conservation-of-atoms",
+              "term": "conservation of atoms",
+              "clue": "The principle that atoms are rearranged but not created or destroyed.",
+              "definition": "The principle that atoms are rearranged but not created or destroyed.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-mole-ratio",
+              "term": "mole ratio",
+              "clue": "The proportional relationship shown by equation coefficients.",
+              "definition": "The proportional relationship shown by equation coefficients.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-limiting-reactant",
+              "term": "limiting reactant",
+              "clue": "The reactant consumed first and controlling maximum product.",
+              "definition": "The reactant consumed first and controlling maximum product.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-excess-reactant",
+              "term": "excess reactant",
+              "clue": "A reactant present in more than the required amount.",
+              "definition": "A reactant present in more than the required amount.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-yield",
+              "term": "yield",
+              "clue": "The amount of product obtained from a reaction.",
+              "definition": "The amount of product obtained from a reaction.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-precipitate",
+              "term": "precipitate",
+              "clue": "An insoluble solid formed from ions in solution.",
+              "definition": "An insoluble solid formed from ions in solution.",
+              "tags": [
+                "language"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-language-spectator-ion",
+              "term": "spectator ion",
+              "clue": "An ion present in solution but unchanged by the reaction.",
+              "definition": "An ion present in solution but unchanged by the reaction.",
+              "tags": [
+                "language"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "types",
+          "label": "Reaction Types",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-synthesis-reaction",
+              "term": "synthesis reaction",
+              "clue": "A reaction combining simpler substances into a more complex product.",
+              "definition": "A reaction combining simpler substances into a more complex product.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-decomposition-reaction",
+              "term": "decomposition reaction",
+              "clue": "A reaction breaking a compound into simpler substances.",
+              "definition": "A reaction breaking a compound into simpler substances.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-combustion",
+              "term": "combustion",
+              "clue": "A rapid reaction with oxygen that releases energy.",
+              "definition": "A rapid reaction with oxygen that releases energy.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-complete-combustion",
+              "term": "complete combustion",
+              "clue": "Combustion with sufficient oxygen producing carbon dioxide and water.",
+              "definition": "Combustion with sufficient oxygen producing carbon dioxide and water.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-incomplete-combustion",
+              "term": "incomplete combustion",
+              "clue": "Combustion with limited oxygen producing carbon monoxide or soot.",
+              "definition": "Combustion with limited oxygen producing carbon monoxide or soot.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-oxidation",
+              "term": "oxidation",
+              "clue": "Loss of electrons or reaction involving oxygen.",
+              "definition": "Loss of electrons or reaction involving oxygen.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-reduction",
+              "term": "reduction",
+              "clue": "Gain of electrons or removal of oxygen.",
+              "definition": "Gain of electrons or removal of oxygen.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-redox-reaction",
+              "term": "redox reaction",
+              "clue": "A reaction containing simultaneous oxidation and reduction.",
+              "definition": "A reaction containing simultaneous oxidation and reduction.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-corrosion",
+              "term": "corrosion",
+              "clue": "Unwanted oxidation that deteriorates a material.",
+              "definition": "Unwanted oxidation that deteriorates a material.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-neutralisation",
+              "term": "neutralisation",
+              "clue": "Reaction between an acid and a base, commonly forming salt and water.",
+              "definition": "Reaction between an acid and a base, commonly forming salt and water.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-acid",
+              "term": "acid",
+              "clue": "A substance that donates hydrogen ions in aqueous solution.",
+              "definition": "A substance that donates hydrogen ions in aqueous solution.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-base",
+              "term": "base",
+              "clue": "A substance that accepts hydrogen ions or produces hydroxide ions.",
+              "definition": "A substance that accepts hydrogen ions or produces hydroxide ions.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-alkali",
+              "term": "alkali",
+              "clue": "A soluble base that produces hydroxide ions in water.",
+              "definition": "A soluble base that produces hydroxide ions in water.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-salt",
+              "term": "salt",
+              "clue": "An ionic compound often formed when acid hydrogen is replaced.",
+              "definition": "An ionic compound often formed when acid hydrogen is replaced.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-precipitation-reaction",
+              "term": "precipitation reaction",
+              "clue": "A reaction in solution that forms an insoluble solid.",
+              "definition": "A reaction in solution that forms an insoluble solid.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-displacement-reaction",
+              "term": "displacement reaction",
+              "clue": "A reaction where a more reactive element replaces another.",
+              "definition": "A reaction where a more reactive element replaces another.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-metal-acid-reaction",
+              "term": "metal acid reaction",
+              "clue": "A reaction commonly producing a salt and hydrogen gas.",
+              "definition": "A reaction commonly producing a salt and hydrogen gas.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-carbonate-acid-reaction",
+              "term": "carbonate acid reaction",
+              "clue": "A reaction producing a salt, water and carbon dioxide.",
+              "definition": "A reaction producing a salt, water and carbon dioxide.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-polymerisation",
+              "term": "polymerisation",
+              "clue": "A reaction joining monomers into long chains or networks.",
+              "definition": "A reaction joining monomers into long chains or networks.",
+              "tags": [
+                "types"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-types-fermentation",
+              "term": "fermentation",
+              "clue": "Anaerobic conversion of sugars by microorganisms.",
+              "definition": "Anaerobic conversion of sugars by microorganisms.",
+              "tags": [
+                "types"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rate",
+          "label": "Reaction Rate and Collision Theory",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-reaction-rate",
+              "term": "reaction rate",
+              "clue": "The speed at which reactants are converted into products.",
+              "definition": "The speed at which reactants are converted into products.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-collision-theory",
+              "term": "collision theory",
+              "clue": "A model explaining reactions through particle collisions.",
+              "definition": "A model explaining reactions through particle collisions.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-successful-collision",
+              "term": "successful collision",
+              "clue": "A collision with sufficient energy and suitable orientation.",
+              "definition": "A collision with sufficient energy and suitable orientation.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-activation-energy",
+              "term": "activation energy",
+              "clue": "The minimum energy required for a reaction to occur.",
+              "definition": "The minimum energy required for a reaction to occur.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-concentration",
+              "term": "concentration",
+              "clue": "The amount of solute per quantity of solution.",
+              "definition": "The amount of solute per quantity of solution.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-pressure",
+              "term": "pressure",
+              "clue": "Force per unit area, affecting gas particle spacing and collision rate.",
+              "definition": "Force per unit area, affecting gas particle spacing and collision rate.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-temperature",
+              "term": "temperature",
+              "clue": "A measure related to average particle kinetic energy.",
+              "definition": "A measure related to average particle kinetic energy.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-surface-area",
+              "term": "surface area",
+              "clue": "The exposed area available for particles to collide.",
+              "definition": "The exposed area available for particles to collide.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-particle-size",
+              "term": "particle size",
+              "clue": "The dimensions of solid pieces, affecting surface-area-to-volume ratio.",
+              "definition": "The dimensions of solid pieces, affecting surface-area-to-volume ratio.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-catalyst",
+              "term": "catalyst",
+              "clue": "A substance that increases rate by lowering activation energy.",
+              "definition": "A substance that increases rate by lowering activation energy.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-enzyme",
+              "term": "enzyme",
+              "clue": "A biological catalyst that accelerates a specific reaction.",
+              "definition": "A biological catalyst that accelerates a specific reaction.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-inhibitor",
+              "term": "inhibitor",
+              "clue": "A substance that slows a reaction.",
+              "definition": "A substance that slows a reaction.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-rate-graph",
+              "term": "rate graph",
+              "clue": "A graph showing change in a measured quantity during reaction.",
+              "definition": "A graph showing change in a measured quantity during reaction.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-initial-rate",
+              "term": "initial rate",
+              "clue": "The reaction rate near the beginning of a process.",
+              "definition": "The reaction rate near the beginning of a process.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-rate-constant",
+              "term": "rate constant",
+              "clue": "A value linking reaction rate with reactant concentrations.",
+              "definition": "A value linking reaction rate with reactant concentrations.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-dynamic-equilibrium",
+              "term": "dynamic equilibrium",
+              "clue": "A state where forward and reverse rates are equal.",
+              "definition": "A state where forward and reverse rates are equal.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-reversible-reaction",
+              "term": "reversible reaction",
+              "clue": "A reaction able to proceed in both directions.",
+              "definition": "A reaction able to proceed in both directions.",
+              "tags": [
+                "rate"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-rate-equilibrium-position",
+              "term": "equilibrium position",
+              "clue": "The relative amounts of reactants and products at equilibrium.",
+              "definition": "The relative amounts of reactants and products at equilibrium.",
+              "tags": [
+                "rate"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "energy",
+          "label": "Energy, Industry and Safety",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-exothermic-reaction",
+              "term": "exothermic reaction",
+              "clue": "A reaction that releases energy to the surroundings.",
+              "definition": "A reaction that releases energy to the surroundings.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-endothermic-reaction",
+              "term": "endothermic reaction",
+              "clue": "A reaction that absorbs energy from the surroundings.",
+              "definition": "A reaction that absorbs energy from the surroundings.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-enthalpy-change",
+              "term": "enthalpy change",
+              "clue": "The heat-energy change of a process at constant pressure.",
+              "definition": "The heat-energy change of a process at constant pressure.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-bond-energy",
+              "term": "bond energy",
+              "clue": "The energy required to break a chemical bond.",
+              "definition": "The energy required to break a chemical bond.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-energy-profile",
+              "term": "energy profile",
+              "clue": "A graph showing energy changes along a reaction pathway.",
+              "definition": "A graph showing energy changes along a reaction pathway.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-industrial-chemistry",
+              "term": "industrial chemistry",
+              "clue": "Large-scale production using controlled chemical processes.",
+              "definition": "Large-scale production using controlled chemical processes.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-haber-process",
+              "term": "Haber process",
+              "clue": "Industrial manufacture of ammonia from nitrogen and hydrogen.",
+              "definition": "Industrial manufacture of ammonia from nitrogen and hydrogen.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-contact-process",
+              "term": "contact process",
+              "clue": "Industrial manufacture of sulfuric acid using catalysed oxidation.",
+              "definition": "Industrial manufacture of sulfuric acid using catalysed oxidation.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-electrolysis",
+              "term": "electrolysis",
+              "clue": "Chemical change driven by electric current.",
+              "definition": "Chemical change driven by electric current.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-electrochemical-cell",
+              "term": "electrochemical cell",
+              "clue": "A system converting chemical and electrical energy.",
+              "definition": "A system converting chemical and electrical energy.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-battery",
+              "term": "battery",
+              "clue": "One or more electrochemical cells storing chemical energy.",
+              "definition": "One or more electrochemical cells storing chemical energy.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-fuel-cell",
+              "term": "fuel cell",
+              "clue": "A cell supplied continuously with fuel and oxidant.",
+              "definition": "A cell supplied continuously with fuel and oxidant.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-reaction-vessel",
+              "term": "reaction vessel",
+              "clue": "Equipment designed to safely contain a chemical process.",
+              "definition": "Equipment designed to safely contain a chemical process.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-hazard",
+              "term": "hazard",
+              "clue": "A source with potential to cause harm.",
+              "definition": "A source with potential to cause harm.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-risk-assessment",
+              "term": "risk assessment",
+              "clue": "Evaluation of likelihood and consequence of harm.",
+              "definition": "Evaluation of likelihood and consequence of harm.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-green-chemistry",
+              "term": "green chemistry",
+              "clue": "Design of safer processes that reduce waste and resource use.",
+              "definition": "Design of safer processes that reduce waste and resource use.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-atom-economy",
+              "term": "atom economy",
+              "clue": "The proportion of reactant atoms included in the desired product.",
+              "definition": "The proportion of reactant atoms included in the desired product.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-waste-product",
+              "term": "waste product",
+              "clue": "An undesired material formed or discarded during a process.",
+              "definition": "An undesired material formed or discarded during a process.",
+              "tags": [
+                "energy"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-2-reactions-energy-process-optimisation",
+              "term": "process optimisation",
+              "clue": "Adjustment of conditions to balance rate, yield, cost and safety.",
+              "definition": "Adjustment of conditions to balance rate, yield, cost and safety.",
+              "tags": [
+                "energy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-10-10-3-waves-motion",
+      "label": "10.3 Waves and Motion",
+      "year": 10,
+      "stage": 5,
+      "course": "Year 10 Science",
+      "module": "10-3-waves-motion",
+      "learningIntention": "Students will understand the features and applications of waves and explain object motion using Newton’s laws.",
+      "successCriteria": "Students can calculate and interpret wave and motion quantities, describe wave behaviours and apply Newton’s laws.",
+      "groups": [
+        {
+          "id": "features",
+          "label": "Wave Features",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-wave",
+              "term": "wave",
+              "clue": "A travelling disturbance that transfers energy and information.",
+              "definition": "A travelling disturbance that transfers energy and information.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-medium",
+              "term": "medium",
+              "clue": "Matter through which a mechanical wave travels.",
+              "definition": "Matter through which a mechanical wave travels.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-mechanical-wave",
+              "term": "mechanical wave",
+              "clue": "A wave that requires particles in a medium.",
+              "definition": "A wave that requires particles in a medium.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-electromagnetic-wave",
+              "term": "electromagnetic wave",
+              "clue": "A wave of oscillating electric and magnetic fields.",
+              "definition": "A wave of oscillating electric and magnetic fields.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-transverse-wave",
+              "term": "transverse wave",
+              "clue": "A wave whose oscillations are perpendicular to travel direction.",
+              "definition": "A wave whose oscillations are perpendicular to travel direction.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-longitudinal-wave",
+              "term": "longitudinal wave",
+              "clue": "A wave whose oscillations are parallel to travel direction.",
+              "definition": "A wave whose oscillations are parallel to travel direction.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-amplitude",
+              "term": "amplitude",
+              "clue": "Maximum displacement from equilibrium.",
+              "definition": "Maximum displacement from equilibrium.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-wavelength",
+              "term": "wavelength",
+              "clue": "Distance between corresponding points on successive waves.",
+              "definition": "Distance between corresponding points on successive waves.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-frequency",
+              "term": "frequency",
+              "clue": "Number of complete wave cycles passing a point each second.",
+              "definition": "Number of complete wave cycles passing a point each second.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-period",
+              "term": "period",
+              "clue": "Time taken for one complete wave cycle.",
+              "definition": "Time taken for one complete wave cycle.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-wave-speed",
+              "term": "wave speed",
+              "clue": "Distance travelled by a wave per unit time.",
+              "definition": "Distance travelled by a wave per unit time.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-crest",
+              "term": "crest",
+              "clue": "The highest point of a transverse wave.",
+              "definition": "The highest point of a transverse wave.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-trough",
+              "term": "trough",
+              "clue": "The lowest point of a transverse wave.",
+              "definition": "The lowest point of a transverse wave.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-compression",
+              "term": "compression",
+              "clue": "A high-density region in a longitudinal wave.",
+              "definition": "A high-density region in a longitudinal wave.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-rarefaction",
+              "term": "rarefaction",
+              "clue": "A low-density region in a longitudinal wave.",
+              "definition": "A low-density region in a longitudinal wave.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-phase",
+              "term": "phase",
+              "clue": "Position within a repeating wave cycle.",
+              "definition": "Position within a repeating wave cycle.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-intensity",
+              "term": "intensity",
+              "clue": "Power transferred by a wave per unit area.",
+              "definition": "Power transferred by a wave per unit area.",
+              "tags": [
+                "features"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-features-hertz",
+              "term": "hertz",
+              "clue": "The SI unit of frequency, equal to one cycle per second.",
+              "definition": "The SI unit of frequency, equal to one cycle per second.",
+              "tags": [
+                "features"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "behaviour",
+          "label": "Wave Behaviour and Applications",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-reflection",
+              "term": "reflection",
+              "clue": "A wave bouncing from a boundary.",
+              "definition": "A wave bouncing from a boundary.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-refraction",
+              "term": "refraction",
+              "clue": "A change in direction caused by a change in wave speed.",
+              "definition": "A change in direction caused by a change in wave speed.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-diffraction",
+              "term": "diffraction",
+              "clue": "Spreading of a wave around obstacles or through openings.",
+              "definition": "Spreading of a wave around obstacles or through openings.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-interference",
+              "term": "interference",
+              "clue": "Combination of overlapping waves.",
+              "definition": "Combination of overlapping waves.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-constructive-interference",
+              "term": "constructive interference",
+              "clue": "Overlap that produces a larger resultant amplitude.",
+              "definition": "Overlap that produces a larger resultant amplitude.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-destructive-interference",
+              "term": "destructive interference",
+              "clue": "Overlap that produces a smaller resultant amplitude.",
+              "definition": "Overlap that produces a smaller resultant amplitude.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-resonance",
+              "term": "resonance",
+              "clue": "Large oscillation produced when driving and natural frequencies match.",
+              "definition": "Large oscillation produced when driving and natural frequencies match.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-standing-wave",
+              "term": "standing wave",
+              "clue": "A stationary pattern formed by waves travelling in opposite directions.",
+              "definition": "A stationary pattern formed by waves travelling in opposite directions.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-node",
+              "term": "node",
+              "clue": "A point of zero displacement in a standing wave.",
+              "definition": "A point of zero displacement in a standing wave.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-antinode",
+              "term": "antinode",
+              "clue": "A point of maximum displacement in a standing wave.",
+              "definition": "A point of maximum displacement in a standing wave.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-sound-wave",
+              "term": "sound wave",
+              "clue": "A mechanical pressure wave detected by hearing.",
+              "definition": "A mechanical pressure wave detected by hearing.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-pitch",
+              "term": "pitch",
+              "clue": "Perception mainly related to sound frequency.",
+              "definition": "Perception mainly related to sound frequency.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-loudness",
+              "term": "loudness",
+              "clue": "Perception related to sound intensity and hearing sensitivity.",
+              "definition": "Perception related to sound intensity and hearing sensitivity.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-echo",
+              "term": "echo",
+              "clue": "A reflected sound heard separately from the original.",
+              "definition": "A reflected sound heard separately from the original.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-ultrasound",
+              "term": "ultrasound",
+              "clue": "Sound with frequency above the upper limit of human hearing.",
+              "definition": "Sound with frequency above the upper limit of human hearing.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-sonar",
+              "term": "sonar",
+              "clue": "Use of sound reflections to detect distance, depth or objects.",
+              "definition": "Use of sound reflections to detect distance, depth or objects.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-electromagnetic-spectrum",
+              "term": "electromagnetic spectrum",
+              "clue": "The full range of electromagnetic frequencies and wavelengths.",
+              "definition": "The full range of electromagnetic frequencies and wavelengths.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-radio-wave",
+              "term": "radio wave",
+              "clue": "Low-frequency electromagnetic radiation used in communication and astronomy.",
+              "definition": "Low-frequency electromagnetic radiation used in communication and astronomy.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-microwave",
+              "term": "microwave",
+              "clue": "Electromagnetic radiation used in radar, communication and heating.",
+              "definition": "Electromagnetic radiation used in radar, communication and heating.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-infrared",
+              "term": "infrared",
+              "clue": "Electromagnetic radiation associated with thermal emission.",
+              "definition": "Electromagnetic radiation associated with thermal emission.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-ultraviolet",
+              "term": "ultraviolet",
+              "clue": "Electromagnetic radiation beyond violet light that can cause fluorescence and skin damage.",
+              "definition": "Electromagnetic radiation beyond violet light that can cause fluorescence and skin damage.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-x-ray",
+              "term": "X ray",
+              "clue": "High-frequency radiation used for imaging dense structures.",
+              "definition": "High-frequency radiation used for imaging dense structures.",
+              "tags": [
+                "behaviour"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-behaviour-gamma-ray",
+              "term": "gamma ray",
+              "clue": "Very high-frequency radiation produced in nuclear processes.",
+              "definition": "Very high-frequency radiation produced in nuclear processes.",
+              "tags": [
+                "behaviour"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "motion",
+          "label": "Motion Quantities and Graphs",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-position",
+              "term": "position",
+              "clue": "Location relative to a chosen reference point.",
+              "definition": "Location relative to a chosen reference point.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-distance",
+              "term": "distance",
+              "clue": "Total path length travelled.",
+              "definition": "Total path length travelled.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-displacement",
+              "term": "displacement",
+              "clue": "Change in position with direction.",
+              "definition": "Change in position with direction.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-speed",
+              "term": "speed",
+              "clue": "Distance travelled per unit time.",
+              "definition": "Distance travelled per unit time.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-velocity",
+              "term": "velocity",
+              "clue": "Rate of change of displacement with direction.",
+              "definition": "Rate of change of displacement with direction.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-acceleration",
+              "term": "acceleration",
+              "clue": "Rate of change of velocity.",
+              "definition": "Rate of change of velocity.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-uniform-motion",
+              "term": "uniform motion",
+              "clue": "Motion with constant velocity and zero acceleration.",
+              "definition": "Motion with constant velocity and zero acceleration.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-instantaneous-speed",
+              "term": "instantaneous speed",
+              "clue": "Speed at a particular moment.",
+              "definition": "Speed at a particular moment.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-average-velocity",
+              "term": "average velocity",
+              "clue": "Total displacement divided by total time.",
+              "definition": "Total displacement divided by total time.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-scalar",
+              "term": "scalar",
+              "clue": "A quantity with magnitude only.",
+              "definition": "A quantity with magnitude only.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-vector",
+              "term": "vector",
+              "clue": "A quantity with both magnitude and direction.",
+              "definition": "A quantity with both magnitude and direction.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-position-time-graph",
+              "term": "position time graph",
+              "clue": "A graph whose gradient represents velocity.",
+              "definition": "A graph whose gradient represents velocity.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-velocity-time-graph",
+              "term": "velocity time graph",
+              "clue": "A graph whose gradient represents acceleration.",
+              "definition": "A graph whose gradient represents acceleration.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-gradient",
+              "term": "gradient",
+              "clue": "Rate of change shown by the steepness of a graph.",
+              "definition": "Rate of change shown by the steepness of a graph.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-area-under-graph",
+              "term": "area under graph",
+              "clue": "A region whose value may represent displacement on a velocity–time graph.",
+              "definition": "A region whose value may represent displacement on a velocity–time graph.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-terminal-velocity",
+              "term": "terminal velocity",
+              "clue": "Constant speed reached when drag balances the driving force.",
+              "definition": "Constant speed reached when drag balances the driving force.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-projectile",
+              "term": "projectile",
+              "clue": "An object moving under gravity after launch.",
+              "definition": "An object moving under gravity after launch.",
+              "tags": [
+                "motion"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-motion-trajectory",
+              "term": "trajectory",
+              "clue": "The path followed by a moving object.",
+              "definition": "The path followed by a moving object.",
+              "tags": [
+                "motion"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "laws",
+          "label": "Newton’s Laws and Forces",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-inertia",
+              "term": "inertia",
+              "clue": "Resistance of an object to changes in its motion.",
+              "definition": "Resistance of an object to changes in its motion.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-newton-first-law",
+              "term": "Newton first law",
+              "clue": "The principle that motion remains unchanged unless a resultant force acts.",
+              "definition": "The principle that motion remains unchanged unless a resultant force acts.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-newton-second-law",
+              "term": "Newton second law",
+              "clue": "The relationship linking resultant force, mass and acceleration.",
+              "definition": "The relationship linking resultant force, mass and acceleration.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-newton-third-law",
+              "term": "Newton third law",
+              "clue": "The principle that interaction forces are equal and opposite and act on different objects.",
+              "definition": "The principle that interaction forces are equal and opposite and act on different objects.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-resultant-force",
+              "term": "resultant force",
+              "clue": "The vector sum of all forces acting on an object.",
+              "definition": "The vector sum of all forces acting on an object.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-net-force",
+              "term": "net force",
+              "clue": "Another name for the resultant force.",
+              "definition": "Another name for the resultant force.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-mass",
+              "term": "mass",
+              "clue": "A measure of inertia and amount of matter.",
+              "definition": "A measure of inertia and amount of matter.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-weight",
+              "term": "weight",
+              "clue": "The gravitational force acting on a mass.",
+              "definition": "The gravitational force acting on a mass.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-gravitational-field-strength",
+              "term": "gravitational field strength",
+              "clue": "Force per unit mass in a gravitational field.",
+              "definition": "Force per unit mass in a gravitational field.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-friction",
+              "term": "friction",
+              "clue": "A contact force opposing relative movement between surfaces.",
+              "definition": "A contact force opposing relative movement between surfaces.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-drag",
+              "term": "drag",
+              "clue": "A resistive force caused by movement through a fluid.",
+              "definition": "A resistive force caused by movement through a fluid.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-normal-force",
+              "term": "normal force",
+              "clue": "A support force acting perpendicular to a surface.",
+              "definition": "A support force acting perpendicular to a surface.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-tension",
+              "term": "tension",
+              "clue": "A pulling force transmitted through a stretched connector.",
+              "definition": "A pulling force transmitted through a stretched connector.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-momentum",
+              "term": "momentum",
+              "clue": "Mass multiplied by velocity.",
+              "definition": "Mass multiplied by velocity.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-impulse",
+              "term": "impulse",
+              "clue": "Force multiplied by interaction time, equal to change in momentum.",
+              "definition": "Force multiplied by interaction time, equal to change in momentum.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-collision",
+              "term": "collision",
+              "clue": "A short interaction in which objects exert forces on one another.",
+              "definition": "A short interaction in which objects exert forces on one another.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-seatbelt",
+              "term": "seatbelt",
+              "clue": "A safety device that increases stopping time and restrains an occupant.",
+              "definition": "A safety device that increases stopping time and restrains an occupant.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-airbag",
+              "term": "airbag",
+              "clue": "A safety device that cushions rapid deceleration and spreads force.",
+              "definition": "A safety device that cushions rapid deceleration and spreads force.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-crumple-zone",
+              "term": "crumple zone",
+              "clue": "A vehicle region designed to deform and absorb energy.",
+              "definition": "A vehicle region designed to deform and absorb energy.",
+              "tags": [
+                "laws"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-3-waves-motion-laws-centripetal-force",
+              "term": "centripetal force",
+              "clue": "A resultant force directed towards the centre of circular motion.",
+              "definition": "A resultant force directed towards the centre of circular motion.",
+              "tags": [
+                "laws"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nsw-2023-year-10-10-4-data-science-2",
+      "label": "10.4 Data Science 2",
+      "year": 10,
+      "stage": 5,
+      "course": "Year 10 Science",
+      "module": "10-4-data-science-2",
+      "learningIntention": "Students will understand how scientific knowledge and data are used to verify claims and support decisions.",
+      "successCriteria": "Students can assess evidence quality, analyse uncertainty, identify misleading practices and justify evidence-based conclusions.",
+      "groups": [
+        {
+          "id": "claims",
+          "label": "Claims and Evidence",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-claim",
+              "term": "claim",
+              "clue": "A statement presented as true or testable.",
+              "definition": "A statement presented as true or testable.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-evidence",
+              "term": "evidence",
+              "clue": "Information used to support or challenge a claim.",
+              "definition": "Information used to support or challenge a claim.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-reasoning",
+              "term": "reasoning",
+              "clue": "The logical link explaining why evidence supports a claim.",
+              "definition": "The logical link explaining why evidence supports a claim.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-argument",
+              "term": "argument",
+              "clue": "A claim supported by evidence and scientific reasoning.",
+              "definition": "A claim supported by evidence and scientific reasoning.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-conclusion",
+              "term": "conclusion",
+              "clue": "A judgement drawn from analysis of evidence.",
+              "definition": "A judgement drawn from analysis of evidence.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-hypothesis",
+              "term": "hypothesis",
+              "clue": "A testable proposed relationship or explanation.",
+              "definition": "A testable proposed relationship or explanation.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-theory",
+              "term": "theory",
+              "clue": "A broad scientific explanation supported by extensive evidence.",
+              "definition": "A broad scientific explanation supported by extensive evidence.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-law",
+              "term": "law",
+              "clue": "A concise description of a consistent relationship in nature.",
+              "definition": "A concise description of a consistent relationship in nature.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-fact",
+              "term": "fact",
+              "clue": "A well-confirmed observation or measurement.",
+              "definition": "A well-confirmed observation or measurement.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-opinion",
+              "term": "opinion",
+              "clue": "A personal judgement not necessarily supported by evidence.",
+              "definition": "A personal judgement not necessarily supported by evidence.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-anecdote",
+              "term": "anecdote",
+              "clue": "A personal story or isolated example.",
+              "definition": "A personal story or isolated example.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-source",
+              "term": "source",
+              "clue": "The origin of information, evidence or data.",
+              "definition": "The origin of information, evidence or data.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-primary-source",
+              "term": "primary source",
+              "clue": "Original research or first-hand data.",
+              "definition": "Original research or first-hand data.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-secondary-source",
+              "term": "secondary source",
+              "clue": "A work that interprets or summarises other sources.",
+              "definition": "A work that interprets or summarises other sources.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-peer-review",
+              "term": "peer review",
+              "clue": "Evaluation of scientific work by relevant experts.",
+              "definition": "Evaluation of scientific work by relevant experts.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-replication",
+              "term": "replication",
+              "clue": "Independent repetition of a study to test its findings.",
+              "definition": "Independent repetition of a study to test its findings.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-consensus",
+              "term": "consensus",
+              "clue": "Broad expert agreement produced by converging evidence.",
+              "definition": "Broad expert agreement produced by converging evidence.",
+              "tags": [
+                "claims"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-claims-burden-of-proof",
+              "term": "burden of proof",
+              "clue": "Responsibility to provide evidence for a claim.",
+              "definition": "Responsibility to provide evidence for a claim.",
+              "tags": [
+                "claims"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "quality",
+          "label": "Data Quality and Uncertainty",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-validity",
+              "term": "validity",
+              "clue": "How well a method tests the intended question.",
+              "definition": "How well a method tests the intended question.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-reliability",
+              "term": "reliability",
+              "clue": "Consistency of results across repeated observations or trials.",
+              "definition": "Consistency of results across repeated observations or trials.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-accuracy",
+              "term": "accuracy",
+              "clue": "Closeness of a result to a true or accepted value.",
+              "definition": "Closeness of a result to a true or accepted value.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-precision",
+              "term": "precision",
+              "clue": "Closeness of repeated measurements to one another.",
+              "definition": "Closeness of repeated measurements to one another.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-uncertainty",
+              "term": "uncertainty",
+              "clue": "A limit on confidence in a measurement, estimate or prediction.",
+              "definition": "A limit on confidence in a measurement, estimate or prediction.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-random-error",
+              "term": "random error",
+              "clue": "Unpredictable variation that causes measurements to scatter.",
+              "definition": "Unpredictable variation that causes measurements to scatter.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-systematic-error",
+              "term": "systematic error",
+              "clue": "A consistent bias that shifts results in one direction.",
+              "definition": "A consistent bias that shifts results in one direction.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-measurement-error",
+              "term": "measurement error",
+              "clue": "Difference between a measured and accepted value.",
+              "definition": "Difference between a measured and accepted value.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-margin-of-error",
+              "term": "margin of error",
+              "clue": "An interval expressing uncertainty in a sample estimate.",
+              "definition": "An interval expressing uncertainty in a sample estimate.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-confidence-interval",
+              "term": "confidence interval",
+              "clue": "A range estimating a population value under stated assumptions.",
+              "definition": "A range estimating a population value under stated assumptions.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-sample-size",
+              "term": "sample size",
+              "clue": "The number of observations or individuals in a sample.",
+              "definition": "The number of observations or individuals in a sample.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-representative-sample",
+              "term": "representative sample",
+              "clue": "A sample reflecting important features of the population.",
+              "definition": "A sample reflecting important features of the population.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-sampling-bias",
+              "term": "sampling bias",
+              "clue": "Systematic over- or under-representation in a sample.",
+              "definition": "Systematic over- or under-representation in a sample.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-confounding-variable",
+              "term": "confounding variable",
+              "clue": "An uncontrolled factor related to both variables of interest.",
+              "definition": "An uncontrolled factor related to both variables of interest.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-control-group",
+              "term": "control group",
+              "clue": "A comparison group that does not receive the tested treatment.",
+              "definition": "A comparison group that does not receive the tested treatment.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-placebo",
+              "term": "placebo",
+              "clue": "An inactive treatment used to control for expectation effects.",
+              "definition": "An inactive treatment used to control for expectation effects.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-blind-study",
+              "term": "blind study",
+              "clue": "A study that hides treatment allocation from participants or researchers.",
+              "definition": "A study that hides treatment allocation from participants or researchers.",
+              "tags": [
+                "quality"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-quality-reproducibility",
+              "term": "reproducibility",
+              "clue": "Ability to obtain consistent results using the same data and analysis.",
+              "definition": "Ability to obtain consistent results using the same data and analysis.",
+              "tags": [
+                "quality"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "statistics",
+          "label": "Statistics and Relationships",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-mean",
+              "term": "mean",
+              "clue": "The arithmetic average of a dataset.",
+              "definition": "The arithmetic average of a dataset.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-median",
+              "term": "median",
+              "clue": "The middle value in an ordered dataset.",
+              "definition": "The middle value in an ordered dataset.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-mode",
+              "term": "mode",
+              "clue": "The most frequently occurring value or category.",
+              "definition": "The most frequently occurring value or category.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-range",
+              "term": "range",
+              "clue": "The difference between the maximum and minimum values.",
+              "definition": "The difference between the maximum and minimum values.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-standard-deviation",
+              "term": "standard deviation",
+              "clue": "A measure of spread around the mean.",
+              "definition": "A measure of spread around the mean.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-distribution",
+              "term": "distribution",
+              "clue": "The pattern formed by values and their frequencies.",
+              "definition": "The pattern formed by values and their frequencies.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-normal-distribution",
+              "term": "normal distribution",
+              "clue": "A symmetric bell-shaped distribution.",
+              "definition": "A symmetric bell-shaped distribution.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-skew",
+              "term": "skew",
+              "clue": "Asymmetry in the shape of a data distribution.",
+              "definition": "Asymmetry in the shape of a data distribution.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-outlier",
+              "term": "outlier",
+              "clue": "A value far from the main pattern.",
+              "definition": "A value far from the main pattern.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-correlation",
+              "term": "correlation",
+              "clue": "A statistical association between two variables.",
+              "definition": "A statistical association between two variables.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-positive-correlation",
+              "term": "positive correlation",
+              "clue": "A relationship in which variables tend to increase together.",
+              "definition": "A relationship in which variables tend to increase together.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-negative-correlation",
+              "term": "negative correlation",
+              "clue": "A relationship in which one variable tends to decrease as another increases.",
+              "definition": "A relationship in which one variable tends to decrease as another increases.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-causation",
+              "term": "causation",
+              "clue": "A relationship in which one factor produces change in another.",
+              "definition": "A relationship in which one factor produces change in another.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-regression",
+              "term": "regression",
+              "clue": "A method for modelling relationships between variables.",
+              "definition": "A method for modelling relationships between variables.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-line-of-best-fit",
+              "term": "line of best fit",
+              "clue": "A line summarising the trend in a scatter plot.",
+              "definition": "A line summarising the trend in a scatter plot.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-effect-size",
+              "term": "effect size",
+              "clue": "The magnitude of a difference or relationship.",
+              "definition": "The magnitude of a difference or relationship.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-statistical-significance",
+              "term": "statistical significance",
+              "clue": "Evidence that a result is unlikely under a stated null model.",
+              "definition": "Evidence that a result is unlikely under a stated null model.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-base-rate",
+              "term": "base rate",
+              "clue": "The underlying frequency of an event in a population.",
+              "definition": "The underlying frequency of an event in a population.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-relative-risk",
+              "term": "relative risk",
+              "clue": "A ratio comparing risk between groups.",
+              "definition": "A ratio comparing risk between groups.",
+              "tags": [
+                "statistics"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-statistics-absolute-risk",
+              "term": "absolute risk",
+              "clue": "The actual probability of an outcome.",
+              "definition": "The actual probability of an outcome.",
+              "tags": [
+                "statistics"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions",
+          "label": "Communication and Decisions",
+          "items": [
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-bias",
+              "term": "bias",
+              "clue": "A systematic influence that distorts results or judgement.",
+              "definition": "A systematic influence that distorts results or judgement.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-confirmation-bias",
+              "term": "confirmation bias",
+              "clue": "Favouring information that supports an existing belief.",
+              "definition": "Favouring information that supports an existing belief.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-publication-bias",
+              "term": "publication bias",
+              "clue": "Greater likelihood of publishing certain types of result.",
+              "definition": "Greater likelihood of publishing certain types of result.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-conflict-of-interest",
+              "term": "conflict of interest",
+              "clue": "A secondary interest that may influence judgement.",
+              "definition": "A secondary interest that may influence judgement.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-misinformation",
+              "term": "misinformation",
+              "clue": "False or misleading information shared without necessarily intending harm.",
+              "definition": "False or misleading information shared without necessarily intending harm.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-disinformation",
+              "term": "disinformation",
+              "clue": "False information deliberately created to deceive.",
+              "definition": "False information deliberately created to deceive.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-cherry-picking",
+              "term": "cherry picking",
+              "clue": "Selecting only evidence that supports a preferred claim.",
+              "definition": "Selecting only evidence that supports a preferred claim.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-false-balance",
+              "term": "false balance",
+              "clue": "Presenting unequal evidence as if positions are equally supported.",
+              "definition": "Presenting unequal evidence as if positions are equally supported.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-misleading-graph",
+              "term": "misleading graph",
+              "clue": "A graph whose scale, form or labels distort interpretation.",
+              "definition": "A graph whose scale, form or labels distort interpretation.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-data-visualisation",
+              "term": "data visualisation",
+              "clue": "Graphical communication designed to reveal and explain data.",
+              "definition": "Graphical communication designed to reveal and explain data.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-risk",
+              "term": "risk",
+              "clue": "The likelihood and consequence of harm.",
+              "definition": "The likelihood and consequence of harm.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-benefit",
+              "term": "benefit",
+              "clue": "A favourable outcome or advantage.",
+              "definition": "A favourable outcome or advantage.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-trade-off",
+              "term": "trade off",
+              "clue": "A compromise in which gaining one benefit reduces another.",
+              "definition": "A compromise in which gaining one benefit reduces another.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-cost-benefit-analysis",
+              "term": "cost benefit analysis",
+              "clue": "Comparison of expected costs and benefits of an option.",
+              "definition": "Comparison of expected costs and benefits of an option.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-precautionary-principle",
+              "term": "precautionary principle",
+              "clue": "Taking protective action when serious harm is plausible despite uncertainty.",
+              "definition": "Taking protective action when serious harm is plausible despite uncertainty.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-ethics",
+              "term": "ethics",
+              "clue": "Principles concerning right action, fairness and responsibility.",
+              "definition": "Principles concerning right action, fairness and responsibility.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-stakeholder",
+              "term": "stakeholder",
+              "clue": "A person or group affected by a decision.",
+              "definition": "A person or group affected by a decision.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-evidence-based-decision",
+              "term": "evidence based decision",
+              "clue": "A choice informed by reliable evidence, expertise and context.",
+              "definition": "A choice informed by reliable evidence, expertise and context.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-scientific-literacy",
+              "term": "scientific literacy",
+              "clue": "Ability to understand and evaluate scientific information.",
+              "definition": "Ability to understand and evaluate scientific information.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-fact-check",
+              "term": "fact check",
+              "clue": "Systematic verification of a claim using reliable sources.",
+              "definition": "Systematic verification of a claim using reliable sources.",
+              "tags": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "nsw-2023-year-10-10-4-data-science-2-decisions-transparency",
+              "term": "transparency",
+              "clue": "Open communication of methods, data, assumptions and limitations.",
+              "definition": "Open communication of methods, data, assumptions and limitations.",
+              "tags": [
+                "decisions"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

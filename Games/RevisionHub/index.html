@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#172b4d">
+  <title>SciSims Revision Games</title>
+  <link rel="icon" href="../../favicon.png">
+  <link rel="stylesheet" href="../../shared/scisims-nav.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="../../shared/scisims-nav.js"></script>
+  <script defer src="../../shared/revision-bank-loader.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div id="scisimsSiteNav"></div>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">SCISIMS · REVISION GAMES</p>
+      <h1>One bank. Five ways to revise.</h1>
+      <p>Choose any NSW Science course from Years 7–12, select a module and change game mode without changing your question bank.</p>
+    </div>
+    <div class="hero-badge"><strong id="recordCount">—</strong><span>revision records ready</span></div>
+  </header>
+
+  <main>
+    <section class="control-panel" aria-label="Revision game controls">
+      <label><span>Year or course</span><select id="bankSelect" aria-label="Year or course"></select></label>
+      <label><span>Module or collection</span><select id="collectionSelect" aria-label="Module or collection"></select></label>
+      <label><span>Game mode</span><select id="modeSelect" aria-label="Game mode">
+        <option value="match">Word Match</option>
+        <option value="mystery">Mystery Word</option>
+        <option value="odd">Odd One Out</option>
+        <option value="connections">Science Connections</option>
+        <option value="chain">Chain Reaction</option>
+      </select></label>
+      <button id="newGame" class="primary">New game</button>
+    </section>
+
+    <section class="game-shell">
+      <div class="game-heading">
+        <div><p id="courseLabel">Loading curriculum…</p><h2 id="gameTitle">Revision game</h2><span id="gameInstructions"></span></div>
+        <div class="score"><span>SCORE</span><strong id="score">0</strong></div>
+      </div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div id="gameArea" class="game-area" aria-live="polite"></div>
+      <div id="gameActions" class="game-actions"></div>
+    </section>
+
+    <section class="about-bank">
+      <div><p class="eyebrow">SHARED CURRICULUM ENGINE</p><h2>Change the game, not the content.</h2></div>
+      <p>Every mode reads the same underlying JSON records. Teachers and curriculum writers can improve a definition once and every compatible revision game receives the update.</p>
+    </section>
+  </main>
+  <footer><span>NSW Science 7–10 (2023)</span><span>NSW Stage 6 Science (2017)</span><span>Australian English</span></footer>
+</body>
+</html>
