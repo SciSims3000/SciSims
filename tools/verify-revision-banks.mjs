@@ -46,5 +46,5 @@ for (const page of ['index.html', 'Stage6index.html', 'shared/stage45-data.js'])
 const hub = await readFile(join(root, 'Games/RevisionHub/index.html'), 'utf8');
 const hubScript = await readFile(join(root, 'Games/RevisionHub/app.js'), 'utf8');
 assert.match(hub, /shared\/revision-bank-loader\.js/);
-for (const mode of ['match', 'mystery', 'odd', 'connections', 'chain']) assert.match(hubScript, new RegExp(`${mode}:render`, 'i'));
+for (const mode of ['match', 'mystery', 'odd', 'connections', 'chain', 'jeopardy']) assert.match(hubScript, new RegExp(`${mode}:render`, 'i'));
 console.log(`Validated ${bankEntries.length} banks, ${collectionCount} collections and ${itemCount} unique records across Years 7–12.`);

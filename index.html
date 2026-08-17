@@ -2380,6 +2380,19 @@
   {
     "section": "brainbreak",
     "group": "Science Games",
+    "title": "All-level Science Jeopardy",
+    "description": "Choose curriculum categories and point values, respond to scientific clues and reveal the correct terms across Years 7–12.",
+    "path": "Games/RevisionHub/?mode=jeopardy",
+    "tags": [
+      "Years 7–12",
+      "NSW Science",
+      "Revision games",
+      "Jeopardy"
+    ]
+  },
+  {
+    "section": "brainbreak",
+    "group": "Science Games",
     "title": "Mystery Science Word",
     "description": "Guess hidden Years 7–10 science vocabulary using clues before the mystery meter fills. Choose individual modules, complete Year Review banks, or attempt the bright-pink Mega Mix containing words from every available module.",
     "path": "Games/MysteryScienceWord/",
@@ -3273,6 +3286,9 @@
     ]
   }
 ];
+
+  const LEGACY_REVISION_PATHS = /^(Games\/(?:MysteryScienceWord|OddOneOut|ScienceConnections|ScienceWordMatch|ChainReactions)\/|Games\/(?:HSCConnections|HSCWordMatch|Stage6ChainReaction|Jeopardy)\/)/;
+  for(let index=SIMS.length-1;index>=0;index--)if(LEGACY_REVISION_PATHS.test(SIMS[index].path))SIMS.splice(index,1);
 
   const catalogue = document.getElementById('catalogue');
   const contentsLinks = document.getElementById('contentsLinks');

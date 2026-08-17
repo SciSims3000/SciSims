@@ -4,11 +4,11 @@
   const bankBase = '../../question-banks';
   const shuffle = values => { const out=[...values]; for(let i=out.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]} return out };
   const state = { catalogue:null, bank:null, collection:null, items:[], score:0, selectedTerm:null, selectedDefinition:null, solved:[], chain:[] };
-  const modeNames = { match:'Word Match', mystery:'Mystery Word', odd:'Odd One Out', connections:'Science Connections', chain:'Chain Reaction' };
+  const modeNames = { match:'Word Match', mystery:'Mystery Word', odd:'Odd One Out', connections:'Science Connections', chain:'Chain Reaction', jeopardy:'Science Jeopardy' };
   const instructions = {
     match:'Match each scientific term with its definition.', mystery:'Use the clue and letter pattern to identify the hidden term.',
     odd:'Three terms share a category. Select the term that does not belong.', connections:'Find groups of four scientifically connected terms.',
-    chain:'Build the concept chain in its curriculum sequence.'
+    chain:'Build the concept chain in its curriculum sequence.', jeopardy:'Choose a category and value, respond to the clue, then reveal the correct term.'
   };
 
   function setMessage(text,type=''){const el=$('message');el.textContent=text;el.className=`message ${type}`}
@@ -44,7 +44,7 @@
     $('courseLabel').textContent=`${state.bank.syllabus} · ${$('collectionSelect').selectedOptions[0].textContent}`;
     const mode=$('modeSelect').value;$('gameTitle').textContent=modeNames[mode];$('gameInstructions').textContent=instructions[mode];
     $('gameArea').className='game-area';$('gameArea').innerHTML='';$('gameActions').innerHTML='';setMessage(`${state.items.length} curriculum records available for this game.`);
-    ({match:renderMatch,mystery:renderMystery,odd:renderOdd,connections:renderConnections,chain:renderChain})[mode]();
+    ({match:renderMatch,mystery:renderMystery,odd:renderOdd,connections:renderConnections,chain:renderChain,jeopardy:renderJeopardy})[mode]();
     const params=new URLSearchParams({mode,bank:$('bankSelect').value,collection:$('collectionSelect').value});history.replaceState(null,'',`${location.pathname}?${params}`);
   }
 
@@ -80,6 +80,14 @@
   function renderChain(){
     const groups=currentCollections().flatMap(c=>c.groups.filter(g=>g.items.length>=4));if(!groups.length){setMessage('This selection needs a category with at least four terms for Chain Reaction.','bad');return}const group=shuffle(groups)[0],target=group.items.slice(0,Math.min(6,group.items.length)),pool=shuffle(target);
     const list=document.createElement('div');list.className='chain-list';const answer=document.createElement('div');answer.className='chain-answer';const draw=()=>{list.innerHTML='';pool.filter(i=>!state.chain.includes(i.id)).forEach(item=>{const card=document.createElement('button');card.className='chain-card';card.textContent=item.term;card.onclick=()=>{state.chain.push(item.id);draw()};list.append(card)});answer.innerHTML=state.chain.map(id=>`<span>${target.find(i=>i.id===id).term}</span>`).join('')};$('gameArea').append(list,answer);draw();$('gameActions').append(makeButton('Reset chain','secondary',()=>{state.chain=[];draw()}),makeButton('Check chain','',()=>{if(state.chain.length!==target.length){setMessage(`Add all ${target.length} concepts before checking.`,'bad');return}if(state.chain.every((id,i)=>id===target[i].id)){setScore(3);setMessage(`${group.label}: chain complete.`,'good')}else{setScore(-1);setMessage('Close, but the curriculum sequence is different. Reset and try again.','bad')}}));
+  }
+
+  function renderJeopardy(){
+    const groups=shuffle(currentCollections().flatMap(c=>c.groups.filter(g=>g.items.length>=3))).slice(0,5);if(groups.length<2){setMessage('This selection needs at least two categories for Science Jeopardy.','bad');return}
+    const board=document.createElement('div');board.className='jeopardy-board';board.style.setProperty('--categories',groups.length);
+    groups.forEach(group=>{const heading=document.createElement('div');heading.className='jeopardy-category';heading.textContent=group.label;board.append(heading)});
+    for(let row=0;row<5;row++)groups.forEach(group=>{const item=group.items[row];if(!item){const blank=document.createElement('div');blank.className='jeopardy-tile blank';board.append(blank);return}const tile=document.createElement('button');tile.className='jeopardy-tile';tile.textContent=`${(row+1)*100}`;let reveal=0;tile.onclick=()=>{if(reveal===0){tile.textContent=item.definition;tile.classList.add('clue');setMessage('Say the scientific term, then select the clue again to reveal it.');reveal=1}else if(reveal===1){tile.textContent=item.term;tile.classList.add('answer');setScore(row+1);setMessage(`Correct response: ${item.term}.`,'good');reveal=2}};board.append(tile)});
+    $('gameArea').append(board);$('gameActions').append(makeButton('New Jeopardy board','',()=>{$('gameArea').innerHTML='';$('gameActions').innerHTML='';renderJeopardy()}));setMessage('Choose a category and point value.');
   }
 
   initialise();

@@ -358,6 +358,32 @@
       white-space:nowrap;
     }
 
+    .hsc-unified-games{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .hsc-unified-games a{
+      display:grid;
+      place-items:center;
+      min-height:58px;
+      padding:10px;
+      border:2px solid var(--navy);
+      border-radius:12px;
+      background:#eff6ff;
+      color:var(--navy);
+      font-weight:900;
+      text-align:center;
+      text-decoration:none;
+    }
+
+    .hsc-unified-games a:hover,
+    .hsc-unified-games a:focus-visible{
+      background:var(--navy);
+      color:#fff;
+    }
+
     .hsc-games-table-wrap{
       overflow-x:auto;
       border:1px solid var(--line);
@@ -728,7 +754,7 @@
           <div class="summary-stat"><strong id="totalSims">0</strong><span>mapped resources</span></div>
           <div class="summary-stat"><strong id="totalLinks">0</strong><span>course and module links</span></div>
           <div class="summary-stat"><strong>6</strong><span>Stage 6 science courses</span></div>
-          <div class="summary-stat"><strong id="revisionGameCount">0</strong><span>course-specific revision games</span></div>
+          <div class="summary-stat"><strong id="revisionGameCount">0</strong><span>unified revision game modes</span></div>
         </div>
       </div>
       <img src="mainbanner.png" alt="SciSims science simulations banner" class="hero-image">
@@ -818,25 +844,17 @@
     <div class="hsc-games-header">
       <div>
         <h2 id="hscGamesHeading">Stage 6 Revision Games</h2>
-        <p>Open a course-specific Word Match, Connections, Jeopardy or Chain Reaction game directly.</p>
+        <p>Choose a game, then select any Stage 6 course, year, module or glossary inside the shared Revision Hub.</p>
       </div>
-      <span class="hsc-games-count">24 course games + Science Web</span>
+      <span class="hsc-games-count">6 games · all courses</span>
     </div>
-
-    <div class="hsc-games-table-wrap">
-      <table class="hsc-games-table">
-        <caption class="sr-only">Stage 6 revision games arranged by course and game type</caption>
-        <thead>
-          <tr>
-            <th scope="col">Stage 6 course</th>
-            <th scope="col">Word Match</th>
-            <th scope="col">Connections</th>
-            <th scope="col">Jeopardy</th>
-            <th scope="col">Chain Reactions</th>
-          </tr>
-        </thead>
-        <tbody id="hscGamesTableBody"></tbody>
-      </table>
+    <div class="hsc-unified-games">
+      <a href="Games/RevisionHub/?mode=match">Word Match</a>
+      <a href="Games/RevisionHub/?mode=mystery">Mystery Word</a>
+      <a href="Games/RevisionHub/?mode=odd">Odd One Out</a>
+      <a href="Games/RevisionHub/?mode=connections">Connections</a>
+      <a href="Games/RevisionHub/?mode=chain">Chain Reaction</a>
+      <a href="Games/RevisionHub/?mode=jeopardy">Jeopardy</a>
     </div>
   </section>
 
@@ -9087,6 +9105,9 @@
   }
 ];
 
+  const LEGACY_STAGE6_REVISION_PATHS = /^Games\/(?:HSCConnections|HSCWordMatch|Stage6ChainReaction|Jeopardy)\//;
+  for(let index=STAGE6_SIMS.length-1;index>=0;index--)if(LEGACY_STAGE6_REVISION_PATHS.test(STAGE6_SIMS[index].path))STAGE6_SIMS.splice(index,1);
+
   const YEAR11_REVISION_MODULES = {
     "Biology":[
       "Module 1: Cells as the Basis of Life",
@@ -9237,8 +9258,7 @@
     resultsSummary:document.getElementById("resultsSummary"),
     totalSims:document.getElementById("totalSims"),
     totalLinks:document.getElementById("totalLinks"),
-    revisionGameCount:document.getElementById("revisionGameCount"),
-    hscGamesTableBody:document.getElementById("hscGamesTableBody")
+    revisionGameCount:document.getElementById("revisionGameCount")
   };
 
   function escapeHTML(value){
@@ -9572,10 +9592,9 @@ elements.hscGamesTableBody.innerHTML =
   }
 
   renderCourseControls();
-  renderHSCGamesTable();
   elements.totalSims.textContent=STAGE6_SIMS.length;
   elements.totalLinks.textContent=STAGE6_SIMS.reduce((sum,sim)=>sum+sim.mappings.length,0);
-  elements.revisionGameCount.textContent=STAGE6_SIMS.filter(sim=>(sim.type||"Simulation")==="Revision game").length;
+  elements.revisionGameCount.textContent=6;
 
   elements.searchInput.addEventListener("input",render);
   elements.courseSelect.addEventListener("change",()=>{

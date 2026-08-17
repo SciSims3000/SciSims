@@ -2,7 +2,7 @@
 
 ## Audit summary
 
-The current catalogue contains five core revision mechanics across 23 curriculum-specific pages:
+The current catalogue contains six core revision mechanics across the curriculum-specific pages:
 
 | Game mechanic | Existing implementations | Unified mode |
 | --- | ---: | --- |
@@ -11,6 +11,7 @@ The current catalogue contains five core revision mechanics across 23 curriculum
 | Category discrimination | Years 7–10 | Odd One Out |
 | Four connected groups | Years 7–10 plus six Stage 6 pages | Science Connections |
 | Ordered concept chains | Years 7–10 plus six Stage 6 pages | Chain Reaction |
+| Category and value quiz board | Six Stage 6 pages | Science Jeopardy |
 
 The legacy games embed large, duplicated curriculum objects inside individual HTML files. The largest standalone game is over 800 KB. Corrections therefore need to be repeated across several games and Stage 6 course variants.
 
@@ -23,7 +24,7 @@ The legacy games embed large, duplicated curriculum objects inside individual HT
 - 67 collections and 3,715 unique term, clue and definition records.
 - A versioned schema and stable record IDs.
 - A shared browser loader with caching and schema compatibility checks.
-- One front end at `Games/RevisionHub/` with five game adapters.
+- One front end at `Games/RevisionHub/` with six game adapters.
 - Automated structural validation for coverage, uniqueness and required fields.
 
 ## Migration policy
