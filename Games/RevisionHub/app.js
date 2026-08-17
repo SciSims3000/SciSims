@@ -22,6 +22,9 @@
       state.catalogue=await window.SciSimsRevisionBanks.loadCatalogue(bankBase);
       const banks=state.catalogue.curricula.flatMap(c=>c.banks.map(b=>({...b,curriculum:c.label})));
       $('bankSelect').innerHTML=banks.map(b=>`<option value="${b.path}">${b.label}</option>`).join('');
+      const params=new URLSearchParams(location.search),requestedMode=params.get('mode'),requestedBank=params.get('bank');
+      if(Object.hasOwn(modeNames,requestedMode))$('modeSelect').value=requestedMode;
+      if(banks.some(bank=>bank.path===requestedBank))$('bankSelect').value=requestedBank;
       $('bankSelect').addEventListener('change',loadBank);$('collectionSelect').addEventListener('change',newGame);$('modeSelect').addEventListener('change',newGame);$('newGame').addEventListener('click',newGame);
       await loadBank();
     }catch(error){setMessage(`${error.message}. Serve SciSims through a web server so the JSON files can load.`,'bad')}
@@ -30,6 +33,7 @@
   async function loadBank(){
     state.bank=await window.SciSimsRevisionBanks.loadBank(bankBase,$('bankSelect').value);
     $('collectionSelect').innerHTML=`<option value="all">Whole course review</option>${state.bank.collections.map(c=>`<option value="${c.id}">${c.year?`Year ${c.year} · `:''}${c.label}</option>`).join('')}`;
+    const requestedCollection=new URLSearchParams(location.search).get('collection');if([...$('collectionSelect').options].some(option=>option.value===requestedCollection))$('collectionSelect').value=requestedCollection;
     const count=allItems(state.bank.collections).length;$('recordCount').textContent=count.toLocaleString('en-AU');
     newGame();
   }
@@ -41,6 +45,7 @@
     const mode=$('modeSelect').value;$('gameTitle').textContent=modeNames[mode];$('gameInstructions').textContent=instructions[mode];
     $('gameArea').className='game-area';$('gameArea').innerHTML='';$('gameActions').innerHTML='';setMessage(`${state.items.length} curriculum records available for this game.`);
     ({match:renderMatch,mystery:renderMystery,odd:renderOdd,connections:renderConnections,chain:renderChain})[mode]();
+    const params=new URLSearchParams({mode,bank:$('bankSelect').value,collection:$('collectionSelect').value});history.replaceState(null,'',`${location.pathname}?${params}`);
   }
 
   function renderMatch(){
