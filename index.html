@@ -473,7 +473,7 @@
       letter-spacing:.035em;
     }
 
-    .resource-type.teacher-tool{background:#e0f7fa;border-color:#80deea;color:#0e6473;}
+    .resource-type.teacher-tool,.resource-type.student-tool{background:#e0f7fa;border-color:#80deea;color:#0e6473;}
     .resource-type.game,.resource-type.revision-game{background:#fce7f3;border-color:#f9a8d4;color:#9d174d;}
     .resource-type.activity,.resource-type.archived-activity{background:#f1f5f9;border-color:#cbd5e1;color:#475569;}
     .resource-type.simulation{background:#e0ecff;border-color:#bfdbfe;color:#1d4ed8;}
@@ -806,8 +806,8 @@
     },
     {
       id:'stage6games',
-      title:'Science Revision',
-      intro:'Six flexible game formats powered by shared NSW Science question banks for every course from Years 7–12.',
+      title:'Student Revision & Tools',
+      intro:'Revision games, study planners and interactive learning tools for students across Years 7–12.',
       banner:'invsci.png',
       tagClass:'stage6'
     },
@@ -3215,6 +3215,7 @@
     "title": "Science Web",
     "description": "Build, explain and share interactive science concept maps using module banks from Years 7–10 and every Stage 6 science course. Add relationship labels, explanations and examples, then export or import editable JSON webs.",
     "path": "Games/ScienceWeb/",
+    "type": "Student Tool",
     "tags": [
       "Science Web",
       "Concept mapping",
@@ -3247,6 +3248,7 @@
     "title": "Stage 6 Study Planner",
     "description": "Build and manage a structured Stage 6 study plan with course priorities, revision sessions and progress tracking.",
     "path": "Games/StudyPlanner/",
+    "type": "Student Tool",
     "tags": [
       "Stage 6",
       "Study planner",
@@ -3256,11 +3258,12 @@
     ]
   },
   {
-    "section": "interestingsims",
-    "group": "Mathematical and Cross-topic Models",
+    "section": "stage6games",
+    "group": "All Years 7–12",
     "title": "STEAMWeb",
     "description": "Explore and connect ideas across science, technology, engineering, arts and mathematics in an interactive web.",
     "path": "STEAM/STEAMWeb/",
+    "type": "Student Tool",
     "tags": [
       "STEAM",
       "Cross-curricular",
@@ -3272,11 +3275,12 @@
     ]
   },
   {
-    "section": "interestingsims",
-    "group": "Mathematical and Cross-topic Models",
+    "section": "stage6games",
+    "group": "All Years 7–12",
     "title": "StudyBoard3K",
     "description": "Organise study tasks and learning activities on an interactive visual board.",
     "path": "StudyBoard3K/",
+    "type": "Student Tool",
     "tags": [
       "Study board",
       "Organisation",
@@ -3424,7 +3428,7 @@
   }
 
   function getActionLabel(type){
-    if(type === 'Teacher Tool') return 'Open tool';
+    if(type === 'Teacher Tool' || type === 'Student Tool') return 'Open tool';
     if(type === 'Game' || type === 'Revision Game') return 'Play game';
     if(type === 'Activity' || type === 'Archived Activity') return 'Open activity';
     return 'Open sim';
