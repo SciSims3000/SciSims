@@ -24,7 +24,7 @@
       <label>Module<select id="module"></select></label>
       <button id="start" type="button">Build Jeopardy board →</button>
     </div>
-    <p class="note">Stage 6 courses open their original 6 × 5 board with team scoring, category values, reveals and teacher controls.</p>
+    <p class="note">Every course opens the full 6 × 5 classroom board with teams, timers, scoring, Daily Doubles, Final Jeopardy and teacher controls.</p>
     <div class="board-preview" aria-hidden="true"><span>100</span><span>200</span><span>300</span><span>400</span><span>500</span><span>600</span></div>
   </section></main>
   <script>
@@ -41,12 +41,16 @@
     }
     async function loadModules(){
       const bank=await fetch(`../../question-banks/${course.value}`).then(r=>r.json());module.innerHTML='';
-      bank.collections.forEach(collection=>{const o=document.createElement('option');o.value=collection.module||collection.id;o.textContent=collection.label;module.appendChild(o)});
+      const junior=course.value.startsWith('nsw-2023/');
+      bank.collections.forEach(collection=>{const o=document.createElement('option');o.value=junior?collection.id:(collection.module||collection.id);o.textContent=collection.label;module.appendChild(o)});
     }
     document.getElementById('start').addEventListener('click',()=>{
       const selected=course.options[course.selectedIndex].textContent;
       if(routes[selected]) location.href=`./${routes[selected]}/?bank=${encodeURIComponent(module.value.replace(/^module/,'m'))}`;
-      else location.href=`../RevisionHub/?mode=jeopardy&bank=${encodeURIComponent(course.value)}&collection=${encodeURIComponent(module.value)}`;
+      else {
+        const year=(course.value.match(/year-(7|8|9|10)\.json$/)||[])[1]||'7';
+        location.href=`./Junior/?year=${year}&bank=${encodeURIComponent(module.value)}`;
+      }
     });
     init();
   </script>
