@@ -384,6 +384,37 @@
       color:#fff;
     }
 
+    .formula-deconstructor-panel{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:24px;
+      align-items:center;
+      margin:0 0 24px;
+      padding:22px;
+      border:1px solid #99d5c9;
+      border-radius:var(--radius);
+      background:linear-gradient(135deg,#f0fdf4,#ecfeff);
+      box-shadow:var(--shadow);
+    }
+
+    .formula-deconstructor-panel h2{margin-bottom:6px;color:var(--navy);font-size:1.5rem;}
+    .formula-deconstructor-panel p{margin:0;color:#475569;max-width:820px;}
+    .formula-deconstructor-panel .formula-summary{margin-top:10px;font-size:.86rem;font-weight:800;color:#0f766e;}
+    .formula-deconstructor-panel a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:12px 18px;
+      border-radius:999px;
+      background:#0f766e;
+      color:#fff;
+      font-weight:900;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .formula-deconstructor-panel a:hover,.formula-deconstructor-panel a:focus-visible{background:#134e4a;}
+
     .hsc-games-table-wrap{
       overflow-x:auto;
       border:1px solid var(--line);
@@ -724,6 +755,8 @@
       .filter-grid{grid-template-columns:1fr;}
       .field.search-field{grid-column:auto;}
       .dashboard-header,.results-heading,.card-actions{align-items:stretch;flex-direction:column;}
+      .formula-deconstructor-panel{grid-template-columns:1fr;}
+      .formula-deconstructor-panel a{width:100%;}
       .reset-button,.open-link{width:100%;}
       .sim-card-top{display:block;}
       .area-badge{margin-top:8px;}
@@ -856,6 +889,15 @@
       <a href="Games/ChainReactions/">Chain Reaction</a>
       <a href="Games/Jeopardy/">Jeopardy</a>
     </div>
+  </section>
+
+  <section class="formula-deconstructor-panel" aria-labelledby="formulaDeconstructorHeading">
+    <div>
+      <h2 id="formulaDeconstructorHeading">Science Formula &amp; Relationship Deconstructor</h2>
+      <p>Explore formulas by Physics, Chemistry, Biology, Earth science or statistics. Break each relationship into variables, units, curriculum connections, misconceptions and application steps.</p>
+      <p class="formula-summary">137 relationships · NSW Stage 6 (2017) mappings · Stage 4–5 connections · HSC constants and data tables</p>
+    </div>
+    <a href="ScienceFormulaDeconstructor/">Open deconstructor</a>
   </section>
 
   <div class="results-heading">
