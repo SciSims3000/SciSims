@@ -2317,7 +2317,7 @@
     "group": "All Years 7–12",
     "title": "Science Word Match",
     "description": "Match scientific terms with definitions across every NSW Science course from Years 7–12, using module, whole-course and glossary banks.",
-    "path": "Games/RevisionHub/?mode=match",
+    "path": "Games/ScienceWordMatch/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -2330,7 +2330,7 @@
     "group": "All Years 7–12",
     "title": "Mystery Science Word",
     "description": "Identify hidden scientific vocabulary from clues and letter patterns across Years 7–12.",
-    "path": "Games/RevisionHub/?mode=mystery",
+    "path": "Games/MysteryScienceWord/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -2343,7 +2343,7 @@
     "group": "All Years 7–12",
     "title": "Science Odd One Out",
     "description": "Compare scientific categories and identify the outsider using curriculum banks from Years 7–12.",
-    "path": "Games/RevisionHub/?mode=odd",
+    "path": "Games/OddOneOut/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -2356,7 +2356,7 @@
     "group": "All Years 7–12",
     "title": "Science Connections",
     "description": "Sort sixteen terms into four curriculum connections for any NSW Science year or Stage 6 course.",
-    "path": "Games/RevisionHub/?mode=connections",
+    "path": "Games/ScienceConnections/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -2369,7 +2369,7 @@
     "group": "All Years 7–12",
     "title": "Chain Reaction",
     "description": "Order connected scientific concepts into curriculum sequences across Years 7–12.",
-    "path": "Games/RevisionHub/?mode=chain",
+    "path": "Games/ChainReactions/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -2382,7 +2382,7 @@
     "group": "All Years 7–12",
     "title": "Science Jeopardy",
     "description": "Choose curriculum categories and point values, respond to scientific clues and reveal the correct terms across Years 7–12.",
-    "path": "Games/RevisionHub/?mode=jeopardy",
+    "path": "Games/Jeopardy/",
     "tags": [
       "Years 7–12",
       "NSW Science",
@@ -3290,9 +3290,6 @@
     ]
   }
 ];
-
-  const LEGACY_REVISION_PATHS = /^(Games\/(?:MysteryScienceWord|OddOneOut|ScienceConnections|ScienceWordMatch|ChainReactions)\/|Games\/(?:HSCConnections|HSCWordMatch|Stage6ChainReaction|Jeopardy)\/)/;
-  for(let index=SIMS.length-1;index>=0;index--)if(LEGACY_REVISION_PATHS.test(SIMS[index].path))SIMS.splice(index,1);
 
   const catalogue = document.getElementById('catalogue');
   const contentsLinks = document.getElementById('contentsLinks');

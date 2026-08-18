@@ -390,7 +390,7 @@
       <section class="panel controls-panel">
         <h2>Game Controls</h2>
 
-        <label for="yearSelect">Year</label>
+        <label for="yearSelect">Year / Course</label>
         <select id="yearSelect" aria-label="Select year level"></select>
 
         <label for="moduleSelect">Module</label>
@@ -484,6 +484,7 @@
     </section>
   </div>
 
+<script src="../../shared/standalone-revision-banks.js"></script>
 <script>
 'use strict';
 
@@ -583,10 +584,10 @@ function applyTheme(){
 
 function populateYears(){
   yearSelect.innerHTML='';
-  ['7','8','9','10'].forEach(year=>{
+  Object.entries(VOCAB_LIBRARY).filter(([year])=>year!=='mega').forEach(([year,data])=>{
     const option=document.createElement('option');
     option.value=year;
-    option.textContent=`Year ${year}`;
+    option.textContent=data.label;
     yearSelect.appendChild(option);
   });
   const mega=document.createElement('option');
@@ -608,7 +609,7 @@ function populateModules(preferred=''){
 
   const review=document.createElement('option');
   review.value='year-review';
-  review.textContent=`Year ${year} Review — All Modules`;
+  review.textContent=`${VOCAB_LIBRARY[year]?.label||`Year ${year}`} Review — All Modules`;
   moduleSelect.appendChild(review);
 
   Object.entries(VOCAB_LIBRARY[year]?.modules||{}).forEach(([key,module])=>{
@@ -1074,11 +1075,12 @@ function updateUrl(){
   history.replaceState(null,'',`${location.pathname}?${params.toString()}`);
 }
 
-function initialiseFromUrl(){
+async function initialiseFromUrl(){
+  await SciSimsStandaloneBanks.extend(VOCAB_LIBRARY);
   const params=new URLSearchParams(location.search);
   populateYears();
   const requestedYear=params.get('year');
-  yearSelect.value=['7','8','9','10','mega'].includes(requestedYear)?requestedYear:'7';
+  yearSelect.value=VOCAB_LIBRARY[requestedYear]?requestedYear:'7';
   populateModules(params.get('module')||'');
   const requestedLevel=params.get('level');
   difficultySelect.value=DIFFICULTY[requestedLevel]?requestedLevel:'medium';
@@ -1130,8 +1132,7 @@ document.addEventListener('keydown',event=>{
   }
 });
 
-initialiseFromUrl();
-updateScore();
+initialiseFromUrl().then(updateScore);
 </script>
 </body>
 </html>

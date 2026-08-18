@@ -933,7 +933,7 @@
       <section class="panel">
         <h2>Game Controls</h2>
 
-        <label for="yearSelect">Year</label>
+        <label for="yearSelect">Year / Course</label>
         <select id="yearSelect" aria-label="Select year level"></select>
 
         <label for="moduleSelect">Module</label>
@@ -1150,6 +1150,7 @@ peer review | A process where other scientists check research before publication
     </section>
   </div>
 
+  <script src="../../shared/standalone-revision-banks.js"></script>
   <script>
     const moduleLibrary = {
       "7": {
@@ -7750,7 +7751,7 @@ peer review | A process where other scientists check research before publication
       if(yearKey !== "mega" && Object.keys(modules).length > 0){
         const reviewOption = document.createElement("option");
         reviewOption.value = YEAR_REVIEW_KEY;
-        reviewOption.textContent = `Year ${yearKey} Review — All Modules`;
+        reviewOption.textContent = `${moduleLibrary[yearKey]?.label || `Year ${yearKey}`} Review — All Modules`;
         moduleSelect.appendChild(reviewOption);
       }
 
@@ -8329,7 +8330,8 @@ peer review | A process where other scientists check research before publication
       updateClassScores();
     }
 
-    function initialiseSelectionsFromUrl(){
+    async function initialiseSelectionsFromUrl(){
+      await SciSimsStandaloneBanks.extend(moduleLibrary);
       const params = new URLSearchParams(window.location.search);
       const requestedYear = params.get("year");
       const requestedModule = params.get("module");
@@ -8372,16 +8374,17 @@ peer review | A process where other scientists check research before publication
       if(alphabet.includes(letter)) handleGuess(letter);
     });
 
-    initialiseSelectionsFromUrl();
-    buildKeyboard();
-    updateCurrentWordOptions();
-    updateStatus();
-    updateScore();
-    updateClassScores();
-    updateLives();
-    renderWord();
-    updateClueDisplay();
-    updateMeter();
+    initialiseSelectionsFromUrl().then(() => {
+      buildKeyboard();
+      updateCurrentWordOptions();
+      updateStatus();
+      updateScore();
+      updateClassScores();
+      updateLives();
+      renderWord();
+      updateClueDisplay();
+      updateMeter();
+    });
   </script>
 </body>
 </html>
