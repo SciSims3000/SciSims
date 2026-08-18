@@ -33,7 +33,7 @@ function categoriesFor(collection) {
     categories.push([`${collection.label} challenge ${categories.length + 1}`, all.slice(offset, offset + 5)]);
   }
   return categories.slice(0, 6).map(([label, items]) => [label, items.map(item =>
-    `${clean(item.term)}|${clean(item.definition)}|${clean(item.definition)}`
+    `${clean(item.term)}|${clean(item.definition)}|${clean(item.term)}`
   )]);
 }
 
