@@ -35,6 +35,8 @@
       const catalogue=await fetch('../../question-banks/catalogue.json').then(r=>r.json());
       banks=catalogue.curricula.flatMap(c=>c.banks);
       banks.forEach(bank=>{const o=document.createElement('option');o.value=bank.path;o.textContent=bank.label;course.appendChild(o)});
+      const requestedCourse=new URLSearchParams(location.search).get('course');
+      if(banks.some(bank=>bank.path===requestedCourse)) course.value=requestedCourse;
       course.addEventListener('change',loadModules);loadModules();
     }
     async function loadModules(){

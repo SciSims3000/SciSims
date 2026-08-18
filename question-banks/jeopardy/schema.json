@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scisims3000.github.io/SciSims/question-banks/jeopardy/schema.json",
+  "title": "SciSims Jeopardy Question Bank",
+  "type": "object",
+  "required": ["schemaVersion", "course", "modules"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "course": { "type": "string", "minLength": 1 },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "categories"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "categories": {
+            "type": "array",
+            "minItems": 6,
+            "items": {
+              "type": "object",
+              "required": ["label", "clues"],
+              "properties": {
+                "label": { "type": "string" },
+                "clues": {
+                  "type": "array",
+                  "minItems": 5,
+                  "items": {
+                    "type": "object",
+                    "required": ["value", "clue", "response", "guidance"],
+                    "properties": {
+                      "value": { "enum": [100, 200, 300, 400, 500] },
+                      "clue": { "type": "string", "minLength": 10 },
+                      "response": { "type": "string", "minLength": 1 },
+                      "guidance": { "type": "string", "minLength": 1 },
+                      "stimulus": {
+                        "type": "object",
+                        "properties": {
+                          "type": { "enum": ["table", "graph", "diagram", "image", "scenario"] },
+                          "content": {}
+                        },
+                        "required": ["type", "content"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
