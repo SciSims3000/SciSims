@@ -90,6 +90,7 @@ function init(){
   $("#teamCount").innerHTML=[2,3,4,5,6].map(n=>`<option value="${n}" ${n===names.length?"selected":""}>${n} teams</option>`).join("");
   renderTeamInputs(names);$("#teamCount").onchange=()=>renderTeamInputs(names);
   $("#bankGrid").innerHTML=BANKS.map(([id,title,sub],i)=>`<label class="bank"><input type="checkbox" value="${id}" ${i===12?"checked":""}><span><strong>${title}</strong><br><small>${sub}</small></span></label>`).join("");
+  const requestedBank=new URLSearchParams(location.search).get("bank");if(requestedBank){$$("#bankGrid input").forEach(input=>input.checked=input.value===requestedBank)}
   const saved=localStorage.getItem(KEY);$("#resumeBtn").hidden=!saved;
 }
 function renderTeamInputs(seed=[]){const n=+$("#teamCount").value;$("#teamInputs").innerHTML=Array.from({length:n},(_,i)=>`<div class="field"><label>Team ${i+1}</label><input class="team-name" value="${esc(seed[i]||"Team "+(i+1))}" maxlength="30"></div>`).join("")}

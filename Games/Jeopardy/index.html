@@ -39,11 +39,11 @@
     }
     async function loadModules(){
       const bank=await fetch(`../../question-banks/${course.value}`).then(r=>r.json());module.innerHTML='';
-      bank.collections.forEach(collection=>{const o=document.createElement('option');o.value=collection.id;o.textContent=collection.label;module.appendChild(o)});
+      bank.collections.forEach(collection=>{const o=document.createElement('option');o.value=collection.module||collection.id;o.textContent=collection.label;module.appendChild(o)});
     }
     document.getElementById('start').addEventListener('click',()=>{
       const selected=course.options[course.selectedIndex].textContent;
-      if(routes[selected]) location.href=`./${routes[selected]}/?bank=${encodeURIComponent(module.value)}`;
+      if(routes[selected]) location.href=`./${routes[selected]}/?bank=${encodeURIComponent(module.value.replace(/^module/,'m'))}`;
       else location.href=`../RevisionHub/?mode=jeopardy&bank=${encodeURIComponent(course.value)}&collection=${encodeURIComponent(module.value)}`;
     });
     init();

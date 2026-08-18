@@ -2,6 +2,40 @@
 <html lang="en-AU">
 <head>
   <meta charset="utf-8">
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const routes = {
+        match: '../ScienceWordMatch/',
+        mystery: '../MysteryScienceWord/',
+        odd: '../OddOneOut/',
+        connections: '../ScienceConnections/',
+        chain: '../ChainReactions/',
+        jeopardy: '../Jeopardy/'
+      };
+      const mode = params.get('mode') || 'match';
+      const bank = params.get('bank') || '';
+      const collection = params.get('collection') || '';
+      const courseKeys = {
+        'biology.json': 'stage6-biology',
+        'chemistry.json': 'stage6-chemistry',
+        'earth-and-environmental-science.json': 'stage6-earth-and-environmental-science',
+        'investigating-science.json': 'stage6-investigating-science',
+        'physics.json': 'stage6-physics',
+        'science-extension.json': 'stage6-science-extension'
+      };
+      let year = '';
+      const yearMatch = bank.match(/year-(7|8|9|10)\.json/);
+      if (yearMatch) year = yearMatch[1];
+      for (const [ending, key] of Object.entries(courseKeys)) if (bank.endsWith(ending)) year = key;
+      const next = new URLSearchParams();
+      if (year) next.set('year', year);
+      if (collection && collection !== 'all' && mode !== 'jeopardy') next.set('module', collection);
+      if (mode === 'chain') next.set('mode', 'chain');
+      const query = next.toString();
+      location.replace(`${routes[mode] || routes.match}${query ? `?${query}` : ''}`);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#172b4d">
   <title>SciSims Revision Games</title>

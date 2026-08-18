@@ -181,6 +181,10 @@
       gap:9px;
       margin-top:16px;
     }
+    .classroom-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .team-scoreboard{display:none;grid-template-columns:repeat(4,minmax(100px,1fr));gap:8px;margin-top:14px}
+    .team-scoreboard.active{display:grid}.team-score{border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:var(--panel-soft);cursor:pointer}
+    .team-score.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.team-score strong{display:block;font-size:1.45rem}.team-score small{display:block;margin-bottom:4px}
 
     .score-card,.status-card{
       padding:11px;
@@ -203,7 +207,7 @@
 
     .status-strip{
       display:grid;
-      grid-template-columns:repeat(4,1fr);
+      grid-template-columns:repeat(5,1fr);
       gap:10px;
       margin-bottom:14px;
     }
@@ -357,7 +361,7 @@
       .page{padding:12px;}
       h1{font-size:1.72rem;}
       .status-strip{grid-template-columns:1fr 1fr;}
-      .score-grid{grid-template-columns:1fr 1fr;}
+      .score-grid{grid-template-columns:1fr 1fr}.classroom-options{grid-template-columns:1fr}.team-scoreboard{grid-template-columns:1fr 1fr}
       .board{gap:7px;}
       .word-card{min-height:72px;padding:9px 6px;font-size:.9rem;}
       .primary-button,.secondary-button,.danger-button{flex:1 1 44%;}
@@ -403,6 +407,13 @@
           <option value="hard">Hard — 3 mistakes, 1 hint</option>
         </select>
 
+        <div class="classroom-options">
+          <label for="playModeSelect">Play mode<select id="playModeSelect"><option value="individual">Individual</option><option value="teams">Class teams</option></select></label>
+          <label for="teamCountSelect">Teams<select id="teamCountSelect" disabled><option value="2">2 teams</option><option value="3">3 teams</option><option value="4">4 teams</option></select></label>
+          <label for="timerSelect">Timer<select id="timerSelect"><option value="-1">No timer</option><option value="0" selected>Stopwatch</option><option value="180">3 minute countdown</option><option value="300">5 minute countdown</option><option value="600">10 minute countdown</option></select></label>
+        </div>
+        <div class="team-scoreboard" id="teamScoreboard" aria-label="Team scores"></div>
+
         <div class="button-row">
           <button class="primary-button" id="newRoundButton">New Puzzle</button>
           <button class="secondary-button" id="shuffleButton">Shuffle</button>
@@ -437,6 +448,7 @@
           <div class="status-card"><h3>Module</h3><p id="moduleDisplay">Introduction to Science</p></div>
           <div class="status-card"><h3>Level</h3><p id="difficultyDisplay">Medium</p></div>
           <div class="status-card"><h3>Round</h3><p id="roundDisplay">Not started</p></div>
+          <div class="status-card"><h3>Timer</h3><p id="timerDisplay">0:00</p></div>
         </div>
 
         <div class="mistakes-row">
@@ -507,6 +519,11 @@ const DIFFICULTY = {
 const yearSelect = document.getElementById('yearSelect');
 const moduleSelect = document.getElementById('moduleSelect');
 const difficultySelect = document.getElementById('difficultySelect');
+const playModeSelect = document.getElementById('playModeSelect');
+const teamCountSelect = document.getElementById('teamCountSelect');
+const timerSelect = document.getElementById('timerSelect');
+const teamScoreboard = document.getElementById('teamScoreboard');
+const timerDisplay = document.getElementById('timerDisplay');
 const newRoundButton = document.getElementById('newRoundButton');
 const shuffleButton = document.getElementById('shuffleButton');
 const clearSelectionButton = document.getElementById('clearSelectionButton');
@@ -548,6 +565,63 @@ let roundsSolved = 0;
 let streak = 0;
 let totalGroupsFound = 0;
 let usedTermsByCategory = new Map();
+let teamScores = [0,0,0,0];
+let activeTeam = 0;
+let timerId = null;
+let timerSeconds = 0;
+let timerCountsDown = false;
+
+function formatTime(total){
+  const safe=Math.max(0,total);
+  return `${Math.floor(safe/60)}:${String(safe%60).padStart(2,'0')}`;
+}
+
+function stopTimer(){
+  if(timerId){clearInterval(timerId);timerId=null;}
+}
+
+function renderTimer(){
+  timerDisplay.textContent=timerSelect.value==='-1'?'Off':formatTime(timerSeconds);
+}
+
+function startTimer(){
+  stopTimer();
+  timerCountsDown=Number(timerSelect.value)>0;
+  timerSeconds=timerCountsDown?Number(timerSelect.value):0;
+  renderTimer();
+  if(timerSelect.value==='-1') return;
+  timerId=setInterval(()=>{
+    timerSeconds+=timerCountsDown?-1:1;
+    renderTimer();
+    if(timerCountsDown&&timerSeconds<=0){
+      stopTimer();
+      messageBox.textContent='Time is up. The remaining connections have been revealed.';
+      endRoundByFailure();
+    }
+  },1000);
+}
+
+function renderTeams(){
+  const count=Number(teamCountSelect.value);
+  teamScoreboard.classList.toggle('active',playModeSelect.value==='teams');
+  teamCountSelect.disabled=playModeSelect.value!=='teams';
+  teamScoreboard.innerHTML='';
+  for(let index=0;index<count;index++){
+    const card=document.createElement('button');
+    card.type='button';
+    card.className=`team-score${index===activeTeam?' active':''}`;
+    card.innerHTML=`<small>Team ${index+1}${index===activeTeam?' · playing':''}</small><strong>${teamScores[index]}</strong><span>select team</span>`;
+    card.addEventListener('click',()=>{activeTeam=index;renderTeams();});
+    teamScoreboard.appendChild(card);
+  }
+}
+
+function addTeamPoints(points,rotate=false){
+  if(playModeSelect.value!=='teams') return;
+  teamScores[activeTeam]=Math.max(0,teamScores[activeTeam]+points);
+  if(rotate) activeTeam=(activeTeam+1)%Number(teamCountSelect.value);
+  renderTeams();
+}
 
 function shuffle(array){
   const copy = [...array];
@@ -772,6 +846,8 @@ function startNewRound(){
   updateControls();
   updateStatus();
   updateUrl();
+  startTimer();
+  renderTeams();
 }
 
 function renderBoard(){
@@ -826,6 +902,7 @@ function submitGroup(){
 
   mistakesRemaining-=1;
   score=Math.max(0,score-25);
+  addTeamPoints(-1,true);
   const maxSame=Math.max(...counts.values());
   messageBox.textContent=maxSame===3?'One away — three selected terms belong together.':'Those four terms do not form one complete connection.';
   flashWrongSelection();
@@ -855,6 +932,7 @@ function solveGroup(groupId,revealed){
   if(!revealed){
     score+=DIFFICULTY[difficultySelect.value].groupPoints;
     totalGroupsFound+=1;
+    addTeamPoints(1);
     messageBox.textContent=`Correct — ${categoryDisplayLabel(group)}.`;
   }
 
@@ -899,10 +977,12 @@ function showDefinition(entry){
 
 function completeRound(){
   gameOver=true;
+  stopTimer();
   const level=DIFFICULTY[difficultySelect.value];
   score+=level.bonus+mistakesRemaining*20;
   roundsSolved+=1;
   streak+=1;
+  addTeamPoints(2);
   messageBox.textContent=`Puzzle solved. Bonus awarded for completing all four connections with ${mistakesRemaining} mistake${mistakesRemaining===1?'':'s'} remaining.`;
   updateScore();
   updateControls();
@@ -911,6 +991,7 @@ function completeRound(){
 
 function endRoundByFailure(){
   gameOver=true;
+  stopTimer();
   streak=0;
   currentGroups.filter(group=>!solvedIds.has(group.id)).forEach(group=>{
     solvedIds.add(group.id);
@@ -927,6 +1008,7 @@ function endRoundByFailure(){
 function revealRound(){
   if(gameOver||!currentGroups.length) return;
   gameOver=true;
+  stopTimer();
   streak=0;
   currentGroups.filter(group=>!solvedIds.has(group.id)).forEach(group=>{
     solvedIds.add(group.id);
@@ -1038,6 +1120,7 @@ function updateStatus(){
 }
 
 function resetBoardForSelectionChange(message='Choose New Puzzle to begin.'){
+  stopTimer();
   currentGroups=[];
   boardItems=[];
   selectedIds.clear();
@@ -1048,6 +1131,8 @@ function resetBoardForSelectionChange(message='Choose New Puzzle to begin.'){
   definitionBox.style.display='none';
   messageBox.textContent=message;
   roundDisplay.textContent='Not started';
+  timerSeconds=0;
+  renderTimer();
   mistakesRemaining=DIFFICULTY[difficultySelect.value].mistakes;
   hintsRemaining=DIFFICULTY[difficultySelect.value].hints;
   updateMistakes();
@@ -1063,6 +1148,9 @@ function resetSession(){
   totalGroupsFound=0;
   currentRound=0;
   usedTermsByCategory.clear();
+  teamScores=[0,0,0,0];
+  activeTeam=0;
+  renderTeams();
   updateScore();
   resetBoardForSelectionChange('Session reset. Choose New Puzzle to begin.');
 }
@@ -1072,6 +1160,9 @@ function updateUrl(){
   params.set('year',yearSelect.value);
   params.set('module',moduleSelect.value);
   params.set('level',difficultySelect.value);
+  params.set('play',playModeSelect.value);
+  params.set('teams',teamCountSelect.value);
+  params.set('timer',timerSelect.value);
   history.replaceState(null,'',`${location.pathname}?${params.toString()}`);
 }
 
@@ -1084,6 +1175,11 @@ async function initialiseFromUrl(){
   populateModules(params.get('module')||'');
   const requestedLevel=params.get('level');
   difficultySelect.value=DIFFICULTY[requestedLevel]?requestedLevel:'medium';
+  if(['individual','teams'].includes(params.get('play'))) playModeSelect.value=params.get('play');
+  if(['2','3','4'].includes(params.get('teams'))) teamCountSelect.value=params.get('teams');
+  if(['-1','0','180','300','600'].includes(params.get('timer'))) timerSelect.value=params.get('timer');
+  renderTeams();
+  renderTimer();
   applyTheme();
   updateStatus();
   resetBoardForSelectionChange();
@@ -1110,6 +1206,25 @@ difficultySelect.addEventListener('change',()=>{
   streak=0;
   updateScore();
   resetBoardForSelectionChange('Challenge level changed. Choose New Puzzle to begin.');
+  updateUrl();
+});
+
+playModeSelect.addEventListener('change',()=>{
+  activeTeam=0;
+  renderTeams();
+  updateUrl();
+});
+
+teamCountSelect.addEventListener('change',()=>{
+  activeTeam=0;
+  renderTeams();
+  updateUrl();
+});
+
+timerSelect.addEventListener('change',()=>{
+  stopTimer();
+  timerSeconds=Number(timerSelect.value)>0?Number(timerSelect.value):0;
+  renderTimer();
   updateUrl();
 });
 
