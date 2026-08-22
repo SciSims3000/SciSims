@@ -384,6 +384,37 @@
       color:#fff;
     }
 
+    .practice-exam-panel{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:24px;
+      align-items:center;
+      margin:0 0 24px;
+      padding:22px;
+      border:1px solid #c4b5fd;
+      border-radius:var(--radius);
+      background:linear-gradient(135deg,#f5f3ff,#eff6ff);
+      box-shadow:var(--shadow);
+    }
+
+    .practice-exam-panel h2{margin-bottom:6px;color:var(--navy);font-size:1.5rem;}
+    .practice-exam-panel p{margin:0;color:#475569;max-width:820px;}
+    .practice-exam-panel .practice-exam-summary{margin-top:10px;font-size:.86rem;font-weight:800;color:#6d28d9;}
+    .practice-exam-panel a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:12px 18px;
+      border-radius:999px;
+      background:#6d28d9;
+      color:#fff;
+      font-weight:900;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .practice-exam-panel a:hover,.practice-exam-panel a:focus-visible{background:#4c1d95;}
+
     .formula-deconstructor-panel{
       display:grid;
       grid-template-columns:minmax(0,1fr) auto;
@@ -755,6 +786,8 @@
       .filter-grid{grid-template-columns:1fr;}
       .field.search-field{grid-column:auto;}
       .dashboard-header,.results-heading,.card-actions{align-items:stretch;flex-direction:column;}
+      .practice-exam-panel{grid-template-columns:1fr;}
+      .practice-exam-panel a{width:100%;}
       .formula-deconstructor-panel{grid-template-columns:1fr;}
       .formula-deconstructor-panel a{width:100%;}
       .reset-button,.open-link{width:100%;}
@@ -889,6 +922,15 @@
       <a href="Games/ChainReactions/">Chain Reaction</a>
       <a href="Games/Jeopardy/">Jeopardy</a>
     </div>
+  </section>
+
+  <section class="practice-exam-panel" aria-labelledby="practiceExamHeading">
+    <div>
+      <h2 id="practiceExamHeading">Practice Exam Builder</h2>
+      <p>Build and test practice-exam resources from the developing SciSims question library. The working question banks remain in Google Drive while the library structure and supporting guides are refined.</p>
+      <p class="practice-exam-summary">Question library access · guide drafts · pilot development</p>
+    </div>
+    <a href="PracticeExamBuilder/">Open exam builder</a>
   </section>
 
   <section class="formula-deconstructor-panel" aria-labelledby="formulaDeconstructorHeading">

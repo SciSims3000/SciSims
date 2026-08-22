@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#172b4d">
+  <title>Practice Exam Builder | SciSims</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../shared/scisims-nav.css">
+  <script defer src="../shared/scisims-nav.js"></script>
+  <style>
+    :root{--navy:#172b4d;--ink:#1f2937;--muted:#64748b;--line:#dbe3ef;--panel:#fff;--purple:#6d28d9;--purple-dark:#4c1d95;--shadow:0 12px 34px rgba(15,23,42,.1);--radius:18px}
+    *{box-sizing:border-box}
+    body{margin:0;background:#f5f7fb;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+    main{width:min(1050px,calc(100% - 28px));margin:28px auto 48px}
+    .hero,.panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}
+    .hero{padding:clamp(24px,5vw,52px);background:linear-gradient(135deg,#f5f3ff,#eff6ff)}
+    .eyebrow{margin:0 0 8px;color:var(--purple);font-size:.78rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+    h1{margin:0 0 12px;color:var(--navy);font-size:clamp(2rem,5vw,3.7rem);line-height:1.02}
+    h2{margin:0 0 8px;color:var(--navy)}
+    p{line-height:1.6}
+    .hero>p:not(.eyebrow){max-width:760px;margin:0;color:#475569;font-size:1.08rem}
+    .status{display:inline-flex;margin-top:18px;padding:7px 11px;border:1px solid #c4b5fd;border-radius:999px;background:#fff;color:var(--purple);font-size:.82rem;font-weight:900}
+    .panel{margin-top:20px;padding:24px}
+    .library{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center}
+    .library p{margin:0;color:#475569}
+    .primary{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 20px;border-radius:999px;background:var(--purple);color:#fff;font-weight:900;text-decoration:none;white-space:nowrap}
+    .primary:hover,.primary:focus-visible{background:var(--purple-dark)}
+    .guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+    .guide{padding:18px;border:1px solid var(--line);border-radius:14px;background:#f8fafc}
+    .guide h3{margin:0 0 7px;color:var(--navy);font-size:1rem}
+    .guide p{margin:0;color:var(--muted);font-size:.9rem}
+    .draft{display:inline-block;margin-top:12px;padding:5px 8px;border-radius:999px;background:#ede9fe;color:#5b21b6;font-size:.72rem;font-weight:900;text-transform:uppercase}
+    .note{margin-top:20px;padding:16px;border-left:4px solid var(--purple);border-radius:10px;background:#f5f3ff;color:#4c1d95}
+    .back{display:inline-block;margin-top:22px;color:var(--navy);font-weight:800}
+    @media(max-width:720px){.library{grid-template-columns:1fr}.primary{width:100%}.guides{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div id="scisimsSiteNav"></div>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">SciSims · Assessment development</p>
+      <h1>Practice Exam Builder</h1>
+      <p>A developing question-library system for assembling, reviewing and testing practice-exam resources.</p>
+      <span class="status">Pilot development</span>
+    </section>
+
+    <section class="panel library" aria-labelledby="libraryHeading">
+      <div>
+        <h2 id="libraryHeading">Working Question Library</h2>
+        <p>The live question banks remain in Google Drive while their structure, coverage and exam-building workflow are tested.</p>
+      </div>
+      <a class="primary" href="https://drive.google.com/drive/folders/1dFVfaByXJlw1nAPfJHIIuj5OZyl66PBN?usp=sharing" target="_blank" rel="noopener noreferrer">Open Question Library</a>
+    </section>
+
+    <section class="panel" aria-labelledby="guidesHeading">
+      <h2 id="guidesHeading">Guides</h2>
+      <p>The supporting documentation is still being refined in Drive. View-only links will be added here when each guide is ready for wider use.</p>
+      <div class="guides">
+        <article class="guide"><h3>Student Guide</h3><p>How students will select, complete and review practice questions.</p><span class="draft">Draft</span></article>
+        <article class="guide"><h3>Teacher Guide</h3><p>How teachers will choose question sets and assemble practice-exam resources.</p><span class="draft">Draft</span></article>
+        <article class="guide"><h3>Tab and Column Guide</h3><p>A reference for the question-library structure, fields and expected data.</p><span class="draft">Draft</span></article>
+      </div>
+      <div class="note"><strong>Current approach:</strong> keep the working sheets in Drive during testing, then publish stable view-only documentation links here.</div>
+    </section>
+
+    <a class="back" href="../Stage6index.html">← Back to the Stage 6 index</a>
+  </main>
+</body>
+</html>
