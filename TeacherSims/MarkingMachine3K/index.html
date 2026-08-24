@@ -597,42 +597,121 @@
     return p||{text:'Judge the demonstrated evidence against the stated criteria rather than against the rest of the pile.',theme:'Criterion-referenced judgement'};
   }
 
+
+  function bandSarcasm(mark,max,pct,params){
+    const band=pct>=.9?0:pct>=.75?1:pct>=.55?2:pct>=.35?3:4;
+    const pools=[
+      [
+        `This is irritatingly good. The ${params.subject} understanding is clear, the response actually answers the question, and I have been denied the traditional pleasure of circling things in red.`,
+        `Against all statistical expectations, this is a strong ${params.subject} response. The knowledge is accurate, the reasoning is mostly visible, and the marking criteria have been forced to cooperate.`,
+        `An excellent response. I approached it ready to be disappointed and have instead been inconvenienced by competence.`
+      ],
+      [
+        `A strong response, which means my red pen has been reduced to largely ceremonial duties. There are a few gaps, but nothing sufficiently catastrophic to improve my afternoon.`,
+        `This is annoyingly competent. The ${params.subject} content is mostly accurate and the response mostly does what the question asked. A little more precision would ruin my remaining objections.`,
+        `A respectable effort. I searched for a disaster and found only minor structural damage.`
+      ],
+      [
+        `A respectable middle-of-the-road effort. You clearly knew enough ${params.subject} to make this look deliberate.`,
+        `This response is the academic equivalent of arriving at the correct suburb but refusing to tell me which house. Some useful knowledge is here; precision remains at large.`,
+        `There is enough here to earn marks and enough missing to keep the marking process emotionally sustainable.`
+      ],
+      [
+        `This response and the question appear to have met briefly at a social function, but I am not convinced they exchanged contact details.`,
+        `There are promising fragments of ${params.subject} scattered throughout. Unfortunately, assembling them into an answer has apparently been left as an exercise for the marker.`,
+        `Somewhere inside this response is a better answer trying to escape. At present it is being held hostage by vague language and optimism.`
+      ],
+      [
+        `This answer has boldly rejected several traditional conventions, including relevance, clarity and the apparent need to answer the question.`,
+        `I have read this twice. This was not because it improved on the second reading.`,
+        `The response demonstrates tremendous confidence. Evidence for that confidence remains under active investigation.`
+      ]
+    ];
+    return pick(pools[band]);
+  }
+
+  function verbSarcasm(params){
+    const map={
+      Identify:'You identified something. A thrilling start. Next time, identify the actual required feature and save us both the archaeological dig.',
+      Describe:'You have described it, in the broadest possible sense of the word. More relevant characteristics and fewer decorative words would be an exciting development.',
+      Explain:'There are words here, and some of them are even causal. Try linking cause and effect clearly so the explanation does not require interpretive dance.',
+      Compare:'A comparison usually benefits from comparing both similarities and differences. Revolutionary, I know.',
+      Analyse:'You have taken the response apart; putting the relationships and implications back together would complete the analysis.',
+      Assess:'A judgement has been sighted in the distance. Please bring it closer and attach it to evidence and criteria.',
+      Evaluate:'Strengths and limitations are not optional accessories. Add both, then make a judgement that appears to have met the evidence before.',
+      Justify:'You have a position. Wonderful. Now give it evidence so it is more than an opinion wearing school shoes.',
+      Discuss:'One perspective has received generous attention. The others would also appreciate being invited.',
+      Calculate:'Numbers have occurred. Please show the working, use the correct units and try not to make the final answer a surprise to everyone involved.',
+      Outline:'You have supplied some features. A few more of the important ones would help transform this from a hint into an outline.',
+      Predict:'A prediction has been made with admirable confidence. Linking it to evidence or a scientific principle would make it slightly less fortune-cookie based.'
+    };
+    return map[params.verb]||'The command verb has been acknowledged in spirit, if not always in practice.';
+  }
+
+  function typeSarcasm(params){
+    const map={
+      'Essay':'The essay has a beginning, middle and end, though not necessarily in that order. A sustained argument and integrated evidence would be a bold next experiment.',
+      'Calculation':'The calculator appears to have survived. Show every step anyway, because method marks cannot be awarded for vibes.',
+      'Practical report':'Apparently the experiment happened. Linking claims to observations, variables, uncertainty and data would help prove it.',
+      'Data analysis':'The data is sitting right there, waiting patiently to be used. Mention specific trends, patterns and anomalies rather than making it feel excluded.',
+      'Graphing question':'Axes, units, scale and line of best fit are not decorative extras. Please invite them to the graph next time.',
+      'Extended response':'A list of ideas wearing paragraph clothes is still a list. Develop the points and keep them attached to the actual question.',
+      'Short answer':'Short is good. Vague is less good. Use precise terminology and only the information that earns marks.',
+      'Multiple choice':'An answer was selected with confidence. Accuracy remains a separate, apparently optional, achievement.'
+    };
+    return map[params.type]||'The response type has been interpreted with admirable creative freedom.';
+  }
+
+  function coherentSarcasticPieces(mark,max,pct,params){
+    const pieces=[bandSarcasm(mark,max,pct,params)];
+    if(teacherMood>=2) pieces.push(verbSarcasm(params));
+    if(teacherMood>=3 && params.type!=='Multiple choice') pieces.push(typeSarcasm(params));
+    return pieces;
+  }
+
   function buildSarcasticV2(mark,max,pct,params){
     const pair=pickPaired(params);
-    const pieces=[];
+    const pieces=coherentSarcasticPieces(mark,max,pct,params);
     let source=null, special=false;
 
-    // Rare high-mood event specified in the master bank architecture.
     if(teacherMood>=4 && Math.random()<.018){
       special=true;
       const cath=pick(V2_CATHARSIS_BANK);
+      pieces.length=0;
       pieces.push(`🚨 AI MARKER HAS HAD ENOUGH. ${cath.comic}`);
+      pieces.push(typeSarcasm(params));
     }else{
-      if(pair) pieces.push(pair.comic);
+      if(pair && teacherMood>=2 && Math.random() < ({1:0,2:.35,3:.55,4:.72,5:.82}[teacherMood])){
+        if(!pieces.some(p=>p===pair.comic)) pieces.push(pair.comic);
+      }
 
-      const allusionChance={1:.05,2:.16,3:.42,4:.68,5:.84}[teacherMood];
+      const allusionChance={1:.06,2:.20,3:.48,4:.74,5:.88}[teacherMood];
       if(Math.random()<allusionChance){
         const a=pickAllusion(params);
-        if(a && (!pair || a.comic!==pair.comic)){
-          // Keep the response funny but coherent: normally one primary line + one allusion maximum.
-          if(teacherMood>=3 || !pair) pieces.push(a.comic);
+        if(a){
+          pieces.push(a.comic);
           source=a;
         }
       }
 
-      const cathChance={1:0,2:.02,3:.08,4:.22,5:.38}[teacherMood];
-      if(Math.random()<cathChance && pieces.length<2){
+      const cathChance={1:0,2:.01,3:.07,4:.20,5:.34}[teacherMood];
+      if(Math.random()<cathChance){
         const c=pick(V2_CATHARSIS_BANK);
         pieces.push(c.comic);
       }
     }
 
-    if(mark===max && teacherMood>=2 && pieces.length<2) pieces.push('Full marks. I checked twice. Disappointingly, there is nothing to deduct.');
-    if(mark===0 && teacherMood>=2 && pieces.length<2) pieces.push('Zero marks, but an impressive demonstration of confidence in the absence of supporting evidence.');
+    const maxPieces={1:1,2:3,3:4,4:5,5:6}[teacherMood];
+    let trimmed=pieces.slice(0,maxPieces);
+
+    if(mark===max && teacherMood>=2 && trimmed.length<maxPieces)
+      trimmed.push('Full marks. I checked twice. Disappointingly, there is nothing to deduct.');
+    if(mark===0 && teacherMood>=2 && trimmed.length<maxPieces)
+      trimmed.push('Zero marks, but an impressive demonstration of confidence in the absence of supporting evidence.');
 
     const pl=buildSeriousPL(params,pair);
     return {
-      comic:pieces.join(' '),
+      comic:trimmed.join(' '),
       pl,
       source,
       special,
