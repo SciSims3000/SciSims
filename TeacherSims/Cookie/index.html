@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Science Fortune Cookie | SciSims</title>
   <link rel="stylesheet" href="../../shared/scisims-nav.css">
+  <link rel="stylesheet" href="../shared/otu-bank-app.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2307111f%22/><path d=%22M18 57c15-31 49-31 64 0-12 5-20 13-26 25H44C38 70 30 62 18 57Z%22 fill=%22%23e7a83d%22/><path d=%22M31 48c12-14 26-14 38 0%22 fill=%22none%22 stroke=%22%23ffd98a%22 stroke-width=%226%22 stroke-linecap=%22round%22/></svg>">
   <style>
     :root{--bg1:#07111f;--bg2:#142447;--panel:rgba(255,255,255,.09);--line:rgba(255,255,255,.18);--text:#f7fbff;--muted:#b9c9df;--accent:#65e3d1;--gold:#ffd166;--cookie:#d98b2b;--cookie2:#f1b95a;--shadow:0 22px 60px rgba(0,0,0,.42)}
@@ -17,7 +18,7 @@
     @media(min-width:1081px) and (min-height:760px){.app{height:calc(100dvh - 90px);min-height:0;overflow:hidden}.controls{overflow-y:auto}}@media(max-width:1080px){.workspace{grid-template-columns:minmax(280px,.8fr) minmax(420px,1.35fr)}.history-panel{grid-column:1/-1}.history{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:none}}@media(max-width:760px){.app{padding-inline:12px}.workspace{grid-template-columns:1fr}.stage{min-height:440px;order:-1}.history{grid-template-columns:1fr}.hero{align-items:flex-start}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
   </style>
 </head>
-<body>
+<body data-app-mode="fortune-cookie">
 <div id="scisimsSiteNav"></div>
 <main class="app">
   <section class="hero"><div><h1>Science Fortune Cookie</h1><p>Crack a cookie for a science fact, study tip, ridiculous prediction or quick classroom challenge.</p></div><div class="version">Version 1.1.0</div></section>
@@ -29,18 +30,5 @@
   <footer class="footer">A SciSims classroom tool. Fortunes are for discussion and fun, not scientific prediction.</footer>
 </main>
 <script src="../../shared/scisims-nav.js"></script>
-<script>
-'use strict';
-const fortunes={fact:[
-'Octopuses have three hearts and blue blood.','A day on Venus is longer than a year on Venus.','Most of the atoms in your body were forged inside ancient stars.','Water can boil and freeze at the same time at its triple point.','Bananas are slightly radioactive because they contain potassium-40.','Sharks existed before trees.','A teaspoon of neutron-star matter would have an extraordinary mass on Earth.','Your brain uses roughly the power of a small household light globe.'],tip:[
-'Explain the idea without using your notes. The gaps you notice are what to revise next.','Practise retrieval before rereading. Trying to remember strengthens memory.','Turn one diagram into five questions, then answer them tomorrow.','Compare two similar concepts and state exactly how they differ.','Space your revision across several days instead of cramming it into one session.','When solving a calculation, write the data and units before selecting the formula.','Use evidence in every scientific explanation, not just a final conclusion.'],prediction:[
-'You will meet a suspiciously confident variable before lunch.','A graph will reveal a pattern only after someone labels the axes.','Today, one hypothesis will survive longer than expected.','A controlled variable will attempt to escape. Remain alert.','You will soon hear the phrase “Is this in the test?”','An unexpected result will become the most interesting part of an investigation.','Someone nearby will confuse mass and weight.'],challenge:[
-'Name five things in this room that involve energy transfers.','Explain a scientific idea using only ten words.','Find an object that could be used to model a cell structure.','Write one testable question about something happening in the room.','Give one observation and one inference about the same event.','Describe a fair test that could be completed using only classroom objects.','Draw a particle model of a substance changing state.']};
-const labels={fact:'Science fact',tip:'Study tip',prediction:'Ridiculous prediction',challenge:'Mystery challenge'};const $=id=>document.getElementById(id);let history=[],soundOn=true,last='';
-function randomItem(a){return a[Math.floor(Math.random()*a.length)]}function choose(){let type=$('categorySelect').value;if(type==='mixed')type=randomItem(Object.keys(fortunes));let text=randomItem(fortunes[type]);for(let i=0;i<8&&text===last;i++)text=randomItem(fortunes[type]);last=text;return{type,text}}
-function tone(){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext;const ctx=new C();const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.setValueAtTime(240,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(520,ctx.currentTime+.18);g.gain.setValueAtTime(.0001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.025);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.32);o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+.34)}catch(_){}}
-function renderHistory(){const list=$('historyList');list.innerHTML='';if(!history.length){list.innerHTML='<li class="empty">No cookies cracked yet.</li>';return}history.slice(0,8).forEach(item=>{const li=document.createElement('li');li.innerHTML=`<div class="type">${labels[item.type]}</div><div class="text"></div>`;li.querySelector('.text').textContent=item.text;list.append(li)})}
-function crack(){const item=choose(),cookie=$('cookie'),fortune=$('fortuneText');cookie.classList.remove('crack');fortune.classList.remove('show');void cookie.offsetWidth;cookie.classList.add('crack');fortune.textContent=item.text;$('categoryTag').textContent=labels[item.type].toUpperCase();setTimeout(()=>fortune.classList.add('show'),170);history.unshift(item);renderHistory();tone()}
-$('crackBtn').addEventListener('click',crack);$('againBtn').addEventListener('click',crack);$('cookie').addEventListener('click',crack);$('cookie').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();crack()}});$('clearBtn').addEventListener('click',()=>{history=[];renderHistory()});$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 Sound on':'🔇 Sound off';$('soundBtn').setAttribute('aria-pressed',String(soundOn))});$('fullscreenBtn').addEventListener('click',async()=>{try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(_){}});document.addEventListener('fullscreenchange',()=>$('fullscreenBtn').textContent=document.fullscreenElement?'⤫ Exit full screen':'⛶ Full screen');document.addEventListener('keydown',e=>{if(e.code==='Space'&&!['SELECT','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();crack()}});
-</script>
+<script src="../shared/otu-bank-app.js"></script>
 </body></html>
