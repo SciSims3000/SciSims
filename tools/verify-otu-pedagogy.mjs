@@ -8,6 +8,8 @@ assert.equal(data.overview.banks.length, 9);
 for (const bank of data.overview.banks) {
   assert.equal(bank.cookies.length, 10, `${bank.outcome} cookie count`);
   assert.equal(bank.wyr.length, 10, `${bank.outcome} WYR count`);
+  for (const item of bank.cookies) assert(item.kind === 'fortune-cookie' && item.statement, `${item.id} invalid Overview cookie`);
+  for (const item of bank.wyr) assert(item.kind === 'would-you-rather' && item.optionA && item.optionB, `${item.id} invalid Overview WYR`);
 }
 const statements = data.sections.flatMap(section => section.contentStatements);
 assert.equal(statements.length, 19);

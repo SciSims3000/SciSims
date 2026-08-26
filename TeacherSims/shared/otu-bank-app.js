@@ -47,8 +47,11 @@
   const tags = item => `<div class="ped-tags"><span>${item.metadata.outcome}</span><span>Difficulty ${item.metadata.difficulty}</span><span>${item.metadata.type.replaceAll('-',' ')}</span></div>`;
   function reveal(button){button.hidden=true;button.nextElementSibling.hidden=false;}
   function renderCookie(item){
-    $('learningStage').innerHTML=`<div class="topic">${item.metadata.overviewBank||$('sectionSelect').selectedOptions[0].textContent}</div><div class="cookie-display"><div class="cookie compact"><div class="half left"></div><div class="half right"></div></div><article class="learning-card"><h2>${item.statement}</h2>${tags(item)}<button class="explain-btn">Explain</button><div class="explanation" hidden><h3>EXPLAIN</h3><p>${item.explanation}</p><div class="think"><strong>THINK</strong><p>${item.think}</p></div></div></article></div>`;
+    $('learningStage').innerHTML=`<div class="topic">${item.metadata.overviewBank||$('sectionSelect').selectedOptions[0].textContent}</div><div class="cookie-display"><div class="cookie compact" id="interactiveCookie" role="button" tabindex="0" aria-label="Crack the cookie for another science statement"><div class="half left"></div><div class="half right"></div></div><div class="cookie-instruction">Click the cookie to crack another</div><article class="learning-card"><h2>${item.statement}</h2>${tags(item)}<button class="explain-btn">Explain</button><div class="explanation" hidden><h3>EXPLAIN</h3><p>${item.explanation}</p><div class="think"><strong>THINK</strong><p>${item.think}</p></div></div></article></div>`;
     $('learningStage').querySelector('.explain-btn').addEventListener('click',e=>reveal(e.currentTarget));
+    const cookie=$('interactiveCookie');
+    cookie.addEventListener('click',crackCookie);
+    cookie.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();crackCookie();}});
     history.unshift(item);history=history.slice(0,8);renderHistory();
   }
   function renderHistory(){const list=$('historyList');list.innerHTML=history.length?history.map(x=>`<li><div class="type">${x.metadata.overviewBank||'7.1 content'}</div><div class="text"></div></li>`).join(''):'<li class="empty">No cookies cracked yet.</li>';list.querySelectorAll('.text').forEach((el,i)=>el.textContent=history[i].statement);}
@@ -59,6 +62,7 @@
   }
   function vote(side){votes[side]++;$('countA').textContent=votes.a;$('countB').textContent=votes.b;const total=votes.a+votes.b;$('resultbar').style.setProperty('--aPct',`${total?votes.a/total*100:50}%`);document.querySelectorAll('.choice').forEach(x=>x.classList.toggle('selected',x.dataset.side===side));}
   function next(){current=choose();isCookie?renderCookie(current):renderWyr(current);}
+  function crackCookie(){const cookie=$('interactiveCookie');if(!cookie)return;cookie.classList.remove('crack');void cookie.offsetWidth;cookie.classList.add('crack');setTimeout(next,520);}
 
   async function init(){
     shell();

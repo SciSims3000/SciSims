@@ -261,14 +261,17 @@ for (const section of sections) for (const statement of section.statements) {
 }
 
 const detailedItems = sections.flatMap(s => s.statements.flatMap(st => [...st[2],...st[3]]));
+const detailedCookies = detailedItems.filter(item => item.kind === 'fortune-cookie');
+const detailedWyr = detailedItems.filter(item => item.kind === 'would-you-rather');
 const overviewOutcomes = [
   ['SC4-OTU-01','Observing the Universe'],
   ['SC4-WS-01','Observing'],['SC4-WS-02','Questioning and predicting'],['SC4-WS-03','Planning investigations'],['SC4-WS-04','Conducting investigations'],['SC4-WS-05','Processing data and information'],['SC4-WS-06','Analysing data and information'],['SC4-WS-07','Problem-solving'],['SC4-WS-08','Communicating']
 ];
 const overview = overviewOutcomes.map(([outcome,label], oi) => {
-  const source = Array.from({length:10},(_,i)=>detailedItems[((oi*17+i*19)*2)%detailedItems.length]);
-  const cookies = source.map((x,i)=>({...x,id:`otu-overview-${outcome.toLowerCase()}-cookie-${String(i+1).padStart(2,'0')}`,metadata:{...x.metadata,outcome,contentStatement:'Overview',overviewBank:label}}));
-  const wyr = source.map((x,i)=>{const y=detailedItems.find(z=>z.kind==='would-you-rather'&&z.metadata.contentStatement===x.metadata.contentStatement)||detailedItems.find(z=>z.kind==='would-you-rather');return {...y,id:`otu-overview-${outcome.toLowerCase()}-wyr-${String(i+1).padStart(2,'0')}`,metadata:{...y.metadata,outcome,contentStatement:'Overview',overviewBank:label}}});
+  const cookieSource = Array.from({length:10},(_,i)=>detailedCookies[(oi*17+i*19)%detailedCookies.length]);
+  const wyrSource = Array.from({length:10},(_,i)=>detailedWyr[(oi*23+i*17)%detailedWyr.length]);
+  const cookies = cookieSource.map((x,i)=>({...x,id:`otu-overview-${outcome.toLowerCase()}-cookie-${String(i+1).padStart(2,'0')}`,metadata:{...x.metadata,outcome,contentStatement:'Overview',overviewBank:label}}));
+  const wyr = wyrSource.map((y,i)=>({...y,id:`otu-overview-${outcome.toLowerCase()}-wyr-${String(i+1).padStart(2,'0')}`,metadata:{...y.metadata,outcome,contentStatement:'Overview',overviewBank:label}}));
   return {id:outcome.toLowerCase(),label,outcome,cookies,wyr};
 });
 
