@@ -4,7 +4,7 @@
   const isCookie = mode === 'fortune-cookie';
   const dataUrl = '../data/nsw-2023/stage-4/7-1-observing-the-universe.json';
   const $ = id => document.getElementById(id);
-  let data, current, history = [], votes = {a:0,b:0}, lastId = '';
+  let data, current, history = [], votes = {a:0,b:0}, lastId = '', cracking = false, soundOn = true, audioContext;
 
   const option = (value,label) => `<option value="${value}">${label}</option>`;
   const shell = () => {
@@ -18,7 +18,7 @@
           <div><label for="statementSelect">Content statement</label><select id="statementSelect"></select></div>
           <button class="primary" id="newItemBtn">${isCookie?'Crack the cookie':'New question'}</button>
           ${isCookie?'':`<button class="secondary" id="resetVotesBtn">Reset votes</button>`}
-          <div class="utility-row"><button class="utility" id="fullscreenBtn">⛶ Full screen</button></div>
+          <div class="utility-row">${isCookie?'<button class="utility" id="soundBtn" aria-pressed="true">🔊 Sound on</button>':''}<button class="utility" id="fullscreenBtn">⛶ Full screen</button></div>
           <p class="hint"><strong>Lesson use:</strong> Select a statement for targeted retrieval, or “All within section” for revision.</p>
         </aside>
         <section class="panel stage" id="learningStage" aria-live="polite"></section>
@@ -62,14 +62,26 @@
   }
   function vote(side){votes[side]++;$('countA').textContent=votes.a;$('countB').textContent=votes.b;const total=votes.a+votes.b;$('resultbar').style.setProperty('--aPct',`${total?votes.a/total*100:50}%`);document.querySelectorAll('.choice').forEach(x=>x.classList.toggle('selected',x.dataset.side===side));}
   function next(){current=choose();isCookie?renderCookie(current):renderWyr(current);}
-  function crackCookie(){const cookie=$('interactiveCookie');if(!cookie)return;cookie.classList.remove('crack');void cookie.offsetWidth;cookie.classList.add('crack');setTimeout(next,520);}
+  function playCrackSound(){
+    if(!soundOn)return;
+    try{
+      const Audio=window.AudioContext||window.webkitAudioContext;
+      audioContext ||= new Audio();
+      const now=audioContext.currentTime, duration=.16, buffer=audioContext.createBuffer(1,audioContext.sampleRate*duration,audioContext.sampleRate), samples=buffer.getChannelData(0);
+      for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*Math.pow(1-i/samples.length,3);
+      const noise=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();
+      noise.buffer=buffer;filter.type='bandpass';filter.frequency.setValueAtTime(1500,now);filter.Q.value=.8;gain.gain.setValueAtTime(.32,now);gain.gain.exponentialRampToValueAtTime(.001,now+duration);noise.connect(filter).connect(gain).connect(audioContext.destination);noise.start(now);
+      [520,310].forEach((frequency,index)=>{const snap=audioContext.createOscillator(),snapGain=audioContext.createGain();snap.type='triangle';snap.frequency.setValueAtTime(frequency,now+index*.035);snap.frequency.exponentialRampToValueAtTime(120,now+.1+index*.035);snapGain.gain.setValueAtTime(.13,now+index*.035);snapGain.gain.exponentialRampToValueAtTime(.001,now+.11+index*.035);snap.connect(snapGain).connect(audioContext.destination);snap.start(now+index*.035);snap.stop(now+.13+index*.035);});
+    }catch(_){/* Audio is an enhancement; the cookie still works without it. */}
+  }
+  function crackCookie(){const cookie=$('interactiveCookie');if(!cookie||cracking)return;cracking=true;playCrackSound();cookie.classList.remove('crack');void cookie.offsetWidth;cookie.classList.add('crack');setTimeout(()=>{next();cracking=false;},560);}
 
   async function init(){
     shell();
     try {const response=await fetch(dataUrl);if(!response.ok)throw new Error(`${response.status} ${response.statusText}`);data=await response.json();}
     catch(error){$('learningStage').innerHTML=`<div class="load-error"><h2>Content could not be loaded</h2><p>${error.message}</p><p>Run this app through a web server rather than opening the HTML file directly.</p></div>`;return;}
-    fillSelectors();$('sectionSelect').addEventListener('change',()=>{updateStatements();next();});$('statementSelect').addEventListener('change',next);$('newItemBtn').addEventListener('click',next);
-    if(isCookie)$('clearBtn').addEventListener('click',()=>{history=[];renderHistory();});else $('resetVotesBtn').addEventListener('click',()=>{votes={a:0,b:0};$('countA').textContent=0;$('countB').textContent=0;$('resultbar').style.setProperty('--aPct','50%');});
+    fillSelectors();$('sectionSelect').addEventListener('change',()=>{updateStatements();next();});$('statementSelect').addEventListener('change',next);$('newItemBtn').addEventListener('click',isCookie?crackCookie:next);
+    if(isCookie){$('clearBtn').addEventListener('click',()=>{history=[];renderHistory();});$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 Sound on':'🔇 Sound off';$('soundBtn').setAttribute('aria-pressed',String(soundOn));});}else $('resetVotesBtn').addEventListener('click',()=>{votes={a:0,b:0};$('countA').textContent=0;$('countB').textContent=0;$('resultbar').style.setProperty('--aPct','50%');});
     $('fullscreenBtn').addEventListener('click',async()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());
     next();
   }
