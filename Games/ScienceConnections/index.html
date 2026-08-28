@@ -182,7 +182,7 @@
       margin-top:16px;
     }
     .classroom-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-    .team-scoreboard{display:none;grid-template-columns:repeat(4,minmax(100px,1fr));gap:8px;margin-top:14px}
+    .team-scoreboard{display:none;grid-template-columns:repeat(2,minmax(140px,1fr));gap:8px;margin:0 0 14px}
     .team-scoreboard.active{display:grid}.team-score{border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:var(--panel-soft);cursor:pointer}
     .team-score.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.team-score strong{display:block;font-size:1.45rem}.team-score small{display:block;margin-bottom:4px}
 
@@ -253,6 +253,8 @@
     .solved-group:nth-child(2){background:var(--solved-2);}
     .solved-group:nth-child(3){background:var(--solved-3);}
     .solved-group:nth-child(4){background:var(--solved-4);}
+    .solved-group:nth-child(5){background:#ffedd5;}
+    .solved-group:nth-child(6){background:#cffafe;}
     .solved-group.revealed{filter:saturate(.45);}
     .solved-group h3{margin:0 0 8px;font-size:1rem;}
     .solved-terms{display:flex;flex-wrap:wrap;gap:7px;}
@@ -278,6 +280,8 @@
       gap:10px;
       min-height:300px;
     }
+    body:fullscreen .page,body:-webkit-full-screen .page{max-width:none;padding:12px;}
+    body:fullscreen .controls-panel,body:-webkit-full-screen .controls-panel{position:static;}
 
     .word-card{
       position:relative;
@@ -405,14 +409,21 @@
           <option value="easy">Easy — 6 mistakes, 2 hints</option>
           <option value="medium" selected>Medium — 4 mistakes, 1 hint</option>
           <option value="hard">Hard — 3 mistakes, 1 hint</option>
+          <option value="insane">Insane — 6 connections, 2 mistakes</option>
         </select>
 
         <div class="classroom-options">
           <label for="playModeSelect">Play mode<select id="playModeSelect"><option value="individual">Individual</option><option value="teams">Class teams</option></select></label>
           <label for="teamCountSelect">Teams<select id="teamCountSelect" disabled><option value="2">2 teams</option><option value="3">3 teams</option><option value="4">4 teams</option></select></label>
-          <label for="timerSelect">Timer<select id="timerSelect"><option value="-1">No timer</option><option value="0" selected>Stopwatch</option><option value="180">3 minute countdown</option><option value="300">5 minute countdown</option><option value="600">10 minute countdown</option></select></label>
+          <label for="timerSelect">Timer<select id="timerSelect"><option value="-1">No timer</option><option value="0" selected>Stopwatch</option><option value="60">1 minute countdown</option><option value="120">2 minute countdown</option><option value="180">3 minute countdown</option><option value="300">5 minute countdown</option><option value="600">10 minute countdown</option></select></label>
         </div>
-        <div class="team-scoreboard" id="teamScoreboard" aria-label="Team scores"></div>
+
+        <label for="teamAdvanceSelect">Team rotation</label>
+        <select id="teamAdvanceSelect" disabled>
+          <option value="manual">Manual</option>
+          <option value="every">Auto after every turn</option>
+          <option value="wrong">Auto only when wrong</option>
+        </select>
 
         <div class="button-row">
           <button class="primary-button" id="newRoundButton">New Puzzle</button>
@@ -431,18 +442,21 @@
 
         <div class="button-row">
           <button class="secondary-button" id="resetScoreButton">Reset Session</button>
+          <button class="secondary-button" id="fullscreenButton">Full Screen</button>
         </div>
 
         <div class="legend">
           <div class="legend-card"><strong>Easy</strong>More mistakes and category-aware hints.</div>
           <div class="legend-card"><strong>Medium</strong>Standard four-mistake puzzle.</div>
           <div class="legend-card"><strong>Hard</strong>Only three mistakes and less revealing hints.</div>
+          <div class="legend-card"><strong>Insane</strong>Six connections, 24 terms and only two mistakes.</div>
         </div>
 
         <p class="small-note">The game uses four vocabulary categories from the selected module, Year Review or Mega Mix. The words change between puzzles.</p>
       </section>
 
       <section class="panel game-panel">
+        <div class="team-scoreboard" id="teamScoreboard" aria-label="Team scores"></div>
         <div class="status-strip">
           <div class="status-card"><h3>Scope</h3><p id="scopeDisplay">Year 7</p></div>
           <div class="status-card"><h3>Module</h3><p id="moduleDisplay">Introduction to Science</p></div>
@@ -477,7 +491,7 @@
       <ol>
         <li>Select four terms that share one scientific connection.</li>
         <li>Submit the group. Correct groups lock into place.</li>
-        <li>Find all four groups before the mistake counter reaches zero.</li>
+        <li>Find every group before the mistake counter reaches zero.</li>
         <li>After solving a group, select any term in it to review its full definition.</li>
         <li>Explain why each term belongs in its group using a complete scientific sentence.</li>
       </ol>
@@ -486,7 +500,7 @@
     <section class="teacher-notes">
       <h2>Teacher Notes</h2>
       <ul>
-        <li>Each puzzle contains four vocabulary categories and four terms from each category.</li>
+        <li>Standard puzzles contain four vocabulary categories; Insane puzzles contain six. Every category has four terms.</li>
         <li>Specific modules draw categories from that module. Year Review draws from all modules in the selected year.</li>
         <li>Mega Mix draws categories from across Years 7–10 and uses the bright-pink theme.</li>
         <li>A “one away” message appears when three selected terms belong to the same category.</li>
@@ -511,9 +525,10 @@ const YEAR_THEMES = {
 };
 
 const DIFFICULTY = {
-  easy:{label:'Easy',mistakes:6,hints:2,groupPoints:80,bonus:220},
-  medium:{label:'Medium',mistakes:4,hints:1,groupPoints:100,bonus:300},
-  hard:{label:'Hard',mistakes:3,hints:1,groupPoints:130,bonus:400}
+  easy:{label:'Easy',mistakes:6,hints:2,groupPoints:80,bonus:220,groups:4},
+  medium:{label:'Medium',mistakes:4,hints:1,groupPoints:100,bonus:300,groups:4},
+  hard:{label:'Hard',mistakes:3,hints:1,groupPoints:130,bonus:400,groups:4},
+  insane:{label:'Insane',mistakes:2,hints:0,groupPoints:160,bonus:650,groups:6}
 };
 
 const yearSelect = document.getElementById('yearSelect');
@@ -522,6 +537,7 @@ const difficultySelect = document.getElementById('difficultySelect');
 const playModeSelect = document.getElementById('playModeSelect');
 const teamCountSelect = document.getElementById('teamCountSelect');
 const timerSelect = document.getElementById('timerSelect');
+const teamAdvanceSelect = document.getElementById('teamAdvanceSelect');
 const teamScoreboard = document.getElementById('teamScoreboard');
 const timerDisplay = document.getElementById('timerDisplay');
 const newRoundButton = document.getElementById('newRoundButton');
@@ -530,6 +546,7 @@ const clearSelectionButton = document.getElementById('clearSelectionButton');
 const hintButton = document.getElementById('hintButton');
 const revealButton = document.getElementById('revealButton');
 const resetScoreButton = document.getElementById('resetScoreButton');
+const fullscreenButton = document.getElementById('fullscreenButton');
 const submitGroupButton = document.getElementById('submitGroupButton');
 const board = document.getElementById('board');
 const solvedGroups = document.getElementById('solvedGroups');
@@ -605,6 +622,7 @@ function renderTeams(){
   const count=Number(teamCountSelect.value);
   teamScoreboard.classList.toggle('active',playModeSelect.value==='teams');
   teamCountSelect.disabled=playModeSelect.value!=='teams';
+  teamAdvanceSelect.disabled=playModeSelect.value!=='teams';
   teamScoreboard.innerHTML='';
   for(let index=0;index<count;index++){
     const card=document.createElement('button');
@@ -616,11 +634,19 @@ function renderTeams(){
   }
 }
 
-function addTeamPoints(points,rotate=false){
+function addTeamPoints(points){
   if(playModeSelect.value!=='teams') return;
   teamScores[activeTeam]=Math.max(0,teamScores[activeTeam]+points);
-  if(rotate) activeTeam=(activeTeam+1)%Number(teamCountSelect.value);
   renderTeams();
+}
+
+function rotateTeam(result){
+  if(playModeSelect.value!=='teams') return;
+  const mode=teamAdvanceSelect.value;
+  if(mode==='every'||(mode==='wrong'&&result==='wrong')){
+    activeTeam=(activeTeam+1)%Number(teamCountSelect.value);
+    renderTeams();
+  }
 }
 
 function shuffle(array){
@@ -737,8 +763,8 @@ function getScopeCategories(){
   return categories;
 }
 
-function selectFourCategories(categories){
-  if(categories.length<4) return [];
+function selectCategories(categories,count){
+  if(categories.length<count) return [];
   const year=yearSelect.value;
   const moduleKey=moduleSelect.value;
 
@@ -748,8 +774,8 @@ function selectFourCategories(categories){
       if(!byYear.has(cat.year)) byYear.set(cat.year,[]);
       byYear.get(cat.year).push(cat);
     });
-    const onePerYear=shuffle([...byYear.keys()]).slice(0,4).map(y=>shuffle(byYear.get(y))[0]);
-    if(onePerYear.length===4) return onePerYear;
+    const onePerYear=shuffle([...byYear.keys()]).slice(0,count).map(y=>shuffle(byYear.get(y))[0]);
+    if(onePerYear.length===count) return onePerYear;
   }
 
   if(moduleKey==='year-review'){
@@ -758,11 +784,11 @@ function selectFourCategories(categories){
       if(!byModule.has(cat.moduleKey)) byModule.set(cat.moduleKey,[]);
       byModule.get(cat.moduleKey).push(cat);
     });
-    const onePerModule=shuffle([...byModule.keys()]).slice(0,4).map(key=>shuffle(byModule.get(key))[0]);
-    if(onePerModule.length===4) return onePerModule;
+    const onePerModule=shuffle([...byModule.keys()]).slice(0,count).map(key=>shuffle(byModule.get(key))[0]);
+    if(onePerModule.length===count) return onePerModule;
   }
 
-  return shuffle(categories).slice(0,4);
+  return shuffle(categories).slice(0,count);
 }
 
 function chooseTerms(category,count=4,blockedTerms=new Set()){
@@ -782,12 +808,27 @@ function chooseTerms(category,count=4,blockedTerms=new Set()){
 }
 
 function buildRound(){
-  const categories=getScopeCategories();
+  let categories=getScopeCategories();
+  const targetGroups=DIFFICULTY[difficultySelect.value].groups;
+  if(categories.length<targetGroups&&yearSelect.value!=='mega'){
+    const existingIds=new Set(categories.map(category=>category.id));
+    const year=yearSelect.value;
+    Object.entries(VOCAB_LIBRARY[year]?.modules||{}).forEach(([key,module])=>{
+      Object.entries(module.groupNames||{}).forEach(([groupKey,groupLabel])=>{
+        const id=`${year}|${key}|${groupKey}`;
+        const entries=(module.groups?.[groupKey]||[]).filter(entry=>entry?.word&&entry?.definition);
+        if(!existingIds.has(id)&&entries.length>=4){
+          existingIds.add(id);
+          categories.push({id,year,moduleKey:key,moduleLabel:module.label,groupKey,label:groupLabel,entries});
+        }
+      });
+    });
+  }
   let selectedCategories=[];
   let built=[];
 
   for(let attempt=0;attempt<50;attempt++){
-    selectedCategories=selectFourCategories(categories);
+    selectedCategories=selectCategories(categories,targetGroups);
     const blocked=new Set();
     built=[];
     let valid=true;
@@ -799,7 +840,7 @@ function buildRound(){
       built.push({...category,selectedEntries:terms});
     }
 
-    if(valid&&built.length===4) break;
+    if(valid&&built.length===targetGroups) break;
   }
 
   return built;
@@ -807,13 +848,13 @@ function buildRound(){
 
 function categoryDisplayLabel(group){
   if(yearSelect.value==='mega') return `Year ${group.year} · ${group.moduleLabel} — ${group.label}`;
-  if(moduleSelect.value==='year-review') return `${group.moduleLabel} — ${group.label}`;
+  if(moduleSelect.value==='year-review'||difficultySelect.value==='insane') return `${group.moduleLabel} — ${group.label}`;
   return group.label;
 }
 
 function startNewRound(){
   const groups=buildRound();
-  if(groups.length!==4){
+  if(groups.length!==DIFFICULTY[difficultySelect.value].groups){
     messageBox.textContent='This selection does not yet contain enough vocabulary categories to build a puzzle.';
     return;
   }
@@ -897,13 +938,14 @@ function submitGroup(){
 
   mistakesRemaining-=1;
   score=Math.max(0,score-25);
-  addTeamPoints(-1,true);
+  addTeamPoints(-1);
   const maxSame=Math.max(...counts.values());
   messageBox.textContent=maxSame===3?'One away — three selected terms belong together.':'Those four terms do not form one complete connection.';
   flashWrongSelection();
   selectedIds.clear();
   updateMistakes();
   updateScore();
+  rotateTeam('wrong');
   setTimeout(()=>{renderBoard();updateSelection();},260);
 
   if(mistakesRemaining<=0){
@@ -936,9 +978,10 @@ function solveGroup(groupId,revealed){
   updateSelection();
   updateScore();
 
-  if(solvedIds.size===4&&!revealed){
+  if(solvedIds.size===currentGroups.length&&!revealed){
     completeRound();
   }
+  if(!revealed) rotateTeam('correct');
 }
 
 function addSolvedGroup(group,revealed){
@@ -977,7 +1020,7 @@ function completeRound(){
   score+=level.bonus+mistakesRemaining*20;
   roundsSolved+=1;
   streak+=1;
-  addTeamPoints(2);
+    addTeamPoints(2);
   messageBox.textContent=`Puzzle solved. Bonus awarded for completing all four connections with ${mistakesRemaining} mistake${mistakesRemaining===1?'':'s'} remaining.`;
   updateScore();
   updateControls();
@@ -1096,7 +1139,7 @@ function updateStatus(){
 
   if(year==='mega'){
     gameTitle.textContent='Science Connections — Mega Mix';
-    gameSubtitle.textContent='Connect science vocabulary from across Years 7–10. Find four groups of four before the bright-pink mistake counter runs out.';
+    gameSubtitle.textContent=`Connect science vocabulary from across Years 7–10. Find ${DIFFICULTY[difficultySelect.value].groups} groups of four before the bright-pink mistake counter runs out.`;
     learningIntentionText.textContent='Students will connect vocabulary and concepts across multiple years and branches of science.';
     successCriteriaText.textContent='Students can identify four cross-curriculum connections and justify why each term belongs in its group.';
   }else if(moduleKey==='year-review'){
@@ -1107,7 +1150,7 @@ function updateStatus(){
   }else{
     const module=VOCAB_LIBRARY[year]?.modules?.[moduleKey];
     gameTitle.textContent=`Science Connections — ${module?.label||`Year ${year}`}`;
-    gameSubtitle.textContent=`Find four groups of four related terms from ${module?.label||`Year ${year} Science`}.`;
+    gameSubtitle.textContent=`Find ${DIFFICULTY[difficultySelect.value].groups} groups of four related terms from ${module?.label||`Year ${year} Science`}.`;
     learningIntentionText.textContent='Students will organise module vocabulary into meaningful scientific categories.';
     successCriteriaText.textContent='Students can identify related terms and explain the scientific idea connecting each group.';
   }
@@ -1158,6 +1201,7 @@ function updateUrl(){
   params.set('play',playModeSelect.value);
   params.set('teams',teamCountSelect.value);
   params.set('timer',timerSelect.value);
+  params.set('advance',teamAdvanceSelect.value);
   history.replaceState(null,'',`${location.pathname}?${params.toString()}`);
 }
 
@@ -1172,7 +1216,8 @@ async function initialiseFromUrl(){
   difficultySelect.value=DIFFICULTY[requestedLevel]?requestedLevel:'medium';
   if(['individual','teams'].includes(params.get('play'))) playModeSelect.value=params.get('play');
   if(['2','3','4'].includes(params.get('teams'))) teamCountSelect.value=params.get('teams');
-  if(['-1','0','180','300','600'].includes(params.get('timer'))) timerSelect.value=params.get('timer');
+  if(['-1','0','60','120','180','300','600'].includes(params.get('timer'))) timerSelect.value=params.get('timer');
+  if(['manual','every','wrong'].includes(params.get('advance'))) teamAdvanceSelect.value=params.get('advance');
   renderTeams();
   renderTimer();
   applyTheme();
@@ -1210,6 +1255,8 @@ playModeSelect.addEventListener('change',()=>{
   updateUrl();
 });
 
+teamAdvanceSelect.addEventListener('change',updateUrl);
+
 teamCountSelect.addEventListener('change',()=>{
   activeTeam=0;
   renderTeams();
@@ -1218,8 +1265,11 @@ teamCountSelect.addEventListener('change',()=>{
 
 timerSelect.addEventListener('change',()=>{
   stopTimer();
-  timerSeconds=Number(timerSelect.value)>0?Number(timerSelect.value):0;
-  renderTimer();
+  if(!gameOver) startTimer();
+  else{
+    timerSeconds=Number(timerSelect.value)>0?Number(timerSelect.value):0;
+    renderTimer();
+  }
   updateUrl();
 });
 
@@ -1230,6 +1280,17 @@ hintButton.addEventListener('click',useHint);
 revealButton.addEventListener('click',revealRound);
 resetScoreButton.addEventListener('click',resetSession);
 submitGroupButton.addEventListener('click',submitGroup);
+fullscreenButton.addEventListener('click',async()=>{
+  try{
+    if(!document.fullscreenElement) await document.body.requestFullscreen();
+    else await document.exitFullscreen();
+  }catch(error){
+    messageBox.textContent='Full screen is not available in this browser.';
+  }
+});
+document.addEventListener('fullscreenchange',()=>{
+  fullscreenButton.textContent=document.fullscreenElement?'Exit Full Screen':'Full Screen';
+});
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Enter'&&selectedIds.size===4&&!submitGroupButton.disabled){

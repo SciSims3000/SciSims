@@ -44,7 +44,36 @@
     async function loadModules(){
       const bank=await fetch(`../../question-banks/${course.value}`).then(r=>r.json());module.innerHTML='';
       const junior=course.value.startsWith('nsw-2023/');
-      bank.collections.forEach(collection=>{const o=document.createElement('option');o.value=junior?collection.id:(collection.module||collection.id);o.textContent=collection.label;module.appendChild(o)});
+      const add=(value,label)=>{const o=document.createElement('option');o.value=value;o.textContent=label;module.appendChild(o)};
+      if(junior){
+        const modules=bank.collections.filter(collection=>/\b[1-4]\b/.test(collection.label)).slice(0,4);
+        modules.slice(0,3).forEach((collection,index)=>add(`m${index+1}`,collection.label));
+        add('m1_3','Modules 1–3 Review');
+        add('m1_3g','Modules 1–3 + Glossary');
+        if(modules[3]) add('m4',modules[3].label);
+        add('m1_4','Modules 1–4 Review');
+        add('m1_4g','Modules 1–4 + Glossary');
+        return;
+      }
+      const extension=/Science Extension/i.test(bank.label);
+      const byModule=number=>bank.collections.find(collection=>collection.module===`module${number}`);
+      if(extension){
+        [1,2,3,4].forEach(number=>{const item=byModule(number);if(item)add(`m${number}`,item.label)});
+        add('course','Year 12 / Whole Course — Modules 1–4');
+        add('courseg','Year 12 / Whole Course + Glossary');
+        add('glossary','Syllabus Glossary');
+        return;
+      }else{
+        [1,2,3,4].forEach(number=>{const item=byModule(number);if(item)add(`m${number}`,item.label)});
+        add('y11','Year 11 Course — Modules 1–4');
+        add('y11g','Year 11 Course + Glossary');
+        [5,6,7,8].forEach(number=>{const item=byModule(number);if(item)add(`m${number}`,item.label)});
+        add('y12','Year 12 Course — Modules 5–8');
+        add('y12g','Year 12 Course + Glossary');
+      }
+      add('glossary','Syllabus Glossary');
+      add('stage6','Whole Course — All Modules');
+      add('stage6g','Whole Course + Glossary');
     }
     document.getElementById('start').addEventListener('click',()=>{
       const selected=course.options[course.selectedIndex].textContent;

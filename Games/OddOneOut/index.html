@@ -299,11 +299,11 @@
     function updateModuleText() {
       const moduleData = getSelectedModule();
       if(!moduleData) return;
-      gameTitle.textContent = moduleData.displayTitle || 'Science Odd One Out';
+      gameTitle.textContent = 'Science Odd One Out';
       gameSubtitle.textContent = moduleData.subtitle || 'Pick the term that does not belong with the other three.';
       learningIntentionText.textContent = moduleData.learningIntention || '';
       successCriteriaText.textContent = moduleData.successCriteria || '';
-      document.title = moduleData.displayTitle || 'Science Odd One Out';
+      document.title = `Science Odd One Out — ${moduleData.label || yearSelect.value}`;
     }
 
     function getWordGroupLabel() {

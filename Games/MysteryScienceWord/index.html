@@ -670,6 +670,13 @@
       flex-wrap:nowrap;
     }
 
+    .word-separator{
+      align-self:center;
+      color:#64748b;
+      font-size:1.6rem;
+      font-weight:900;
+    }
+
     .letter-box{
       width:34px;
       height:48px;
@@ -7789,11 +7796,11 @@ peer review | A process where other scientists check research before publication
       const moduleData = getSelectedModule();
       if(!moduleData) return;
 
-      gameTitle.textContent = moduleData.displayTitle;
+      gameTitle.textContent = "Mystery Science Word";
       gameSubtitle.textContent = moduleData.subtitle;
       learningIntentionText.textContent = moduleData.learningIntention;
       successCriteriaText.textContent = moduleData.successCriteria;
-      document.title = moduleData.displayTitle;
+      document.title = `Mystery Science Word — ${moduleData.label || yearSelect.value}`;
     }
 
     function getWordGroupLabel(){
@@ -8010,8 +8017,15 @@ peer review | A process where other scientists check research before publication
         return;
       }
 
-      const words = currentEntry.word.toUpperCase().split(" ");
-      words.forEach(wordPart => {
+      const words = currentEntry.word.toUpperCase().trim().split(/\s+/);
+      words.forEach((wordPart, wordIndex) => {
+        if(wordIndex > 0){
+          const separator = document.createElement("span");
+          separator.className = "word-separator";
+          separator.textContent = "/";
+          separator.setAttribute("aria-hidden", "true");
+          wordDisplay.appendChild(separator);
+        }
         const wordChunk = document.createElement("div");
         wordChunk.className = "word-chunk";
         for(const char of wordPart){
