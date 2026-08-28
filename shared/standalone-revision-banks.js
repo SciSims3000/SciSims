@@ -93,8 +93,9 @@
 
   function organiseStage6Course(bank, modules) {
     const entries = Object.entries(modules);
-    const year11 = entries.filter(([, module]) => /Module [1-4]\b/.test(module.label));
-    const year12 = entries.filter(([, module]) => /Module [5-8]\b/.test(module.label));
+    const scienceExtension = /Science Extension/i.test(bank.label);
+    const year11 = scienceExtension ? [] : entries.filter(([, module]) => /Module [1-4]\b/.test(module.label));
+    const year12 = entries.filter(([, module]) => scienceExtension ? /Module [1-4]\b/.test(module.label) : /Module [5-8]\b/.test(module.label));
     const glossary = entries.find(([, module]) => /Glossary/i.test(module.label));
     const ordered = {};
     const add = ([key, module]) => { ordered[key] = module; };
@@ -105,7 +106,7 @@
     }
     year12.forEach(add);
     if (year12.length) {
-      ordered['year-12-course'] = compositeModule('Year 12 Course — Modules 5–8', year12.map(([, module]) => module), year12.map(([key]) => key));
+      ordered['year-12-course'] = compositeModule(`Year 12 Course — Modules ${scienceExtension ? '1–4' : '5–8'}`, year12.map(([, module]) => module), year12.map(([key]) => key));
       ordered['year-12-course-glossary'] = compositeModule('Year 12 Course + Glossary', [...year12.map(([, module]) => module), glossary?.[1]], [...year12.map(([key]) => key), glossary?.[0]].filter(Boolean));
     }
     if (glossary) add(glossary);
