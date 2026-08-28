@@ -3693,6 +3693,22 @@ window.SCISIMS_STAGE45 = {
           "relevance": "Core"
         }
       ]
+    },
+    {
+      "id": "games-sciword",
+      "title": "SciWord",
+      "path": "Games/SciWord/",
+      "description": "Decode curriculum science concepts using letter-position feedback and a progressively revealed evidence panel.",
+      "type": "Revision game",
+      "tags": ["Science vocabulary", "Year 7", "Observing the Universe", "Word game", "Evidence"],
+      "workingScientifically": ["Observing", "Processing data and information", "Communicating"],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.1",
+          "relevance": "Core"
+        }
+      ]
     }
   ],
   "sharedTools": [
