@@ -207,7 +207,7 @@
 
     .status-strip{
       display:grid;
-      grid-template-columns:repeat(5,1fr);
+      grid-template-columns:repeat(4,1fr);
       gap:10px;
       margin-bottom:14px;
     }
@@ -215,6 +215,10 @@
     .status-card{text-align:left;}
     .status-card h3{margin:0 0 4px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;}
     .status-card p{margin:0;font-weight:800;line-height:1.25;}
+    .puzzle-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding:11px 13px;background:var(--accent-soft);border:1px solid var(--line);border-radius:15px;}
+    .puzzle-timer{display:flex;align-items:baseline;gap:9px;font-weight:900;}
+    .puzzle-timer span{color:var(--muted);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;}
+    .puzzle-timer strong{font-size:1.55rem;font-variant-numeric:tabular-nums;}
 
     .mistakes-row{
       display:flex;
@@ -280,8 +284,8 @@
       gap:10px;
       min-height:300px;
     }
-    body:fullscreen .page,body:-webkit-full-screen .page{max-width:none;padding:12px;}
-    body:fullscreen .controls-panel,body:-webkit-full-screen .controls-panel{position:static;}
+    .game-panel:fullscreen,.game-panel:-webkit-full-screen{overflow:auto;border-radius:0;padding:clamp(14px,2vw,28px);background:var(--panel);}
+    .game-panel:fullscreen .board,.game-panel:-webkit-full-screen .board{min-height:min(62vh,720px);}
 
     .word-card{
       position:relative;
@@ -442,7 +446,6 @@
 
         <div class="button-row">
           <button class="secondary-button" id="resetScoreButton">Reset Session</button>
-          <button class="secondary-button" id="fullscreenButton">Full Screen</button>
         </div>
 
         <div class="legend">
@@ -455,14 +458,17 @@
         <p class="small-note">The game uses four vocabulary categories from the selected module, Year Review or Mega Mix. The words change between puzzles.</p>
       </section>
 
-      <section class="panel game-panel">
+      <section class="panel game-panel" id="gamePanel">
+        <div class="puzzle-toolbar">
+          <div class="puzzle-timer"><span>Timer</span><strong id="timerDisplay">0:00</strong></div>
+          <button class="secondary-button" id="fullscreenButton">Full-screen Puzzle</button>
+        </div>
         <div class="team-scoreboard" id="teamScoreboard" aria-label="Team scores"></div>
         <div class="status-strip">
           <div class="status-card"><h3>Scope</h3><p id="scopeDisplay">Year 7</p></div>
           <div class="status-card"><h3>Module</h3><p id="moduleDisplay">Introduction to Science</p></div>
           <div class="status-card"><h3>Level</h3><p id="difficultyDisplay">Medium</p></div>
           <div class="status-card"><h3>Round</h3><p id="roundDisplay">Not started</p></div>
-          <div class="status-card"><h3>Timer</h3><p id="timerDisplay">0:00</p></div>
         </div>
 
         <div class="mistakes-row">
@@ -540,6 +546,7 @@ const timerSelect = document.getElementById('timerSelect');
 const teamAdvanceSelect = document.getElementById('teamAdvanceSelect');
 const teamScoreboard = document.getElementById('teamScoreboard');
 const timerDisplay = document.getElementById('timerDisplay');
+const gamePanel = document.getElementById('gamePanel');
 const newRoundButton = document.getElementById('newRoundButton');
 const shuffleButton = document.getElementById('shuffleButton');
 const clearSelectionButton = document.getElementById('clearSelectionButton');
@@ -1282,7 +1289,7 @@ resetScoreButton.addEventListener('click',resetSession);
 submitGroupButton.addEventListener('click',submitGroup);
 fullscreenButton.addEventListener('click',async()=>{
   try{
-    if(!document.fullscreenElement) await document.body.requestFullscreen();
+    if(!document.fullscreenElement) await gamePanel.requestFullscreen();
     else await document.exitFullscreen();
   }catch(error){
     messageBox.textContent='Full screen is not available in this browser.';
