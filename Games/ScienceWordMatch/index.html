@@ -776,10 +776,6 @@
         option.textContent = moduleData.label;
         moduleSelect.appendChild(option);
       });
-      const review = document.createElement("option");
-      review.value = "year-review";
-      review.textContent = `${moduleLibrary[yearSelect.value]?.label || `Year ${yearSelect.value}`} Review — All Modules`;
-      moduleSelect.appendChild(review);
       if(preferred && [...moduleSelect.options].some(option => option.value === preferred)) moduleSelect.value = preferred;
     }
 

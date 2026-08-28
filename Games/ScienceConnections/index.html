@@ -681,11 +681,6 @@ function populateModules(preferred=''){
     return;
   }
 
-  const review=document.createElement('option');
-  review.value='year-review';
-  review.textContent=`${VOCAB_LIBRARY[year]?.label||`Year ${year}`} Review — All Modules`;
-  moduleSelect.appendChild(review);
-
   Object.entries(VOCAB_LIBRARY[year]?.modules||{}).forEach(([key,module])=>{
     const option=document.createElement('option');
     option.value=key;

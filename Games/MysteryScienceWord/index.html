@@ -7747,13 +7747,6 @@ peer review | A process where other scientists check research before publication
         moduleSelect.appendChild(option);
       });
 
-      if(yearKey !== "mega" && Object.keys(modules).length > 0){
-        const reviewOption = document.createElement("option");
-        reviewOption.value = YEAR_REVIEW_KEY;
-        reviewOption.textContent = `${moduleLibrary[yearKey]?.label || `Year ${yearKey}`} Review — All Modules`;
-        moduleSelect.appendChild(reviewOption);
-      }
-
       if(preferredModule === YEAR_REVIEW_KEY && yearKey !== "mega"){
         moduleSelect.value = YEAR_REVIEW_KEY;
       } else if(preferredModule && modules[preferredModule]){

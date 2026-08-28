@@ -165,6 +165,18 @@ glossary:[
 };
 Object.assign(CONTENT,window.SCISIMS_INVSCI_JEOPARDY||{});
 const REVIEW_MAP={y11:["m1","m2","m3","m4"],y12:["m5","m6","m7","m8"],stage6:["m1","m2","m3","m4","m5","m6","m7","m8"]};
+const combineJeopardyBanks=(...ids)=>ids.flatMap(id=>CONTENT[id]||[]);
+REVIEW_MAP.y11g=[...REVIEW_MAP.y11,'glossary'];
+REVIEW_MAP.y12g=[...REVIEW_MAP.y12,'glossary'];
+REVIEW_MAP.stage6g=[...REVIEW_MAP.stage6,'glossary'];
+const bankById=Object.fromEntries(BANKS.map(bank=>[bank[0],bank]));
+BANKS.splice(0,BANKS.length,
+ ...['m1','m2','m3','m4'].map(id=>bankById[id]),
+ bankById.y11,['y11g','Year 11 Course + Glossary','Modules 1–4 plus glossary'],
+ ...['m5','m6','m7','m8'].map(id=>bankById[id]),
+ bankById.y12,['y12g','Year 12 Course + Glossary','Modules 5–8 plus glossary'],
+ bankById.working,bankById.glossary,bankById.stage6,['stage6g','Whole Course + Glossary','Modules 1–8 plus glossary'],bankById.teacher
+);
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const state={teams:[],active:0,board:[],history:[],analytics:[],settings:{},selectedBanks:[],current:null,phase:"setup",finalMarks:{}};
 const KEY="scisims-investigating-science-jeopardy-v2";
