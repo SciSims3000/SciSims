@@ -2,180 +2,126 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="icon" type="image/png" href="../../favicon.png">
-<title>SciWord — Draft 1</title>
+<title>SciWord — Concept Test 2</title>
 <link rel="stylesheet" href="../../shared/scisims-nav.css">
 <script defer src="../../shared/scisims-nav.js"></script>
 <style>
-:root{
-  --bg:#07151b;--panel:#0d232c;--panel2:#12323d;--text:#eef8fb;--muted:#9fc0cb;
-  --green:#36b37e;--yellow:#f2c94c;--grey:#465b63;--accent:#66d9c8;--danger:#ff6b6b;
-}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(160deg,#061117,#0a2430 58%,#08202a);color:var(--text);min-height:100vh}
-.app{max-width:1180px;margin:0 auto;padding:18px 18px 36px}
-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
-.brand h1{margin:0;font-size:clamp(2rem,5vw,4.4rem);letter-spacing:.08em}.brand p{margin:.15rem 0 0;color:var(--muted)}
-.badge{background:#153744;border:1px solid #2f5b69;padding:8px 12px;border-radius:999px;font-weight:700}
-.toolbar{display:grid;grid-template-columns:1.5fr 1fr auto;gap:10px;background:rgba(13,35,44,.86);padding:12px;border-radius:18px;border:1px solid #214653;margin-bottom:16px;position:sticky;top:0;z-index:5;backdrop-filter:blur(10px)}
-select,button,input{font:inherit}.select,.btn{border-radius:12px;border:1px solid #315863;background:#0b1d24;color:var(--text);padding:11px 12px}.btn{cursor:pointer;font-weight:800}.btn.primary{background:var(--accent);color:#062027;border-color:transparent}.btn.ghost{background:#14313b}.btn:disabled{opacity:.45;cursor:not-allowed}
-main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);gap:18px}.game,.side{background:rgba(13,35,44,.9);border:1px solid #214653;border-radius:22px;padding:18px;box-shadow:0 18px 50px rgba(0,0,0,.2)}
-.status{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.status strong{font-size:1.05rem}.score{font-size:1.3rem;font-weight:900;color:var(--accent)}
-.word-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.chip{background:#12323d;border:1px solid #28505c;color:#cae9ef;border-radius:999px;padding:5px 9px;font-size:.88rem}
-.board-wrap{overflow-x:auto;padding-bottom:8px}.board{display:grid;gap:7px;min-width:max-content;justify-content:center}.row{display:flex;gap:6px;justify-content:center}.tile{width:46px;height:52px;border-radius:8px;border:2px solid #31505a;background:#0b1a20;display:grid;place-items:center;font-weight:900;font-size:1.25rem;text-transform:uppercase;transition:.2s}.tile.space{border:none;background:transparent;width:20px}.tile.correct{background:var(--green);border-color:var(--green);color:#061810}.tile.present{background:var(--yellow);border-color:var(--yellow);color:#241d03}.tile.absent{background:var(--grey);border-color:var(--grey)}
-.guess-area{display:grid;grid-template-columns:1fr auto;gap:10px;margin:12px 0}.guess-area input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid #315863;background:#081b22;color:white;text-transform:uppercase;letter-spacing:.05em}.message{min-height:24px;color:var(--muted);font-weight:700}.message.error{color:var(--danger)}
-.keyboard{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:10px}.key{padding:10px 2px;border:none;border-radius:7px;background:#36515a;color:#fff;font-weight:800}.key.correct{background:var(--green)}.key.present{background:var(--yellow);color:#1b1700}.key.absent{background:#25363d;color:#8ca0a7}
-.side h2{margin-top:0}.evidence{display:grid;gap:9px}.evidence-item{background:#0a1d24;border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px}.evidence-item .label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}.locked{opacity:.45;filter:saturate(.4)}
-.result{margin-top:16px;background:#0a1d24;border:1px solid #2a5663;border-radius:16px;padding:15px}.result h3{margin:0 0 6px;font-size:1.5rem}.result p{line-height:1.55}.examples{margin:.5rem 0 0;padding-left:1.2rem}.result.hidden{display:none}.scoreline{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}.scorebox{background:#14313b;border-radius:10px;padding:8px 10px;font-weight:800}
-.footer-note{margin-top:14px;color:var(--muted);font-size:.9rem}
-@media(max-width:800px){main{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr}.toolbar .btn{grid-column:1/-1}.tile{width:38px;height:46px}.keyboard{grid-template-columns:repeat(7,1fr)}}
+:root{--bg:#07151b;--panel:#0d232c;--panel2:#12323d;--text:#eef8fb;--muted:#9fc0cb;--green:#36b37e;--yellow:#f2c94c;--grey:#465b63;--accent:#66d9c8;--danger:#ff8585;--focus:#fff}
+*{box-sizing:border-box}html{overflow-x:hidden}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(160deg,#061117,#0a2430 58%,#08202a);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{max-width:1220px;margin:0 auto;padding:14px max(12px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px}.brand h1{margin:0;font-size:clamp(2rem,4vw,3.5rem);letter-spacing:.08em}.brand p{margin:.1rem 0 0;color:var(--muted)}.badge{background:#153744;border:1px solid #2f5b69;padding:7px 11px;border-radius:999px;font-weight:700;white-space:nowrap}
+.toolbar{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(130px,.7fr) minmax(120px,.65fr) minmax(115px,.55fr) auto auto;gap:8px;background:rgba(13,35,44,.92);padding:10px;border-radius:16px;border:1px solid #214653;margin-bottom:12px;position:sticky;top:0;z-index:5;backdrop-filter:blur(10px)}
+select,button,input{font:inherit}.select,.btn{min-width:0;border-radius:11px;border:1px solid #315863;background:#0b1d24;color:var(--text);padding:10px 11px}.btn{cursor:pointer;font-weight:800}.btn.primary{background:var(--accent);color:#062027;border-color:transparent}.btn.ghost{background:#14313b}.btn:disabled,.select:disabled{opacity:.5;cursor:not-allowed}.btn:focus-visible,.select:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.setup-note{margin:-3px 2px 10px;color:var(--muted);font-size:.9rem}.setup-note.hidden{display:none}
+main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.72fr);gap:14px;min-width:0}.game,.side{min-width:0;background:rgba(13,35,44,.92);border:1px solid #214653;border-radius:20px;padding:15px;box-shadow:0 18px 50px rgba(0,0,0,.2)}
+.status{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:9px}.status strong{font-size:1.05rem}.status-right{display:flex;align-items:center;gap:10px}.score{font-size:1.22rem;font-weight:900;color:var(--accent)}.timer{font-size:1.2rem;font-weight:900;font-variant-numeric:tabular-nums}.timer.urgent{color:var(--danger)}
+.word-meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}.chip{background:#12323d;border:1px solid #28505c;color:#cae9ef;border-radius:999px;padding:4px 8px;font-size:.84rem}.active-team{border-color:var(--accent);color:#fff}
+.board-wrap{max-width:100%;overflow-x:auto;padding-bottom:6px}.board{display:grid;gap:5px;min-width:0;justify-content:center}.row{display:flex;gap:5px;justify-content:center;min-width:0}.tile{position:relative;width:42px;height:47px;flex:0 0 auto;border-radius:7px;border:2px solid #31505a;background:#0b1a20;display:grid;place-items:center;font-weight:900;font-size:1.15rem;text-transform:uppercase}.tile.space{border:none;background:transparent;width:13px}.tile.correct{background:var(--green);border-color:var(--green);color:#061810}.tile.present{background:var(--yellow);border-color:var(--yellow);color:#241d03}.tile.absent{background:var(--grey);border-color:var(--grey)}.tile.given,.tile.literal{border-color:var(--accent);color:var(--accent);background:#102d37}.tile.literal{width:20px}.state-mark{position:absolute;right:2px;bottom:-1px;font-size:.6rem;line-height:1}.board.long .tile{width:31px;height:43px;font-size:1rem}.board.very-long .tile{width:27px;height:41px;font-size:.9rem}.board.long .tile.space,.board.very-long .tile.space{width:9px}
+.guess-area{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:9px 0}.guess-area input{min-width:0;width:100%;padding:12px 13px;border-radius:11px;border:1px solid #315863;background:#081b22;color:white;text-transform:uppercase;letter-spacing:.05em}.message{min-height:23px;color:var(--muted);font-weight:700}.message.error{color:var(--danger)}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin:7px 0}.action-row .btn{padding:8px 10px;font-size:.9rem}.keyboard{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin-top:8px}.key{min-width:0;min-height:38px;padding:7px 2px;border:1px solid transparent;border-radius:7px;background:#36515a;color:#fff;font-weight:800}.key.correct{background:var(--green);color:#061810}.key.present{background:var(--yellow);color:#1b1700}.key.absent{background:#25363d;color:#a9bac0}.key.wide{grid-column:span 2;font-size:.78rem}
+.side h2{margin:0 0 9px}.team-panel{margin-bottom:14px}.team-panel.hidden{display:none}.scoreboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0}.team-card{background:#0a1d24;border:2px solid transparent;border-radius:10px;padding:8px}.team-card.active{border-color:var(--accent)}.team-card strong,.team-card span{display:block}.team-card span{font-size:1.25rem;font-weight:900;color:var(--accent)}
+.evidence{display:grid;gap:7px}.evidence-item{background:#0a1d24;border-left:4px solid var(--accent);border-radius:9px;padding:8px 10px}.evidence-item .label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}.locked{opacity:.58;filter:saturate(.4)}
+.result{margin-top:12px;background:#0a1d24;border:1px solid #2a5663;border-radius:14px;padding:13px}.result h3{margin:0 0 5px;font-size:1.4rem}.result p{line-height:1.48}.examples{margin:.4rem 0 0;padding-left:1.2rem}.result.hidden,.welcome.hidden{display:none}.scoreline{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.scorebox{background:#14313b;border-radius:9px;padding:7px 9px;font-weight:800}.reflection{border-top:1px solid #28505c;padding-top:9px}.footer-note{margin-top:10px;color:var(--muted);font-size:.86rem}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.presentation #scisimsSiteNav,.presentation header,.presentation .footer-note{display:none!important}.presentation.has-scisims-simulation-nav{padding-top:0!important}.presentation .app{max-width:none;padding-top:6px}.presentation .toolbar{position:static}.presentation .game,.presentation .side{padding:11px}.presentation .tile{height:39px}.presentation .board{gap:3px}.presentation .row{gap:4px}
+@media(max-width:900px){.toolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}.toolbar .primary{grid-column:span 2}main{grid-template-columns:minmax(0,1fr)}.side{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:14px}.side>h2{grid-column:1/-1}.team-panel{margin:0}}
+@media(max-width:600px){.app{padding-left:8px;padding-right:8px}header{padding:0 4px}.brand h1{font-size:2rem}.toolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr);position:static}.toolbar #moduleSelect,.toolbar .primary{grid-column:1/-1}.toolbar .btn{width:100%}.setup-note{padding:0 4px}.game,.side{padding:10px;border-radius:15px}.side{display:block}.team-panel{margin-bottom:12px}.tile{width:37px;height:43px}.row{gap:4px}.board.long .tile{width:24px;height:38px;font-size:.82rem}.board.very-long .tile{width:17px;height:35px;font-size:.7rem;border-width:1px}.board.long .tile.space,.board.very-long .tile.space{width:5px}.keyboard{grid-template-columns:repeat(7,minmax(0,1fr))}.key{min-height:42px}.guess-area{grid-template-columns:minmax(0,1fr) auto}.guess-area .btn{padding-left:10px;padding-right:10px}.scoreboard{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-height:760px) and (min-width:901px){header{display:none}.toolbar{position:static}.tile{height:38px}.board{gap:3px}.row{gap:4px}.game,.side{padding:11px}.keyboard{margin-top:5px}.key{min-height:32px;padding:4px 2px}}
 </style>
 </head>
 <body>
 <div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
 <div class="app">
-<header>
-  <div class="brand"><h1>SCIWORD</h1><p>Decode the science concept.</p></div>
-  <div class="badge">Draft 1</div>
-</header>
-<section class="toolbar">
-  <select id="moduleSelect" class="select" aria-label="Curriculum module"></select>
-  <select id="difficultySelect" class="select" aria-label="Difficulty">
-    <option value="foundation">Foundation</option>
-    <option value="standard" selected>Standard</option>
-    <option value="challenge">Challenge</option>
-    <option value="insane">Insane</option>
-  </select>
-  <button id="newBtn" class="btn primary">New Word</button>
+<header><div class="brand"><h1>SCIWORD</h1><p>Decode the science concept.</p></div><div class="badge">Concept Test 2</div></header>
+<section class="toolbar" aria-label="Round setup">
+  <label class="sr-only" for="moduleSelect">Curriculum module</label><select id="moduleSelect" class="select"></select>
+  <label class="sr-only" for="difficultySelect">Level</label><select id="difficultySelect" class="select"><option value="easy">Easy · 5 letters + one given</option><option value="standard" selected>Standard · 5 letters</option><option value="hard">Hard · any length</option></select>
+  <label class="sr-only" for="playModeSelect">Play mode</label><select id="playModeSelect" class="select"><option value="solo">Solo</option><option value="teams">Teams</option></select>
+  <label class="sr-only" for="timerSelect">Round timer</label><select id="timerSelect" class="select"><option value="0">Timer off</option><option value="60">60 seconds</option><option value="90">90 seconds</option><option value="120">120 seconds</option></select>
+  <button id="newBtn" class="btn primary">Start Round</button><button id="presentationBtn" class="btn ghost" aria-pressed="false">Classroom View</button>
 </section>
+<div id="setupNote" class="setup-note">Choose the round settings, then start. Settings lock until the round ends.</div>
 <main>
-  <section class="game">
-    <div class="status"><strong id="attemptText">Attempt 1 of 6</strong><div class="score" id="scoreText">0 pts</div></div>
-    <div class="word-meta"><span class="chip" id="lengthChip"></span><span class="chip" id="conceptChip"></span><span class="chip" id="baseChip"></span></div>
-    <div class="board-wrap"><div id="board" class="board"></div></div>
-    <div class="guess-area"><input id="guessInput" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Enter your guess"/><button id="guessBtn" class="btn primary">Guess</button></div>
-    <div id="message" class="message"></div>
-    <div id="keyboard" class="keyboard"></div>
-    <div id="result" class="result hidden"></div>
-    <div class="footer-note">Spaces and punctuation are supplied automatically. Guess letters only.</div>
+  <section class="game" aria-label="SciWord game">
+    <div class="status"><strong id="attemptText">Ready to play</strong><div class="status-right"><span id="timerText" class="timer" aria-label="Timer"></span><span class="score" id="scoreText">—</span></div></div>
+    <div class="word-meta"><span class="chip" id="lengthChip">Choose a level</span><span class="chip" id="conceptChip">Six attempts</span><span class="chip" id="baseChip">Science clues included</span><span class="chip active-team" id="activeTeamChip" hidden></span></div>
+    <div id="welcome" class="welcome"><p>Easy supplies one correctly positioned letter. Standard uses five-letter concepts. Hard allows longer and multiword science terms.</p></div>
+    <div class="board-wrap"><div id="board" class="board" role="grid" aria-label="Guess board"></div></div>
+    <div class="guess-area"><label class="sr-only" for="guessInput">Enter your science word guess</label><input id="guessInput" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Enter your guess" disabled/><button id="guessBtn" class="btn primary" disabled>Guess</button></div>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+    <div class="action-row"><button id="clueBtn" class="btn ghost" disabled>Reveal clue (−150)</button><button id="nextTeamBtn" class="btn primary" hidden disabled>Pass to Next Team →</button><button id="pauseBtn" class="btn ghost" hidden disabled>Pause Timer</button></div>
+    <div id="keyboard" class="keyboard" aria-label="On-screen keyboard"></div>
+    <div id="result" class="result hidden" tabindex="-1" aria-live="polite"></div>
+    <div class="footer-note">Spaces and punctuation are supplied automatically. Use the clue button instead of sacrificing an attempt for help.</div>
   </section>
-  <aside class="side">
-    <h2>Evidence Panel</h2>
-    <div id="evidence" class="evidence"></div>
+  <aside class="side" aria-label="Round information">
+    <div id="teamPanel" class="team-panel hidden"><h2>Teams</h2><label for="teamCountSelect">Teams</label> <select id="teamCountSelect" class="select"><option>2</option><option>3</option><option>4</option></select> <label for="teamRuleSelect">Turn style</label> <select id="teamRuleSelect" class="select"><option value="rotate">Shared Guess Turns</option><option value="streak">Play Till Lose</option></select><div id="scoreboard" class="scoreboard"></div><button id="resetScoresBtn" class="btn ghost">Reset scores</button></div>
+    <div><h2>Evidence Panel</h2><div id="evidence" class="evidence"></div></div>
   </aside>
 </main>
 </div>
 <script>
-const BANK = [
- {module:'7.1 Observing the Universe',word:'EVIDENCE',category:'Nature of science',conceptDifficulty:2,definition:'Information gathered through observation, measurement or investigation that can be used to support or challenge a scientific explanation.',examples:['Measurements from an experiment can provide evidence for a relationship between variables.','Astronomers use light from distant stars as evidence about their composition.'],clues:['Branch: Nature of science','It is used to support or challenge an explanation.','It may come from observations, measurements or experiments.','Scientific claims should be based on this rather than opinion.']},
+const CURATED_BANK = [
  {module:'7.1 Observing the Universe',word:'MODEL',category:'Nature of science',conceptDifficulty:1,definition:'A simplified representation of an object, system or process that scientists use to describe, explain or predict phenomena.',examples:['A diagram of the Solar System is a model.','Particle diagrams are models used to represent matter.'],clues:['Branch: Nature of science','It is a representation, not the real thing.','Scientists may change it when new evidence is found.','It can be physical, mathematical, conceptual or computer-based.']},
+ {module:'7.1 Observing the Universe',word:'EARTH',category:'Space science',conceptDifficulty:1,definition:'The third planet from the Sun and the only known planet that supports life.',examples:['Earth completes one orbit of the Sun in approximately one year.','Earth’s rotation produces the cycle of day and night.'],clues:['Branch: Space science','It is a rocky planet.','It has one natural satellite.','It is the third planet from the Sun.']},
+ {module:'7.1 Observing the Universe',word:'ORBIT',category:'Space science',conceptDifficulty:2,definition:'The curved path of an object around another object due to gravity.',examples:['Earth follows an orbit around the Sun.','The Moon’s orbit around Earth is slightly elliptical.'],clues:['Branch: Space science','Gravity maintains this path.','Moons and artificial satellites follow one.','Earth completes one around the Sun each year.']},
+ {module:'7.1 Observing the Universe',word:'COMET',category:'Space science',conceptDifficulty:2,definition:'A small icy Solar System body that releases gas and dust when it approaches the Sun.',examples:['A comet may develop a glowing coma and tails near the Sun.','Comet tails point generally away from the Sun.'],clues:['Branch: Space science','It contains ice, dust and rock.','It follows an orbit around the Sun.','Near the Sun it may develop a coma and tails.']},
+ {module:'7.1 Observing the Universe',word:'EVIDENCE',category:'Nature of science',conceptDifficulty:2,definition:'Information gathered through observation, measurement or investigation that can support or challenge a scientific explanation.',examples:['Measurements from an experiment can provide evidence for a relationship between variables.','Astronomers use light from distant stars as evidence about their composition.'],clues:['Branch: Nature of science','It is used to support or challenge an explanation.','It may come from observations, measurements or experiments.','Scientific claims should be based on this rather than opinion.']},
  {module:'7.1 Observing the Universe',word:'THEORY',category:'Nature of science',conceptDifficulty:2,definition:'A well-supported scientific explanation that accounts for a broad range of observations and evidence.',examples:['The theory of evolution explains changes in populations over generations.','Scientific theories can be refined when new evidence becomes available.'],clues:['Branch: Nature of science','It explains a broad range of observations.','It is supported by substantial evidence.','In science, this word does not mean a casual guess.']},
  {module:'7.1 Observing the Universe',word:'GRAVITY',category:'Space science',conceptDifficulty:1,definition:'The attractive interaction between objects with mass.',examples:['Gravity keeps planets in orbit around the Sun.','Earth’s gravity gives objects weight and causes unsupported objects to accelerate towards the ground.'],clues:['Branch: Physics / space science','It is a non-contact interaction.','It acts between objects with mass.','It helps keep planets and moons in orbit.']},
  {module:'7.1 Observing the Universe',word:'TELESCOPE',category:'Space science',conceptDifficulty:1,definition:'An instrument designed to collect and focus electromagnetic radiation from distant objects so they can be observed or measured.',examples:['Optical telescopes collect visible light.','Radio telescopes detect radio waves from objects in space.'],clues:['Branch: Space science','It is an observational instrument.','Different versions detect different parts of the electromagnetic spectrum.','Astronomers use it to study distant objects.']},
  {module:'7.1 Observing the Universe',word:'HELIOCENTRIC',category:'Space science',conceptDifficulty:3,definition:'A model in which the Sun is at or near the centre of the Solar System, with planets orbiting it.',examples:['The modern Solar System model is heliocentric.','Copernicus proposed a heliocentric model that challenged the dominant geocentric view in Europe.'],clues:['Branch: Space science','This describes a model of the Solar System.','Its name refers to the Sun.','In this model, planets orbit the Sun.']},
  {module:'7.1 Observing the Universe',word:'SOLAR SYSTEM',category:'Space science',conceptDifficulty:1,definition:'The Sun and all objects gravitationally bound to it, including planets, dwarf planets, moons, asteroids and comets.',examples:['Earth is one of eight planets in the Solar System.','Comets orbit the Sun as part of the Solar System.'],clues:['Branch: Space science','It contains one star.','It includes planets, moons, asteroids and comets.','Earth is part of it.']},
- {module:'7.1 Observing the Universe',word:'INTERDISCIPLINARY',category:'Nature of science',conceptDifficulty:4,definition:'Involving knowledge, methods or perspectives from more than one discipline to investigate or solve a problem.',examples:['Climate science combines ideas from physics, chemistry, biology and Earth science.','Astrobiology draws on astronomy, biology, geology and chemistry.'],clues:['Branch: Nature of science','It involves more than one field of knowledge.','Modern scientific problems often require this approach.','Climate science is a good example.']},
+ {module:'7.1 Observing the Universe',word:'INTERDISCIPLINARY',category:'Nature of science',conceptDifficulty:4,definition:'Involving knowledge, methods or perspectives from more than one discipline to investigate or solve a problem.',examples:['Climate science combines ideas from physics, chemistry, biology and Earth science.','Astrobiology draws on astronomy, biology, geology and chemistry.'],clues:['Branch: Nature of science','It involves more than one field of knowledge.','Modern scientific problems often require this approach.','Climate science is a good example.']}
 ];
-
-const MAX_ATTEMPTS=6;
-let current=null, attempts=[], keyState={}, finished=false;
-const $=id=>document.getElementById(id);
-
+const BANK_FILES=['nsw-2023/year-7.json','nsw-2023/year-8.json','nsw-2023/year-9.json','nsw-2023/year-10.json','nsw-2017/biology.json','nsw-2017/chemistry.json','nsw-2017/earth-and-environmental-science.json','nsw-2017/investigating-science.json','nsw-2017/physics.json','nsw-2017/science-extension.json'];
+const CURATED_BY_TERM=new Map(CURATED_BANK.map(item=>[normalise(item.word),item]));
+let BANK=CURATED_BANK.map(item=>({...item,scopeId:'prototype',scopeLabel:'Year 7 Science',moduleKey:'prototype-7-1',moduleLabel:item.module,year:7,context:['Year 7 Science',item.module,item.category]}));
+const MAX_ATTEMPTS=6,$=id=>document.getElementById(id);
+let current=null,attempts=[],keyState={},finished=false,roundMode='standard',playMode='solo',teamRule='rotate',givenIndex=-1,finalScore=0,extraClues=0;
+let timerId=null,timerSeconds=0,timerEndsAt=0,timerPaused=false,activeTeam=0,teamScores=[0,0,0,0];
 function normalise(s){return s.toUpperCase().replace(/[^A-Z]/g,'')}
-function displayPattern(word){return [...word.toUpperCase()]}
-function basePoints(len){
-  if(len<=4) return 1500; if(len===5) return 1300; if(len===6) return 1150; if(len===7) return 1000;
-  if(len===8) return 900; if(len===9) return 800; if(len===10) return 725; if(len<=12) return 650; return 600;
-}
-function difficultyMultiplier(){return {foundation:0.9,standard:1,challenge:1.15,insane:1.35}[$('difficultySelect').value]}
-function conceptMultiplier(n){return [1,1,1.08,1.17,1.28][n]||1}
-function calculateScore(){
-  if(!finished || normalise(attempts.length ? attempts[attempts.length-1] : '')!==normalise(current.word)) return 0;
-  const len=normalise(current.word).length;
-  const earlyBonus=Math.max(0,(MAX_ATTEMPTS-attempts.length))*120;
-  return Math.round((basePoints(len)+earlyBonus)*difficultyMultiplier()*conceptMultiplier(current.conceptDifficulty));
-}
-function modules(){return [...new Set(BANK.map(x=>x.module))]}
-function initModules(){ $('moduleSelect').innerHTML=modules().map(m=>`<option>${m}</option>`).join('') }
-function pickWord(){
-  const list=BANK.filter(x=>x.module===$('moduleSelect').value);
-  let choices=list.filter(x=>!current||x.word!==current.word); if(!choices.length) choices=list;
-  current=choices[Math.floor(Math.random()*choices.length)]; attempts=[]; keyState={}; finished=false; $('guessInput').value=''; $('message').textContent=''; $('result').classList.add('hidden'); render(); $('guessInput').focus();
-}
-function compare(guess,target){
-  guess=normalise(guess); target=normalise(target); const res=Array(target.length).fill('absent'), counts={};
-  for(let i=0;i<target.length;i++) counts[target[i]]=(counts[target[i]]||0)+1;
-  for(let i=0;i<target.length;i++) if(guess[i]===target[i]){res[i]='correct'; counts[guess[i]]--}
-  for(let i=0;i<target.length;i++) if(res[i]!=='correct' && counts[guess[i]]>0){res[i]='present'; counts[guess[i]]--}
-  return res;
-}
-function mapLettersToDisplay(word,letters,statuses){
-  let idx=0; return displayPattern(word).map(ch=>{
-    if(/[A-Z]/.test(ch)){const obj={ch:letters[idx]||'',state:statuses?statuses[idx]:''};idx++;return obj}
-    return {ch,state:'space'};
-  });
-}
-function updateKeyState(guess,statuses){
-  const rank={absent:1,present:2,correct:3}; [...normalise(guess)].forEach((ch,i)=>{if(!keyState[ch]||rank[statuses[i]]>rank[keyState[ch]])keyState[ch]=statuses[i]})
-}
-function revealedClues(){
-  const d=$('difficultySelect').value, n=attempts.length;
-  const shift={foundation:0,standard:1,challenge:2,insane:3}[d];
-  return Math.max(0,Math.min(current.clues.length,n+1-shift));
-}
-function renderEvidence(){
-  const count=revealedClues();
-  $('evidence').innerHTML=current.clues.map((c,i)=>`<div class="evidence-item ${i<count?'':'locked'}"><div class="label">${i<count?'Evidence '+(i+1):'Locked clue'}</div><div>${i<count?c:'Complete another attempt to reveal more evidence.'}</div></div>`).join('');
-}
-function renderBoard(){
-  const word=current.word, target=normalise(word), needed=Math.max(MAX_ATTEMPTS,attempts.length);
-  let html='';
-  for(let r=0;r<needed;r++){
-    const g=attempts[r]||'', letters=[...normalise(g)], statuses=g?compare(g,target):null, mapped=mapLettersToDisplay(word,letters,statuses);
-    html+=`<div class="row">${mapped.map(o=>`<div class="tile ${o.state||''}">${o.ch===' '||o.ch==='-'?'':o.ch}</div>`).join('')}</div>`;
-  }
-  $('board').innerHTML=html;
-}
-function renderKeyboard(){
- const letters='QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
- $('keyboard').innerHTML=letters.map(l=>`<button type="button" class="key ${keyState[l]||''}" data-key="${l}">${l}</button>`).join('');
- Array.prototype.forEach.call(document.querySelectorAll('.key'), function(btn){
-   btn.addEventListener('click', function(){
-     if(finished) return;
-     $('guessInput').value += btn.getAttribute('data-key');
-     $('guessInput').focus();
-   });
- });
-}
-function renderResult(){
- if(!finished) return;
- const solved=normalise(attempts.length ? attempts[attempts.length-1] : '')===normalise(current.word), score=calculateScore();
- $('result').classList.remove('hidden');
- $('result').innerHTML=`<h3>${solved?'Solved!':'Answer'} — ${current.word}</h3>
- <p><strong>Definition:</strong> ${current.definition}</p>
- <p><strong>Examples:</strong></p><ul class="examples">${current.examples.map(x=>`<li>${x}</li>`).join('')}</ul>
- <div class="scoreline"><div class="scorebox">${solved?attempts.length+'/'+MAX_ATTEMPTS:'Not solved'}</div><div class="scorebox">${score.toLocaleString()} points</div><div class="scorebox">Concept difficulty ${'★'.repeat(current.conceptDifficulty)}${'☆'.repeat(5-current.conceptDifficulty)}</div></div>`;
-}
-function render(){
- const len=normalise(current.word).length;
- $('lengthChip').textContent=`${len} letters`;$('conceptChip').textContent=`Concept ${'★'.repeat(current.conceptDifficulty)}${'☆'.repeat(5-current.conceptDifficulty)}`;$('baseChip').textContent=`Base ${basePoints(len)} pts`;
- $('attemptText').textContent=finished?'Round complete':`Attempt ${attempts.length+1} of ${MAX_ATTEMPTS}`;$('scoreText').textContent=finished?`${calculateScore().toLocaleString()} pts`:'—';
- renderBoard();renderEvidence();renderKeyboard();renderResult(); $('guessBtn').disabled=finished;$('guessInput').disabled=finished;
-}
-function submitGuess(){
- if(finished)return; const guess=$('guessInput').value.trim(); const g=normalise(guess), target=normalise(current.word);
- $('message').className='message';
- if(g.length!==target.length){$('message').textContent=`Enter ${target.length} letters. Spaces and punctuation do not count.`;$('message').classList.add('error');return}
- if(!/^[A-Za-z\s-]+$/.test(guess)){$('message').textContent='Use letters only.';$('message').classList.add('error');return}
- attempts.push(guess.toUpperCase()); const statuses=compare(guess,target);updateKeyState(guess,statuses);$('guessInput').value='';
- if(g===target){finished=true;$('message').textContent='Concept solved.'}
- else if(attempts.length>=MAX_ATTEMPTS){finished=true;$('message').textContent=`The answer was ${current.word}.`}
- else $('message').textContent='Evidence updated.';
- render(); if(!finished)$('guessInput').focus();
-}
-
-$('guessBtn').addEventListener('click',submitGuess);$('guessInput').addEventListener('keydown',function(e){if(e.key==='Enter')submitGuess()});$('newBtn').addEventListener('click',pickWord);$('moduleSelect').addEventListener('change',pickWord);$('difficultySelect').addEventListener('change',render);
-initModules();pickWord();
+function modeMultiplier(){return {easy:.8,standard:1,hard:1.3}[roundMode]}
+function basePoints(len){return 650+(Math.min(len,14)*85)}
+function setMessage(text,error=false){$('message').textContent=text;$('message').className='message'+(error?' error':'')}
+function roundActive(){return current&&!finished}
+function setSetupLocked(locked){['moduleSelect','difficultySelect','playModeSelect','timerSelect','teamCountSelect','teamRuleSelect'].forEach(id=>$(id).disabled=locked);$('setupNote').classList.toggle('hidden',locked)}
+function eligibleWords(mode=$('difficultySelect').value){const selected=$('moduleSelect').value,list=selected.startsWith('scope:')?BANK.filter(x=>x.scopeId===selected.slice(6)):BANK.filter(x=>x.moduleKey===selected.slice(7));return mode==='hard'?list:list.filter(x=>normalise(x.word).length===5&&!/[\s-]/.test(x.word))}
+function startRound(){stopTimer();roundMode=$('difficultySelect').value;playMode=$('playModeSelect').value;teamRule=$('teamRuleSelect').value;const list=eligibleWords(roundMode);if(!list.length){setMessage('This selection has no five-letter concepts. Choose Hard or a broader course/year collection.',true);return}const choices=list.filter(x=>!current||normalise(x.word)!==normalise(current.word));current=(choices.length?choices:list)[Math.floor(Math.random()*(choices.length||list.length))];attempts=[];keyState={};finished=false;finalScore=0;extraClues=0;givenIndex=roundMode==='easy'?Math.floor(Math.random()*normalise(current.word).length):-1;$('guessInput').value='';$('result').classList.add('hidden');$('welcome').classList.add('hidden');setMessage(playMode==='teams'&&teamRule==='streak'?`Team ${activeTeam+1} plays until it loses this word.`:'Round started. Use the evidence as well as the letter pattern.');setSetupLocked(true);$('newBtn').textContent='New Round';timerSeconds=Number($('timerSelect').value);if(timerSeconds)startTimer();render();$('guessInput').focus()}
+function abandonOrStart(){if(roundActive()&&!window.confirm('Start a new round and abandon this word?'))return;startRound()}
+function stopTimer(){if(timerId)clearInterval(timerId);timerId=null}
+function startTimer(){timerPaused=false;timerEndsAt=Date.now()+timerSeconds*1000;timerId=setInterval(tickTimer,250);$('pauseBtn').hidden=false;$('pauseBtn').disabled=false;$('pauseBtn').textContent='Pause Timer';tickTimer()}
+function tickTimer(){if(timerPaused)return;timerSeconds=Math.max(0,Math.ceil((timerEndsAt-Date.now())/1000));renderTimer();if(timerSeconds<=0)finishRound(false,'Time is up.')}
+function renderTimer(){const clock=timerSeconds?`${Math.floor(timerSeconds/60)}:${String(timerSeconds%60).padStart(2,'0')}`:'';$('timerText').textContent=clock+(finished&&clock?' left':'');$('timerText').classList.toggle('urgent',!finished&&timerSeconds>0&&timerSeconds<=10);$('timerText').setAttribute('aria-label',timerSeconds?(finished?`${timerSeconds} seconds remained`:`${timerSeconds} seconds remaining`):'')}
+function toggleTimer(){if(!roundActive()||!Number($('timerSelect').value))return;if(timerPaused){timerPaused=false;timerEndsAt=Date.now()+timerSeconds*1000;$('pauseBtn').textContent='Pause Timer'}else{timerPaused=true;$('pauseBtn').textContent='Resume Timer'}renderTimer()}
+function compare(guess,target){guess=normalise(guess);target=normalise(target);const res=Array(target.length).fill('absent'),counts={};for(const ch of target)counts[ch]=(counts[ch]||0)+1;for(let i=0;i<target.length;i++)if(guess[i]===target[i]){res[i]='correct';counts[guess[i]]--}for(let i=0;i<target.length;i++)if(res[i]!=='correct'&&counts[guess[i]]>0){res[i]='present';counts[guess[i]]--}return res}
+function updateKeyState(guess,statuses){const rank={absent:1,present:2,correct:3};[...normalise(guess)].forEach((ch,i)=>{if(!keyState[ch]||rank[statuses[i]]>rank[keyState[ch]])keyState[ch]=statuses[i]})}
+function revealedClues(){if(finished)return current.clues.length;const automatic=1+(attempts.length>=2?1:0)+(attempts.length>=4?1:0);return Math.min(current.clues.length,automatic+extraClues)}
+function revealClue(){if(!roundActive()||revealedClues()>=current.clues.length)return;extraClues++;setMessage('Another evidence clue was revealed. 150 points will be deducted if you solve it.');render()}
+function renderEvidence(){if(!current){$('evidence').innerHTML='<div class="evidence-item">Evidence will appear when the round starts.</div>';return}const count=revealedClues();$('evidence').innerHTML=current.clues.map((c,i)=>`<div class="evidence-item ${i<count?'':'locked'}"><div class="label">${i<count?'Evidence '+(i+1):'Locked clue'}</div><div>${i<count?c:'More evidence unlocks after attempts 2 and 4.'}</div></div>`).join('')}
+function tileMarkup(ch,state,row,col){const symbols={correct:'✓',present:'●',absent:'×',given:'◆'},names={correct:'correct position',present:'present elsewhere',absent:'not in word',given:'given letter',literal:'supplied character'};if(state==='space')return '<div class="tile space" aria-hidden="true"></div>';const shown=ch||((row>=attempts.length&&col===givenIndex)?normalise(current.word)[givenIndex]:'');const actualState=state||((row>=attempts.length&&col===givenIndex)?'given':'');const label=shown?`${shown}, ${names[actualState]||'empty'}`:'empty';return `<div class="tile ${actualState}" role="gridcell" aria-label="${label}">${shown}${symbols[actualState]?`<span class="state-mark" aria-hidden="true">${symbols[actualState]}</span>`:''}</div>`}
+function renderBoard(){if(!current){$('board').innerHTML='';return}const target=normalise(current.word),display=[...current.word.toUpperCase()];$('board').className='board '+(target.length>12?'very-long':target.length>8?'long':'');let html='';for(let r=0;r<MAX_ATTEMPTS;r++){const submitted=r<attempts.length,isDraft=r===attempts.length&&roundActive(),guess=submitted?attempts[r]:(isDraft?$('guessInput').value:''),letters=[...normalise(guess)],states=submitted?compare(guess,target):null;let letterIndex=0,cells='';for(const ch of display){if(/[A-Z]/.test(ch)){cells+=tileMarkup(letters[letterIndex]||'',states?states[letterIndex]:'',r,letterIndex);letterIndex++}else cells+=/\s/.test(ch)?tileMarkup('','space',r,letterIndex):tileMarkup(ch,'literal',r,letterIndex)}html+=`<div class="row" role="row" aria-label="Attempt ${r+1}${isDraft?', current guess':''}">${cells}</div>`}$('board').innerHTML=html}
+function handleDraftInput(){if(!roundActive())return;const input=$('guessInput');if(roundMode==='easy'){let value=normalise(input.value),given=normalise(current.word)[givenIndex];if(value.length>givenIndex&&value[givenIndex]!==given)value=value.slice(0,givenIndex)+given+value.slice(givenIndex);input.value=value.slice(0,normalise(current.word).length)}renderBoard()}
+function editGuess(action){if(!roundActive())return;const input=$('guessInput');if(action==='backspace')input.value=input.value.slice(0,-1);else input.value+=action;handleDraftInput();input.focus()}
+function renderKeyboard(){const letters='QWERTYUIOPASDFGHJKLZXCVBNM'.split('');$('keyboard').innerHTML=letters.map(l=>`<button type="button" class="key ${keyState[l]||''}" data-key="${l}" aria-label="${l}${keyState[l]?', '+keyState[l]:''}" ${roundActive()?'':'disabled'}>${l}</button>`).join('')+`<button type="button" class="key wide" data-action="backspace" ${roundActive()?'':'disabled'}>⌫ Delete</button><button type="button" class="key wide" data-action="enter" ${roundActive()?'':'disabled'}>Enter</button>`}
+function calculateScore(){if(!finished||normalise(attempts.at(-1)||'')!==normalise(current.word))return 0;const attemptBonus=(MAX_ATTEMPTS-attempts.length)*110,timeBonus=Number($('timerSelect').value)?timerSeconds*3:0;return Math.max(100,Math.round((basePoints(normalise(current.word).length)+attemptBonus+timeBonus)*modeMultiplier()*(1+(current.conceptDifficulty-1)*.08)-extraClues*150))}
+function finishRound(solved,message){if(finished)return;finished=true;stopTimer();if(solved){finalScore=calculateScore();if(playMode==='teams')teamScores[activeTeam]+=finalScore}else{finalScore=0;if(playMode==='teams'&&teamRule==='streak'){activeTeam=(activeTeam+1)%teamCount();message+=` Team ${activeTeam+1} plays next.`}}setMessage(message);setSetupLocked(false);render();updateAvailability();$('result').focus()}
+function submitGuess(){if(!roundActive())return;const guess=$('guessInput').value.trim(),g=normalise(guess),target=normalise(current.word);if(!/^[A-Za-z\s-]+$/.test(guess)){setMessage('Use letters only.',true);return}if(g.length!==target.length){setMessage(`Enter ${target.length} letters. Spaces and punctuation do not count.`,true);return}if(givenIndex>=0&&g[givenIndex]!==target[givenIndex]){setMessage(`Keep the given letter ${target[givenIndex]} in position ${givenIndex+1}.`,true);return}attempts.push(guess.toUpperCase());const states=compare(guess,target);updateKeyState(guess,states);$('guessInput').value='';if(g===target)finishRound(true,'Concept solved.');else if(attempts.length>=MAX_ATTEMPTS)finishRound(false,`The answer was ${current.word}.`);else{if(playMode==='teams'&&teamRule==='rotate'){activeTeam=(activeTeam+1)%teamCount();setMessage(`Not solved. Team ${activeTeam+1}'s turn.`)}else if(playMode==='teams')setMessage(`Not solved. Team ${activeTeam+1} keeps control until the word is lost.`);else setMessage('Evidence updated.');render();$('guessInput').focus()}}
+function renderResult(){if(!finished){$('result').classList.add('hidden');return}const solved=normalise(attempts.at(-1)||'')===normalise(current.word),support=current.examples&&current.examples.length?`<p><strong>Examples:</strong></p><ul class="examples">${current.examples.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<p><strong>Curriculum context:</strong> ${current.context.join(' · ')}</p>`;$('result').classList.remove('hidden');$('result').innerHTML=`<h3>${solved?'Solved!':'Answer'} — ${current.word}</h3><p><strong>Definition:</strong> ${current.definition}</p>${support}<div class="scoreline"><div class="scorebox">${solved?attempts.length+'/'+MAX_ATTEMPTS:'Not solved'}</div><div class="scorebox">${finalScore.toLocaleString()} points</div><div class="scorebox">${roundMode[0].toUpperCase()+roundMode.slice(1)} level</div></div><p class="reflection"><strong>Explain it:</strong> How would you describe ${current.word.toLowerCase()} in your own words?</p>`}
+function teamCount(){return Number($('teamCountSelect').value)}
+function renderTeams(){const displayedMode=roundActive()?playMode:$('playModeSelect').value;$('teamPanel').classList.toggle('hidden',displayedMode!=='teams');$('scoreboard').innerHTML=Array.from({length:teamCount()},(_,i)=>`<div class="team-card ${playMode==='teams'&&i===activeTeam&&roundActive()?'active':''}"><strong>Team ${i+1}</strong><span>${teamScores[i].toLocaleString()}</span></div>`).join('');$('activeTeamChip').hidden=displayedMode!=='teams'||!current;$('activeTeamChip').textContent=`Team ${activeTeam+1}'s turn`;$('nextTeamBtn').hidden=displayedMode!=='teams';$('nextTeamBtn').disabled=!roundActive()}
+function nextTeam(){if(!roundActive())return;activeTeam=(activeTeam+1)%teamCount();$('guessInput').value='';setMessage(`Passed. Team ${activeTeam+1}'s turn.`);render();$('guessInput').focus()}
+function resetScores(){teamScores=[0,0,0,0];activeTeam=0;renderTeams()}
+function render(){const active=roundActive();if(current){const len=normalise(current.word).length;$('lengthChip').textContent=`${len} letters`;$('conceptChip').textContent=current.category;$('baseChip').textContent=`${roundMode[0].toUpperCase()+roundMode.slice(1)} level`}$('attemptText').textContent=!current?'Ready to play':finished?'Round complete':`Attempt ${attempts.length+1} of ${MAX_ATTEMPTS}`;$('scoreText').textContent=finished?`${finalScore.toLocaleString()} pts`:'—';renderBoard();renderEvidence();renderKeyboard();renderResult();renderTeams();renderTimer();$('guessBtn').disabled=!active;$('guessInput').disabled=!active;$('clueBtn').disabled=!active||revealedClues()>=current.clues.length;$('pauseBtn').disabled=!active||!Number($('timerSelect').value);if(finished)$('pauseBtn').hidden=true}
+function togglePresentation(){const on=document.body.classList.toggle('presentation');$('presentationBtn').setAttribute('aria-pressed',String(on));$('presentationBtn').textContent=on?'Exit Classroom View':'Classroom View'}
+function importedDefinition(item,group,collection){const original=(item.definition||item.clue||'').trim();if(/syllabus concept used when/i.test(original))return `${item.term} is a concept used when studying ${group.label.toLowerCase()} in ${collection.label}.`;return original}
+function buildExpandedBank(documents){const expanded=[];for(const document of documents){for(const collection of document.collections||[]){const seen=new Set(),year=collection.year||null,moduleKey=`${document.id}:${collection.id}`;for(const group of collection.groups||[]){for(const item of group.items||[]){const clean=normalise(item.term||'');if(clean.length<2||seen.has(clean))continue;seen.add(clean);const curated=CURATED_BY_TERM.get(clean),first=clean[0],last=clean.at(-1),difficulty=Math.min(4,(year&&year<=8?1:year&&year<=10?2:3)+(clean.length>12?1:0));expanded.push({scopeId:document.id,scopeLabel:document.label,moduleKey,moduleLabel:collection.label,module:collection.label,year,word:item.term,category:group.label,conceptDifficulty:difficulty,definition:importedDefinition(item,group,collection),examples:curated?.examples||[],context:[document.label,year?`Year ${year}`:'Years 11–12 glossary',collection.label,group.label],clues:[`${document.label}${year?` · Year ${year}`:' · syllabus glossary'}`,`Topic: ${group.label}`,item.clue||`This term is used in ${group.label.toLowerCase()}.`,`It begins with ${first} and ends with ${last}.`]})}}}}return expanded}
+function initModules(){const scopes=new Map();for(const item of BANK){if(!scopes.has(item.scopeId))scopes.set(item.scopeId,{label:item.scopeLabel,modules:new Map(),count:0});const scope=scopes.get(item.scopeId);scope.count++;if(!scope.modules.has(item.moduleKey))scope.modules.set(item.moduleKey,{label:item.moduleLabel,count:0});scope.modules.get(item.moduleKey).count++}$('moduleSelect').innerHTML=[...scopes].map(([scopeId,scope])=>`<optgroup label="${scope.label}"><option value="scope:${scopeId}">All ${scope.label} (${scope.count})</option>${[...scope.modules].map(([key,module])=>`<option value="module:${key}">${module.label} (${module.count})</option>`).join('')}</optgroup>`).join('')}
+function updateAvailability(){if(!$('moduleSelect').value)return;const count=eligibleWords().length,total=eligibleWords('hard').length,level=$('difficultySelect').selectedOptions[0].textContent.split(' · ')[0];$('newBtn').disabled=count===0;$('setupNote').textContent=count?`${level}: ${count.toLocaleString()} eligible concepts in this selection (${total.toLocaleString()} total).`:`No five-letter concepts in this module. Choose Hard or select the full course/year.`}
+async function loadExpandedBank(){$('newBtn').disabled=true;$('newBtn').textContent='Loading Years 7–12…';$('setupNote').textContent='Loading the complete curriculum vocabulary bank…';try{const documents=await Promise.all(BANK_FILES.map(async path=>{const response=await fetch(`../../question-banks/${path}`);if(!response.ok)throw new Error(`Could not load ${path}`);return response.json()}));BANK=buildExpandedBank(documents);initModules();$('newBtn').textContent='Start Round';updateAvailability();setMessage(`${BANK.length.toLocaleString()} Year 7–12 curriculum concepts loaded.`)}catch(error){initModules();$('newBtn').textContent='Start Round';updateAvailability();setMessage('The full bank could not be loaded, so the prototype bank is available.',true);console.error(error)}render()}
+$('newBtn').addEventListener('click',abandonOrStart);$('guessBtn').addEventListener('click',submitGuess);$('guessInput').addEventListener('input',handleDraftInput);$('guessInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitGuess()});$('clueBtn').addEventListener('click',revealClue);$('nextTeamBtn').addEventListener('click',nextTeam);$('pauseBtn').addEventListener('click',toggleTimer);$('resetScoresBtn').addEventListener('click',resetScores);$('teamCountSelect').addEventListener('change',resetScores);$('playModeSelect').addEventListener('change',renderTeams);$('difficultySelect').addEventListener('change',updateAvailability);$('moduleSelect').addEventListener('change',updateAvailability);$('presentationBtn').addEventListener('click',togglePresentation);$('keyboard').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.action==='enter')submitGuess();else if(b.dataset.action==='backspace')editGuess('backspace');else if(b.dataset.key)editGuess(b.dataset.key)});
+render();loadExpandedBank();
 </script>
 </body>
 </html>
