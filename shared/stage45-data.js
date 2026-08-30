@@ -3724,6 +3724,17 @@ window.SCISIMS_STAGE45 = {
       "mappings": []
     },
     {
+      "id": "games-juniorjeopardy",
+      "title": "Years 7–10 Science Jeopardy",
+      "path": "Games/Jeopardy/Junior/",
+      "description": "Build and run a teacher-led Jeopardy board using curriculum banks for Years 7, 8, 9 or 10, with team scoring, timers, Daily Doubles, Final Jeopardy and teacher-picked questions.",
+      "type": "Game",
+      "tags": ["Years 7–10", "Science revision", "Jeopardy", "Team game", "Module review"],
+      "workingScientifically": ["Observing", "Processing data and information", "Communicating"],
+      "depthStudy": false,
+      "mappings": []
+    },
+    {
       "id": "games-mysteryscienceword",
       "title": "Mystery Science Word",
       "path": "Games/MysteryScienceWord/",
