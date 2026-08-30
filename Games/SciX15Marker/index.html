@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Science Extension 15-Marker Generator</title>
+<style>
+:root{
+  --bg:#0f172a;--panel:#111827;--panel2:#1f2937;--ink:#f8fafc;--muted:#cbd5e1;--accent:#22c55e;--accent2:#38bdf8;--warn:#f59e0b;--danger:#ef4444;--line:#334155;--paper:#ffffff;--paperink:#111827;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#0b1220,#111827);color:var(--ink);min-height:100vh}
+button,select,input{font:inherit}.app{max-width:1400px;margin:0 auto;padding:20px}.header{display:flex;gap:18px;justify-content:space-between;align-items:center;margin-bottom:18px}.brand h1{margin:0;font-size:clamp(1.7rem,3vw,3rem);line-height:1.05}.brand p{margin:.5rem 0 0;color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);background:#0b1220;white-space:nowrap}.grid{display:grid;grid-template-columns:320px 1fr;gap:16px}.panel{background:rgba(17,24,39,.96);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)}.controls{padding:16px;position:sticky;top:16px;height:max-content}.controls h2{margin:0 0 10px;font-size:1.05rem}.control{margin:12px 0}.control label{display:block;font-weight:700;margin-bottom:5px}.control small{display:block;color:var(--muted);margin-top:4px;font-size:.9rem}.control select,.control input[type="number"]{width:100%;background:#0b1220;border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:10px}
+.toggleRow{display:flex;justify-content:space-between;align-items:center;gap:12px}.switch{position:relative;width:54px;height:30px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#334155;border-radius:999px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}.switch input:checked + .slider{background:var(--accent)}.switch input:checked + .slider:before{transform:translateX(24px)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.btn{border:0;border-radius:11px;padding:10px 12px;font-weight:800;cursor:pointer;transition:.15s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--accent);color:#052e16}.btn.secondary{background:#334155;color:white}.btn.blue{background:var(--accent2);color:#082f49}.btn.warn{background:var(--warn);color:#451a03}.btn.ghost{background:#0b1220;color:var(--ink);border:1px solid var(--line)}
+.main{display:flex;flex-direction:column;gap:16px}.examWorkspace{display:grid;grid-template-columns:minmax(0,.86fr) minmax(520px,1.14fr);gap:16px;align-items:stretch}.questionCard{background:var(--paper);color:var(--paperink);border-radius:18px;padding:clamp(20px,3vw,34px);min-height:320px;display:flex;flex-direction:column;justify-content:center;border:6px solid #e5e7eb}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.74rem;font-weight:900;color:#64748b}.question{font-size:clamp(1.35rem,2.5vw,2.55rem);line-height:1.18;font-weight:750;margin:12px 0}.subprompt{font-size:clamp(.98rem,1.35vw,1.2rem);color:#475569;margin-top:10px}.marks{margin-top:18px;font-weight:900;color:#0f172a}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.tag{font-size:.84rem;border-radius:999px;padding:6px 9px;background:#e2e8f0;color:#334155;font-weight:700}.tag.hard{background:#fee2e2;color:#991b1b}.tag.mid{background:#fef3c7;color:#92400e}.tag.std{background:#dcfce7;color:#166534}
+.toolRow{display:flex;gap:9px;flex-wrap:wrap}.section{padding:18px}.section h3{margin:0 0 12px}.hidden{display:none!important}.scaffold{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.scaffold .box{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:12px}.box b{display:block;margin-bottom:4px}.box span{color:var(--muted);font-size:.93rem}.stimulus{background:#f8fafc;color:#0f172a;border-left:6px solid var(--accent2);border-radius:10px;padding:16px;line-height:1.5}.rubricTable{width:100%;border-collapse:collapse;background:white;color:#111827;border-radius:12px;overflow:hidden}.rubricTable th,.rubricTable td{border:1px solid #cbd5e1;padding:12px;vertical-align:top}.rubricTable th{background:#f1f5f9}.rubricTable ul{margin:0;padding-left:20px}.rubricTable .marksCell{width:90px;text-align:center;font-weight:900;font-size:1.05rem;vertical-align:middle}
+.responsePanel{display:flex;flex-direction:column;min-height:320px;padding:16px}.responseHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.responseHeader h3{margin:0}.wordCount{color:var(--muted);font-size:.9rem;font-weight:700}.responseBox{width:100%;flex:1;min-height:380px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fff;color:#111827;padding:16px;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.responseBox:disabled{background:#f1f5f9;color:#475569}.responseStatus{margin-top:8px;color:var(--muted);font-size:.9rem}.responseStatus.finished{color:var(--accent);font-weight:800}.timerPanel{display:flex;align-items:center;justify-content:space-between;gap:16px}.timer{font-variant-numeric:tabular-nums;font-size:2.2rem;font-weight:900;letter-spacing:.04em}.timer.running{color:var(--accent)}.timer.low{color:var(--warn)}.timer.critical{color:var(--danger)}.footerNote{color:var(--muted);font-size:.9rem;text-align:center;padding:8px 0 2px}.compat{margin-top:12px;padding:9px 10px;border-radius:10px;background:#0b1220;color:var(--muted);font-size:.82rem;line-height:1.35}
+.examModeBar{display:none;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#0b1220;border:1px solid var(--line);border-radius:14px}.examModeBar .examTimer{font-variant-numeric:tabular-nums;font-size:1.35rem;font-weight:900}.examModeBar .examHint{color:var(--muted);font-size:.9rem}.exam-mode .header,.exam-mode .controls,.exam-mode .toolRow,.exam-mode .timerPanel,.exam-mode .footerNote,.exam-mode #planSection,.exam-mode #stimulusSection{display:none!important}.exam-mode .app{max-width:none;padding:12px}.exam-mode .grid{display:block}.exam-mode .main{gap:12px}.exam-mode .examModeBar{display:flex}.exam-mode .examWorkspace{grid-template-columns:minmax(0,.82fr) minmax(600px,1.18fr);gap:12px}.exam-mode .questionCard{min-height:300px;padding:24px}.exam-mode .question{font-size:clamp(1.25rem,2.2vw,2.2rem)}.exam-mode .responsePanel{min-height:300px}.exam-mode .responseBox{min-height:430px}.exam-mode #rubricSection{display:block!important;padding:14px}.exam-mode #rubricSection h3{margin-bottom:8px}.exam-mode .rubricTable{font-size:.92rem}.exam-mode .rubricTable th,.exam-mode .rubricTable td{padding:9px}
+@media (max-width:1050px){.examWorkspace{grid-template-columns:1fr}}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.controls{position:static}.scaffold{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.questionCard{min-height:300px}.actions{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.app{padding:10px}.actions{grid-template-columns:1fr}.toolRow .btn{flex:1 1 45%}}
+@media print{body{background:white;color:black}.controls,.toolRow,.timerPanel,.footerNote,.header .pill,.responseStatus{display:none!important}.grid{display:block}.panel{box-shadow:none;border:none}.examWorkspace{display:block}.questionCard{border:1px solid #999;margin-bottom:18px}.responsePanel{border:1px solid #999;padding:16px!important}.responseBox{border:0;min-height:600px;resize:none;overflow:visible;background:white!important;color:black!important}.section{break-inside:avoid}.rubricTable{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <h1>Science Extension 15‑Marker Generator</h1>
+      <p>Curated extended-response practice for NSW Science Extension.</p>
+    </div>
+    <div class="pill">Draft 1 • Question + planning + adaptive rubric</div>
+  </div>
+
+  <div class="grid">
+    <aside class="panel controls">
+      <h2>Question settings</h2>
+
+      <div class="control">
+        <label for="verb">Command verb</label>
+        <select id="verb">
+          <option value="random">Random</option>
+          <option>Explain</option><option>Analyse</option><option>Assess</option><option>Evaluate</option><option value="To what extent">To what extent</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty">
+          <option value="standard">Standard</option>
+          <option value="challenging">Challenging</option>
+          <option value="insane">Insane</option>
+        </select>
+        <small>Higher levels permit less obvious conceptual relationships.</small>
+      </div>
+
+      <div class="control toggleRow">
+        <div><label style="margin:0">Use Scientific Research Project</label><small>OFF suits most exam-style questions.</small></div>
+        <label class="switch"><input id="project" type="checkbox"><span class="slider"></span></label>
+      </div>
+
+      <div class="control toggleRow">
+        <div><label style="margin:0">Include stimulus</label><small>Add a short data/evidence scenario.</small></div>
+        <label class="switch"><input id="stimToggle" type="checkbox"><span class="slider"></span></label>
+      </div>
+
+      <div class="control">
+        <label for="timerMins">Writing timer (minutes)</label>
+        <input id="timerMins" type="number" min="1" max="60" value="36">
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="newQ">New question</button>
+        <button class="btn warn" id="harder">Make harder</button>
+        <button class="btn blue" id="togglePlan">Planning mode</button>
+        <button class="btn secondary" id="toggleRubric">Show rubric</button>
+        <button class="btn ghost" id="timerStart">Start timer</button>
+        <button class="btn ghost" id="timerReset">Reset timer</button>
+        <button class="btn secondary" id="examMode" style="grid-column:1 / -1">Full-screen exam mode</button>
+      </div>
+      <div class="compat" id="compatNote"></div>
+    </aside>
+
+    <main class="main">
+      <div class="examModeBar" id="examModeBar">
+        <div>
+          <strong>Exam mode</strong>
+          <div class="examHint">Question, response and adaptive rubric remain available.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="examTimer" id="examTimer">36:00</div>
+          <button class="btn ghost" id="exitExamMode">Exit exam mode</button>
+        </div>
+      </div>
+      <div class="examWorkspace">
+        <section class="questionCard" id="questionCard">
+          <div class="eyebrow">Science Extension • Extended response</div>
+          <div class="question" id="questionText"></div>
+          <div class="subprompt" id="projectPrompt"></div>
+          <div class="marks">15 marks • 36 minutes at 2.4 minutes per mark</div>
+          <div class="meta" id="meta"></div>
+        </section>
+
+        <section class="panel section responsePanel" id="responsePanel">
+          <div class="responseHeader">
+            <h3>Student response</h3>
+            <div class="wordCount" id="wordCount">0 words</div>
+          </div>
+          <textarea id="responseBox" class="responseBox" spellcheck="true" placeholder="Type your extended response here..."></textarea>
+          <div class="responseStatus" id="responseStatus">The response remains editable while the timer is running.</div>
+        </section>
+      </div>
+
+      <section class="panel section hidden" id="stimulusSection">
+        <h3>Stimulus</h3>
+        <div class="stimulus" id="stimulusText"></div>
+      </section>
+
+      <div class="toolRow">
+        <button class="btn secondary" id="exportPdf" disabled>Export response to PDF</button>
+        <button class="btn ghost" id="copyQ">Copy question</button>
+      </div>
+
+      <section class="panel section hidden" id="planSection">
+        <h3>Planning scaffold</h3>
+        <div class="scaffold" id="scaffold"></div>
+      </section>
+
+      <section class="panel section hidden" id="rubricSection">
+        <h3>Adaptive 15-mark rubric</h3>
+        <table class="rubricTable"><thead><tr><th>Criteria</th><th>Marks</th></tr></thead><tbody id="rubricBody"></tbody></table>
+      </section>
+
+      <section class="panel section timerPanel">
+        <div><h3 style="margin:0 0 4px">Writing timer</h3><div style="color:var(--muted)">Exam timing: 2.4 minutes per mark × 15 marks = 36 minutes. The response locks when time expires.</div></div>
+        <div class="timer" id="timer">36:00</div>
+      </section>
+      <div class="footerNote">Questions are generated from curated concept pairings to avoid meaningless random combinations.</div>
+    </main>
+  </div>
+</div>
+<script>
+const concepts = [
+ {name:'a review of scientific literature',cat:'knowledge',links:['knowledge','research','evaluation','communication','society']},
+ {name:'existing scientific knowledge',cat:'knowledge',links:['knowledge','research','evaluation','society']},
+ {name:'scientific theories',cat:'knowledge',links:['knowledge','evaluation','society']},
+ {name:'scientific laws',cat:'knowledge',links:['knowledge','evaluation']},
+ {name:'scientific models',cat:'knowledge',links:['knowledge','research','evaluation','technology']},
+ {name:'scientific paradigms',cat:'knowledge',links:['knowledge','society']},
+ {name:'paradigm shifts',cat:'knowledge',links:['knowledge','society']},
+ {name:'falsifiability',cat:'knowledge',links:['knowledge','evaluation','research']},
+ {name:'replication',cat:'research',links:['evaluation','research','knowledge']},
+ {name:'reproducibility',cat:'research',links:['evaluation','research','knowledge']},
+ {name:'scientific scepticism',cat:'knowledge',links:['evaluation','knowledge','society']},
+ {name:'scientific consensus',cat:'knowledge',links:['knowledge','society','evaluation']},
+ {name:'scientific argument',cat:'knowledge',links:['knowledge','evaluation','communication']},
+ {name:'inductive reasoning',cat:'knowledge',links:['knowledge','research','evaluation']},
+ {name:'deductive reasoning',cat:'knowledge',links:['knowledge','research','evaluation']},
+ {name:'scientific creativity',cat:'knowledge',links:['knowledge','technology','research']},
+ {name:'scientific collaboration',cat:'society',links:['knowledge','research','technology','society']},
+ {name:'interdisciplinary research',cat:'society',links:['knowledge','technology','society','research']},
+ {name:'a scientific research question',cat:'research',links:['research','knowledge','evaluation']},
+ {name:'a scientific hypothesis',cat:'research',links:['research','knowledge','evaluation']},
+ {name:'experimental design',cat:'research',links:['research','evaluation','knowledge']},
+ {name:'choice of methodology',cat:'research',links:['research','evaluation','knowledge']},
+ {name:'controlled variables',cat:'research',links:['research','evaluation']},
+ {name:'control groups',cat:'research',links:['research','evaluation']},
+ {name:'sampling methods',cat:'research',links:['research','evaluation','society']},
+ {name:'sample size',cat:'research',links:['research','evaluation']},
+ {name:'repeated trials',cat:'research',links:['research','evaluation']},
+ {name:'pilot studies',cat:'research',links:['research','evaluation']},
+ {name:'standardised procedures',cat:'research',links:['research','evaluation']},
+ {name:'ethical frameworks',cat:'society',links:['society','research','evaluation']},
+ {name:'research limitations',cat:'evaluation',links:['evaluation','research','knowledge']},
+ {name:'research assumptions',cat:'evaluation',links:['evaluation','research','knowledge']},
+ {name:'primary data',cat:'data',links:['data','evaluation','research']},
+ {name:'secondary data',cat:'data',links:['data','evaluation','research','knowledge']},
+ {name:'qualitative data',cat:'data',links:['data','evaluation','society']},
+ {name:'quantitative data',cat:'data',links:['data','evaluation','research']},
+ {name:'modern data collection techniques',cat:'technology',links:['data','technology','research','knowledge']},
+ {name:'digital sensors',cat:'technology',links:['data','technology','research']},
+ {name:'automated data collection',cat:'technology',links:['data','technology','research']},
+ {name:'remote sensing',cat:'technology',links:['data','technology','knowledge','society']},
+ {name:'computer simulations',cat:'technology',links:['knowledge','technology','research','evaluation']},
+ {name:'large data sets',cat:'data',links:['data','technology','knowledge','evaluation']},
+ {name:'open data sets',cat:'data',links:['data','research','evaluation','society']},
+ {name:'data analysis',cat:'data',links:['data','evaluation','knowledge','research']},
+ {name:'statistical analysis',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'statistical tests',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'graphical representations',cat:'data',links:['data','communication','evaluation']},
+ {name:'outliers',cat:'data',links:['data','evaluation','research']},
+ {name:'trends and patterns in data',cat:'data',links:['data','knowledge','evaluation']},
+ {name:'correlation',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'causation',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'statistical significance',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'measurement error',cat:'data',links:['data','evaluation','research']},
+ {name:'random error',cat:'data',links:['data','evaluation','research']},
+ {name:'systematic error',cat:'data',links:['data','evaluation','research']},
+ {name:'uncertainty',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'accuracy',cat:'data',links:['data','evaluation','research']},
+ {name:'precision',cat:'data',links:['data','evaluation','research']},
+ {name:'reliability',cat:'evaluation',links:['evaluation','research','knowledge']},
+ {name:'validity',cat:'evaluation',links:['evaluation','research','knowledge']},
+ {name:'relevance of data',cat:'data',links:['data','evaluation']},
+ {name:'quality of data',cat:'data',links:['data','evaluation','research']},
+ {name:'anomalous results',cat:'data',links:['data','evaluation','research','knowledge']},
+ {name:'the distinction between data and evidence',cat:'data',links:['data','evaluation','knowledge']},
+ {name:'the interpretation of evidence',cat:'evaluation',links:['evaluation','knowledge','society']},
+ {name:'conflicting evidence',cat:'evaluation',links:['evaluation','knowledge','society']},
+ {name:'new evidence',cat:'knowledge',links:['knowledge','evaluation','society']},
+ {name:'a scientific portfolio',cat:'communication',links:['communication','evaluation','research']},
+ {name:'a scientific research report',cat:'communication',links:['communication','evaluation','knowledge']},
+ {name:'the literature review',cat:'communication',links:['knowledge','research','evaluation','communication']},
+ {name:'the methodology section of a report',cat:'communication',links:['communication','evaluation','research']},
+ {name:'the results section of a report',cat:'communication',links:['communication','data','evaluation']},
+ {name:'the discussion section of a report',cat:'communication',links:['communication','evaluation','knowledge']},
+ {name:'the conclusion of a research report',cat:'communication',links:['communication','evaluation','knowledge']},
+ {name:'referencing',cat:'communication',links:['communication','evaluation','knowledge']},
+ {name:'peer review',cat:'communication',links:['evaluation','knowledge','communication','society']},
+ {name:'publication of research',cat:'communication',links:['communication','knowledge','society']},
+ {name:'economic influences',cat:'society',links:['society','research','technology']},
+ {name:'political influences',cat:'society',links:['society','research','knowledge']},
+ {name:'cultural influences',cat:'society',links:['society','research','knowledge']},
+ {name:'global influences',cat:'society',links:['society','research','technology']},
+ {name:'funding of scientific research',cat:'society',links:['society','research','technology']},
+ {name:'commercial interests',cat:'society',links:['society','evaluation','research']},
+ {name:'government regulation',cat:'society',links:['society','research','technology']},
+ {name:'public opinion',cat:'society',links:['society','knowledge','communication']},
+ {name:'media representation of science',cat:'society',links:['society','communication','evaluation']},
+ {name:'technological developments',cat:'technology',links:['technology','knowledge','research','society']}
+];
+
+const outcomes = [
+ {text:'lead to new scientific ideas',cat:'knowledge',level:1},
+ {text:'contribute to scientific knowledge',cat:'knowledge',level:1},
+ {text:'strengthen a scientific explanation',cat:'knowledge',level:1},
+ {text:'challenge an existing scientific explanation',cat:'knowledge',level:2},
+ {text:'modify a scientific model',cat:'knowledge',level:2},
+ {text:'support a scientific theory',cat:'knowledge',level:1},
+ {text:'challenge a scientific theory',cat:'knowledge',level:2},
+ {text:'lead to a paradigm shift',cat:'knowledge',level:3},
+ {text:'identify gaps in scientific knowledge',cat:'knowledge',level:2},
+ {text:'generate new research questions',cat:'research',level:1},
+ {text:'produce new hypotheses',cat:'research',level:1},
+ {text:'stimulate further scientific research',cat:'research',level:1},
+ {text:'improve experimental design',cat:'research',level:1},
+ {text:'improve the reliability of research',cat:'evaluation',level:1},
+ {text:'improve the validity of research',cat:'evaluation',level:1},
+ {text:'improve the accuracy of measurements',cat:'data',level:1},
+ {text:'reduce uncertainty',cat:'data',level:1},
+ {text:'reduce bias',cat:'evaluation',level:2},
+ {text:'reveal bias',cat:'evaluation',level:2},
+ {text:'identify limitations',cat:'evaluation',level:1},
+ {text:'identify sources of error',cat:'data',level:1},
+ {text:'improve data collection',cat:'data',level:1},
+ {text:'improve data analysis',cat:'data',level:1},
+ {text:'strengthen scientific conclusions',cat:'evaluation',level:1},
+ {text:'increase confidence in a conclusion',cat:'evaluation',level:1},
+ {text:'challenge a conclusion',cat:'evaluation',level:2},
+ {text:'distinguish correlation from causation',cat:'data',level:2},
+ {text:'identify anomalous results',cat:'data',level:1},
+ {text:'provide evidence for a scientific claim',cat:'evaluation',level:1},
+ {text:'provide evidence against a scientific claim',cat:'evaluation',level:2},
+ {text:'test a scientific claim',cat:'evaluation',level:1},
+ {text:'expose fraudulent research',cat:'evaluation',level:3},
+ {text:'reveal methodological weaknesses',cat:'evaluation',level:2},
+ {text:'identify unsupported conclusions',cat:'evaluation',level:2},
+ {text:'distinguish data from evidence',cat:'data',level:2},
+ {text:'improve reproducibility',cat:'research',level:1},
+ {text:'improve transparency in science',cat:'communication',level:2},
+ {text:'increase confidence in scientific knowledge',cat:'knowledge',level:2},
+ {text:'inform decision-making',cat:'society',level:1},
+ {text:'influence government policy',cat:'society',level:2},
+ {text:'influence public health decisions',cat:'society',level:2},
+ {text:'influence environmental management',cat:'society',level:2},
+ {text:'influence technological development',cat:'technology',level:2},
+ {text:'improve public understanding of science',cat:'society',level:1},
+ {text:'improve public confidence in science',cat:'society',level:2},
+ {text:'challenge public misconceptions',cat:'society',level:2},
+ {text:'improve the lives of individuals and society',cat:'society',level:1},
+ {text:'contribute to sustainable development',cat:'society',level:2},
+ {text:'influence economic decisions',cat:'society',level:2},
+ {text:'influence ethical decisions',cat:'society',level:2},
+ {text:'lead to an understanding of other cultures',cat:'society',level:3},
+ {text:'lead to new technologies',cat:'technology',level:1},
+ {text:'improve existing technologies',cat:'technology',level:1},
+ {text:'create new research methods',cat:'technology',level:2},
+ {text:'make previously impossible research possible',cat:'technology',level:3},
+ {text:'allow larger quantities of data to be analysed',cat:'technology',level:2},
+ {text:'allow previously inaccessible phenomena to be investigated',cat:'technology',level:3},
+ {text:'encourage interdisciplinary research',cat:'research',level:2},
+ {text:'encourage international collaboration',cat:'society',level:2},
+ {text:'change the direction of future research',cat:'research',level:3},
+ {text:'communicate scientific findings effectively',cat:'communication',level:1},
+ {text:'allow research to be critically evaluated',cat:'communication',level:1}
+];
+
+const stimuli = [
+ 'A research team reports a strong correlation between two variables, but the sample is small and no experimental manipulation was performed. Subsequent studies produce mixed results.',
+ 'Two laboratories use different methods to investigate the same phenomenon. Both obtain similar trends, but their absolute measurements differ beyond the quoted uncertainty.',
+ 'A large open data set reveals a pattern that was not predicted by the accepted model. The pattern persists after independent analysis by several research groups.',
+ 'A highly publicised study reports a dramatic effect. During peer review of a replication study, researchers identify an unreported change in methodology that may have influenced the original result.',
+ 'A new digital sensor produces far more measurements than a traditional method, but the sensor has a small systematic offset that is not initially recognised.',
+ 'A government agency must make a policy decision using evidence from studies that differ in sample size, methodology and reported uncertainty.',
+ 'A computer model accurately reproduces historical observations but gives different predictions from an established model under conditions that have not yet been tested experimentally.',
+ 'A research project produces an unexpected outlier. Removing it improves the statistical relationship, but there is no clear methodological reason for excluding the datum.'
+];
+
+let current = null, timerInterval = null, remaining = 2160;
+const $ = id => document.getElementById(id);
+const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function allowedLevel(){return $('difficulty').value==='standard'?1:$('difficulty').value==='challenging'?2:3}
+function pickVerb(){let v=$('verb').value; if(v==='random') v=rand(['Explain','Analyse','Assess','Evaluate','To what extent']); return v}
+function generate(){
+  const level=allowedLevel();
+  let c=rand(concepts);
+  let pool=outcomes.filter(o=>c.links.includes(o.cat) && o.level<=level);
+  if(level===3 && Math.random()<0.42){ pool=outcomes.filter(o=>o.level>=2); }
+  let o=rand(pool.length?pool:outcomes);
+  let v=pickVerb();
+  current={concept:c,outcome:o,verb:v,difficulty:$('difficulty').value};
+  render();
+}
+function makeQuestion(v,c,o){
+  if(v==='To what extent') return `To what extent can ${c.name} ${o.text} in science?`;
+  const lower=v.toLowerCase();
+  return `${v} how ${c.name} can ${o.text} in science.`;
+}
+function render(){
+  const q=makeQuestion(current.verb,current.concept,current.outcome);
+  $('questionText').textContent=q;
+  $('projectPrompt').textContent=$('project').checked?'Support your answer with reference to your experience in developing a scientific research project.':'';
+  $('meta').innerHTML=`<span class="tag ${current.difficulty==='standard'?'std':current.difficulty==='challenging'?'mid':'hard'}">${cap(current.difficulty)}</span><span class="tag">${current.verb}</span><span class="tag">${$('project').checked?'Project reference ON':'Project reference OFF'}</span>`;
+  $('compatNote').innerHTML=`<b>Pairing:</b> ${cap(current.concept.cat)} concept → ${cap(current.outcome.cat)} outcome`;
+  renderStimulus(); renderScaffold(); renderRubric();
+}
+function renderStimulus(){
+  const on=$('stimToggle').checked; $('stimulusSection').classList.toggle('hidden',!on); if(on) $('stimulusText').textContent=rand(stimuli);
+}
+function scaffoldItems(){
+  const project=$('project').checked;
+  const verb=current.verb;
+  const core=[
+    ['Define the concepts',`Precisely define ${current.concept.name} and the key idea in “${current.outcome.text}”.`],
+    ['Establish the relationship','Explain the mechanism: how does the first concept produce, influence or limit the second?'],
+    [project?'Project evidence':'Scientific evidence',project?'Identify a specific method, datum, decision, result or difficulty from your Scientific Research Project.':'Use a specific scientific example, study, data set or the supplied stimulus.'],
+    ['Develop the argument','Use evidence to build a connected chain of reasoning rather than a list of points.'],
+    ['Limitations / counterpoint','Identify circumstances where the relationship may be weaker, conditional or contested.'],
+    [verb==='Evaluate'||verb==='Assess'||verb==='To what extent'?'Judgement':'Consequence',verb==='Evaluate'||verb==='Assess'||verb==='To what extent'?'Reach a supported judgement that directly answers the command verb.':'Explain why the relationship matters for scientific knowledge or practice.']
+  ]; return core;
+}
+function renderScaffold(){ $('scaffold').innerHTML=scaffoldItems().map(([a,b])=>`<div class="box"><b>${a}</b><span>${b}</span></div>`).join('') }
+function descriptor(type){
+  const map={
+    Explain:['comprehensive explanation of the relationship between the concepts','thorough explanation of the relationship between the concepts','sound explanation of relevant aspects of the relationship','some explanation of the relationship','limited relevant information'],
+    Analyse:['comprehensive analysis of relationships, causes, patterns and consequences','thorough analysis of relevant relationships','sound analysis of relevant aspects','some analysis of relevant information','limited relevant information'],
+    Assess:['comprehensive assessment supported by a reasoned conclusion','thorough assessment with a supported conclusion','sound assessment of relevant aspects','some assessment of the issue','limited relevant information'],
+    Evaluate:['comprehensive evaluation using relevant criteria and a well-supported judgement','thorough evaluation with a supported judgement','sound evaluation of relevant aspects','some evaluation of the issue','limited relevant information'],
+    'To what extent':['comprehensive argument that establishes the extent and reaches a well-supported judgement','thorough argument that addresses extent and reaches a supported judgement','sound argument addressing the extent to which the claim applies','some consideration of the extent of the claim','limited relevant information']
+  }; return map[type]||map.Explain;
+}
+function renderRubric(){
+  const d=descriptor(current.verb), project=$('project').checked;
+  const evidenceTop=project?'Supports the response effectively with specific reference to the student’s experience in developing a Scientific Research Project':'Supports the response effectively with relevant scientific evidence, examples and/or the supplied stimulus';
+  const evidenceMid=project?'Includes relevant aspects of the student’s experience in developing a Scientific Research Project to support the response':'Includes relevant scientific evidence, examples and/or stimulus material to support the response';
+  const evidenceSound=project?'Includes some relevant aspects of the student’s experience in developing their Scientific Research Project':'Includes some relevant scientific evidence or examples';
+  const evidenceBasic=project?'Makes some reference to the student’s experience in developing their Scientific Research Project':'Makes some reference to relevant scientific evidence or examples';
+  const rows=[
+    ['13–15',[`Demonstrates extensive knowledge and understanding of ${current.concept.name} and ${current.outcome.text}`,`Provides a ${d[0]}`,evidenceTop,'Communicates ideas and information using appropriate scientific language','Presents a logical and coherent response']],
+    ['10–12',[`Demonstrates thorough knowledge and understanding of ${current.concept.name} and ${current.outcome.text}`,`Provides a ${d[1]}`,evidenceMid,'Communicates ideas and information using scientific language','Presents a logical response']],
+    ['7–9',[`Demonstrates sound, developed knowledge and understanding of relevant concepts`,`Provides a ${d[2]}`,evidenceSound,'Presents a structured response using scientific language']],
+    ['4–6',[`Demonstrates some knowledge and understanding of relevant concepts`,`Provides ${d[3]}`,evidenceBasic,'Uses some scientific language']],
+    ['1–3',[`Demonstrates limited understanding of relevant scientific concepts`,`Provides ${d[4]}`,project?'May refer to the student’s Scientific Research Project':'May refer to a relevant scientific example']]
+  ];
+  $('rubricBody').innerHTML=rows.map(([m,items])=>`<tr><td><ul>${items.map(x=>`<li>${capSentence(x)}</li>`).join('')}</ul></td><td class="marksCell">${m}</td></tr>`).join('');
+}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)} function capSentence(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function setDifficultyUp(){ const s=$('difficulty'); s.value=s.value==='standard'?'challenging':s.value==='challenging'?'insane':'insane'; generate(); }
+function setResponseFinished(finished){
+  $('responseBox').disabled=finished;
+  $('exportPdf').disabled=!finished;
+  const status=$('responseStatus');
+  if(finished){status.textContent='Time is up. Your response is locked and ready to export as a PDF.';status.classList.add('finished')}
+  else{status.textContent='The response remains editable while the timer is running.';status.classList.remove('finished')}
+}
+function resetTimer(){clearInterval(timerInterval);timerInterval=null;remaining=Math.max(1,parseInt($('timerMins').value)||36)*60;updateTimer();$('timerStart').textContent='Start timer';setResponseFinished(false)}
+function updateTimer(){let m=Math.floor(remaining/60),s=remaining%60;const value=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;const t=$('timer');t.textContent=value;t.className='timer'+(timerInterval?' running':'')+(remaining<=300?' critical':remaining<=600?' low':'');const et=$('examTimer');if(et){et.textContent=value;et.style.color=remaining<=300?'var(--danger)':remaining<=600?'var(--warn)':timerInterval?'var(--accent)':'var(--ink)'}}
+function finishTimer(){clearInterval(timerInterval);timerInterval=null;remaining=0;updateTimer();$('timerStart').textContent='Time finished';setResponseFinished(true);$('exportPdf').focus()}
+function toggleTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;$('timerStart').textContent='Resume timer';updateTimer();return} if(remaining<=0){return} $('timerStart').textContent='Pause timer';timerInterval=setInterval(()=>{remaining--;updateTimer();if(remaining<=0)finishTimer()},1000);updateTimer()}
+function updateWordCount(){const text=$('responseBox').value.trim();const words=text?text.split(/\s+/).filter(Boolean).length:0;$('wordCount').textContent=`${words} ${words===1?'word':'words'}`}
+function enterExamMode(){
+  document.body.classList.add('exam-mode');
+  $('rubricSection').classList.remove('hidden');
+  $('toggleRubric').textContent='Hide rubric';
+  if(document.documentElement.requestFullscreen && !document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{})}
+}
+function exitExamMode(){
+  document.body.classList.remove('exam-mode');
+  if(document.fullscreenElement && document.exitFullscreen){document.exitFullscreen().catch(()=>{})}
+}
+function exportResponse(){window.print()}
+$('newQ').addEventListener('click',generate); $('harder').addEventListener('click',setDifficultyUp);
+$('project').addEventListener('change',render); $('stimToggle').addEventListener('change',renderStimulus); $('verb').addEventListener('change',generate); $('difficulty').addEventListener('change',generate);
+$('togglePlan').addEventListener('click',()=>{$('planSection').classList.toggle('hidden')}); $('toggleRubric').addEventListener('click',()=>{$('rubricSection').classList.toggle('hidden')});
+$('timerStart').addEventListener('click',toggleTimer); $('timerReset').addEventListener('click',resetTimer); $('timerMins').addEventListener('change',resetTimer); $('responseBox').addEventListener('input',updateWordCount); $('exportPdf').addEventListener('click',exportResponse);
+$('examMode').addEventListener('click',enterExamMode); $('exitExamMode').addEventListener('click',exitExamMode); document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.body.classList.remove('exam-mode')});
+$('copyQ').addEventListener('click',async()=>{const txt=$('questionText').textContent+'\n'+$('projectPrompt').textContent+'\n(15 marks)';try{await navigator.clipboard.writeText(txt);$('copyQ').textContent='Copied';setTimeout(()=>$('copyQ').textContent='Copy question',1000)}catch(e){alert(txt)}});
+generate(); resetTimer(); updateWordCount();
+</script>
+</body>
+</html>
