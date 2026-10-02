@@ -1,33 +1,475 @@
-<!doctype html>
-<html lang="en-AU">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Inclined Planes and Friction | SciSims</title>
-<meta name="description" content="Inclined Planes and Friction: a forthcoming SciSims physics simulation.">
-<link rel="icon" href="../../favicon.png">
-<link rel="stylesheet" href="../../shared/scisims-nav.css">
-<script defer src="../../shared/scisims-nav.js"></script>
+<meta name="description" content="Physics27: investigate ramp angle and acceleration, static friction and the critical angle for sliding.">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#172b42;font-family:Arial,sans-serif;line-height:1.6}
-main{max-width:760px;margin:clamp(24px,7vw,80px) auto;padding:clamp(24px,5vw,48px);background:white;border:1px solid #d9e2ec;border-radius:16px}
-.status{display:inline-block;background:#fff0cf;color:#704600;padding:5px 12px;border-radius:20px;font-weight:bold}
-.chapter{color:#52657a;font-size:.95rem}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.18;margin:18px 0}
-a{color:#1457a1;text-underline-offset:3px}a:focus-visible{outline:3px solid #1457a1;outline-offset:5px}
-.note{border-top:1px solid #d9e2ec;margin-top:28px;padding-top:20px;color:#52657a}
-</style>
-</head>
-<body>
-<div id="scisimsSiteNav"></div>
-<main>
-<span class="status">Coming soon</span>
-<p class="chapter">Chapter 2 · Fundamentals of mechanics</p>
-<h1>Inclined Planes and Friction</h1>
-<p>Explore force components, static and kinetic friction, and the angle at which an object begins to slide.</p>
-<p>This simulation is planned and is not yet available. Please check back later.</p>
-<p class="note">The completed simulation will appear at this same address, so links from your textbook or bookmarks will continue to work.</p>
-<p><a href="../../index.html#physicssims">Browse current physics simulations</a></p>
-</main>
-</body>
-</html>
+:root{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--ink:#182b43;--muted:#55677e;--border:#d6e0ed;--blue:#1d4ed8;--teal:#087e8b;--orange:#b85b00;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,input,select{accent-color:var(--blue)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #2196f3;outline-offset:3px}button{cursor:pointer;min-height:42px;border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:white;color:var(--ink);font-weight:650}button:hover:not(:disabled){background:#edf3ff}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover:not(:disabled){background:#173daf}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.15;letter-spacing:-.035em}h2{font-size:1.08rem}h3{font-size:.94rem}p+p{margin-top:8px}.page{max-width:1280px;margin:auto;padding:20px 24px 40px}.hero{border-radius:24px;background:linear-gradient(125deg,#102240,#1d4ed8 65%,#0891b2);padding:28px;color:white;box-shadow:0 10px 25px #19396018}.hero p{max-width:830px;color:#e2edff;margin-top:10px}.eyebrow{font-size:.75rem;letter-spacing:.12em;font-weight:800;margin-bottom:9px}.lessons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 5px 18px #17345606}.lessons h2{color:var(--blue);margin-bottom:6px}.muted,.small{color:var(--muted)}.small{font-size:.83rem}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.stack{display:grid;gap:16px;align-content:start}.main{min-width:0}.control{display:block;margin-top:16px}.control>span{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;font-weight:650}.control input[type=range]{display:block;width:100%;margin:10px 0 0}.control output{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--blue)}select{width:100%;min-height:42px;background:white;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:6px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.modes{display:flex;gap:8px;margin-bottom:16px}.modes button{flex:1}.modes button[aria-pressed=true]{background:#e8f0ff;border-color:var(--blue);color:#163ca1}.row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.badge{background:#eaf5f7;color:#08636e;font-size:.8rem;padding:6px 10px;border-radius:20px;font-weight:750;white-space:nowrap}.notice{background:#eef4ff;border-radius:10px;padding:10px;font-size:.85rem}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{background:#f3f6fb;padding:10px;border-radius:10px;font-size:.77rem;color:var(--muted)}.metric strong{display:block;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{padding:12px;background:#f3f6fb;border-radius:10px;font-size:.88rem}.formula p{margin-top:6px}svg{display:block;width:100%;height:auto}.hidden{display:none!important}.tablewrap{overflow:auto;max-height:340px}table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}th{background:#f3f6fb}caption{text-align:left;color:var(--muted);padding:10px 0}.status{min-height:1.5em;margin-top:10px;font-size:.87rem;color:#234e7a}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:18px;border-top:3px solid var(--blue);margin-right:5px;vertical-align:middle}.legend .points::before{border-color:var(--teal)}.legend .recorded::before{border-color:var(--purple)}.legend .fit::before{border-color:var(--purple);border-top-style:dashed}.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.prompt-grid>div{background:#f3f6fb;border-radius:10px;padding:12px}.prompt-grid p{font-size:.84rem;margin-top:5px}details summary{cursor:pointer;font-weight:700}details p{margin-top:10px}footer{font-size:.8rem;color:var(--muted);margin-top:18px}.check{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-top:12px}.check input{width:18px;height:18px}.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{display:flex;gap:12px;justify-content:space-between;align-items:center}.graph-head select{width:auto;max-width:240px}#repeats{max-height:130px;overflow:auto;font-size:.86rem}.danger{color:#9c3125}dialog{border:1px solid var(--border);border-radius:16px;max-width:440px;padding:24px;color:var(--ink);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#12243a80}dialog p{margin:12px 0 20px}@media(max-width:950px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls>h2,.controls>.notice,.controls>.toolbar,.controls>.small{grid-column:1/-1}.subgrid{grid-template-columns:1fr}}@media(max-width:580px){.graph-scroll svg{min-width:720px}.graph-scroll-hint{display:block;margin-top:10px}#scene text{font-size:26px}.page{padding:12px}.hero{padding:22px}.lessons,.controls{grid-template-columns:1fr}.controls>*{grid-column:1!important}.readouts,.prompt-grid{grid-template-columns:1fr 1fr}.modes{flex-direction:column}.row,.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{flex-wrap:wrap}.toolbar button{flex:1}.card{padding:14px}.graph-head select{max-width:100%}}@media print{body.has-scisims-simulation-nav{padding-top:0!important}.controls,.modes,.toolbar{display:none}.layout{display:block}.card{break-inside:avoid;box-shadow:none}.main{display:block}.main>.card{margin-bottom:16px}}
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
 
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
+
+</style></head><body class="has-scisims-simulation-nav"><div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+<main class="page"><header class="hero"><div class="eyebrow">SCISIMS · PHYSICS27 · CHAPTER 2.4</div><h1>Inclined Planes &amp; Friction</h1><p>When does a block start to slide? How does ramp angle change its acceleration? Use two investigations to connect forces, motion and evidence.</p></header>
+<section class="lessons" aria-label="Learning intention and success criteria"><div class="card"><h2>Learning intention</h2><p>Explain motion on an incline using components of weight, normal force, and static and kinetic friction.</p></div><div class="card"><h2>Success criteria</h2><p>Measure acceleration at different angles, bracket the angle at which sliding begins, and use the evidence to estimate coefficients of friction.</p></div></section>
+<div class="modes" aria-label="Investigation"><button id="modeRamp" aria-pressed="true">01 · Angle &amp; acceleration</button><button id="modeCritical" aria-pressed="false">02 · Critical angle</button></div>
+<div class="layout"><aside class="card controls"><h2>Experiment controls</h2><p class="small">Down the ramp is the positive direction. Release the block from rest for every trial.</p><div id="lock" class="notice hidden">Dataset started: controlled variables are locked. Start a new experiment to change them.</div>
+<label class="control"><span>Ramp angle <output id="angleOut"></output></span><input id="angle" type="range" min="0" max="60" step="0.1" value="25"></label>
+<label class="control"><span>Block mass <output id="massOut"></output></span><input id="mass" type="range" min="0.2" max="5" step="0.1" value="1"></label>
+<label class="control"><span>Static coefficient, μₛ <output id="musOut"></output></span><input id="mus" type="range" min="0" max="1" step="0.01" value="0.4"></label>
+<label class="control"><span>Kinetic coefficient, μₖ <output id="mukOut"></output></span><input id="muk" type="range" min="0" max="0.4" step="0.01" value="0.25"></label>
+<label class="control"><span>Travel distance <output id="distanceOut"></output></span><input id="distance" type="range" min="0.5" max="3" step="0.1" value="2"></label>
+<label id="timingControl" class="control"><span>Timing variation, ± <output id="noiseOut"></output></span><input id="noise" type="range" min="0" max="0.1" step="0.005" value="0"></label>
+<p class="small" style="margin-top:12px">μₖ ≤ μₛ. Gravity is fixed at 9.81 m/s². Timing variation affects recorded times only.</p>
+<div class="toolbar" style="margin-top:16px"><button id="new">New experiment</button><button id="reset">Reset all</button></div></aside>
+<div class="main stack"><section class="card"><div class="row"><div><h2>Ramp laboratory</h2><p class="small" id="instruction">Release the block, collect three or more transit times, then record a mean.</p></div><span id="phase" class="badge" role="status">Ready</span></div>
+<p class="small" style="margin-top:10px">Schematic · force vectors share one scale within each trial.</p><svg id="scene" viewBox="0 0 760 365" role="img" aria-label="Block on an adjustable ramp with force vectors"><defs><marker id="weightArrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6Z" fill="#b85b00"/></marker><marker id="normalArrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6Z" fill="#1d4ed8"/></marker><marker id="frictionArrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6Z" fill="#087e8b"/></marker></defs><line x1="55" y1="315" x2="720" y2="315" stroke="#b7c5d9" stroke-width="2"/><path id="rampFill" fill="#e5edf9"/><path id="rampLine" stroke="#425d80" stroke-width="7" stroke-linecap="round"/><path id="angleArc" fill="none" stroke="#7c3aed" stroke-width="2"/><text id="angleLabel" fill="#6d28d9" font-size="15"/><g id="block"><rect x="-22" y="-32" width="44" height="32" rx="5" fill="#1d4ed8"/><path d="M-12 -21 H12 M-12 -12 H5" stroke="#aac8ff" stroke-width="3"/></g><g id="vectors"><line id="weightVector" stroke="#b85b00" stroke-width="3" marker-end="url(#weightArrow)"/><line id="normalVector" stroke="#1d4ed8" stroke-width="3" marker-end="url(#normalArrow)"/><line id="frictionVector" stroke="#087e8b" stroke-width="3" marker-end="url(#frictionArrow)"/></g><text x="600" y="344" fill="#55677e" font-size="13">finish</text></svg>
+<div class="toolbar"><button id="run" class="primary">Release &amp; time</button><button id="pause" disabled>Pause</button><button id="return">Return to start</button><label class="check" style="margin:0"><input id="showForces" type="checkbox" checked>Show forces</label></div>
+<div class="readouts"><div class="metric">Simulation time<strong id="timeOut">0.000 s</strong></div><div class="metric">Distance travelled<strong id="positionOut">0.000 m</strong></div><div class="metric">Speed<strong id="speedOut">0.000 m/s</strong></div><div class="metric"><span id="accelLabel">Predicted acceleration after release</span><strong id="accelOut">0.000 m/s²</strong></div></div>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+</section>
+<div class="subgrid"><section class="card"><h2>Forces on the block</h2><p class="small">Weight: orange · normal: blue · friction: teal</p><div class="formula" style="margin-top:10px"><p>Weight, mg: <strong id="weightOut"></strong></p><p>Down-slope component, mg sin θ: <strong id="parallelOut"></strong></p><p>Normal force, N = mg cos θ: <strong id="normalOut"></strong></p><p>Maximum static friction, μₛN: <strong id="maxStaticOut"></strong></p><p id="frictionRow">Actual friction: <strong id="frictionOut"></strong></p><p>Net down-slope force: <strong id="netOut"></strong></p></div><p class="small" style="margin-top:8px">Static friction matches the down-slope force up to μₛN. It is not always equal to its maximum.</p></section>
+<section class="card"><h2 id="evidenceTitle">Current repeats</h2><div id="rampEvidence"><p class="small">Measured transit times for this angle. Timing variation is sampled uniformly within the selected ± range.</p><div id="repeats" style="margin-top:10px">No completed runs yet.</div><p id="repeatStats" class="notice" style="margin-top:10px">Complete at least 3 runs.</p><div class="toolbar" style="margin-top:10px"><button id="record" disabled>Record mean</button><button id="clear">Clear repeats</button></div></div>
+<div id="criticalEvidence" class="hidden"><p class="small">Test angles from rest. Find the highest angle that holds and the lowest that slides, within 1° of each other.</p><p id="bracket" class="notice" style="margin-top:10px">Test one angle that holds and one that slides.</p><div class="toolbar" style="margin-top:10px"><button id="recordCritical" disabled>Record bracket</button><button id="clearBracket">Clear bracket</button></div><p class="small" style="margin-top:10px">Keep narrowing the interval in 0.1° steps. The midpoint estimates θc; half the interval is its angular uncertainty.</p></div></section></div>
+<section class="card"><div class="graph-head"><h2 id="graphTitle">Acceleration versus angle</h2><label id="plotControl" class="small">Plot <select id="plot"><option value="angle">a against θ</option><option value="linear">a/(g cos θ) against tan θ</option></select></label><label id="zoomControl" class="small hidden">View <select id="zoom"><option value="auto">Zoom to observations</option><option value="full">Full range (0–60°)</option></select></label></div><p class="small graph-scroll-hint">Swipe horizontally to read the full graph.</p><div class="graph-scroll" tabindex="0" role="region" aria-label="Scrollable investigation graph"><svg id="graph" viewBox="0 0 760 350" role="img" aria-label="Acceleration graph showing model and recorded data"><defs><clipPath id="graphClip"><rect x="75" y="25" width="650" height="260"/></clipPath></defs><g id="grid"></g><g clip-path="url(#graphClip)"><path id="theory" fill="none" stroke="#1d4ed8" stroke-width="2.5"/><path id="fit" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="7 5"/><g id="dots"></g></g><text id="xLabel" x="400" y="333" text-anchor="middle" font-size="14" fill="#182b43"/><text id="yLabel" transform="translate(18 155) rotate(-90)" text-anchor="middle" font-size="13" fill="#182b43"/></svg></div><div id="graphLegend" class="legend" aria-label="Graph legend"></div><p id="regression" class="notice" style="margin-top:12px">Record at least three distinct sliding angles for a linear fit.</p><p id="graphNote" class="small" style="margin-top:8px"></p></section>
+</div></div>
+<section class="card" style="margin-top:16px"><div class="row"><div><h2>Investigation results</h2><p id="conditions" class="small">No recorded dataset yet.</p></div><button id="csv" disabled>Export CSV</button></div><div class="tablewrap"><table><caption id="caption">Angle &amp; acceleration · three or more runs per recorded angle</caption><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div><div class="prompt-grid" style="margin-top:16px"><div><h3>Predict</h3><p>Will a heavier block start sliding at a smaller angle?</p></div><div><h3>Observe</h3><p>Find the transition from holding to sliding. Then compare acceleration at different angles.</p></div><div><h3>Analyse</h3><p>Use μₛ ≈ tan θc. For sliding, a/(g cos θ) = tan θ − μₖ.</p></div><div><h3>Evaluate</h3><p>Compare repeat spread, angular resolution and model assumptions. What does changing mass reveal?</p></div></div></section>
+<details class="card" style="margin-top:16px"><summary>Model, method and limitations</summary><p>The block is a non-rolling rigid object on a uniform ramp. Air resistance, surface irregularity and the difference between starting and stopping friction are not modelled. Coefficients are constant; gravity is 9.81 m/s².</p><p>Released from rest, the block holds when mg sin θ ≤ μₛmg cos θ. Equality is treated as limiting equilibrium. Above this threshold it slides with constant acceleration a = g(sin θ − μₖ cos θ). The critical angle is θc = arctan μₛ. Mass cancels in both predictions.</p><p>For each sliding run, the transit time is t = √(2L/a). Optional simulated timing variation is added to that time; the measured acceleration for each repeat is 2L/t². Recorded acceleration is the mean of these individual estimates, with sample standard deviation. No timing variation is added to the animation or the critical-angle tests.</p><p>The linear graph includes sliding results only. Its expected slope is 1 and intercept is −μₖ. Ordinary least squares gives each recorded angle equal weight. Standard-deviation error bars describe repeat spread, not uncertainty in the mean. Ideal repeats are identical when timing variation is zero.</p><p>Critical-angle observations give a bracket, not an exact measurement. If θlow holds and θhigh slides, μₛ lies from tan θlow up to tan θhigh (exclusive at the upper end). Changing settings clears unfinished repeats or brackets. Recorded data lock controlled variables. Switching investigation starts a new dataset after confirmation.</p></details>
+<footer>SciSims · Physics27 · Works offline as one HTML file. Site navigation requires the SciSims website.</footer></main>
+<dialog id="confirm"><h2>Start fresh?</h2><p id="confirmText">This will clear your measurements. Export your CSV first if you want to keep them.</p><div class="toolbar"><button id="cancelDialog">Keep working</button><button id="confirmDialog" class="primary">Clear and continue</button></div></dialog>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), G=9.81, ns='http://www.w3.org/2000/svg';
+const controlled=['mass','mus','muk','distance','noise'];
+let mode='ramp',phase='ready',locked=false,time=0,position=0,speed=0,acceleration=0,lastFrame=null,raf=0,runSettings=null;
+let repeats=[],records=[],low=null,high=null,bracketRecords=[],pending=null;
+const val=id=>Number($(id).value), f=(x,n=3)=>Number.isFinite(x)?x.toFixed(n):'—';
+const state=()=>({angle:val('angle'),mass:val('mass'),mus:val('mus'),muk:val('muk'),distance:val('distance'),noise:val('noise')});
+function physics(s){const theta=s.angle*Math.PI/180,N=s.mass*G*Math.cos(theta),parallel=s.mass*G*Math.sin(theta),holds=parallel<=s.mus*N+1e-10;return{theta,N,parallel,holds,a:holds?0:G*(Math.sin(theta)-s.muk*Math.cos(theta)),friction:holds?parallel:s.muk*N};}
+function stats(values){const mean=values.reduce((a,b)=>a+b,0)/values.length;return{mean,sd:values.length>1?Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/(values.length-1)):0};}
+function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));parent.appendChild(e);return e;}
+function say(text){$('status').textContent=text;}
+function hasData(){return repeats.length||records.length||bracketRecords.length||low!==null||high!==null||phase==='running'||phase==='paused';}
+function ask(action){if(!hasData()){action();return;}pending=action;$('confirm').showModal();}
+$('cancelDialog').onclick=()=>{$('confirm').close();pending=null;};
+$('confirmDialog').onclick=()=>{const action=pending;pending=null;$('confirm').close();if(action)action();};
+$('confirm').addEventListener('cancel',()=>{pending=null;});
+function stop(){cancelAnimationFrame(raf);raf=0;phase='ready';time=position=speed=acceleration=0;lastFrame=null;runSettings=null;}
+function newDataset(reset=false,nextMode=mode){stop();locked=false;repeats=[];records=[];bracketRecords=[];low=high=null;mode=nextMode;if(reset){mode='ramp';$('muk').max='0.4';Object.entries({angle:25,mass:1,mus:.4,muk:.25,distance:2,noise:0}).forEach(([k,v])=>$(k).value=v);$('plot').value='angle';$('zoom').value='auto';$('showForces').checked=true;}$('muk').max=$('mus').value;say('New experiment ready.');render();}
+$('new').onclick=()=>ask(()=>newDataset());$('reset').onclick=()=>ask(()=>newDataset(true));
+$('modeRamp').onclick=()=>{if(mode!=='ramp')ask(()=>newDataset(false,'ramp'));};$('modeCritical').onclick=()=>{if(mode!=='critical')ask(()=>newDataset(false,'critical'));};
+function settingChanged(id){stop();repeats=[];if(id!=='angle'){low=high=null;}if(id==='mus'){$('muk').max=$('mus').value;if(val('muk')>val('mus'))$('muk').value=$('mus').value;}say(id==='angle'?'Angle changed; block returned to rest.':'Setting changed; unfinished measurements cleared.');render();}
+['angle',...controlled].forEach(id=>$(id).addEventListener('input',()=>settingChanged(id)));
+$('showForces').onchange=drawScene;$('plot').onchange=drawGraph;$('zoom').onchange=drawGraph;
+window.matchMedia('(max-width:580px)').addEventListener('change',drawScene);
+function renderControls(){const s=state(),busy=phase==='running'||phase==='paused';controlled.forEach(id=>$(id).disabled=locked||busy);$('angle').disabled=busy;
+[['angle','°',1],['mass',' kg',1],['mus','',2],['muk','',2],['distance',' m',1],['noise',' s',3]].forEach(([id,unit,n])=>$(id+'Out').textContent=f(s[id],n)+unit);
+$('lock').classList.toggle('hidden',!locked);$('modeRamp').setAttribute('aria-pressed',String(mode==='ramp'));$('modeCritical').setAttribute('aria-pressed',String(mode==='critical'));
+$('timingControl').classList.toggle('hidden',mode==='critical');$('rampEvidence').classList.toggle('hidden',mode!=='ramp');$('criticalEvidence').classList.toggle('hidden',mode!=='critical');$('evidenceTitle').textContent=mode==='ramp'?'Current repeats':'Critical-angle bracket';$('plotControl').classList.toggle('hidden',mode==='critical');$('zoomControl').classList.toggle('hidden',mode!=='critical');$('run').textContent=mode==='ramp'?'Release & time':'Test this angle';$('run').disabled=busy;$('pause').disabled=!busy;$('pause').textContent=phase==='paused'?'Resume':'Pause';
+$('instruction').textContent=mode==='ramp'?'Release the block, collect three or more transit times, then record a mean.':'Test from rest at several angles. Narrow the boundary between holding and sliding.';
+$('accelLabel').textContent=['running','paused','finished'].includes(phase)?'Acceleration during run':'Predicted acceleration after release';
+$('phase').textContent=({ready:'Ready',running:'Sliding',paused:'Paused',held:'Holding',finished:'Run complete',tested:'Sliding detected'})[phase];
+const list=mode==='ramp'?records:bracketRecords;$('csv').disabled=!list.length;
+$('conditions').textContent=locked?`Controlled variables: m = ${f(s.mass,1)} kg | μₛ = ${f(s.mus,2)} | μₖ = ${f(s.muk,2)} | L = ${f(s.distance,1)} m | g = 9.81 m/s²`+(mode==='ramp'?` | timing ±${f(s.noise)} s`:''):'No recorded dataset yet.';
+}
+function drawScene(){const s=state(),p=physics(s),theta=p.theta,base={x:660,y:300},len=Math.min(530,230/Math.max(Math.sin(theta),.01)),top={x:base.x-len*Math.cos(theta),y:base.y-len*Math.sin(theta)};
+const mobile=window.matchMedia('(max-width:580px)').matches,left=Math.max(0,top.x-90),upper=Math.max(0,top.y-100);$('scene').setAttribute('viewBox',mobile?`${left} ${upper} ${760-left} ${395-upper}`:'0 0 760 395');
+$('rampLine').setAttribute('d',`M${top.x} ${top.y}L${base.x} ${base.y}`);$('rampFill').setAttribute('d',`M${top.x} ${top.y}L${base.x} ${base.y}L${top.x} ${base.y}Z`);
+const progress=Math.min(1,position/s.distance),x=top.x+progress*(base.x-top.x),y=top.y+progress*(base.y-top.y);$('block').setAttribute('transform',`translate(${x} ${y}) rotate(${s.angle})`);
+const cx=x+16*Math.sin(theta),cy=y-16*Math.cos(theta);const moving=['running','paused','finished'].includes(phase),friction=moving?s.muk*p.N:p.friction;const scale=74/(s.mass*G);
+function arrow(id,dx,dy){const e=$(id);[['x1',cx],['y1',cy],['x2',cx+dx],['y2',cy+dy]].forEach(([a,b])=>e.setAttribute(a,b));e.style.display=Math.hypot(dx,dy)<.1?'none':'';}
+arrow('weightVector',0,74);arrow('normalVector',p.N*scale*Math.sin(theta),-p.N*scale*Math.cos(theta));arrow('frictionVector',-friction*scale*Math.cos(theta),-friction*scale*Math.sin(theta));$('vectors').classList.toggle('hidden',!$('showForces').checked);
+const radius=50;$('angleArc').setAttribute('d',`M${base.x-radius} ${base.y} A${radius} ${radius} 0 0 1 ${base.x-radius*Math.cos(theta)} ${base.y-radius*Math.sin(theta)}`);$('angleLabel').setAttribute('x',base.x-80);$('angleLabel').setAttribute('y',base.y+22);$('angleLabel').textContent=f(s.angle,1)+'°';
+$('timeOut').textContent=f(time)+' s';$('positionOut').textContent=f(position)+' m';$('speedOut').textContent=f(speed)+' m/s';$('accelOut').textContent=f(moving?acceleration:p.a)+' m/s²';
+$('weightOut').textContent=f(s.mass*G)+' N';$('parallelOut').textContent=f(p.parallel)+' N';$('normalOut').textContent=f(p.N)+' N';$('maxStaticOut').textContent=f(s.mus*p.N)+' N';$('frictionOut').textContent=f(friction)+' N ('+(p.holds&&!moving?'static':'kinetic, after release')+')';$('netOut').textContent=f(p.parallel-friction)+' N';}
+function renderEvidence(){const busy=phase==='running'||phase==='paused';$('clear').disabled=busy;$('record').disabled=busy||repeats.length<3;
+$('repeats').textContent=repeats.length?repeats.map((r,i)=>`${i+1}. ${f(r.t)} s → ${f(r.a)} m/s²`).join(' · '):'No completed runs yet.';
+if(repeats.length){const t=stats(repeats.map(r=>r.t)),a=stats(repeats.map(r=>r.a));$('repeatStats').textContent=`${repeats.length} runs · mean t ${f(t.mean)} s · mean a ${f(a.mean)} m/s² · SD(a) ${f(a.sd)} m/s²`;}else $('repeatStats').textContent='Complete at least 3 runs.';
+$('bracket').textContent=(low===null?'Holding angle: not yet found':`Highest holding angle: ${f(low,1)}°`)+(high===null?' · Sliding angle: not yet found':` · Lowest sliding angle: ${f(high,1)}°`)+(low!==null&&high!==null?` · width ${f(high-low,1)}°`:'');$('recordCritical').disabled=!(low!==null&&high!==null&&high>low&&high-low<=1.000001);}
+function renderTable(){const ramp=mode==='ramp';$('caption').textContent=ramp?'Angle & acceleration · three or more runs per recorded angle':'Critical angle · measured brackets and coefficient estimates';const headers=ramp?['θ (°)','Repeats','Mean t (s)','Mean a (m/s²)','SD(a) (m/s²)','Raw times (s)']:['Trial','Holds at (°)','Slides at (°)','θc estimate (°)','μₛ estimate','μₛ interval'];$('tableHead').innerHTML='<tr>'+headers.map(h=>'<th scope="col">'+h+'</th>').join('')+'</tr>';
+const rows=ramp?records.map(r=>[f(r.angle,1),r.raw.length,f(r.meanT),f(r.meanA),f(r.sdA),r.raw.map(x=>f(x.t)).join(', ')]):bracketRecords.map((r,i)=>[i+1,f(r.low,1),f(r.high,1),f(r.mid,2)+' ± '+f((r.high-r.low)/2,2),f(r.mu),`[${f(r.minMu)}, ${f(r.maxMu)})`]);$('tableBody').innerHTML=rows.length?rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join(''):`<tr><td colspan="6">No recorded results yet.</td></tr>`;}
+function fitLinear(data){if(data.length<3)return null;const xs=data.map(d=>Math.tan(d.angle*Math.PI/180)),ys=data.map(d=>d.meanA/(G*Math.cos(d.angle*Math.PI/180))),xm=stats(xs).mean,ym=stats(ys).mean;let xx=0,xy=0,yy=0;xs.forEach((x,i)=>{xx+=(x-xm)**2;xy+=(x-xm)*(ys[i]-ym);yy+=(ys[i]-ym)**2;});if(xx<1e-12)return null;const m=xy/xx,b=ym-m*xm;let err=0;xs.forEach((x,i)=>err+=(ys[i]-m*x-b)**2);return{m,b,r2:yy>1e-15?1-err/yy:null};}
+function drawGraph(){const s=state(),critical=mode==='critical',linear=$('plot').value==='linear'&&!critical,ymin=critical?-.1:linear?-.12:0,ymax=critical?1.1:linear?Math.max(1.8,...records.map(r=>(r.meanA+r.sdA)/(G*Math.cos(r.angle*Math.PI/180)))):Math.max(9,...records.map(r=>r.meanA+r.sdA))*1.05;
+let xmin=0,xmax=linear?Math.tan(Math.PI/3):60;
+const observations=[low,high,...bracketRecords.flatMap(r=>[r.low,r.high])].filter(x=>x!==null);
+if(critical&&$('zoom').value==='auto'&&observations.length){const lo=Math.min(...observations),hi=Math.max(...observations),span=Math.max(1,(hi-lo)*1.5),mid=(lo+hi)/2;xmin=Math.max(0,mid-span/2);xmax=Math.min(60,xmin+span);xmin=Math.max(0,xmax-span);}
+$('graph').dataset.xmin=xmin;$('graph').dataset.xmax=xmax;
+const X=x=>75+(x-xmin)/(xmax-xmin)*650,Y=y=>285-(y-ymin)/(ymax-ymin)*260;$('grid').replaceChildren();$('dots').replaceChildren();$('fit').setAttribute('d','');
+for(let i=0;i<=5;i++){const x=xmin+(xmax-xmin)*i/5,y=ymin+(ymax-ymin)*i/5;svg('line',{x1:75,y1:Y(y),x2:725,y2:Y(y),stroke:'#dce4ef'},$('grid'));svg('text',{x:65,y:Y(y)+4,'text-anchor':'end',fill:'#55677e','font-size':14},$('grid')).textContent=f(y,linear?2:1);svg('text',{x:X(x),y:305,'text-anchor':'middle',fill:'#55677e','font-size':14},$('grid')).textContent=f(x,linear||critical&&xmax-xmin<10?2:0);}
+let path='',prevSliding=false;for(let i=0;i<=600;i++){const angle=i/10,p=physics({...s,angle}),sliding=!p.holds;if(linear&&!sliding)continue;let x=linear?Math.tan(p.theta):angle,y=critical?(sliding?1:0):linear?p.a/(G*Math.cos(p.theta)):p.a;path+=(path&&sliding===prevSliding?'L':'M')+X(x)+' '+Y(y)+' ';prevSliding=sliding;}if(critical){const boundary=Math.atan(s.mus)*180/Math.PI;path='';if(xmin<=boundary)path+=`M${X(xmin)} ${Y(0)}L${X(Math.min(xmax,boundary))} ${Y(0)}`;if(xmax>boundary)path+=`M${X(Math.max(xmin,boundary))} ${Y(1)}L${X(xmax)} ${Y(1)}`;}
+$('theory').setAttribute('d',path);
+$('graphTitle').textContent=critical?'Holding or sliding?':linear?'Linearised acceleration':'Acceleration versus angle';$('xLabel').textContent=linear?'tan θ (dimensionless)':'Ramp angle, θ (°)';$('yLabel').textContent=critical?'0 = holds · 1 = slides':linear?'a/(g cos θ) (dimensionless)':'Acceleration, a (m/s²)';
+$('graph').setAttribute('aria-label',critical?'Holding and sliding observations with recorded critical-angle brackets':'Acceleration graph showing model and recorded data');
+$('graphLegend').innerHTML=critical?'<span>Holding/sliding model</span><span class="points">Current tests</span><span class="recorded">Recorded brackets</span>':'<span>Model after release</span><span class="points">Measured means ±1 SD</span><span class="fit">Fit: sliding data only</span>';
+if(critical){
+bracketRecords.forEach((r,i)=>{
+  const group=svg('g',{'data-recorded-bracket':i+1},$('dots'));
+  svg('title',{},group).textContent=`Trial ${i+1}: holds at ${f(r.low,1)}°, slides at ${f(r.high,1)}°`;
+  svg('rect',{x:X(r.low),y:Y(1),width:Math.max(1,X(r.high)-X(r.low)),height:Y(0)-Y(1),fill:'#7c3aed',opacity:.16},group);
+  [[r.low,0],[r.high,1]].forEach(([x,y])=>svg('circle',{cx:X(x),cy:Y(y),r:6,fill:'white',stroke:'#7c3aed','stroke-width':2},group));
+});
+[[low,0],[high,1]].forEach(([x,y])=>{if(x!==null)svg('circle',{cx:X(x),cy:Y(y),r:5,fill:'#087e8b'},$('dots'));});$('regression').textContent=bracketRecords.length?`Latest estimate: μₛ = ${f(bracketRecords.at(-1).mu)} · model μₛ = ${f(s.mus,2)} · θc = ${f(Math.atan(s.mus)*180/Math.PI,2)}°`:'Record a bracket to compare your estimate with the model.';$('graphNote').textContent='Each test starts from rest. Static friction holds up to the limiting angle; above it, kinetic friction applies. Purple bands preserve recorded brackets; teal points show the current tests.'+(xmax-xmin<60?` View: ${f(xmin,2)}°–${f(xmax,2)}°. Choose Full range for context.`:'');return;}
+records.forEach(r=>{const theta=r.angle*Math.PI/180,scale=linear?G*Math.cos(theta):1,x=X(linear?Math.tan(theta):r.angle),y=r.meanA/scale,sd=r.sdA/scale;svg('line',{x1:x,y1:Y(y-sd),x2:x,y2:Y(y+sd),stroke:'#087e8b','stroke-width':2},$('dots'));for(const q of [y-sd,y+sd])svg('line',{x1:x-4,y1:Y(q),x2:x+4,y2:Y(q),stroke:'#087e8b'},$('dots'));svg('circle',{cx:x,cy:Y(y),r:5,fill:'#087e8b'},$('dots'));});const reg=fitLinear(records);
+$('regression').textContent=reg?`Sliding-data fit: slope ${f(reg.m)} (expected 1) · intercept ${f(reg.b)} · estimated μₖ = ${f(-reg.b)} (model ${f(s.muk,2)}) · R² ${reg.r2===null?'undefined':f(reg.r2,4)}`:'Record at least three distinct sliding angles for a linear fit.';
+if(linear&&reg){const xmin=Math.tan(Math.min(...records.map(r=>r.angle))*Math.PI/180),xmaxFit=Math.tan(Math.max(...records.map(r=>r.angle))*Math.PI/180);$('fit').setAttribute('d',`M${X(xmin)} ${Y(reg.m*xmin+reg.b)}L${X(xmaxFit)} ${Y(reg.m*xmaxFit+reg.b)}`);}
+$('graphNote').textContent=linear?'For sliding: a/(g cos θ) = tan θ − μₖ. Static results are excluded. The fitted line spans measured angles only.':'The model has a jump at the onset of sliding when μₛ > μₖ. Held blocks have zero acceleration and no transit time.';}
+function render(){renderControls();drawScene();renderEvidence();renderTable();drawGraph();}
+function complete(){phase='finished';time=Math.sqrt(2*runSettings.distance/acceleration);position=runSettings.distance;speed=acceleration*time;const measured=time+(Math.random()*2-1)*runSettings.noise;repeats.push({t:measured,a:2*runSettings.distance/(measured*measured)});say(`Run ${repeats.length} complete. Measured time ${f(measured)} s. ${repeats.length<3?'Collect at least 3 runs.':'Ready to record a mean or collect more repeats.'}`);lastFrame=null;raf=0;render();}
+function tick(now){if(phase!=='running')return;if(lastFrame!==null)time+=Math.min((now-lastFrame)/1000,.1);lastFrame=now;const finish=Math.sqrt(2*runSettings.distance/acceleration);if(time>=finish){complete();return;}position=.5*acceleration*time*time;speed=acceleration*time;drawScene();raf=requestAnimationFrame(tick);}
+$('run').onclick=()=>{stop();const s=state(),p=physics(s);if(mode==='critical'){if(p.holds){low=low===null?s.angle:Math.max(low,s.angle);phase='held';say(`At ${f(s.angle,1)}° the block holds. Try a higher angle.`);}else{high=high===null?s.angle:Math.min(high,s.angle);phase='tested';say(`At ${f(s.angle,1)}° sliding begins. Try a lower angle to narrow the bracket.`);}render();return;}if(p.holds){phase='held';say('The block holds: static friction balances the down-slope force. Increase the angle to collect a transit time.');render();return;}runSettings=s;acceleration=p.a;phase='running';say('Timing the block over '+f(s.distance,1)+' m…');render();raf=requestAnimationFrame(tick);};
+$('pause').onclick=()=>{if(phase==='running'){phase='paused';cancelAnimationFrame(raf);lastFrame=null;}else if(phase==='paused'){phase='running';lastFrame=null;raf=requestAnimationFrame(tick);}renderControls();renderEvidence();};
+$('return').onclick=()=>{stop();say('Block returned to rest. Completed repeats are retained.');render();};
+$('clear').onclick=()=>{repeats=[];say('Unrecorded repeats cleared.');renderEvidence();};
+$('record').onclick=()=>{if(repeats.length<3)return;const s=state(),t=stats(repeats.map(r=>r.t)),a=stats(repeats.map(r=>r.a)),record={angle:s.angle,meanT:t.mean,sdT:t.sd,meanA:a.mean,sdA:a.sd,raw:repeats.map(r=>({...r}))};const ix=records.findIndex(r=>r.angle===s.angle);if(ix<0)records.push(record);else records[ix]=record;records.sort((a,b)=>a.angle-b.angle);locked=true;repeats=[];say((ix<0?'Recorded':'Replaced')+' mean at '+f(s.angle,1)+'°. Controlled variables are now locked.');render();};
+$('clearBracket').onclick=()=>{low=high=null;say('Unrecorded bracket cleared.');render();};
+$('recordCritical').onclick=()=>{if(low===null||high===null||high-low>1.000001)return;const mid=(low+high)/2;bracketRecords.push({low,high,mid,mu:Math.tan(mid*Math.PI/180),minMu:Math.tan(low*Math.PI/180),maxMu:Math.tan(high*Math.PI/180)});locked=true;low=high=null;say('Bracket recorded. Test a fresh pair of angles for an independent repeat.');render();};
+$('csv').onclick=()=>{const s=state(),rows=[];if(mode==='ramp'){rows.push(['angle_deg','repeat','time_s','acceleration_m_s2','mean_time_s','sd_time_s','mean_acceleration_m_s2','sd_acceleration_m_s2','mass_kg','mu_static','mu_kinetic','distance_m','timing_variation_s','g_m_s2']);records.forEach(r=>r.raw.forEach((raw,i)=>rows.push([r.angle,i+1,raw.t,raw.a,r.meanT,r.sdT,r.meanA,r.sdA,s.mass,s.mus,s.muk,s.distance,s.noise,G])));}else{rows.push(['trial','highest_holding_angle_deg','lowest_sliding_angle_deg','critical_angle_estimate_deg','half_bracket_width_deg','estimated_mu_static','mu_lower_inclusive','mu_upper_exclusive','model_mu_static','model_mu_kinetic','mass_kg','g_m_s2']);bracketRecords.forEach((r,i)=>rows.push([i+1,r.low,r.high,r.mid,(r.high-r.low)/2,r.mu,r.minMu,r.maxMu,s.mus,s.muk,s.mass,G]));}if(rows.length<2)return;const blob=new Blob([rows.map(row=>row.join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=mode==='ramp'?'inclined-plane-acceleration.csv':'inclined-plane-critical-angle.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&phase==='running'){$('pause').click();say('Paused while this tab is hidden. Resume when ready.');}});
+render();
+})();
+
+</script>
+<script>
+if (location.protocol === 'file:' || !location.pathname.includes('/PhySims/')) {
+/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+
+} else {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '../../shared/scisims-nav.css';
+  document.head.appendChild(style);
+  const shared = document.createElement('script');
+  shared.src = '../../shared/scisims-nav.js';
+  shared.onerror = () => {/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+};
+  document.head.appendChild(shared);
+}
+
+</script>
+</body></html>
