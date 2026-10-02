@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Speed of Sound — Flag &amp; Horn | SciSims</title><meta name="description" content="Measure the speed of sound using a simultaneous flag and horn signal, repeated timings and linear regression."><style>
+:root{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--ink:#182b43;--muted:#55677e;--border:#d6e0ed;--blue:#1d4ed8;--teal:#087e8b;--orange:#b85b00;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,input,select{accent-color:var(--blue)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #2196f3;outline-offset:3px}button{cursor:pointer;min-height:42px;border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:white;color:var(--ink);font-weight:650}button:hover:not(:disabled){background:#edf3ff}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover:not(:disabled){background:#173daf}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.15;letter-spacing:-.035em}h2{font-size:1.08rem}h3{font-size:.94rem}p+p{margin-top:8px}.page{max-width:1280px;margin:auto;padding:20px 24px 40px}.hero{border-radius:24px;background:linear-gradient(125deg,#102240,#1d4ed8 65%,#0891b2);padding:28px;color:white;box-shadow:0 10px 25px #19396018}.hero p{max-width:830px;color:#e2edff;margin-top:10px}.eyebrow{font-size:.75rem;letter-spacing:.12em;font-weight:800;margin-bottom:9px}.lessons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 5px 18px #17345606}.lessons h2{color:var(--blue);margin-bottom:6px}.muted,.small{color:var(--muted)}.small{font-size:.83rem}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.stack{display:grid;gap:16px;align-content:start}.main{min-width:0}.control{display:block;margin-top:16px}.control>span{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;font-weight:650}.control input[type=range]{display:block;width:100%;margin:10px 0 0}.control output{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--blue)}select{width:100%;min-height:42px;background:white;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:6px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.modes{display:flex;gap:8px;margin-bottom:16px}.modes button{flex:1}.modes button[aria-pressed=true]{background:#e8f0ff;border-color:var(--blue);color:#163ca1}.row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.badge{background:#eaf5f7;color:#08636e;font-size:.8rem;padding:6px 10px;border-radius:20px;font-weight:750;white-space:nowrap}.notice{background:#eef4ff;border-radius:10px;padding:10px;font-size:.85rem}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{background:#f3f6fb;padding:10px;border-radius:10px;font-size:.77rem;color:var(--muted)}.metric strong{display:block;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{padding:12px;background:#f3f6fb;border-radius:10px;font-size:.88rem}.formula p{margin-top:6px}svg{display:block;width:100%;height:auto}.hidden{display:none!important}.tablewrap{overflow:auto;max-height:340px}table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}th{background:#f3f6fb}caption{text-align:left;color:var(--muted);padding:10px 0}.status{min-height:1.5em;margin-top:10px;font-size:.87rem;color:#234e7a}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:18px;border-top:3px solid var(--blue);margin-right:5px;vertical-align:middle}.legend .points::before{border-color:var(--teal)}.legend .recorded::before{border-color:var(--purple)}.legend .fit::before{border-color:var(--purple);border-top-style:dashed}.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.prompt-grid>div{background:#f3f6fb;border-radius:10px;padding:12px}.prompt-grid p{font-size:.84rem;margin-top:5px}details summary{cursor:pointer;font-weight:700}details p{margin-top:10px}footer{font-size:.8rem;color:var(--muted);margin-top:18px}.check{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-top:12px}.check input{width:18px;height:18px}.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{display:flex;gap:12px;justify-content:space-between;align-items:center}.graph-head select{width:auto;max-width:240px}#repeats{max-height:130px;overflow:auto;font-size:.86rem}.danger{color:#9c3125}dialog{border:1px solid var(--border);border-radius:16px;max-width:440px;padding:24px;color:var(--ink);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#12243a80}dialog p{margin:12px 0 20px}@media(max-width:950px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls>h2,.controls>.notice,.controls>.toolbar,.controls>.small{grid-column:1/-1}.subgrid{grid-template-columns:1fr}}@media(max-width:580px){.graph-scroll svg{min-width:720px}.graph-scroll-hint{display:block;margin-top:10px}#scene text{font-size:26px}.page{padding:12px}.hero{padding:22px}.lessons,.controls{grid-template-columns:1fr}.controls>*{grid-column:1!important}.readouts,.prompt-grid{grid-template-columns:1fr 1fr}.modes{flex-direction:column}.row,.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{flex-wrap:wrap}.toolbar button{flex:1}.card{padding:14px}.graph-head select{max-width:100%}}@media print{body.has-scisims-simulation-nav{padding-top:0!important}.controls,.modes,.toolbar{display:none}.layout{display:block}.card{break-inside:avoid;box-shadow:none}.main{display:block}.main>.card{margin-bottom:16px}}
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
+
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
+
+
+#scene text{font-size:16px}.source{color:#b85b00}.reading-list{max-height:160px;overflow:auto}.legend .points::before{border-color:#087e8b}.legend .fit::before{border-color:#7c3aed}.graph-scroll svg{min-width:620px}.controls .control{margin-top:18px}@media(max-width:580px){#scene text{font-size:22px}.graph-scroll-hint{display:block}}
+</style></head><body class="has-scisims-simulation-nav"><div id="scisimsSiteNav" class="scisims-simulation-nav"></div><main class="page">
+<header class="hero"><div class="eyebrow">SCISIMS · PHYSICS27 · CHAPTER 3.2</div><h1>Speed of Sound — Flag &amp; Horn</h1><p>See the flag. Hear the horn. Measure the delay and use repeated trials to find how quickly sound travels through air.</p></header>
+<section class="lessons" aria-label="Learning intention and success criteria"><div class="card"><h2>Learning intention</h2><p>Explain the delay between seeing and hearing a simultaneous signal, and determine the speed of sound experimentally.</p></div><div class="card"><h2>Success criteria</h2><p>Collect repeated times at several distances, use a best-fit graph to estimate speed, and distinguish random timing variation from systematic bias.</p></div></section>
+<div class="layout"><aside class="card controls"><h2>Experiment controls</h2><p class="small">Change the observer’s distance. Keep air temperature and timing conditions constant within each dataset.</p><div id="lock" class="notice hidden">Dataset started. Controlled variables are locked; distance remains adjustable.</div>
+<label class="control"><span>Distance <output id="distanceOut"></output></span><input id="distance" type="range" min="50" max="1000" step="10" value="200"></label>
+<label class="control"><span>Air temperature <output id="temperatureOut"></output></span><input id="temperature" type="range" min="0" max="40" step="1" value="20"></label>
+<label class="control"><span>Timing mode</span><select id="mode"><option value="ideal">Ideal timing</option><option value="lab">Field investigation</option></select></label>
+<div id="labControls" class="hidden"><label class="control"><span>Random timing variation, ± <output id="variationOut"></output></span><input id="variation" type="range" min="0" max="0.1" step="0.005" value="0.04"></label><label class="control"><span>Systematic timing bias <output id="biasOut"></output></span><input id="bias" type="range" min="-0.03" max="0.15" step="0.005" value="0.03"></label><p class="small" style="margin-top:8px">Positive bias means a measured delay that is consistently too long. Variation applies to the total measured delay.</p></div>
+<label class="control"><span>Playback speed</span><select id="playback"><option value="1">Real time</option><option value="0.25">Quarter speed</option></select></label><p class="small" style="margin-top:12px">Slow playback changes the animation only. Recorded times always use physical seconds.</p><label class="check"><input id="audio" type="checkbox">Play arrival cue</label><div class="toolbar" style="margin-top:16px"><button id="new">New experiment</button><button id="reset">Reset all</button></div></aside>
+<div class="main stack"><section class="card"><div class="row"><div><h2>Field laboratory</h2><p class="small">The source raises its flag and sounds its horn at the same instant.</p></div><span id="phase" class="badge" role="status">Ready</span></div>
+<svg id="scene" viewBox="0 0 760 300" role="img" aria-label="A flag and horn source sends a sound wave to a distant observer"><defs><clipPath id="fieldClip"><rect x="30" y="30" width="700" height="205"/></clipPath></defs><rect x="20" y="30" width="720" height="210" rx="18" fill="#eef6ff"/><path d="M20 200H740V240H20Z" fill="#d8eadd"/><g clip-path="url(#fieldClip)"><circle id="wave" cx="85" cy="145" r="0" fill="#1d4ed8" fill-opacity=".07" stroke="#1d4ed8" stroke-width="3"/></g><g id="source"><circle cx="85" cy="121" r="12" fill="#b85b00"/><path d="M85 134V176M85 147L105 140M85 176L73 198M85 176L96 198" stroke="#80532b" stroke-width="6" stroke-linecap="round"/><path d="M105 134L125 125V153L105 146Z" fill="#b85b00"/><line x1="61" y1="94" x2="61" y2="180" stroke="#80532b" stroke-width="3"/><path id="flag" d="M61 94L100 94L89 108L61 108Z" fill="#dc2626" opacity=".2"/><text x="85" y="227" text-anchor="middle" fill="#182b43">Source</text></g><g id="observer"><circle cx="0" cy="121" r="12" fill="#087e8b"/><path d="M0 134V176M0 148L-17 143M0 176L-12 198M0 176L12 198" stroke="#087e8b" stroke-width="6" stroke-linecap="round"/><text x="0" y="227" text-anchor="middle" fill="#182b43">Observer</text><circle id="arrival" cx="0" cy="120" r="23" fill="none" stroke="#087e8b" stroke-width="3" opacity="0"/></g><line id="ruler" x1="85" y1="258" x2="650" y2="258" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/><text id="sceneDistance" x="370" y="283" text-anchor="middle" fill="#182b43"/></svg>
+<div class="toolbar"><button id="run" class="primary">Send flag &amp; horn</button><button id="pause" disabled>Pause</button><button id="return">Return to start</button></div><div class="readouts"><div class="metric">Physical elapsed time<strong id="timeOut">0.000 s</strong></div><div class="metric">Visual signal<strong id="flagOut">Waiting</strong></div><div class="metric">Sound signal<strong id="soundOut">Waiting</strong></div><div class="metric">Latest measured delay<strong id="measuredOut">—</strong></div></div><p class="small" style="margin-top:10px">The wavefront represents sound travelling through stationary air; it is not a moving parcel of air. Separation is schematic; the labelled distance determines travel time.</p><div id="status" class="status" role="status" aria-live="polite"></div></section>
+<div class="subgrid"><section class="card"><h2>Repeated measurements</h2><p class="small">Record at least three trials at the same distance. In ideal mode the repeated times are identical.</p><div id="repeats" class="reading-list" style="margin-top:10px">No completed trials yet.</div><p id="stats" class="notice" style="margin-top:12px">Complete at least 3 trials.</p><div class="toolbar" style="margin-top:12px"><button id="record" disabled>Record mean</button><button id="clear">Clear repeats</button></div></section><section class="card"><h2>From timing to speed</h2><div class="formula" style="margin-top:10px"><p>Single-distance estimate: v = d / mean delay</p><p id="single">Collect readings to estimate speed.</p><p>Graph model: t = d/v + b</p><p>Gradient = 1/v · intercept = timing bias b</p></div><p class="small" style="margin-top:10px">A fixed timing bias distorts d/t, especially at short distances. A fitted intercept can separate this bias from the speed estimate.</p></section></div>
+<section class="card"><div class="graph-head"><h2>Measured delay versus distance</h2><label class="small">View <select id="graphView"><option value="full">Full range</option><option value="data">Fit to recorded data</option></select></label></div><p class="small">Record at three or more distinct distances to fit a line.</p><p class="small graph-scroll-hint">Swipe horizontally to read the full graph.</p><div class="graph-scroll" tabindex="0" role="region" aria-label="Scrollable delay graph"><svg id="graph" viewBox="0 0 760 350" role="img" aria-label="Mean measured delay against distance, with standard-deviation error bars"><defs><clipPath id="plotClip"><rect x="75" y="25" width="650" height="260"/></clipPath></defs><g id="grid"></g><g clip-path="url(#plotClip)"><path id="fit" stroke="#7c3aed" stroke-width="3" stroke-dasharray="7 5" fill="none"/><g id="points"></g></g><text x="400" y="335" text-anchor="middle" fill="#182b43" font-size="16">Source–observer distance, d (m)</text><text transform="translate(20 155) rotate(-90)" text-anchor="middle" fill="#182b43" font-size="16">Measured delay, t (s)</text></svg></div><div class="legend"><span class="points">Recorded means ±1 SD</span><span class="fit">Best-fit line</span></div><p id="regression" class="notice" style="margin-top:12px">No fit yet.</p><details style="margin-top:14px"><summary>Compare with the air-temperature model</summary><p id="model"></p><p class="small">Approximation for dry air over 0–40°C: v ≈ 331.3 + 0.606T m/s. Wind and humidity are not modelled.</p></details></section>
+</div></div><section class="card" style="margin-top:16px"><div class="row"><div><h2>Investigation results</h2><p id="conditions" class="small">No recorded dataset yet.</p></div><button id="csv" disabled>Export CSV</button></div><div class="tablewrap"><table><caption>Each row represents repeated timings at one distance.</caption><thead><tr><th scope="col">Distance (m)</th><th scope="col">Repeats</th><th scope="col">Mean delay (s)</th><th scope="col">SD (s)</th><th scope="col">d / mean t (m/s)</th><th scope="col">Raw delays (s)</th></tr></thead><tbody id="tableBody"></tbody></table></div><div class="prompt-grid" style="margin-top:16px"><div><h3>Predict</h3><p>What happens to the sound delay when distance doubles?</p></div><div><h3>Observe</h3><p>Repeat timings at five or more distances, spread across the available range.</p></div><div><h3>Analyse</h3><p>Use the gradient to estimate speed. What does the intercept suggest?</p></div><div><h3>Evaluate</h3><p>Compare short- and long-distance estimates. Can repeats remove systematic bias?</p></div></div></section>
+<details class="card" style="margin-top:16px"><summary>Method, model and limitations</summary><p>This is a simulated field-timing investigation, not a test of your reaction time. A trial starts when the simultaneous source signals are sent. The visual delay is treated as zero: at 1 km, light travel time is only about 3.3 microseconds, negligible beside sound travel time.</p><p>In ideal mode, the recorded delay is d/v. In field mode, the delay is d/v + b + ε, where b is the selected systematic timing bias and ε is a new uniformly distributed error within the selected ± variation for every trial. Control limits keep all measured delays positive. The animation shows the physical sound travel time; the displayed measured time may differ because of timing error.</p><p>The graph uses ordinary least squares on recorded means with a free intercept. All distances receive equal weight. Error bars show sample standard deviation of repeated times, not uncertainty in the mean. A slope of m gives v = 1/m. Identical distances replace the previous recorded mean. Changing distance clears unfinished repeats; recorded results lock temperature and timing conditions.</p><p>The optional audio cue is for illustration only. Browser audio latency is not included in measurements. Pausing, slow playback and tab switching do not alter the recorded physical travel time.</p></details><footer>SciSims · Physics27 · Self-contained classroom simulation.</footer></main><dialog id="confirm"><h2>Start fresh?</h2><p>This clears your measurements. Export your CSV first if you want to keep them.</p><div class="toolbar"><button id="cancel">Keep working</button><button id="confirmClear" class="primary">Clear and continue</button></div></dialog>
+<script>(()=>{'use strict';const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';let phase='ready',time=0,last=null,raf=0,locked=false,repeats=[],records=[],latest=null,pending=null,audioContext=null;
+const val=id=>Number($(id).value),f=(x,n=3)=>Number.isFinite(x)?x.toFixed(n):'—';const state=()=>({d:val('distance'),temperature:val('temperature'),variation:$('mode').value==='ideal'?0:val('variation'),bias:$('mode').value==='ideal'?0:val('bias'),mode:$('mode').value});const speed=s=>331.3+.606*s.temperature;
+const stats=a=>{const mean=a.reduce((x,y)=>x+y,0)/a.length;return{mean,sd:a.length>1?Math.sqrt(a.reduce((q,x)=>q+(x-mean)**2,0)/(a.length-1)):0};};const say=t=>$('status').textContent=t;const busy=()=>phase==='running'||phase==='paused';
+function stop(){cancelAnimationFrame(raf);raf=0;phase='ready';time=0;last=null;}
+function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));parent.append(e);return e;}
+function ask(action){if(records.length||repeats.length||busy()){pending=action;$('confirm').showModal();}else action();}
+$('cancel').onclick=()=>{pending=null;$('confirm').close();};$('confirm').addEventListener('cancel',()=>pending=null);$('confirmClear').onclick=()=>{const fn=pending;pending=null;$('confirm').close();if(fn)fn();};
+function fresh(reset=false){stop();locked=false;repeats=[];records=[];latest=null;if(reset){Object.entries({distance:200,temperature:20,variation:.04,bias:.03}).forEach(([k,v])=>$(k).value=v);$('mode').value='ideal';$('playback').value='1';$('graphView').value='full';$('audio').checked=false;}say('New experiment ready.');render();}
+window.matchMedia('(max-width:580px)').addEventListener('change',drawScene);
+$('new').onclick=()=>ask(()=>fresh());$('reset').onclick=()=>ask(()=>fresh(true));
+for(const id of ['distance','temperature','variation','bias','mode'])$(id).addEventListener(id==='mode'?'change':'input',()=>{stop();repeats=[];latest=null;say('Setting changed. Unrecorded repeats cleared.');render();});
+function drawScene(){const s=state(),x=220+s.d*.43; $('scene').setAttribute('viewBox',window.matchMedia('(max-width:580px)').matches?`0 50 ${Math.max(420,x+85)} 250`:'0 0 760 300'); $('observer').setAttribute('transform',`translate(${x} 0)`);$('ruler').setAttribute('x2',x);$('sceneDistance').setAttribute('x',(85+x)/2);$('sceneDistance').textContent=f(s.d,0)+' m';$('wave').setAttribute('r',time*speed(s)/s.d*(x-85));$('wave').setAttribute('opacity',phase==='ready'?0:1);$('flag').setAttribute('opacity',phase==='ready'?.2:1);$('arrival').setAttribute('opacity',phase==='finished'?1:0);$('timeOut').textContent=f(time)+' s';$('flagOut').textContent=phase==='ready'?'Waiting':'Seen';$('soundOut').textContent=phase==='finished'?'Arrived':phase==='ready'?'Waiting':'Travelling';$('measuredOut').textContent=latest===null?'—':f(latest)+' s';}
+function render(){const s=state();for(const id of ['temperature','mode','variation','bias'])$(id).disabled=locked||busy();$('distance').disabled=busy();$('lock').classList.toggle('hidden',!locked);$('labControls').classList.toggle('hidden',s.mode!=='lab');[['distance',' m',0],['temperature',' °C',0],['variation',' s',3],['bias',' s',3]].forEach(([id,unit,n])=>$(id+'Out').textContent=f(val(id),n)+unit);$('phase').textContent=({ready:'Ready',running:'Sound travelling',paused:'Paused',finished:'Sound arrived'})[phase];$('run').disabled=busy();$('pause').disabled=!busy();$('pause').textContent=phase==='paused'?'Resume':'Pause';$('record').disabled=busy()||repeats.length<3;$('clear').disabled=busy();$('csv').disabled=!records.length;
+$('conditions').textContent=locked?`Controlled variables: temperature ${s.temperature}°C | ${s.mode==='ideal'?'Ideal timing':`Field timing · variation ±${f(s.variation)} s · bias ${f(s.bias)} s`}`:'No recorded dataset yet.';
+$('repeats').textContent=repeats.length?repeats.map((t,i)=>`${i+1}. ${f(t)} s`).join(' · '):'No completed trials yet.';if(repeats.length){const st=stats(repeats);$('stats').textContent=`${repeats.length} trials · mean ${f(st.mean)} s · SD ${f(st.sd)} s`;$('single').textContent=`${f(s.d,0)} m ÷ ${f(st.mean)} s ≈ ${f(s.d/st.mean,1)} m/s`;}else{$('stats').textContent='Complete at least 3 trials.';$('single').textContent='Collect readings to estimate speed.';}
+$('tableBody').innerHTML=records.length?records.map(r=>'<tr>'+[r.d,r.raw.length,f(r.mean),f(r.sd),f(r.d/r.mean,1),r.raw.map(t=>f(t)).join(', ')].map(v=>'<td>'+v+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="6">No recorded results yet.</td></tr>';drawScene();drawGraph();}
+function regression(){if(records.length<3)return null;const mx=stats(records.map(r=>r.d)).mean,my=stats(records.map(r=>r.mean)).mean;let xx=0,xy=0,yy=0;records.forEach(r=>{xx+=(r.d-mx)**2;xy+=(r.d-mx)*(r.mean-my);yy+=(r.mean-my)**2;});if(xx<1e-12)return null;const slope=xy/xx,intercept=my-slope*mx,sse=records.reduce((sum,r)=>sum+(r.mean-slope*r.d-intercept)**2,0);return{slope,intercept,r2:yy>1e-15?1-sse/yy:null};}
+$('graphView').onchange=drawGraph;
+function drawGraph(){const s=state(),fitData=$('graphView').value==='data'&&records.length>0;
+let xmin=0,xmax=1000,ymin=0,ymax=Math.max(3.5,...records.map(r=>r.mean+r.sd))*1.06;
+if(fitData){const ds=records.map(r=>r.d),dlo=Math.min(...ds),dhi=Math.max(...ds),pad=Math.max(25,(dhi-dlo)*.1);xmin=Math.max(0,dlo-pad);xmax=Math.min(1000,dhi+pad);const lo=Math.min(...records.map(r=>r.mean-r.sd)),hi=Math.max(...records.map(r=>r.mean+r.sd)),yp=Math.max(.05,(hi-lo)*.12);ymin=Math.max(0,lo-yp);ymax=hi+yp;}
+$('graph').dataset.xmin=xmin;$('graph').dataset.xmax=xmax;
+const X=d=>75+(d-xmin)/(xmax-xmin)*650,Y=t=>285-(t-ymin)/(ymax-ymin)*260;$('grid').replaceChildren();$('points').replaceChildren();$('fit').setAttribute('d','');for(let i=0;i<=5;i++){const d=xmin+(xmax-xmin)*i/5,t=ymin+(ymax-ymin)*i/5;svg('line',{x1:75,y1:Y(t),x2:725,y2:Y(t),stroke:'#dce4ef'},$('grid'));svg('text',{x:65,y:Y(t)+5,'text-anchor':'end',fill:'#55677e','font-size':15},$('grid')).textContent=f(t,fitData?2:1);svg('text',{x:X(d),y:308,'text-anchor':'middle',fill:'#55677e','font-size':15},$('grid')).textContent=f(d,0);}records.forEach(r=>{const x=X(r.d);svg('line',{x1:x,x2:x,y1:Y(r.mean-r.sd),y2:Y(r.mean+r.sd),stroke:'#087e8b','stroke-width':2},$('points'));for(const y of [r.mean-r.sd,r.mean+r.sd])svg('line',{x1:x-4,x2:x+4,y1:Y(y),y2:Y(y),stroke:'#087e8b'},$('points'));svg('circle',{cx:x,cy:Y(r.mean),r:5,fill:'#087e8b'},$('points'));});const fit=regression();$('model').textContent=`At ${s.temperature}°C, the model predicts ${f(speed(s),2)} m/s.`;if(!fit){$('regression').textContent='Record at least three distinct distances for a best-fit line.';return;}const lo=records[0].d,hi=records.at(-1).d;$('fit').setAttribute('d',`M${X(lo)} ${Y(fit.slope*lo+fit.intercept)}L${X(hi)} ${Y(fit.slope*hi+fit.intercept)}`);$('regression').textContent=`Gradient ${f(fit.slope,6)} s/m · intercept ${f(fit.intercept,4)} s · speed ${fit.slope>0?f(1/fit.slope,2)+' m/s':'not physically meaningful (non-positive gradient)'} · R² ${fit.r2===null?'undefined':f(fit.r2,4)}`;if(fit.slope>0)$('model').textContent+=` Your fitted speed differs by ${f(Math.abs(1/fit.slope-speed(s))/speed(s)*100,2)}%.`;}
+function beep(){if(!$('audio').checked||!audioContext)return;try{const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=440;g.gain.setValueAtTime(0,audioContext.currentTime);g.gain.linearRampToValueAtTime(.08,audioContext.currentTime+.01);g.gain.linearRampToValueAtTime(0,audioContext.currentTime+.18);o.connect(g);g.connect(audioContext.destination);o.start();o.stop(audioContext.currentTime+.2);}catch{say('Audio unavailable; the visual arrival cue and measurements still work.');}}
+function tick(now){if(phase!=='running')return;const s=state(),arrival=s.d/speed(s);if(last!==null)time+=Math.min((now-last)/1000,.1)*val('playback');last=now;if(time>=arrival){time=arrival;phase='finished';raf=0;last=null;latest=arrival+s.bias+(Math.random()*2-1)*s.variation;repeats.push(latest);say(`Trial ${repeats.length} complete. Measured delay ${f(latest)} s.`);beep();render();return;}drawScene();raf=requestAnimationFrame(tick);}
+$('run').onclick=()=>{stop();latest=null;phase='running';if($('audio').checked){try{audioContext??=new(window.AudioContext||window.webkitAudioContext)();audioContext.resume().catch(()=>{});}catch{audioContext=null;}}say('Flag seen: timing begins. Sound is on its way.');render();raf=requestAnimationFrame(tick);};$('pause').onclick=()=>{if(phase==='running'){phase='paused';cancelAnimationFrame(raf);last=null;}else if(phase==='paused'){phase='running';last=null;raf=requestAnimationFrame(tick);}render();};$('return').onclick=()=>{stop();say('Ready for another trial. Completed repeats are retained.');render();};$('clear').onclick=()=>{repeats=[];latest=null;say('Unrecorded repeats cleared.');render();};$('record').onclick=()=>{if(repeats.length<3)return;const s=state(),st=stats(repeats),record={d:s.d,...st,raw:[...repeats]},i=records.findIndex(r=>r.d===s.d);if(i>=0)records[i]=record;else records.push(record);records.sort((a,b)=>a.d-b.d);locked=true;repeats=[];say((i>=0?'Replaced':'Recorded')+' mean at '+s.d+' m.');render();};
+$('csv').onclick=()=>{if(!records.length)return;const s=state(),rows=[['distance_m','repeat','measured_delay_s','mean_delay_s','sd_delay_s','single_distance_speed_m_s','temperature_C','mode','timing_variation_s','timing_bias_s','model_speed_m_s']];records.forEach(r=>r.raw.forEach((t,i)=>rows.push([r.d,i+1,t,r.mean,r.sd,r.d/r.mean,s.temperature,s.mode,s.variation,s.bias,speed(s)])));const blob=new Blob([rows.map(r=>r.join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='speed-of-sound-flag-horn.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};document.addEventListener('visibilitychange',()=>{if(document.hidden&&phase==='running'){$('pause').click();say('Paused while this tab is hidden.');}});render();})();
+</script><script>
+if (location.protocol === 'file:' || !location.pathname.includes('/PhySims/')) {
+/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+
+} else {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '../../shared/scisims-nav.css';
+  document.head.appendChild(style);
+  const shared = document.createElement('script');
+  shared.src = '../../shared/scisims-nav.js';
+  shared.onerror = () => {/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+};
+  document.head.appendChild(shared);
+}
+
+</script>
+</body></html>
