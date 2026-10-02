@@ -1,0 +1,379 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Solenoid Field versus Current | SciSims</title><meta name="description" content="Investigate the magnetic field at the centre of an air-core solenoid using repeated readings, current reversal and regression."><style>
+:root{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--ink:#182b43;--muted:#55677e;--border:#d6e0ed;--blue:#1d4ed8;--teal:#087e8b;--orange:#b85b00;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,input,select{accent-color:var(--blue)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #2196f3;outline-offset:3px}button{cursor:pointer;min-height:42px;border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:white;color:var(--ink);font-weight:650}button:hover:not(:disabled){background:#edf3ff}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover:not(:disabled){background:#173daf}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.15;letter-spacing:-.035em}h2{font-size:1.08rem}h3{font-size:.94rem}p+p{margin-top:8px}.page{max-width:1280px;margin:auto;padding:20px 24px 40px}.hero{border-radius:24px;background:linear-gradient(125deg,#102240,#1d4ed8 65%,#0891b2);padding:28px;color:white;box-shadow:0 10px 25px #19396018}.hero p{max-width:830px;color:#e2edff;margin-top:10px}.eyebrow{font-size:.75rem;letter-spacing:.12em;font-weight:800;margin-bottom:9px}.lessons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 5px 18px #17345606}.lessons h2{color:var(--blue);margin-bottom:6px}.muted,.small{color:var(--muted)}.small{font-size:.83rem}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.stack{display:grid;gap:16px;align-content:start}.main{min-width:0}.control{display:block;margin-top:16px}.control>span{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;font-weight:650}.control input[type=range]{display:block;width:100%;margin:10px 0 0}.control output{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--blue)}select{width:100%;min-height:42px;background:white;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:6px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.modes{display:flex;gap:8px;margin-bottom:16px}.modes button{flex:1}.modes button[aria-pressed=true]{background:#e8f0ff;border-color:var(--blue);color:#163ca1}.row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.badge{background:#eaf5f7;color:#08636e;font-size:.8rem;padding:6px 10px;border-radius:20px;font-weight:750;white-space:nowrap}.notice{background:#eef4ff;border-radius:10px;padding:10px;font-size:.85rem}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{background:#f3f6fb;padding:10px;border-radius:10px;font-size:.77rem;color:var(--muted)}.metric strong{display:block;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{padding:12px;background:#f3f6fb;border-radius:10px;font-size:.88rem}.formula p{margin-top:6px}svg{display:block;width:100%;height:auto}.hidden{display:none!important}.tablewrap{overflow:auto;max-height:340px}table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}th{background:#f3f6fb}caption{text-align:left;color:var(--muted);padding:10px 0}.status{min-height:1.5em;margin-top:10px;font-size:.87rem;color:#234e7a}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:18px;border-top:3px solid var(--blue);margin-right:5px;vertical-align:middle}.legend .points::before{border-color:var(--teal)}.legend .recorded::before{border-color:var(--purple)}.legend .fit::before{border-color:var(--purple);border-top-style:dashed}.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.prompt-grid>div{background:#f3f6fb;border-radius:10px;padding:12px}.prompt-grid p{font-size:.84rem;margin-top:5px}details summary{cursor:pointer;font-weight:700}details p{margin-top:10px}footer{font-size:.8rem;color:var(--muted);margin-top:18px}.check{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-top:12px}.check input{width:18px;height:18px}.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{display:flex;gap:12px;justify-content:space-between;align-items:center}.graph-head select{width:auto;max-width:240px}#repeats{max-height:130px;overflow:auto;font-size:.86rem}.danger{color:#9c3125}dialog{border:1px solid var(--border);border-radius:16px;max-width:440px;padding:24px;color:var(--ink);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#12243a80}dialog p{margin:12px 0 20px}@media(max-width:950px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls>h2,.controls>.notice,.controls>.toolbar,.controls>.small{grid-column:1/-1}.subgrid{grid-template-columns:1fr}}@media(max-width:580px){.graph-scroll svg{min-width:720px}.graph-scroll-hint{display:block;margin-top:10px}#scene text{font-size:26px}.page{padding:12px}.hero{padding:22px}.lessons,.controls{grid-template-columns:1fr}.controls>*{grid-column:1!important}.readouts,.prompt-grid{grid-template-columns:1fr 1fr}.modes{flex-direction:column}.row,.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{flex-wrap:wrap}.toolbar button{flex:1}.card{padding:14px}.graph-head select{max-width:100%}}@media print{body.has-scisims-simulation-nav{padding-top:0!important}.controls,.modes,.toolbar{display:none}.layout{display:block}.card{break-inside:avoid;box-shadow:none}.main{display:block}.main>.card{margin-bottom:16px}}
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
+
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
+
+
+#scene text{font-size:16px}.source{color:#b85b00}.reading-list{max-height:160px;overflow:auto}.legend .points::before{border-color:#087e8b}.legend .fit::before{border-color:#7c3aed}.graph-scroll svg{min-width:620px}.controls .control{margin-top:18px}@media(max-width:580px){#scene text{font-size:22px}.graph-scroll-hint{display:block}}
+
+#apparatus{background:linear-gradient(#eef6ff,#fff);border-radius:14px;margin-top:12px}.apparatus-wrap{overflow:auto}.apparatus-wrap svg{min-width:620px}.controls .toolbar{margin-top:14px}.controls>.control{margin-top:16px}.metric strong{font-size:1.06rem}.polarity{font-size:.85rem;margin-top:12px}.model-line{font-size:.9rem}.graph-scroll svg{min-width:720px}.legend .model::before{border-color:#2563eb}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+</style></head><body class="has-scisims-simulation-nav"><div id="scisimsSiteNav" class="scisims-simulation-nav"></div><main class="page"><header class="hero"><div class="eyebrow">SCISIMS · PHYSICS27 · CHAPTER 4.3</div><h1>Solenoid Field versus Current</h1><p>Change the current, reverse the poles, and measure the magnetic field. Use the gradient of your graph to test the solenoid model.</p></header>
+<section class="lessons" aria-label="Learning intention and success criteria"><div class="card"><h2>Learning intention</h2><p>Explain how current and coil geometry affect the magnetic field at the centre of a solenoid, and predict its direction.</p></div><div class="card"><h2>Success criteria</h2><p>Collect repeated field readings at several currents, interpret a signed B–I graph, and use its gradient and intercept to evaluate the model.</p></div></section>
+<div class="layout"><aside class="card controls"><h2>Experiment controls</h2><p class="small">Positive field points to the right along the coil axis. Current is conventional current.</p><div id="lock" class="notice hidden">Dataset started. Coil geometry and sensor conditions are locked; current remains adjustable.</div>
+<label class="control"><span>Current, I <output id="currentOut"></output></span><input id="current" type="range" min="-5" max="5" step="0.1" value="1"></label><div class="toolbar"><button id="reverse">Reverse current</button><button id="zero">Set I = 0</button></div>
+<label class="control"><span>Number of turns, N <output id="turnsOut"></output></span><input id="turns" type="range" min="100" max="1000" step="50" value="500"></label>
+<label class="control"><span>Coil length, L <output id="lengthOut"></output></span><input id="length" type="range" min="0.2" max="1" step="0.05" value="0.5"></label><p class="small" style="margin-top:8px">Air core · radius fixed at 0.020 m · sensor fixed at the centre.</p>
+<label class="control"><span>Sensor mode</span><select id="mode"><option value="ideal">Ideal sensor</option><option value="lab">Laboratory sensor</option></select></label><div id="labControls" class="hidden"><label class="control"><span>Background axial field <output id="backgroundOut"></output></span><input id="background" type="range" min="-0.1" max="0.1" step="0.005" value="0.03"></label><label class="control"><span>Random sensor variation, ± <output id="variationOut"></output></span><input id="variation" type="range" min="0" max="0.05" step="0.001" value="0.01"></label></div>
+<label class="check"><input id="showField" type="checkbox" checked>Show field arrows</label><div class="toolbar"><button id="new">New experiment</button><button id="reset">Reset all</button></div></aside>
+<div class="main stack"><section class="card"><div class="row"><div><h2>Coil and field sensor</h2><p class="small">The diagram shows the coil’s field. The sensor measures its axial component plus any background field.</p></div><span id="phase" class="badge">Current to right-hand rule</span></div><p class="small graph-scroll-hint">Swipe horizontally to inspect the full apparatus.</p><div class="apparatus-wrap" tabindex="0" role="region" aria-label="Scrollable solenoid apparatus"><svg id="apparatus" viewBox="0 0 760 355" role="img" aria-label="Air-core solenoid with a central field sensor, poles and current direction viewed from the right end"><defs><marker id="fieldArrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0L7 3L0 6Z" fill="#1d4ed8"/></marker><marker id="currentArrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0L7 3L0 6Z" fill="#b85b00"/></marker></defs><rect id="coilBody" x="110" y="113" width="405" height="112" rx="48" fill="#e6edf5"/><g id="turnsDrawing"></g><g id="field"><path id="insideArrow" fill="none" stroke="#1d4ed8" stroke-width="4" marker-end="url(#fieldArrow)"/><path id="outsideArrow" fill="none" stroke="#1d4ed8" stroke-width="2" marker-end="url(#fieldArrow)"/></g><text id="leftPole" x="90" y="179" text-anchor="middle" font-size="26" font-weight="700" fill="#182b43"/><text id="rightPole" x="535" y="179" text-anchor="middle" font-size="26" font-weight="700" fill="#182b43"/><rect x="307" y="185" width="14" height="30" rx="3" fill="#087e8b"/><path d="M314 214V262H480" fill="none" stroke="#087e8b" stroke-width="3"/><text x="483" y="268" fill="#087e8b" font-size="16">Centre sensor</text><text id="coilCaption" x="310" y="301" fill="#55677e" font-size="15" text-anchor="middle">Schematic · visible loops represent many turns</text><circle cx="644" cy="170" r="53" fill="#fff" stroke="#b85b00" stroke-width="4"/><path id="endCurrent" fill="none" stroke="#b85b00" stroke-width="3" marker-end="url(#currentArrow)"/><text x="644" y="89" text-anchor="middle" fill="#182b43" font-size="16">Right-end view</text><text id="endLabel" x="644" y="248" text-anchor="middle" fill="#b85b00" font-size="15"/><text id="endField" x="644" y="179" text-anchor="middle" fill="#1d4ed8" font-size="28"/><text x="644" y="284" text-anchor="middle" fill="#55677e" font-size="14">⊙ towards you · ⊗ away</text></svg></div><p id="direction" class="polarity"></p><div class="readouts"><div class="metric">Coil field, Bcoil<strong id="coilOut"></strong></div><div class="metric">Expected sensor field<strong id="expectedOut"></strong></div><div class="metric">Latest measured field<strong id="measuredOut">—</strong></div><div class="metric">Turns per metre, N/L<strong id="densityOut"></strong></div></div><div class="toolbar" style="margin-top:14px"><button id="read" class="primary">Take reading</button><button id="record" disabled>Record mean</button><button id="clear">Clear repeats</button></div><div id="status" class="status" role="status" aria-live="polite"></div></section>
+<div class="subgrid"><section class="card"><h2>Current repeats</h2><p class="small">Collect at least three readings at the same current. Laboratory variation is uniform within the selected ± range.</p><div id="repeats" style="margin-top:12px">No readings yet.</div><p id="stats" class="notice" style="margin-top:12px">Take at least 3 readings.</p></section><section class="card"><h2>Right-hand grip rule</h2><p class="concept">Curl your right-hand fingers in the direction of conventional current around the coil. Your thumb points along the field inside the coil and towards its north end.</p><p class="concept" style="margin-top:10px">Viewed from an end: anticlockwise current makes that end north; clockwise current makes it south.</p><p class="small" style="margin-top:10px">At zero current the coil has no poles in this air-core model. A background field can still give a non-zero sensor reading.</p></section></div>
+<section class="card"><div class="graph-head"><h2>Axial field versus current</h2><label class="small">View <select id="graphView"><option value="full">Full current range</option><option value="data">Fit to recorded data</option></select></label></div><p class="small graph-scroll-hint">Swipe horizontally to read the full graph.</p><div class="graph-scroll" tabindex="0" role="region" aria-label="Scrollable field-current graph"><svg id="graph" viewBox="0 0 760 350" role="img" aria-label="Signed magnetic field in millitesla against signed current in amperes"><defs><clipPath id="graphClip"><rect x="75" y="25" width="650" height="260"/></clipPath></defs><g id="grid"></g><g clip-path="url(#graphClip)"><path id="fit" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="7 5"/><g id="points"></g></g><text x="400" y="335" text-anchor="middle" font-size="16" fill="#182b43">Current, I (A)</text><text transform="translate(18 155) rotate(-90)" text-anchor="middle" font-size="16" fill="#182b43">Axial field, B (mT)</text></svg></div><div class="legend"><span class="points">Recorded means ±1 SD</span><span class="fit">Best-fit line</span></div><p id="regression" class="notice" style="margin-top:12px">Record at least three distinct currents for a best-fit line.</p><details style="margin-top:14px"><summary>Compare with the solenoid model</summary><p id="model" class="model-line"></p><p class="small">The centre-field model includes finite coil length. For a long coil, B ≈ μ₀(N/L)I.</p></details></section></div></div>
+<section class="card" style="margin-top:16px"><div class="row"><div><h2>Investigation results</h2><p id="conditions" class="small">No recorded dataset yet.</p></div><button id="csv" disabled>Export CSV</button></div><div class="tablewrap"><table><caption>Signed axial readings; 1 mT = 10⁻³ T.</caption><thead><tr><th scope="col">Current (A)</th><th scope="col">Repeats</th><th scope="col">Mean B (mT)</th><th scope="col">SD (mT)</th><th scope="col">Raw readings (mT)</th></tr></thead><tbody id="tableBody"></tbody></table></div><div class="prompt-grid" style="margin-top:16px"><div><h3>Predict</h3><p>What happens to the magnitude and direction of B when current doubles or reverses?</p></div><div><h3>Observe</h3><p>Record several negative and positive currents, including zero.</p></div><div><h3>Analyse</h3><p>Interpret the gradient and intercept. Compare B(+I) and B(−I).</p></div><div><h3>Evaluate</h3><p>Can reversing current help separate the coil’s field from a constant background?</p></div></div></section>
+<details class="card" style="margin-top:16px"><summary>Model, method and limitations</summary><p>The sensor stays on the axis at the centre of an air-core solenoid in stationary conditions. The model treats closely spaced turns as a continuous current sheet. There is no iron core, heating, resistance calculation, magnetic saturation or remanence.</p><p>Centre field: Bcoil = μ₀NI / √(L² + 4R²), where μ₀ = 4π × 10⁻⁷ T m/A and R = 0.020 m. For L much larger than R this tends to μ₀(N/L)I. The finite-length expression gives the simulated readings; using the long-coil approximation introduces a small geometry-dependent difference.</p><p>Laboratory readings add the selected constant axial background and a new uniform random error to every reading. The diagram shows coil field only, not the total field sensed. Its field lines, loop count and end-view glyphs indicate direction and are not a quantitative field map.</p><p>Regression fits B = mI + b to recorded means, giving each current equal weight. For this geometry, Nestimated = (m/1000)√(L² + 4R²)/μ₀ when m is in mT/A. Error bars show sample standard deviation, not uncertainty in the mean. A non-zero intercept estimates the background in this model; in a real experiment sensor zero offset can also contribute.</p><p>Current reversal cancels constant background: [B(+I) − B(−I)]/2 isolates the coil field at +I. [B(+I) + B(−I)]/2 estimates background. Use equal current magnitudes and unchanged sensor position.</p></details><footer>SciSims · Physics27 · Standalone investigation; no external libraries required.</footer></main><dialog id="confirm"><h2>Start fresh?</h2><p>This clears your measurements. Export your CSV first if you want to keep them.</p><div class="toolbar"><button id="cancel">Keep working</button><button id="confirmClear">Clear and continue</button></div></dialog><script>(()=>{'use strict';const $=id=>document.getElementById(id),MU0=4*Math.PI*1e-7,R=.02,ns='http://www.w3.org/2000/svg';let locked=false,repeats=[],records=[],latest=null,pending=null;const val=id=>Number($(id).value),f=(x,n=3)=>Number.isFinite(x)?(Math.abs(x)<.5*10**-n?0:x).toFixed(n):'—';const state=()=>({I:val('current'),N:val('turns'),L:val('length'),mode:$('mode').value,background:$('mode').value==='lab'?val('background'):0,variation:$('mode').value==='lab'?val('variation'):0});const slope=s=>1000*MU0*s.N/Math.sqrt(s.L*s.L+4*R*R),stats=a=>{const mean=a.reduce((x,y)=>x+y,0)/a.length;return{mean,sd:a.length>1?Math.sqrt(a.reduce((q,v)=>q+(v-mean)**2,0)/(a.length-1)):0};};const say=t=>$('status').textContent=t;
+function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));parent.append(e);return e;}
+function ask(fn){if(records.length||repeats.length){pending=fn;$('confirm').showModal();}else fn();}$('cancel').onclick=()=>{pending=null;$('confirm').close();};$('confirm').addEventListener('cancel',()=>pending=null);$('confirmClear').onclick=()=>{const fn=pending;pending=null;$('confirm').close();if(fn)fn();};
+function fresh(reset=false){locked=false;repeats=[];records=[];latest=null;if(reset){Object.entries({current:1,turns:500,length:.5,background:.03,variation:.01}).forEach(([k,v])=>$(k).value=v);$('mode').value='ideal';$('showField').checked=true;$('graphView').value='full';}say('New experiment ready.');render();}
+$('new').onclick=()=>ask(()=>fresh());$('reset').onclick=()=>ask(()=>fresh(true));function change(){repeats=[];latest=null;say('Setting changed. Unrecorded repeats cleared.');render();}for(const id of ['current','turns','length','background','variation','mode'])$(id).addEventListener(id==='mode'?'change':'input',change);$('reverse').onclick=()=>{$('current').value=-val('current');change();};$('zero').onclick=()=>{$('current').value=0;change();};$('showField').onchange=drawScene;$('graphView').onchange=drawGraph;
+function drawScene(){const s=state(),positive=s.I>0,active=s.I!==0;const width=180+(s.L-.2)/.8*230,left=314-width/2,right=314+width/2;const g=$('turnsDrawing');g.replaceChildren();$('coilBody').setAttribute('x',left);$('coilBody').setAttribute('width',width);$('leftPole').setAttribute('x',left-26);$('rightPole').setAttribute('x',right+26);$('coilCaption').textContent=`L = ${f(s.L,2)} m · visible loops represent many turns`;const loops=8+Math.round(s.N/80);for(let i=0;i<loops;i++)svg('ellipse',{cx:left+12+i*(width-24)/(loops-1),cy:169,rx:13,ry:57,fill:'none',stroke:'#b85b00','stroke-width':2},g);
+$('field').classList.toggle('hidden',!active||!$('showField').checked);$('insideArrow').setAttribute('d',positive?`M${left+25} 169H${right-25}`:`M${right-25} 169H${left+25}`);$('outsideArrow').setAttribute('d',positive?`M${right-15} 130C${right+55} 45 ${left-55} 45 ${left+15} 130`:`M${left+15} 130C${left-55} 45 ${right+55} 45 ${right-15} 130`);$('leftPole').textContent=active?(positive?'S':'N'):'—';$('rightPole').textContent=active?(positive?'N':'S'):'—';$('endCurrent').setAttribute('d',!active?'':positive?'M678 147A41 41 0 1 0 678 193':'M678 193A41 41 0 1 1 678 147');$('endField').textContent=!active?'0':positive?'⊙':'⊗';$('endLabel').textContent=!active?'No current':positive?'Anticlockwise':'Clockwise';$('phase').textContent=!active?'Coil field zero':positive?'North end: right':'North end: left';$('direction').textContent=!active?'No coil current → no coil field. The sensor can still detect a background field.':positive?'Positive current: viewed from the right end, current is anticlockwise. The coil field points right (+B).':'Negative current: viewed from the right end, current is clockwise. The coil field points left (−B).';$('coilOut').textContent=f(slope(s)*s.I)+' mT';$('expectedOut').textContent=f(slope(s)*s.I+s.background)+' mT';$('measuredOut').textContent=latest===null?'—':f(latest)+' mT';$('densityOut').textContent=f(s.N/s.L,0)+' m⁻¹';}
+function render(){const s=state();for(const id of ['turns','length','mode','background','variation'])$(id).disabled=locked;$('lock').classList.toggle('hidden',!locked);$('labControls').classList.toggle('hidden',s.mode!=='lab');[['current',' A',1],['turns','',0],['length',' m',2],['background',' mT',3],['variation',' mT',3]].forEach(([id,u,n])=>$(id+'Out').textContent=f(val(id),n)+u);$('record').disabled=repeats.length<3;$('csv').disabled=!records.length;$('repeats').textContent=repeats.length?repeats.map((v,i)=>`${i+1}. ${f(v)} mT`).join(' · '):'No readings yet.';if(repeats.length){const st=stats(repeats);$('stats').textContent=`${repeats.length} repeats · mean ${f(st.mean)} mT · SD ${f(st.sd)} mT`;}else $('stats').textContent='Take at least 3 readings.';$('conditions').textContent=locked?`Controlled variables: N = ${s.N} | L = ${f(s.L,2)} m | R = 0.020 m | air core | ${s.mode==='ideal'?'Ideal sensor':`background ${f(s.background)} mT · variation ±${f(s.variation)} mT`}`:'No recorded dataset yet.';
+$('tableBody').innerHTML=records.length?records.map(r=>'<tr>'+[f(r.I,1),r.raw.length,f(r.mean),f(r.sd),r.raw.map(v=>f(v)).join(', ')].map(v=>'<td>'+v+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="5">No recorded results yet.</td></tr>';drawScene();drawGraph();}
+function regression(){if(records.length<3)return null;const mx=stats(records.map(r=>r.I)).mean,my=stats(records.map(r=>r.mean)).mean;let xx=0,xy=0,yy=0;records.forEach(r=>{xx+=(r.I-mx)**2;xy+=(r.I-mx)*(r.mean-my);yy+=(r.mean-my)**2;});if(xx<1e-12)return null;const m=xy/xx,b=my-m*mx,sse=records.reduce((sum,r)=>sum+(r.mean-m*r.I-b)**2,0);return{m,b,r2:yy>1e-15?1-sse/yy:null};}
+function drawGraph(){const s=state(),zoom=$('graphView').value==='data'&&records.length;let xmin=-5,xmax=5,ymin=-Math.max(1,slope(s)*5+Math.abs(s.background)+s.variation)*1.1,ymax=-ymin;if(zoom){const lo=Math.min(...records.map(r=>r.I)),hi=Math.max(...records.map(r=>r.I)),pad=Math.max(.5,(hi-lo)*.1);xmin=Math.max(-5,lo-pad);xmax=Math.min(5,hi+pad);const yl=Math.min(...records.map(r=>r.mean-r.sd)),yh=Math.max(...records.map(r=>r.mean+r.sd)),yp=Math.max(.05,(yh-yl)*.1);ymin=yl-yp;ymax=yh+yp;}const X=x=>75+(x-xmin)/(xmax-xmin)*650,Y=y=>285-(y-ymin)/(ymax-ymin)*260;$('graph').dataset.xmin=xmin;$('graph').dataset.xmax=xmax;$('grid').replaceChildren();$('points').replaceChildren();$('fit').setAttribute('d','');for(let i=0;i<=5;i++){const x=xmin+(xmax-xmin)*i/5,y=ymin+(ymax-ymin)*i/5;svg('line',{x1:75,x2:725,y1:Y(y),y2:Y(y),stroke:'#dce4ef'},$('grid'));svg('text',{x:65,y:Y(y)+5,'text-anchor':'end','font-size':14,fill:'#55677e'},$('grid')).textContent=f(y,2);svg('text',{x:X(x),y:308,'text-anchor':'middle','font-size':14,fill:'#55677e'},$('grid')).textContent=f(x,1);}if(ymin<=0&&ymax>=0)svg('line',{x1:75,x2:725,y1:Y(0),y2:Y(0),stroke:'#64748b'},$('grid'));if(xmin<=0&&xmax>=0)svg('line',{x1:X(0),x2:X(0),y1:25,y2:285,stroke:'#64748b'},$('grid'));records.forEach(r=>{const x=X(r.I);svg('line',{x1:x,x2:x,y1:Y(r.mean-r.sd),y2:Y(r.mean+r.sd),stroke:'#087e8b','stroke-width':2},$('points'));for(const y of [r.mean-r.sd,r.mean+r.sd])svg('line',{x1:x-4,x2:x+4,y1:Y(y),y2:Y(y),stroke:'#087e8b'},$('points'));svg('circle',{cx:x,cy:Y(r.mean),r:5,fill:'#087e8b'},$('points'));});const fit=regression();$('model').textContent=`Finite-length gradient: ${f(slope(s),5)} mT/A. Long-coil approximation: ${f(1000*MU0*s.N/s.L,5)} mT/A.`;if(!fit){$('regression').textContent='Record at least three distinct currents for a best-fit line.';return;}const lo=records[0].I,hi=records.at(-1).I;$('fit').setAttribute('d',`M${X(lo)} ${Y(fit.m*lo+fit.b)}L${X(hi)} ${Y(fit.m*hi+fit.b)}`);const n=fit.m/1000*Math.sqrt(s.L*s.L+4*R*R)/MU0;$('regression').textContent=`Gradient ${f(fit.m,5)} mT/A · intercept ${f(fit.b,4)} mT · R² ${fit.r2===null?'undefined':f(fit.r2,4)}`;$('model').textContent+=fit.m>0?` Estimated turns: ${f(n,1)} (actual ${s.N}); error ${f(Math.abs(n-s.N)/s.N*100,2)}%.`:' The non-positive fitted gradient does not support a physical turn-count estimate with this sign convention.';}
+$('read').onclick=()=>{const s=state();latest=slope(s)*s.I+s.background+(Math.random()*2-1)*s.variation;repeats.push(latest);say(`Reading ${repeats.length} collected at ${f(s.I,1)} A.`);render();};$('clear').onclick=()=>{repeats=[];latest=null;say('Unrecorded repeats cleared.');render();};$('record').onclick=()=>{if(repeats.length<3)return;const s=state(),r={I:s.I,...stats(repeats),raw:[...repeats]},i=records.findIndex(r=>r.I===s.I);if(i>=0)records[i]=r;else records.push(r);records.sort((a,b)=>a.I-b.I);locked=true;repeats=[];say((i>=0?'Replaced':'Recorded')+' mean at '+f(s.I,1)+' A.');render();};$('csv').onclick=()=>{if(!records.length)return;const s=state(),rows=[['current_A','repeat','field_mT','mean_field_mT','sd_field_mT','turns','length_m','radius_m','sensor_mode','background_mT','variation_mT','model_coil_field_mT']];records.forEach(r=>r.raw.forEach((v,i)=>rows.push([r.I,i+1,v,r.mean,r.sd,s.N,s.L,R,s.mode,s.background,s.variation,slope(s)*r.I])));const blob=new Blob([rows.map(r=>r.join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='solenoid-field-current.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};render();})();
+</script><script>
+if (location.protocol === 'file:' || !location.pathname.includes('/PhySims/')) {
+/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+
+} else {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '../../shared/scisims-nav.css';
+  document.head.appendChild(style);
+  const shared = document.createElement('script');
+  shared.src = '../../shared/scisims-nav.js';
+  shared.onerror = () => {/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+};
+  document.head.appendChild(shared);
+}
+
+</script>
+</body></html>
