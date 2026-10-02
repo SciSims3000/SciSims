@@ -1,0 +1,382 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Electroscope Induction | SciSims</title><meta name="description" content="Explore electrostatic induction, earthing and contact charging with an interactive electroscope."><style>
+:root{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--ink:#182b43;--muted:#55677e;--border:#d6e0ed;--blue:#1d4ed8;--teal:#087e8b;--orange:#b85b00;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,input,select{accent-color:var(--blue)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #2196f3;outline-offset:3px}button{cursor:pointer;min-height:42px;border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:white;color:var(--ink);font-weight:650}button:hover:not(:disabled){background:#edf3ff}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover:not(:disabled){background:#173daf}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.15;letter-spacing:-.035em}h2{font-size:1.08rem}h3{font-size:.94rem}p+p{margin-top:8px}.page{max-width:1280px;margin:auto;padding:20px 24px 40px}.hero{border-radius:24px;background:linear-gradient(125deg,#102240,#1d4ed8 65%,#0891b2);padding:28px;color:white;box-shadow:0 10px 25px #19396018}.hero p{max-width:830px;color:#e2edff;margin-top:10px}.eyebrow{font-size:.75rem;letter-spacing:.12em;font-weight:800;margin-bottom:9px}.lessons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 5px 18px #17345606}.lessons h2{color:var(--blue);margin-bottom:6px}.muted,.small{color:var(--muted)}.small{font-size:.83rem}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.stack{display:grid;gap:16px;align-content:start}.main{min-width:0}.control{display:block;margin-top:16px}.control>span{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;font-weight:650}.control input[type=range]{display:block;width:100%;margin:10px 0 0}.control output{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--blue)}select{width:100%;min-height:42px;background:white;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:6px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.modes{display:flex;gap:8px;margin-bottom:16px}.modes button{flex:1}.modes button[aria-pressed=true]{background:#e8f0ff;border-color:var(--blue);color:#163ca1}.row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.badge{background:#eaf5f7;color:#08636e;font-size:.8rem;padding:6px 10px;border-radius:20px;font-weight:750;white-space:nowrap}.notice{background:#eef4ff;border-radius:10px;padding:10px;font-size:.85rem}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{background:#f3f6fb;padding:10px;border-radius:10px;font-size:.77rem;color:var(--muted)}.metric strong{display:block;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{padding:12px;background:#f3f6fb;border-radius:10px;font-size:.88rem}.formula p{margin-top:6px}svg{display:block;width:100%;height:auto}.hidden{display:none!important}.tablewrap{overflow:auto;max-height:340px}table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}th{background:#f3f6fb}caption{text-align:left;color:var(--muted);padding:10px 0}.status{min-height:1.5em;margin-top:10px;font-size:.87rem;color:#234e7a}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:18px;border-top:3px solid var(--blue);margin-right:5px;vertical-align:middle}.legend .points::before{border-color:var(--teal)}.legend .recorded::before{border-color:var(--purple)}.legend .fit::before{border-color:var(--purple);border-top-style:dashed}.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.prompt-grid>div{background:#f3f6fb;border-radius:10px;padding:12px}.prompt-grid p{font-size:.84rem;margin-top:5px}details summary{cursor:pointer;font-weight:700}details p{margin-top:10px}footer{font-size:.8rem;color:var(--muted);margin-top:18px}.check{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-top:12px}.check input{width:18px;height:18px}.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{display:flex;gap:12px;justify-content:space-between;align-items:center}.graph-head select{width:auto;max-width:240px}#repeats{max-height:130px;overflow:auto;font-size:.86rem}.danger{color:#9c3125}dialog{border:1px solid var(--border);border-radius:16px;max-width:440px;padding:24px;color:var(--ink);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#12243a80}dialog p{margin:12px 0 20px}@media(max-width:950px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls>h2,.controls>.notice,.controls>.toolbar,.controls>.small{grid-column:1/-1}.subgrid{grid-template-columns:1fr}}@media(max-width:580px){.graph-scroll svg{min-width:720px}.graph-scroll-hint{display:block;margin-top:10px}#scene text{font-size:26px}.page{padding:12px}.hero{padding:22px}.lessons,.controls{grid-template-columns:1fr}.controls>*{grid-column:1!important}.readouts,.prompt-grid{grid-template-columns:1fr 1fr}.modes{flex-direction:column}.row,.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{flex-wrap:wrap}.toolbar button{flex:1}.card{padding:14px}.graph-head select{max-width:100%}}@media print{body.has-scisims-simulation-nav{padding-top:0!important}.controls,.modes,.toolbar{display:none}.layout{display:block}.card{break-inside:avoid;box-shadow:none}.main{display:block}.main>.card{margin-bottom:16px}}
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
+
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
+
+
+#scene text{font-size:16px}.source{color:#b85b00}.reading-list{max-height:160px;overflow:auto}.legend .points::before{border-color:#087e8b}.legend .fit::before{border-color:#7c3aed}.graph-scroll svg{min-width:620px}.controls .control{margin-top:18px}@media(max-width:580px){#scene text{font-size:22px}.graph-scroll-hint{display:block}}
+
+#apparatus{background:linear-gradient(#eef6ff,#fff);border-radius:14px;margin-top:14px}#apparatus text{font-family:system-ui,sans-serif}.charge-key{display:flex;flex-wrap:wrap;gap:16px;font-size:.84rem;margin-top:10px}.positive{color:#b42318}.negative{color:#1d4ed8}.steps{padding-left:23px;font-size:.88rem}.steps li{padding:5px}.steps li.done{color:#087e8b;font-weight:700}.concept{font-size:.87rem;margin-top:10px}.explain{min-height:5em}.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.state-grid .metric strong{font-size:1rem}.controls button{width:100%}.controls .toolbar button{width:auto}.charge-read{font-size:.85rem;margin-top:8px}.apparatus-wrap{overflow-x:auto}.apparatus-wrap svg{min-width:520px}.case-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.case-buttons button{flex:1}#log td{white-space:normal;min-width:100px}#log td:last-child{min-width:220px}.warning{background:#fff5df;color:#704600;padding:10px;border-radius:10px;font-size:.85rem}@media(max-width:580px){.state-grid{grid-template-columns:1fr}.case-buttons{flex-direction:column}}
+</style></head><body class="has-scisims-simulation-nav"><div id="scisimsSiteNav" class="scisims-simulation-nav"></div><main class="page"><header class="hero"><div class="eyebrow">SCISIMS · PHYSICS27 · CHAPTER 4.1</div><h1>Electroscope Induction</h1><p>Separate charge without touching. Connect to Earth, choose the order of your actions, and discover when the electroscope keeps a charge.</p></header>
+<section class="lessons" aria-label="Learning intention and success criteria"><div class="card"><h2>Learning intention</h2><p>Explain how a nearby charged object redistributes electrons, and how earthing can leave an electroscope charged by induction.</p></div><div class="card"><h2>Success criteria</h2><p>Distinguish polarisation from net charging, predict leaf behaviour, and explain why the earth connection must be removed before the inducing object.</p></div></section>
+<div class="layout"><aside class="card controls"><h2>Experiment controls</h2><label class="control"><span>Inducing object</span><select id="polarity"><option value="negative">Negatively charged wand</option><option value="positive">Positively charged wand</option><option value="neutral">Neutral wand</option></select></label><p class="small" style="margin-top:8px">Preparing a different wand begins a new trial. This model uses a conducting wand, so contact can transfer charge.</p><label class="control"><span>Wand proximity <output id="proximityOut">Far away</output></span><input id="proximity" type="range" min="0" max="100" step="5" value="0"></label><div class="toolbar" style="margin-top:10px"><button id="near">Bring near</button><button id="away">Remove wand</button></div><button id="earth" style="margin-top:16px" aria-pressed="false">Connect to Earth</button><button id="contact" style="margin-top:10px">Touch terminal with wand</button><p class="small" style="margin-top:8px">Touching is a separate contact-charging test. Induction requires no contact.</p><div class="toolbar" style="margin-top:20px"><button id="new">New trial</button><button id="reset">Reset all</button></div><label class="check"><input id="charges" type="checkbox" checked>Show charge imbalance</label></aside>
+<div class="main stack"><section class="card"><div class="row"><div><h2>Electroscope laboratory</h2><p class="small">The terminal, stem and leaves form one conductor. Only electrons move between objects.</p></div><span id="phase" class="badge">Isolated</span></div><p class="small graph-scroll-hint">Swipe horizontally to inspect the apparatus.</p><div class="apparatus-wrap" tabindex="0" role="region" aria-label="Scrollable electroscope apparatus"><svg id="apparatus" viewBox="0 0 760 455" role="img" aria-label="Charged wand, metal electroscope and switchable earth connection"><defs><marker id="electronArrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#1d4ed8"/></marker></defs><rect x="275" y="170" width="270" height="235" rx="22" fill="#fff" stroke="#b5c8df" stroke-width="3"/><text x="545" y="433" text-anchor="end" fill="#55677e" font-size="16">Insulating enclosure</text><rect x="365" y="167" width="90" height="20" rx="6" fill="#d3b4e5"/><text x="570" y="179" fill="#55677e" font-size="16">Insulating support</text><line x1="455" y1="177" x2="560" y2="177" stroke="#64748b"/><line x1="410" y1="126" x2="410" y2="267" stroke="#60738c" stroke-width="9"/><ellipse cx="410" cy="120" rx="64" ry="18" fill="#d4dfec" stroke="#60738c" stroke-width="3"/><g id="terminalCharges"></g><line id="leftLeaf" x1="410" y1="267" x2="410" y2="367" stroke="#bb8b22" stroke-width="8" stroke-linecap="round"/><line id="rightLeaf" x1="410" y1="267" x2="410" y2="367" stroke="#bb8b22" stroke-width="8" stroke-linecap="round"/><g id="leafCharges"></g><text x="410" y="395" text-anchor="middle" fill="#55677e" font-size="16">Conducting leaves</text><g id="wand"><rect x="-85" y="99" width="73" height="22" rx="9" fill="#80552e"/><rect x="-25" y="93" width="63" height="34" rx="15" fill="#e1e8f2" stroke="#60738c" stroke-width="2"/><text id="wandSymbol" x="8" y="117" text-anchor="middle" font-size="26" font-weight="700"/><text x="-8" y="75" text-anchor="middle" font-size="17" fill="#182b43">Wand</text></g><path id="earthWire" d="M410 205H623V320" fill="none" stroke="#087e8b" stroke-width="4" stroke-dasharray="8 6" opacity=".25"/><path d="M600 322H646M607 332H639M615 342H631" stroke="#087e8b" stroke-width="4"/><text x="623" y="373" text-anchor="middle" fill="#087e8b" font-size="18">Earth</text><path id="electronFlow" fill="none" stroke="#1d4ed8" stroke-width="3" marker-end="url(#electronArrow)"/><text id="flowLabel" x="600" y="269" text-anchor="middle" fill="#55677e" font-size="14"></text><text id="flow" x="600" y="244" text-anchor="middle" fill="#1d4ed8" font-size="16"/><text id="leafLabel" x="410" y="45" text-anchor="middle" fill="#182b43" font-size="18"/></svg></div><div class="charge-key"><span class="negative">− Electron excess</span><span class="positive">+ Electron deficit</span><span class="small">Symbols show imbalance, not every particle.</span></div><div class="state-grid"><div class="metric">Electroscope net charge<strong id="net"></strong></div><div class="metric">Leaves<strong id="leaves"></strong></div><div class="metric">Earth connection<strong id="earthState"></strong></div></div><div id="explanation" class="notice explain" style="margin-top:12px" role="status" aria-live="polite"></div></section>
+<div class="subgrid"><section class="card"><h2>Charge by induction</h2><ol id="steps" class="steps"><li>Begin with a neutral, isolated electroscope.</li><li>Bring a charged wand near without touching.</li><li>Connect the electroscope to Earth.</li><li>Disconnect Earth while the wand stays near.</li><li>Remove the wand.</li></ol><p id="progress" class="notice">Ready to investigate.</p></section><section class="card"><h2>Try a contrasting sequence</h2><p class="concept">What happens if you remove the wand <strong>before</strong> disconnecting Earth?</p><p class="concept">Can leaves separate while the electroscope’s total charge is zero?</p><p class="concept">Can leaf separation alone tell you whether the charge is positive or negative?</p><div class="case-buttons"><button id="presetNegative">Start negatively charged</button><button id="presetPositive">Start positively charged</button></div><p class="small" style="margin-top:10px">These presets start a fresh comparison trial. Bring the same or opposite polarity near and observe the leaves.</p></section></div>
+<section class="card"><h2>Interpret the evidence</h2><div class="formula" style="margin-top:10px"><p><strong>Polarisation:</strong> electrons redistribute within the electroscope; its total charge need not change.</p><p><strong>Earthing:</strong> electrons can enter or leave through a conducting path to Earth.</p><p><strong>Induction:</strong> disconnecting Earth before removing the wand traps a net charge opposite to the wand.</p><p><strong>Leaf separation:</strong> both leaves have the same sign and repel. Separation alone does not identify that sign.</p></div></section></div></div>
+<section class="card" style="margin-top:16px"><div class="row"><div><h2>Observation record</h2><p class="small">Actions are recorded automatically. Proximity changes are recorded when the slider is released.</p></div><button id="csv">Export CSV</button></div><div class="tablewrap"><table id="log"><thead><tr><th scope="col">Step</th><th scope="col">Action</th><th scope="col">Wand</th><th scope="col">Position</th><th scope="col">Earth</th><th scope="col">Net charge</th><th scope="col">Leaves</th><th scope="col">Explanation</th></tr></thead><tbody id="tableBody"></tbody></table></div></section>
+<details class="card" style="margin-top:16px"><summary>Model and limitations</summary><p>This is a qualitative electrostatic model. Leaf angles and charge symbols illustrate charge redistribution, not calibrated charge, voltage, force or a geometrically exact electric field. The conducting enclosure components shown are electrically connected; the support and outer enclosure are insulating.</p><p>The model divides induced imbalance between the terminal and two identical leaves. A nearby wand influences the terminal most strongly. Earthing cancels the model’s leaf imbalance while the wand remains nearby; real electroscopes can retain some field-dependent leaf deflection.</p><p>Contact charging uses a simplified equal-capacitance charge-sharing model for the wand and electroscope. While the wand touches an earthed electroscope, both discharge to Earth. The wand retreats slightly after contact. An insulating charged rod would not behave as this conducting wand does.</p><p>Blue arrows show the direction of electron transfer during the most recent earthing action; they do not indicate a continuing current. Positive charge means a deficit of electrons; it does not mean positive ions travel through the wire. At this schematic level, the positions of individual charge symbols are illustrative.</p><p>Starting a new trial, choosing a different wand or using a precharged preset clears the observation record after confirmation. Export first to preserve it.</p></details><footer>SciSims · Physics27 · Self-contained qualitative model. No external libraries required.</footer></main><dialog id="confirm"><h2>Start a new trial?</h2><p>This clears the observation record. Export it first if you want to keep it.</p><div class="toolbar"><button id="cancel">Keep working</button><button id="confirmClear">Clear and continue</button></div></dialog><script>(()=>{'use strict';const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';let q=0,wand=-12,earthCharge=0,grounded=false,proximity=0,selected='negative',log=[],stage=1,spoiled=false,pending=null,explanation='',flow='';const eps=1e-8,sign=x=>Math.abs(x)<eps?'Neutral':x>0?'Positive':'Negative',influence=()=>.8*(proximity/100)**2*wand,leaf=()=>grounded?0:(q+influence())/2;const leafState=()=>Math.abs(leaf())<eps?'Together':`${sign(leaf())} · separated`;
+function equalise(){if(!grounded)return;const next=-influence(),change=next-q;earthCharge-=change;q=next;flow=Math.abs(change)<eps?'No net transfer':change>0?'Electrons → Earth':'Electrons ← Earth';}
+function symbol(x,y,value,parent,size=20){if(Math.abs(value)<eps)return;const t=document.createElementNS(ns,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill',value>0?'#b42318':'#1d4ed8');t.setAttribute('font-size',size);t.setAttribute('font-weight','700');t.setAttribute('text-anchor','middle');t.textContent=value>0?'+':'−';parent.append(t);}
+function record(action){log.push({action,wand:sign(wand),position:proximity===0?'Removed':proximity+'% near',earth:grounded?'Connected':'Disconnected',net:sign(q),leaves:leafState(),explanation});render();}
+function render(){const l=leaf(),angle=Math.min(52,Math.abs(l)*7),rad=angle*Math.PI/180,dx=100*Math.sin(rad),dy=100*Math.cos(rad);$('leftLeaf').setAttribute('x2',410-dx);$('rightLeaf').setAttribute('x2',410+dx);$('leftLeaf').setAttribute('y2',267+dy);$('rightLeaf').setAttribute('y2',267+dy);$('terminalCharges').replaceChildren();$('leafCharges').replaceChildren();if($('charges').checked){const terminal=q-2*l,n=Math.min(7,Math.ceil(Math.abs(terminal)/1.5));for(let i=0;i<n;i++)symbol(410+(i-(n-1)/2)*15,125,terminal,$('terminalCharges'));if(Math.abs(l)>eps)for(const side of [-1,1]){for(let i=1;i<=Math.min(3,Math.ceil(Math.abs(l)/2));i++)symbol(410+side*(dx*i/3+17),267+dy*i/3,l,$('leafCharges'));}}
+$('wand').setAttribute('transform',`translate(${100+proximity*1.9} 0)`);$('wandSymbol').textContent=Math.abs(wand)<eps?'0':wand>0?'+':'−';$('wandSymbol').setAttribute('fill',wand>0?'#b42318':'#1d4ed8');$('net').textContent=sign(q);$('leaves').textContent=leafState();$('earthState').textContent=grounded?'Connected':'Disconnected';$('earth').textContent=grounded?'Disconnect Earth':'Connect to Earth';$('earth').setAttribute('aria-pressed',String(grounded));$('phase').textContent=grounded?'Earthed':'Isolated';$('earthWire').setAttribute('opacity',grounded?1:.25);$('earthWire').setAttribute('stroke-dasharray',grounded?'':'8 6');$('flow').textContent=flow;$('flowLabel').textContent=flow==='Electrons → Earth'||flow==='Electrons ← Earth'?'Last electron transfer':'';
+$('electronFlow').setAttribute('d',flow==='Electrons → Earth'?'M450 195H610V295':flow==='Electrons ← Earth'?'M610 295V195H450':'');
+$('electronFlow').setAttribute('aria-label',flow||'No electron transfer');$('leafLabel').textContent=angle<.01?'Leaves together':'Like charges repel';$('proximityOut').textContent=proximity===0?'Far away':proximity+'% near';$('contact').disabled=proximity<80;$('explanation').textContent=explanation;
+[...$('steps').children].forEach((li,i)=>li.classList.toggle('done',!spoiled&&i<stage));$('progress').textContent=spoiled?'This is a comparison sequence. Start a new neutral trial to follow the induction method.':stage===5?'Induction complete: the isolated electroscope retains charge opposite to the wand.':`Induction method: ${stage} of 5 steps completed.`;
+$('tableBody').replaceChildren();log.forEach((r,i)=>{const tr=document.createElement('tr');[i+1,r.action,r.wand,r.position,r.earth,r.net,r.leaves,r.explanation].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});$('tableBody').append(tr);});$('csv').disabled=!log.length;}
+function ask(action){if(log.length>1){pending=action;$('confirm').showModal();}else action();}
+$('cancel').onclick=()=>{pending=null;$('confirm').close();$('polarity').value=selected;};$('confirm').addEventListener('cancel',()=>{pending=null;$('polarity').value=selected;});$('confirmClear').onclick=()=>{const fn=pending;pending=null;$('confirm').close();if(fn)fn();};
+function fresh(polarity=selected,charge=0){q=charge;selected=polarity;wand=polarity==='positive'?12:polarity==='negative'?-12:0;earthCharge=0;grounded=false;proximity=0;log=[];stage=1;spoiled=charge!==0;flow='';$('proximity').value=0;$('polarity').value=selected;explanation=charge===0?'The electroscope is neutral and isolated. It contains equal total positive and negative charge. Bring a charged wand near without touching.':`The electroscope starts ${sign(q).toLowerCase()}. Both leaves carry the same sign and repel. This is a prepared initial condition.`;record('Initial state');}
+function move(value,action){const before=proximity;proximity=Number(value);$('proximity').value=proximity;flow='';equalise();if(!spoiled){if(stage===1&&proximity>0&&Math.abs(wand)>eps)stage=2;if(stage===2&&proximity===0)stage=1;if(stage===3&&proximity===0)spoiled=true;if(stage===4&&proximity===0)stage=Math.abs(q)>eps?5:1;if(stage===5&&proximity>0)stage=4;}
+if(grounded){explanation=proximity===0?'With the wand removed while Earth is still connected, electrons flow until the electroscope is neutral. Disconnecting Earth now will not retain a charge.':'Earth supplies or accepts electrons. The electroscope acquires a net charge opposite to the nearby wand; in this model the leaves collapse.';}else if(proximity===0){explanation=Math.abs(q)<eps?'Removing the wand allows the separated charges to redistribute. The electroscope is still neutral and its leaves close.':'The wand is removed, but the isolated electroscope retains its net charge. Both leaves carry the same sign and remain apart.';}else if(Math.abs(wand)<eps){explanation='The neutral wand produces no inducing field in this simplified model.';}else{explanation=Math.abs(q)<eps?`The ${sign(wand).toLowerCase()} wand redistributes electrons without contact. The terminal becomes ${sign(-influence()).toLowerCase()} and the leaves ${sign(leaf()).toLowerCase()}, but the total charge remains zero.`:'The nearby wand redistributes the electroscope’s existing charge. Its net charge stays fixed; leaf separation can decrease, disappear or increase.';}if(action)record(action);else render();}
+$('proximity').addEventListener('input',()=>move($('proximity').value));$('proximity').addEventListener('change',()=>record('Adjust proximity'));$('near').onclick=()=>move(100,'Bring wand near');$('away').onclick=()=>move(0,'Remove wand');
+$('earth').onclick=()=>{flow='';grounded=!grounded;if(grounded){equalise();if(!spoiled&&stage===2&&proximity>0)stage=3;else if(!spoiled)spoiled=true;explanation=proximity>0&&Math.abs(wand)>eps?`${flow}. Earth allows a net charge opposite to the wand to remain on the electroscope. Leave the wand in place while disconnecting Earth.`:'Earth neutralises the electroscope when no charged wand is nearby.';}else{if(!spoiled&&stage===3&&proximity>0)stage=4;explanation='The Earth connection is removed. No further electrons can enter or leave through that path. The electroscope keeps its current net charge.';}record(grounded?'Connect Earth':'Disconnect Earth');};
+$('contact').onclick=()=>{if(proximity<80)return;spoiled=true;flow='';if(grounded){const discharge=q+wand;flow=Math.abs(discharge)<eps?'No net transfer':discharge>0?'Electrons ← Earth':'Electrons → Earth';earthCharge+=discharge;q=wand=0;explanation='Contact completes a path from the conducting wand to Earth. Both the wand and electroscope discharge.';}else{const total=q+wand;q=wand=total/2;explanation='The conducting wand touches the terminal. Charge is shared between them (equal-capacitance approximation). This is charging by contact, not induction.';}record('Touch and separate wand');};
+$('polarity').onchange=()=>{const next=$('polarity').value;$('polarity').value=selected;ask(()=>fresh(next));};$('new').onclick=()=>ask(()=>fresh());$('reset').onclick=()=>ask(()=>{$('charges').checked=true;fresh('negative');});$('presetNegative').onclick=()=>ask(()=>fresh(selected,-6));$('presetPositive').onclick=()=>ask(()=>fresh(selected,6));$('charges').onchange=render;
+$('csv').onclick=()=>{const escape=v=>'"'+String(v).replaceAll('"','""')+'"',rows=[['Step','Action','Wand charge','Wand position','Earth connection','Electroscope net charge','Leaves','Explanation'],...log.map((r,i)=>[i+1,r.action,r.wand,r.position,r.earth,r.net,r.leaves,r.explanation])],blob=new Blob([rows.map(r=>r.map(escape).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='electroscope-observations.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};fresh();})();
+</script><script>
+if (location.protocol === 'file:' || !location.pathname.includes('/PhySims/')) {
+/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+
+} else {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '../../shared/scisims-nav.css';
+  document.head.appendChild(style);
+  const shared = document.createElement('script');
+  shared.src = '../../shared/scisims-nav.js';
+  shared.onerror = () => {/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+};
+  document.head.appendChild(shared);
+}
+
+</script>
+</body></html>
