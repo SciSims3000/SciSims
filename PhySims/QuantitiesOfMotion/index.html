@@ -1,0 +1,381 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quantities of Motion | SciSims</title><style>
+:root{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--ink:#182b43;--muted:#55677e;--border:#d6e0ed;--blue:#1d4ed8;--teal:#087e8b;--orange:#b85b00;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,input,select{accent-color:var(--blue)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #2196f3;outline-offset:3px}button{cursor:pointer;min-height:42px;border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:white;color:var(--ink);font-weight:650}button:hover:not(:disabled){background:#edf3ff}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover:not(:disabled){background:#173daf}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.15;letter-spacing:-.035em}h2{font-size:1.08rem}h3{font-size:.94rem}p+p{margin-top:8px}.page{max-width:1280px;margin:auto;padding:20px 24px 40px}.hero{border-radius:24px;background:linear-gradient(125deg,#102240,#1d4ed8 65%,#0891b2);padding:28px;color:white;box-shadow:0 10px 25px #19396018}.hero p{max-width:830px;color:#e2edff;margin-top:10px}.eyebrow{font-size:.75rem;letter-spacing:.12em;font-weight:800;margin-bottom:9px}.lessons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 5px 18px #17345606}.lessons h2{color:var(--blue);margin-bottom:6px}.muted,.small{color:var(--muted)}.small{font-size:.83rem}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.stack{display:grid;gap:16px;align-content:start}.main{min-width:0}.control{display:block;margin-top:16px}.control>span{display:flex;justify-content:space-between;gap:8px;font-size:.86rem;font-weight:650}.control input[type=range]{display:block;width:100%;margin:10px 0 0}.control output{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--blue)}select{width:100%;min-height:42px;background:white;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:6px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.modes{display:flex;gap:8px;margin-bottom:16px}.modes button{flex:1}.modes button[aria-pressed=true]{background:#e8f0ff;border-color:var(--blue);color:#163ca1}.row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.badge{background:#eaf5f7;color:#08636e;font-size:.8rem;padding:6px 10px;border-radius:20px;font-weight:750;white-space:nowrap}.notice{background:#eef4ff;border-radius:10px;padding:10px;font-size:.85rem}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{background:#f3f6fb;padding:10px;border-radius:10px;font-size:.77rem;color:var(--muted)}.metric strong{display:block;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{padding:12px;background:#f3f6fb;border-radius:10px;font-size:.88rem}.formula p{margin-top:6px}svg{display:block;width:100%;height:auto}.hidden{display:none!important}.tablewrap{overflow:auto;max-height:340px}table{width:100%;border-collapse:collapse;font-size:.85rem;white-space:nowrap}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}th{background:#f3f6fb}caption{text-align:left;color:var(--muted);padding:10px 0}.status{min-height:1.5em;margin-top:10px;font-size:.87rem;color:#234e7a}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:18px;border-top:3px solid var(--blue);margin-right:5px;vertical-align:middle}.legend .points::before{border-color:var(--teal)}.legend .recorded::before{border-color:var(--purple)}.legend .fit::before{border-color:var(--purple);border-top-style:dashed}.prompt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.prompt-grid>div{background:#f3f6fb;border-radius:10px;padding:12px}.prompt-grid p{font-size:.84rem;margin-top:5px}details summary{cursor:pointer;font-weight:700}details p{margin-top:10px}footer{font-size:.8rem;color:var(--muted);margin-top:18px}.check{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-top:12px}.check input{width:18px;height:18px}.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{display:flex;gap:12px;justify-content:space-between;align-items:center}.graph-head select{width:auto;max-width:240px}#repeats{max-height:130px;overflow:auto;font-size:.86rem}.danger{color:#9c3125}dialog{border:1px solid var(--border);border-radius:16px;max-width:440px;padding:24px;color:var(--ink);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#12243a80}dialog p{margin:12px 0 20px}@media(max-width:950px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls>h2,.controls>.notice,.controls>.toolbar,.controls>.small{grid-column:1/-1}.subgrid{grid-template-columns:1fr}}@media(max-width:580px){.graph-scroll svg{min-width:720px}.graph-scroll-hint{display:block;margin-top:10px}#scene text{font-size:26px}.page{padding:12px}.hero{padding:22px}.lessons,.controls{grid-template-columns:1fr}.controls>*{grid-column:1!important}.readouts,.prompt-grid{grid-template-columns:1fr 1fr}.modes{flex-direction:column}.row,.stack>*{min-width:0}.graph-scroll{max-width:100%;overflow-x:auto}.graph-scroll-hint{display:none}.graph-head{flex-wrap:wrap}.toolbar button{flex:1}.card{padding:14px}.graph-head select{max-width:100%}}@media print{body.has-scisims-simulation-nav{padding-top:0!important}.controls,.modes,.toolbar{display:none}.layout{display:block}.card{break-inside:avoid;box-shadow:none}.main{display:block}.main>.card{margin-bottom:16px}}
+/* SciSims shared site navigation | Version 1.1.0 */
+:root{
+  --scisims-nav-bg:#0b2f6f;
+  --scisims-nav-bg-hover:#164a9b;
+  --scisims-nav-text:#ffffff;
+  --scisims-nav-active:#dbeafe;
+  --scisims-nav-active-text:#0b2f6f;
+  --scisims-nav-border:rgba(255,255,255,.18);
+  --scisims-nav-shadow:0 12px 30px rgba(15,23,42,.20);
+}
+
+#scisimsSiteNav{
+  position:sticky;
+  top:8px;
+  z-index:1000;
+  margin:0 0 20px;
+}
+
+/* Simulation pages opt into a fixed mount so the menu does not become a
+   flex/grid child or resize full-screen canvases and game boards. */
+#scisimsSiteNav.scisims-simulation-nav{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  width:auto;
+  margin:0;
+}
+
+body.has-scisims-simulation-nav{
+  box-sizing:border-box;
+  padding-top:78px!important;
+}
+
+.scisims-site-nav{
+  width:100%;
+  border:1px solid var(--scisims-nav-border);
+  border-radius:16px;
+  background:var(--scisims-nav-bg);
+  color:var(--scisims-nav-text);
+  box-shadow:var(--scisims-nav-shadow);
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.scisims-nav-inner{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:8px 10px 8px 16px;
+}
+
+.scisims-nav-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:0 0 auto;
+  color:#fff;
+  text-decoration:none;
+  font-size:1.05rem;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+
+.scisims-nav-mark{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  overflow:visible;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.scisims-nav-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  flex:1 1 auto;
+}
+
+.scisims-nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:850;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+
+.scisims-nav-link:hover,
+.scisims-nav-link:focus-visible{
+  background:var(--scisims-nav-bg-hover);
+  color:#fff;
+  outline:none;
+  transform:translateY(-1px);
+}
+
+.scisims-nav-link[aria-current="page"]{
+  background:var(--scisims-nav-active);
+  color:var(--scisims-nav-active-text);
+}
+
+.scisims-nav-toggle{
+  display:none;
+  width:44px;
+  height:42px;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.scisims-nav-toggle:hover,
+.scisims-nav-toggle:focus-visible{
+  background:rgba(255,255,255,.18);
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:2px;
+}
+
+/* Keep the main catalogue's own sticky search below the global navigation. */
+.search-toolbar{top:82px!important;}
+
+@media (max-width:860px){
+  #scisimsSiteNav{top:6px;}
+
+  #scisimsSiteNav.scisims-simulation-nav{
+    top:6px;
+    left:6px;
+    right:6px;
+  }
+
+  .scisims-nav-inner{
+    position:relative;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+    min-height:56px;
+    padding:7px 9px 7px 14px;
+  }
+
+  .scisims-nav-toggle{display:inline-flex;}
+
+  .scisims-nav-links{
+    display:none;
+    width:100%;
+    flex:1 0 100%;
+    padding:4px 0 3px;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+
+  .scisims-site-nav.is-open .scisims-nav-links{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .scisims-nav-link{
+    justify-content:flex-start;
+    width:100%;
+  }
+
+  .search-toolbar{top:72px!important;}
+}
+
+@media (max-width:520px){
+  .scisims-site-nav.is-open .scisims-nav-links{grid-template-columns:1fr;}
+  .scisims-nav-brand{font-size:1rem;}
+}
+
+@media print{
+  #scisimsSiteNav{display:none!important;}
+}
+
+
+#scene text{font-size:16px}.source{color:#b85b00}.reading-list{max-height:160px;overflow:auto}.legend .points::before{border-color:#087e8b}.legend .fit::before{border-color:#7c3aed}.graph-scroll svg{min-width:620px}.controls .control{margin-top:18px}@media(max-width:580px){#scene text{font-size:22px}.graph-scroll-hint{display:block}}
+
+.graph-scroll svg{min-width:600px}.control input[type=number]{width:100%;padding:8px;border:1px solid #d6e0ed;border-radius:8px}.toolbar{margin-top:14px}.metric strong{font-size:1.05rem}.track{overflow:auto}.track svg{min-width:650px} .graph-scroll-hint{display:block} .controls .check{grid-column:1/-1}
+</style></head><body class="has-scisims-simulation-nav"><div id="scisimsSiteNav" class="scisims-simulation-nav"></div><main class="page"><header class="hero"><div class="eyebrow">SCISIMS · PHYSICS27 · CHAPTER 2.1</div><h1>Quantities of Motion</h1><p>Follow a cart along a straight track. Explore how a change of direction separates distance from displacement, and speed from velocity.</p></header><section class="lessons"><div class="card"><h2>Learning intention</h2><p>Connect position, displacement, distance, velocity, speed and acceleration using motion and graphs.</p></div><div class="card"><h2>Success criteria</h2><p>Interpret graph gradients and signed areas, and calculate average speed and velocity over a chosen interval.</p></div></section><div class="layout"><aside class="card controls"><h2>Motion controls</h2><p class="small">Right is positive. Each journey lasts 12 seconds. Pause to inspect or record.</p><label class="control"><span>Journey</span><select id="preset"><option value="steady">Constant velocity</option><option value="accelerate">Accelerate from rest</option><option value="turn">Slow down and turn back</option><option value="custom">Custom motion</option></select></label><label class="control"><span>Initial position (m)</span><input id="x0" type="number" min="-20" max="20" step="1" value="0"></label><label class="control"><span>Initial velocity (m/s)</span><input id="v0" type="number" min="-8" max="8" step="0.5" value="2"></label><label class="control"><span>Acceleration (m/s²)</span><input id="acc" type="number" min="-2" max="2" step="0.1" value="0"></label><p id="lock" class="notice hidden">Journey locked. Start a new journey to change its motion.</p><label class="control"><span>Playback speed</span><select id="rate"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label><label class="check"><input id="future" type="checkbox">Show full predicted graphs</label><div class="toolbar"><button id="new">New journey</button><button id="reset">Reset all</button></div></aside><div class="main stack"><section class="card"><div class="row"><h2>Straight-track journey</h2><span id="phase" class="badge">Ready</span></div><p class="small">The track scale fits the whole journey and stays fixed. The arrow shows velocity direction. The teal line joins the marked start to the current position; it represents displacement, not distance travelled.</p><div class="track" tabindex="0" role="region" aria-label="Scrollable cart track"><svg id="track" viewBox="0 0 760 170" role="img" aria-label="Cart position on a signed metre scale"></svg></div><div class="readouts"><div class="metric">Time<strong id="timeOut"></strong></div><div class="metric">Position<strong id="positionOut"></strong></div><div class="metric">Velocity<strong id="velocityOut"></strong></div><div class="metric">Speed<strong id="speedOut"></strong></div><div class="metric">Displacement from start<strong id="displacementOut"></strong></div><div class="metric">Distance travelled<strong id="distanceOut"></strong></div><div class="metric">Acceleration<strong id="accOut"></strong></div><div class="metric">Direction<strong id="directionOut"></strong></div></div><div class="toolbar"><button id="play" class="primary">Play</button><button id="step">Step +0.5 s</button><button id="rewind">Rewind</button><button id="record">Record snapshot</button></div><label class="control"><span>Inspect time <output id="scrubOut"></output></span><input id="time" type="range" min="0" max="12" step="0.01" value="0"></label><p class="small">Scrubbing pauses playback. Rewind preserves saved measurements.</p><p id="status" class="status" role="status" aria-live="polite"></p></section><section class="card"><h2>Linked motion graphs</h2><p class="small">Blue: position · teal: velocity · purple: acceleration. Dashed cursor marks the current time. The orange region on the velocity graph is the selected interval; area below zero is negative. With predictions off, shading stops at the current time.</p><p class="small graph-scroll-hint">On small screens, swipe each graph horizontally.</p><div class="graph-scroll" tabindex="0" role="region" aria-label="Position (m) graph"><svg id="positionGraph" viewBox="0 0 760 220" role="img" aria-label="Position (m) versus time"></svg></div><div class="graph-scroll" tabindex="0" role="region" aria-label="Velocity (m/s) graph"><svg id="velocityGraph" viewBox="0 0 760 220" role="img" aria-label="Velocity (m/s) versus time"></svg></div><div class="graph-scroll" tabindex="0" role="region" aria-label="Acceleration (m/s²) graph"><svg id="accelerationGraph" viewBox="0 0 760 220" role="img" aria-label="Acceleration (m/s²) versus time"></svg></div></section><section class="card"><h2>Measure an interval</h2><p class="small">Choose any two times in the 12-second model. Interval results include future motion, even before playback reaches it.</p><div class="subgrid"><label class="control"><span>Start time (s)</span><input id="from" type="number" min="0" max="11.99" step="0.5" value="0"></label><label class="control"><span>End time (s)</span><input id="to" type="number" min="0.01" max="12" step="0.5" value="12"></label></div><p id="interval" class="notice" style="margin-top:12px"></p><div class="toolbar"><button id="saveInterval">Record interval</button></div></section></div></div><section class="card" style="margin-top:16px"><div class="row"><h2>Saved measurements</h2><button id="csv" disabled>Export CSV</button></div><p class="small">Snapshots describe the journey from time zero to the chosen time. Intervals use your selected start and end. Recording the same type and times replaces that row.</p><div class="tablewrap"><table><caption id="conditions">No measurements yet.</caption><thead><tr><th>Type</th><th>Start (s)</th><th>End (s)</th><th>End position (m)</th><th>End velocity (m/s)</th><th>Displacement (m)</th><th>Distance (m)</th><th>Average velocity (m/s)</th><th>Average speed (m/s)</th></tr></thead><tbody id="rows"></tbody></table></div><div class="prompt-grid" style="margin-top:16px"><div><h3>Predict</h3><p>Can a cart have zero velocity but non-zero acceleration?</p></div><div><h3>Observe</h3><p>Choose “Slow down and turn back”. Compare the readings at 6 s and 12 s.</p></div><div><h3>Analyse</h3><p>Position–time gradient is velocity. Velocity–time gradient is acceleration.</p></div><div><h3>Explain</h3><p>Signed area under velocity gives displacement. Total absolute area gives distance.</p></div></div></section><details class="card" style="margin-top:16px"><summary>Model and definitions</summary><p>This is ideal one-dimensional motion with constant acceleration, without collisions or track boundaries. Position x = x₀ + v₀t + ½at²; velocity v = v₀ + at. The cart may reverse once. Distance is calculated by splitting the journey at that reversal, rather than using the magnitude of displacement.</p><p>Displacement = final position − initial position. Average velocity = displacement / elapsed time. Average speed = distance / elapsed time. Instantaneous speed = |velocity|. At a zero-duration snapshot the averages are undefined and shown as a dash.</p><p>The drawn track auto-scales to include zero, both endpoints and any turning point. Graph axes remain fixed throughout playback. Motion is calculated from simulation time, not screen pixels. All measurements are exact model values, rounded for display; there is no experimental noise.</p></details><footer>SciSims · Physics27 · Self-contained simulation; no external libraries required.</footer></main><dialog id="confirm"><h2>Clear saved measurements?</h2><p>Export your CSV first if you want to keep it.</p><div class="toolbar"><button id="cancel">Keep working</button><button id="confirmClear">Clear and continue</button></div></dialog><script>(()=>{'use strict';
+const $=id=>document.getElementById(id),T=12, presets={steady:[0,2,0],accelerate:[0,0,.5],turn:[0,3,-.5]};
+let cfg=[0,2,0],t=0,running=false,locked=false,frame=0,last=0,rows=[],pending='';
+const fmt=(n,d=2)=>n===null?'—':(Math.abs(n)<.0000001?0:n).toFixed(d),x=s=>cfg[0]+cfg[1]*s+.5*cfg[2]*s*s,v=s=>cfg[1]+cfg[2]*s;
+function distance(a,b){const turn=cfg[2]?-cfg[1]/cfg[2]:-1;return turn>a&&turn<b?Math.abs(x(turn)-x(a))+Math.abs(x(b)-x(turn)):Math.abs(x(b)-x(a));}
+function measurement(a,b,type){const dt=b-a,dx=x(b)-x(a),ds=distance(a,b);return {type,a,b,endX:x(b),endV:v(b),dx,ds,av:dt?dx/dt:null,as:dt?ds/dt:null};}
+function lock(){locked=true;['preset','x0','v0','acc'].forEach(id=>$(id).disabled=true);$('lock').classList.remove('hidden');}
+function pause(){running=false;cancelAnimationFrame(frame);$('play').textContent=t>=T?'Replay':'Play';}
+function interval(){let a=Number($('from').value),b=Number($('to').value);if($('from').value===''||$('to').value===''||!Number.isFinite(a+b)||a<0||b>T||a>=b){$('interval').textContent='Choose 0 ≤ start < end ≤ 12 seconds.';$('saveInterval').disabled=true;return null;}$('saveInterval').disabled=running;let m=measurement(a,b,'Interval');$('interval').textContent=`Δt ${fmt(b-a)} s · displacement ${fmt(m.dx)} m · distance ${fmt(m.ds)} m · average velocity ${fmt(m.av)} m/s · average speed ${fmt(m.as)} m/s`;return m;}
+const line=(x1,y1,x2,y2,color='#d6e0ed',extra='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" ${extra}/>`;
+const txt=(xx,yy,s,anchor='middle')=>`<text x="${xx}" y="${yy}" text-anchor="${anchor}" fill="#55677e" font-size="13">${s}</text>`;
+function extrema(fn){let values=[fn(0),fn(T),0],turn=cfg[2]?-cfg[1]/cfg[2]:-1;if(turn>0&&turn<T)values.push(fn(turn));let lo=Math.min(...values),hi=Math.max(...values),pad=Math.max((hi-lo)*.12,1),raw=(hi-lo+2*pad)/5,power=10**Math.floor(Math.log10(raw)),ratio=raw/power,step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*power;return [Math.floor((lo-pad)/step)*step,Math.ceil((hi+pad)/step)*step,step];}
+function draw(){let [lo,hi,step]=extrema(x),sx=s=>50+(s-lo)/(hi-lo)*660;let track=line(50,112,710,112,'#55677e','stroke-width="3"');for(let q=lo;q<=hi+step*.01;q+=step){let px=sx(q);track+=line(px,108,px,119)+txt(px,140,fmt(q,step<1?1:0));}let px=sx(x(t)),start=sx(cfg[0]),vel=v(t);track+=line(start,92,px,92,'#087e8b','stroke-width="5"')+line(start,82,start,105,'#087e8b','stroke-width="2"')+txt(start,159,'Start')+txt(710,28,'Teal line: displacement','end')+line(sx(0),40,sx(0),119,'#94a3b8','stroke-dasharray="4 4"')+txt(sx(0),28,'Origin')+`<rect x="${px-18}" y="68" width="36" height="25" rx="5" fill="#1d4ed8"/><circle cx="${px-11}" cy="99" r="7" fill="#182b43"/><circle cx="${px+11}" cy="99" r="7" fill="#182b43"/>`+txt(710,160,'Position (m)','end');if(Math.abs(vel)>1e-8){let end=px+Math.sign(vel)*30;track+=line(px,52,end,52,'#b85b00','stroke-width="3"')+`<path d="M${end-Math.sign(vel)*8} 46 L${end} 52 L${end-Math.sign(vel)*8} 58" fill="none" stroke="#b85b00" stroke-width="3"/>`;}$('track').innerHTML=track;
+let m=interval();for(const [id,fn,label,color]of [['position',x,'Position (m)','#1d4ed8'],['velocity',v,'Velocity (m/s)','#087e8b'],['acceleration',()=>cfg[2],'Acceleration (m/s²)','#7c3aed']]){let [min,max,gridStep]=extrema(fn),X=s=>75+s/T*650,Y=n=>175-(n-min)/(max-min)*140,out=txt(75,18,label,'start');for(let n=min;n<=max+gridStep*.01;n+=gridStep){let yy=Y(n);out+=line(75,yy,725,yy)+txt(66,yy+4,fmt(n,gridStep<1?1:0),'end');}for(let s=0;s<=12;s+=2)out+=line(X(s),35,X(s),175)+txt(X(s),195,s);out+=line(75,Y(0),725,Y(0),'#64748b')+txt(725,214,'Time (s)','end');if(id==='velocity'&&m&&($('future').checked||t>m.a)){let areaEnd=$('future').checked?m.b:Math.min(m.b,t);out+=`<path d="M${X(m.a)} ${Y(0)} L${X(m.a)} ${Y(v(m.a))} L${X(areaEnd)} ${Y(v(areaEnd))} L${X(areaEnd)} ${Y(0)}Z" fill="#f59e0b" opacity=".18"/>`;}let end=$('future').checked?T:t,points=[];for(let i=0;i<=120;i++){let s=end*i/120;points.push(`${i?'L':'M'}${X(s)} ${Y(fn(s))}`);}out+=`<path d="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="3"/>`+line(X(t),35,X(t),175,'#182b43','stroke-dasharray="4 4"')+`<circle cx="${X(t)}" cy="${Y(fn(t))}" r="4" fill="${color}"/>`;$(`${id}Graph`).innerHTML=out;}}
+function render(){for(const [id,value]of Object.entries({timeOut:fmt(t)+' s',positionOut:fmt(x(t))+' m',velocityOut:fmt(v(t))+' m/s',speedOut:fmt(Math.abs(v(t)))+' m/s',displacementOut:fmt(x(t)-cfg[0])+' m',distanceOut:fmt(distance(0,t))+' m',accOut:fmt(cfg[2])+' m/s²',directionOut:Math.abs(v(t))<1e-8?'At rest':v(t)>0?'Right (+)':'Left (−)'}))$(id).textContent=value;$('time').value=t;$('scrubOut').textContent=fmt(t)+' s';$('phase').textContent=running?'Moving':t>=T?'Journey complete':t?'Paused':'Ready';$('record').disabled=running;$('step').disabled=running||t>=T;$('play').textContent=running?'Pause':t>=T?'Replay':'Play';draw();}
+function tick(now){if(!running)return;t=Math.min(T,t+(now-last)/1000*Number($('rate').value));last=now;if(t>=T)pause();render();if(running)frame=requestAnimationFrame(tick);}
+$('play').onclick=()=>{if(running){pause();render();return;}lock();if(t>=T)t=0;running=true;last=performance.now();render();frame=requestAnimationFrame(tick);};$('step').onclick=()=>{lock();t=Math.min(T,t+.5);render();};$('rewind').onclick=()=>{pause();t=0;render();};$('time').oninput=()=>{pause();lock();t=Number($('time').value);render();};$('future').onchange=render;['from','to'].forEach(id=>$(id).oninput=draw);
+function configure(){cfg=['x0','v0','acc'].map(id=>{let el=$(id),n=Number(el.value);if(el.value===''||!Number.isFinite(n))n=0;n=Math.min(Number(el.max),Math.max(Number(el.min),n));el.value=n;return n;});render();}
+['x0','v0','acc'].forEach(id=>$(id).onchange=()=>{$('preset').value='custom';configure();});$('preset').onchange=()=>{let p=presets[$('preset').value];if(p){['x0','v0','acc'].forEach((id,i)=>$(id).value=p[i]);configure();}};
+function save(m){lock();let index=rows.findIndex(r=>r.type===m.type&&Math.abs(r.a-m.a)<1e-8&&Math.abs(r.b-m.b)<1e-8);if(index<0)rows.push(m);else rows[index]=m;$('status').textContent=index<0?'Measurement recorded.':'Matching measurement replaced.';table();}
+function table(){$('rows').innerHTML=rows.map(r=>'<tr>'+[r.type,fmt(r.a),fmt(r.b),fmt(r.endX),fmt(r.endV),fmt(r.dx),fmt(r.ds),fmt(r.av),fmt(r.as)].map(c=>`<td>${c}</td>`).join('')+'</tr>').join('');$('csv').disabled=!rows.length;$('conditions').textContent=rows.length?`x₀ = ${cfg[0]} m · v₀ = ${cfg[1]} m/s · a = ${cfg[2]} m/s²`:'No measurements yet.';}
+$('record').onclick=()=>save(measurement(0,t,'Snapshot'));$('saveInterval').onclick=()=>{let m=interval();if(m)save(m);};
+function clear(reset){pause();t=0;rows=[];locked=false;['preset','x0','v0','acc'].forEach(id=>$(id).disabled=false);$('lock').classList.add('hidden');$('status').textContent='';if(reset){$('preset').value='steady';['x0','v0','acc'].forEach((id,i)=>$(id).value=presets.steady[i]);$('rate').value='1';$('future').checked=false;$('from').value=0;$('to').value=12;}configure();table();}
+for(let id of ['new','reset'])$(id).onclick=()=>{pause();render();if(rows.length){pending=id;$('confirm').showModal();}else clear(id==='reset');};$('cancel').onclick=()=>$('confirm').close();$('confirmClear').onclick=()=>{$('confirm').close();clear(pending==='reset');};
+$('csv').onclick=()=>{const data=[['SciSims Quantities of Motion'],['Initial position (m)',cfg[0]],['Initial velocity (m/s)',cfg[1]],['Acceleration (m/s^2)',cfg[2]],['Type','Start (s)','End (s)','End position (m)','End velocity (m/s)','Displacement (m)','Distance (m)','Average velocity (m/s)','Average speed (m/s)'],...rows.map(r=>[r.type,r.a,r.b,r.endX,r.endV,r.dx,r.ds,r.av??'',r.as??''])].map(r=>r.join(',')).join('\r\n');let url=URL.createObjectURL(new Blob([data],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='quantities-of-motion.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};render();table();
+})();
+</script><script>
+if (location.protocol === 'file:' || !location.pathname.includes('/PhySims/')) {
+/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+
+} else {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '../../shared/scisims-nav.css';
+  document.head.appendChild(style);
+  const shared = document.createElement('script');
+  shared.src = '../../shared/scisims-nav.js';
+  shared.onerror = () => {/* SciSims shared site navigation | Version 1.1.0 */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('scisimsSiteNav');
+  if (!mount) return;
+  if (mount.classList.contains('scisims-simulation-nav')) {
+    document.body.classList.add('has-scisims-simulation-nav');
+  }
+
+  const siteRoot = window.location.pathname.includes('/PhySims/')
+    ? new URL('../../', window.location.href)
+    : new URL('https://SciSims3000.github.io/SciSims/');
+
+  const items = [
+    {label:'Stage 4', file:'Stage4index.html'},
+    {label:'Stage 5', file:'Stage5index.html'},
+    {label:'Stage 6', file:'Stage6index.html'},
+    {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'More', file:'Moreindex.html'}
+  ];
+
+  const currentPath = decodeURIComponent(window.location.pathname).replace(/\\/g,'/');
+  const currentFile = (currentPath.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+  const activeFile = currentFile === 'hscindex.html' ? 'stage6index.html' : currentFile;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scisims-site-nav';
+  nav.setAttribute('aria-label','SciSims site navigation');
+
+  const homeHref = new URL('index.html', siteRoot).href;
+  const links = items.map(item => {
+    const active = item.file.toLowerCase() === activeFile;
+    return `<a class="scisims-nav-link" href="${new URL(item.file, siteRoot).href}"${active ? ' aria-current="page"' : ''}>${item.label}</a>`;
+  }).join('');
+
+  nav.innerHTML = `
+    <div class="scisims-nav-inner">
+      <a class="scisims-nav-brand" href="${homeHref}"${activeFile === 'index.html' ? ' aria-current="page"' : ''}>
+        <svg class="scisims-nav-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="3.4"></circle>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(60 20 20)"></ellipse>
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(120 20 20)"></ellipse>
+        </svg>
+        <span>SciSims</span>
+      </a>
+      <button class="scisims-nav-toggle" type="button" aria-expanded="false" aria-controls="scisimsNavLinks" aria-label="Open site menu">☰</button>
+      <div id="scisimsNavLinks" class="scisims-nav-links">${links}</div>
+    </div>`;
+
+  mount.replaceChildren(nav);
+
+  const toggle = nav.querySelector('.scisims-nav-toggle');
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
+    toggle.textContent = open ? '×' : '☰';
+  };
+
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('.scisims-nav-link, .scisims-nav-brand')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  document.addEventListener('click', event => {
+    if (!nav.contains(event.target)) setOpen(false);
+  });
+})();
+};
+  document.head.appendChild(shared);
+}
+
+</script>
+</body></html>
