@@ -147,6 +147,172 @@ window.SCISIMS_STAGE45 = {
     }
   ],
   "resources": [
+{
+  "id": "physims-quantitiesofmotion",
+  "title": "Quantities of Motion",
+  "path": "PhySims/QuantitiesOfMotion/",
+  "description": "Explore distance, displacement, speed, velocity and acceleration with a moving cart, linked graphs, interval measurements and CSV export.",
+  "type": "Simulation",
+  "tags": [
+    "Motion",
+    "Kinematics",
+    "Distance",
+    "Displacement",
+    "Velocity",
+    "Acceleration",
+    "Graphs"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "10.3",
+      "relevance": "Core"
+    }
+  ]
+},
+{
+  "id": "physims-inclinedplane",
+  "title": "Inclined Planes and Friction",
+  "path": "PhySims/InclinedPlane/",
+  "description": "Investigate ramp angle and acceleration, then find the critical angle for sliding and estimate static friction using repeated measurements and graphs.",
+  "type": "Simulation",
+  "tags": [
+    "Forces",
+    "Inclined plane",
+    "Friction",
+    "Acceleration",
+    "Critical angle"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "physims-speedofsound",
+  "title": "Speed of Sound — Flag and Horn",
+  "path": "PhySims/SpeedOfSound/",
+  "description": "Measure sound travel time over different distances, collect repeated readings and use a best-fit graph to estimate sound speed and timing bias.",
+  "type": "Simulation",
+  "tags": [
+    "Sound",
+    "Waves",
+    "Speed",
+    "Timing",
+    "Regression"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "10.3",
+      "relevance": "Core"
+    }
+  ]
+},
+{
+  "id": "physims-lightintensity",
+  "title": "Light Intensity — Inverse Square Law",
+  "path": "PhySims/LightIntensity/",
+  "description": "Investigate light intensity versus distance using repeated measurements, graphing, regression and CSV export.",
+  "type": "Simulation",
+  "tags": [
+    "Light",
+    "Intensity",
+    "Inverse square law",
+    "Distance",
+    "Graphs"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "physims-electroscope",
+  "title": "Electroscope Induction",
+  "path": "PhySims/Electroscope/",
+  "description": "Explore charge separation, earthing, contact charging and induction with a qualitative electroscope model and an exportable action log.",
+  "type": "Simulation",
+  "tags": [
+    "Electrostatics",
+    "Charge",
+    "Induction",
+    "Earthing",
+    "Electroscope"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "physims-solenoid",
+  "title": "Solenoid Field versus Current",
+  "path": "PhySims/Solenoid/",
+  "description": "Measure the field at the centre of an air-core solenoid, reverse current, apply the right-hand grip rule and analyse repeated readings with regression.",
+  "type": "Simulation",
+  "tags": [
+    "Magnetism",
+    "Solenoid",
+    "Current",
+    "Magnetic field",
+    "Right-hand rule"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    }
+  ]
+},
     {
       "id": "invsci-var",
       "title": "Accuracy, Reliability and Validity Lab",
