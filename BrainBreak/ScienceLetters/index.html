@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Science Letters | SciSims</title>
+<meta name="description" content="Nine letters, one science word: simultaneous classroom teams and solo practice with dictionary lookup and teacher adjudication.">
+<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color-scheme:light;--bg:#eaf2fb;--panel:#fff;--soft:#f7fbff;--line:#cddcf0;--text:#172033;--muted:#4b5870;--blue:#2f63e6;--blue-dark:#173a9e;--green:#166534;--red:#991b1b;--amber:#92400e;--shadow:0 12px 28px rgba(22,40,70,.12)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}main{max-width:1260px;margin:auto;padding:14px 20px 40px}main header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:28px;border-radius:28px;background:linear-gradient(120deg,#14254d,#263c91 46%,#155f55);box-shadow:var(--shadow);color:#fff}main h1{font-size:clamp(28px,4vw,44px);margin:8px 0;line-height:1.1}main h2{font-size:20px;margin:0 0 16px}main h3{font-size:17px;margin:0 0 12px}main header p{margin:0;color:#eef4ff}main .eyebrow{font-size:12px;letter-spacing:2px;font-weight:bold;color:#b4f1dd}main p{line-height:1.5;color:var(--muted)}main button,main input,main select{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);padding:11px;min-height:44px;touch-action:manipulation}main button{cursor:pointer;font-weight:bold;color:var(--blue-dark);background:#eaf2ff}main button:hover:not(:disabled){background:#dbeafe;border-color:var(--blue)}main button:disabled{opacity:.45;cursor:default}main button:focus-visible,main input:focus-visible,main select:focus-visible,main summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}main .primary{background:var(--blue);color:#fff;border-color:var(--blue)}main .primary:hover:not(:disabled){background:var(--blue-dark)}main header button{flex-shrink:0;background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.5)}
+.toolbar,.actions{display:flex;gap:10px;flex-wrap:wrap}.toolbar{margin:20px 0}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start}.panel{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}.stack{display:grid;gap:20px}.small{font-size:13px}.muted{color:var(--muted)}.hidden{display:none!important}main label{display:block;font-size:13px;font-weight:bold;color:var(--blue-dark);margin:14px 0 6px}main input,main select{width:100%;min-width:0}.check-label{display:flex;align-items:center;gap:9px;font-weight:normal;line-height:1.4}.check-label input{width:18px;min-height:18px;flex-shrink:0}.names{margin-top:14px}.name-row{margin:8px 0}.scoreboard{display:grid;gap:8px;margin-top:16px}.score-row{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px}.score-row strong{font-size:22px;color:var(--blue-dark)}
+.round-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.badge{border-radius:999px;background:#eaf2ff;color:var(--blue-dark);font-weight:bold;padding:7px 12px;font-size:13px}.clock{font-size:38px;color:var(--blue-dark);font-weight:bold;font-variant-numeric:tabular-nums}.clock.urgent{color:var(--red)}.clockbar{height:8px;background:#dbe5f4;border-radius:12px;overflow:hidden;margin:12px 0 22px}.clockbar div{width:0;height:100%;background:var(--blue);transition:width .2s}.letters{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;padding:20px 0}.letter{display:grid;place-items:center;aspect-ratio:1;font-size:clamp(20px,3.8vw,40px);font-weight:bold;background:linear-gradient(135deg,#edf4ff,#e8f6f0);border:2px solid #a9c2ed;border-radius:12px;color:var(--blue-dark);box-shadow:0 4px 0 #9ab4df}.letter.empty{color:#8da0bd;box-shadow:none;border-style:dashed}.status{padding:12px 14px;border:1px solid var(--line);background:var(--soft);border-radius:12px;line-height:1.5;min-height:46px;margin:12px 0}.team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}.team-card{border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0;background:var(--soft)}.team-title{display:flex;align-items:center;justify-content:space-between;gap:8px}.team-title h3{margin:0}.team-card label{margin-top:12px}.word-input{text-transform:uppercase;font-size:20px!important;letter-spacing:2px;font-weight:bold}.team-card .actions{margin-top:10px}.team-card .actions button{flex:1}.light{width:16px;height:16px;border-radius:50%;background:#94a3b8;flex-shrink:0;border:1px solid #64748b}.light.green{background:#22c55e;border-color:#166534;box-shadow:0 0 0 4px #dcfce7}.light.red{background:#ef4444;border-color:#991b1b;box-shadow:0 0 0 4px #fee2e2}.light.amber{background:#f59e0b;border-color:#92400e;box-shadow:0 0 0 4px #fef3c7}.result{font-size:14px;line-height:1.5;margin-top:12px;min-height:22px;overflow-wrap:anywhere}.result.green{color:var(--green)}.result.red{color:var(--red)}.result.amber{color:var(--amber)}.definition{font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0;overflow-wrap:anywhere}.reference{font-size:13px;color:var(--blue-dark)}.review-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.review-actions button{font-size:13px;padding:9px}.review-actions .accept{color:var(--green);background:#ecfdf3;border-color:#a7dfba}.review-actions .reject{color:var(--red);background:#fff1f2;border-color:#fecaca}.winner{border:2px solid #15803d;background:#f0fdf4}.round-result{font-size:18px;font-weight:bold;color:var(--blue-dark)}main details{margin-top:16px}main summary{cursor:pointer;color:var(--blue-dark);font-weight:bold}main ol{padding-left:20px;color:var(--muted);line-height:1.6}main footer{margin-top:24px;color:var(--muted);font-size:12px;line-height:1.6}main footer a,main details a{color:var(--blue-dark)}.history-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;min-width:450px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--blue-dark);background:var(--soft)}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.letters{gap:6px}.panel{padding:18px}main{padding:14px 16px 30px}.scoreboard{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){main header{padding:22px;flex-wrap:wrap}.team-grid{grid-template-columns:1fr}.letters{gap:4px;padding:14px 0}.letter{border-radius:8px;font-size:23px}.toolbar button{flex:1}.scoreboard{grid-template-columns:1fr}.clock{font-size:30px}}@media(prefers-reduced-motion:reduce){.clockbar div{transition:none}}
+</style>
+</head>
+<body>
+<div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+<main>
+<header><div><div class="eyebrow">SCISIMS · WORD LAB</div><h1>Science Letters</h1><p>Nine letters. One answer. Your longest science word.</p></div><button id="fullscreen" type="button">⛶ Full screen</button></header>
+<div class="toolbar"><button id="newRound" class="primary" type="button">Start round</button><button id="endRound" type="button" disabled>End round &amp; reveal</button><button id="award" class="primary" type="button" disabled>Award points</button><button id="reset" type="button">Reset match</button></div>
+<div class="layout">
+<aside class="panel">
+<h2>Round controls</h2>
+<label for="mode">Play mode</label><select id="mode"><option value="teams">Classroom teams</option><option value="solo">Solo practice</option></select>
+<label for="teamCount">Number of teams</label><select id="teamCount"><option value="2">2 teams</option><option value="3">3 teams</option><option value="4">4 teams</option><option value="5">5 teams</option><option value="6">6 teams</option></select>
+<label for="topic">Science topic</label><select id="topic"><option value="mixed">Mixed Science</option><option value="biology">Biology</option><option value="chemistry">Chemistry</option><option value="physics">Physics</option><option value="earth">Earth and Space</option></select>
+<label for="duration">Countdown (seconds)</label><input id="duration" type="number" min="10" max="600" step="1" value="60">
+<label class="check-label" for="untimed"><input id="untimed" type="checkbox">No timer</label>
+<label class="check-label" for="hideWords"><input id="hideWords" type="checkbox" checked>Hide answers until the reveal</label>
+<p class="small">All teams play at once. Type each team's nominated word, then lock its single attempt. At timeout, any typed answers lock automatically.</p>
+<div id="names" class="names"></div>
+<h3 style="margin-top:22px">Match scores</h3><div id="scoreboard" class="scoreboard"></div>
+<details><summary>How to play</summary><ol><li>Choose a topic, teams and countdown. Press Start round.</li><li>Build a science word from the nine letters. Each tile can be used only once; not every tile is needed.</li><li>Each team has one locked answer. Answers and results are revealed together when the round closes.</li><li>Check definitions, then accept or reject each word's relevance to the selected topic.</li><li>The longest accepted word earns one point per letter. Shorter words earn zero. Tied winners each receive their full letter score.</li></ol><p class="small">Solo practice earns the accepted word's length. A dictionary match confirms an English word, not its science relevance. You can approve unfamiliar terms after checking a source, including terms the dictionary misses.</p><p class="small">Single words only, 2–9 letters. Plurals and Australian spellings are allowed if valid science terms. Spaces, hyphens, abbreviations, chemical formulae and proper names are excluded.</p><p class="small">Letter sets use a small collection of starter terms to ensure a playable science word. Those terms do not limit the answers you may submit. The revealed example is not a claim about the longest possible answer.</p></details>
+</aside>
+<div class="stack">
+<section class="panel" aria-label="Letters round">
+<div class="round-heading"><div><h2 style="margin-bottom:8px">Shared letters</h2><span id="roundBadge" class="badge">Ready to play</span></div><div id="clock" class="clock" aria-label="Round timer">—</div></div>
+<div class="clockbar" aria-hidden="true"><div id="clockFill"></div></div>
+<div id="letters" class="letters" aria-label="Nine letter tiles"></div>
+<div id="status" class="status" role="status" aria-live="polite">Choose your settings, then start a round.</div>
+<div id="teams" class="team-grid"></div>
+<div id="roundResult" class="round-result" aria-live="polite"></div>
+<div id="example" class="status hidden"></div>
+</section>
+<section class="panel"><h2>Round history</h2><div class="history-scroll"><table><thead><tr><th>Round</th><th>Topic</th><th>Team</th><th>Word</th><th>Points</th></tr></thead><tbody id="history"><tr><td colspan="5" class="muted">No scored rounds yet.</td></tr></tbody></table></div></section>
+</div>
+</div>
+<footer>Scores are saved in this browser when available. Dictionary checking needs internet access; teacher review remains available if a lookup fails. Definitions: <a href="https://dictionaryapi.dev/" target="_blank" rel="noopener noreferrer">Free Dictionary API</a>. Word lookup links: <a href="https://en.wiktionary.org/" target="_blank" rel="noopener noreferrer">Wiktionary</a>. No student or team names are sent to the dictionary service.</footer>
+</main>
+<script>
+'use strict';
+const TOPICS={mixed:'Mixed Science',biology:'Biology',chemistry:'Chemistry',physics:'Physics',earth:'Earth and Space'};
+// These are starting points for playable letter sets, never an answer whitelist.
+const STARTERS={
+ biology:['biology','genetics','enzyme','osmosis','membrane','nucleus','mitosis','protein','habitat','species','organism','neuron','bacteria','ecology','cellulose','hormone','vacuole','diffusion','chromatin','evolution'],
+ chemistry:['chemistry','molecule','element','reaction','electron','neutron','proton','isotope','compound','solution','solvent','catalyst','metal','alkali','polymer','oxidation','chloride','carbonate','covalent','titration'],
+ physics:['physics','velocity','momentum','gravity','friction','energy','force','pressure','density','voltage','current','resistor','frequency','amplitude','magnetism','refraction','inertia','wave','photon','radiation'],
+ earth:['geology','planet','asteroid','galaxy','mineral','erosion','weather','climate','volcano','sediment','tectonic','fossil','orbit','comet','eclipse','meteor','solstice','equinox','mantle','crust']
+};
+// Keep only single words that fit the nine-tile round.
+for(const key of Object.keys(STARTERS))STARTERS[key]=STARTERS[key].filter(w=>/^[a-z]{2,9}$/.test(w));
+function normaliseWord(raw){return String(raw).trim().toLowerCase();}
+function checkLetters(raw,letters){
+ const word=normaliseWord(raw);
+ if(!word)return {valid:false,reason:'No answer submitted.'};
+ if(!/^[a-z]{2,9}$/.test(word))return {valid:false,reason:'Use one word of 2–9 letters, without spaces, punctuation or numbers.'};
+ const available={};for(const letter of letters){const ch=letter.toLowerCase();available[ch]=(available[ch]||0)+1;}
+ for(const ch of word){if(!available[ch])return {valid:false,reason:'The tiles cannot make this word: not enough '+ch.toUpperCase()+' tiles.'};available[ch]--;}
+ return {valid:true,word};
+}
+function shuffle(items,random=Math.random){const copy=[...items];for(let i=copy.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
+function makeLetters(topic,previous='',random=Math.random){
+ const pool=topic==='mixed'?Object.values(STARTERS).flat():STARTERS[topic];
+ const choices=pool.filter(w=>w!==previous),seed=choices[Math.floor(random()*choices.length)];
+ const letters=seed.toUpperCase().split(''),vowels='AAAAAEEEEEEEIIIIOOOOUU',consonants='BBCCDDFFGGHHJKLLLMMMNNNNPPRRRRSSSSTTTTTVWY';
+ while(letters.length<9){const source=letters.filter(c=>'AEIOU'.includes(c)).length<3?vowels:(random()<.35?vowels:consonants);letters.push(source[Math.floor(random()*source.length)]);}
+ return {letters:shuffle(letters,random),seed};
+}
+function pointsFor(answers){
+ const longest=Math.max(0,...answers.filter(a=>a.decision==='accepted').map(a=>a.word.length));
+ return answers.map(a=>a.decision==='accepted'&&a.word.length===longest?longest:0);
+}
+const $=id=>document.getElementById(id);
+let state='idle',round=null,roundNumber=0,deadline=0,lastSeed='',lookupVersion=0;
+let soloScore=0;
+let names=['Team 1','Team 2','Team 3','Team 4','Team 5','Team 6'],scores=[0,0,0,0,0,0],history=[];
+const dictionaryCache=new Map();
+try{const saved=JSON.parse(localStorage.getItem('scienceLettersMatch')||'null');if(saved){soloScore=Number.isInteger(saved.soloScore)&&saved.soloScore>=0?saved.soloScore:0;if(Array.isArray(saved.names))names=names.map((n,i)=>typeof saved.names[i]==='string'?saved.names[i].slice(0,32):n);if(Array.isArray(saved.scores))scores=scores.map((n,i)=>Number.isInteger(saved.scores[i])&&saved.scores[i]>=0?saved.scores[i]:0);if(Array.isArray(saved.history))history=saved.history.slice(-120).filter(r=>r&&typeof r.word==='string'&&typeof r.name==='string');roundNumber=Number.isInteger(saved.roundNumber)&&saved.roundNumber>=0?saved.roundNumber:0;}}catch{}
+function persist(){try{localStorage.setItem('scienceLettersMatch',JSON.stringify({names,scores,soloScore,history:history.slice(-120),roundNumber}));}catch{}}
+function activeCount(){return $('mode').value==='solo'?1:Number($('teamCount').value);}
+function teamName(i){return $('mode').value==='solo'?'Player':names[i]||'Team '+(i+1);}
+function say(text){$('status').textContent=text;}
+function updateScoreboard(){
+ $('scoreboard').replaceChildren();
+ for(let i=0;i<activeCount();i++){const row=document.createElement('div');row.className='score-row';const label=document.createElement('span');label.textContent=teamName(i);const score=document.createElement('strong');score.textContent=$('mode').value==='solo'?soloScore:scores[i];row.append(label,score);$('scoreboard').append(row);}
+}
+function renderHistory(){
+ $('history').replaceChildren();
+ if(!history.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.className='muted';td.textContent='No scored rounds yet.';tr.append(td);$('history').append(tr);return;}
+ for(const row of [...history].reverse()){const tr=document.createElement('tr');for(const text of [row.round,row.topic,row.name,row.word||'—',row.points]){const td=document.createElement('td');td.textContent=text;tr.append(td);}$('history').append(tr);}
+}
+function settingsLocked(lock){for(const id of ['mode','teamCount','topic','duration','untimed','hideWords'])$(id).disabled=lock;for(const input of $('names').querySelectorAll('input'))input.disabled=lock;if(!lock){$('teamCount').disabled=$('mode').value==='solo';$('duration').disabled=$('untimed').checked;}}
+function renderNames(){
+ $('names').replaceChildren();
+ if($('mode').value==='teams')for(let i=0;i<activeCount();i++){const label=document.createElement('label');label.htmlFor='name'+i;label.textContent='Team '+(i+1)+' name';const input=document.createElement('input');input.id='name'+i;input.value=names[i];input.maxLength=32;input.oninput=()=>{names[i]=input.value.trim().slice(0,32)||'Team '+(i+1);updateScoreboard();persist();};$('names').append(label,input);}
+ updateScoreboard();settingsLocked(state==='playing'||state==='review');
+}
+function displayLetters(letters=[]){$('letters').replaceChildren(...Array.from({length:9},(_,i)=>{const tile=document.createElement('div');tile.className='letter'+(letters[i]?'':' empty');tile.textContent=letters[i]||'—';return tile;}));}
+function renderTeams(){
+ $('teams').replaceChildren();
+ if(!round)return;
+ round.answers.forEach((answer,i)=>{
+  const card=document.createElement('section');card.className='team-card';card.id='teamCard'+i;
+  const title=document.createElement('div');title.className='team-title';const heading=document.createElement('h3');heading.textContent=answer.name;const light=document.createElement('span');light.className='light';light.id='light'+i;light.setAttribute('aria-hidden','true');title.append(heading,light);
+  const label=document.createElement('label');label.htmlFor='word'+i;label.textContent='One word · one attempt';
+  const input=document.createElement('input');input.id='word'+i;input.className='word-input';input.type=round.hideWords?'password':'text';input.maxLength=40;input.autocomplete='off';input.spellcheck=false;input.setAttribute('autocapitalize','characters');input.setAttribute('aria-label',answer.name+' answer');input.oninput=()=>{answer.draft=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();lockAnswer(i);}};
+  const actions=document.createElement('div');actions.className='actions';const lock=document.createElement('button');lock.id='lock'+i;lock.type='button';lock.textContent='Lock answer';lock.onclick=()=>lockAnswer(i);actions.append(lock);
+  const result=document.createElement('div');result.id='result'+i;result.className='result';result.textContent='Thinking…';
+  const definition=document.createElement('div');definition.id='definition'+i;definition.className='definition';
+  const review=document.createElement('div');review.id='review'+i;review.className='review-actions hidden';
+  card.append(title,label,input,actions,result,definition,review);$('teams').append(card);
+ });
+}
+function beginRound(){
+ if(state==='playing'||state==='review')return;
+ const seconds=Number($('duration').value);
+ if(!$('untimed').checked&&(!Number.isInteger(seconds)||seconds<10||seconds>600)){say('Choose a whole-number countdown from 10 to 600 seconds, or select No timer.');$('duration').focus();return;}
+ const topic=$('topic').value,generated=makeLetters(topic,lastSeed);lastSeed=generated.seed;roundNumber++;
+ round={number:roundNumber,topic,...generated,hideWords:$('hideWords').checked,untimed:$('untimed').checked,seconds,mode:$('mode').value,answers:Array.from({length:activeCount()},(_,i)=>({name:teamName(i),draft:'',word:'',locked:false,decision:'pending',reason:'',lookup:null}))};
+ state='playing';lookupVersion++;deadline=Date.now()+seconds*1000;displayLetters(round.letters);renderTeams();settingsLocked(true);
+ $('roundBadge').textContent='Round '+round.number+' · '+TOPICS[topic];$('newRound').disabled=true;$('endRound').disabled=false;$('award').disabled=true;$('roundResult').textContent='';$('example').classList.add('hidden');
+ say('All teams are playing. Lock one nominated word per team; results stay hidden until the reveal.');tick();persist();$('word0').focus();
+}
+function lockAnswer(i){
+ if(state!=='playing')return;
+ if(!round.untimed&&Date.now()>=deadline){closeRound();return;}
+ const a=round.answers[i];if(a.locked)return;
+ a.word=normaliseWord($('word'+i).value);a.draft=$('word'+i).value;a.locked=true;
+ $('word'+i).disabled=true;$('lock'+i).disabled=true;$('lock'+i).textContent='Locked';$('result'+i).textContent='Answer locked · waiting for reveal';
+ const count=round.answers.filter(a=>a.locked).length;
+ say(count===round.answers.length?'All answers are locked. End the round to reveal and review.':count+' of '+round.answers.length+' answers locked. Other teams keep playing.');
+}
+function closeRound(){
+ if(state!=='playing')return;
+ state='review';$('endRound').disabled=true;$('clockFill').style.width='0%';$('clock').classList.remove('urgent');$('clock').textContent='Closed';
+ say('Answers revealed. Check the definitions and decide whether each word fits '+TOPICS[round.topic]+'.');
+ const version=lookupVersion;
+ round.answers.forEach((a,i)=>{
+  if(!a.locked){a.word=normaliseWord($('word'+i).value);a.locked=true;}
+  $('word'+i).type='text';$('word'+i).value=a.word.toUpperCase();$('word'+i).disabled=true;$('lock'+i).disabled=true;$('lock'+i).textContent='Locked';
+  const check=checkLetters(a.word,round.letters);
+  if(!check.valid){a.decision='rejected';a.reason=check.reason;updateAnswer(i);return;}
+  a.decision='pending';a.reason='Checking dictionary…';updateAnswer(i);
+  lookupWord(a.word).then(data=>{if(version!==lookupVersion||state!=='review')return;a.lookup=data;if(a.decision==='pending')a.reason=data.status==='found'?'Dictionary entry found — confirm the science topic.':data.status==='missing'?'No dictionary entry found — teacher review required.':'Dictionary unavailable — teacher review required.';updateAnswer(i);});
+ });
+ updateAward();
+}
+async function lookupWord(word){
+ if(dictionaryCache.has(word))return dictionaryCache.get(word);
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),8000);
+ try{
+  const response=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word),{signal:controller.signal,credentials:'omit'});
+  if(response.status===404){const result={status:'missing',definitions:[]};dictionaryCache.set(word,result);return result;}
+  if(!response.ok)throw Error('Dictionary response failed');
+  const entries=await response.json();if(!Array.isArray(entries)||!entries.length)throw Error('Invalid dictionary response');
+  const definitions=[];
+  for(const entry of entries)for(const meaning of entry.meanings||[])for(const d of meaning.definitions||[])if(typeof d.definition==='string'&&definitions.length<3)definitions.push((meaning.partOfSpeech?meaning.partOfSpeech+': ':'')+d.definition);
+  const result={status:'found',definitions};dictionaryCache.set(word,result);return result;
+ }catch{return {status:'unavailable',definitions:[]};}finally{clearTimeout(timeout);}
+}
+function decide(i,accepted){
+ if(state!=='review')return;
+ const a=round.answers[i];if(!checkLetters(a.word,round.letters).valid)return;
+ a.decision=accepted?'accepted':'rejected';a.reason=accepted?'Accepted for '+TOPICS[round.topic]+' · '+a.word.length+' letters.':'Rejected for this science topic.';updateAnswer(i);updateAward();
+}
+function updateAnswer(i){
+ const a=round.answers[i],colour=a.decision==='accepted'?'green':a.decision==='rejected'?'red':'amber';
+ $('light'+i).className='light '+colour;$('result'+i).className='result '+colour;$('result'+i).textContent=a.reason;
+ const definition=$('definition'+i);definition.replaceChildren();
+ if(a.lookup){for(const text of a.lookup.definitions){const p=document.createElement('p');p.textContent=text;definition.append(p);}}
+ const review=$('review'+i);review.replaceChildren();
+ if(!checkLetters(a.word,round.letters).valid){review.classList.add('hidden');updateAward();return;}
+ review.classList.remove('hidden');
+ const link=document.createElement('a');link.className='reference';link.href='https://en.wiktionary.org/wiki/'+encodeURIComponent(a.word);link.target='_blank';link.rel='noopener noreferrer';link.textContent='Look up word';definition.append(link);
+ const accept=document.createElement('button');accept.type='button';accept.className='accept';accept.textContent=round.mode==='solo'?'Accept science word':'Accept for topic';accept.onclick=()=>decide(i,true);
+ const reject=document.createElement('button');reject.type='button';reject.className='reject';reject.textContent='Reject word';reject.onclick=()=>decide(i,false);review.append(accept,reject);updateAward();
+}
+function updateAward(){
+ if(state!=='review')return;
+ const pending=round.answers.filter(a=>a.decision==='pending').length;$('award').disabled=pending>0;
+ $('roundResult').textContent=pending?pending+' answer'+(pending===1?'':'s')+' awaiting review.':'Review complete. Award points to finish this round.';
+}
+function awardPoints(){
+ if(state!=='review'||round.answers.some(a=>a.decision==='pending'))return;
+ const points=pointsFor(round.answers);state='scored';lookupVersion++;
+ const winners=[];
+ round.answers.forEach((a,i)=>{if(round.mode==='solo')soloScore+=points[i];else scores[i]+=points[i];if(points[i]){winners.push(a.name+' +'+points[i]);$('teamCard'+i).classList.add('winner');}const suffix=points[i]?' +'+points[i]+' points.':a.decision==='accepted'?' Valid word; a longer answer wins this round.':' No points.';$('result'+i).textContent=a.reason+suffix;$('review'+i).replaceChildren();history.push({round:round.number,topic:TOPICS[round.topic],name:a.name,word:a.word,points:points[i]});});
+ history=history.slice(-120);$('roundResult').textContent=winners.length?winners.join(' · '):'No accepted words this round.';
+ $('example').textContent='One possible science word: '+round.seed.toUpperCase()+' ('+round.seed.length+' letters). You may have found a longer word!';$('example').classList.remove('hidden');
+ $('award').disabled=true;$('newRound').disabled=false;$('newRound').textContent='Start next round';settingsLocked(false);updateScoreboard();renderHistory();persist();say('Round scored. Adjust your settings or start the next round.');
+}
+function tick(){
+ if(state!=='playing')return;
+ if(round.untimed){$('clock').textContent='No timer';$('clockFill').style.width='100%';return;}
+ const remaining=Math.max(0,deadline-Date.now()),seconds=Math.ceil(remaining/1000);
+ $('clock').textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');$('clock').classList.toggle('urgent',seconds<=10);$('clockFill').style.width=(remaining/(round.seconds*1000)*100)+'%';
+ if(!remaining)closeRound();
+}
+function resetMatch(){
+ if((state==='playing'||state==='review'||scores.some(s=>s>0)||soloScore>0||history.length)&&!window.confirm('Reset the match? This clears scores, history and any current round.'))return;
+ lookupVersion++;state='idle';round=null;roundNumber=0;scores=[0,0,0,0,0,0];soloScore=0;history=[];deadline=0;
+ displayLetters();$('teams').replaceChildren();$('roundBadge').textContent='Ready to play';$('clock').textContent='—';$('clock').classList.remove('urgent');$('clockFill').style.width='0%';$('roundResult').textContent='';$('example').classList.add('hidden');$('newRound').disabled=false;$('newRound').textContent='Start round';$('endRound').disabled=true;$('award').disabled=true;settingsLocked(false);renderNames();renderHistory();persist();say('Choose your settings, then start a round.');
+}
+$('newRound').onclick=beginRound;$('endRound').onclick=closeRound;$('award').onclick=awardPoints;$('reset').onclick=resetMatch;
+$('mode').onchange=()=>{if(state==='playing'||state==='review')return;resetForSettings();};$('teamCount').onchange=()=>{if(state==='playing'||state==='review')return;resetForSettings();};
+function resetForSettings(){if(state==='scored'){$('teams').replaceChildren();$('roundResult').textContent='';$('example').classList.add('hidden');displayLetters();$('roundBadge').textContent='Ready for next round';}renderNames();}
+$('untimed').onchange=()=>{$('duration').disabled=$('untimed').checked;};
+$('fullscreen').onclick=()=>{const promise=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();if(promise)promise.catch(()=>say('Full screen is unavailable in this browser.'));};
+displayLetters();renderNames();renderHistory();setInterval(tick,200);
+</script>
+</body>
+</html>
