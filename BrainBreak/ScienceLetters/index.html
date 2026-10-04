@@ -14,6 +14,14 @@
 .toolbar,.actions{display:flex;gap:10px;flex-wrap:wrap}.toolbar{margin:20px 0}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start}.panel{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}.stack{display:grid;gap:20px}.small{font-size:13px}.muted{color:var(--muted)}.hidden{display:none!important}main label{display:block;font-size:13px;font-weight:bold;color:var(--blue-dark);margin:14px 0 6px}main input,main select{width:100%;min-width:0}.check-label{display:flex;align-items:center;gap:9px;font-weight:normal;line-height:1.4}.check-label input{width:18px;min-height:18px;flex-shrink:0}.names{margin-top:14px}.name-row{margin:8px 0}.scoreboard{display:grid;gap:8px;margin-top:16px}.score-row{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px}.score-row strong{font-size:22px;color:var(--blue-dark)}
 .round-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.badge{border-radius:999px;background:#eaf2ff;color:var(--blue-dark);font-weight:bold;padding:7px 12px;font-size:13px}.clock{font-size:38px;color:var(--blue-dark);font-weight:bold;font-variant-numeric:tabular-nums}.clock.urgent{color:var(--red)}.clockbar{height:8px;background:#dbe5f4;border-radius:12px;overflow:hidden;margin:12px 0 22px}.clockbar div{width:0;height:100%;background:var(--blue);transition:width .2s}.letters{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;padding:20px 0}.letter{display:grid;place-items:center;aspect-ratio:1;font-size:clamp(20px,3.8vw,40px);font-weight:bold;background:linear-gradient(135deg,#edf4ff,#e8f6f0);border:2px solid #a9c2ed;border-radius:12px;color:var(--blue-dark);box-shadow:0 4px 0 #9ab4df}.letter.empty{color:#8da0bd;box-shadow:none;border-style:dashed}.status{padding:12px 14px;border:1px solid var(--line);background:var(--soft);border-radius:12px;line-height:1.5;min-height:46px;margin:12px 0}.team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}.team-card{border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0;background:var(--soft)}.team-title{display:flex;align-items:center;justify-content:space-between;gap:8px}.team-title h3{margin:0}.team-card label{margin-top:12px}.word-input{text-transform:uppercase;font-size:20px!important;letter-spacing:2px;font-weight:bold}.team-card .actions{margin-top:10px}.team-card .actions button{flex:1}.light{width:16px;height:16px;border-radius:50%;background:#94a3b8;flex-shrink:0;border:1px solid #64748b}.light.green{background:#22c55e;border-color:#166534;box-shadow:0 0 0 4px #dcfce7}.light.red{background:#ef4444;border-color:#991b1b;box-shadow:0 0 0 4px #fee2e2}.light.amber{background:#f59e0b;border-color:#92400e;box-shadow:0 0 0 4px #fef3c7}.result{font-size:14px;line-height:1.5;margin-top:12px;min-height:22px;overflow-wrap:anywhere}.result.green{color:var(--green)}.result.red{color:var(--red)}.result.amber{color:var(--amber)}.definition{font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0;overflow-wrap:anywhere}.reference{font-size:13px;color:var(--blue-dark)}.review-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.review-actions button{font-size:13px;padding:9px}.review-actions .accept{color:var(--green);background:#ecfdf3;border-color:#a7dfba}.review-actions .reject{color:var(--red);background:#fff1f2;border-color:#fecaca}.winner{border:2px solid #15803d;background:#f0fdf4}.round-result{font-size:18px;font-weight:bold;color:var(--blue-dark)}main details{margin-top:16px}main summary{cursor:pointer;color:var(--blue-dark);font-weight:bold}main ol{padding-left:20px;color:var(--muted);line-height:1.6}main footer{margin-top:24px;color:var(--muted);font-size:12px;line-height:1.6}main footer a,main details a{color:var(--blue-dark)}.history-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;min-width:450px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--blue-dark);background:var(--soft)}
 @media(max-width:950px){.layout{grid-template-columns:1fr}.letters{gap:6px}.panel{padding:18px}main{padding:14px 16px 30px}.scoreboard{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){main header{padding:22px;flex-wrap:wrap}.team-grid{grid-template-columns:1fr}.letters{gap:4px;padding:14px 0}.letter{border-radius:8px;font-size:23px}.toolbar button{flex:1}.scoreboard{grid-template-columns:1fr}.clock{font-size:30px}}@media(prefers-reduced-motion:reduce){.clockbar div{transition:none}}
+
+/* Conceal projected answers without creating login/password fields. */
+.word-input.hidden-answer{-webkit-text-security:disc}
+@supports not (-webkit-text-security:disc){.word-input.hidden-answer{color:transparent!important;caret-color:var(--blue-dark)}}
+main .word-input.dictionary-green{border:2px solid #15803d;background:#ecfdf3;color:#14532d}
+main .word-input.dictionary-red{border:2px solid #dc2626;background:#fff1f2;color:#991b1b}
+main .word-input.dictionary-amber{border:2px solid #d97706;background:#fffbeb}
+.dictionary-status{font-size:12px;line-height:1.4;margin-top:7px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -116,12 +124,13 @@ function renderTeams(){
   const card=document.createElement('section');card.className='team-card';card.id='teamCard'+i;
   const title=document.createElement('div');title.className='team-title';const heading=document.createElement('h3');heading.textContent=answer.name;const light=document.createElement('span');light.className='light';light.id='light'+i;light.setAttribute('aria-hidden','true');title.append(heading,light);
   const label=document.createElement('label');label.htmlFor='word'+i;label.textContent='One word · one attempt';
-  const input=document.createElement('input');input.id='word'+i;input.className='word-input';input.type=round.hideWords?'password':'text';input.maxLength=40;input.autocomplete='off';input.spellcheck=false;input.setAttribute('autocapitalize','characters');input.setAttribute('aria-label',answer.name+' answer');input.oninput=()=>{answer.draft=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();lockAnswer(i);}};
+  const input=document.createElement('input');input.id='word'+i;input.className='word-input'+(round.hideWords?' hidden-answer':'');input.type='text';input.maxLength=40;input.autocomplete='off';input.spellcheck=false;input.setAttribute('autocapitalize','characters');input.setAttribute('aria-label',answer.name+' answer');input.setAttribute('aria-describedby','dictionaryStatus'+i);input.setAttribute('data-lpignore','true');input.setAttribute('data-1p-ignore','true');input.oninput=()=>{answer.draft=input.value;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();lockAnswer(i);}};
+  const dictionaryStatus=document.createElement('div');dictionaryStatus.id='dictionaryStatus'+i;dictionaryStatus.className='dictionary-status';dictionaryStatus.textContent='Dictionary result appears after the reveal.';
   const actions=document.createElement('div');actions.className='actions';const lock=document.createElement('button');lock.id='lock'+i;lock.type='button';lock.textContent='Lock answer';lock.onclick=()=>lockAnswer(i);actions.append(lock);
   const result=document.createElement('div');result.id='result'+i;result.className='result';result.textContent='Thinking…';
   const definition=document.createElement('div');definition.id='definition'+i;definition.className='definition';
   const review=document.createElement('div');review.id='review'+i;review.className='review-actions hidden';
-  card.append(title,label,input,actions,result,definition,review);$('teams').append(card);
+  card.append(title,label,input,dictionaryStatus,actions,result,definition,review);$('teams').append(card);
  });
 }
 function beginRound(){
@@ -149,7 +158,7 @@ function closeRound(){
  say('Answers revealed. Check the definitions and decide whether each word fits '+TOPICS[round.topic]+'.');
  round.answers.forEach((a,i)=>{
   if(!a.locked){a.word=normaliseWord($('word'+i).value);a.locked=true;}
-  $('word'+i).type='text';$('word'+i).value=a.word.toUpperCase();$('word'+i).disabled=true;$('lock'+i).disabled=true;$('lock'+i).textContent='Locked';
+  $('word'+i).classList.remove('hidden-answer');$('word'+i).value=a.word.toUpperCase();$('word'+i).disabled=true;$('lock'+i).disabled=true;$('lock'+i).textContent='Locked';
   const check=checkLetters(a.word,round.letters);
   if(!check.valid){a.decision='rejected';a.reason=check.reason;updateAnswer(i);return;}
   a.decision='pending';a.reason='Checking dictionary…';updateAnswer(i);
@@ -223,7 +232,11 @@ function decide(i,accepted){
  a.decision=accepted?'accepted':'rejected';a.reason=accepted?'Accepted for '+TOPICS[round.topic]+' · '+a.word.length+' letters.':'Rejected for this science topic.';updateAnswer(i);updateAward();
 }
 function updateAnswer(i){
- const a=round.answers[i],colour=a.decision==='accepted'?'green':a.decision==='rejected'?'red':'amber';
+ const a=round.answers[i],lettersValid=checkLetters(a.word,round.letters).valid;
+ const boxColour=!lettersValid||a.lookup?.status==='missing'?'red':a.lookup?.status==='found'?'green':'amber';
+ $('word'+i).className='word-input dictionary-'+boxColour;
+ $('dictionaryStatus'+i).textContent=!lettersValid?'Invalid answer: check the letter tiles.':a.lookup?.status==='found'?'Dictionary: English word found.':a.lookup?.status==='missing'?'Dictionary: word not found.':a.lookup?.status==='unavailable'?'Dictionary: connection unavailable.':'Dictionary: checking…';
+ const colour=a.decision==='accepted'?'green':a.decision==='rejected'?'red':'amber';
  $('light'+i).className='light '+colour;$('result'+i).className='result '+colour;$('result'+i).textContent=a.reason;
  const definition=$('definition'+i);definition.replaceChildren();
  if(a.lookup?.status==='found'&&a.lookup.source==='Wiktionary'){const note=document.createElement('p');note.textContent='English entry verified. Open the word lookup to read its definitions.';definition.append(note);}
