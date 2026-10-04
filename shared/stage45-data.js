@@ -3878,6 +3878,49 @@ window.SCISIMS_STAGE45 = {
     }
   ],
   "sharedTools": [
+{
+    "id": "brainbreak-scienceletters",
+    "title": "Science Letters",
+    "path": "BrainBreak/ScienceLetters/",
+    "description": "Build the longest science word from nine shared letters. Choose a science topic, play with 2–6 classroom teams or practise solo, and use dictionary checks, teacher review and longest-word scoring.",
+    "tags": [
+        "Science vocabulary",
+        "Word game",
+        "Biology",
+        "Chemistry",
+        "Physics",
+        "Earth and Space",
+        "Teams",
+        "Solo practice"
+    ],
+    "type": "Game",
+    "workingScientifically": [
+        "Communicating"
+    ],
+    "depthStudy": false,
+    "mappings": []
+},
+{
+    "id": "brainbreak-targetreactor",
+    "title": "Target Reactor",
+    "path": "BrainBreak/TargetReactor/",
+    "description": "Build an equation to hit the target using 2–6 dice. Choose the difficulty, require every die or allow a subset, and try timed rounds, daily challenges or shared classroom codes.",
+    "tags": [
+        "Numeracy",
+        "Arithmetic",
+        "Problem-solving",
+        "Dice",
+        "Target number",
+        "Brain break",
+        "Classroom codes"
+    ],
+    "type": "Game",
+    "workingScientifically": [
+        "Problem-solving"
+    ],
+    "depthStudy": false,
+    "mappings": []
+},
     {
       "id": "games-revisionhub",
       "title": "SciSims Revision Games",
@@ -4307,3 +4350,4 @@ window.SCISIMS_STAGE45 = {
     "Communicating"
   ]
 };
+
