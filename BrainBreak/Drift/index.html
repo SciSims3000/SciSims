@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090d16">
+  <title>Drift — a soft-fascination simulator</title>
+  <link rel="stylesheet" href="../../shared/scisims-nav.css">
+  <script defer src="../../shared/scisims-nav.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f1e9;
+      --muted: rgba(244, 241, 233, .66);
+      --faint: rgba(244, 241, 233, .38);
+      --glass: rgba(11, 14, 23, .62);
+      --glass-strong: rgba(11, 14, 23, .82);
+      --line: rgba(255, 255, 255, .13);
+      --line-strong: rgba(255, 255, 255, .24);
+      --accent: #e8b58d;
+      --accent-soft: rgba(232, 181, 141, .16);
+      --shadow: 0 18px 60px rgba(0, 0, 0, .36);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #090d16; }
+
+    body {
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    button, select { font: inherit; }
+    button { color: inherit; }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #090d16;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, .22) 100%);
+      mix-blend-mode: multiply;
+    }
+
+    .wordmark {
+      position: fixed;
+      top: max(94px, calc(env(safe-area-inset-top) + 86px));
+      left: 28px;
+      pointer-events: none;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, .32);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .wordmark h1 {
+      margin: 0;
+      font: 500 24px/1.1 Georgia, "Times New Roman", serif;
+      letter-spacing: .015em;
+    }
+
+    .wordmark p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .corner-actions {
+      position: fixed;
+      top: max(92px, calc(env(safe-area-inset-top) + 84px));
+      right: 24px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .icon-button, .ghost-button {
+      border: 1px solid var(--line);
+      background: rgba(10, 13, 21, .26);
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .icon-button:hover, .ghost-button:hover { background: rgba(10, 13, 21, .54); border-color: var(--line-strong); }
+    .icon-button:active, .ghost-button:active { transform: scale(.95); }
+    .icon-button:focus-visible, .scene-button:focus-visible, .mode-button:focus-visible, select:focus-visible, .hint:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .icon-button svg { width: 16px; height: 16px; opacity: .82; }
+
+    .controls {
+      position: fixed;
+      left: 24px;
+      bottom: max(24px, env(safe-area-inset-bottom));
+      width: min(390px, calc(100vw - 48px));
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px) saturate(115%);
+      -webkit-backdrop-filter: blur(22px) saturate(115%);
+      transform: translateY(0);
+      opacity: 1;
+      transition: opacity .5s ease, transform .5s ease, visibility .5s ease;
+    }
+
+    .controls.is-hidden { opacity: 0; transform: translateY(14px); visibility: hidden; pointer-events: none; }
+
+    .control-heading { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 13px; }
+    .eyebrow { color: var(--faint); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; }
+    .time-readout { color: var(--muted); font-size: 11px; }
+
+    .mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 3px; background: rgba(0, 0, 0, .19); border: 1px solid rgba(255, 255, 255, .08); border-radius: 12px; }
+    .mode-button { border: 0; border-radius: 9px; padding: 9px 10px; background: transparent; color: var(--muted); cursor: pointer; transition: background .3s ease, color .3s ease; }
+    .mode-button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); }
+
+    .section { margin-top: 16px; }
+    .section-label { display: block; color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+    .scene-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .scene-button { min-width: 0; border: 1px solid transparent; border-radius: 11px; padding: 9px 4px 8px; background: rgba(0, 0, 0, .18); color: var(--muted); cursor: pointer; transition: background .3s ease, border-color .3s ease, color .3s ease; }
+    .scene-button:hover { background: rgba(0, 0, 0, .3); color: var(--ink); }
+    .scene-button[aria-pressed="true"] { border-color: rgba(232, 181, 141, .52); background: var(--accent-soft); color: var(--ink); }
+    .scene-icon { display: block; height: 20px; margin-bottom: 4px; font-size: 16px; line-height: 20px; }
+    .scene-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+
+    .timing-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field { min-width: 0; }
+    .field label { display: block; color: var(--muted); font-size: 11px; margin-bottom: 7px; }
+    select { width: 100%; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; background: rgba(0, 0, 0, .2); cursor: pointer; }
+    select:disabled { opacity: .42; cursor: not-allowed; }
+    select option { background: #151926; color: var(--ink); }
+
+    .utility-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+    .sound-button { display: inline-flex; align-items: center; gap: 7px; border: 0; padding: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; }
+    .sound-button:hover { color: var(--ink); }
+    .sound-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); transition: background .25s ease, box-shadow .25s ease; }
+    .sound-button.is-on .sound-dot { background: #b9d6af; box-shadow: 0 0 12px rgba(185, 214, 175, .7); }
+    .principle { color: var(--faint); font: italic 11px/1.35 Georgia, serif; text-align: right; }
+    .audio-credit { margin-top: 9px; color: rgba(244, 241, 233, .32); font-size: 9px; letter-spacing: .02em; }
+    .audio-credit a { color: inherit; text-underline-offset: 2px; }
+
+    .hint { position: fixed; left: 50%; bottom: max(25px, env(safe-area-inset-bottom)); transform: translateX(-50%); color: rgba(244, 241, 233, .38); font-size: 11px; letter-spacing: .04em; opacity: 1; transition: opacity .8s ease; pointer-events: none; }
+    .hint.is-dim { opacity: 0; }
+
+    .scene-caption { position: fixed; right: 28px; bottom: max(26px, env(safe-area-inset-bottom)); pointer-events: none; text-align: right; text-shadow: 0 2px 16px rgba(0, 0, 0, .55); transition: opacity .7s ease; }
+    .scene-caption strong { display: block; font: 500 20px Georgia, serif; }
+    .scene-caption span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+
+    @media (max-width: 650px) {
+      .wordmark { left: 18px; top: 88px; }
+      .corner-actions { top: 84px; right: 18px; }
+      .wordmark p { display: none; }
+      .corner-actions { top: 16px; right: 16px; }
+      .controls { left: 12px; bottom: 12px; width: calc(100vw - 24px); padding: 14px; }
+      .scene-caption { right: 18px; bottom: 14px; }
+      .hint { bottom: 18px; }
+      .controls:not(.is-hidden) ~ .hint { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+  <canvas id="scene" aria-label="A gently animated relaxing scene"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="wordmark" aria-hidden="true">
+    <h1>Drift</h1>
+    <p>soft fascination</p>
+  </div>
+
+  <div class="corner-actions">
+    <button class="icon-button" id="hideControls" type="button" aria-label="Hide controls" title="Hide controls">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.2"/></svg>
+    </button>
+  </div>
+
+  <section class="controls" id="controls" aria-label="Drift controls">
+    <div class="control-heading">
+      <span class="eyebrow">Choose your pace</span>
+      <span class="time-readout" id="timeReadout">Staying here</span>
+    </div>
+
+    <div class="mode-switch" role="group" aria-label="Viewing mode">
+      <button class="mode-button" id="singleMode" type="button" aria-pressed="true">Single</button>
+      <button class="mode-button" id="driftMode" type="button" aria-pressed="false">Drift</button>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Environment</span>
+      <div class="scene-grid" role="group" aria-label="Choose an environment">
+        <button class="scene-button" type="button" data-scene="campfire" aria-pressed="true"><span class="scene-icon">♨</span><span class="scene-name">Campfire</span></button>
+        <button class="scene-button" type="button" data-scene="fireplace" aria-pressed="false"><span class="scene-icon">▱</span><span class="scene-name">Fireplace</span></button>
+        <button class="scene-button" type="button" data-scene="pond" aria-pressed="false"><span class="scene-icon">◌</span><span class="scene-name">Pond</span></button>
+        <button class="scene-button" type="button" data-scene="rain" aria-pressed="false"><span class="scene-icon">⁙</span><span class="scene-name">Rain window</span></button>
+        <button class="scene-button" type="button" data-scene="creek" aria-pressed="false"><span class="scene-icon">≈</span><span class="scene-name">Creek</span></button>
+        <button class="scene-button" type="button" data-scene="coast" aria-pressed="false"><span class="scene-icon">≋</span><span class="scene-name">Coast</span></button>
+        <button class="scene-button" type="button" data-scene="forest" aria-pressed="false"><span class="scene-icon">♧</span><span class="scene-name">Forest</span></button>
+        <button class="scene-button" type="button" data-scene="night" aria-pressed="false"><span class="scene-icon">✦</span><span class="scene-name">Night sky</span></button>
+      </div>
+    </div>
+
+    <div class="section timing-row">
+      <div class="field">
+        <label for="duration">Change scenes</label>
+        <select id="duration" aria-label="Scene duration">
+          <option value="300000">Every 5 minutes</option>
+          <option value="600000" selected>Every 10 minutes</option>
+          <option value="900000">Every 15 minutes</option>
+          <option value="1200000">Every 20 minutes</option>
+          <option value="30000">Demo · 30 seconds</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sound</label>
+        <button class="sound-button" id="soundButton" type="button" aria-pressed="false"><span class="sound-dot"></span><span id="soundLabel">Off · click to listen</span></button>
+      </div>
+    </div>
+
+    <div class="utility-row">
+      <span class="eyebrow">No score · no goals</span>
+      <span class="principle">nothing demands your attention</span>
+    </div>
+    <div class="audio-credit">Recorded ambience: <a href="https://sound-effects.bbcrewind.co.uk/faqs" target="_blank" rel="noreferrer">BBC Sound Effects Archive</a> · non-commercial prototype</div>
+  </section>
+
+  <div class="scene-caption" aria-live="polite"><strong id="sceneTitle">Campfire</strong><span id="sceneDescription">embers, warmth, and night air</span></div>
+  <div class="hint" id="hint">Press H to hide the controls</div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.getElementById('scene');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const controls = document.getElementById('controls');
+      const hideControls = document.getElementById('hideControls');
+      const hint = document.getElementById('hint');
+      const timeReadout = document.getElementById('timeReadout');
+      const durationSelect = document.getElementById('duration');
+      const soundButton = document.getElementById('soundButton');
+      const soundLabel = document.getElementById('soundLabel');
+      const sceneTitle = document.getElementById('sceneTitle');
+      const sceneDescription = document.getElementById('sceneDescription');
+      const sceneButtons = [...document.querySelectorAll('[data-scene]')];
+      const singleMode = document.getElementById('singleMode');
+      const driftMode = document.getElementById('driftMode');
+
+      const scenes = {
+        campfire: { title: 'Campfire', description: 'embers, warmth, and night air', color: '#d88b60' },
+        fireplace: { title: 'Fireplace', description: 'a room lit by a quiet flame', color: '#d99b71' },
+        pond: { title: 'Pond', description: 'still water beneath a patient sky', color: '#83aab1' },
+        rain: { title: 'Rain window', description: 'water, glass, and distant light', color: '#9eb5cf' },
+        creek: { title: 'Creek', description: 'clear water over mossy stones', color: '#8fb6a9' },
+        coast: { title: 'Coast', description: 'small waves beneath a wide sky', color: '#d1a47e' },
+        forest: { title: 'Forest', description: 'filtered light through tall trees', color: '#9ab27a' },
+        night: { title: 'Night sky', description: 'stars above a sleeping meadow', color: '#91a7c9' }
+      };
+      // BBC Sound Effects Archive recordings, saved beside this file for offline playback.
+      // Each scene can carry several quiet layers; Drift fades the complete layer group.
+      const AUDIO_SOURCES = {
+        campfire: ['bbc-NHU10242809.mp3', 'bbc-07059050.mp3', 'bbc-07024184.mp3'],
+        fireplace: ['bbc-NHU10242809.mp3', 'bbc-07059050.mp3', 'bbc-07024184.mp3'],
+        pond: ['bbc-NHU05006098.mp3', 'bbc-NHU05006099.mp3'],
+        coast: ['bbc-NHU05006098.mp3', 'bbc-NHU05006099.mp3'],
+        rain: ['bbc-0009073.mp3'],
+        creek: ['bbc-07074004.mp3'],
+        forest: ['bbc-NHU9679709.mp3', 'bbc-NHU05089065.mp3', 'bbc-NHU05073136.mp3'],
+        night: ['bbc-07063086.mp3']
+      };
+      const VISUAL_PLATES = {
+        campfire: 'drift-mode-campfire-mac-2560x1600.jpg',
+        fireplace: 'drift-mode-fireplace-mac-2560x1600.jpg',
+        pond: 'drift-mode-pond-mac-2560x1600.jpg',
+        rain: 'drift-mode-rain-mac-2560x1600.jpg'
+      };
+      const EXTRA_PLATES = {
+        creek: 'drift-mode-creek-loop-source-4k.jpg',
+        coast: 'drift-mode-coast-loop-source-4k.jpg',
+        forest: 'drift-mode-forest-loop-source-4k.jpg',
+        night: 'drift-mode-night-sky-loop-source-4k.jpg'
+      };
+      const plateImages = Object.fromEntries(Object.entries({ ...VISUAL_PLATES, ...EXTRA_PLATES }).map(([scene, source]) => {
+        const image = new Image(); image.decoding = 'async'; image.src = source; return [scene, image];
+      }));
+      const VIDEO_SOURCES = {
+        campfire: 'campfire.mp4',
+        fireplace: 'fireplace.mp4',
+        pond: 'pond.mp4',
+        rain: 'rain.mp4',
+        creek: 'creek.mp4',
+        coast: 'coast.mp4',
+        forest: 'forest.mp4',
+        night: 'night.mp4'
+      };
+      const sceneVideos = Object.fromEntries(Object.entries(VIDEO_SOURCES).map(([scene, source]) => {
+        const video = document.createElement('video');
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        video.setAttribute('aria-hidden', 'true');
+        video.src = source;
+        video.load();
+        const play = video.play();
+        if (play) play.catch(() => {});
+        video.addEventListener('canplay', () => video.play().catch(() => {}), { once: true });
+        return [scene, video];
+      }));
+      const driftOrder = ['campfire', 'night', 'forest', 'creek', 'pond', 'coast', 'rain', 'fireplace'];
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let lastTime = 0;
+      let activeScene = 'campfire';
+      let outgoingScene = null;
+      let transitionStarted = 0;
+      let transitionLength = 5200;
+      let nextSceneAt = 0;
+      let drift = false;
+      let paused = false;
+      let controlsHidden = false;
+      let hintTimer;
+      let noiseSeed = 4;
+      let audio = null;
+
+      const state = {
+        campfire: { sparks: [], emberPulse: 0, eventAt: 0 },
+        fireplace: { sparks: [], emberPulse: 0, eventAt: 0 },
+        pond: { ripples: [], fireflies: [], eventAt: 0 },
+        rain: { drops: [], beads: [], eventAt: 0 }
+      };
+
+      function fit() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        seedSceneParticles();
+      }
+
+      function seedSceneParticles() {
+        const camp = state.campfire;
+        const hearth = state.fireplace;
+        const pond = state.pond;
+        const rain = state.rain;
+        camp.sparks = Array.from({ length: 20 }, (_, i) => makeSpark(i, true));
+        hearth.sparks = Array.from({ length: 11 }, (_, i) => makeSpark(i + 19, true));
+        pond.fireflies = Array.from({ length: 13 }, (_, i) => ({
+          x: .1 + seeded(i + 33) * .8,
+          y: .24 + seeded(i + 82) * .39,
+          phase: seeded(i + 110) * Math.PI * 2,
+          speed: .45 + seeded(i + 140) * .8,
+          strength: .35 + seeded(i + 190) * .65
+        }));
+        rain.drops = Array.from({ length: 92 }, (_, i) => makeDrop(i, false));
+        rain.beads = Array.from({ length: 10 }, (_, i) => makeDrop(i + 100, true));
+      }
+
+      function seeded(n) {
+        const x = Math.sin(n * 12.9898 + noiseSeed * 78.233) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      function makeSpark(i, warm) {
+        return { x: .5 + (seeded(i * 4 + 2) - .5) * (warm ? .22 : .17), y: .73 + seeded(i * 5 + 3) * .14, vx: (seeded(i * 5 + 4) - .5) * .035, vy: -.025 - seeded(i * 5 + 5) * .07, life: seeded(i * 5 + 6), max: .35 + seeded(i * 5 + 7) * 1.5, size: 1 + seeded(i * 5 + 8) * 2.2 };
+      }
+
+      function makeDrop(i, bead) {
+        return { x: seeded(i * 3 + 4), y: seeded(i * 5 + 8), length: bead ? 20 + seeded(i + 5) * 70 : 10 + seeded(i + 5) * 28, speed: (bead ? 2 : .62) + seeded(i + 9) * (bead ? 1.4 : .85), width: bead ? 1.4 : .6 + seeded(i + 12) * .7, alpha: .12 + seeded(i + 15) * .3, bead, trail: seeded(i + 18) * .5 }
+      }
+
+      function resizeScale() { return Math.min(width, height) / 900; }
+      function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+      function formatDuration(ms) { return ms < 60000 ? '30 sec' : `${Math.round(ms / 60000)} min`; }
+
+      function requestScene(id, resetClock = true) {
+        if (id === activeScene && !outgoingScene) return;
+        outgoingScene = activeScene;
+        activeScene = id;
+        transitionStarted = performance.now();
+        sceneTitle.textContent = scenes[id].title;
+        sceneDescription.textContent = scenes[id].description;
+        updateSceneButtons();
+        if (audio) audio.setScene(id);
+        if (resetClock && drift) nextSceneAt = performance.now() + Number(durationSelect.value);
+      }
+
+      function updateSceneButtons() {
+        sceneButtons.forEach(button => { button.setAttribute('aria-pressed', String(button.dataset.scene === activeScene)); });
+      }
+
+      function setMode(isDrift) {
+        drift = isDrift;
+        singleMode.setAttribute('aria-pressed', String(!drift));
+        driftMode.setAttribute('aria-pressed', String(drift));
+        durationSelect.disabled = !drift;
+        if (drift) {
+          nextSceneAt = performance.now() + Number(durationSelect.value);
+          timeReadout.textContent = 'Next scene in ' + formatDuration(Number(durationSelect.value));
+        } else {
+          nextSceneAt = 0;
+          timeReadout.textContent = 'Staying here';
+        }
+        showControlsBriefly();
+      }
+
+      function advanceScene() {
+        const currentIndex = driftOrder.indexOf(activeScene);
+        requestScene(driftOrder[(currentIndex + 1) % driftOrder.length], false);
+        nextSceneAt = performance.now() + Number(durationSelect.value);
+      }
+
+      function updateReadout(now) {
+        if (!drift) return;
+        const remaining = Math.max(0, nextSceneAt - now);
+        timeReadout.textContent = remaining < 60000 ? `Next scene in ${Math.ceil(remaining / 1000)} sec` : `Next scene in ${Math.ceil(remaining / 60000)} min`;
+      }
+
+      function toggleControls(force) {
+        controlsHidden = force === undefined ? !controlsHidden : force;
+        controls.classList.toggle('is-hidden', controlsHidden);
+        hideControls.setAttribute('aria-label', controlsHidden ? 'Show controls' : 'Hide controls');
+        hideControls.setAttribute('title', controlsHidden ? 'Show controls' : 'Hide controls');
+        hideControls.innerHTML = controlsHidden
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2.2 2.2 0 0 0 3 3M9.9 5.2A10.8 10.8 0 0 1 12 5c5.8 0 9 7 9 7a17.6 17.6 0 0 1-2.3 3.1M6.2 6.2C4.1 7.6 3 12 3 12s3.2 7 9 7c1.2 0 2.3-.2 3.2-.6"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.2"/></svg>';
+      }
+
+      function showControlsBriefly() {
+        if (controlsHidden) toggleControls(false);
+        clearTimeout(hintTimer);
+        hint.classList.remove('is-dim');
+        hintTimer = setTimeout(() => hint.classList.add('is-dim'), 4600);
+      }
+
+      function draw(now, dt) {
+        ctx.clearRect(0, 0, width, height);
+        if (outgoingScene) {
+          const progress = clamp((now - transitionStarted) / transitionLength, 0, 1);
+          const t = ease(progress);
+          drawScene(outgoingScene, now, dt, 1 - t);
+          drawScene(activeScene, now, dt, t);
+          if (progress >= 1) outgoingScene = null;
+        } else {
+          drawScene(activeScene, now, dt, 1);
+        }
+      }
+
+      function drawScene(scene, now, dt, alpha) {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        if (scene === 'campfire') drawCampfire(now, dt);
+        if (scene === 'fireplace') drawFireplace(now, dt);
+        if (scene === 'pond') drawPond(now, dt);
+        if (scene === 'rain') drawRain(now, dt);
+        if (scene === 'creek' || scene === 'coast' || scene === 'forest' || scene === 'night') drawSceneMedia(scene, 1);
+        ctx.restore();
+      }
+
+      function fillGradient(top, bottom) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, top); gradient.addColorStop(1, bottom);
+        ctx.fillStyle = gradient; ctx.fillRect(0, 0, width, height);
+      }
+
+      function drawStars(now, count = 54, opacity = .5) {
+        for (let i = 0; i < count; i++) {
+          const x = seeded(i * 6 + 90) * width;
+          const y = seeded(i * 7 + 100) * height * .58;
+          const twinkle = .45 + Math.sin(now * (.00025 + seeded(i + 211) * .0007) + i) * .25;
+          ctx.fillStyle = `rgba(236, 226, 202, ${opacity * twinkle})`;
+          ctx.beginPath(); ctx.arc(x, y, .5 + seeded(i + 231) * 1.25, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      function glow(x, y, radius, color, strength = 1) {
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, color.replace('ALPHA', String(.22 * strength)));
+        gradient.addColorStop(.35, color.replace('ALPHA', String(.08 * strength)));
+        gradient.addColorStop(1, color.replace('ALPHA', '0'));
+        ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+      }
+
+      function drawAtmosphericGrain(now, amount = .03) {
+        ctx.save(); ctx.globalCompositeOperation = 'screen';
+        for (let i = 0; i < 170; i++) {
+          const x = seeded(i + 900) * width;
+          const y = seeded(i + 1200) * height;
+          const alpha = amount * (.45 + .55 * ((Math.sin(now * .0015 + i) + 1) * .5));
+          ctx.fillStyle = `rgba(244, 235, 213, ${alpha})`;
+          ctx.fillRect(x, y, .7, .7);
+        }
+        ctx.restore();
+      }
+
+      function drawSmoke(cx, base, now, strength = 1) {
+        const s = resizeScale();
+        ctx.save(); ctx.globalCompositeOperation = 'screen';
+        for (let i = 0; i < 8; i++) {
+          const life = (now * .000035 + i * .17) % 1;
+          const x = cx + Math.sin(now * .00045 + i * 1.7) * 22 * s + life * 18 * s;
+          const y = base - life * height * .33;
+          const radius = (14 + life * 34) * s;
+          const haze = ctx.createRadialGradient(x, y, 0, x, y, radius);
+          haze.addColorStop(0, `rgba(196, 190, 183, ${(1 - life) * .045 * strength})`);
+          haze.addColorStop(1, 'rgba(196, 190, 183, 0)');
+          ctx.fillStyle = haze; ctx.beginPath(); ctx.ellipse(x, y, radius * .7, radius, 0, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawFireStones(cx, base, s) {
+        ctx.save(); ctx.translate(cx, base + 10 * s);
+        for (let i = 0; i < 9; i++) {
+          const angle = (i / 9) * Math.PI * 2;
+          const x = Math.cos(angle) * 49 * s, y = Math.sin(angle) * 13 * s;
+          ctx.fillStyle = i % 2 ? '#343b3e' : '#424346';
+          ctx.beginPath(); ctx.ellipse(x, y, 15 * s, 7 * s, angle, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = 'rgba(204, 173, 143, .12)'; ctx.lineWidth = 1 * s; ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawWaterSheen(now, waterTop, s) {
+        ctx.save(); ctx.globalCompositeOperation = 'screen';
+        for (let i = 0; i < 24; i++) {
+          const y = waterTop + 34 * s + i * 27 * s;
+          const shift = Math.sin(now * .00035 + i * .8) * 13 * s;
+          const length = (26 + seeded(i + 710) * 125) * s;
+          ctx.strokeStyle = `rgba(136, 177, 175, ${.045 + seeded(i + 720) * .05})`;
+          ctx.lineWidth = (.45 + seeded(i + 730) * .8) * s;
+          ctx.beginPath(); ctx.moveTo(width * seeded(i + 740) + shift, y); ctx.quadraticCurveTo(width * .5, y + Math.sin(i) * 3 * s, width * seeded(i + 750) + length + shift, y); ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawMoonAndReflection(now, waterTop, s) {
+        const moonX = width * .72, moonY = height * .2;
+        glow(moonX, moonY, 110 * s, 'rgba(193, 216, 210, ALPHA)', .5);
+        ctx.fillStyle = 'rgba(221, 231, 214, .72)'; ctx.beginPath(); ctx.arc(moonX, moonY, 21 * s, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.globalCompositeOperation = 'screen';
+        for (let i = 0; i < 26; i++) {
+          const progress = i / 26;
+          const y = waterTop + progress * height * .52;
+          const x = moonX + Math.sin(now * .00045 + i * .8) * (6 + progress * 18) * s;
+          const line = (7 + Math.sin(i * 4.2 + now * .0005) * 4 + progress * 14) * s;
+          ctx.strokeStyle = `rgba(197, 222, 209, ${(1 - progress) * .18 + .025})`; ctx.lineWidth = 1.1 * s;
+          ctx.beginPath(); ctx.moveTo(x - line, y); ctx.lineTo(x + line, y); ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawPlate(scene, opacity = .94) {
+        const image = plateImages[scene];
+        if (!image || !image.complete || !image.naturalWidth) return false;
+        const sourceRatio = image.naturalWidth / image.naturalHeight;
+        const viewRatio = width / height;
+        let sx = 0, sy = 0, sw = image.naturalWidth, sh = image.naturalHeight;
+        if (sourceRatio > viewRatio) { sw = image.naturalHeight * viewRatio; sx = (image.naturalWidth - sw) * .5; }
+        else { sh = image.naturalWidth / viewRatio; sy = (image.naturalHeight - sh) * .5; }
+        ctx.save(); ctx.globalAlpha *= opacity;
+        ctx.drawImage(image, sx, sy, sw, sh, 0, 0, width, height);
+        ctx.restore();
+        return true;
+      }
+
+      function drawVideo(scene, opacity = .94) {
+        const video = sceneVideos[scene];
+        if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return false;
+        const sourceRatio = video.videoWidth / video.videoHeight;
+        const viewRatio = width / height;
+        let sx = 0, sy = 0, sw = video.videoWidth, sh = video.videoHeight;
+        if (sourceRatio > viewRatio) { sw = video.videoHeight * viewRatio; sx = (video.videoWidth - sw) * .5; }
+        else { sh = video.videoWidth / viewRatio; sy = (video.videoHeight - sh) * .5; }
+        ctx.save(); ctx.globalAlpha *= opacity;
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, width, height);
+        ctx.restore();
+        return true;
+      }
+
+      function drawSceneMedia(scene, opacity = .94) {
+        return drawVideo(scene, opacity) || drawPlate(scene, opacity);
+      }
+
+      function animateFire(sceneKey, now, dt, cx, base, s, scale = 1) {
+        const fireState = state[sceneKey]; fireState.emberPulse += dt;
+        if (fireState.emberPulse > 1200 + seeded(Math.floor(now / 1000)) * 2400) {
+          fireState.emberPulse = 0;
+          const spark = makeSpark(Math.floor(now / 800) + 43, true); spark.life = 0; spark.x = .5 + (seeded(Math.floor(now / 1000)) - .5) * .12; fireState.sparks.push(spark);
+          if (fireState.sparks.length > 26) fireState.sparks.shift();
+        }
+        drawSparks(fireState.sparks, now, dt, cx, base, s);
+      }
+
+      function drawPhotoCampfire(now, dt) {
+        return drawSceneMedia('campfire', 1);
+      }
+
+      function drawPhotoFireplace(now, dt) {
+        return drawSceneMedia('fireplace', 1);
+      }
+
+      function drawPhotoPond(now, dt) {
+        return drawSceneMedia('pond', 1);
+      }
+
+      function drawRainOverlay(now, dt, s) {
+        const rain = state.rain;
+        rain.drops.forEach(drop => {
+          drop.y += drop.speed * dt / 1000; drop.x -= .006 * dt / 1000;
+          if (drop.y > 1.05) { drop.y = -.06; drop.x = seeded(Math.floor(now) + drop.length) * 1.1; }
+          ctx.strokeStyle = `rgba(208, 226, 237, ${drop.alpha * .86})`; ctx.lineWidth = drop.width * s;
+          ctx.beginPath(); ctx.moveTo(drop.x * width, drop.y * height); ctx.lineTo((drop.x - .006) * width, drop.y * height + drop.length * s); ctx.stroke();
+        });
+        rain.beads.forEach(drop => {
+          drop.y += drop.speed * dt / 1000; if (drop.y > 1.07) { drop.y = -.05; drop.x = seeded(Math.floor(now) + drop.length) * 1.1; }
+          const x = drop.x * width, y = drop.y * height;
+          const bead = ctx.createRadialGradient(x - 1, y - 2, 0, x, y, 6 * s); bead.addColorStop(0, 'rgba(239, 247, 252, .52)'); bead.addColorStop(1, 'rgba(160, 192, 214, 0)'); ctx.fillStyle = bead; ctx.beginPath(); ctx.ellipse(x, y, 3 * s, 7 * s, -.2, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+
+      function drawPhotoRain(now, dt) {
+        return drawSceneMedia('rain', 1);
+      }
+
+      function drawCampfire(now, dt) {
+        if (drawPhotoCampfire(now, dt)) return;
+        fillGradient('#101d32', '#050810');
+        drawStars(now, 68, .72);
+        const s = resizeScale();
+        const horizon = height * .69;
+        const ground = ctx.createLinearGradient(0, horizon, 0, height);
+        ground.addColorStop(0, '#0b1116'); ground.addColorStop(.5, '#080d11'); ground.addColorStop(1, '#04070a');
+        ctx.fillStyle = ground;
+        ctx.beginPath(); ctx.moveTo(0, horizon); ctx.quadraticCurveTo(width * .18, horizon - 30 * s, width * .4, horizon + 4 * s); ctx.quadraticCurveTo(width * .73, horizon - 32 * s, width, horizon - 4 * s); ctx.lineTo(width, height); ctx.lineTo(0, height); ctx.fill();
+        glow(width * .5, height * .77, Math.min(width, height) * .4, 'rgba(235, 127, 66, ALPHA)', .95);
+        drawPines(now, horizon, .18);
+        const cx = width * .5, base = height * .78;
+        drawSmoke(cx, base - 72 * s, now, .72);
+        drawFireStones(cx, base, s);
+        drawLogs(cx, base, s, false);
+        drawFlame(cx, base - 16 * s, 1, now, 'campfire');
+        const fireState = state.campfire;
+        fireState.emberPulse += dt;
+        if (fireState.emberPulse > 1200 + seeded(Math.floor(now / 1000)) * 2400) {
+          fireState.emberPulse = 0;
+          const spark = makeSpark(Math.floor(now / 800) + 43, true); spark.life = 0; spark.x = .5 + (seeded(Math.floor(now / 1000)) - .5) * .12; fireState.sparks.push(spark);
+          if (fireState.sparks.length > 26) fireState.sparks.shift();
+        }
+        drawSparks(fireState.sparks, now, dt, cx, base, s);
+        drawAtmosphericGrain(now, .035);
+      }
+
+      function drawPines(now, horizon, alpha) {
+        for (let i = 0; i < 15; i++) {
+          const x = (i / 14) * width + Math.sin(i * 7) * 18;
+          const h = 80 + seeded(i + 330) * 150;
+          const sway = Math.sin(now * .00028 + i) * 3;
+          ctx.fillStyle = `rgba(4, 10, 15, ${alpha + seeded(i + 350) * .16})`;
+          ctx.beginPath(); ctx.moveTo(x, horizon + 12); ctx.lineTo(x - h * .28 + sway, horizon + 12); ctx.lineTo(x, horizon - h); ctx.lineTo(x + h * .28 + sway, horizon + 12); ctx.fill();
+        }
+      }
+
+      function drawLogs(cx, base, s, inset) {
+        ctx.save(); ctx.translate(cx, base);
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 12 * s;
+        ctx.strokeStyle = '#542f26';
+        ctx.beginPath(); ctx.moveTo(-46 * s, 8 * s); ctx.lineTo(45 * s, -9 * s); ctx.stroke();
+        ctx.strokeStyle = '#71412e'; ctx.lineWidth = 8 * s;
+        ctx.beginPath(); ctx.moveTo(-42 * s, -8 * s); ctx.lineTo(39 * s, 9 * s); ctx.stroke();
+        ctx.strokeStyle = '#c0744e'; ctx.lineWidth = 2 * s;
+        ctx.beginPath(); ctx.moveTo(-39 * s, -9 * s); ctx.lineTo(34 * s, 8 * s); ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawFlame(cx, base, scale, now, kind) {
+        const s = resizeScale() * scale;
+        const flutter = Math.sin(now * .0051) * 7 + Math.sin(now * .0087 + 1.6) * 4;
+        const tall = kind === 'fireplace' ? 125 : 112;
+        glow(cx, base - tall * .5 * s, 170 * s, 'rgba(240, 120, 48, ALPHA)', kind === 'fireplace' ? .72 : .85);
+        ctx.save(); ctx.translate(cx + flutter * s, base);
+        ctx.fillStyle = '#b8482e';
+        flamePath(0, 0, tall * s, 38 * s, now, 1); ctx.fill();
+        ctx.fillStyle = '#cf5d32';
+        flamePath(-17 * s, 2 * s, tall * .56 * s, 19 * s, now + 2.2, .4); ctx.fill();
+        flamePath(15 * s, 3 * s, tall * .63 * s, 21 * s, now + 4.4, .7); ctx.fill();
+        ctx.fillStyle = '#ed803e';
+        flamePath(-1 * s, 3 * s, tall * .76 * s, 28 * s, now + 1.8, .8); ctx.fill();
+        ctx.fillStyle = '#ffd18a';
+        flamePath(-1 * s, 6 * s, tall * .48 * s, 18 * s, now + 3, .55); ctx.fill();
+        ctx.restore();
+      }
+
+      function flamePath(x, y, tall, wide, now, wobble) {
+        const wave = Math.sin(now * .004 + wobble) * wide * .1;
+        ctx.beginPath(); ctx.moveTo(x - wide * .45, y);
+        ctx.bezierCurveTo(x - wide * .78, y - tall * .18, x - wide * .15 + wave, y - tall * .4, x + wave, y - tall);
+        ctx.bezierCurveTo(x + wide * .12, y - tall * .57, x + wide * .72 - wave, y - tall * .4, x + wide * .44, y);
+        ctx.closePath();
+      }
+
+      function drawSparks(sparks, now, dt, cx, base, s) {
+        sparks.forEach(spark => {
+          spark.life += dt / 1000;
+          spark.x += spark.vx * dt / 16;
+          spark.y += spark.vy * dt / 16;
+          spark.vy += .00008 * dt;
+          if (spark.life > spark.max || spark.y < .19) Object.assign(spark, makeSpark(Math.floor(now) + spark.size * 10, true), { life: 0 });
+          const opacity = clamp(1 - spark.life / spark.max, 0, 1);
+          ctx.fillStyle = `rgba(255, 193, 111, ${opacity * .9})`;
+          ctx.beginPath(); ctx.arc(spark.x * width, spark.y * height, spark.size * s * opacity, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+
+      function drawFireplace(now, dt) {
+        if (drawPhotoFireplace(now, dt)) return;
+        fillGradient('#2a2528', '#171319');
+        const s = resizeScale();
+        const floor = height * .84;
+        ctx.fillStyle = 'rgba(8, 7, 10, .4)'; ctx.fillRect(0, floor, width, height - floor);
+        for (let i = 0; i < 9; i++) {
+          const y = height * .11 + i * height * .065;
+          ctx.strokeStyle = `rgba(238, 205, 178, ${.035 + (i % 2) * .02})`; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+          for (let x = (i % 2) * 70 - 35; x < width; x += 140) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + height * .065); ctx.stroke(); }
+        }
+        const fx = width * .5, mantelY = height * .43, openingY = height * .53, openingW = Math.min(width * .62, 590 * s);
+        glow(fx, height * .66, Math.min(width, height) * .48, 'rgba(242, 131, 62, ALPHA)', .55);
+        ctx.fillStyle = '#40343a'; roundRect(fx - openingW * .6, mantelY, openingW * 1.2, height * .33, 8 * s); ctx.fill();
+        ctx.fillStyle = '#59474a'; roundRect(fx - openingW * .67, mantelY - 18 * s, openingW * 1.34, 20 * s, 5 * s); ctx.fill();
+        const firebox = ctx.createLinearGradient(0, openingY, 0, openingY + height * .24);
+        firebox.addColorStop(0, '#09080b'); firebox.addColorStop(.55, '#191116'); firebox.addColorStop(1, '#2b1917');
+        ctx.fillStyle = firebox; roundRect(fx - openingW * .47, openingY, openingW * .94, height * .24, 90 * s); ctx.fill();
+        ctx.fillStyle = 'rgba(255, 146, 78, .07)'; ctx.fillRect(fx - openingW * .37, openingY + height * .05, openingW * .74, height * .19);
+        drawSmoke(fx, openingY + height * .06, now, .4);
+        drawFireStones(fx, openingY + height * .22, s * .85);
+        drawLogs(fx, openingY + height * .22, s * .85, true);
+        drawFlame(fx, openingY + height * .22, .82, now, 'fireplace');
+        const hearth = state.fireplace; hearth.emberPulse += dt;
+        if (hearth.emberPulse > 1800 + seeded(Math.floor(now / 1100)) * 1800) { hearth.emberPulse = 0; hearth.sparks.push(Object.assign(makeSpark(Math.floor(now) + 99, true), { x: .5, y: .72, life: 0 })); if (hearth.sparks.length > 16) hearth.sparks.shift(); }
+        drawSparks(hearth.sparks, now, dt, fx, openingY, s);
+        ctx.fillStyle = 'rgba(255, 211, 162, .16)'; ctx.fillRect(fx - openingW * .39, openingY + 12 * s, openingW * .78, 1);
+        ctx.fillStyle = 'rgba(226, 174, 142, .13)'; ctx.fillRect(fx - openingW * .68, floor - 13 * s, openingW * 1.36, 5 * s);
+        drawAtmosphericGrain(now, .028);
+      }
+
+      function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+
+      function drawPond(now, dt) {
+        if (drawPhotoPond(now, dt)) return;
+        fillGradient('#152b3b', '#071219');
+        drawStars(now, 45, .45);
+        const s = resizeScale();
+        const waterTop = height * .49;
+        const water = ctx.createLinearGradient(0, waterTop, 0, height);
+        water.addColorStop(0, '#17333a'); water.addColorStop(.48, '#10272e'); water.addColorStop(1, '#071419');
+        ctx.fillStyle = water; ctx.fillRect(0, waterTop, width, height - waterTop);
+        drawMoonAndReflection(now, waterTop, s);
+        drawWaterSheen(now, waterTop, s);
+        drawPondBank(now, waterTop, s);
+        const p = state.pond;
+        p.eventAt += dt;
+        if (p.eventAt > 1900 + seeded(Math.floor(now / 1600)) * 4000) {
+          p.eventAt = 0;
+          p.ripples.push({ x: .16 + seeded(Math.floor(now / 1300) + 9) * .7, y: .58 + seeded(Math.floor(now / 1300) + 13) * .2, life: 0, max: 2.8 + seeded(Math.floor(now / 1300) + 22) * 2.6 });
+          if (p.ripples.length > 8) p.ripples.shift();
+        }
+        p.ripples.forEach(r => {
+          r.life += dt / 1000;
+          const progress = r.life / r.max;
+          if (progress > 1) return;
+          ctx.strokeStyle = `rgba(165, 205, 199, ${(1 - progress) * .28})`; ctx.lineWidth = 1.3 * s;
+          ctx.beginPath(); ctx.ellipse(r.x * width, r.y * height, (8 + progress * 48) * s, (2 + progress * 11) * s, 0, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(r.x * width, r.y * height, (3 + progress * 26) * s, (1 + progress * 6) * s, 0, 0, Math.PI * 2); ctx.stroke();
+        });
+        drawFireflies(now, s);
+        ctx.fillStyle = 'rgba(12, 30, 31, .8)';
+        for (let i = 0; i < 12; i++) { const x = width * (i / 11) + Math.sin(i) * 17; const h = (24 + seeded(i + 430) * 60) * s; ctx.fillRect(x, waterTop - h, 2 * s, h); }
+        ctx.fillStyle = '#1b3938'; ctx.beginPath(); ctx.ellipse(width * .71, height * .69, 40 * s, 12 * s, -.12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#89a59a'; ctx.beginPath(); ctx.ellipse(width * .7, height * .685, 26 * s, 7 * s, -.12, 0, Math.PI * 2); ctx.fill();
+        drawAtmosphericGrain(now, .03);
+      }
+
+      function drawPondBank(now, waterTop, s) {
+        ctx.fillStyle = '#0c1c1e'; ctx.beginPath(); ctx.moveTo(0, waterTop + 6); ctx.quadraticCurveTo(width * .2, waterTop - 26, width * .42, waterTop + 5); ctx.quadraticCurveTo(width * .68, waterTop - 25, width, waterTop + 4); ctx.lineTo(width, waterTop + 42); ctx.lineTo(0, waterTop + 42); ctx.fill();
+        for (let i = 0; i < 20; i++) { const x = seeded(i + 500) * width; const y = waterTop + seeded(i + 510) * 20; ctx.strokeStyle = 'rgba(91, 128, 111, .38)'; ctx.lineWidth = 1.5 * s; ctx.beginPath(); ctx.moveTo(x, y + 20); ctx.quadraticCurveTo(x - 5 * s, y - 5, x + Math.sin(i) * 8 * s, y - 18 * s); ctx.stroke(); }
+      }
+
+      function drawFireflies(now, s) {
+        state.pond.fireflies.forEach(f => {
+          const pulse = (Math.sin(now * .001 * f.speed + f.phase) + 1) * .5;
+          const x = f.x * width + Math.sin(now * .0002 * f.speed + f.phase) * 11 * s;
+          const y = f.y * height + Math.cos(now * .00025 * f.speed + f.phase) * 7 * s;
+          glow(x, y, 18 * s, `rgba(198, 222, 155, ALPHA)`, pulse * f.strength);
+          ctx.fillStyle = `rgba(220, 237, 170, ${pulse * f.strength * .7})`; ctx.beginPath(); ctx.arc(x, y, 1.3 * s, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+
+      function drawRain(now, dt) {
+        if (drawPhotoRain(now, dt)) return;
+        fillGradient('#253544', '#0e171f');
+        const s = resizeScale();
+        const glowX = width * .73, glowY = height * .57;
+        glow(glowX, glowY, Math.min(width, height) * .58, 'rgba(212, 154, 93, ALPHA)', .65);
+        ctx.fillStyle = 'rgba(35, 47, 55, .72)'; ctx.fillRect(0, height * .18, width, height * .82);
+        ctx.save(); ctx.filter = 'blur(3px)'; drawDistantWindowLights(now, s); ctx.restore();
+        ctx.fillStyle = 'rgba(21, 27, 33, .7)'; ctx.fillRect(0, height * .73, width, height * .27);
+        ctx.strokeStyle = 'rgba(172, 196, 214, .22)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(width * .5, 0); ctx.lineTo(width * .5, height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, height * .61); ctx.lineTo(width, height * .61); ctx.stroke();
+        const rain = state.rain;
+        rain.drops.forEach(drop => {
+          drop.y += drop.speed * dt / 1000; drop.x -= .006 * dt / 1000;
+          if (drop.y > 1.05) { drop.y = -.06; drop.x = seeded(Math.floor(now) + drop.length) * 1.1; }
+          ctx.strokeStyle = `rgba(197, 220, 235, ${drop.alpha})`; ctx.lineWidth = drop.width * s;
+          ctx.beginPath(); ctx.moveTo(drop.x * width, drop.y * height); ctx.lineTo((drop.x - .006) * width, drop.y * height + drop.length * s); ctx.stroke();
+        });
+        rain.beads.forEach(drop => {
+          drop.y += drop.speed * dt / 1000; if (drop.y > 1.07) { drop.y = -.05; drop.x = seeded(Math.floor(now) + drop.length) * 1.1; }
+          const x = drop.x * width, y = drop.y * height;
+          const bead = ctx.createRadialGradient(x - 1, y - 2, 0, x, y, 6 * s); bead.addColorStop(0, 'rgba(232, 244, 252, .45)'); bead.addColorStop(1, 'rgba(160, 192, 214, 0)'); ctx.fillStyle = bead; ctx.beginPath(); ctx.ellipse(x, y, 3 * s, 7 * s, -.2, 0, Math.PI * 2); ctx.fill();
+        });
+        // A barely-there warm lamp reflection gives the rain somewhere to rest.
+        ctx.fillStyle = 'rgba(237, 179, 113, .12)'; ctx.beginPath(); ctx.ellipse(width * .73, height * .56, 28 * s, 70 * s, 0, 0, Math.PI * 2); ctx.fill();
+        drawAtmosphericGrain(now, .034);
+      }
+
+      function drawDistantWindowLights(now, s) {
+        for (let i = 0; i < 19; i++) {
+          const x = width * (.08 + seeded(i + 600) * .88); const y = height * (.29 + seeded(i + 620) * .3); const pulse = .65 + Math.sin(now * .0003 + i) * .1;
+          ctx.fillStyle = `rgba(218, 173, 122, ${.08 * pulse})`; ctx.fillRect(x, y, (4 + seeded(i + 630) * 13) * s, (2 + seeded(i + 640) * 3) * s);
+        }
+      }
+
+      // Small Web Audio ambience, created only after the user asks to hear it.
+      function createNoiseBuffer(ac, seconds = 2) {
+        const buffer = ac.createBuffer(1, ac.sampleRate * seconds, ac.sampleRate);
+        const data = buffer.getChannelData(0); let last = 0;
+        for (let i = 0; i < data.length; i++) { const white = Math.random() * 2 - 1; last = last * .985 + white * .15; data[i] = last; }
+        return buffer;
+      }
+
+      function startAudio() {
+        if (!audio) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) { soundLabel.textContent = 'Sound unavailable'; return; }
+          const ac = new AudioContext();
+          const master = ac.createGain(); master.gain.value = .0001; master.connect(ac.destination);
+          const bed = ac.createBufferSource(); bed.buffer = createNoiseBuffer(ac, 3); bed.loop = true;
+          const low = ac.createBiquadFilter(); low.type = 'lowpass'; low.frequency.value = 650;
+          const high = ac.createBiquadFilter(); high.type = 'highpass'; high.frequency.value = 45;
+          const bedGain = ac.createGain(); bedGain.gain.value = 0;
+          bed.connect(low).connect(high).connect(bedGain).connect(master); bed.start();
+          const assets = Object.fromEntries(Object.entries(AUDIO_SOURCES).map(([scene, sources]) => {
+            const tracks = sources.map(source => {
+              const element = new Audio(source);
+              element.preload = 'auto'; element.loop = true;
+              element.addEventListener('loadedmetadata', () => {
+                if (Number.isFinite(element.duration) && element.duration > 8) {
+                  element.currentTime = Math.random() * Math.max(0, element.duration - 4);
+                }
+              }, { once: true });
+              const media = ac.createMediaElementSource(element);
+              const gain = ac.createGain(); gain.gain.value = .0001;
+              media.connect(gain).connect(master);
+              return { element, gain };
+            });
+            return [scene, tracks];
+          }));
+          audio = { ac, master, bedGain, low, high, assets, scene: activeScene, tick: null, setScene: updateAudioScene };
+          audio.master.gain.exponentialRampToValueAtTime(.2, ac.currentTime + .8);
+          Object.values(assets).flat().forEach(({ element }) => { const play = element.play(); if (play) play.catch(() => {}); });
+          audio.tick = setInterval(audioEvent, 1300);
+        }
+        if (audio.ac.state === 'suspended') audio.ac.resume();
+        soundButton.classList.add('is-on'); soundButton.setAttribute('aria-pressed', 'true'); soundLabel.textContent = 'On · BBC layers + generated bed';
+        updateAudioScene(activeScene);
+      }
+
+      function updateAudioScene(scene) {
+        if (!audio) return;
+        const now = audio.ac.currentTime;
+        const levels = { campfire: .085, fireplace: .07, pond: .035, rain: .12, creek: .055, coast: .07, forest: .045, night: .03 };
+        const recordingLevels = { campfire: .24, fireplace: .22, pond: .2, coast: .2, rain: .2, creek: .18, forest: .2, night: .14 };
+        const lows = { campfire: 780, fireplace: 520, pond: 260, rain: 2100, creek: 520, coast: 700, forest: 1500, night: 900 };
+        audio.bedGain.gain.cancelScheduledValues(now); audio.bedGain.gain.linearRampToValueAtTime(levels[scene], now + 2.2);
+        audio.low.frequency.cancelScheduledValues(now); audio.low.frequency.linearRampToValueAtTime(lows[scene], now + 2.2);
+        Object.entries(audio.assets).forEach(([id, tracks]) => {
+          const layerLevel = (recordingLevels[id] || .16) / Math.max(1, tracks.length);
+          tracks.forEach(track => {
+            track.gain.gain.cancelScheduledValues(now);
+            track.gain.gain.linearRampToValueAtTime(id === scene ? layerLevel : .0001, now + 3.5);
+          });
+        });
+        if (soundButton.classList.contains('is-on')) soundLabel.textContent = AUDIO_SOURCES[scene]?.length ? 'On · BBC layers + generated bed' : 'On · generated ambience';
+        audio.scene = scene;
+      }
+
+      function audioEvent() {
+        if (!audio || audio.ac.state !== 'running') return;
+        const chance = Math.random();
+        if ((audio.scene === 'campfire' || audio.scene === 'fireplace') && chance < .52) playTone(100 + Math.random() * 90, .035 + Math.random() * .055, .045);
+        if (audio.scene === 'pond' && chance < .18) playTone(680 + Math.random() * 260, .045, .018);
+        if (audio.scene === 'rain' && chance < .28) playTone(130 + Math.random() * 100, .11, .025);
+      }
+
+      function playTone(freq, duration, volume) {
+        const osc = audio.ac.createOscillator(); const gain = audio.ac.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq; gain.gain.setValueAtTime(.0001, audio.ac.currentTime); gain.gain.exponentialRampToValueAtTime(volume, audio.ac.currentTime + .008); gain.gain.exponentialRampToValueAtTime(.0001, audio.ac.currentTime + duration); osc.connect(gain).connect(audio.master); osc.start(); osc.stop(audio.ac.currentTime + duration + .03);
+      }
+
+      function toggleAudio() {
+        if (!audio || audio.ac.state === 'suspended') startAudio();
+        else if (soundButton.classList.contains('is-on')) {
+          audio.master.gain.cancelScheduledValues(audio.ac.currentTime); audio.master.gain.linearRampToValueAtTime(.0001, audio.ac.currentTime + .5); soundButton.classList.remove('is-on'); soundButton.setAttribute('aria-pressed', 'false'); soundLabel.textContent = 'Off · click to listen';
+        } else {
+          audio.master.gain.cancelScheduledValues(audio.ac.currentTime); audio.master.gain.linearRampToValueAtTime(.2, audio.ac.currentTime + .7); soundButton.classList.add('is-on'); soundButton.setAttribute('aria-pressed', 'true'); soundLabel.textContent = 'On · recorded ambience';
+        }
+      }
+
+      function frame(now) {
+        if (!lastTime) lastTime = now;
+        const dt = Math.min(80, now - lastTime); lastTime = now;
+        if (!paused) {
+          if (drift && nextSceneAt && now >= nextSceneAt && !outgoingScene) advanceScene();
+          updateReadout(now);
+          draw(now, dt);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('resize', fit);
+      document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!paused) lastTime = performance.now(); });
+      hideControls.addEventListener('click', () => toggleControls());
+      singleMode.addEventListener('click', () => setMode(false));
+      driftMode.addEventListener('click', () => setMode(true));
+      durationSelect.addEventListener('change', () => { if (drift) nextSceneAt = performance.now() + Number(durationSelect.value); showControlsBriefly(); });
+      soundButton.addEventListener('click', toggleAudio);
+      sceneButtons.forEach(button => button.addEventListener('click', () => { requestScene(button.dataset.scene); showControlsBriefly(); }));
+      document.addEventListener('keydown', event => {
+        if (event.key.toLowerCase() === 'h' && !event.metaKey && !event.ctrlKey) { event.preventDefault(); toggleControls(); }
+        if (event.key === 'Escape' && !controlsHidden) toggleControls(true);
+      });
+      canvas.addEventListener('pointermove', () => { if (!controlsHidden) showControlsBriefly(); }, { passive: true });
+
+      fit();
+      updateSceneButtons();
+      showControlsBriefly();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>
