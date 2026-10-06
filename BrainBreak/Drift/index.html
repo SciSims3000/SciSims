@@ -104,6 +104,12 @@
     .icon-button:focus-visible, .scene-button:focus-visible, .mode-button:focus-visible, select:focus-visible, .hint:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .icon-button svg { width: 16px; height: 16px; opacity: .82; }
 
+    body.is-fullscreen .scisims-simulation-nav {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
     .controls {
       position: fixed;
       left: 24px;
@@ -190,6 +196,9 @@
   </div>
 
   <div class="corner-actions">
+    <button class="icon-button" id="fullscreenButton" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg>
+    </button>
     <button class="icon-button" id="hideControls" type="button" aria-label="Hide controls" title="Hide controls">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.2"/></svg>
     </button>
@@ -265,6 +274,7 @@
       const sceneButtons = [...document.querySelectorAll('[data-scene]')];
       const singleMode = document.getElementById('singleMode');
       const driftMode = document.getElementById('driftMode');
+      const fullscreenButton = document.getElementById('fullscreenButton');
 
       const scenes = {
         campfire: { title: 'Campfire', description: 'embers, warmth, and night air', color: '#d88b60' },
@@ -342,6 +352,7 @@
       let drift = false;
       let paused = false;
       let controlsHidden = false;
+      let fullscreenFallback = false;
       let hintTimer;
       let noiseSeed = 4;
       let audio = null;
@@ -453,6 +464,44 @@
         hideControls.innerHTML = controlsHidden
           ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2.2 2.2 0 0 0 3 3M9.9 5.2A10.8 10.8 0 0 1 12 5c5.8 0 9 7 9 7a17.6 17.6 0 0 1-2.3 3.1M6.2 6.2C4.1 7.6 3 12 3 12s3.2 7 9 7c1.2 0 2.3-.2 3.2-.6"/></svg>'
           : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.2"/></svg>';
+      }
+
+      function fullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || null;
+      }
+
+      function fullscreenActive() {
+        return Boolean(fullscreenElement()) || fullscreenFallback;
+      }
+
+      function syncFullscreenState() {
+        const active = fullscreenActive();
+        document.body.classList.toggle('is-fullscreen', active);
+        fullscreenButton.setAttribute('aria-pressed', String(active));
+        fullscreenButton.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+        fullscreenButton.setAttribute('title', active ? 'Exit fullscreen' : 'Enter fullscreen');
+        fullscreenButton.innerHTML = active
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M21 15v6h-6M3 15v6h6"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg>';
+      }
+
+      async function toggleFullscreen() {
+        try {
+          if (fullscreenActive()) {
+            if (document.exitFullscreen) await document.exitFullscreen();
+            else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+            else fullscreenFallback = false;
+          } else if (document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+          } else {
+            fullscreenFallback = true;
+          }
+        } catch (error) {
+          fullscreenFallback = false;
+        }
+        syncFullscreenState();
       }
 
       function showControlsBriefly() {
@@ -960,6 +1009,9 @@
 
       window.addEventListener('resize', fit);
       document.addEventListener('visibilitychange', () => { paused = document.hidden; if (!paused) lastTime = performance.now(); });
+      document.addEventListener('fullscreenchange', syncFullscreenState);
+      document.addEventListener('webkitfullscreenchange', syncFullscreenState);
+      fullscreenButton.addEventListener('click', toggleFullscreen);
       hideControls.addEventListener('click', () => toggleControls());
       singleMode.addEventListener('click', () => setMode(false));
       driftMode.addEventListener('click', () => setMode(true));
@@ -974,6 +1026,7 @@
 
       fit();
       updateSceneButtons();
+      syncFullscreenState();
       showControlsBriefly();
       requestAnimationFrame(frame);
     })();
