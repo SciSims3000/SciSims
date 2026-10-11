@@ -7,6 +7,13 @@
   section.className = 'section';
   section.setAttribute('aria-label','Science in a Hurry music');
   section.innerHTML = '<label class="section-label" for="driftMusic">Science in a Hurry · ambient music</label><div style="display:flex;gap:8px"><select id="driftMusic" style="flex:1;min-width:0"></select><button id="driftMusicPlay" type="button" class="mode-button" style="background:var(--accent-soft);min-width:62px">Play</button></div><div style="display:flex;align-items:center;gap:10px;margin-top:9px"><label for="driftMusicVolume" style="font-size:11px">Volume</label><input id="driftMusicVolume" type="range" min="0" max="100" value="30" style="flex:1;accent-color:var(--accent)"></div><div id="driftMusicStatus" role="status" style="font-size:10px;color:var(--muted);margin-top:5px">Music off · independent of scenes</div>';
+  const playlistLink = document.createElement('a');
+  playlistLink.href = 'https://www.youtube.com/playlist?list=PLTY_TOi89uet65hNYNW-bjXMMyy3546-4';
+  playlistLink.target = '_blank';
+  playlistLink.rel = 'noopener noreferrer';
+  playlistLink.textContent = 'Watch the original ambient videos on YouTube ↗';
+  playlistLink.style.cssText = 'display:inline-block;margin-top:8px;font-size:10px;color:var(--muted);text-underline-offset:3px';
+  section.appendChild(playlistLink);
   const credit = controls.querySelector('.audio-credit');
   controls.insertBefore(section,credit);
   const select = section.querySelector('#driftMusic'), button = section.querySelector('#driftMusicPlay'), volume = section.querySelector('#driftMusicVolume'), status = section.querySelector('#driftMusicStatus');
