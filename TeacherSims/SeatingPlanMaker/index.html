@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TeacherSims | SeatingPlan | Version 1.6.0 -->
+<!-- TeacherSims | SeatingPlan | Version 1.6.1 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8">
@@ -332,12 +332,12 @@
     <header class="hero">
       <h1>Seating Plan Maker</h1>
       <div class="version-wrap">
-        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.6.0</button>
+        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.6.1</button>
         <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
       </div>
       <div id="versionNotes" class="version-notes" hidden>
         <strong>Latest changes</strong>
-        Added optional pre-test / QCI organisation with alternating A/B seat labels, higher/lower students in A seats and middle students in B seats. Scores remain in teacher controls; existing seating actions remain available.
+        Paste Name [Tab] Mark from a spreadsheet into Student names to automatically fill the optional pre-test / QCI scores. Name-only lists and manual score entry remain available.
       </div>
       <p>Plan, save and project flexible classroom seating arrangements. Classes, plans, room tabs and planning information remain on this device unless you export a JSON backup.</p>
     </header>
@@ -361,7 +361,7 @@
         <label id="customCourseWrap" hidden style="display:block;margin-top:10px"><span class="field-label">Custom course</span><input id="customCourseInput" type="text" placeholder="Course name" maxlength="60"></label>
         <label class="field-label" for="namesInput" style="margin-top:13px"><span>Student names</span><span id="studentCount" class="count-badge">0 students</span></label>
         <textarea id="namesInput" spellcheck="false" placeholder="Alex Morgan&#10;Bailey Chen&#10;Charlie Singh&#10;Dakota Williams"></textarea>
-        <p class="hint">One name per line. Commas, semicolons and copied spreadsheet columns also work.</p>
+        <p class="hint">One name per line, or paste two spreadsheet columns: Name [Tab] Mark. Marks automatically fill the pre-test / QCI scores for the current room tab. Name-only lists, commas and semicolons still work.</p>
         <div class="mini-actions" style="margin-top:10px"><button class="button primary" id="saveClassButton" type="button">Save class</button><button class="button secondary" id="newClassButton" type="button">New class</button><button class="button danger" id="deleteClassButton" type="button" disabled>Delete</button></div>
         <div id="classStatus" aria-live="polite"></div>
 
@@ -452,7 +452,7 @@
             <summary>Organise by pre-test / QCI (optional)</summary>
             <p class="hint">Rank present students using results for the current topic. A seats alternate higher- and lower-scoring students; B seats take the middle-scoring students. About one quarter are higher, one quarter lower and one half middle. A/B labels belong to seats, not permanent student groups.</p>
             <label class="switch-row"><input id="qciLabelsInput" type="checkbox"><span>Show A/B seat labels</span></label>
-            <p class="hint">Enter comparable scores (raw marks or percentages). Scores remain in teacher controls and are not shown on the seating plan.</p>
+            <p class="hint">Paste Name [Tab] Mark into Student names to fill these scores automatically, or enter scores here. Use comparable marks or percentages. Scores are not shown on the seating plan.</p>
             <div id="qciScoreList"></div>
             <button id="qciOrganiseButton" class="button primary" type="button" style="margin-top:10px">Organise unlocked by pre-test / QCI</button>
             <p class="hint">Keeps locked seats fixed. Review together/apart rules after organising. Other seating actions still work as before.</p>
@@ -582,10 +582,20 @@
   const TABLE_ROTATIONS=[0,45,90,135,180,225,270,315];
   function normaliseName(value){return String(value||'').trim().replace(/\s+/g,' ')}
   function normaliseTableRotation(value){const angle=((Number(value)||0)%360+360)%360;return TABLE_ROTATIONS.reduce((closest,candidate)=>Math.abs(candidate-angle)<Math.abs(closest-angle)?candidate:closest,0)}
-  function parseNames(){
-    const seen=new Set();
-    return refs.namesInput.value.split(/[\n,;\t]+/).map(normaliseName).filter(Boolean).filter(name=>{const key=name.toLocaleLowerCase('en-AU');if(seen.has(key))return false;seen.add(key);return true});
+  function parseStudentInput(value){
+    const seen=new Set(),entries=[];
+    const add=(name,score)=>{name=normaliseName(name);const key=name.toLocaleLowerCase('en-AU');if(!name||seen.has(key))return;seen.add(key);entries.push({name,...(score!==undefined?{score}:{})})};
+    String(value).split(/\r?\n/).forEach(line=>{
+      const columns=line.split('\t');
+      if(columns.length===2&&/^(student\s*)?name$/i.test(columns[0].trim())&&/^(mark|score|marks|qci)$/i.test(columns[1].trim()))return;
+      const mark=columns.length===2?columns[1].trim():'';
+      if(columns.length===2&&(mark===''||Number.isFinite(Number(mark)))){
+        add(columns[0],mark!==''&&Number(mark)>=0?Number(mark):null);
+      }else line.split(/[,;\t]+/).forEach(name=>add(name));
+    });
+    return entries;
   }
+  function parseNames(){return parseStudentInput(refs.namesInput.value).map(student=>student.name)}
   function currentCourse(){return refs.courseSelect.value==='Other'?(refs.customCourseInput.value.trim()||'Other'):refs.courseSelect.value}
   function classLabel(record){return [record.year,record.course,record.classCode].filter(Boolean).join(' — ')}
   function setStatus(target,message,type='success'){target.innerHTML='';if(!message)return;const box=document.createElement('div');box.className=`status ${type}`;box.textContent=message;target.appendChild(box)}
@@ -720,11 +730,14 @@
   function updateUndoButtons(){refs.undoButton.disabled=!undoStack.length;refs.redoButton.disabled=!redoStack.length}
 
   function syncStudentsFromInput({mutate=false}={}){
-    const names=parseNames(),previous=sharedStudents(),presence=new Map(previous.map(s=>[s.name.toLocaleLowerCase('en-AU'),s.present]));
+    const entries=parseStudentInput(refs.namesInput.value),names=entries.map(student=>student.name),previous=sharedStudents(),presence=new Map(previous.map(s=>[s.name.toLocaleLowerCase('en-AU'),s.present]));
     const rosterChanged=names.length!==previous.length||names.some((name,index)=>name!==previous[index]?.name);
-    if(mutate&&rosterChanged)beginMutation();
+    const hasMarks=entries.some(student=>Object.hasOwn(student,'score'));
+    if(mutate&&(rosterChanged||hasMarks))beginMutation();
     workspace.students=names.map(name=>({name,present:presence.has(name.toLocaleLowerCase('en-AU'))?presence.get(name.toLocaleLowerCase('en-AU')):true}));
-    syncSharedStudentsToTabs();if(rosterChanged)workspace.tabs.forEach(invalidateRoles);selected=null;renderAll();saveDraft();
+    syncSharedStudentsToTabs();
+    if(hasMarks){const scores=qciSettings().scores;entries.forEach(student=>{if(!Object.hasOwn(student,'score'))return;if(student.score===null)delete scores[student.name];else Object.defineProperty(scores,student.name,{value:student.score,writable:true,enumerable:true,configurable:true})});refs.namesInput.value=names.join('\n')}
+    if(rosterChanged)workspace.tabs.forEach(invalidateRoles);selected=null;renderAll();saveDraft();
   }
   function updateStudentCount(){const students=sharedStudents(),present=students.filter(s=>s.present).length;refs.studentCount.textContent=`${students.length} ${students.length===1?'student':'students'} · ${present} present`}
   function renderAttendance(){
@@ -839,6 +852,7 @@
     return {high:ranked.slice(0,highCount),middle:ranked.slice(highCount,ranked.length-lowCount),low:lowCount?ranked.slice(-lowCount).reverse():[]};
   }
   function organiseQci(){
+    syncStudentsFromInput({mutate:true});
     const tab=activeTab();ensureSeatArrays(tab);const settings=qciSettings(tab),names=presentNames();
     if(!names.length){setStatus(refs.planStatus,'Add present students before organising.','warning');return}
     const missing=names.filter(name=>!Object.hasOwn(settings.scores,name)||typeof settings.scores[name]!=='number'||!Number.isFinite(settings.scores[name])||settings.scores[name]<0);
@@ -1158,9 +1172,9 @@
 
   function safeFilePart(value){return String(value||'Seating-Workspace').trim().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'').slice(0,70)||'Seating-Workspace'}
   function downloadJson(payload,fileName){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=fileName;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href)}
-  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.6.0',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
+  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.6.1',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
   async function importSharedWorkspace(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload?.workspace||!Array.isArray(payload.workspace.tabs))throw new Error('Invalid shared workspace');if(!window.confirm('Open this shared workspace? It will replace the current unsaved workspace, but it will not overwrite saved classes or plans until you choose Save.'))return;cancelPickerAnimation();stopTimer();workspace=hydrateWorkspace(payload.workspace);activeTabId=workspace.tabs.some(tab=>tab.id===payload.activeTabId)?payload.activeTabId:workspace.activeTabId;workspace.activeTabId=activeTabId;activeClassId='';activePlanId='';const classInfo=payload.class||{};refs.yearSelect.value=classInfo.year||'Year 7';const course=classInfo.course||'Science';const standard=[...refs.courseSelect.options].some(option=>option.value===course&&course!=='Other');refs.courseSelect.value=standard?course:'Other';refs.customCourseInput.value=standard?'':course;refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=classInfo.classCode||'';refs.namesInput.value=sharedStudents().map(student=>student.name).join('\n');refs.planNameInput.value=payload.planName||'Imported shared workspace';lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderClassOptions();renderPlanOptions();renderAll();saveDraft();setStatus(refs.planStatus,'Shared workspace opened. Review it, then save the class and workspace locally if required.')}catch(error){setStatus(refs.planStatus,'That file is not a valid shared Seating Plan Maker workspace.','error')}finally{refs.importWorkspaceInput.value=''}}
-  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.6.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
+  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.6.1',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
   async function importBackup(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload||!Array.isArray(payload.classes)||!Array.isArray(payload.plans))throw new Error('Invalid backup');if(!window.confirm('Import and merge this backup with the items already stored on this device?'))return;const classMap=new Map(classes.map(i=>[i.id,i]));payload.classes.forEach(i=>{if(i?.id&&Array.isArray(i.names))classMap.set(i.id,i)});classes=[...classMap.values()];const planMap=new Map(plans.map(i=>[i.id,i]));payload.plans.forEach(i=>{if(i?.id&&Array.isArray(i.tabs))planMap.set(i.id,i)});plans=[...planMap.values()];saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);renderClassOptions();renderPlanOptions();setStatus(refs.planStatus,'Backup imported and merged successfully.')}catch(error){setStatus(refs.planStatus,'That file is not a valid Seating Plan Maker backup.','error')}finally{refs.importInput.value=''}}
   function saveDraft(){saveValue(STORAGE.draft,{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim(),savedAt:Date.now()});renderSaveState()}
   function loadDraft(){const draft=loadObject(STORAGE.draft);if(!draft?.workspace)return false;workspace=hydrateWorkspace(draft.workspace);activeClassId=draft.activeClassId||'';activePlanId=draft.activePlanId||'';activeTabId=workspace.tabs.some(t=>t.id===draft.activeTabId)?draft.activeTabId:workspace.activeTabId;refs.yearSelect.value=draft.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===draft.course&&draft.course!=='Other');refs.courseSelect.value=standard?draft.course:'Other';refs.customCourseInput.value=standard?'':draft.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=draft.classCode||'';refs.planNameInput.value=draft.planName||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');draftRecovered=true;lastSavedSignature='';return true}
