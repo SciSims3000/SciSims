@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- TeacherSims | SeatingPlan | Version 1.6.2 -->
+<!-- TeacherSims | SeatingPlan | Version 1.7.0 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8">
@@ -332,12 +332,12 @@
     <header class="hero">
       <h1>Seating Plan Maker</h1>
       <div class="version-wrap">
-        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.6.2</button>
+        <button id="versionButton" class="version-button" type="button" aria-expanded="false" aria-controls="versionNotes">Version 1.7.0</button>
         <span class="version-tooltip" role="tooltip">Click for the latest changes</span>
       </div>
       <div id="versionNotes" class="version-notes" hidden>
         <strong>Latest changes</strong>
-        Paste Name [Tab] Mark from a spreadsheet into Student names to automatically fill the optional pre-test / QCI scores. Name-only lists and manual score entry remain available.
+        Added a compact display that hides empty seats and unused desks, plus optional DEI questioning that selects only the middle-scoring half of present students.
       </div>
       <p>Plan, save and project flexible classroom seating arrangements. Classes, plans, room tabs and planning information remain on this device unless you export a JSON backup.</p>
     </header>
@@ -448,12 +448,16 @@
 
         <details class="control-section" open>
           <summary>Seating actions</summary>
+          <label class="switch-row" style="margin-top:10px"><input id="compactSeatsInput" type="checkbox" checked><span>Hide empty seats and resize desks</span></label>
+          <p class="hint">Empty seats and unused desks are hidden in the display. Enable Planning mode to see all seats for editing. Room capacity and locked seats are preserved.</p>
           <details style="margin-top:12px">
             <summary>Organise by pre-test / QCI (optional)</summary>
             <p class="hint">Rank present students using results for the current topic. A seats alternate higher- and lower-scoring students; B seats take the middle-scoring students. About one quarter are higher, one quarter lower and one half middle. A/B labels belong to seats, not permanent student groups.</p>
             <label class="switch-row"><input id="qciLabelsInput" type="checkbox"><span>Show A/B seat labels</span></label>
             <p class="hint">Paste Name [Tab] Mark into Student names to fill these scores automatically, or enter scores here. Use comparable marks or percentages. Scores are not shown on the seating plan.</p>
             <div id="qciScoreList"></div>
+            <label class="switch-row" style="margin-top:10px"><input id="deiModeInput" type="checkbox"><span>DEI questioning — middle students only</span></label>
+            <p class="hint">The random student picker uses only the middle-scoring half of present students, based on these results. Complete all present students’ scores first. This does not move students.</p>
             <button id="qciOrganiseButton" class="button primary" type="button" style="margin-top:10px">Organise unlocked by pre-test / QCI</button>
             <p class="hint">Keeps locked seats fixed. Review together/apart rules after organising. Other seating actions still work as before.</p>
           </details>
@@ -484,7 +488,7 @@
             <section class="display-card picker-card" aria-labelledby="pickerHeading">
               <div style="min-width:0"><h3 id="pickerHeading">Random student picker</h3><div id="pickerName" class="picker-name" aria-live="polite">Ready</div><p id="pickerHistoryText" class="hint">No student selected yet.</p></div>
               <div class="picker-controls">
-                <label class="picker-config"><span class="field-label">Picker pool</span><select id="pickerPoolSelect"><option value="seated">Seated students only</option><option value="present">All present students</option></select></label>
+                <label class="picker-config"><span class="field-label">Picker pool</span><select id="pickerPoolSelect"><option value="seated">Seated students only</option><option value="present">All present students</option><option value="dei">DEI — middle students only</option></select></label>
                 <label class="switch-row picker-remove-row"><input id="pickerRemoveInput" type="checkbox" checked> Remove selected students until reset</label>
                 <div class="picker-speed-actions"><button class="button small primary" id="pickFastButton" type="button">Fast pick · 5 s</button><button class="button small secondary" id="pickSlowButton" type="button">Slow pick · 10 s</button></div>
                 <div class="picker-reset-row"><button class="button small secondary" id="pickerSoundButton" type="button" aria-pressed="true">🔊 Picker sound</button><button class="button small secondary" id="resetPickerButton" type="button">Reset picker</button></div>
@@ -642,7 +646,7 @@
     tab.history=Array.isArray(raw?.history)?raw.history:[];tab.roles=Array.isArray(raw?.roles)&&raw.roles.length?raw.roles:[...DEFAULT_ROLES];tab.roleAssignments=raw?.roleAssignments&&typeof raw.roleAssignments==='object'?raw.roleAssignments:{};tab.rolesDirty=Boolean(raw?.rolesDirty);
     tab.lessonTask={title:normaliseName(raw?.lessonTask?.title)||base.lessonTask.title,text:String(raw?.lessonTask?.text||'')};
     tab.display={...base.display,...(raw?.display||{})};tab.display.fitToScreen=Boolean(tab.display.fitToScreen);
-    tab.picker={...base.picker,...(raw?.picker||{})};tab.picker.history=Array.isArray(tab.picker.history)?tab.picker.history:[];tab.picker.counts=tab.picker.counts&&typeof tab.picker.counts==='object'&&!Array.isArray(tab.picker.counts)?tab.picker.counts:{};tab.picker.pool=tab.picker.pool==='present'?'present':'seated';tab.picker.removePicked=tab.picker.removePicked!==false;tab.picker.sound=tab.picker.sound!==false;
+    tab.picker={...base.picker,...(raw?.picker||{})};tab.picker.history=Array.isArray(tab.picker.history)?tab.picker.history:[];tab.picker.counts=tab.picker.counts&&typeof tab.picker.counts==='object'&&!Array.isArray(tab.picker.counts)?tab.picker.counts:{};tab.picker.pool=['present','dei'].includes(tab.picker.pool)?tab.picker.pool:'seated';tab.picker.removePicked=tab.picker.removePicked!==false;tab.picker.sound=tab.picker.sound!==false;
     tab.timer={...base.timer,...(raw?.timer||{}),running:false,startedAt:null};
     ensureSeatArrays(tab);return tab;
   }
@@ -832,6 +836,45 @@
   function moveNameTo(name,sourceIndex,targetIndex){const tab=activeTab();if(tab.locks[targetIndex]||(sourceIndex!==null&&tab.locks[sourceIndex]))return;beginMutation();const occupant=tab.seats[targetIndex];if(sourceIndex!==null)tab.seats[sourceIndex]=occupant||null;tab.seats[targetIndex]=name;invalidateRoles(tab);selected=null;renderAll();saveDraft()}
   function moveSelectedToPool(){const tab=activeTab();if(!selected)return;if(selected.sourceIndex!==null&&!tab.locks[selected.sourceIndex]){beginMutation();tab.seats[selected.sourceIndex]=null;invalidateRoles(tab)}selected=null;renderAll();saveDraft()}
 
+  function compactSeatDisplay(tab=activeTab()){
+    const enabled=tab.display.compactSeats!==false;
+    document.getElementById('compactSeatsInput').checked=enabled;
+    if(!enabled||tab.planning.enabled)return;
+    const root=tab.mode==='custom'?refs.customRoomCanvas:refs.seatGrid;
+    root.querySelectorAll('.seat.empty').forEach(seat=>seat.hidden=true);
+    if(tab.mode==='quick'){
+      refs.seatGrid.style.minHeight=tab.quickLayout==='ushape'?'560px':'0';
+      if(tab.quickLayout==='traditional'||tab.quickLayout==='exam'){
+        const occupied=tab.seats.filter(Boolean).length;
+        refs.seatGrid.style.gridTemplateColumns=`repeat(${Math.max(1,Math.min(tab.columns,occupied))},minmax(96px,1fr))`;
+      }
+      root.querySelectorAll('.quick-table').forEach(table=>{
+        const count=table.querySelectorAll('.seat:not(.empty)').length;
+        if(!count){table.hidden=true;return}
+        const columns=Math.min(count,table.classList.contains('lab-bench')?4:table.classList.contains('pod-6')?3:2);
+        table.style.gridTemplateColumns=`repeat(${columns},minmax(96px,1fr))`;
+        table.style.width=`min(100%,${columns*146+24}px)`;
+        table.style.justifySelf='center';
+      });
+    }else{
+      root.querySelectorAll('.custom-table').forEach(table=>{
+        const seats=[...table.querySelectorAll('.seat:not(.empty)')],count=seats.length;
+        if(!count){table.hidden=true;return}
+        if(count<=2){
+          const angle=Number(table.style.getPropertyValue('--table-angle').replace('deg',''))||0;
+          table.style.width=angle===90||angle===270?'210px':'270px';
+          table.style.height=angle===90||angle===270?'270px':'210px';
+          const positions=count===1?[{x:50,y:95}]:seatPositions(2,angle);
+          seats.forEach((seat,index)=>{seat.style.left=`${positions[index].x}%`;seat.style.top=`${positions[index].y}%`});
+        }
+      });
+    }
+  }
+  document.getElementById('compactSeatsInput').addEventListener('change',event=>{beginMutation();activeTab().display.compactSeats=event.target.checked;renderAll();saveDraft()});
+  document.getElementById('deiModeInput').addEventListener('change',event=>{
+    const enabled=event.target.checked;syncStudentsFromInput({mutate:true});cancelPickerAnimation();beginMutation();const picker=activeTab().picker;
+    picker.pool=enabled?'dei':'seated';picker.history=[];picker.counts={};picker.current='';renderAll();saveDraft();
+  });
   function qciSettings(tab=activeTab()){
     if(!tab.qci||typeof tab.qci!=='object'||Array.isArray(tab.qci))tab.qci={};
     if(!tab.qci.scores||typeof tab.qci.scores!=='object'||Array.isArray(tab.qci.scores))tab.qci.scores={};
@@ -1033,7 +1076,7 @@
   function renderPlan(){
     const tab=activeTab(),has=sharedStudents().length>0;refs.planContent.hidden=!has;refs.emptyState.hidden=has;if(!has)return;ensureSeatArrays(tab);document.documentElement.style.setProperty('--plan-accent',tab.accent);document.documentElement.style.setProperty('--highlight',tab.highlight);
     const present=presentNames().length,seated=tab.seats.filter(Boolean).length;refs.planSummary.textContent=`${seated}/${present} seated · ${seatCount(tab)} seats`;refs.planSubtitle.textContent=`${refs.yearSelect.value} ${currentCourse()}${refs.classCodeInput.value.trim()?` — ${refs.classCodeInput.value.trim()}`:''}${refs.planNameInput.value.trim()?` · ${refs.planNameInput.value.trim()}`:''} · ${tab.title}`;
-    refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';tab.mode==='custom'?renderCustom():renderQuick();renderStudentPool();renderTimer();renderLessonTask();renderPicker();requestAnimationFrame(applyFitToScreen);
+    refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';tab.mode==='custom'?renderCustom():renderQuick();compactSeatDisplay(tab);renderStudentPool();renderTimer();renderLessonTask();renderPicker();requestAnimationFrame(applyFitToScreen);
   }
   function renderStudentPool(){const tab=activeTab();refs.studentPool.innerHTML='';const pool=unseatedNames(tab);if(!pool.length){refs.studentPool.innerHTML='<p class="empty-pool">All present students are seated.</p>';return}pool.forEach(name=>{const chip=document.createElement('button');chip.type='button';chip.className=`student-chip${selected?.name===name&&selected.sourceIndex===null?' selected':''}`;chip.textContent=name;chip.draggable=true;chip.addEventListener('click',event=>{event.stopPropagation();selectStudent(name,null)});chip.addEventListener('dragstart',()=>{dragged={name,sourceIndex:null}});chip.addEventListener('dragend',()=>dragged=null);refs.studentPool.appendChild(chip)})}
 
@@ -1108,6 +1151,11 @@
   function pickerPool(tab=activeTab()){
     const present=presentNames();
     const seated=[...new Set(tab.seats.filter(name=>name&&present.includes(name)))];
+    if(tab.picker.pool==='dei'){
+      const scores=qciSettings(tab).scores;
+      if(present.some(name=>!Object.hasOwn(scores,name)||typeof scores[name]!=='number'||!Number.isFinite(scores[name])||scores[name]<0))return [];
+      return qciRankGroups(present,scores).middle;
+    }
     return tab.picker.pool==='present'?present:seated;
   }
   function pickerAvailable(tab,pool){return tab.picker.removePicked?pool.filter(name=>!(Number(tab.picker.counts?.[name])>0)):[...pool]}
@@ -1124,13 +1172,15 @@
   }
   function renderPicker(){
     const tab=activeTab(),picker=tab.picker,pool=pickerPool(tab),remaining=pickerAvailable(tab,pool).length;
-    refs.pickerPoolSelect.value=picker.pool==='present'?'present':'seated';refs.pickerRemoveInput.checked=picker.removePicked!==false;refs.pickerSoundButton.setAttribute('aria-pressed',String(picker.sound!==false));refs.pickerSoundButton.textContent=picker.sound!==false?'🔊 Picker sound':'🔇 Picker muted';refs.pickerName.textContent=picker.current||'Ready';refs.pickerName.classList.toggle('cycling',pickerRunning&&pickerRunTabId===tab.id);setPickerControlsDisabled(pickerRunning);const exhausted=!pool.length||(picker.removePicked&&remaining===0&&Object.keys(picker.counts||{}).length>0);refs.pickFastButton.disabled=pickerRunning||exhausted;refs.pickSlowButton.disabled=pickerRunning||exhausted;
+    refs.pickerPoolSelect.value=['present','dei'].includes(picker.pool)?picker.pool:'seated';refs.pickerRemoveInput.checked=picker.removePicked!==false;refs.pickerSoundButton.setAttribute('aria-pressed',String(picker.sound!==false));refs.pickerSoundButton.textContent=picker.sound!==false?'🔊 Picker sound':'🔇 Picker muted';refs.pickerName.textContent=picker.current||'Ready';refs.pickerName.classList.toggle('cycling',pickerRunning&&pickerRunTabId===tab.id);setPickerControlsDisabled(pickerRunning);const exhausted=!pool.length||(picker.removePicked&&remaining===0&&Object.keys(picker.counts||{}).length>0);refs.pickFastButton.disabled=pickerRunning||exhausted;refs.pickSlowButton.disabled=pickerRunning||exhausted;
     if(pickerRunning&&pickerRunTabId===tab.id)refs.pickerHistoryText.textContent='Cycling through the available students…';
-    else if(!pool.length)refs.pickerHistoryText.textContent=picker.pool==='present'?'No present students are available.':'No seated students are available.';
+    else if(!pool.length)refs.pickerHistoryText.textContent=picker.pool==='dei'?'DEI needs scores for all present students and at least two students.':picker.pool==='present'?'No present students are available.':'No seated students are available.';
     else if(picker.removePicked&&remaining===0&&Object.keys(picker.counts||{}).length)refs.pickerHistoryText.textContent='Everyone in the current picker pool has had a turn. Reset the picker to begin again.';
     else if(picker.current&&!tab.seats.includes(picker.current))refs.pickerHistoryText.textContent=`${picker.current} is currently unseated.${picker.removePicked?` ${remaining} remaining before reset.`:''}`;
     else if(picker.current)refs.pickerHistoryText.textContent=picker.removePicked?`${remaining} ${remaining===1?'student remains':'students remain'} before reset.`:`Recent: ${picker.history.slice(-4).reverse().join(' · ')}`;
     else refs.pickerHistoryText.textContent=picker.removePicked?`${remaining} ${remaining===1?'student is':'students are'} available.`:'No student selected yet.';
+    document.getElementById('deiModeInput').checked=picker.pool==='dei';
+    if(picker.pool==='dei'&&pool.length)refs.pickerHistoryText.textContent='DEI — middle students only · '+refs.pickerHistoryText.textContent;
     renderPickerTally();
   }
   function cancelPickerAnimation(){pickerRunToken+=1;pickerRunning=false;pickerRunTabId='';refs.pickerName.classList.remove('cycling');setPickerControlsDisabled(false)}
@@ -1176,9 +1226,9 @@
 
   function safeFilePart(value){return String(value||'Seating-Workspace').trim().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'').slice(0,70)||'Seating-Workspace'}
   function downloadJson(payload,fileName){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=fileName;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(link.href)}
-  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.6.2',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
+  function exportSharedWorkspace(){syncStudentsFromInput();if(!sharedStudents().length){setStatus(refs.planStatus,'Add or load a class before sharing a workspace.','error');return}const planName=refs.planNameInput.value.trim()||'Shared seating workspace';const payload={schema:'teachersims-seating-shared-workspace-1',version:'1.7.0',exportedAt:new Date().toISOString(),class:{year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim()},planName,activeTabId,workspace:workspaceForStorage()};downloadJson(payload,`${safeFilePart(planName)}-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded the current class workspace as shareable JSON. Another staff member can open it with “Open shared workspace”.')}
   async function importSharedWorkspace(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload?.workspace||!Array.isArray(payload.workspace.tabs))throw new Error('Invalid shared workspace');if(!window.confirm('Open this shared workspace? It will replace the current unsaved workspace, but it will not overwrite saved classes or plans until you choose Save.'))return;cancelPickerAnimation();stopTimer();workspace=hydrateWorkspace(payload.workspace);activeTabId=workspace.tabs.some(tab=>tab.id===payload.activeTabId)?payload.activeTabId:workspace.activeTabId;workspace.activeTabId=activeTabId;activeClassId='';activePlanId='';const classInfo=payload.class||{};refs.yearSelect.value=classInfo.year||'Year 7';const course=classInfo.course||'Science';const standard=[...refs.courseSelect.options].some(option=>option.value===course&&course!=='Other');refs.courseSelect.value=standard?course:'Other';refs.customCourseInput.value=standard?'':course;refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=classInfo.classCode||'';refs.namesInput.value=sharedStudents().map(student=>student.name).join('\n');refs.planNameInput.value=payload.planName||'Imported shared workspace';lastSavedSignature='';draftRecovered=false;undoStack=[];redoStack=[];syncControlsFromTab();renderClassOptions();renderPlanOptions();renderAll();saveDraft();setStatus(refs.planStatus,'Shared workspace opened. Review it, then save the class and workspace locally if required.')}catch(error){setStatus(refs.planStatus,'That file is not a valid shared Seating Plan Maker workspace.','error')}finally{refs.importWorkspaceInput.value=''}}
-  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.6.2',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
+  function exportBackup(){const payload={schema:'teachersims-seating-backup-3',version:'1.7.0',exportedAt:new Date().toISOString(),classes,plans,draft:{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim()}};downloadJson(payload,`TeacherSims-SeatingPlan-Backup-${new Date().toISOString().slice(0,10)}.json`);setStatus(refs.planStatus,'Downloaded a JSON backup of all saved classes and seating-plan workspaces.')}
   async function importBackup(file){if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload||!Array.isArray(payload.classes)||!Array.isArray(payload.plans))throw new Error('Invalid backup');if(!window.confirm('Import and merge this backup with the items already stored on this device?'))return;const classMap=new Map(classes.map(i=>[i.id,i]));payload.classes.forEach(i=>{if(i?.id&&Array.isArray(i.names))classMap.set(i.id,i)});classes=[...classMap.values()];const planMap=new Map(plans.map(i=>[i.id,i]));payload.plans.forEach(i=>{if(i?.id&&Array.isArray(i.tabs))planMap.set(i.id,i)});plans=[...planMap.values()];saveValue(STORAGE.classes,classes);saveValue(STORAGE.plans,plans);renderClassOptions();renderPlanOptions();setStatus(refs.planStatus,'Backup imported and merged successfully.')}catch(error){setStatus(refs.planStatus,'That file is not a valid Seating Plan Maker backup.','error')}finally{refs.importInput.value=''}}
   function saveDraft(){saveValue(STORAGE.draft,{workspace:workspaceForStorage(),activeClassId,activePlanId,activeTabId,year:refs.yearSelect.value,course:currentCourse(),classCode:refs.classCodeInput.value.trim(),planName:refs.planNameInput.value.trim(),savedAt:Date.now()});renderSaveState()}
   function loadDraft(){const draft=loadObject(STORAGE.draft);if(!draft?.workspace)return false;workspace=hydrateWorkspace(draft.workspace);activeClassId=draft.activeClassId||'';activePlanId=draft.activePlanId||'';activeTabId=workspace.tabs.some(t=>t.id===draft.activeTabId)?draft.activeTabId:workspace.activeTabId;refs.yearSelect.value=draft.year||'Year 7';const standard=[...refs.courseSelect.options].some(o=>o.value===draft.course&&draft.course!=='Other');refs.courseSelect.value=standard?draft.course:'Other';refs.customCourseInput.value=standard?'':draft.course||'';refs.customCourseWrap.hidden=refs.courseSelect.value!=='Other';refs.classCodeInput.value=draft.classCode||'';refs.planNameInput.value=draft.planName||'';refs.namesInput.value=sharedStudents().map(s=>s.name).join('\n');draftRecovered=true;lastSavedSignature='';return true}
@@ -1256,7 +1306,7 @@
   refs.alphabetiseButton.addEventListener('click',alphabetiseSeating);refs.fillFrontButton.addEventListener('click',fillFromFront);refs.randomiseButton.addEventListener('click',()=>randomiseSeating({all:false}));refs.randomiseAllButton.addEventListener('click',()=>randomiseSeating({all:true}));refs.clearSeatsButton.addEventListener('click',clearSeats);refs.unlockAllButton.addEventListener('click',()=>{beginMutation();activeTab().locks=activeTab().locks.map(()=>false);renderAll();saveDraft()});refs.undoButton.addEventListener('click',undo);refs.redoButton.addEventListener('click',redo);refs.exampleButton.addEventListener('click',()=>{beginMutation();refs.namesInput.value=EXAMPLE_NAMES.join('\n');syncStudentsFromInput();renderAll();saveDraft()});
   refs.addTabButton.addEventListener('click',addTab);refs.duplicateTabButton.addEventListener('click',duplicateTab);refs.renameTabButton.addEventListener('click',renameTab);refs.deleteTabButton.addEventListener('click',deleteTab);
   refs.timerStartButton.addEventListener('click',startPauseTimer);refs.timerResetButton.addEventListener('click',resetTimer);refs.timerAddButton.addEventListener('click',addMinute);refs.timerSoundButton.addEventListener('click',()=>{touchEdit();activeTab().timer.sound=!activeTab().timer.sound;renderTimer();saveDraft()});refs.timerModeSelect.addEventListener('change',()=>{stopTimer();beginMutation();const timer=activeTab().timer;timer.mode=refs.timerModeSelect.value;timer.running=false;timer.startedAt=null;timer.elapsed=0;timer.remaining=timer.duration;renderTimer();saveDraft()});refs.timerMinutesInput.addEventListener('change',resetTimer);
-  refs.pickerPoolSelect.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();const tab=activeTab();tab.picker.pool=refs.pickerPoolSelect.value==='present'?'present':'seated';tab.picker.history=[];tab.picker.counts={};tab.picker.current='';renderPlan();renderPicker();saveDraft()});refs.pickerRemoveInput.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();activeTab().picker.removePicked=refs.pickerRemoveInput.checked;renderPicker();saveDraft()});refs.pickerSoundButton.addEventListener('click',()=>{touchEdit();const picker=activeTab().picker;picker.sound=picker.sound===false;if(picker.sound){getPickerAudioContext();playPickerTick(.5)}renderPicker();saveDraft()});refs.pickFastButton.addEventListener('click',()=>startPicker(5000));refs.pickSlowButton.addEventListener('click',()=>startPicker(10000));refs.resetPickerButton.addEventListener('click',resetPicker);
+  refs.pickerPoolSelect.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();const tab=activeTab();tab.picker.pool=['present','dei'].includes(refs.pickerPoolSelect.value)?refs.pickerPoolSelect.value:'seated';tab.picker.history=[];tab.picker.counts={};tab.picker.current='';renderPlan();renderPicker();saveDraft()});refs.pickerRemoveInput.addEventListener('change',()=>{cancelPickerAnimation();touchEdit();activeTab().picker.removePicked=refs.pickerRemoveInput.checked;renderPicker();saveDraft()});refs.pickerSoundButton.addEventListener('click',()=>{touchEdit();const picker=activeTab().picker;picker.sound=picker.sound===false;if(picker.sound){getPickerAudioContext();playPickerTick(.5)}renderPicker();saveDraft()});refs.pickFastButton.addEventListener('click',()=>startPicker(5000));refs.pickSlowButton.addEventListener('click',()=>startPicker(10000));refs.resetPickerButton.addEventListener('click',resetPicker);
   refs.unseatedArea.addEventListener('click',event=>{if(event.target.closest('.student-chip'))return;moveSelectedToPool()});refs.printButton.addEventListener('click',()=>window.print());refs.splitScreenButton.addEventListener('click',()=>setSplitFocus(!document.body.classList.contains('split-focus')));refs.fitScreenButton.addEventListener('click',()=>{touchEdit();const tab=activeTab();tab.display=tab.display||{fitToScreen:false};tab.display.fitToScreen=!tab.display.fitToScreen;applyFitToScreen();saveDraft()});refs.focusButton.addEventListener('click',()=>setStudentFocus(!document.body.classList.contains('student-focus')));document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('student-focus')){document.body.classList.remove('student-focus');refs.focusButton.setAttribute('aria-pressed','false');refs.focusButton.textContent='⛶ Student display';applyFitToScreen()}});
   refs.themeButton.addEventListener('click',()=>setTheme(document.body.classList.contains('dark')?'light':'dark'));refs.versionButton.addEventListener('click',event=>{event.stopPropagation();const open=refs.versionNotes.hidden;refs.versionNotes.hidden=!open;refs.versionButton.setAttribute('aria-expanded',String(open))});document.addEventListener('click',event=>{if(!event.target.closest('.version-wrap')&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!refs.versionNotes.hidden){refs.versionNotes.hidden=true;refs.versionButton.setAttribute('aria-expanded','false')}else if(event.key==='Escape'&&document.body.classList.contains('split-focus')){setSplitFocus(false)}});
   refs.tableEditorClose.addEventListener('click',closeTableEditor);refs.tableEditorCancel.addEventListener('click',closeTableEditor);refs.tableEditorSave.addEventListener('click',saveTableEditor);refs.tableEditorDialog.addEventListener('click',event=>{if(event.target===refs.tableEditorDialog)closeTableEditor()});refs.tableEditorDialog.addEventListener('close',()=>{editingTableId=''});window.addEventListener('resize',()=>{applyFitToScreen();updateStickyOffset()},{passive:true});window.addEventListener('beforeunload',()=>{cancelPickerAnimation();stopTimer();saveDraft()});
@@ -1268,4 +1318,5 @@
 </script>
 </body>
 </html>
+
 
