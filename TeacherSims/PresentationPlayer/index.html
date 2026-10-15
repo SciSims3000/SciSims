@@ -138,6 +138,31 @@ function update(){[...wrap.children].forEach((b,i)=>{b.classList.toggle('active'
 $('clear').onclick=()=>{selected=-1;update()};$('position').onchange=()=>{const p=$('position').value;$('fs').className='pos-'+p;localStorage.setItem('scisims-player-position',p)};let saved=localStorage.getItem('scisims-player-position')||'bottom';if(!['top','bottom','left','right'].includes(saved))saved='bottom';$('position').value=saved;$('fs').className='pos-'+saved;$('full').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
 $('fullHeader').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
 document.querySelectorAll('[data-dock]').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.dock;$('position').value=p;$('position').dispatchEvent(new Event('change'))}));
+
+/* Keyboard docking: when the toolbar has focus, arrows move it.
+   Alt+Shift+Arrow provides a deliberate shortcut outside the Google iframe. */
+const toolbar=$('tools');
+toolbar.setAttribute('tabindex','0');
+toolbar.setAttribute('role','toolbar');
+toolbar.setAttribute('aria-label','Student engagement icons and position controls');
+function moveDockFromKey(key){
+  const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'top',ArrowDown:'bottom'};
+  const position=map[key];
+  if(!position)return false;
+  $('position').value=position;
+  $('position').dispatchEvent(new Event('change'));
+  return true;
+}
+toolbar.addEventListener('keydown',e=>{
+  if(e.altKey||e.ctrlKey||e.metaKey)return;
+  if(moveDockFromKey(e.key)){e.preventDefault();e.stopPropagation();}
+});
+document.addEventListener('keydown',e=>{
+  if(e.altKey&&e.shiftKey&&!e.ctrlKey&&!e.metaKey&&moveDockFromKey(e.key)){
+    e.preventDefault();e.stopPropagation();
+  }
+});
+
 const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
 openSlides();
 })();
