@@ -112,8 +112,18 @@ main.pos-left .dock-arrows,main.pos-right .dock-arrows{display:grid!important;gr
 .icons>.norm:nth-child(7)>.symbol{background-image:url("data:image/webp;base64,UklGRloBAABXRUJQVlA4IE4BAADQCACdASowADAAPpFAl0klpCIhKrVdULASCWIArk8ExngqvGxboEVgDeeFEpqE9Dy+4Sy3POWPWjFIvLaaX+WUH4b8q87g3DltHbTcrungAP7+wi4ykA9yKI4wfNbo4sr/vx8nMGsVtYF5NHH5HBc/1ZRC8u0C/qdZoGu9sHdpld4uJaZM6sdvO4FSxvrokThmSCelu6s2z5/NA+17hYGSUyf+URqRpu5vcGdtg9ApdOgYR9xNOh+/gHnxB/fr+p/l0XzN34Poi7hTv40IN17iK/0gQ7Vfht0N5ZE/3oCo7zE4dmreaGbCpxktWFBbsN2T5NWrsFrM+5YQXK34BUtuwramTKHauMzWnqT+9bOGzdzlqY3loU2N5kmIPfFg/+sLZXtCTNAxrPqjfvqIHqRheZ2A+NeFkwfoCQ7tqwEaBLL7cF9MLa2zASn+8AAA")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important;background-color:transparent!important;font-size:0!important;width:28px!important;height:28px!important;border-radius:50%!important}
 .icons>.norm:nth-child(8)>.symbol{background-image:url("data:image/webp;base64,UklGRoABAABXRUJQVlA4IHQBAABwCQCdASowADAAPpFCmkqlo6Iho4wAsBIJQBdma9+v7idbvUrtyCF0SORw3TCZ5yciF8qZSbOJvePMQiSS5313Yy0JZ7cLzKvFdOxw4AYFvpxnp7QA/v7XZRB5f7PoP+FXxNZ8kiagDi4I/V8CX+zPigyu/sBXDfYbuKNU0fKzXsBqBt5dqjg2VzOTGR/E7v69QCXHFmigHpgcfw3oLuIX+EN7RipAFZy7FN8iSSJRbT65Q2IYTku8WM36FtuyeEn0l6D/aoVjHzDwff54qeazWfiCLqvvHid8Z2wYAINcTuojstwZhbqzZk2BlNY06OCmauhyV8Vl7jkkn/AwlcI6TLWIdnTntZRSu9Z8SjpfN78980Oqb803G+DI7NQU0np7hxFmJ2W2x8zJYZAkv9KgOWJAL+Z7NKEvL0r7+F+jFkl4GAuEVPqDWJzNC0KdtCLEehg3uTz+hFkxhl83PcQC9jj5wnYpLh8WdxLJF9DTrBEAAAA=")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important;background-color:transparent!important;font-size:0!important;width:28px!important;height:28px!important;border-radius:50%!important}
 #fs:fullscreen{display:flex!important;flex-direction:column!important;background:#fff!important;width:100vw!important;height:100vh!important;max-width:none!important;padding:0!important;gap:0!important}#fs:fullscreen .viewer{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow:hidden!important;border:0!important}#fs:fullscreen iframe{width:100%!important;height:100%!important;aspect-ratio:auto!important;display:block!important}#fs:fullscreen .tools{flex:0 0 38px!important;min-height:38px!important;max-height:38px!important}#fs:fullscreen .notice{display:none!important}#fs:fullscreen.pos-left,#fs:fullscreen.pos-right{display:grid!important;grid-template-columns:54px minmax(0,1fr)!important}#fs:fullscreen.pos-right{grid-template-columns:minmax(0,1fr) 54px!important}#fs:fullscreen.pos-left .tools,#fs:fullscreen.pos-right .tools{max-height:none!important;min-height:0!important}
+
+/* Version display and original-artwork monochrome style */
+#versionButton{white-space:nowrap;font-size:12px;padding:7px 10px}
+#versionNotes{background:#ecf6fa;color:#18384a;border-bottom:1px solid #aac8d5;padding:10px 18px;font-size:13px;line-height:1.4}
+#versionNotes[hidden]{display:none}
+#versionNotes ul{margin:5px 0;padding-left:22px}
+#versionNotes small{color:#466576}
+body.icon-monochrome .icons>.norm>.symbol{filter:grayscale(1) contrast(1.1)!important}
+header select{border:1px solid #b7cbd4;background:#fff;color:#193147;border-radius:7px;padding:7px;font:inherit;font-size:12px}
 </style></head>
-<body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Google Slides URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a viewable Google Slides presentation URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button><button id="fullHeader">Fullscreen</button><label for="position">Icons</label><select id="position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></header>
+<body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Slides / PowerPoint URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a Google Slides link or public PowerPoint URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button><button id="fullHeader">Fullscreen</button><label for="iconTheme">Icons</label><select id="iconTheme" aria-label="Icon style"><option value="colour">Colour</option><option value="mono">Monochrome</option></select><button id="versionButton" type="button" aria-expanded="false" aria-controls="versionNotes">v1.8 <span aria-hidden="true">▾</span></button><label for="position">Icons</label><select id="position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></header>
+<div id="versionNotes" hidden role="region" aria-label="Recent changes"><strong>Presentation Player v1.8 — 15 October 2026</strong><ul><li>Added support for public PowerPoint file links and Microsoft 365 embed links.</li><li>Added Colour / Monochrome icons using the original artwork.</li><li>Added a version panel with recent updates.</li><li>Kept keyboard docking shortcuts, compact toolbar and fullscreen behaviour.</li></ul><small>PowerPoint embedding depends on Microsoft sharing permissions. Local .pptx files require an accessible link; private files may need Microsoft authentication.</small></div>
 <div id="hoverPanel" role="tooltip"></div><main id="fs"><div class="viewer"><iframe id="slides" title="Embedded Google Slides presentation" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="notice">Use the navigation provided by Google Slides inside the player. If an organisation blocks embedding, choose <b>Open in Google Slides</b> instead. <a href="https://support.google.com/docs/answer/183965" target="_blank" rel="noopener">Embedding guidance</a></div></div>
 <section class="tools" id="tools"><h2>Student Engagement Norms</h2><div class="dock-inner"><div id="icons" class="icons"></div><div class="dock-arrows" aria-label="Move engagement toolbar"><button type="button" data-dock="left" title="Move icons left" aria-label="Move icons left">←</button><button type="button" data-dock="top" title="Move icons to top" aria-label="Move icons to top">↑</button><button type="button" data-dock="bottom" title="Move icons to bottom" aria-label="Move icons to bottom">↓</button><button type="button" data-dock="right" title="Move icons right" aria-label="Move icons right">→</button></div></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
 <div class="controls"><button id="clear" title="Close the pinned explanation">Dismiss explanation</button><button id="full">Fullscreen</button><small>Slide navigation is handled by Google's embedded presentation controls.</small></div></section></main>
@@ -131,7 +141,22 @@ const norms=[
 ['▤','Complete Sentences','Respond in a complete sentence that communicates your reasoning and uses appropriate subject vocabulary.']];
 let original=initial;let selected=-1;const $=id=>document.getElementById(id);
 function parseSlides(url){const m=url.match(/(?:docs\.google\.com\/presentation\/d\/|\/d\/)([A-Za-z0-9_-]{20,})/);return m?m[1]:null}
-function openSlides(){const raw=$('source').value.trim();const id=parseSlides(raw);if(!id){alert('Paste a Google Slides link containing /presentation/d/…');return}original=raw;$('slides').src='https://docs.google.com/presentation/d/'+id+'/embed?start=false&loop=false&delayms=3000';location.hash='deck='+encodeURIComponent(id)}
+function openSlides(){
+  const raw=$('source').value.trim();
+  if(!raw){alert('Paste a Google Slides link or a publicly viewable PowerPoint link.');return;}
+  let u;try{u=new URL(raw)}catch{alert('Enter a complete https:// link.');return;}
+  if(u.protocol!=='https:'){alert('Only HTTPS presentation links are supported.');return;}
+  const id=parseSlides(raw);
+  let src;
+  if(id){src='https://docs.google.com/presentation/d/'+id+'/embed?start=false&loop=false&delayms=3000';}
+  else if(/(?:^|\\.)view\\.officeapps\\.live\\.com$/.test(u.hostname) && u.pathname.startsWith('/op/embed.aspx') && u.searchParams.has('src')){src=raw;}
+  else if(/(?:^|\\.)office\\.com$|(?:^|\\.)officeapps\\.live\\.com$|(?:^|\\.)sharepoint\\.com$|(?:^|\\.)onedrive\\.live\\.com$|(?:^|\\.)1drv\\.ms$/.test(u.hostname) && /embed|embed\.aspx/i.test(raw)){src=raw;}
+  else if(/\\.pptx?(?:$|[?#])/i.test(u.pathname) || /\\.pptx?(?:$|[?#])/i.test(raw)){src='https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(raw);}
+  else{alert('For PowerPoint, use a publicly accessible .pptx URL or the Embed link from PowerPoint for the web. Regular private sharing links may not embed.');return;}
+  original=raw;$('slides').src=src;
+  if(id)location.hash='deck='+encodeURIComponent(id);
+  localStorage.setItem('scisims-player-last-url',raw);
+}
 $('source').value=initial;$('load').onclick=openSlides;$('source').addEventListener('keydown',e=>{if(e.key==='Enter')openSlides()});$('external').onclick=()=>window.open(original,'_blank','noopener,noreferrer');
 const wrap=$('icons');norms.forEach((n,i)=>{const b=document.createElement('button');b.className='norm';b.type='button';b.setAttribute('aria-label',n[1]+': '+n[2]);b.setAttribute('aria-pressed','false');const icon=document.createElement('span');icon.className='symbol';icon.textContent=n[0];const tip=document.createElement('span');tip.className='tooltip';tip.innerHTML='<strong></strong><span></span>';tip.querySelector('strong').textContent=n[1];tip.querySelector('span').textContent=n[2];b.append(icon,tip);b.onmouseenter=()=>{const p=$('hoverPanel');p.replaceChildren();const heading=document.createElement('strong');heading.textContent=n[1];const desc=document.createElement('span');desc.textContent=n[2];p.append(heading,desc);p.classList.add('show')};b.onmouseleave=()=>{$('hoverPanel').classList.remove('show')};b.onblur=()=>{$('hoverPanel').classList.remove('show')};b.onclick=()=>{selected=selected===i?-1:i;update()};wrap.append(b)});
 function update(){[...wrap.children].forEach((b,i)=>{b.classList.toggle('active',i===selected);b.setAttribute('aria-pressed',String(i===selected))});const box=$('pinned');box.classList.toggle('visible',selected>=0);box.replaceChildren();if(selected>=0){const title=document.createElement('strong');title.textContent=norms[selected][1];const detail=document.createElement('div');detail.textContent=norms[selected][2];const close=document.createElement('button');close.className='close-panel';close.textContent='×';close.setAttribute('aria-label','Close explanation');close.onclick=()=>{selected=-1;update()};box.append(title,detail,close)}}
@@ -163,7 +188,13 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
+const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);
+if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
+else if(localStorage.getItem('scisims-player-last-url'))$('source').value=localStorage.getItem('scisims-player-last-url');
+$('iconTheme').value=localStorage.getItem('scisims-player-icon-theme')==='mono'?'mono':'colour';
+function setIconTheme(){document.body.classList.toggle('icon-monochrome',$('iconTheme').value==='mono');localStorage.setItem('scisims-player-icon-theme',$('iconTheme').value);}
+$('iconTheme').addEventListener('change',setIconTheme);setIconTheme();
+$('versionButton').addEventListener('click',()=>{const panel=$('versionNotes');panel.hidden=!panel.hidden;$('versionButton').setAttribute('aria-expanded',String(!panel.hidden));$('versionButton').querySelector('span').textContent=panel.hidden?'▾':'▴';});
 openSlides();
 })();
 </script></body></html>
