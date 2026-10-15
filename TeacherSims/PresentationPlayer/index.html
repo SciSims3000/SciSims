@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SciSims Presentation Player</title>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color:#193147;background:#e9f0f5}*{box-sizing:border-box}body{margin:0}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 18px;background:#123550;color:#fff}header h1{font-size:19px;margin:0 18px 0 0}
+button,input{font:inherit}button{cursor:pointer;border:1px solid #a9c3d3;border-radius:9px;background:#fff;color:#173650;padding:9px 13px}
+button:hover,button:focus-visible{outline:2px solid #1c879f;outline-offset:1px}
+header button{background:#daf5fa}input{min-width:200px;flex:1;border:1px solid #a7bac6;border-radius:9px;padding:9px}
+main{padding:12px;max-width:1600px;margin:auto}
+.viewer{background:#fff;border:1px solid #c4d6de;border-radius:12px;overflow:hidden;position:relative}
+iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#f4f8fa}
+.notice{padding:8px 12px;color:#375166;background:#edf7fa;font-size:13px}.notice a{color:#075d87}
+.tools{margin:10px auto;background:#fff;border:1px solid #c4d6de;border-radius:14px;padding:12px;position:relative;max-width:1100px}
+.tools h2{font-size:15px;margin:0 0 9px}.icons{display:grid;grid-template-columns:repeat(8,minmax(50px,1fr));gap:7px}
+.norm{position:relative;display:flex;align-items:center;justify-content:center;min-height:70px;border-radius:12px;border:2px solid transparent;background:#eef7fe;touch-action:manipulation}
+.norm:nth-child(3n){background:#fff1d1}.norm:nth-child(5n){background:#fff1d1}.norm:hover,.norm.active,.norm:focus-visible{border-color:#007e96}
+.symbol{display:grid;place-items:center;width:49px;height:49px;border-radius:50%;font-size:26px;font-weight:900;background:#d2e9fc;color:#103e82}
+.norm:nth-child(3n) .symbol,.norm:nth-child(5n) .symbol{background:#ffe9b8;color:#8b5505}
+.tooltip{position:absolute;z-index:9;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);width:min(310px,82vw);pointer-events:none;text-align:left;background:#123550;color:#fff;border-radius:10px;padding:12px;box-shadow:0 6px 22px #0003;display:none;font-size:14px;line-height:1.45}
+.tooltip strong{display:block;font-size:16px;margin-bottom:4px}.norm:hover .tooltip,.norm:focus-visible .tooltip{display:block}
+.pinned{padding:10px 14px;border-radius:9px;margin:10px 0 0;background:#e5f6fa;border-left:4px solid #0089a0;display:none}.pinned.visible{display:block}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}.controls small{color:#456}
+#fs:fullscreen{background:#111}#fs:fullscreen iframe{height:calc(100vh - 170px);aspect-ratio:auto}#fs:fullscreen .notice{display:none}
+@media(max-width:600px){header{padding:10px}header h1{width:100%}.icons{grid-template-columns:repeat(4,1fr)}.norm{min-height:60px}.tooltip{display:none!important}}
+</style></head>
+<body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Google Slides URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a viewable Google Slides presentation URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button></header>
+<main id="fs"><div class="viewer"><iframe id="slides" title="Embedded Google Slides presentation" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="notice">Use the navigation provided by Google Slides inside the player. If an organisation blocks embedding, choose <b>Open in Google Slides</b> instead. <a href="https://support.google.com/docs/answer/183965" target="_blank" rel="noopener">Embedding guidance</a></div></div>
+<section class="tools" id="tools"><h2>Student Engagement Norms — hover to explain, click to pin</h2><div id="icons" class="icons"></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
+<div class="controls"><button id="clear">Clear explanation</button><button id="hide">Hide icons</button><button id="full">Fullscreen player</button><small>Slide navigation is handled by Google's embedded presentation controls.</small></div></section></main>
+<script>
+(()=>{'use strict';
+const initial='https://docs.google.com/presentation/d/1hhI-VUzYS7TPWGgVCJMHd3MI6sLxxECNaA442bkaUAE/edit';
+const norms=[
+['👄','Pronounce With Me','Say the important word aloud with your teacher. Practise saying it clearly and use it accurately in a sentence.'],
+['◉','Track With Me','Follow the words, diagram or demonstration that the teacher is referring to. Be ready to identify the relevant detail.'],
+['ABC','Read With Me','Read the selected words aloud together, paying attention to accuracy and meaning.'],
+['✋','Gesture With Me','Use the agreed hand gesture to represent the idea. Explain what the movement means.'],
+['👥','Pair-Share','Turn to your partner and discuss the question. Explain your thinking, listen carefully and prepare a shared response.'],
+['!!!','Attention Signal','Stop, look towards the teacher and listen for the next instruction.'],
+['▣','Whiteboards','Write or draw your response on your mini-whiteboard. Show it when requested so the teacher can check understanding.'],
+['▤','Complete Sentences','Respond in a complete sentence that communicates your reasoning and uses appropriate subject vocabulary.']];
+let original=initial;let selected=-1;const $=id=>document.getElementById(id);
+function parseSlides(url){const m=url.match(/(?:docs\.google\.com\/presentation\/d\/|\/d\/)([A-Za-z0-9_-]{20,})/);return m?m[1]:null}
+function openSlides(){const raw=$('source').value.trim();const id=parseSlides(raw);if(!id){alert('Paste a Google Slides link containing /presentation/d/…');return}original=raw;$('slides').src='https://docs.google.com/presentation/d/'+id+'/embed?start=false&loop=false&delayms=3000';location.hash='deck='+encodeURIComponent(id)}
+$('source').value=initial;$('load').onclick=openSlides;$('source').addEventListener('keydown',e=>{if(e.key==='Enter')openSlides()});$('external').onclick=()=>window.open(original,'_blank','noopener,noreferrer');
+const wrap=$('icons');norms.forEach((n,i)=>{const b=document.createElement('button');b.className='norm';b.type='button';b.setAttribute('aria-label',n[1]+': '+n[2]);b.setAttribute('aria-pressed','false');const icon=document.createElement('span');icon.className='symbol';icon.textContent=n[0];const tip=document.createElement('span');tip.className='tooltip';tip.innerHTML='<strong></strong><span></span>';tip.querySelector('strong').textContent=n[1];tip.querySelector('span').textContent=n[2];b.append(icon,tip);b.onclick=()=>{selected=selected===i?-1:i;update()};wrap.append(b)});
+function update(){[...wrap.children].forEach((b,i)=>{b.classList.toggle('active',i===selected);b.setAttribute('aria-pressed',String(i===selected))});const box=$('pinned');box.classList.toggle('visible',selected>=0);box.textContent=selected<0?'':norms[selected][1]+' — '+norms[selected][2]}
+$('clear').onclick=()=>{selected=-1;update()};$('hide').onclick=()=>{wrap.hidden=!wrap.hidden;$('hide').textContent=wrap.hidden?'Show icons':'Hide icons'};$('full').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
+const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
+openSlides();
+})();
+</script></body></html>
