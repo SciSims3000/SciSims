@@ -149,9 +149,9 @@ function openSlides(){
   const id=parseSlides(raw);
   let src;
   if(id){src='https://docs.google.com/presentation/d/'+id+'/embed?start=false&loop=false&delayms=3000';}
-  else if(/(?:^|\\.)view\\.officeapps\\.live\\.com$/.test(u.hostname) && u.pathname.startsWith('/op/embed.aspx') && u.searchParams.has('src')){src=raw;}
-  else if(/(?:^|\\.)office\\.com$|(?:^|\\.)officeapps\\.live\\.com$|(?:^|\\.)sharepoint\\.com$|(?:^|\\.)onedrive\\.live\\.com$|(?:^|\\.)1drv\\.ms$/.test(u.hostname) && /embed|embed\.aspx/i.test(raw)){src=raw;}
-  else if(/\\.pptx?(?:$|[?#])/i.test(u.pathname) || /\\.pptx?(?:$|[?#])/i.test(raw)){src='https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(raw);}
+  else if(/(?:^|\.)view\.officeapps\.live\.com$/.test(u.hostname) && u.pathname.startsWith('/op/embed.aspx') && u.searchParams.has('src')){src=raw;}
+  else if(/(?:^|\.)office\.com$|(?:^|\.)officeapps\.live\.com$|(?:^|\.)sharepoint\.com$|(?:^|\.)onedrive\.live\.com$|(?:^|\.)1drv\.ms$/.test(u.hostname) && /embed|embed\.aspx/i.test(raw)){src=raw;}
+  else if(/\.pptx?(?:$|[?#])/i.test(u.pathname) || /\.pptx?(?:$|[?#])/i.test(raw)){src='https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(raw);}
   else{alert('For PowerPoint, use a publicly accessible .pptx URL or the Embed link from PowerPoint for the web. Regular private sharing links may not embed.');return;}
   original=raw;$('slides').src=src;
   if(id)location.hash='deck='+encodeURIComponent(id);
