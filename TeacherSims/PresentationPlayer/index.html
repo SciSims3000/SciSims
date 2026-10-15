@@ -66,10 +66,28 @@ main.pos-left .symbol,main.pos-right .symbol{width:29px!important;height:29px!im
 .pinned .close-panel{position:absolute;top:5px;right:7px;background:none;border:0;font-size:20px;padding:2px 6px;line-height:1.1}
 header button,header select{font-size:12px;padding:6px 9px}
 @media(max-width:600px){.icons{grid-template-columns:repeat(8,minmax(0,1fr))!important}.norm{min-height:29px!important;height:29px!important}.norm .symbol{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important}}
+
+/* v1.4 — compact icon cluster and dock arrows */
+.tools{padding:2px 4px!important;display:flex;justify-content:center;align-items:center;min-height:35px!important;overflow:visible!important}
+.dock-inner{display:flex;gap:7px;align-items:center;justify-content:center;width:max-content;max-width:100%}
+.icons{display:grid!important;grid-template-columns:repeat(8,32px)!important;gap:2px!important;width:max-content!important}
+.norm,.norm:nth-child(3n),.norm:nth-child(5n){width:32px!important;height:31px!important;min-height:31px!important;background:transparent!important;padding:1px!important;flex:0 0 auto}
+.dock-arrows{display:flex;gap:2px;align-items:center;flex:0 0 auto}
+.dock-arrows button{border:1px solid #c5dce2;border-radius:4px;background:#f4f9fb;color:#22516b;min-width:23px;width:23px;height:26px;padding:0;line-height:1;font-size:15px;font-weight:700}
+.dock-arrows button:hover{background:#d9f2f6}
+.tools .controls{display:none!important}
+.tooltip{position:fixed!important;bottom:55px!important;right:15px!important;left:auto!important;transform:none!important;max-width:310px;z-index:10000!important}
+main.pos-left .tools,main.pos-right .tools{display:flex;align-items:flex-start;padding:4px 1px!important}
+main.pos-left .dock-inner,main.pos-right .dock-inner{flex-direction:column;gap:5px;width:100%}
+main.pos-left .icons,main.pos-right .icons{grid-template-columns:32px!important;grid-template-rows:repeat(8,31px)!important;gap:2px!important;width:32px!important}
+main.pos-left .dock-arrows,main.pos-right .dock-arrows{display:grid;grid-template-columns:repeat(2,23px);gap:2px;justify-content:center}
+main.pos-left,main.pos-right{grid-template-columns:54px minmax(0,1fr)!important}
+main.pos-right{grid-template-columns:minmax(0,1fr) 54px!important}
+@media(max-width:520px){.icons{grid-template-columns:repeat(8,27px)!important}.norm,.norm:nth-child(3n),.norm:nth-child(5n){width:27px!important}.dock-inner{gap:3px}.dock-arrows button{width:20px;min-width:20px}}
 </style></head>
 <body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Google Slides URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a viewable Google Slides presentation URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button><button id="fullHeader">Fullscreen</button><label for="position">Icons</label><select id="position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></header>
 <main id="fs"><div class="viewer"><iframe id="slides" title="Embedded Google Slides presentation" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="notice">Use the navigation provided by Google Slides inside the player. If an organisation blocks embedding, choose <b>Open in Google Slides</b> instead. <a href="https://support.google.com/docs/answer/183965" target="_blank" rel="noopener">Embedding guidance</a></div></div>
-<section class="tools" id="tools"><h2>Student Engagement Norms</h2><div id="icons" class="icons"></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
+<section class="tools" id="tools"><h2>Student Engagement Norms</h2><div class="dock-inner"><div id="icons" class="icons"></div><div class="dock-arrows" aria-label="Move engagement toolbar"><button type="button" data-dock="left" title="Move icons left" aria-label="Move icons left">←</button><button type="button" data-dock="top" title="Move icons to top" aria-label="Move icons to top">↑</button><button type="button" data-dock="bottom" title="Move icons to bottom" aria-label="Move icons to bottom">↓</button><button type="button" data-dock="right" title="Move icons right" aria-label="Move icons right">→</button></div></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
 <div class="controls"><button id="clear" title="Close the pinned explanation">Dismiss explanation</button><button id="full">Fullscreen</button><small>Slide navigation is handled by Google's embedded presentation controls.</small></div></section></main>
 <script>
 (()=>{'use strict';
@@ -91,6 +109,7 @@ const wrap=$('icons');norms.forEach((n,i)=>{const b=document.createElement('butt
 function update(){[...wrap.children].forEach((b,i)=>{b.classList.toggle('active',i===selected);b.setAttribute('aria-pressed',String(i===selected))});const box=$('pinned');box.classList.toggle('visible',selected>=0);box.replaceChildren();if(selected>=0){const title=document.createElement('strong');title.textContent=norms[selected][1];const detail=document.createElement('div');detail.textContent=norms[selected][2];const close=document.createElement('button');close.className='close-panel';close.textContent='×';close.setAttribute('aria-label','Close explanation');close.onclick=()=>{selected=-1;update()};box.append(title,detail,close)}}
 $('clear').onclick=()=>{selected=-1;update()};$('position').onchange=()=>{const p=$('position').value;$('fs').className='pos-'+p;localStorage.setItem('scisims-player-position',p)};let saved=localStorage.getItem('scisims-player-position')||'bottom';if(!['top','bottom','left','right'].includes(saved))saved='bottom';$('position').value=saved;$('fs').className='pos-'+saved;$('full').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
 $('fullHeader').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
+document.querySelectorAll('[data-dock]').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.dock;$('position').value=p;$('position').dispatchEvent(new Event('change'))}));
 const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
 openSlides();
 })();
