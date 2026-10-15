@@ -6,27 +6,41 @@ header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 18px
 button,input{font:inherit}button{cursor:pointer;border:1px solid #a9c3d3;border-radius:9px;background:#fff;color:#173650;padding:9px 13px}
 button:hover,button:focus-visible{outline:2px solid #1c879f;outline-offset:1px}
 header button{background:#daf5fa}input{min-width:200px;flex:1;border:1px solid #a7bac6;border-radius:9px;padding:9px}
-main{padding:12px;max-width:1600px;margin:auto}
+main{padding:6px;max-width:1800px;margin:auto;display:flex;flex-direction:column;gap:5px}
 .viewer{background:#fff;border:1px solid #c4d6de;border-radius:12px;overflow:hidden;position:relative}
 iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#f4f8fa}
 .notice{padding:8px 12px;color:#375166;background:#edf7fa;font-size:13px}.notice a{color:#075d87}
-.tools{margin:10px auto;background:#fff;border:1px solid #c4d6de;border-radius:14px;padding:12px;position:relative;max-width:1100px}
-.tools h2{font-size:15px;margin:0 0 9px}.icons{display:grid;grid-template-columns:repeat(8,minmax(50px,1fr));gap:7px}
-.norm{position:relative;display:flex;align-items:center;justify-content:center;min-height:70px;border-radius:12px;border:2px solid transparent;background:#eef7fe;touch-action:manipulation}
+.tools{margin:0;background:#fff;border:1px solid #c4d6de;border-radius:9px;padding:4px 7px;position:relative;width:100%}.tools h2{display:none}
+main.pos-bottom .viewer{order:0}main.pos-bottom .tools{order:1}main.pos-top .viewer{order:1}main.pos-top .tools{order:0}
+main.pos-left,main.pos-right{display:grid;grid-template-columns:minmax(58px,72px) minmax(0,1fr);align-items:stretch}
+main.pos-right{grid-template-columns:minmax(0,1fr) minmax(58px,72px)}
+main.pos-left .tools{grid-column:1;grid-row:1}main.pos-left .viewer{grid-column:2;grid-row:1}
+main.pos-right .tools{grid-column:2;grid-row:1}main.pos-right .viewer{grid-column:1;grid-row:1}
+main.pos-left .tools,main.pos-right .tools{padding:6px 2px}
+main.pos-left .icons,main.pos-right .icons{grid-template-columns:1fr;gap:2px}
+main.pos-left .norm,main.pos-right .norm{min-height:46px}
+main.pos-left .symbol,main.pos-right .symbol{width:40px;height:40px;font-size:20px}
+main.pos-left iframe,main.pos-right iframe{height:min(84vh,calc(100vw * .56));aspect-ratio:auto}
+main.pos-left .controls,main.pos-right .controls{display:none}
+main.pos-left .pinned,main.pos-right .pinned{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:99;width:min(520px,92vw)}
+@media(max-width:800px){main.pos-left,main.pos-right{grid-template-columns:54px minmax(0,1fr)}main.pos-right{grid-template-columns:minmax(0,1fr) 54px}}
+
+.tools h2{font-size:15px;margin:0 0 9px}.icons{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px}
+.norm{position:relative;display:flex;align-items:center;justify-content:center;min-height:47px;border-radius:5px;border:1px solid transparent;background:transparent;touch-action:manipulation}
 .norm:nth-child(3n){background:#fff1d1}.norm:nth-child(5n){background:#fff1d1}.norm:hover,.norm.active,.norm:focus-visible{border-color:#007e96}
-.symbol{display:grid;place-items:center;width:49px;height:49px;border-radius:50%;font-size:26px;font-weight:900;background:#d2e9fc;color:#103e82}
+.symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:50%;font-size:23px;font-weight:900;background:#d2e9fc;color:#103e82}
 .norm:nth-child(3n) .symbol,.norm:nth-child(5n) .symbol{background:#ffe9b8;color:#8b5505}
 .tooltip{position:absolute;z-index:9;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);width:min(310px,82vw);pointer-events:none;text-align:left;background:#123550;color:#fff;border-radius:10px;padding:12px;box-shadow:0 6px 22px #0003;display:none;font-size:14px;line-height:1.45}
 .tooltip strong{display:block;font-size:16px;margin-bottom:4px}.norm:hover .tooltip,.norm:focus-visible .tooltip{display:block}
 .pinned{padding:10px 14px;border-radius:9px;margin:10px 0 0;background:#e5f6fa;border-left:4px solid #0089a0;display:none}.pinned.visible{display:block}
-.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}.controls small{color:#456}
+.controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center;font-size:12px}.controls button,.controls select{padding:3px 7px;font-size:12px;border:1px solid #c6d5df;border-radius:5px;background:#f8fbff}.controls small{color:#456}
 #fs:fullscreen{background:#111}#fs:fullscreen iframe{height:calc(100vh - 170px);aspect-ratio:auto}#fs:fullscreen .notice{display:none}
 @media(max-width:600px){header{padding:10px}header h1{width:100%}.icons{grid-template-columns:repeat(4,1fr)}.norm{min-height:60px}.tooltip{display:none!important}}
 </style></head>
 <body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Google Slides URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a viewable Google Slides presentation URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button></header>
 <main id="fs"><div class="viewer"><iframe id="slides" title="Embedded Google Slides presentation" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="notice">Use the navigation provided by Google Slides inside the player. If an organisation blocks embedding, choose <b>Open in Google Slides</b> instead. <a href="https://support.google.com/docs/answer/183965" target="_blank" rel="noopener">Embedding guidance</a></div></div>
-<section class="tools" id="tools"><h2>Student Engagement Norms — hover to explain, click to pin</h2><div id="icons" class="icons"></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
-<div class="controls"><button id="clear">Clear explanation</button><button id="hide">Hide icons</button><button id="full">Fullscreen player</button><small>Slide navigation is handled by Google's embedded presentation controls.</small></div></section></main>
+<section class="tools" id="tools"><h2>Student Engagement Norms</h2><div id="icons" class="icons"></div><div id="pinned" class="pinned" role="status" aria-live="polite"></div>
+<div class="controls"><label for="position">Icons</label><select id="position" aria-label="Icon position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select><button id="clear" title="Close the pinned explanation">Dismiss explanation</button><button id="full">Fullscreen</button><small>Slide navigation is handled by Google's embedded presentation controls.</small></div></section></main>
 <script>
 (()=>{'use strict';
 const initial='https://docs.google.com/presentation/d/1hhI-VUzYS7TPWGgVCJMHd3MI6sLxxECNaA442bkaUAE/edit';
@@ -45,7 +59,7 @@ function openSlides(){const raw=$('source').value.trim();const id=parseSlides(ra
 $('source').value=initial;$('load').onclick=openSlides;$('source').addEventListener('keydown',e=>{if(e.key==='Enter')openSlides()});$('external').onclick=()=>window.open(original,'_blank','noopener,noreferrer');
 const wrap=$('icons');norms.forEach((n,i)=>{const b=document.createElement('button');b.className='norm';b.type='button';b.setAttribute('aria-label',n[1]+': '+n[2]);b.setAttribute('aria-pressed','false');const icon=document.createElement('span');icon.className='symbol';icon.textContent=n[0];const tip=document.createElement('span');tip.className='tooltip';tip.innerHTML='<strong></strong><span></span>';tip.querySelector('strong').textContent=n[1];tip.querySelector('span').textContent=n[2];b.append(icon,tip);b.onclick=()=>{selected=selected===i?-1:i;update()};wrap.append(b)});
 function update(){[...wrap.children].forEach((b,i)=>{b.classList.toggle('active',i===selected);b.setAttribute('aria-pressed',String(i===selected))});const box=$('pinned');box.classList.toggle('visible',selected>=0);box.textContent=selected<0?'':norms[selected][1]+' — '+norms[selected][2]}
-$('clear').onclick=()=>{selected=-1;update()};$('hide').onclick=()=>{wrap.hidden=!wrap.hidden;$('hide').textContent=wrap.hidden?'Show icons':'Hide icons'};$('full').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
+$('clear').onclick=()=>{selected=-1;update()};$('position').onchange=()=>{const p=$('position').value;$('fs').className='pos-'+p;localStorage.setItem('scisims-player-position',p)};let saved=localStorage.getItem('scisims-player-position')||'bottom';if(!['top','bottom','left','right'].includes(saved))saved='bottom';$('position').value=saved;$('fs').className='pos-'+saved;$('full').onclick=()=>{if(!document.fullscreenElement){$('fs').requestFullscreen?.()}else document.exitFullscreen?.()};
 const h=location.hash.match(/deck=([A-Za-z0-9_-]+)/);if(h)$('source').value='https://docs.google.com/presentation/d/'+h[1]+'/edit';
 openSlides();
 })();
