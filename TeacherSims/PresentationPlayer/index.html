@@ -36,6 +36,18 @@ main.pos-left .pinned,main.pos-right .pinned{position:fixed;bottom:12px;left:50%
 .controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center;font-size:12px}.controls button,.controls select{padding:3px 7px;font-size:12px;border:1px solid #c6d5df;border-radius:5px;background:#f8fbff}.controls small{color:#456}
 #fs:fullscreen{background:#111}#fs:fullscreen iframe{height:calc(100vh - 170px);aspect-ratio:auto}#fs:fullscreen .notice{display:none}
 @media(max-width:600px){header{padding:10px}header h1{width:100%}.icons{grid-template-columns:repeat(4,1fr)}.norm{min-height:28px}.tooltip{display:none!important}}
+
+/* Original coloured icon strip, sourced from the LHS slide artwork. */
+.norm .symbol{font-size:0!important;border-radius:0!important;background-image:url("https://lh7-rt.googleusercontent.com/slidesz/AGV_vUfg948tBIpdtF3WqT6cVg-RPjfNBIAHtYZvBb7925fixmnkRFl_7GurMaopgQlqS7Nw7aiM1aXyTndB-NEwdBXL-ZSVn53YQX0QkHbdWECXmvuIikMC1asgRgEOuKLsj3UlRRDjkEqfrvrgXvYRhL7etGLmZnkarQzN83j_oY72_lZt=s2048?key=38LLicphZWo0815xZ6s1nQ")!important;background-repeat:no-repeat!important;background-size:800% 100%!important;background-color:transparent!important}
+.norm:nth-child(1) .symbol{background-position:0% 50%!important}
+.norm:nth-child(2) .symbol{background-position:14.2857% 50%!important}
+.norm:nth-child(3) .symbol{background-position:28.5714% 50%!important}
+.norm:nth-child(4) .symbol{background-position:42.8571% 50%!important}
+.norm:nth-child(5) .symbol{background-position:57.1429% 50%!important}
+.norm:nth-child(6) .symbol{background-position:71.4286% 50%!important}
+.norm:nth-child(7) .symbol{background-position:85.7143% 50%!important}
+.norm:nth-child(8) .symbol{background-position:100% 50%!important}
+.norm:nth-child(3n),.norm:nth-child(5n){background:transparent}
 </style></head>
 <body><header><h1>🔬 SciSims Presentation Player</h1><label for="source">Google Slides URL</label><input id="source" aria-label="Google Slides URL" placeholder="Paste a viewable Google Slides presentation URL"><button id="load">Open slides</button><button id="external">Open in Google Slides ↗</button><label for="position">Icons</label><select id="position"><option value="bottom">Bottom</option><option value="top">Top</option><option value="left">Left</option><option value="right">Right</option></select></header>
 <main id="fs"><div class="viewer"><iframe id="slides" title="Embedded Google Slides presentation" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="notice">Use the navigation provided by Google Slides inside the player. If an organisation blocks embedding, choose <b>Open in Google Slides</b> instead. <a href="https://support.google.com/docs/answer/183965" target="_blank" rel="noopener">Embedding guidance</a></div></div>
