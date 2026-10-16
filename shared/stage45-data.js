@@ -148,6 +148,60 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "id": "physims-combinationcircuits",
+  "title": "Combination Circuits and Kirchhoff’s Laws",
+  "path": "PhySims/CombinationCircuits/",
+  "description": "Investigate current at junctions, potential differences around loops, and resistance in series–parallel circuits.",
+  "tags": [
+    "Electricity",
+    "Circuits",
+    "Kirchhoff’s laws",
+    "Current",
+    "Voltage",
+    "Resistance"
+  ],
+  "type": "Simulation",
+  "workingScientifically": [
+    "Questioning and predicting",
+    "Analysing data and information",
+    "Problem-solving"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "physims-workenergy",
+  "title": "Work–Energy Theorem",
+  "path": "PhySims/WorkEnergy/",
+  "description": "Connect net work, the area under a force–displacement graph, and changes in kinetic energy.",
+  "tags": [
+    "Work",
+    "Energy",
+    "Kinetic energy",
+    "Force",
+    "Displacement",
+    "Graphs"
+  ],
+  "type": "Simulation",
+  "workingScientifically": [
+    "Questioning and predicting",
+    "Analysing data and information",
+    "Problem-solving"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
   "id": "earthsims-earthinmotion",
   "title": "Earth in Motion",
   "path": "EarthSims/EarthInMotion/",
