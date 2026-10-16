@@ -148,6 +148,37 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "id": "earthsims-earthinmotion",
+  "title": "Earth in Motion",
+  "path": "EarthSims/EarthInMotion/",
+  "description": "Investigate day and night, the Sun’s apparent path and opposite seasonal patterns. Compare latitude, date and axial tilt, test a zero-tilt Earth, and record predictions and evidence offline.",
+  "type": "Simulation",
+  "tags": [
+    "Year 7",
+    "Stage 4",
+    "Observing the Universe",
+    "Earth rotation",
+    "Day and night",
+    "Seasons",
+    "Axial tilt",
+    "Sunlight"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Conducting investigations",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Core"
+    }
+  ]
+},
+{
   "id": "earthsims-solarsystemshowdown",
   "title": "Solar System Model Showdown",
   "path": "EarthSims/SolarSystemShowdown/",
