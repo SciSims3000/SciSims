@@ -1,8 +1,8 @@
 # Earth in Motion — acceptance report
 
-Version 2.0.0 · 17 October 2026
+Version 2.1.0 · 17 October 2026
 
-**Result: 48/48 automated release checks passed; no JavaScript runtime errors.**
+**Result: 48/48 regression checks and 12/12 theme checks passed; no JavaScript runtime errors.**
 
 ## Scientific acceptance
 
@@ -38,3 +38,9 @@ Approximate educational model, not an ephemeris. Daily rotation holds date fixed
 Tested in desktop Chrome with responsive viewports and reduced-motion preference. Physical touch hardware, actual screen-reader sessions and native full screen in every host are not certified. Browser storage/full-screen support depends on browser/origin; fallback is supplied. External source links require internet. Written answers are not automatically marked.
 
 The standalone `index.html`, optional test runner and README accompany this report. Tests use a separate temporary browser context with synthetic work and do not clear existing browser-profile data.
+
+## Light/dark mode update
+
+A title-banner switch follows the device appearance initially and remembers an explicit choice independently of student work. Theme colours cover text, panels, controls, tables, sky, ground, diagram annotations and sunlight vectors; scientific light/dark Earth shading remains meaningful in both modes. The initial preference is applied before the first paint.
+
+The separate theme suite verifies the light default, dark toggle and accessible state, unchanged simulation settings, reload persistence, normal-text and sky-label contrast of at least 4.5:1 in both themes, 320 px layout in each, explicit preference taking precedence over system changes, graceful storage failure, light print surfaces and no runtime errors. Representative dark/light screenshots were inspected.
