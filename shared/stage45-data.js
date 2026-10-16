@@ -148,6 +148,38 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "id": "earthsims-solarsystemshowdown",
+  "title": "Solar System Model Showdown",
+  "path": "EarthSims/SolarSystemShowdown/",
+  "description": "Compare simple geocentric, Ptolemaic, early heliocentric and modern orbital models. Investigate retrograde motion, Venus phases and Jupiter’s moons, then record predictions and evidence.",
+  "type": "Simulation",
+  "tags": [
+    "Year 7",
+    "Stage 4",
+    "Observing the Universe",
+    "Solar System",
+    "Scientific models",
+    "Retrograde motion",
+    "Venus phases",
+    "Jupiter moons",
+    "Evidence"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Conducting investigations",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Core"
+    }
+  ]
+},
+{
   "id": "physims-quantitiesofmotion",
   "title": "Quantities of Motion",
   "path": "PhySims/QuantitiesOfMotion/",
