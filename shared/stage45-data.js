@@ -148,6 +148,48 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "title": "Cosmic Journey",
+  "path": "EarthSims/CosmicJourney/",
+  "description": "Travel through ten cosmic milestones with animated explanations, evidence and uncertainty notes, logarithmic and linear timelines, relative expansion readouts, questions, reduced motion and fullscreen presentation. Supporting classroom uses: connect observations with cosmological models, and compare how logarithmic and linear scales represent the same time intervals.",
+  "type": "Simulation",
+  "tags": [
+    "Big Bang",
+    "Cosmic history",
+    "Expansion of space",
+    "Cosmic microwave background",
+    "Nucleosynthesis",
+    "Scientific models",
+    "Evidence",
+    "Logarithmic scales",
+    "Stage 4",
+    "Stage 5",
+    "Stage 6"
+  ],
+  "id": "earthsims-cosmicjourney",
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Processing data and information",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
   "id": "physims-combinationcircuits",
   "title": "Combination Circuits and Kirchhoff’s Laws",
   "path": "PhySims/CombinationCircuits/",
