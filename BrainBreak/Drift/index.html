@@ -162,6 +162,20 @@
     .audio-credit { margin-top: 9px; color: rgba(244, 241, 233, .32); font-size: 9px; letter-spacing: .02em; }
     .audio-credit a { color: inherit; text-underline-offset: 2px; }
 
+
+    /* Optional countdown: completely absent until enabled. */
+    .countdown-display { position: fixed; top: max(140px, calc(env(safe-area-inset-top) + 132px)); right: 26px; z-index: 3; pointer-events: none; font: 300 clamp(30px, 4vw, 55px)/1.1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .03em; font-variant-numeric: tabular-nums; text-align: right; text-shadow: none; }
+    .countdown-display[hidden], .countdown-settings[hidden] { display: none !important; }
+    .countdown-display.is-subtle { color: transparent; -webkit-text-stroke: 1px rgba(245, 246, 246, .66); }
+    .countdown-display.is-visible { color: #fff; font-weight: 550; text-shadow: 0 2px 18px rgba(0,0,0,.7); }
+    .countdown-settings { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .countdown-settings input[type="number"] { width: 76px; padding: 8px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); background: rgba(0,0,0,.2); font: inherit; }
+    .countdown-settings .timer-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 9px; }
+    .countdown-settings button { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: rgba(0,0,0,.2); cursor: pointer; }
+    .countdown-settings button:disabled { opacity: .45; cursor: default; }
+    .countdown-settings select { width: auto; flex: 1; }
+    @media (max-width: 650px) { .countdown-display { top: 67px; right: 18px; font-size: 32px; } }
+
     .hint { position: fixed; left: 50%; bottom: max(25px, env(safe-area-inset-bottom)); transform: translateX(-50%); color: rgba(244, 241, 233, .38); font-size: 11px; letter-spacing: .04em; opacity: 1; transition: opacity .8s ease; pointer-events: none; }
     .hint.is-dim { opacity: 0; }
 
@@ -203,6 +217,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.2"/></svg>
     </button>
   </div>
+
+  <div id="countdownDisplay" class="countdown-display is-subtle" role="timer" aria-label="Time remaining" hidden>05:00</div>
 
   <section class="controls" id="controls" aria-label="Drift controls">
     <div class="control-heading">
@@ -246,6 +262,29 @@
       </div>
     </div>
 
+    <div class="section">
+      <label class="section-label" style="display:flex; align-items:center; gap:9px; cursor:pointer">
+        <input type="checkbox" id="countdownEnabled"> Enable countdown
+      </label>
+      <div class="countdown-settings" id="countdownSettings" hidden>
+        <label class="section-label" for="countdownMinutes">Duration (minutes)</label>
+        <div class="timer-line">
+          <select id="countdownPreset" aria-label="Countdown preset"><option value="1">1 minute</option><option value="2">2 minutes</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="custom">Custom</option></select>
+          <input id="countdownMinutes" type="number" min="1" max="180" step="1" value="5" aria-label="Custom countdown minutes">
+        </div>
+        <div class="timer-line">
+          <label class="section-label" for="countdownStyle" style="margin:0">Display</label>
+          <select id="countdownStyle"><option value="subtle" selected>Subtle outline</option><option value="visible">Visible solid</option></select>
+        </div>
+        <div class="timer-line">
+          <button type="button" id="countdownStart">Start</button>
+          <button type="button" id="countdownPause" disabled>Pause</button>
+          <button type="button" id="countdownReset">Reset</button>
+        </div>
+        <span class="section-label" style="margin-top:8px">Final 30 seconds fade gently to silence.</span>
+      </div>
+    </div>
+
     <div class="utility-row">
       <span class="eyebrow">No score · no goals</span>
       <span class="principle">nothing demands your attention</span>
@@ -260,6 +299,15 @@
     (() => {
       'use strict';
 
+      const countdownEnabled = document.getElementById('countdownEnabled');
+      const countdownSettings = document.getElementById('countdownSettings');
+      const countdownDisplay = document.getElementById('countdownDisplay');
+      const countdownPreset = document.getElementById('countdownPreset');
+      const countdownMinutes = document.getElementById('countdownMinutes');
+      const countdownStyle = document.getElementById('countdownStyle');
+      const countdownStart = document.getElementById('countdownStart');
+      const countdownPause = document.getElementById('countdownPause');
+      const countdownReset = document.getElementById('countdownReset');
       const canvas = document.getElementById('scene');
       const ctx = canvas.getContext('2d', { alpha: false });
       const controls = document.getElementById('controls');
@@ -356,6 +404,68 @@
       let hintTimer;
       let noiseSeed = 4;
       let audio = null;
+      // Countdown is opt-in, so normal Drift remains untouched on load.
+      let timerRunning = false;
+      let timerEnd = 0;
+      let timerRemaining = 300000;
+      let timerFinished = false;
+      let timerFade = 1;
+      let lastTimerAudioLevel = -1;
+
+      function selectedTimerDuration() {
+        const value = Math.max(1, Math.min(180, Math.round(Number(countdownMinutes.value) || 5)));
+        countdownMinutes.value = value;
+        return value * 60000;
+      }
+      function timerTimeLeft() {
+        return timerRunning ? Math.max(0, timerEnd - Date.now()) : timerRemaining;
+      }
+      function updateTimer(now) {
+        if (!countdownEnabled.checked) return;
+        const remaining = timerTimeLeft();
+        if (timerRunning && remaining <= 0) {
+          timerRunning = false;
+          timerRemaining = 0;
+          timerFinished = true;
+        }
+        timerFade = timerFinished ? 0 : (timerRunning && remaining <= 30000 ? remaining / 30000 : 1);
+        const totalSeconds = Math.ceil(remaining / 1000);
+        countdownDisplay.textContent = String(Math.floor(totalSeconds / 60)).padStart(2, '0') + ':' + String(totalSeconds % 60).padStart(2, '0');
+        countdownStart.disabled = timerRunning;
+        countdownPause.disabled = !timerRunning;
+        countdownStart.textContent = timerRemaining === 0 && timerFinished ? 'Restart' : (timerRemaining < selectedTimerDuration() ? 'Resume' : 'Start');
+        updateTimerAudio();
+      }
+      function updateTimerAudio() {
+        if (!audio || !countdownEnabled.checked && lastTimerAudioLevel === -1) return;
+        const level = countdownEnabled.checked ? timerFade : 1;
+        if (Math.abs(level - lastTimerAudioLevel) < .005) return;
+        lastTimerAudioLevel = level;
+        const now = audio.ac.currentTime;
+        const gain = audio.timerGain.gain;
+        gain.cancelScheduledValues(now);
+        gain.setTargetAtTime(level, now, .12);
+      }
+      function resetTimer() {
+        timerRunning = false;
+        timerRemaining = selectedTimerDuration();
+        timerFinished = false;
+        timerFade = 1;
+        updateTimer(performance.now());
+      }
+      function startTimer() {
+        if (timerFinished || timerRemaining <= 0) timerRemaining = selectedTimerDuration();
+        timerFinished = false;
+        timerRunning = true;
+        timerEnd = Date.now() + timerRemaining;
+        updateTimer(performance.now());
+      }
+      function pauseTimer() {
+        timerRemaining = timerTimeLeft();
+        timerRunning = false;
+        updateTimer(performance.now());
+      }
+
 
       const state = {
         campfire: { sparks: [], emberPulse: 0, eventAt: 0 },
@@ -923,7 +1033,9 @@
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           if (!AudioContext) { soundLabel.textContent = 'Sound unavailable'; return; }
           const ac = new AudioContext();
-          const master = ac.createGain(); master.gain.value = .0001; master.connect(ac.destination);
+          const master = ac.createGain(); master.gain.value = .0001;
+          const timerGain = ac.createGain(); timerGain.gain.value = countdownEnabled.checked ? timerFade : 1;
+          master.connect(timerGain).connect(ac.destination);
           const bed = ac.createBufferSource(); bed.buffer = createNoiseBuffer(ac, 3); bed.loop = true;
           const low = ac.createBiquadFilter(); low.type = 'lowpass'; low.frequency.value = 650;
           const high = ac.createBiquadFilter(); high.type = 'highpass'; high.frequency.value = 45;
@@ -945,7 +1057,7 @@
             });
             return [scene, tracks];
           }));
-          audio = { ac, master, bedGain, low, high, assets, scene: activeScene, tick: null, setScene: updateAudioScene };
+          audio = { ac, master, timerGain, bedGain, low, high, assets, scene: activeScene, tick: null, setScene: updateAudioScene };
           audio.master.gain.exponentialRampToValueAtTime(.2, ac.currentTime + .8);
           Object.values(assets).flat().forEach(({ element }) => { const play = element.play(); if (play) play.catch(() => {}); });
           audio.tick = setInterval(audioEvent, 1300);
@@ -997,12 +1109,18 @@
       }
 
       function frame(now) {
+        if (countdownEnabled.checked) updateTimer(now);
         if (!lastTime) lastTime = now;
         const dt = Math.min(80, now - lastTime); lastTime = now;
         if (!paused) {
           if (drift && nextSceneAt && now >= nextSceneAt && !outgoingScene) advanceScene();
           updateReadout(now);
           draw(now, dt);
+          // The countdown fade covers only the scene canvas, never the timer or controls.
+          if (countdownEnabled.checked && timerFade < 1) {
+            ctx.fillStyle = 'rgba(9, 13, 22, ' + (1 - timerFade) + ')';
+            ctx.fillRect(0, 0, width, height);
+          }
         }
         requestAnimationFrame(frame);
       }
@@ -1017,6 +1135,27 @@
       driftMode.addEventListener('click', () => setMode(true));
       durationSelect.addEventListener('change', () => { if (drift) nextSceneAt = performance.now() + Number(durationSelect.value); showControlsBriefly(); });
       soundButton.addEventListener('click', toggleAudio);
+      countdownEnabled.addEventListener('change', () => {
+        countdownSettings.hidden = !countdownEnabled.checked;
+        countdownDisplay.hidden = !countdownEnabled.checked;
+        if (!countdownEnabled.checked) {
+          timerRunning = false; timerFinished = false; timerFade = 1;
+          timerRemaining = selectedTimerDuration();
+          updateTimerAudio();
+        } else resetTimer();
+      });
+      countdownStyle.addEventListener('change', () => {
+        countdownDisplay.classList.toggle('is-subtle', countdownStyle.value === 'subtle');
+        countdownDisplay.classList.toggle('is-visible', countdownStyle.value === 'visible');
+      });
+      countdownPreset.addEventListener('change', () => {
+        if (countdownPreset.value !== 'custom') countdownMinutes.value = countdownPreset.value;
+        resetTimer();
+      });
+      countdownMinutes.addEventListener('change', () => { countdownPreset.value = 'custom'; resetTimer(); });
+      countdownStart.addEventListener('click', startTimer);
+      countdownPause.addEventListener('click', pauseTimer);
+      countdownReset.addEventListener('click', resetTimer);
       sceneButtons.forEach(button => button.addEventListener('click', () => { requestScene(button.dataset.scene); showControlsBriefly(); }));
       document.addEventListener('keydown', event => {
         if (event.key.toLowerCase() === 'h' && !event.metaKey && !event.ctrlKey) { event.preventDefault(); toggleControls(); }
