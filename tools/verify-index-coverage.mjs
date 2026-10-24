@@ -25,7 +25,7 @@ function walk(directory) {
     if (entry.name.startsWith('.')) continue;
     const file = path.join(directory, entry.name);
     if (entry.isDirectory()) walk(file);
-    else if (entry.name.endsWith('.html') && directory !== '.' && !alternates.has(file)) entries.push(normalise(file));
+    else if (entry.name.endsWith('.html') && directory !== '.' && !alternates.has(file) && !(directory === 'Animation-Lab' && entry.name !== 'index.html')) entries.push(normalise(file));
   }
 }
 walk('.');
@@ -58,12 +58,13 @@ for (const target of ['PhySims/CombinationCircuits', 'PhySims/WorkEnergy']) {
 
 // Check static links and assets in every index gateway, including fragment destinations.
 const sections = [...read('index.html').matchAll(/id:\s*'([^']+)'/g)].map(match => match[1]);
-for (const file of ['index.html', 'Stage4index.html', 'Stage5index.html', 'Stage6index.html', 'HSCindex.html', 'TeacherToolsindex.html', 'Moreindex.html']) {
+for (const file of ['index.html', 'Stage4index.html', 'Stage5index.html', 'Stage6index.html', 'HSCindex.html', 'TeacherToolsindex.html', 'Moreindex.html', 'Animation-Lab/index.html', 'Animation-Lab/Catalogue.html', 'Animation-Lab/Visual-review.html', 'Animation-Lab/Year7-Forces.html', 'Animation-Lab/Year7-Cells-and-Classification.html', 'Animation-Lab/Year7-Observing-the-Universe.html', 'Animation-Lab/Year7-Solutions-and-Mixtures.html']) {
   for (const match of read(file).matchAll(/(?:href|src)=["']([^"'$<>\x60{}]+)["']/g)) {
     const url = match[1];
     if (/^(?:https?:|mailto:|data:|#)/.test(url)) continue;
     const [pathname, fragment] = url.split('#');
-    const target = pathname.endsWith('/') ? pathname + 'index.html' : pathname.split('?')[0];
+    const relativeTarget = pathname.endsWith('/') ? pathname + 'index.html' : pathname.split('?')[0];
+    const target = path.join(path.dirname(file), relativeTarget);
     if (!fs.existsSync(target)) failures.push(file + ': broken link or asset ' + url);
     else if (fragment && target.endsWith('.html') && !read(target).includes('id="' + fragment + '"') && !(target === 'index.html' && sections.includes(fragment))) failures.push(file + ': missing fragment ' + url);
   }

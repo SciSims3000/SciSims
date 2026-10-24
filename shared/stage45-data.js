@@ -148,6 +148,44 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "title": "Animation Lab",
+  "description": "Explore 221 short science animations, including 24-second explainers, with playback controls, captions and ready-made videos for lessons.",
+  "path": "Animation-Lab/",
+  "type": "Learning Tool",
+  "tags": [
+    "Animations",
+    "Explainers",
+    "Year 7",
+    "Stage 6",
+    "Video",
+    "Scientific models"
+  ],
+  "id": "animation-lab",
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
   "title": "Interactive Periodic Table",
   "description": "Explore element properties, periodic trends, electron configurations and classroom views in the interactive periodic table.",
   "path": "ChemSims/PeriodicTable/SciSims-3000-Periodic-Table-v1.2.html",

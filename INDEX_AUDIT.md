@@ -32,3 +32,13 @@ No broken local index targets or unintended same-collection duplicates were foun
 Excluded alternate entry files: `ChemSims/ChemicalReactionReactor/index1.html`, `EarthSims/SolarSystemShowdown/offline.html`, and `PhySims/MagForce.html`; each has an indexed primary activity. Senior specialist physics resources remain scoped to Stage 6; games and teacher utilities retain their appropriate collections rather than being forced into curriculum modules. Avogadro’s amount-of-substance gas model is placed in Stage 6.
 
 Validation passed: 183 activity entry points, 124 shared junior resources, 146 senior resources (including the runtime-added Science Web), Teacher Tools coverage, duplicate/path checks, all index static local links/assets and cross-page fragments, and `git diff --check`. Styles, layout markup and navigation were not changed. Validation checks repository targets and catalogue data, not all simulation behaviour, external services or live deployed HTTP availability.
+
+## Animation Lab publication — 25 October 2026
+
+Imported the latest Animation Lab package from the 17 October output folder, last updated 18 October 2026 at 11:08 am; its 11:09 am ZIP contains the identical player. Includes 221 animations, the ready-made MP4 catalogue, Year 7 topic guides, visual review examples and local export helper. Source files on the Mac were left unchanged.
+
+Added Animation Lab immediately after Periodic Table in Featured Learning Tools; retained Cosmic Journey, Formula Deconstructor and Drift. Added a searchable main-catalogue entry under Working Scientifically, Stage 4 mappings for modules 7.1–7.4 and supporting Year 12 Stage 6 mappings for the five represented courses, modules 5–8.
+
+Website integration adds shared navigation to the player and explains that custom MP4 rendering needs the local helper; hosted users can play animations and use the existing downloadable MP4s. Auxiliary HTML catalogues/guides are validated as supporting pages rather than counted as independent simulations.
+
+Checks: all 221 registry entries match library metadata, all catalogue video targets exist, the final top-down Jupiter correction is present, local index validation covers 184 activities / 125 junior / 147 senior resources, JavaScript syntax checks and git diff --check pass.
