@@ -148,6 +148,62 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "title": "Interactive Periodic Table",
+  "description": "Explore element properties, periodic trends, electron configurations and classroom views in the interactive periodic table.",
+  "path": "ChemSims/PeriodicTable/SciSims-3000-Periodic-Table-v1.2.html",
+  "type": "Simulation",
+  "version": "1.2",
+  "tags": [
+    "Periodic table",
+    "Elements",
+    "Periodic trends",
+    "Atomic structure"
+  ],
+  "id": "chemsims-interactive-periodic-table",
+  "workingScientifically": [
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "8.2",
+      "relevance": "Core"
+    },
+    {
+      "module": "9.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "title": "Science Formula Deconstructor",
+  "description": "Explore and deconstruct NSW science formulas, statistics and constants by identifying symbols, quantities, units and mathematical relationships.",
+  "path": "ScienceFormulaDeconstructor/",
+  "type": "Student Tool",
+  "tags": [
+    "Science formulas",
+    "Constants",
+    "Statistics",
+    "Units",
+    "Mathematical relationships"
+  ],
+  "id": "science-formula-deconstructor",
+  "workingScientifically": [
+    "Problem-solving"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
   "title": "Cosmic Journey",
   "path": "EarthSims/CosmicJourney/",
   "description": "Travel through ten cosmic milestones with animated explanations, evidence and uncertainty notes, logarithmic and linear timelines, relative expansion readouts, questions, reduced motion and fullscreen presentation. Supporting classroom uses: connect observations with cosmological models, and compare how logarithmic and linear scales represent the same time intervals.",

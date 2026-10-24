@@ -5,13 +5,16 @@ import vm from 'node:vm';
 const read = file => fs.readFileSync(file, 'utf8');
 const normalise = value => value.replace(/index\.html$/, '').replace(/\/$/, '');
 const failures = [];
+const targetFile = value => /\.html$/.test(value) ? value : `${normalise(value)}/index.html`;
+const alternates = new Set(['ChemSims/ChemicalReactionReactor/index1.html', 'EarthSims/SolarSystemShowdown/offline.html', 'PhySims/MagForce.html']);
 function catalogue(file, name) {
   const match = read(file).match(new RegExp(`const ${name} = (\\[[\\s\\S]*?\\n\\s*\\]);`));
   if (!match) throw new Error(`Cannot find ${name} in ${file}`);
   return vm.runInNewContext(match[1], Object.create(null), { timeout: 1000 });
 }
 const main = catalogue('index.html', 'SIMS');
-const senior = catalogue('Stage6index.html', 'STAGE6_SIMS');
+const seniorSource = read('Stage6index.html');
+const senior = vm.runInNewContext(seniorSource.slice(seniorSource.indexOf('const STAGE6_SIMS ='), seniorSource.indexOf('  const COURSE_COLOURS =')) + '\nSTAGE6_SIMS;', Object.create(null), { timeout: 1000 });
 const context = { window: {} };
 vm.runInNewContext(read('shared/stage45-data.js'), context, { timeout: 1000 });
 const junior = context.window.SCISIMS_STAGE45.resources;
@@ -22,7 +25,7 @@ function walk(directory) {
     if (entry.name.startsWith('.')) continue;
     const file = path.join(directory, entry.name);
     if (entry.isDirectory()) walk(file);
-    else if (entry.name === 'index.html' && directory !== '.') entries.push(directory);
+    else if (entry.name.endsWith('.html') && directory !== '.' && !alternates.has(file)) entries.push(normalise(file));
   }
 }
 walk('.');
@@ -33,7 +36,7 @@ for (const [name, items] of [['Main', main], ['Stage 4/5', junior], ['Stage 6', 
   const seen = new Set();
   for (const item of items) {
     const target = normalise(item.path);
-    if (!fs.existsSync(`${target}/index.html`)) failures.push(`${name}: broken path ${item.path}`);
+    if (!fs.existsSync(targetFile(item.path))) failures.push(`${name}: broken path ${item.path}`);
     // The main catalogue deliberately lists some activities in multiple sections.
     const key = name === 'Main' ? `${item.section}:${target}` : target;
     if (seen.has(key)) failures.push(`${name}: duplicate entry ${item.path}`);
@@ -52,6 +55,20 @@ for (const target of ['PhySims/CombinationCircuits', 'PhySims/WorkEnergy']) {
     if (!items.some(item => normalise(item.path) === target)) failures.push(`${name} is missing ${target}/`);
   }
 }
+
+// Check static links and assets in every index gateway, including fragment destinations.
+const sections = [...read('index.html').matchAll(/id:\s*'([^']+)'/g)].map(match => match[1]);
+for (const file of ['index.html', 'Stage4index.html', 'Stage5index.html', 'Stage6index.html', 'HSCindex.html', 'TeacherToolsindex.html', 'Moreindex.html']) {
+  for (const match of read(file).matchAll(/(?:href|src)=["']([^"'$<>\x60{}]+)["']/g)) {
+    const url = match[1];
+    if (/^(?:https?:|mailto:|data:|#)/.test(url)) continue;
+    const [pathname, fragment] = url.split('#');
+    const target = pathname.endsWith('/') ? pathname + 'index.html' : pathname.split('?')[0];
+    if (!fs.existsSync(target)) failures.push(file + ': broken link or asset ' + url);
+    else if (fragment && target.endsWith('.html') && !read(target).includes('id="' + fragment + '"') && !(target === 'index.html' && sections.includes(fragment))) failures.push(file + ': missing fragment ' + url);
+  }
+}
+
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
