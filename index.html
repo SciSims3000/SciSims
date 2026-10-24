@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SciSims main index | Version 1.4.2 -->
+<!-- SciSims main index | Version 1.5.0 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8" />
@@ -701,6 +701,12 @@
       .search-toolbar{top:6px;}
     }
 
+    .featured-tools{background:linear-gradient(135deg,#ffffff,#eef5ff);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+    .featured-tools .section-header{margin-bottom:18px;}
+    .featured-tools .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .featured-tools .tag-row,.featured-tools .release-meta{display:none;}
+    @media (max-width:760px){.featured-tools .cards{grid-template-columns:1fr;}}
+
     @media (max-width:560px){
       h1{font-size:34px;}
       h2{font-size:24px;}
@@ -727,7 +733,7 @@
         </div>
         <div id="versionNotes" class="version-notes" hidden>
           <strong>Latest changes</strong>
-          Completed the individual-page catalogue audit by adding Years 7–10 Science Jeopardy and the Science Extension 15-Marker Generator.
+          Featured Learning Tools brings the Periodic Table, Cosmic Journey, Formula Deconstructor and Drift together at the top of the page.
         </div>
         <p>A collection of classroom science simulations for practical inquiry, modelling, data analysis and concept development.</p>
              <p> </p>
@@ -745,6 +751,14 @@
            <p>Modify this however you wish.</p>
     </div>
   </header>
+  <section id="learning-tools" class="section featured-tools" aria-labelledby="learningToolsTitle">
+    <div class="section-header">
+      <h2 id="learningToolsTitle">Featured Learning Tools</h2>
+      <p class="section-intro">Explore elements, watch the Universe unfold, unpack a formula or take a quiet reset.</p>
+    </div>
+    <div id="featuredToolsGrid" class="cards"></div>
+  </section>
+
   <section class="dashboard" aria-label="SciSims controls">
     <div class="toolbar search-toolbar">
       <div class="toolbar-grid">
@@ -4261,6 +4275,20 @@
     return card;
   }
 
+  function renderFeaturedTools(){
+    const featured = [
+      ['ChemSims/PeriodicTable/SciSims-3000-Periodic-Table-v1.2.html','Interactive Periodic Table','Explore elements, compare their properties and discover patterns across the periodic table.'],
+      ['EarthSims/CosmicJourney/','Cosmic Journey','Watch an animated journey through the history of the Universe, with evidence, explanations and questions along the way.'],
+      ['ScienceFormulaDeconstructor/','Formula Deconstructor','Break science formulas into variables, units and clear steps to understand what each relationship means.'],
+      ['BrainBreak/Drift/','Drift','Take a quiet reset with calming natural scenes and layered ambient sound.']
+    ];
+    const grid = document.getElementById('featuredToolsGrid');
+    featured.forEach(([path,title,description])=>{
+      const sim = SIMS.find(item=>item.path === path);
+      if(sim) grid.appendChild(createCard({...sim,title,description}));
+    });
+  }
+
   function groupSims(sims){
     return sims.reduce((groups,sim)=>{
       if(!groups[sim.group]) groups[sim.group] = [];
@@ -4271,6 +4299,10 @@
 
   function renderContents(){
     contentsLinks.innerHTML = '';
+    const featuredLink = document.createElement('a');
+    featuredLink.href = '#learning-tools';
+    featuredLink.textContent = 'Learning Tools';
+    contentsLinks.appendChild(featuredLink);
     SECTIONS.forEach(section=>{
       const link = document.createElement('a');
       link.href = `#${section.id}`;
@@ -4446,6 +4478,7 @@
     }
   });
 
+  renderFeaturedTools();
   renderContents();
   renderFilters();
   renderQuickAccess();
