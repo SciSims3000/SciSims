@@ -190,7 +190,7 @@ window.SCISIMS_STAGE45 = {
   "description": "Explore element properties, periodic trends, electron configurations and classroom views in the interactive periodic table.",
   "path": "ChemSims/PeriodicTable/SciSims-3000-Periodic-Table-v1.2.html",
   "type": "Simulation",
-  "version": "1.2",
+  "version": "1.3",
   "tags": [
     "Periodic table",
     "Elements",

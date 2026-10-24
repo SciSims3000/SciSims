@@ -1,8 +1,15 @@
 # SciSims 3000 — Interactive Periodic Table
 
-**Version 1.2 · classroom beta · 17 October 2026**
+**Version 1.3 · classroom beta · 25 October 2026**
 
 Open [SciSims-3000-Periodic-Table-v1.2.html](SciSims-3000-Periodic-Table-v1.2.html) in a modern browser. Download the HTML file to use it offline; no installation, account, external libraries, fonts or network data are required. Reference links require internet access. This versioned HTML is the canonical simulator in this folder.
+
+## Version 1.3 changes
+
+- Light and dark appearance selector; follows the system preference initially and remembers the selected theme when browser storage is available.
+- Visible neutral-atom electron shell diagram near the top of every element pop-up, with shell populations, outermost-shell highlighting and accessible text.
+- All 118 shell populations derived from [PubChem electron configurations](https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON), retrieved 25 October 2026. Predicted configurations retain their source label. Exceptions such as chromium and copper use the supplied configurations rather than a simple filling rule.
+- First-20 prediction/ion activities retain their existing introductory scope. The versioned HTML filename is retained to preserve all existing links.
 
 ## Features
 
