@@ -701,7 +701,11 @@
       .search-toolbar{top:6px;}
     }
 
-    .featured-tools{background:linear-gradient(135deg,#ffffff,#eef5ff);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+    .featured-tools{background:linear-gradient(135deg,#fff176,#ffcc80);border:2px solid #e9a52b;border-radius:var(--radius);padding:24px;margin-bottom:24px;box-shadow:0 8px 24px rgba(180,110,10,.16);}
+    .featured-tools .sim-card{background:#fff8cc;border-color:#d6a536;}
+    .featured-tools .section-header h2,.featured-tools .sim-card h3{color:#172554;}
+    .featured-tools .section-header p,.featured-tools .sim-card p{color:#475569;}
+    .featured-tools .sim-card:hover{background:#fff2a6;border-color:#946200;}
     .featured-tools .section-header{margin-bottom:18px;}
     .featured-tools .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
     .featured-tools .tag-row,.featured-tools .release-meta{display:none;}
@@ -877,6 +881,21 @@
   ];
 
     const SIMS = [
+{
+  "section": "teachertools",
+  "group": "Presentation and Instruction",
+  "title": "Animation Lab",
+  "description": "Play, customise and present short science animations, and open ready-made captioned videos for lessons.",
+  "path": "Animation-Lab/",
+  "type": "Learning Tool",
+  "tags": [
+    "Teacher tool",
+    "Animations",
+    "Lesson preparation",
+    "Explainers",
+    "Video"
+  ]
+},
 {
   "section": "workingscientifically",
   "group": "Learning Tools",
@@ -4504,3 +4523,4 @@
 </script>
 </body>
 </html>
+
