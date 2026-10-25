@@ -4,6 +4,10 @@
 
 Open [SciSims-3000-Periodic-Table-v1.2.html](SciSims-3000-Periodic-Table-v1.2.html) in a modern browser. Download the HTML file to use it offline; no installation, account, external libraries, fonts or network data are required. Reference links require internet access. This versioned HTML is the canonical simulator in this folder.
 
+## Tile labels
+
+Show physical state joins the names, atomic-number and mass checkboxes. It hides state labels and state text in tile accessibility labels/tooltips without changing state filters or temperature counts. Shell-count labels remain available in shell-colouring modes. Reset restores all four label checkboxes.
+
 ## Temperature and state selector
 
 Solid, Liquid, Gas and Unknown buttons sit beside the temperature controls. Counts update at 0, 25 and 100 °C, using either all 118 elements or the First 20 scope. Select a state to highlight matching elements; All clears the state filter. Counts describe the full selected scope, independently of other search/filter settings. The original State dropdown remains synchronised.
