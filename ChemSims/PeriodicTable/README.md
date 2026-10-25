@@ -4,6 +4,10 @@
 
 Open [SciSims-3000-Periodic-Table-v1.2.html](SciSims-3000-Periodic-Table-v1.2.html) in a modern browser. Download the HTML file to use it offline; no installation, account, external libraries, fonts or network data are required. Reference links require internet access. This versioned HTML is the canonical simulator in this folder.
 
+## Temperature and state selector
+
+Solid, Liquid, Gas and Unknown buttons sit beside the temperature controls. Counts update at 0, 25 and 100 °C, using either all 118 elements or the First 20 scope. Select a state to highlight matching elements; All clears the state filter. Counts describe the full selected scope, independently of other search/filter settings. The original State dropdown remains synchronised.
+
 ## Element pop-up navigation
 
 Each information section can be expanded or collapsed independently. Electron shells start open; the remaining sections start collapsed. Expand all / Collapse all controls offer quick navigation, and section choices are retained while browsing elements during the session. Native disclosure controls support keyboard access.
