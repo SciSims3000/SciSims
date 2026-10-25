@@ -42,3 +42,33 @@ Added Animation Lab immediately after Periodic Table in Featured Learning Tools;
 Website integration adds shared navigation to the player and explains that custom MP4 rendering needs the local helper; hosted users can play animations and use the existing downloadable MP4s. Auxiliary HTML catalogues/guides are validated as supporting pages rather than counted as independent simulations.
 
 Checks: all 221 registry entries match library metadata, all catalogue video targets exist, the final top-down Jupiter correction is present, local index validation covers 184 activities / 125 junior / 147 senior resources, JavaScript syntax checks and git diff --check pass.
+
+
+## Latest ten distinct sims and featured styling — 25 October 2026
+
+Checked 25 October 2026 against `main` at `c6d82e2e7e0a21c522c6e3b7bdf166c0eaec2f4e`.
+
+Scope: the ten distinct interactive pages most recently changed, counting repeat commits to a page once. This includes classroom tools and Animation Lab; individual MP4 files and supporting guides are not counted as separate sims.
+
+| Sim/tool | Standard menu before | Correction | Appropriate index coverage after changes |
+| --- | --- | --- | --- |
+| Interactive Periodic Table | Missing | Added shared menu | Main Chemistry; featured; Stage 4 8.2; Stage 5 9.3; Stage 6 Chemistry Year 11 Module 1 |
+| Animation Lab | Missing | Added shared menu; added Teacher Tools listing and matching main collection entry | Main Working Scientifically and Teacher Tools; featured; Stage 4 7.1–7.4; Stage 6 Year 12 Modules 5–8 across its five represented courses |
+| Drift | Present | None needed | Main Brain Breaks and Teacher Tools; featured; Teacher Tools page; More via Brain Breaks gateway |
+| Cosmic Journey | Missing | Added shared menu | Main Earth & Space; featured; Stage 4 7.1/8.4; Stage 5 10.4; Stage 6 Physics Year 12 Module 8 and Investigating Science Year 11 Module 3 / Year 12 Module 7 |
+| Earth in Motion | Missing | Added shared menu; adjusted self-check to allow bundled navigation files | Main Earth & Space; Stage 4 7.1; Stage 6 Investigating Science Year 11 Module 3 |
+| Solar System Model Showdown | Present | None needed | Main Earth & Space; Stage 4 7.1; Stage 6 Investigating Science Year 11 Module 3 |
+| Presentation Player | Missing | Added shared menu | Main Teacher Tools collection; Teacher Tools page |
+| Seating Plan Maker | Present | None needed | Main Teacher Tools collection; Teacher Tools page |
+| Science Letters | Present | None needed | Main Brain Breaks collection; Teacher Tools page; More direct link |
+| Target Reactor | Present | None needed | Main Brain Breaks collection; Teacher Tools page; More direct link |
+
+The main catalogue's subject sections serve as subject indexes. Stage 4/5 share curriculum data; HSC redirects to Stage 6. More is a collection gateway. Classroom utilities have not been forced into unrelated curriculum modules.
+
+The five new menus use the existing shared menu, including Home, Stage 4, Stage 5, Stage 6, Teacher Tools and More, mobile toggle and Escape/outside-click closing. Fixed menu mounts use the standard content offset. All ten pages now have exactly one menu mount and valid shared CSS/JavaScript paths.
+
+Featured Learning Tools now has a bright yellow-to-apricot background, stronger amber border and pale-yellow cards. Changes are scoped to this section; the same sims' normal catalogue cards keep their existing styling.
+
+Validation passed: inline JavaScript parses in all seven changed pages; actual shared-menu code passes open/Escape/outside-click and route checks for all ten sim paths; all 193 main, 125 junior and 147 senior resource paths resolve in the repository tree, without unintended same-collection duplicates; expected curriculum, Teacher Tools and More mappings pass. The additional Animation Lab cross-listing is intentional. No sim models or calculations were changed.
+
+Limits: browser visual layout, mobile rendering, full simulation behaviour and live deployment were not tested. Menu behaviour was exercised in a lightweight DOM harness; path checks use repository targets, not deployed HTTP responses.
