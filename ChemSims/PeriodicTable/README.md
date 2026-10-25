@@ -4,6 +4,10 @@
 
 Open [SciSims-3000-Periodic-Table-v1.2.html](SciSims-3000-Periodic-Table-v1.2.html) in a modern browser. Download the HTML file to use it offline; no installation, account, external libraries, fonts or network data are required. Reference links require internet access. This versioned HTML is the canonical simulator in this folder.
 
+## Element pop-up navigation
+
+Each information section can be expanded or collapsed independently. Electron shells start open; the remaining sections start collapsed. Expand all / Collapse all controls offer quick navigation, and section choices are retained while browsing elements during the session. Native disclosure controls support keyboard access.
+
 ## Version 1.3 changes
 
 - Light and dark appearance selector; follows the system preference initially and remembers the selected theme when browser storage is available.
