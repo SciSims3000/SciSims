@@ -1,8 +1,251 @@
 {
   "schema": "scisims-truth-or-lie-1",
   "id": "science-starters",
-  "title": "Science starters — 30 pairs",
+  "title": "Science starters — 330 pairs",
   "items": [
+    {
+      "id": "motion-04",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Speed is distance travelled per unit time.",
+      "lie": "Speed is displacement per unit time.",
+      "explanation": "Speed uses distance; average velocity uses displacement.",
+      "source": ""
+    },
+    {
+      "id": "motion-05",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Velocity includes direction.",
+      "lie": "Velocity describes magnitude only.",
+      "explanation": "Velocity is a vector: both magnitude and direction matter.",
+      "source": ""
+    },
+    {
+      "id": "motion-06",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Acceleration is the rate of change of velocity.",
+      "lie": "Acceleration is the rate of change of position.",
+      "explanation": "Changing position gives velocity; changing velocity gives acceleration.",
+      "source": ""
+    },
+    {
+      "id": "motion-07",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "The SI unit of speed is metres per second.",
+      "lie": "The SI unit of speed is metres per second squared.",
+      "explanation": "m/s measures speed; m/s² measures acceleration.",
+      "source": ""
+    },
+    {
+      "id": "motion-08",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Negative velocity can describe motion to the left when right is positive.",
+      "lie": "Negative velocity always means an object is slowing down.",
+      "explanation": "The sign identifies direction relative to the chosen positive direction.",
+      "source": ""
+    },
+    {
+      "id": "motion-09",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A car travelling 100 m in 20 s has an average speed of 5 m/s.",
+      "lie": "A car travelling 100 m in 20 s has an average speed of 20 m/s.",
+      "explanation": "Average speed = 100 ÷ 20 = 5 m/s.",
+      "source": ""
+    },
+    {
+      "id": "motion-10",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Travelling 3 m east then 3 m west gives a total distance of 6 m.",
+      "lie": "Travelling 3 m east then 3 m west gives a total distance of 0 m.",
+      "explanation": "Distance adds the lengths of both parts of the journey.",
+      "source": ""
+    },
+    {
+      "id": "motion-11",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Travelling 3 m east then 3 m west gives zero displacement.",
+      "lie": "Travelling 3 m east then 3 m west gives a displacement of 6 m east.",
+      "explanation": "Displacement depends only on final position minus initial position.",
+      "source": ""
+    },
+    {
+      "id": "motion-12",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A speedometer indicates instantaneous speed.",
+      "lie": "A speedometer indicates the total distance travelled.",
+      "explanation": "Instantaneous speed describes how fast the vehicle is moving at that moment.",
+      "source": ""
+    },
+    {
+      "id": "motion-13",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "The gradient of a position–time graph gives velocity.",
+      "lie": "The gradient of a position–time graph gives acceleration directly.",
+      "explanation": "Velocity is change in position divided by elapsed time.",
+      "source": ""
+    },
+    {
+      "id": "motion-14",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A steeper positive position–time gradient means a greater positive velocity.",
+      "lie": "A steeper positive position–time gradient means a smaller positive velocity.",
+      "explanation": "A larger rise in position per second means greater velocity.",
+      "source": ""
+    },
+    {
+      "id": "motion-15",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "The gradient of a velocity–time graph gives acceleration.",
+      "lie": "The gradient of a velocity–time graph gives distance.",
+      "explanation": "Acceleration is change in velocity divided by elapsed time.",
+      "source": ""
+    },
+    {
+      "id": "motion-16",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Signed area under a velocity–time graph gives displacement.",
+      "lie": "Signed area under a velocity–time graph gives acceleration.",
+      "explanation": "Velocity multiplied by time has units of displacement; negative areas subtract.",
+      "source": ""
+    },
+    {
+      "id": "motion-17",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "Area under a speed–time graph gives distance travelled.",
+      "lie": "Area under a speed–time graph gives average acceleration.",
+      "explanation": "Adding speed multiplied by small time intervals gives total distance.",
+      "source": ""
+    },
+    {
+      "id": "motion-18",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A horizontal velocity–time line above zero means constant positive velocity.",
+      "lie": "A horizontal velocity–time line above zero means the object is at rest.",
+      "explanation": "Velocity is constant but non-zero; acceleration is zero.",
+      "source": ""
+    },
+    {
+      "id": "motion-19",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "An object moving in the positive direction slows down if its acceleration is negative.",
+      "lie": "An object moving in the positive direction speeds up if its acceleration is negative.",
+      "explanation": "Acceleration opposite to velocity reduces speed while the object continues in that direction.",
+      "source": ""
+    },
+    {
+      "id": "motion-20",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "An object moving in the negative direction speeds up if its acceleration is also negative.",
+      "lie": "An object moving in the negative direction must slow down when acceleration is negative.",
+      "explanation": "Acceleration in the same direction as velocity increases its magnitude.",
+      "source": ""
+    },
+    {
+      "id": "motion-21",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A ball thrown vertically upwards has downward acceleration at its highest point, ignoring air resistance.",
+      "lie": "A ball thrown vertically upwards has zero acceleration at its highest point.",
+      "explanation": "Its velocity is momentarily zero, but gravity still acts downwards.",
+      "source": ""
+    },
+    {
+      "id": "motion-22",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "At constant speed, doubling the travel time doubles the distance travelled.",
+      "lie": "At constant speed, doubling the travel time halves the distance travelled.",
+      "explanation": "Distance = speed × time.",
+      "source": ""
+    },
+    {
+      "id": "motion-23",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "At constant speed, doubling the distance doubles the travel time.",
+      "lie": "At constant speed, doubling the distance halves the travel time.",
+      "explanation": "Time = distance ÷ speed.",
+      "source": ""
+    },
+    {
+      "id": "motion-24",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "An average speed of 10 m/s does not require a speed of 10 m/s throughout the trip.",
+      "lie": "An average speed of 10 m/s means the speed was exactly 10 m/s throughout the trip.",
+      "explanation": "Different instantaneous speeds can produce the same total-distance-to-time ratio.",
+      "source": ""
+    },
+    {
+      "id": "motion-25",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A passenger can be at rest relative to a train while moving relative to the ground.",
+      "lie": "An object at rest relative to a train must also be at rest relative to the ground.",
+      "explanation": "Motion depends on the reference frame.",
+      "source": ""
+    },
+    {
+      "id": "motion-26",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "For a straight-line journey without reversing, distance equals the magnitude of displacement.",
+      "lie": "For a straight-line journey without reversing, distance is always greater than the magnitude of displacement.",
+      "explanation": "With no reversal, the path length equals the separation of the endpoints.",
+      "source": ""
+    },
+    {
+      "id": "motion-27",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A displacement can be negative in a chosen coordinate system.",
+      "lie": "Distance travelled can be negative if an object moves backwards.",
+      "explanation": "Displacement is signed; distance is a non-negative path length.",
+      "source": ""
+    },
+    {
+      "id": "motion-28",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A change from 2 m/s to 8 m/s in 3 s gives an average acceleration of 2 m/s².",
+      "lie": "A change from 2 m/s to 8 m/s in 3 s gives an average acceleration of 6 m/s².",
+      "explanation": "Average acceleration = (8 − 2) ÷ 3 = 2 m/s².",
+      "source": ""
+    },
+    {
+      "id": "motion-29",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "In ideal projectile motion, horizontal velocity remains constant when air resistance is ignored.",
+      "lie": "In ideal projectile motion, gravity steadily reduces horizontal velocity.",
+      "explanation": "Gravity acts vertically; there is no horizontal acceleration in this model.",
+      "source": ""
+    },
+    {
+      "id": "motion-30",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A runner completing one lap has zero average velocity over that lap.",
+      "lie": "A runner completing one lap must have zero average speed over that lap.",
+      "explanation": "The displacement is zero, but the distance travelled is positive.",
+      "source": ""
+    },
     {
       "id": "science-001",
       "topic": "Motion",
@@ -31,6 +274,249 @@
       "source": ""
     },
     {
+      "id": "forces-04",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A force is a vector quantity.",
+      "lie": "A force has magnitude but no direction.",
+      "explanation": "Forces have both size and direction; direction matters when finding the resultant.",
+      "source": ""
+    },
+    {
+      "id": "forces-05",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Force is measured in newtons.",
+      "lie": "Force is measured in kilograms.",
+      "explanation": "The newton is the SI force unit; the kilogram measures mass.",
+      "source": ""
+    },
+    {
+      "id": "forces-06",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Two equal forces in opposite directions on the same object can balance.",
+      "lie": "Two equal forces in the same direction on the same object cancel out.",
+      "explanation": "Opposite forces subtract; forces in the same direction add.",
+      "source": ""
+    },
+    {
+      "id": "forces-07",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A non-zero net force causes acceleration.",
+      "lie": "A non-zero net force is required to maintain constant velocity.",
+      "explanation": "Newton’s second law links net force to acceleration, not velocity.",
+      "source": ""
+    },
+    {
+      "id": "forces-08",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "For a fixed mass, doubling the net force doubles the acceleration.",
+      "lie": "For a fixed mass, doubling the net force halves the acceleration.",
+      "explanation": "From F = ma, acceleration is proportional to net force for a fixed mass.",
+      "source": ""
+    },
+    {
+      "id": "forces-09",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "For a fixed net force, doubling the mass halves the acceleration.",
+      "lie": "For a fixed net force, doubling the mass doubles the acceleration.",
+      "explanation": "From a = F/m, greater mass produces less acceleration for the same net force.",
+      "source": ""
+    },
+    {
+      "id": "forces-10",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A 2 kg object with a net force of 6 N has an acceleration of 3 m/s².",
+      "lie": "A 2 kg object with a net force of 6 N has an acceleration of 12 m/s².",
+      "explanation": "a = F/m = 6 ÷ 2 = 3 m/s².",
+      "source": ""
+    },
+    {
+      "id": "forces-11",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Inertia is an object’s resistance to changes in velocity.",
+      "lie": "Inertia is a force that pushes moving objects forwards.",
+      "explanation": "Inertia is a property associated with mass, not an additional force.",
+      "source": ""
+    },
+    {
+      "id": "forces-12",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "An object with greater mass has greater inertia.",
+      "lie": "An object with greater speed necessarily has greater inertia.",
+      "explanation": "In introductory mechanics, inertia depends on mass, not speed.",
+      "source": ""
+    },
+    {
+      "id": "forces-13",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Newton’s third-law force pairs act on different objects.",
+      "lie": "Newton’s third-law force pairs cancel because they act on the same object.",
+      "explanation": "Each force acts on one of the two interacting objects.",
+      "source": ""
+    },
+    {
+      "id": "forces-14",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "When a person pushes a wall, the wall pushes back on the person.",
+      "lie": "When a person pushes a stationary wall, the wall exerts no force on the person.",
+      "explanation": "The interaction produces equal-magnitude, opposite-direction forces on different objects.",
+      "source": ""
+    },
+    {
+      "id": "forces-15",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Earth pulls an apple downwards and the apple pulls Earth upwards.",
+      "lie": "Earth pulls an apple downwards but the apple exerts no gravitational force on Earth.",
+      "explanation": "Gravity is mutual. Earth’s much larger mass makes its acceleration tiny.",
+      "source": ""
+    },
+    {
+      "id": "forces-16",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "The normal force acts perpendicular to a contact surface.",
+      "lie": "The normal force always acts vertically upwards.",
+      "explanation": "Normal means perpendicular to the surface, including tilted surfaces.",
+      "source": ""
+    },
+    {
+      "id": "forces-17",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Friction can prevent surfaces from sliding relative to each other.",
+      "lie": "Friction exists only after surfaces start sliding.",
+      "explanation": "Static friction can act before sliding begins.",
+      "source": ""
+    },
+    {
+      "id": "forces-18",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Static friction can be smaller than its maximum possible value.",
+      "lie": "Static friction always equals its maximum possible value.",
+      "explanation": "Static friction adjusts to balance the required tangential force up to its limiting value.",
+      "source": ""
+    },
+    {
+      "id": "forces-19",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Sliding friction usually converts some mechanical energy into internal energy.",
+      "lie": "Sliding friction destroys energy completely.",
+      "explanation": "Energy is transferred into microscopic motion and other forms; total energy is conserved.",
+      "source": ""
+    },
+    {
+      "id": "forces-20",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Air resistance acts opposite to an object’s velocity relative to the air.",
+      "lie": "Air resistance always acts vertically upwards.",
+      "explanation": "Its direction depends on the object’s motion relative to the air.",
+      "source": ""
+    },
+    {
+      "id": "forces-21",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "At terminal velocity, a falling object has zero net force.",
+      "lie": "At terminal velocity, gravity stops acting on a falling object.",
+      "explanation": "Weight is balanced by opposing forces, so acceleration is zero.",
+      "source": ""
+    },
+    {
+      "id": "forces-22",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A parachute can reduce terminal speed by increasing drag.",
+      "lie": "A parachute reduces terminal speed by eliminating gravity.",
+      "explanation": "The parachute increases air resistance; weight remains.",
+      "source": ""
+    },
+    {
+      "id": "forces-23",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Pressure is force divided by area.",
+      "lie": "Pressure is force multiplied by area.",
+      "explanation": "P = F/A, so pressure depends on how concentrated the force is.",
+      "source": ""
+    },
+    {
+      "id": "forces-24",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "For the same force, a smaller contact area gives greater pressure.",
+      "lie": "For the same force, a smaller contact area gives smaller pressure.",
+      "explanation": "Dividing the same force by a smaller area gives a larger pressure.",
+      "source": ""
+    },
+    {
+      "id": "forces-25",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A lever can reduce the effort force needed by increasing the effort distance.",
+      "lie": "A lever reduces the required force without changing distance or energy transfer in an ideal machine.",
+      "explanation": "Mechanical advantage trades force against distance; it does not create energy.",
+      "source": ""
+    },
+    {
+      "id": "forces-26",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A stretched string can exert tension on an attached object.",
+      "lie": "A slack string can push an attached object away by tension.",
+      "explanation": "Tension pulls along a taut string; a string does not transmit a compressive push in this way.",
+      "source": ""
+    },
+    {
+      "id": "forces-27",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Magnetic forces can act without direct contact.",
+      "lie": "Magnetic forces require the magnet to touch the affected object.",
+      "explanation": "A magnetic field allows interactions across a separation.",
+      "source": ""
+    },
+    {
+      "id": "forces-28",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Like magnetic poles repel.",
+      "lie": "Like magnetic poles attract.",
+      "explanation": "North repels north and south repels south; unlike poles attract.",
+      "source": ""
+    },
+    {
+      "id": "forces-29",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "A floating object at rest has an upward buoyant force equal to its weight.",
+      "lie": "A floating object at rest has an upward buoyant force greater than its weight.",
+      "explanation": "Balanced vertical forces give zero vertical acceleration.",
+      "source": ""
+    },
+    {
+      "id": "forces-30",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "For a frictionless ramp, increasing the angle increases the downhill acceleration between 0° and 90°.",
+      "lie": "For a frictionless ramp, increasing the angle decreases the downhill acceleration.",
+      "explanation": "The downhill component of gravity gives a = g sin θ.",
+      "source": ""
+    },
+    {
       "id": "science-004",
       "topic": "Forces",
       "stage": "Stages 4–5",
@@ -55,6 +541,258 @@
       "truth": "In a vacuum, objects released from rest at the same place fall with the same acceleration regardless of mass.",
       "lie": "In a vacuum, heavier objects released from rest fall with greater acceleration than lighter objects.",
       "explanation": "At the same location, gravitational acceleration is independent of the falling object’s mass when other forces are absent.",
+      "source": ""
+    },
+    {
+      "id": "energy-03",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Kinetic energy is energy associated with motion.",
+      "lie": "Kinetic energy is energy associated only with height.",
+      "explanation": "Motion contributes kinetic energy; height in a gravitational field contributes gravitational potential energy.",
+      "source": ""
+    },
+    {
+      "id": "energy-04",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "At the same speed, doubling mass doubles kinetic energy.",
+      "lie": "At the same speed, doubling mass halves kinetic energy.",
+      "explanation": "Kinetic energy = ½mv², so it is proportional to mass at fixed speed.",
+      "source": ""
+    },
+    {
+      "id": "energy-05",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "For a fixed mass, doubling speed quadruples kinetic energy.",
+      "lie": "For a fixed mass, doubling speed only doubles kinetic energy.",
+      "explanation": "Speed is squared in ½mv².",
+      "source": ""
+    },
+    {
+      "id": "energy-06",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A book raised higher near Earth’s surface gains gravitational potential energy.",
+      "lie": "Raising a book higher near Earth’s surface reduces its gravitational potential energy.",
+      "explanation": "Near the surface, the increase is mgh for a height increase h.",
+      "source": ""
+    },
+    {
+      "id": "energy-07",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "The joule is a unit of energy.",
+      "lie": "The watt is a unit of energy.",
+      "explanation": "Joules measure energy; watts measure energy transferred per second.",
+      "source": ""
+    },
+    {
+      "id": "energy-08",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Power is the rate of energy transfer.",
+      "lie": "Power is the total energy stored in an object.",
+      "explanation": "Power describes how quickly energy is transferred, not how much is stored.",
+      "source": ""
+    },
+    {
+      "id": "energy-09",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A device transferring 100 J in 5 s has a power of 20 W.",
+      "lie": "A device transferring 100 J in 5 s has a power of 500 W.",
+      "explanation": "Power = energy ÷ time = 100 ÷ 5.",
+      "source": ""
+    },
+    {
+      "id": "energy-10",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "One watt is one joule per second.",
+      "lie": "One watt is one joule multiplied by one second.",
+      "explanation": "A watt measures a rate of energy transfer.",
+      "source": ""
+    },
+    {
+      "id": "energy-11",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "An object can store energy without moving.",
+      "lie": "An object must be moving to have any energy.",
+      "explanation": "Gravitational, elastic and chemical stores can exist in stationary objects.",
+      "source": ""
+    },
+    {
+      "id": "energy-12",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Chemical reactions can transfer energy to the surroundings.",
+      "lie": "Every chemical reaction must absorb energy from the surroundings.",
+      "explanation": "Exothermic reactions transfer energy out; endothermic reactions absorb it.",
+      "source": ""
+    },
+    {
+      "id": "energy-13",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Food provides a chemical energy store.",
+      "lie": "Food stores energy as a supply of electric current.",
+      "explanation": "Chemical processes release energy from food for cellular activities.",
+      "source": ""
+    },
+    {
+      "id": "energy-14",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A battery stores energy chemically.",
+      "lie": "A battery stores its energy as a tank of moving electrons.",
+      "explanation": "Chemical reactions in the battery transfer energy to charges in a circuit.",
+      "source": ""
+    },
+    {
+      "id": "energy-15",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "In an ideal falling system, gravitational potential energy can become kinetic energy.",
+      "lie": "An ideal falling object gains kinetic energy without any other energy change.",
+      "explanation": "As height falls, gravitational potential energy decreases while kinetic energy increases.",
+      "source": ""
+    },
+    {
+      "id": "energy-16",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Mechanical energy can decrease while total energy remains conserved.",
+      "lie": "If mechanical energy decreases, total energy must have been destroyed.",
+      "explanation": "Mechanical energy can transfer to internal energy through friction or drag.",
+      "source": ""
+    },
+    {
+      "id": "energy-17",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Heating transfers energy because of a temperature difference.",
+      "lie": "Heating transfers a substance called cold from cooler objects into warmer objects.",
+      "explanation": "Heat is energy in transfer; cold is not a material substance.",
+      "source": ""
+    },
+    {
+      "id": "energy-18",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Net thermal energy transfer occurs from hotter to cooler objects without external work.",
+      "lie": "Net thermal energy transfer naturally runs from cooler to hotter objects without external work.",
+      "explanation": "The spontaneous net transfer is down the temperature difference.",
+      "source": ""
+    },
+    {
+      "id": "energy-19",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Temperature and total internal energy are different quantities.",
+      "lie": "Two objects at the same temperature must contain the same total internal energy.",
+      "explanation": "Internal energy depends on amount and type of matter as well as temperature and state.",
+      "source": ""
+    },
+    {
+      "id": "energy-20",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Thermal conduction can occur through a solid without the solid moving as a whole.",
+      "lie": "Thermal conduction requires the entire solid to flow from hot to cold.",
+      "explanation": "Energy is transferred through microscopic interactions rather than bulk flow.",
+      "source": ""
+    },
+    {
+      "id": "energy-21",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Convection involves bulk movement of a fluid.",
+      "lie": "Convection is the main heat-transfer process within a rigid solid.",
+      "explanation": "Convection requires fluid motion, as in liquids and gases.",
+      "source": ""
+    },
+    {
+      "id": "energy-22",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Thermal radiation can transfer energy through empty space.",
+      "lie": "Thermal radiation needs air particles to carry energy.",
+      "explanation": "Electromagnetic radiation can travel through a vacuum.",
+      "source": ""
+    },
+    {
+      "id": "energy-23",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Insulation reduces the rate of thermal energy transfer.",
+      "lie": "Insulation creates thermal energy to keep an object warm.",
+      "explanation": "Insulation slows energy transfer; it is not an energy source.",
+      "source": ""
+    },
+    {
+      "id": "energy-24",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Efficiency compares useful output energy with input energy.",
+      "lie": "Efficiency is calculated by dividing input energy by useful output energy.",
+      "explanation": "Efficiency = useful output ÷ input, often expressed as a percentage.",
+      "source": ""
+    },
+    {
+      "id": "energy-25",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A machine with 80 J useful output from 100 J input is 80% efficient.",
+      "lie": "A machine with 80 J useful output from 100 J input is 125% efficient.",
+      "explanation": "80 ÷ 100 × 100% = 80%.",
+      "source": ""
+    },
+    {
+      "id": "energy-26",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "An ordinary machine cannot deliver more total energy than it receives and releases from storage.",
+      "lie": "An ordinary machine can continuously create extra energy if its gears are arranged correctly.",
+      "explanation": "Energy conservation rules out a machine that produces energy from nothing.",
+      "source": ""
+    },
+    {
+      "id": "energy-27",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A kilowatt-hour is a unit of energy.",
+      "lie": "A kilowatt-hour is a unit of power.",
+      "explanation": "Power multiplied by time gives energy; 1 kWh = 3.6 MJ.",
+      "source": ""
+    },
+    {
+      "id": "energy-28",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Solar panels can convert incoming light energy to electrical energy.",
+      "lie": "Solar panels create energy from nothing when sunlight reaches them.",
+      "explanation": "The light supplies energy that the panels convert.",
+      "source": ""
+    },
+    {
+      "id": "energy-29",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Wind turbines obtain energy from moving air.",
+      "lie": "Wind turbines produce energy by consuming the air itself.",
+      "explanation": "Moving air has kinetic energy; the turbine transfers some of it.",
+      "source": ""
+    },
+    {
+      "id": "energy-30",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Doing work on an object can change its energy.",
+      "lie": "Mechanical work can never transfer energy to an object.",
+      "explanation": "A force acting through a displacement can transfer energy mechanically.",
       "source": ""
     },
     {
@@ -94,6 +832,510 @@
       "source": ""
     },
     {
+      "id": "waves-03",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Waves can transfer energy without transporting matter over the whole journey.",
+      "lie": "A wave must carry the same particles all the way from its source to its destination.",
+      "explanation": "In many waves, particles oscillate locally while the disturbance travels.",
+      "source": ""
+    },
+    {
+      "id": "waves-04",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Wavelength is the distance between successive points in the same phase.",
+      "lie": "Wavelength is the time required for one oscillation.",
+      "explanation": "Wavelength is a distance; period is a time.",
+      "source": ""
+    },
+    {
+      "id": "waves-05",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Frequency is the number of oscillations per second.",
+      "lie": "Frequency is the distance a wave travels in one second.",
+      "explanation": "Frequency counts cycles per second; wave speed measures travel distance per second.",
+      "source": ""
+    },
+    {
+      "id": "waves-06",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Frequency is measured in hertz.",
+      "lie": "Frequency is measured in metres.",
+      "explanation": "One hertz is one cycle per second.",
+      "source": ""
+    },
+    {
+      "id": "waves-07",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "The period is the time taken for one complete oscillation.",
+      "lie": "The period is the number of oscillations in one second.",
+      "explanation": "Period measures time per cycle; frequency counts cycles per time.",
+      "source": ""
+    },
+    {
+      "id": "waves-08",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Doubling frequency halves the period.",
+      "lie": "Doubling frequency doubles the period.",
+      "explanation": "Period and frequency are reciprocals: T = 1/f.",
+      "source": ""
+    },
+    {
+      "id": "waves-09",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A wave with frequency 5 Hz has a period of 0.2 s.",
+      "lie": "A wave with frequency 5 Hz has a period of 5 s.",
+      "explanation": "T = 1 ÷ 5 = 0.2 s.",
+      "source": ""
+    },
+    {
+      "id": "waves-10",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Wave speed equals frequency multiplied by wavelength.",
+      "lie": "Wave speed equals frequency divided by wavelength.",
+      "explanation": "v = fλ, with units of metres per second.",
+      "source": ""
+    },
+    {
+      "id": "waves-11",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A wave with wavelength 2 m and frequency 3 Hz travels at 6 m/s.",
+      "lie": "A wave with wavelength 2 m and frequency 3 Hz travels at 1.5 m/s.",
+      "explanation": "Multiply frequency by wavelength: 3 × 2 = 6.",
+      "source": ""
+    },
+    {
+      "id": "waves-12",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "At fixed wave speed, increasing frequency decreases wavelength.",
+      "lie": "At fixed wave speed, increasing frequency increases wavelength.",
+      "explanation": "Because v = fλ is fixed, wavelength is inversely proportional to frequency.",
+      "source": ""
+    },
+    {
+      "id": "waves-13",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Amplitude is maximum displacement from equilibrium.",
+      "lie": "Amplitude is the distance between a crest and the adjacent trough.",
+      "explanation": "Crest-to-trough displacement is twice the amplitude for a symmetric wave.",
+      "source": ""
+    },
+    {
+      "id": "waves-14",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "In a transverse wave, oscillations are perpendicular to the direction of travel.",
+      "lie": "In a transverse wave, oscillations are parallel to the direction of travel.",
+      "explanation": "Transverse motion is across the propagation direction.",
+      "source": ""
+    },
+    {
+      "id": "waves-15",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "In a longitudinal wave, oscillations are parallel to the direction of travel.",
+      "lie": "In a longitudinal wave, oscillations are always perpendicular to the direction of travel.",
+      "explanation": "Longitudinal oscillations occur along the propagation direction.",
+      "source": ""
+    },
+    {
+      "id": "waves-16",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Sound in air is a longitudinal wave.",
+      "lie": "Sound in air is a transverse wave.",
+      "explanation": "Air undergoes pressure variations through compressions and rarefactions along the travel direction.",
+      "source": ""
+    },
+    {
+      "id": "waves-17",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A compression in a sound wave has higher pressure than the adjacent rarefaction.",
+      "lie": "A compression in a sound wave has lower pressure than the adjacent rarefaction.",
+      "explanation": "Particles are more crowded in a compression, giving higher local pressure.",
+      "source": ""
+    },
+    {
+      "id": "waves-18",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "An echo is reflected sound.",
+      "lie": "An echo is sound that has stopped moving permanently.",
+      "explanation": "Sound reflects from a surface and can return to the listener after a delay.",
+      "source": ""
+    },
+    {
+      "id": "waves-19",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "For an echo, sound travels to the reflector and back.",
+      "lie": "For an echo, the recorded time includes only the outward journey.",
+      "explanation": "The round trip is twice the source-to-reflector distance when the source and receiver are together.",
+      "source": ""
+    },
+    {
+      "id": "waves-20",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Sound generally travels faster in steel than in air.",
+      "lie": "Sound always travels faster in air than in solids.",
+      "explanation": "Wave speed depends on the material’s stiffness and density; steel transmits sound much faster than air.",
+      "source": ""
+    },
+    {
+      "id": "waves-21",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Increasing air temperature generally increases the speed of sound in air.",
+      "lie": "Increasing air temperature generally decreases the speed of sound in air.",
+      "explanation": "Within ordinary classroom conditions, sound speed increases with air temperature.",
+      "source": ""
+    },
+    {
+      "id": "waves-22",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Changing sound amplitude does not by itself change its frequency.",
+      "lie": "Making a sound wave larger in amplitude necessarily raises its frequency.",
+      "explanation": "Amplitude and frequency are separate wave properties.",
+      "source": ""
+    },
+    {
+      "id": "waves-23",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A louder sound does not necessarily have a higher pitch.",
+      "lie": "A louder sound must have a higher pitch.",
+      "explanation": "Loudness relates to intensity and hearing; pitch relates primarily to frequency.",
+      "source": ""
+    },
+    {
+      "id": "waves-24",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "When a wave crosses into another stationary medium, its frequency is set by the source.",
+      "lie": "When a wave crosses into another stationary medium, its frequency must change.",
+      "explanation": "Speed and wavelength can change at the boundary while frequency remains the same.",
+      "source": ""
+    },
+    {
+      "id": "waves-25",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Diffraction is the spreading of waves around edges or through gaps.",
+      "lie": "Diffraction is the complete disappearance of waves at every gap.",
+      "explanation": "Waves spread, especially when the gap size is comparable to wavelength.",
+      "source": ""
+    },
+    {
+      "id": "waves-26",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Overlapping waves can produce constructive interference.",
+      "lie": "Overlapping waves always cancel each other completely.",
+      "explanation": "Their displacements add; the result depends on their relative phases.",
+      "source": ""
+    },
+    {
+      "id": "waves-27",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Destructive interference can reduce the resultant displacement.",
+      "lie": "Destructive interference means both sources have stopped producing waves.",
+      "explanation": "Opposite displacements can cancel locally while the waves continue to exist.",
+      "source": ""
+    },
+    {
+      "id": "waves-28",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A standing-wave node has zero displacement in the ideal pattern.",
+      "lie": "A standing-wave node has the largest displacement in the ideal pattern.",
+      "explanation": "Nodes are stationary points; antinodes have maximum amplitude.",
+      "source": ""
+    },
+    {
+      "id": "waves-29",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "A source approaching a stationary listener can be heard at a higher frequency.",
+      "lie": "A source approaching a stationary listener is always heard at a lower frequency.",
+      "explanation": "The Doppler effect compresses the spacing of arriving wavefronts for an approaching source.",
+      "source": ""
+    },
+    {
+      "id": "waves-30",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Ultrasound has a frequency above the upper limit of ordinary human hearing.",
+      "lie": "Ultrasound is sound with a frequency below ordinary human hearing.",
+      "explanation": "Ultrasound is conventionally above 20 kHz; very low-frequency sound is infrasound.",
+      "source": ""
+    },
+    {
+      "id": "light-03",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Light is an electromagnetic wave.",
+      "lie": "Light is a mechanical pressure wave in air.",
+      "explanation": "Light involves electromagnetic fields rather than sound-like pressure variations.",
+      "source": ""
+    },
+    {
+      "id": "light-04",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Visible light is only part of the electromagnetic spectrum.",
+      "lie": "All electromagnetic radiation is visible to human eyes.",
+      "explanation": "Radio, infrared, ultraviolet and other bands lie outside human visible vision.",
+      "source": ""
+    },
+    {
+      "id": "light-05",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "In a vacuum, all electromagnetic waves travel at the same speed.",
+      "lie": "In a vacuum, radio waves travel much slower than visible light.",
+      "explanation": "All electromagnetic waves have the same vacuum speed, c.",
+      "source": ""
+    },
+    {
+      "id": "light-06",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Light travels much faster than sound in air.",
+      "lie": "Sound in air travels faster than light in a vacuum.",
+      "explanation": "Light travels about 300 million m/s; sound in ordinary air travels a few hundred m/s.",
+      "source": ""
+    },
+    {
+      "id": "light-07",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A light-year measures distance.",
+      "lie": "A light-year measures the age of a star.",
+      "explanation": "It is the distance light travels in one year.",
+      "source": ""
+    },
+    {
+      "id": "light-08",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "We see an ordinary non-luminous object when light from it enters our eyes.",
+      "lie": "Our eyes see ordinary objects by sending out beams of light.",
+      "explanation": "Light reflected or scattered from the object reaches the eye.",
+      "source": ""
+    },
+    {
+      "id": "light-09",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A luminous object emits light.",
+      "lie": "A luminous object can only reflect light from other objects.",
+      "explanation": "Stars and glowing lamps produce light; an illuminated book mainly reflects it.",
+      "source": ""
+    },
+    {
+      "id": "light-10",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "In a uniform transparent medium, light rays travel in straight lines.",
+      "lie": "In a uniform transparent medium, light rays always curve around opaque objects.",
+      "explanation": "The straight-ray model explains ordinary shadows and ray diagrams.",
+      "source": ""
+    },
+    {
+      "id": "light-11",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "An opaque object can block light and form a shadow.",
+      "lie": "An opaque object transmits all incoming visible light.",
+      "explanation": "Opaque materials do not transmit visible light through their bulk in this model.",
+      "source": ""
+    },
+    {
+      "id": "light-12",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "At a mirror, the angle of reflection equals the angle of incidence.",
+      "lie": "At a mirror, the angle of reflection is always twice the angle of incidence.",
+      "explanation": "Both angles are measured from the normal to the surface.",
+      "source": ""
+    },
+    {
+      "id": "light-13",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Reflection angles are measured from the normal.",
+      "lie": "Reflection angles in the usual law are measured from the mirror surface.",
+      "explanation": "The normal is perpendicular to the surface at the point where the ray strikes.",
+      "source": ""
+    },
+    {
+      "id": "light-14",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A plane mirror forms a virtual image behind the mirror.",
+      "lie": "A plane mirror forms a real image that can be caught on a screen behind it.",
+      "explanation": "Reflected rays appear to come from behind the mirror but do not actually converge there.",
+      "source": ""
+    },
+    {
+      "id": "light-15",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "An object’s image in a plane mirror is the same distance behind the mirror as the object is in front.",
+      "lie": "An object’s image in a plane mirror is always twice as far behind it as the object is in front.",
+      "explanation": "The perpendicular object and image distances are equal.",
+      "source": ""
+    },
+    {
+      "id": "light-16",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Refraction can change the direction of light crossing between media.",
+      "lie": "Refraction means light bounces back into the medium it came from.",
+      "explanation": "Refraction involves transmission with a speed change; bouncing back is reflection.",
+      "source": ""
+    },
+    {
+      "id": "light-17",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Light entering glass from air at an oblique angle usually bends towards the normal.",
+      "lie": "Light entering glass from air at an oblique angle usually bends away from the normal.",
+      "explanation": "Light slows in ordinary glass and bends towards the normal.",
+      "source": ""
+    },
+    {
+      "id": "light-18",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A ray entering glass along the normal can change speed without changing direction.",
+      "lie": "A ray entering glass along the normal must turn through a non-zero angle.",
+      "explanation": "At normal incidence there is no bending, even though speed changes.",
+      "source": ""
+    },
+    {
+      "id": "light-19",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A straw in water can appear bent because of refraction.",
+      "lie": "A straw appears bent in water because the water necessarily bends the straw physically.",
+      "explanation": "Light from the submerged part changes direction as it passes into air.",
+      "source": ""
+    },
+    {
+      "id": "light-20",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A prism can separate white light into colours.",
+      "lie": "A prism creates all visible colours from a single-frequency beam.",
+      "explanation": "Different wavelengths refract by different amounts; white light already contains a range of wavelengths.",
+      "source": ""
+    },
+    {
+      "id": "light-21",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Red visible light has a longer wavelength than violet visible light.",
+      "lie": "Red visible light has a shorter wavelength than violet visible light.",
+      "explanation": "Visible wavelengths decrease from red towards violet.",
+      "source": ""
+    },
+    {
+      "id": "light-22",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Violet visible light has a higher frequency than red visible light.",
+      "lie": "Violet visible light has a lower frequency than red visible light.",
+      "explanation": "At the same wave speed, shorter wavelength means higher frequency.",
+      "source": ""
+    },
+    {
+      "id": "light-23",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "An ordinary convex glass lens in air can converge parallel light rays.",
+      "lie": "An ordinary convex glass lens in air always spreads parallel light rays apart.",
+      "explanation": "A converging lens brings parallel rays towards a focus.",
+      "source": ""
+    },
+    {
+      "id": "light-24",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "An ordinary concave glass lens in air diverges parallel light rays.",
+      "lie": "An ordinary concave glass lens in air brings parallel light rays to a real focus.",
+      "explanation": "A diverging lens spreads rays so they appear to come from a virtual focus.",
+      "source": ""
+    },
+    {
+      "id": "light-25",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "A red object under white light reflects some red wavelengths towards the observer.",
+      "lie": "A red object looks red because it absorbs all red light reaching it.",
+      "explanation": "The light reaching the observer includes reflected red wavelengths; other wavelengths may be absorbed.",
+      "source": ""
+    },
+    {
+      "id": "light-26",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Black surfaces generally absorb more visible light than white surfaces under the same illumination.",
+      "lie": "Black surfaces look black because they reflect all visible wavelengths strongly.",
+      "explanation": "Low visible reflection makes a surface appear dark.",
+      "source": ""
+    },
+    {
+      "id": "light-27",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Adding red, green and blue light in suitable proportions can produce white light.",
+      "lie": "Mixing red, green and blue light necessarily produces black light.",
+      "explanation": "Additive colour mixing combines light; it differs from mixing paints.",
+      "source": ""
+    },
+    {
+      "id": "light-28",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Total internal reflection requires light to travel towards a lower-refractive-index medium at a sufficiently large angle.",
+      "lie": "Total internal reflection occurs at every boundary and every angle.",
+      "explanation": "It requires the appropriate index change and an incidence angle greater than the critical angle.",
+      "source": ""
+    },
+    {
+      "id": "light-29",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Optical fibres can guide light using total internal reflection.",
+      "lie": "Optical fibres guide light because light travels only in metal wires.",
+      "explanation": "Light is confined by the fibre’s optical structure, commonly through total internal reflection.",
+      "source": ""
+    },
+    {
+      "id": "light-30",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Ultraviolet radiation is outside the visible range for humans.",
+      "lie": "Ultraviolet radiation is simply very bright purple light that humans can always see.",
+      "explanation": "Ultraviolet wavelengths are shorter than the visible violet end of the spectrum.",
+      "source": ""
+    },
+    {
       "id": "science-011",
       "topic": "Light",
       "stage": "Stages 4–5",
@@ -112,6 +1354,258 @@
       "source": ""
     },
     {
+      "id": "electricity-03",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Like electric charges repel each other.",
+      "lie": "Like electric charges attract each other.",
+      "explanation": "Charges of the same sign repel; opposite signs attract.",
+      "source": ""
+    },
+    {
+      "id": "electricity-04",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Unlike electric charges attract each other.",
+      "lie": "Unlike electric charges repel each other.",
+      "explanation": "A positive and a negative charge attract.",
+      "source": ""
+    },
+    {
+      "id": "electricity-05",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A neutral atom has equal numbers of protons and electrons.",
+      "lie": "A neutral atom contains no charged particles.",
+      "explanation": "Its positive and negative charges balance rather than being absent.",
+      "source": ""
+    },
+    {
+      "id": "electricity-06",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "An object with excess electrons is negatively charged.",
+      "lie": "An object with excess electrons is positively charged.",
+      "explanation": "Electrons carry negative charge.",
+      "source": ""
+    },
+    {
+      "id": "electricity-07",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Electric current is the rate of flow of charge.",
+      "lie": "Electric current is the amount of energy stored in a circuit.",
+      "explanation": "Current measures charge passing per unit time.",
+      "source": ""
+    },
+    {
+      "id": "electricity-08",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "The SI unit of current is the ampere.",
+      "lie": "The SI unit of current is the volt.",
+      "explanation": "Amperes measure current; volts measure potential difference.",
+      "source": ""
+    },
+    {
+      "id": "electricity-09",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Potential difference is energy transferred per unit charge.",
+      "lie": "Potential difference is charge transferred per unit time.",
+      "explanation": "Voltage measures joules per coulomb; current measures coulombs per second.",
+      "source": ""
+    },
+    {
+      "id": "electricity-10",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Electrical resistance is measured in ohms.",
+      "lie": "Electrical resistance is measured in amperes.",
+      "explanation": "The ohm is the SI resistance unit.",
+      "source": ""
+    },
+    {
+      "id": "electricity-11",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "An ammeter is normally connected in series with the component whose current is measured.",
+      "lie": "An ammeter is normally connected directly across a power supply to measure a component’s current.",
+      "explanation": "Series connection lets the component’s current pass through the ammeter; an across-supply connection can short the supply.",
+      "source": ""
+    },
+    {
+      "id": "electricity-12",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A voltmeter is connected across a component to measure its potential difference.",
+      "lie": "A voltmeter must replace the component to measure its potential difference.",
+      "explanation": "Parallel connection compares the potentials at the component’s two terminals.",
+      "source": ""
+    },
+    {
+      "id": "electricity-13",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A simple circuit needs a complete conducting path for a steady current.",
+      "lie": "A single disconnected wire from a battery provides a complete path for steady current.",
+      "explanation": "A closed loop is required for sustained current in a simple battery circuit.",
+      "source": ""
+    },
+    {
+      "id": "electricity-14",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "An open switch breaks the conducting path.",
+      "lie": "An open switch completes the conducting path.",
+      "explanation": "Opening separates the contacts and interrupts the loop.",
+      "source": ""
+    },
+    {
+      "id": "electricity-15",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "In a simple series circuit, current is the same through each component.",
+      "lie": "In a simple series circuit, each component uses up some current.",
+      "explanation": "Charge is conserved; energy is transferred but current is not progressively consumed.",
+      "source": ""
+    },
+    {
+      "id": "electricity-16",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "For resistors in series, total resistance is the sum of their resistances.",
+      "lie": "For resistors in series, total resistance is smaller than every individual resistance.",
+      "explanation": "Series resistances add because the same current crosses each potential drop.",
+      "source": ""
+    },
+    {
+      "id": "electricity-17",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Adding a resistor in series to a fixed-voltage supply reduces the current.",
+      "lie": "Adding a resistor in series to a fixed-voltage supply increases the current.",
+      "explanation": "Total resistance rises, so I = V/R falls.",
+      "source": ""
+    },
+    {
+      "id": "electricity-18",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Parallel branches share the same potential difference between their common endpoints.",
+      "lie": "Parallel branches must share the same current regardless of their resistances.",
+      "explanation": "Voltage is common; branch current depends on branch resistance.",
+      "source": ""
+    },
+    {
+      "id": "electricity-19",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "At a circuit junction, total current entering equals total current leaving in steady conditions.",
+      "lie": "A circuit junction creates extra current when a wire splits into two branches.",
+      "explanation": "Charge conservation requires the incoming and outgoing currents to balance.",
+      "source": ""
+    },
+    {
+      "id": "electricity-20",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "For an ohmic resistor at constant temperature, current is proportional to potential difference.",
+      "lie": "For an ohmic resistor at constant temperature, doubling voltage halves current.",
+      "explanation": "With constant resistance, I = V/R.",
+      "source": ""
+    },
+    {
+      "id": "electricity-21",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A 6 V potential difference across a 3 Ω resistor produces a 2 A current.",
+      "lie": "A 6 V potential difference across a 3 Ω resistor produces an 18 A current.",
+      "explanation": "I = V/R = 6 ÷ 3 = 2 A.",
+      "source": ""
+    },
+    {
+      "id": "electricity-22",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A component carrying 2 A across 6 V transfers electrical energy at 12 W.",
+      "lie": "A component carrying 2 A across 6 V transfers electrical energy at 3 W.",
+      "explanation": "P = VI = 6 × 2 = 12 W.",
+      "source": ""
+    },
+    {
+      "id": "electricity-23",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Conventional current is opposite to electron drift in a metal wire.",
+      "lie": "Conventional current is defined as the direction of electron drift in a metal wire.",
+      "explanation": "Conventional current follows the direction positive charge would move.",
+      "source": ""
+    },
+    {
+      "id": "electricity-24",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Metals generally conduct electricity well because they contain mobile electrons.",
+      "lie": "Metals conduct electricity because all their protons move freely between atoms.",
+      "explanation": "Conduction electrons are mobile; metal ions form the lattice.",
+      "source": ""
+    },
+    {
+      "id": "electricity-25",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "An electrical insulator resists charge movement through its bulk.",
+      "lie": "An electrical insulator contains no electrons.",
+      "explanation": "Insulators contain electrons but do not provide freely moving charges as metals do.",
+      "source": ""
+    },
+    {
+      "id": "electricity-26",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Rubbing two suitable materials can transfer electrons between them.",
+      "lie": "Rubbing two materials creates positive and negative charge from nothing.",
+      "explanation": "Charge is transferred and separated; total charge is conserved.",
+      "source": ""
+    },
+    {
+      "id": "electricity-27",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Earthing can let electrons move between an object and Earth.",
+      "lie": "Earthing always adds protons to a charged object.",
+      "explanation": "Electrons can enter or leave through a conducting path; protons do not flow through the wire.",
+      "source": ""
+    },
+    {
+      "id": "electricity-28",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A current-carrying wire produces a magnetic field.",
+      "lie": "A wire can produce a magnetic field only if it is made from iron.",
+      "explanation": "Electric current produces a magnetic field even in non-ferromagnetic conductors.",
+      "source": ""
+    },
+    {
+      "id": "electricity-29",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Reversing the current in a solenoid reverses its magnetic poles.",
+      "lie": "Reversing the current in a solenoid leaves its magnetic poles unchanged.",
+      "explanation": "The field direction follows current direction through the coil.",
+      "source": ""
+    },
+    {
+      "id": "electricity-30",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Increasing current in an ideal air-core solenoid increases its magnetic field magnitude.",
+      "lie": "Increasing current in an ideal air-core solenoid reduces its magnetic field magnitude.",
+      "explanation": "For fixed coil geometry, magnetic field is proportional to current.",
+      "source": ""
+    },
+    {
       "id": "science-013",
       "topic": "Electricity",
       "stage": "Stages 4–5",
@@ -127,6 +1621,231 @@
       "truth": "A nearby charged object can redistribute charge in a neutral conductor without touching it.",
       "lie": "A nearby charged object cannot affect charge distribution in a conductor unless it touches it.",
       "explanation": "Electrostatic induction redistributes mobile electrons. This does not by itself change the conductor’s total charge.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-06",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "An element contains atoms with the same proton number.",
+      "lie": "An element contains atoms that all have the same neutron number.",
+      "explanation": "Proton number defines the element; neutron number can vary between isotopes.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-07",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A compound contains elements chemically combined in a definite ratio.",
+      "lie": "A compound is any mixture of substances in any ratio.",
+      "explanation": "Compounds have chemically bonded constituents and defined composition; mixtures can vary.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-08",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Air is a mixture of gases.",
+      "lie": "Air is a single pure compound.",
+      "explanation": "Air contains nitrogen, oxygen and other gases that are not all chemically bonded together.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-09",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A molecule can contain atoms of just one element.",
+      "lie": "Every molecule must contain at least two different elements.",
+      "explanation": "An oxygen molecule, O₂, contains two oxygen atoms and only one element.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-10",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A water molecule contains two hydrogen atoms and one oxygen atom.",
+      "lie": "A water molecule contains two oxygen atoms and one hydrogen atom.",
+      "explanation": "The formula H₂O specifies the numbers of each atom.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-11",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Isotopes of an element have different numbers of neutrons.",
+      "lie": "Isotopes of an element have different numbers of protons.",
+      "explanation": "Isotopes retain the same atomic number but differ in mass number.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-12",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "An atom’s mass number is its number of protons plus neutrons.",
+      "lie": "An atom’s mass number is its number of protons plus electrons.",
+      "explanation": "Mass number counts nucleons in the nucleus.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-13",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Most of an atom’s mass is in its nucleus.",
+      "lie": "Most of an atom’s mass is in its electrons.",
+      "explanation": "Protons and neutrons are much more massive than electrons.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-14",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A proton has positive electric charge.",
+      "lie": "A neutron has positive electric charge.",
+      "explanation": "Protons are positive, electrons negative and neutrons electrically neutral.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-15",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Atoms in a solid continue to move microscopically.",
+      "lie": "Particles in a solid are completely motionless.",
+      "explanation": "Particles vibrate around positions even though the solid keeps its overall shape.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-16",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A gas expands to fill its container.",
+      "lie": "A gas has a fixed shape independent of its container.",
+      "explanation": "Gas particles move freely and spread through the available volume.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-17",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A liquid has a fairly fixed volume but takes the shape of its container.",
+      "lie": "A liquid has a fixed shape but no fixed volume.",
+      "explanation": "Liquids can flow, while their particles remain close together.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-18",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Melting is a physical change.",
+      "lie": "Melting a pure substance necessarily makes a new chemical substance.",
+      "explanation": "A change of state changes arrangement and motion rather than chemical identity.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-19",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Condensation changes a gas into a liquid.",
+      "lie": "Condensation changes a liquid into a gas.",
+      "explanation": "Gas-to-liquid change is condensation; liquid-to-gas change is vaporisation.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-20",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Freezing changes a liquid into a solid.",
+      "lie": "Freezing changes a solid into a liquid.",
+      "explanation": "Liquid-to-solid change is freezing; solid-to-liquid change is melting.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-21",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A saturated solution contains the maximum equilibrium amount of dissolved solute under the stated conditions.",
+      "lie": "A saturated solution contains no dissolved solute.",
+      "explanation": "At saturation, no more of that solute dissolves at equilibrium without changing conditions.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-22",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Filtration can separate insoluble sand from water.",
+      "lie": "Ordinary filter paper can remove dissolved salt from salt water.",
+      "explanation": "Sand particles are retained; dissolved ions pass through with the water.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-23",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Evaporating water from salt water can leave solid salt behind.",
+      "lie": "Evaporating water from salt water necessarily evaporates the salt at the same rate.",
+      "explanation": "Under ordinary evaporation conditions the water leaves as vapour while the non-volatile salt remains.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-24",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Distillation can separate substances using differences in volatility.",
+      "lie": "Distillation separates substances only by particle size.",
+      "explanation": "Vaporisation followed by condensation uses differences in how readily substances vaporise.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-25",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Mass is conserved in an ordinary chemical reaction in a closed system.",
+      "lie": "An ordinary chemical reaction in a closed system must reduce total mass.",
+      "explanation": "Atoms are conserved; apparent losses often involve gases escaping from an open system.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-26",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A catalyst can increase reaction rate without being consumed overall.",
+      "lie": "A catalyst increases reaction rate by being permanently used up as a reactant.",
+      "explanation": "A catalyst participates in a pathway and is regenerated overall.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-27",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Increasing temperature often increases reaction rate.",
+      "lie": "Increasing temperature always stops reacting particles from colliding.",
+      "explanation": "Higher temperature commonly increases collision frequency and the fraction of collisions with sufficient energy.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-28",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A smaller particle size can increase the reaction rate of a solid by exposing more surface area.",
+      "lie": "Breaking a solid into smaller pieces always reduces its exposed surface area.",
+      "explanation": "More exposed surface allows more contact with other reactants.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-29",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "In a balanced chemical equation, coefficients can change but substance formulae stay fixed.",
+      "lie": "Balancing a chemical equation requires changing the subscripts inside substance formulae.",
+      "explanation": "Changing a subscript changes the substance; coefficients change the number of units reacting.",
+      "source": ""
+    },
+    {
+      "id": "chemistry-30",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "At 25°C, a neutral aqueous solution has pH 7.",
+      "lie": "At 25°C, a neutral aqueous solution has pH 0.",
+      "explanation": "Neutral water has equal hydrogen and hydroxide ion concentrations; at 25°C this corresponds to pH 7.",
       "source": ""
     },
     {
@@ -151,7 +1870,7 @@
       "id": "science-017",
       "topic": "Chemistry",
       "stage": "Stages 4–5",
-      "truth": "Particles are conserved and rearranged in an ordinary chemical reaction.",
+      "truth": "Atoms are conserved and rearranged in an ordinary chemical reaction.",
       "lie": "An ordinary chemical reaction creates new atoms from nothing.",
       "explanation": "In ordinary chemical reactions, atoms are rearranged into new combinations. Balanced equations conserve the number of atoms of each element.",
       "source": ""
@@ -175,6 +1894,258 @@
       "source": ""
     },
     {
+      "id": "cells-03",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "The cell membrane controls movement of many substances into and out of a cell.",
+      "lie": "The cell membrane allows every substance to cross equally freely.",
+      "explanation": "Membranes are selectively permeable, with transport depending on molecules and membrane proteins.",
+      "source": ""
+    },
+    {
+      "id": "cells-04",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Cytoplasm contains the fluid environment in which many cell reactions occur.",
+      "lie": "Cytoplasm is found only outside the cell membrane.",
+      "explanation": "Cytoplasm lies within the cell membrane and supports cellular processes.",
+      "source": ""
+    },
+    {
+      "id": "cells-05",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "DNA carries hereditary information.",
+      "lie": "DNA’s main role is to digest food outside cells.",
+      "explanation": "DNA stores information used in inheritance and in producing cell components.",
+      "source": ""
+    },
+    {
+      "id": "cells-06",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "The nucleus of a typical eukaryotic cell contains most of its DNA.",
+      "lie": "The nucleus of a typical eukaryotic cell contains no DNA.",
+      "explanation": "Chromosomes in the nucleus contain most eukaryotic genetic material; some organelles also contain DNA.",
+      "source": ""
+    },
+    {
+      "id": "cells-07",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Bacteria are prokaryotic organisms.",
+      "lie": "Bacteria are tiny animals with membrane-bound nuclei.",
+      "explanation": "Bacteria lack a membrane-bound nucleus and are not animals.",
+      "source": ""
+    },
+    {
+      "id": "cells-08",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "A plant cell usually has a cell wall outside its membrane.",
+      "lie": "A plant cell has a cell wall instead of a cell membrane.",
+      "explanation": "Plant cells have both a membrane and a surrounding wall.",
+      "source": ""
+    },
+    {
+      "id": "cells-09",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Animal cells do not have cellulose cell walls.",
+      "lie": "Animal cells have the same cellulose walls as plant cells.",
+      "explanation": "Animal cells have membranes but lack the cellulose walls typical of plants.",
+      "source": ""
+    },
+    {
+      "id": "cells-10",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Chloroplasts are sites of photosynthesis in plant cells.",
+      "lie": "Chloroplasts are the main sites of cellular respiration in plant cells.",
+      "explanation": "Photosynthesis occurs in chloroplasts; much aerobic respiration occurs in mitochondria.",
+      "source": ""
+    },
+    {
+      "id": "cells-11",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Not every plant cell contains chloroplasts.",
+      "lie": "Every plant cell contains chloroplasts, including all root cells.",
+      "explanation": "Many non-photosynthetic plant cells, such as typical root cells, lack chloroplasts.",
+      "source": ""
+    },
+    {
+      "id": "cells-12",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Mitochondria occur in both plant and animal cells.",
+      "lie": "Mitochondria occur only in animal cells.",
+      "explanation": "Both groups use mitochondria in aerobic cellular respiration.",
+      "source": ""
+    },
+    {
+      "id": "cells-13",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Ribosomes make proteins.",
+      "lie": "Ribosomes store all the cell’s hereditary information.",
+      "explanation": "Ribosomes assemble amino acids into proteins using genetic instructions.",
+      "source": ""
+    },
+    {
+      "id": "cells-14",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "A large central vacuole helps support many plant cells.",
+      "lie": "A plant cell’s central vacuole is always an empty air space.",
+      "explanation": "The vacuole contains fluid; water uptake contributes to turgor pressure.",
+      "source": ""
+    },
+    {
+      "id": "cells-15",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Diffusion is net movement down a concentration gradient.",
+      "lie": "Diffusion is net movement from lower to higher concentration without energy input.",
+      "explanation": "Random motion produces a net spread from higher to lower concentration.",
+      "source": ""
+    },
+    {
+      "id": "cells-16",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Diffusion can occur without a living cell being present.",
+      "lie": "Diffusion can occur only inside living cells.",
+      "explanation": "Particles can diffuse in solutions and gases independently of life.",
+      "source": ""
+    },
+    {
+      "id": "cells-17",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Osmosis involves net water movement across a selectively permeable membrane.",
+      "lie": "Osmosis is the movement of any solute through any barrier.",
+      "explanation": "Osmosis concerns water moving across a membrane in response to a water-potential difference.",
+      "source": ""
+    },
+    {
+      "id": "cells-18",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "In the usual dilute-solution model, water moves by osmosis towards the side with greater solute concentration if the solute cannot cross.",
+      "lie": "In the usual dilute-solution model, water moves by osmosis towards the side with lower solute concentration if the solute cannot cross.",
+      "explanation": "With other conditions equal, greater dissolved-solute concentration lowers water potential.",
+      "source": ""
+    },
+    {
+      "id": "cells-19",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Active transport can move substances against a concentration gradient using energy.",
+      "lie": "Active transport moves substances against a concentration gradient without requiring energy.",
+      "explanation": "Transport against a gradient requires an energy source and appropriate transport machinery.",
+      "source": ""
+    },
+    {
+      "id": "cells-20",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "A specialised cell’s structure can help it carry out its function.",
+      "lie": "All cells must have identical shapes to perform different functions.",
+      "explanation": "Features such as surface area, shape and organelle abundance can support particular jobs.",
+      "source": ""
+    },
+    {
+      "id": "cells-21",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Root hair cells have extensions that increase their absorbing surface area.",
+      "lie": "Root hair extensions reduce the surface available for absorption.",
+      "explanation": "The extensions increase contact with the soil solution.",
+      "source": ""
+    },
+    {
+      "id": "cells-22",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Mature human red blood cells lack a nucleus.",
+      "lie": "Every mature human red blood cell has a large nucleus.",
+      "explanation": "Human red blood cells lose their nucleus during development, leaving more room for haemoglobin.",
+      "source": ""
+    },
+    {
+      "id": "cells-23",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "A tissue is a group of cells working together in a function.",
+      "lie": "A tissue is a collection of unrelated organs.",
+      "explanation": "Cells form tissues; tissues combine into organs.",
+      "source": ""
+    },
+    {
+      "id": "cells-24",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "An organ contains multiple tissue types.",
+      "lie": "Every organ consists of just one cell.",
+      "explanation": "An organ is a structure with different tissues working together.",
+      "source": ""
+    },
+    {
+      "id": "cells-25",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Unicellular organisms carry out life processes within one cell.",
+      "lie": "A unicellular organism cannot carry out life processes because it has only one cell.",
+      "explanation": "One cell can perform the functions needed by the organism.",
+      "source": ""
+    },
+    {
+      "id": "cells-26",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Multicellular organisms contain many cells.",
+      "lie": "Multicellular means that an organism contains many nuclei but only one cell.",
+      "explanation": "Multicellularity refers to the presence of multiple cells.",
+      "source": ""
+    },
+    {
+      "id": "cells-27",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "In mitosis, a eukaryotic cell normally produces two genetically equivalent daughter nuclei.",
+      "lie": "In mitosis, a eukaryotic cell normally produces four daughter nuclei with half the chromosome number.",
+      "explanation": "Mitosis preserves chromosome number; meiosis is the division associated with chromosome-number reduction.",
+      "source": ""
+    },
+    {
+      "id": "cells-28",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Cells normally copy their DNA before mitotic division.",
+      "lie": "Cells normally copy their DNA only after both daughter cells have separated.",
+      "explanation": "DNA replication before division allows daughter cells to receive genetic information.",
+      "source": ""
+    },
+    {
+      "id": "cells-29",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "A microscope’s magnification and resolution are different properties.",
+      "lie": "Increasing magnification always reveals more detail, even if resolution stays unchanged.",
+      "explanation": "Magnification enlarges the image; resolution limits how close features can be distinguished.",
+      "source": ""
+    },
+    {
+      "id": "cells-30",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Total magnification of a light microscope is eyepiece magnification multiplied by objective magnification.",
+      "lie": "Total magnification of a light microscope is eyepiece magnification added to objective magnification.",
+      "explanation": "A 10× eyepiece and 40× objective give 400× total magnification.",
+      "source": ""
+    },
+    {
       "id": "science-020",
       "topic": "Cells",
       "stage": "Stages 4–5",
@@ -193,6 +2164,258 @@
       "source": ""
     },
     {
+      "id": "ecology-03",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A population consists of members of one species in an area.",
+      "lie": "A population consists of all species in an area.",
+      "explanation": "All the populations together form a community.",
+      "source": ""
+    },
+    {
+      "id": "ecology-04",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A community includes populations of different species.",
+      "lie": "A community contains only non-living environmental factors.",
+      "explanation": "Communities are the living component, containing interacting populations.",
+      "source": ""
+    },
+    {
+      "id": "ecology-05",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "An ecosystem includes living organisms and their non-living surroundings.",
+      "lie": "An ecosystem includes living organisms but excludes water, light and soil conditions.",
+      "explanation": "Biotic and abiotic components interact in an ecosystem.",
+      "source": ""
+    },
+    {
+      "id": "ecology-06",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Abiotic factors are non-living environmental components.",
+      "lie": "Predators are abiotic factors because they affect other organisms.",
+      "explanation": "Predators are living, so they are biotic factors.",
+      "source": ""
+    },
+    {
+      "id": "ecology-07",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Temperature is an abiotic factor.",
+      "lie": "Temperature is a biotic factor.",
+      "explanation": "Temperature is a physical condition, not a living organism.",
+      "source": ""
+    },
+    {
+      "id": "ecology-08",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A habitat is the place where an organism lives.",
+      "lie": "A habitat is the organism’s position in a food chain only.",
+      "explanation": "Habitat describes where it lives; feeding role is only part of its ecological niche.",
+      "source": ""
+    },
+    {
+      "id": "ecology-09",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Producers make organic substances using energy from light or chemical reactions.",
+      "lie": "Producers obtain all their organic food by eating other organisms.",
+      "explanation": "Plants use photosynthesis, while some microbes use chemical energy.",
+      "source": ""
+    },
+    {
+      "id": "ecology-10",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Consumers obtain organic material by feeding on other organisms or their products.",
+      "lie": "Consumers make all their food directly from sunlight.",
+      "explanation": "Consumers depend on existing organic material.",
+      "source": ""
+    },
+    {
+      "id": "ecology-11",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "An herbivore feeds on plant material.",
+      "lie": "An herbivore feeds exclusively on animals.",
+      "explanation": "Herbivores consume producers such as plants; carnivores consume animals.",
+      "source": ""
+    },
+    {
+      "id": "ecology-12",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "An omnivore can eat both plant and animal material.",
+      "lie": "An omnivore can eat only one type of plant.",
+      "explanation": "Omnivores use both plant and animal food sources.",
+      "source": ""
+    },
+    {
+      "id": "ecology-13",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Food-chain arrows usually point in the direction of energy transfer.",
+      "lie": "Food-chain arrows usually point from the predator to the prey it eats.",
+      "explanation": "The arrow goes from the food organism to the consumer receiving energy.",
+      "source": ""
+    },
+    {
+      "id": "ecology-14",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A food web shows multiple feeding relationships.",
+      "lie": "A food web shows that each species has exactly one food source.",
+      "explanation": "Food webs connect many food chains and allow several links per species.",
+      "source": ""
+    },
+    {
+      "id": "ecology-15",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A species can occupy more than one trophic level in a food web.",
+      "lie": "A species must occupy exactly one trophic level regardless of its diet.",
+      "explanation": "An omnivore can feed at different levels by eating both plants and animals.",
+      "source": ""
+    },
+    {
+      "id": "ecology-16",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Not all energy eaten by a consumer becomes new consumer biomass.",
+      "lie": "All energy eaten by a consumer becomes new consumer biomass.",
+      "explanation": "Energy is used in respiration, transferred as heat and lost in waste or uneaten material.",
+      "source": ""
+    },
+    {
+      "id": "ecology-17",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "The percentage of energy transferred between trophic levels varies.",
+      "lie": "Exactly 10% of energy is transferred at every feeding link in every ecosystem.",
+      "explanation": "Ten per cent is a useful rough guide, not a universal fixed value.",
+      "source": ""
+    },
+    {
+      "id": "ecology-18",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Competition can occur between members of the same species.",
+      "lie": "Competition occurs only between different species.",
+      "explanation": "Individuals of one species may compete for food, space or mates.",
+      "source": ""
+    },
+    {
+      "id": "ecology-19",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Competition can occur when organisms share a limited resource.",
+      "lie": "Competition requires organisms to physically fight each other.",
+      "explanation": "Resources can be depleted without direct physical contact.",
+      "source": ""
+    },
+    {
+      "id": "ecology-20",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Predation involves one organism feeding on another after capturing it.",
+      "lie": "Predation always benefits both the predator and its prey.",
+      "explanation": "The predator benefits while the prey is harmed.",
+      "source": ""
+    },
+    {
+      "id": "ecology-21",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "In mutualism, both interacting species benefit.",
+      "lie": "In mutualism, one species benefits and the other is always harmed.",
+      "explanation": "Mutualism is a positive interaction for both partners.",
+      "source": ""
+    },
+    {
+      "id": "ecology-22",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A parasite benefits at the expense of its host.",
+      "lie": "A parasite always improves its host’s health.",
+      "explanation": "Parasitism benefits the parasite and harms the host.",
+      "source": ""
+    },
+    {
+      "id": "ecology-23",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Carrying capacity depends on environmental conditions and resources.",
+      "lie": "Carrying capacity is a fixed number that can never change.",
+      "explanation": "Food, space, water and other conditions can change the population an environment supports.",
+      "source": ""
+    },
+    {
+      "id": "ecology-24",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Population size can change through births, deaths, immigration and emigration.",
+      "lie": "Population size can change only through births and deaths.",
+      "explanation": "Movement into and out of an area also changes population size.",
+      "source": ""
+    },
+    {
+      "id": "ecology-25",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A quadrat can be used to sample plants in a habitat.",
+      "lie": "A quadrat is usually the best method for counting fast-flying birds directly.",
+      "explanation": "Quadrats suit stationary or slow-moving organisms; mobile animals often need other methods.",
+      "source": ""
+    },
+    {
+      "id": "ecology-26",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Random sampling helps reduce selection bias.",
+      "lie": "Choosing only the most interesting-looking sampling sites guarantees an unbiased estimate.",
+      "explanation": "Random selection reduces deliberate or unconscious preference for particular sites.",
+      "source": ""
+    },
+    {
+      "id": "ecology-27",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "A transect can show changes in organisms along an environmental gradient.",
+      "lie": "A transect must sample only one isolated point.",
+      "explanation": "Sampling along a line can reveal spatial patterns.",
+      "source": ""
+    },
+    {
+      "id": "ecology-28",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Biodiversity includes variation within species, between species and among ecosystems.",
+      "lie": "Biodiversity refers only to the number of animals in an area.",
+      "explanation": "Biodiversity includes genetic, species and ecosystem diversity.",
+      "source": ""
+    },
+    {
+      "id": "ecology-29",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "An introduced species can alter a food web.",
+      "lie": "An introduced species can never affect native species if it is small.",
+      "explanation": "Introduced organisms may compete, prey, spread disease or change habitat regardless of size.",
+      "source": ""
+    },
+    {
+      "id": "ecology-30",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Removing a predator can have indirect effects on other parts of a food web.",
+      "lie": "Removing a predator can affect only that predator and no other species.",
+      "explanation": "Changes can spread through feeding interactions and produce trophic cascades.",
+      "source": ""
+    },
+    {
       "id": "science-022",
       "topic": "Ecology",
       "stage": "Stages 4–5",
@@ -208,6 +2431,240 @@
       "truth": "Decomposers help recycle nutrients in ecosystems.",
       "lie": "Decomposers prevent nutrients from being recycled in ecosystems.",
       "explanation": "Decomposers break down organic material, returning nutrients to forms that can be used again.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-05",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Earth’s rotation produces the regular cycle of day and night.",
+      "lie": "Earth’s yearly orbit around the Sun produces each day and night.",
+      "explanation": "Rotation turns different parts of Earth towards or away from sunlight.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-06",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Earth takes about one year to orbit the Sun.",
+      "lie": "Earth takes about one day to orbit the Sun.",
+      "explanation": "One day describes roughly one rotation; one year describes one orbit.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-07",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The Moon shines mainly by reflecting sunlight.",
+      "lie": "The Moon produces its own visible light through nuclear fusion.",
+      "explanation": "The Moon is not a star; sunlight reflected from its surface reaches us.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-08",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "A solar eclipse occurs when the Moon blocks our view of the Sun.",
+      "lie": "A solar eclipse occurs when Earth blocks sunlight from reaching the Moon.",
+      "explanation": "The Moon lies between Sun and observer during a solar eclipse.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-09",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "A lunar eclipse occurs when the Moon passes through Earth’s shadow.",
+      "lie": "A lunar eclipse occurs when the Sun passes through the Moon’s shadow.",
+      "explanation": "Earth lies between Sun and Moon and blocks some sunlight reaching the Moon.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-10",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The Moon’s orbital tilt helps explain why eclipses do not occur every month.",
+      "lie": "A solar and lunar eclipse must both occur every month.",
+      "explanation": "The tilted orbit usually carries the Moon above or below the required alignment.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-11",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "We generally see the same side of the Moon because its rotation and orbital periods are matched.",
+      "lie": "We see the same side of the Moon because the Moon never rotates.",
+      "explanation": "Synchronous rotation turns the Moon once during each orbit.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-12",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The far side of the Moon receives sunlight.",
+      "lie": "The far side of the Moon is permanently dark.",
+      "explanation": "Both sides experience sunlight and darkness; far side does not mean dark side.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-13",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Gravity keeps planets in orbit around the Sun.",
+      "lie": "Planets remain in orbit because no force acts on them.",
+      "explanation": "Gravity continuously changes the direction of their motion.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-14",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Astronauts in low Earth orbit still experience Earth’s gravity.",
+      "lie": "Astronauts float in low Earth orbit because Earth’s gravity has ended there.",
+      "explanation": "They and their spacecraft are in continuous free fall, producing apparent weightlessness.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-15",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The Solar System is part of the Milky Way galaxy.",
+      "lie": "The Milky Way galaxy is a small part of the Solar System.",
+      "explanation": "The galaxy contains vast numbers of stars, including the Sun and its planets.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-16",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Stars are much farther away than the planets in our Solar System.",
+      "lie": "All visible stars lie between Earth and the outer planets.",
+      "explanation": "Other stars lie far beyond the Solar System.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-17",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "A meteor is the visible phenomenon produced when space material enters the atmosphere.",
+      "lie": "A meteor is a star physically falling out of the sky.",
+      "explanation": "A meteoroid entering the atmosphere produces the light; it is not a falling star.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-18",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "A meteorite is space material that reaches the ground.",
+      "lie": "A meteorite is any bright streak that never reaches the ground.",
+      "explanation": "Material surviving atmospheric passage and reaching the surface is a meteorite.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-19",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Earth’s crust is divided into tectonic plates that move.",
+      "lie": "Earth’s tectonic plates are permanently fixed in place.",
+      "explanation": "Plate motion occurs slowly over geological time.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-20",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "At a divergent boundary, tectonic plates move apart.",
+      "lie": "At a divergent boundary, tectonic plates move towards each other.",
+      "explanation": "Divergence means separation; convergence means approach.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-21",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "At a transform boundary, plates slide past one another.",
+      "lie": "At a transform boundary, one plate must always sink beneath the other.",
+      "explanation": "Transform motion is mainly sideways; subduction occurs at some convergent boundaries.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-22",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Earthquakes can occur when rocks suddenly slip along a fault.",
+      "lie": "Earthquakes are caused only by volcanic eruptions.",
+      "explanation": "Fault slip can release stored elastic energy independently of volcanic activity.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-23",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Weathering breaks down rock in place.",
+      "lie": "Weathering is the transport of all broken rock to a new location.",
+      "explanation": "Weathering breaks material down; erosion involves removal and transport.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-24",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Erosion can move sediment by water, wind or ice.",
+      "lie": "Erosion can be caused only by liquid water.",
+      "explanation": "Several agents transport sediment, including wind and moving ice.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-25",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Metamorphic rock forms when existing rock changes under heat and pressure without fully melting.",
+      "lie": "Metamorphic rock forms only after existing rock completely melts.",
+      "explanation": "Full melting followed by solidification forms igneous rock; metamorphism occurs largely in the solid state.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-26",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Sedimentary rocks can contain fossils.",
+      "lie": "Fossils form only inside molten lava.",
+      "explanation": "Burial and preservation in sediments can retain evidence of past organisms.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-27",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The water cycle includes evaporation, condensation and precipitation.",
+      "lie": "Water moves through the water cycle only as a liquid.",
+      "explanation": "Water changes state and moves among atmosphere, land and water bodies.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-28",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Groundwater occupies pores and cracks in rock and sediment.",
+      "lie": "All groundwater forms large open underground rivers.",
+      "explanation": "Most groundwater is held in small spaces rather than open channels.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-29",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Weather describes short-term atmospheric conditions; climate describes longer-term patterns.",
+      "lie": "Weather and climate both mean only today’s temperature.",
+      "explanation": "Climate summarises patterns and variability over extended periods.",
+      "source": ""
+    },
+    {
+      "id": "earth-space-30",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Greenhouse gases absorb and emit some outgoing infrared radiation.",
+      "lie": "Greenhouse gases warm Earth only by reflecting all sunlight back to the surface.",
+      "explanation": "Their interaction with infrared radiation affects Earth’s energy balance; this differs from simply reflecting sunlight.",
       "source": ""
     },
     {
@@ -271,6 +2728,249 @@
       "truth": "A scientific theory is an explanatory framework supported by evidence.",
       "lie": "A scientific theory is simply an unsupported guess.",
       "explanation": "Scientific theories explain evidence and generate testable predictions. The scientific meaning differs from casual use of “theory”.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-04",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "An observation can involve a measuring instrument.",
+      "lie": "An observation must be made using unaided human senses only.",
+      "explanation": "Instruments extend our senses and provide quantitative measurements.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-05",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "An inference is an interpretation drawn from observations and reasoning.",
+      "lie": "An inference is identical to the raw observation itself.",
+      "explanation": "An observation describes evidence; an inference explains or interprets it.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-06",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A prediction describes an expected outcome.",
+      "lie": "A prediction is always a measurement already collected.",
+      "explanation": "Predictions concern what is expected under specified conditions.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-07",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A useful scientific hypothesis should be testable against evidence.",
+      "lie": "A scientific hypothesis is useful only if no observation could ever challenge it.",
+      "explanation": "Testability allows evidence to support or challenge a proposed explanation.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-08",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A fair test usually changes one independent variable while controlling relevant alternatives.",
+      "lie": "A fair test requires changing every variable at the same time.",
+      "explanation": "Controlling other influences helps isolate the effect being investigated.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-09",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "The independent variable is the factor deliberately changed in a controlled experiment.",
+      "lie": "The independent variable is always the measurement taken as the result.",
+      "explanation": "The dependent variable is measured in response to the independent variable.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-10",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "The dependent variable is the response measured in an experiment.",
+      "lie": "The dependent variable must always be kept constant.",
+      "explanation": "It is measured to determine how it responds to the changed factor.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-11",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A controlled variable is kept consistent to reduce unwanted influences.",
+      "lie": "A controlled variable is deliberately changed to produce the main result.",
+      "explanation": "Consistent conditions help isolate the independent variable’s effect.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-12",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A control group can provide a baseline for comparison.",
+      "lie": "A control group must receive a larger dose of the treatment than every experimental group.",
+      "explanation": "A baseline helps assess effects of the treatment; its design depends on the investigation.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-13",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A larger sample can improve an estimate without removing sampling bias.",
+      "lie": "Increasing sample size automatically removes every form of bias.",
+      "explanation": "A large unrepresentative sample can still systematically misrepresent the population.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-14",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Accuracy concerns agreement with an accepted or reference value.",
+      "lie": "Accuracy means only that repeated measurements are close to one another.",
+      "explanation": "Closeness among repeat readings is precision, which does not guarantee accuracy.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-15",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Precise measurements can all be inaccurate.",
+      "lie": "Precise measurements must always be accurate.",
+      "explanation": "A systematic offset can make readings tightly grouped but far from the reference value.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-16",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Random error contributes to scatter among repeated readings.",
+      "lie": "Random error always shifts every reading by exactly the same amount.",
+      "explanation": "A fixed shift is systematic; random variation changes unpredictably among measurements.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-17",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A zero error in a measuring instrument can create systematic error.",
+      "lie": "A zero error is guaranteed to disappear simply by taking more repeats.",
+      "explanation": "An offset can remain in all readings unless it is identified and corrected.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-18",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Recording units is essential when reporting measured quantities.",
+      "lie": "A measured number has the same meaning regardless of its unit.",
+      "explanation": "Five metres and five centimetres represent different lengths.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-19",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Graph axes should identify the quantities and their units.",
+      "lie": "Graph axes need numbers only; labels and units are unnecessary.",
+      "explanation": "Labels and units make the plotted measurements interpretable.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-20",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "The independent variable is usually placed on the horizontal axis.",
+      "lie": "The independent variable is always placed on the vertical axis.",
+      "explanation": "The usual convention places the independent variable on x and the dependent variable on y.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-21",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A best-fit line summarises a trend rather than necessarily passing through every point.",
+      "lie": "A best-fit line must join every point in the order it was measured.",
+      "explanation": "A fitted trend reflects the overall relationship rather than every fluctuation.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-22",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "An outlier should be investigated before deciding whether to exclude it.",
+      "lie": "An outlier should always be deleted because it makes a graph untidy.",
+      "explanation": "An unusual value may reflect a mistake or real variation; exclusions need reasons.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-23",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Extrapolation estimates beyond the measured data range.",
+      "lie": "Extrapolation estimates only between measured data points.",
+      "explanation": "Interpolation is within the data range; extrapolation extends beyond it.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-24",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Extrapolations can be less reliable when the relationship changes outside the measured range.",
+      "lie": "A straight trend over a small range proves the same trend continues forever.",
+      "explanation": "Relationships may change under conditions not represented by the observations.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-25",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A model represents selected features of a system.",
+      "lie": "A scientific model must reproduce every feature of the real system exactly.",
+      "explanation": "Models simplify reality for a purpose and have limitations.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-26",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Evidence can lead scientists to revise a model.",
+      "lie": "A scientific model can never change once it appears in a textbook.",
+      "explanation": "Scientific models are assessed and refined as evidence develops.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-27",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Peer review can identify weaknesses but does not guarantee a study is correct.",
+      "lie": "Peer review guarantees that every conclusion in a study is permanently correct.",
+      "explanation": "Review is a quality check, not an infallible guarantee.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-28",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A method should provide enough detail for others to attempt the investigation.",
+      "lie": "A method should omit measurement steps so others must guess them.",
+      "explanation": "Clear procedures support reproducibility and meaningful comparison.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-29",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A conclusion should be supported by the collected evidence.",
+      "lie": "A conclusion should be chosen before the experiment and kept regardless of the results.",
+      "explanation": "Evidence should guide conclusions, including when results challenge expectations.",
+      "source": ""
+    },
+    {
+      "id": "working-scientifically-30",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "An experiment that does not support a hypothesis can still provide useful evidence.",
+      "lie": "An experiment is scientifically worthless if it does not support the hypothesis.",
+      "explanation": "Unexpected results can test assumptions, constrain explanations and guide further work.",
       "source": ""
     }
   ]

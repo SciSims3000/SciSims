@@ -1,6 +1,6 @@
-# Truth or Lie — 1.0.0
+# Truth or Lie — 1.0.1
 
-Classroom discussion, solo and 2–6 team modes. Thirty science pairs load from science.json. Each round shuffles unique pairs and balances true/false variants to within one statement. A pair appears only once per round. Optional protected thinking time unlocks answers; it does not impose a deadline. One point per correct answer, no speed bonus. Explanations must be revealed before advancing.
+Classroom discussion, solo and 2–6 team modes. 330 science pairs (30 in each of 11 topics) load from science.json. Each round shuffles unique pairs and balances true/false variants to within one statement. A pair appears only once per round. Optional protected thinking time unlocks answers; it does not impose a deadline. One point per correct answer, no speed bonus. Explanations must be revealed before advancing.
 
 Custom banks can be created with the editor or imported/exported as JSON. Schema and field limits are documented in the app. Only HTTP(S) source URLs are accepted. Custom text is rendered as text, not HTML. Imported files are capped at 2 MB / 1,000 pairs. Custom banks and the active round are saved locally, with a visible error if saving fails. CSV results escape spreadsheet formula prefixes.
 
@@ -8,7 +8,7 @@ Serve this folder through HTTP(S) because the standard bank is fetched as JSON. 
 
 ## Verification
 - JavaScript syntax checked.
-- All 30 starter pairs pass schema validation.
+- All 330 starter pairs pass schema validation.
 - Round lengths 1–30: unique pairs and balanced truth/lie counts.
 - Empty banks, invalid IDs, identical variants and unsafe source URLs rejected.
 - Repeated answer clicks cannot award extra points.
@@ -24,3 +24,15 @@ Serve this folder through HTTP(S) because the standard bank is fetched as JSON. 
 6. Evidence or Inference?
 
 Reuse bank metadata and import/export conventions; each tool needs its own suitable item schema. Remaining tools have not been built yet.
+
+## Expanded bank (1.0.1)
+Each of the 11 topics now contains 30 pairs (330 pairs / 660 statement variants). Existing starter pairs retain their IDs. Questions include conceptual distinctions, misconceptions, simple calculations and interpretation of graphs. Thirty-question rounds are now directly selectable.
+
+Further reading for teachers:
+- Physics: https://openstax.org/books/physics/pages/index
+- Chemistry: https://openstax.org/books/chemistry-2e/pages/index
+- Biology: https://openstax.org/books/biology-2e/pages/index
+- Earth: https://science.nasa.gov/earth/facts/
+- Moon phases: https://science.nasa.gov/moon/moon-phases/
+- Weathering and erosion: https://www.bgs.ac.uk/discovering-geology/geological-processes/erosion/
+These are subject reference resources, not claims of line-by-line validation of every question.
