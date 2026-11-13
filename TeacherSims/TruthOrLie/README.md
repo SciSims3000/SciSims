@@ -1,4 +1,4 @@
-# Truth or Lie — 1.1.1
+# Truth or Lie — 1.2.0
 
 Classroom discussion, solo and 2–6 team modes. 330 science pairs (30 in each of 11 topics) load from science.json. Each round shuffles unique pairs and balances true/false variants to within one statement. A pair appears only once per round. Optional protected thinking time unlocks answers; it does not impose a deadline. One point per correct answer, no speed bonus. Explanations must be revealed before advancing.
 
@@ -46,3 +46,6 @@ These are subject reference resources, not claims of line-by-line validation of 
 
 ## Recorded fart (1.1.1)
 Replaced the procedural fart with a locally hosted MP3: Fart 2 by Breviceps (CC0). See audio/CREDITS.md. Preloaded HTML audio plays only for incorrect answers in secret mode. Mute also stops a currently playing sample. Normal buzzer and correct-answer ding are unchanged.
+
+## Class and team setup (1.2.0)
+Teams is the default for new users. Enter a class name and 2–6 distinct team names. Setup is saved separately from a round and retained when starting a new round or reopening the tool. Named class appears during play, in the summary and in CSV exports. Team turns, yellow active-team indicator and one-point correct scoring remain. Existing saved rounds are supported. Verified setup persistence/restoration, class display/export, named team rotation, scoring and duplicate-name/click guards.
