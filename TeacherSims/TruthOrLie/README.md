@@ -17,13 +17,13 @@ Serve this folder through HTTP(S) because the standard bank is fetched as JSON. 
 
 ## Approved teacher-tool build sequence
 1. Truth or Lie — initial implementation complete.
-2. Spot the Mistake.
+2. Spot the Mistake — initial implementation complete.
 3. Which Doesn't Belong?
 4. Confidence Check.
 5. Put It in Order.
 6. Evidence or Inference?
 
-Reuse bank metadata and import/export conventions; each tool needs its own suitable item schema. Remaining tools have not been built yet.
+Reuse bank metadata and import/export conventions; each tool needs its own suitable item schema. Tools 3–6 have not been built yet.
 
 ## Expanded bank (1.0.1)
 Each of the 11 topics now contains 30 pairs (330 pairs / 660 statement variants). Existing starter pairs retain their IDs. Questions include conceptual distinctions, misconceptions, simple calculations and interpretation of graphs. Thirty-question rounds are now directly selectable.
