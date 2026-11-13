@@ -1,0 +1,457 @@
+{
+  "schema": "scisims-truth-or-lie-1",
+  "id": "year7-science",
+  "title": "Year 7 science — 50 prompts",
+  "items": [
+    {
+      "id": "y7-01",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "Earth’s tilt is the main cause of its seasons.",
+      "lie": "Earth’s changing distance from the Sun is the main cause of its seasons.",
+      "explanation": "Axial tilt changes day length and the angle of sunlight. The hemispheres experience opposite seasons at the same time.",
+      "source": ""
+    },
+    {
+      "id": "y7-02",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "The Moon’s ordinary phases result from our changing view of its sunlit half.",
+      "lie": "The Moon’s ordinary phases are caused by Earth’s shadow covering it each month.",
+      "explanation": "As the Moon orbits Earth, we see different portions of its illuminated half. Earth’s shadow causes a lunar eclipse, not the usual phases.",
+      "source": ""
+    },
+    {
+      "id": "y7-03",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "The Sun is a star.",
+      "lie": "The Sun is a planet.",
+      "explanation": "The Sun produces energy through nuclear fusion in its core. Planets orbit stars and do not sustain the same kind of core fusion.",
+      "source": ""
+    },
+    {
+      "id": "y7-04",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "Earth’s rotation produces the regular cycle of day and night.",
+      "lie": "Earth’s yearly orbit around the Sun produces each day and night.",
+      "explanation": "Rotation turns different parts of Earth towards or away from sunlight.",
+      "source": ""
+    },
+    {
+      "id": "y7-05",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "Earth takes about one year to orbit the Sun.",
+      "lie": "Earth takes about one day to orbit the Sun.",
+      "explanation": "One day describes roughly one rotation; one year describes one orbit.",
+      "source": ""
+    },
+    {
+      "id": "y7-06",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "The Moon shines mainly by reflecting sunlight.",
+      "lie": "The Moon produces its own visible light through nuclear fusion.",
+      "explanation": "The Moon is not a star; sunlight reflected from its surface reaches us.",
+      "source": ""
+    },
+    {
+      "id": "y7-07",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "A solar eclipse occurs when the Moon blocks our view of the Sun.",
+      "lie": "A solar eclipse occurs when Earth blocks sunlight from reaching the Moon.",
+      "explanation": "The Moon lies between Sun and observer during a solar eclipse.",
+      "source": ""
+    },
+    {
+      "id": "y7-08",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "A lunar eclipse occurs when the Moon passes through Earth’s shadow.",
+      "lie": "A lunar eclipse occurs when the Sun passes through the Moon’s shadow.",
+      "explanation": "Earth lies between Sun and Moon and blocks some sunlight reaching the Moon.",
+      "source": ""
+    },
+    {
+      "id": "y7-09",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "The Solar System is part of the Milky Way galaxy.",
+      "lie": "The Milky Way galaxy is a small part of the Solar System.",
+      "explanation": "The galaxy contains vast numbers of stars, including the Sun and its planets.",
+      "source": ""
+    },
+    {
+      "id": "y7-10",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "A light-year measures distance.",
+      "lie": "A light-year measures the age of a star.",
+      "explanation": "It is the distance light travels in one year.",
+      "source": ""
+    },
+    {
+      "id": "y7-11",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "A scientific theory is an explanatory framework supported by evidence.",
+      "lie": "A scientific theory is simply an unsupported guess.",
+      "explanation": "Scientific theories explain evidence and generate testable predictions. The scientific meaning differs from casual use of “theory”.",
+      "source": ""
+    },
+    {
+      "id": "y7-12",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "An observation can involve a measuring instrument.",
+      "lie": "An observation must be made using unaided human senses only.",
+      "explanation": "Instruments extend our senses and provide quantitative measurements.",
+      "source": ""
+    },
+    {
+      "id": "y7-13",
+      "topic": "7.1 Observing the Universe",
+      "stage": "Year 7",
+      "truth": "Evidence can lead scientists to revise a model.",
+      "lie": "A scientific model can never change once it appears in a textbook.",
+      "explanation": "Scientific models are assessed and refined as evidence develops.",
+      "source": ""
+    },
+    {
+      "id": "y7-14",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Force is measured in newtons.",
+      "lie": "Force is measured in kilograms.",
+      "explanation": "The newton is the SI force unit; the kilogram measures mass.",
+      "source": ""
+    },
+    {
+      "id": "y7-15",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Two equal forces in opposite directions on the same object can balance.",
+      "lie": "Two equal forces in the same direction on the same object cancel out.",
+      "explanation": "Opposite forces subtract; forces in the same direction add.",
+      "source": ""
+    },
+    {
+      "id": "y7-16",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "A non-zero net force causes acceleration.",
+      "lie": "A non-zero net force is required to maintain constant velocity.",
+      "explanation": "Newton’s second law links net force to acceleration, not velocity.",
+      "source": ""
+    },
+    {
+      "id": "y7-17",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Mass and weight are different physical quantities.",
+      "lie": "Mass and weight are the same physical quantity.",
+      "explanation": "Mass is measured in kilograms. Weight is a gravitational force measured in newtons and depends on gravitational field strength.",
+      "source": ""
+    },
+    {
+      "id": "y7-18",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "When a person pushes a wall, the wall pushes back on the person.",
+      "lie": "When a person pushes a stationary wall, the wall exerts no force on the person.",
+      "explanation": "The interaction produces equal-magnitude, opposite-direction forces on different objects.",
+      "source": ""
+    },
+    {
+      "id": "y7-19",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Friction can prevent surfaces from sliding relative to each other.",
+      "lie": "Friction exists only after surfaces start sliding.",
+      "explanation": "Static friction can act before sliding begins.",
+      "source": ""
+    },
+    {
+      "id": "y7-20",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Air resistance acts opposite to an object’s velocity relative to the air.",
+      "lie": "Air resistance always acts vertically upwards.",
+      "explanation": "Its direction depends on the object’s motion relative to the air.",
+      "source": ""
+    },
+    {
+      "id": "y7-21",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "A parachute can reduce terminal speed by increasing drag.",
+      "lie": "A parachute reduces terminal speed by eliminating gravity.",
+      "explanation": "The parachute increases air resistance; weight remains.",
+      "source": ""
+    },
+    {
+      "id": "y7-22",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Magnetic forces can act without direct contact.",
+      "lie": "Magnetic forces require the magnet to touch the affected object.",
+      "explanation": "A magnetic field allows interactions across a separation.",
+      "source": ""
+    },
+    {
+      "id": "y7-23",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "Like magnetic poles repel.",
+      "lie": "Like magnetic poles attract.",
+      "explanation": "North repels north and south repels south; unlike poles attract.",
+      "source": ""
+    },
+    {
+      "id": "y7-24",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "A stretched string can exert tension on an attached object.",
+      "lie": "A slack string can push an attached object away by tension.",
+      "explanation": "Tension pulls along a taut string; a string does not transmit a compressive push in this way.",
+      "source": ""
+    },
+    {
+      "id": "y7-25",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "A floating object at rest has an upward buoyant force equal to its weight.",
+      "lie": "A floating object at rest has an upward buoyant force greater than its weight.",
+      "explanation": "Balanced vertical forces give zero vertical acceleration.",
+      "source": ""
+    },
+    {
+      "id": "y7-26",
+      "topic": "7.2 Forces",
+      "stage": "Year 7",
+      "truth": "A lever can reduce the effort force needed by increasing the effort distance.",
+      "lie": "A lever reduces the required force without changing distance or energy transfer in an ideal machine.",
+      "explanation": "Mechanical advantage trades force against distance; it does not create energy.",
+      "source": ""
+    },
+    {
+      "id": "y7-27",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "The cell membrane controls movement of many substances into and out of a cell.",
+      "lie": "The cell membrane allows every substance to cross equally freely.",
+      "explanation": "Membranes are selectively permeable, with transport depending on molecules and membrane proteins.",
+      "source": ""
+    },
+    {
+      "id": "y7-28",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "A plant cell usually has a cell wall outside its membrane.",
+      "lie": "A plant cell has a cell wall instead of a cell membrane.",
+      "explanation": "Plant cells have both a membrane and a surrounding wall.",
+      "source": ""
+    },
+    {
+      "id": "y7-29",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "Animal cells do not have cellulose cell walls.",
+      "lie": "Animal cells have the same cellulose walls as plant cells.",
+      "explanation": "Animal cells have membranes but lack the cellulose walls typical of plants.",
+      "source": ""
+    },
+    {
+      "id": "y7-30",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "Not every plant cell contains chloroplasts.",
+      "lie": "Every plant cell contains chloroplasts, including all root cells.",
+      "explanation": "Many non-photosynthetic plant cells, such as typical root cells, lack chloroplasts.",
+      "source": ""
+    },
+    {
+      "id": "y7-31",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "Unicellular organisms carry out life processes within one cell.",
+      "lie": "A unicellular organism cannot carry out life processes because it has only one cell.",
+      "explanation": "One cell can perform the functions needed by the organism.",
+      "source": ""
+    },
+    {
+      "id": "y7-32",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "A microscope’s magnification and resolution are different properties.",
+      "lie": "Increasing magnification always reveals more detail, even if resolution stays unchanged.",
+      "explanation": "Magnification enlarges the image; resolution limits how close features can be distinguished.",
+      "source": ""
+    },
+    {
+      "id": "y7-33",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "The nucleus of a typical eukaryotic cell contains most of its DNA.",
+      "lie": "The nucleus of a typical eukaryotic cell contains no DNA.",
+      "explanation": "Chromosomes in the nucleus contain most eukaryotic genetic material; some organelles also contain DNA.",
+      "source": ""
+    },
+    {
+      "id": "y7-34",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "Vertebrates are animals with backbones.",
+      "lie": "Vertebrates are animals without backbones.",
+      "explanation": "A backbone is a defining feature of vertebrates; animals without backbones are invertebrates.",
+      "source": ""
+    },
+    {
+      "id": "y7-35",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "An insect has six legs as an adult.",
+      "lie": "An adult insect has eight legs.",
+      "explanation": "Adult insects have three pairs of legs. Spiders are arachnids and usually have four pairs.",
+      "source": ""
+    },
+    {
+      "id": "y7-36",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "Fungi form a group distinct from plants.",
+      "lie": "Fungi are plants because they do not walk around.",
+      "explanation": "Fungi obtain nutrients by absorption and do not photosynthesise like green plants. Classification uses biological features, not whether something moves around.",
+      "source": ""
+    },
+    {
+      "id": "y7-37",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "A branching identification key uses choices about observable features.",
+      "lie": "A branching identification key identifies organisms by guessing their names.",
+      "explanation": "Follow paired alternatives based on features until the key leads to an identification.",
+      "source": ""
+    },
+    {
+      "id": "y7-38",
+      "topic": "7.3 Cells and classification",
+      "stage": "Year 7",
+      "truth": "A scientific species name contains a genus name and a specific epithet.",
+      "lie": "A scientific species name consists only of the organism’s local common name.",
+      "explanation": "Binomial names provide a shared naming system. Common names can vary between places and languages.",
+      "source": ""
+    },
+    {
+      "id": "y7-39",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Air is a mixture of gases.",
+      "lie": "Air is a single pure compound.",
+      "explanation": "Air contains nitrogen, oxygen and other gases that are not all chemically bonded together.",
+      "source": ""
+    },
+    {
+      "id": "y7-40",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "A dissolved substance can remain present even when it is no longer visible.",
+      "lie": "A substance ceases to exist when it dissolves and becomes invisible.",
+      "explanation": "Solute particles disperse through the solvent. Dissolving does not mean the substance has vanished.",
+      "source": ""
+    },
+    {
+      "id": "y7-41",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "A saturated solution contains the maximum equilibrium amount of dissolved solute under the stated conditions.",
+      "lie": "A saturated solution contains no dissolved solute.",
+      "explanation": "At saturation, no more of that solute dissolves at equilibrium without changing conditions.",
+      "source": ""
+    },
+    {
+      "id": "y7-42",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Filtration can separate insoluble sand from water.",
+      "lie": "Ordinary filter paper can remove dissolved salt from salt water.",
+      "explanation": "Sand particles are retained; dissolved ions pass through with the water.",
+      "source": ""
+    },
+    {
+      "id": "y7-43",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Evaporating water from salt water can leave solid salt behind.",
+      "lie": "Evaporating water from salt water necessarily evaporates the salt at the same rate.",
+      "explanation": "Under ordinary evaporation conditions the water leaves as vapour while the non-volatile salt remains.",
+      "source": ""
+    },
+    {
+      "id": "y7-44",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Distillation can separate substances using differences in volatility.",
+      "lie": "Distillation separates substances only by particle size.",
+      "explanation": "Vaporisation followed by condensation uses differences in how readily substances vaporise.",
+      "source": ""
+    },
+    {
+      "id": "y7-45",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Evaporation can occur below a liquid’s boiling point.",
+      "lie": "Evaporation occurs only when a liquid reaches its boiling point.",
+      "explanation": "Some surface particles can escape at temperatures below boiling. Boiling occurs throughout the liquid under suitable pressure conditions.",
+      "source": ""
+    },
+    {
+      "id": "y7-46",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "In salt water, water is the solvent and dissolved salt is the solute.",
+      "lie": "In salt water, salt is the solvent and water is the solute.",
+      "explanation": "The solvent does the dissolving; the solute is dissolved in it.",
+      "source": ""
+    },
+    {
+      "id": "y7-47",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "An insoluble substance does not dissolve appreciably in a specified solvent under the stated conditions.",
+      "lie": "An insoluble substance is a substance that cannot exist as a solid.",
+      "explanation": "Solubility describes how much dissolves in a particular solvent, not whether a substance can be solid.",
+      "source": ""
+    },
+    {
+      "id": "y7-48",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Sieving can separate solid pieces of different sizes.",
+      "lie": "Sieving separates solids only by their colour.",
+      "explanation": "Smaller pieces pass through the holes while larger pieces are retained.",
+      "source": ""
+    },
+    {
+      "id": "y7-49",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "A magnet can help separate iron filings from sand.",
+      "lie": "A magnet removes every type of solid from a mixture.",
+      "explanation": "Iron is attracted to a magnet; ordinary sand is not strongly attracted. The method depends on different magnetic properties.",
+      "source": ""
+    },
+    {
+      "id": "y7-50",
+      "topic": "7.4 Solutions and mixtures",
+      "stage": "Year 7",
+      "truth": "Paper chromatography can separate the dyes in some inks.",
+      "lie": "Paper chromatography works only when every dye moves exactly the same distance.",
+      "explanation": "Dyes can travel different distances because they interact differently with the paper and moving solvent.",
+      "source": ""
+    }
+  ]
+}
