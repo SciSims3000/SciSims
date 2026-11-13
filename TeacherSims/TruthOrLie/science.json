@@ -1,0 +1,277 @@
+{
+  "schema": "scisims-truth-or-lie-1",
+  "id": "science-starters",
+  "title": "Science starters — 30 pairs",
+  "items": [
+    {
+      "id": "science-001",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "An object can have zero displacement after travelling a non-zero distance.",
+      "lie": "An object with zero displacement must have travelled zero distance.",
+      "explanation": "A return journey ends at its starting point. Displacement is zero, but the distance travelled is not.",
+      "source": ""
+    },
+    {
+      "id": "science-002",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "An object can accelerate while its speed stays constant.",
+      "lie": "An object cannot accelerate unless its speed changes.",
+      "explanation": "Acceleration is a change in velocity. Changing direction at constant speed, as in uniform circular motion, is acceleration.",
+      "source": ""
+    },
+    {
+      "id": "science-003",
+      "topic": "Motion",
+      "stage": "Stages 4–5",
+      "truth": "A horizontal line on a position–time graph represents an object at rest.",
+      "lie": "A horizontal line on a position–time graph represents constant non-zero speed.",
+      "explanation": "The gradient of a position–time graph is velocity. A horizontal line has zero gradient.",
+      "source": ""
+    },
+    {
+      "id": "science-004",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Balanced forces can act on an object moving at constant velocity.",
+      "lie": "An object moving at constant velocity must have an unbalanced force acting on it.",
+      "explanation": "Zero net force means zero acceleration. The object can remain at rest or move at constant velocity.",
+      "source": ""
+    },
+    {
+      "id": "science-005",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "Mass and weight are different physical quantities.",
+      "lie": "Mass and weight are the same physical quantity.",
+      "explanation": "Mass is measured in kilograms. Weight is a gravitational force measured in newtons and depends on gravitational field strength.",
+      "source": ""
+    },
+    {
+      "id": "science-006",
+      "topic": "Forces",
+      "stage": "Stages 4–5",
+      "truth": "In a vacuum, objects released from rest at the same place fall with the same acceleration regardless of mass.",
+      "lie": "In a vacuum, heavier objects released from rest fall with greater acceleration than lighter objects.",
+      "explanation": "At the same location, gravitational acceleration is independent of the falling object’s mass when other forces are absent.",
+      "source": ""
+    },
+    {
+      "id": "science-007",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "Energy can be transferred between objects.",
+      "lie": "Energy cannot be transferred between objects.",
+      "explanation": "Heating, mechanical work and radiation can transfer energy. Energy is conserved overall.",
+      "source": ""
+    },
+    {
+      "id": "science-008",
+      "topic": "Energy",
+      "stage": "Stages 4–5",
+      "truth": "A stretched spring can store elastic potential energy.",
+      "lie": "A stretched spring cannot store energy until it starts moving.",
+      "explanation": "Elastic potential energy is associated with deformation. A stationary stretched spring can store it.",
+      "source": ""
+    },
+    {
+      "id": "science-009",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Sound needs a medium through which to travel.",
+      "lie": "Sound can travel through a vacuum.",
+      "explanation": "Sound is a mechanical disturbance transmitted through matter. A vacuum has no particles to transmit it.",
+      "source": ""
+    },
+    {
+      "id": "science-010",
+      "topic": "Waves",
+      "stage": "Stages 4–5",
+      "truth": "Increasing a sound wave’s frequency increases its pitch.",
+      "lie": "Increasing a sound wave’s amplitude increases its pitch.",
+      "explanation": "Pitch relates primarily to frequency. Amplitude relates to the strength of pressure variations and perceived loudness.",
+      "source": ""
+    },
+    {
+      "id": "science-011",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Light can travel through a vacuum.",
+      "lie": "Light needs air in order to travel.",
+      "explanation": "Light is an electromagnetic wave and does not require a material medium. Sunlight reaches Earth through space.",
+      "source": ""
+    },
+    {
+      "id": "science-012",
+      "topic": "Light",
+      "stage": "Stages 4–5",
+      "truth": "Doubling the distance from an ideal point light source reduces irradiance to one quarter.",
+      "lie": "Doubling the distance from an ideal point light source reduces irradiance to one half.",
+      "explanation": "For an isotropic point source without absorption, irradiance follows an inverse-square relationship: E ∝ 1/r².",
+      "source": ""
+    },
+    {
+      "id": "science-013",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "Electric current in a metal wire involves moving electrons.",
+      "lie": "Electric current in a metal wire requires protons to travel along the wire.",
+      "explanation": "Conduction electrons move through the metal. The positive ions remain in the lattice rather than flowing along the wire.",
+      "source": ""
+    },
+    {
+      "id": "science-014",
+      "topic": "Electricity",
+      "stage": "Stages 4–5",
+      "truth": "A nearby charged object can redistribute charge in a neutral conductor without touching it.",
+      "lie": "A nearby charged object cannot affect charge distribution in a conductor unless it touches it.",
+      "explanation": "Electrostatic induction redistributes mobile electrons. This does not by itself change the conductor’s total charge.",
+      "source": ""
+    },
+    {
+      "id": "science-015",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "An atom that loses an electron becomes a positive ion.",
+      "lie": "An atom that loses an electron becomes a negative ion.",
+      "explanation": "Losing negatively charged electrons leaves more protons than electrons, giving a net positive charge.",
+      "source": ""
+    },
+    {
+      "id": "science-016",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "The number of protons determines an atom’s element.",
+      "lie": "The number of neutrons determines an atom’s element.",
+      "explanation": "Atomic number is the number of protons. Atoms of the same element can have different neutron numbers: these are isotopes.",
+      "source": ""
+    },
+    {
+      "id": "science-017",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Particles are conserved and rearranged in an ordinary chemical reaction.",
+      "lie": "An ordinary chemical reaction creates new atoms from nothing.",
+      "explanation": "In ordinary chemical reactions, atoms are rearranged into new combinations. Balanced equations conserve the number of atoms of each element.",
+      "source": ""
+    },
+    {
+      "id": "science-018",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "Evaporation can occur below a liquid’s boiling point.",
+      "lie": "Evaporation occurs only when a liquid reaches its boiling point.",
+      "explanation": "Some surface particles can escape at temperatures below boiling. Boiling occurs throughout the liquid under suitable pressure conditions.",
+      "source": ""
+    },
+    {
+      "id": "science-019",
+      "topic": "Chemistry",
+      "stage": "Stages 4–5",
+      "truth": "A dissolved substance can remain present even when it is no longer visible.",
+      "lie": "A substance ceases to exist when it dissolves and becomes invisible.",
+      "explanation": "Solute particles disperse through the solvent. Dissolving does not mean the substance has vanished.",
+      "source": ""
+    },
+    {
+      "id": "science-020",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Plant cells carry out cellular respiration.",
+      "lie": "Plant cells carry out photosynthesis instead of cellular respiration.",
+      "explanation": "Plants need usable energy for cell processes. They carry out respiration as well as photosynthesis in photosynthetic tissues.",
+      "source": ""
+    },
+    {
+      "id": "science-021",
+      "topic": "Cells",
+      "stage": "Stages 4–5",
+      "truth": "Not all cells have a nucleus.",
+      "lie": "Every cell has a nucleus.",
+      "explanation": "Prokaryotic cells lack a membrane-bound nucleus. Some specialised eukaryotic cells also lack one.",
+      "source": ""
+    },
+    {
+      "id": "science-022",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Energy flows through food chains and is transferred to the surroundings.",
+      "lie": "Energy is endlessly recycled within a food chain without transfer to the surroundings.",
+      "explanation": "Energy enters ecosystems and is transferred, with much eventually dissipated as heat. Matter cycles; energy flows.",
+      "source": ""
+    },
+    {
+      "id": "science-023",
+      "topic": "Ecology",
+      "stage": "Stages 4–5",
+      "truth": "Decomposers help recycle nutrients in ecosystems.",
+      "lie": "Decomposers prevent nutrients from being recycled in ecosystems.",
+      "explanation": "Decomposers break down organic material, returning nutrients to forms that can be used again.",
+      "source": ""
+    },
+    {
+      "id": "science-024",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Earth’s tilt is the main cause of its seasons.",
+      "lie": "Earth’s changing distance from the Sun is the main cause of its seasons.",
+      "explanation": "Axial tilt changes day length and the angle of sunlight. The hemispheres experience opposite seasons at the same time.",
+      "source": ""
+    },
+    {
+      "id": "science-025",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The Moon’s ordinary phases result from our changing view of its sunlit half.",
+      "lie": "The Moon’s ordinary phases are caused by Earth’s shadow covering it each month.",
+      "explanation": "As the Moon orbits Earth, we see different portions of its illuminated half. Earth’s shadow causes a lunar eclipse, not the usual phases.",
+      "source": ""
+    },
+    {
+      "id": "science-026",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "The Sun is a star.",
+      "lie": "The Sun is a planet.",
+      "explanation": "The Sun produces energy through nuclear fusion in its core. Planets orbit stars and do not sustain the same kind of core fusion.",
+      "source": ""
+    },
+    {
+      "id": "science-027",
+      "topic": "Earth & space",
+      "stage": "Stages 4–5",
+      "truth": "Igneous rock forms when molten rock cools and solidifies.",
+      "lie": "Igneous rock forms only by compacting layers of sediment.",
+      "explanation": "Cooling magma or lava forms igneous rock. Compaction and cementation are processes associated with many sedimentary rocks.",
+      "source": ""
+    },
+    {
+      "id": "science-028",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "Repeated measurements can help estimate random variation.",
+      "lie": "Repeated measurements always remove systematic error.",
+      "explanation": "Repeats reveal spread and can improve estimates, but a consistent bias can remain in every measurement.",
+      "source": ""
+    },
+    {
+      "id": "science-029",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A correlation alone does not establish that one variable causes another.",
+      "lie": "A correlation proves that one variable causes another.",
+      "explanation": "An association may have alternative explanations, including confounding variables. Causal claims need additional evidence.",
+      "source": ""
+    },
+    {
+      "id": "science-030",
+      "topic": "Working scientifically",
+      "stage": "Stages 4–5",
+      "truth": "A scientific theory is an explanatory framework supported by evidence.",
+      "lie": "A scientific theory is simply an unsupported guess.",
+      "explanation": "Scientific theories explain evidence and generate testable predictions. The scientific meaning differs from casual use of “theory”.",
+      "source": ""
+    }
+  ]
+}
