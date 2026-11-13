@@ -40,18 +40,25 @@ function toggleSecret(){prefs.silly=!prefs.silly;save();applyTheme();renderGame(
 let secretTaps=0,lastSecretTap=0;
 $('secret').onclick=()=>{const now=Date.now();secretTaps=now-lastSecretTap<1500?secretTaps+1:1;lastSecretTap=now;if(secretTaps>=5){secretTaps=0;toggleSecret();}};
 document.addEventListener('keydown',e=>{if(e.altKey&&e.shiftKey&&e.code==='KeyF'&&!e.repeat){e.preventDefault();toggleSecret();}});
-$('sound').onclick=()=>{prefs.sound=!prefs.sound;if(prefs.sound)unlockAudio();save();applyTheme();};
+$('sound').onclick=()=>{prefs.sound=!prefs.sound;if(!prefs.sound)$('fartSample').pause();if(prefs.sound)unlockAudio();save();applyTheme();};
 function unlockAudio(){
  if(!prefs.sound)return null;
  try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)throw Error('Unsupported');audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>tell('Audio could not start. Check browser audio permissions.'));return audioContext;}
  catch{tell('Sound is unavailable in this browser. The game will continue silently.');return null;}
 }
 async function playFeedback(correct){
+ if(!prefs.sound)return;
+ if(!correct&&prefs.silly){
+  const sample=$('fartSample');
+  try{sample.pause();sample.currentTime=0;sample.volume=.75;await sample.play();}
+  catch{tell('The recorded sound could not play. Check your connection and browser sound settings.');}
+  return;
+ }
  const ctx=unlockAudio();if(!ctx)return;
  try{if(ctx.state==='suspended')await ctx.resume();const t=ctx.currentTime;
  const tone=(frequency,type,start,duration,volume,endFrequency)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(frequency,start);if(endFrequency)o.frequency.exponentialRampToValueAtTime(endFrequency,start+duration);g.gain.setValueAtTime(0,start);g.gain.linearRampToValueAtTime(volume,start+.012);g.gain.exponentialRampToValueAtTime(.0001,start+duration);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+duration+.03);o.onended=()=>{o.disconnect();g.disconnect();};return o;};
  if(correct){tone(1046.5,'sine',t,.48,.18);tone(1568,'sine',t+.06,.6,.10);tone(2093,'sine',t,.3,.035);}
  else if(!prefs.silly){tone(105,'sawtooth',t,.5,.10,72);tone(112,'square',t+.02,.45,.035,78);}
- else{const o=tone(125,'sawtooth',t,.75,.13,42);const mod=ctx.createOscillator(),depth=ctx.createGain();mod.frequency.setValueAtTime(28,t);mod.frequency.linearRampToValueAtTime(15,t+.7);depth.gain.value=24;mod.connect(depth);depth.connect(o.frequency);mod.start(t);mod.stop(t+.77);mod.onended=()=>{mod.disconnect();depth.disconnect();};const n=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.65),ctx.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();noise.buffer=n;filter.type='lowpass';filter.frequency.value=450;gain.gain.value=.12;noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(t);noise.onended=()=>{noise.disconnect();filter.disconnect();gain.disconnect();};}
+
  }catch{tell('Sound could not play. The answer and score were still recorded.');}
 }

@@ -1,4 +1,4 @@
-# Truth or Lie — 1.1.0
+# Truth or Lie — 1.1.1
 
 Classroom discussion, solo and 2–6 team modes. 330 science pairs (30 in each of 11 topics) load from science.json. Each round shuffles unique pairs and balances true/false variants to within one statement. A pair appears only once per round. Optional protected thinking time unlocks answers; it does not impose a deadline. One point per correct answer, no speed bonus. Explanations must be revealed before advancing.
 
@@ -43,3 +43,6 @@ These are subject reference resources, not claims of line-by-line validation of 
 - Secret Fact or Fart mode: Option/Alt + Shift + F, or five version-badge clicks with less than 1.5 seconds between clicks. Repeat to restore the normal title. Incorrect answers use a synthesised fart; correct answers retain the ding. The toggle changes presentation, not question truth or scoring. Preference persists locally.
 - Year 7 bank: 50 pairs mapped to the current SciSims front-page units: 13 Observing the Universe, 13 Forces, 12 Cells and classification, 12 Solutions and mixtures. Separate year7.json; general science bank preserved. Export and custom-copy import supported.
 - Verified schema, both timer durations, scoring, all three audio routes using a mock AudioContext, keyboard/five-tap toggles, mute, saved preferences and DOM references. Audio timbre and volume have not been auditioned in a real browser.
+
+## Recorded fart (1.1.1)
+Replaced the procedural fart with a locally hosted MP3: Fart 2 by Breviceps (CC0). See audio/CREDITS.md. Preloaded HTML audio plays only for incorrect answers in secret mode. Mute also stops a currently playing sample. Normal buzzer and correct-answer ding are unchanged.
