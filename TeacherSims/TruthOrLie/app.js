@@ -32,6 +32,7 @@ async function init(){try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}'
 init();
 
 function applyTheme(){
+ document.documentElement.classList.toggle('fart-dark',prefs.silly);
  $('gameTitle').textContent=prefs.silly?'Fact or Fart?':'Truth or Lie?';
  document.title=(prefs.silly?'Fact or Fart':'Truth or Lie')+' | SciSims';
  $('truth').textContent=prefs.silly?'✓ Fact':'✓ Truth';$('lie').textContent=prefs.silly?'✕ Fart':'✕ Lie';
