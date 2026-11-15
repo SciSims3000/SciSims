@@ -107,6 +107,7 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <button type="button" id="moduleElectromagnetism" aria-pressed="false">6 · Electromagnetism</button>
 <button type="button" id="moduleLight" aria-pressed="false">7 · The Nature of Light</button>
 <button type="button" id="moduleAtomic" aria-pressed="false">8 · From the Universe to the Atom</button>
+<button type="button" id="moduleYear12" aria-pressed="false">Year 12 Revision</button>
 </nav>
 <nav class="view-switch" id="mechanicsTabs" aria-label="Module 5 concepts">
 <button type="button" id="moduleProjectile" aria-pressed="true">Projectile Motion</button>
@@ -129,6 +130,11 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <option value="10" selected>10</option>
 <option value="15">15</option>
 <option value="20">20</option>
+<option value="30">30</option>
+<option value="40">40</option>
+<option value="50">50</option>
+<option value="75">75</option>
+<option value="100">100</option>
 </select>
 </label>
 <div id="progress" aria-live="polite"></div>
@@ -771,6 +777,14 @@ Object.assign(moduleConfigs, {
     topics: atomicTopics, makeQuestion: makeAtomicQuestion,
     instructions: 'Use the supplied constants and report each answer in the displayed unit.'}
 });
+const courseGroups = [conceptIds, ['electromagnetism'], ['light'], ['atomic']];
+moduleConfigs.year12 = {
+  name: 'Year 12 Revision', button: 'moduleYear12',
+  instructions: 'Select calculation topics across Modules 5–8. Use the assumptions, constants and units shown in each question.',
+  topics: Object.fromEntries(courseGroups.flatMap((group, index) => group.flatMap(id =>
+    Object.entries(moduleConfigs[id].topics).map(([kind, label]) => [id + ':' + kind, 'Module ' + (index + 5) + ' · ' + label]))))
+};
+const mixedMode = () => activeModule === 'mixed' || activeModule === 'year12';
 let activeModule = 'projectile';
 let lastMechanicsModule = 'projectile';
 let topicLabels = projectileTopicLabels;
@@ -1077,7 +1091,8 @@ function syncSetupControls() {
 }
 
 function mixedTopicRotation() {
-  const groups = conceptIds.map(id => [...selectedTopics].filter(kind => kind.startsWith(id + ':')));
+  const moduleGroups = activeModule === 'year12' ? courseGroups : conceptIds.map(id => [id]);
+  const groups = moduleGroups.map(ids => [...selectedTopics].filter(kind => ids.includes(kind.split(':')[0])));
   const rotation = [];
   while (groups.some(group => group.length)) {
     for (const group of groups) {
@@ -1092,15 +1107,15 @@ function pickTopic(rotation, last, random) {
     return choices[randomInt(0, choices.length - 1)];
   }
   const choices = rotation.filter(kind => kind !== last);
-  const key = activeModule === 'mixed' || !choices.length ? rotation[0] : choices[randomInt(0, choices.length - 1)];
+  const key = mixedMode() || !choices.length ? rotation[0] : choices[randomInt(0, choices.length - 1)];
   rotation.splice(rotation.indexOf(key), 1);
   return key;
 }
 function makeRotation() {
-  return activeModule === 'mixed' ? mixedTopicRotation() : [...selectedTopics];
+  return mixedMode() ? mixedTopicRotation() : [...selectedTopics];
 }
 function generateQuestion(key, difficulty) {
-  const mixed = activeModule === 'mixed';
+  const mixed = mixedMode();
   const [questionModule, kind] = mixed ? key.split(':') : [activeModule, key];
   const generator = moduleConfigs[questionModule].makeQuestion || makeQuestion;
   return {...generator(difficulty, kind, mixed ? 'auto' : byId('situation').value), module: questionModule};
@@ -1627,7 +1642,9 @@ function syncModuleLabels() {
     byId(config.button).setAttribute('aria-pressed', String(id === activeModule));
   }
   byId('situationControl').hidden = activeModule !== 'projectile';
-  byId('practiceView').hidden = activeModule === 'mixed';
+  byId('practiceView').hidden = mixedMode();
+  const moduleNumber = courseGroups.findIndex(ids => ids.includes(activeModule)) + 5;
+  byId('reportView').textContent = moduleNumber > 5 ? 'Mixed Module ' + moduleNumber + ' Quiz' : 'Quiz';
   byId('modelInstructions').textContent = current.instructions;
   byId('printTitle').textContent = current.name + ' Quiz';
   byId('printInstructions').textContent = current.instructions;
@@ -1654,7 +1671,7 @@ function syncMotionLabels() {
 for (const [id, config] of Object.entries(moduleConfigs)) {
   byId(config.button).addEventListener('click', () => {
     if (id === activeModule) return;
-    const mixed = id === 'mixed';
+    const mixed = id === 'mixed' || id === 'year12';
     switchMode(mixed ? 'quiz' : 'practice', id);
     showView(mixed ? 'report' : 'practice');
   });
