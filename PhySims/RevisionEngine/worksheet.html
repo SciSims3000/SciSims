@@ -25,6 +25,11 @@ select,button{border:1px solid #94a3b8;border-radius:8px;background:#fff;color:i
 button{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.55;cursor:default}
 :focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+#questionPicker{margin-top:14px;border:1px solid #dbe3ef;border-radius:10px;padding:12px}
+#questionPicker legend{font-weight:bold}
+#questionChoices label{display:grid;grid-template-columns:auto 1fr;align-items:start;gap:8px;padding:6px 0}
+#questionChoices input{min-height:0;width:18px;height:18px;margin-top:.2em}
+#questionChoices small{display:block;font-weight:normal}
 #status,.muted{color:#475569;font-size:.95rem}
 #preview{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:clamp(16px,4vw,32px)}
 #questions{padding-left:1.5rem;margin:1.5rem 0 0}
@@ -57,13 +62,18 @@ button:disabled{opacity:.55;cursor:default}
 <input type="file" id="jsonFile" accept=".json,application/json">
 <div id="options" class="toolbar" hidden>
 <label>Questions
-<select id="scope"><option value="all">All questions</option><option value="missed">Missed questions</option></select>
+<select id="scope"><option value="all">All questions</option><option id="missedOption" value="missed">Missed questions</option><option value="individual">Choose individual questions</option></select>
 </label>
 <label>Document
 <select id="format"><option value="worksheet">Student worksheet</option><option value="key">Teacher answer key</option></select>
 </label>
 <button id="print" type="button">Print / Save as PDF</button>
 </div>
+<fieldset id="questionPicker" hidden>
+<legend>Include these questions</legend>
+<button id="toggleQuestions" type="button">Clear all</button>
+<div id="questionChoices"></div>
+</fieldset>
 <p id="status" role="status">Choose a JSON file to preview it.</p>
 </section>
 <section id="preview" aria-labelledby="documentTitle" hidden>
@@ -78,6 +88,7 @@ button:disabled{opacity:.55;cursor:default}
 'use strict';
 const byId = id => document.getElementById(id);
 let imported;
+const selectedQuestions = new Set();
 
 function readSet(data) {
   const fresh = data?.format === 'scisims-question-set' && data.schemaVersion === 1;
@@ -171,17 +182,40 @@ function renderQuestion(question, key) {
   }
   return item;
 }
+function drawQuestionChoices() {
+  byId('questionChoices').replaceChildren(...imported.questions.map(question => {
+    const row = element('label');
+    const box = element('input');
+    box.type = 'checkbox';
+    box.checked = selectedQuestions.has(question.number);
+    box.addEventListener('change', () => {
+      if (box.checked) selectedQuestions.add(question.number);
+      else selectedQuestions.delete(question.number);
+      render();
+    });
+    const description = element('span', question.number + '. ' + question.topic);
+    description.append(element('small', question.prompt));
+    row.append(box, description);
+    return row;
+  }));
+}
+
 function render() {
   if (!imported) return;
   const key = byId('format').value === 'key';
-  const missed = byId('scope').value === 'missed';
-  const questions = missed ? imported.questions.filter(question => question.missed) : imported.questions;
+  const scope = byId('scope').value;
+  const missed = scope === 'missed';
+  const individual = scope === 'individual';
+  byId('questionPicker').hidden = !individual;
+  byId('toggleQuestions').textContent = selectedQuestions.size === imported.questions.length ? 'Clear all' : 'Select all';
+  const questions = imported.questions.filter(question =>
+    missed ? question.missed : individual ? selectedQuestions.has(question.number) : true);
   byId('preview').hidden = !questions.length;
   byId('print').disabled = !questions.length;
   byId('status').textContent = questions.length
     ? questions.length + (questions.length === 1 ? ' question ready.' : ' questions ready.') +
       (key && !imported.fresh ? ' The key uses the answers and working available in the quiz report.' : '')
-    : 'This report has no missed questions.';
+    : individual ? 'Select at least one question to print.' : 'This report has no missed questions.';
   if (!questions.length) return;
   byId('documentTitle').textContent = key ? 'Teacher answer key' : 'Student worksheet';
   byId('sheetMeta').textContent = imported.activity + (missed ? ' · Follow-up practice' : '');
@@ -192,6 +226,8 @@ function render() {
 byId('jsonFile').addEventListener('change', async event => {
   const file = event.target.files?.[0];
   imported = null;
+  selectedQuestions.clear();
+  byId('questionPicker').hidden = true;
   byId('preview').hidden = true;
   byId('options').hidden = true;
   if (!file) {
@@ -204,7 +240,11 @@ byId('jsonFile').addEventListener('change', async event => {
     if (event.target.files?.[0] !== file) return;
     imported = readSet(parsed);
     byId('scope').value = imported.fresh ? 'all' : 'missed';
-    byId('scope').disabled = imported.fresh;
+    byId('missedOption').disabled = imported.fresh;
+    for (const question of imported.questions) {
+      if (imported.fresh || question.missed) selectedQuestions.add(question.number);
+    }
+    drawQuestionChoices();
     byId('format').value = 'worksheet';
     byId('options').hidden = false;
     render();
@@ -215,6 +255,13 @@ byId('jsonFile').addEventListener('change', async event => {
 });
 byId('scope').addEventListener('change', render);
 byId('format').addEventListener('change', render);
+byId('toggleQuestions').addEventListener('click', () => {
+  if (!imported) return;
+  if (selectedQuestions.size === imported.questions.length) selectedQuestions.clear();
+  else for (const question of imported.questions) selectedQuestions.add(question.number);
+  drawQuestionChoices();
+  render();
+});
 byId('print').addEventListener('click', () => {
   if (!byId('preview').hidden) window.print();
 });
