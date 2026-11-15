@@ -98,7 +98,7 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <div class="brand">SciSims · Physics</div>
 <h1>The Revision Engine</h1>
 <p>Year 12 Physics · Modules 5–8</p>
-<p><a href="guide.docx" download="The Revision Engine Teacher and Student Guide.docx">Download the teacher and student guide (Word)</a></p>
+<p><a href="guide.docx" download="The Revision Engine Teacher and Student Guide.docx">Download the teacher and student guide (Word)</a> · <a href="worksheet.html">Worksheet Builder</a></p>
 <p id="modelInstructions">Use g = 9.8 m/s² and ignore air resistance. Take upward and forward as positive. Use degree mode.</p>
 </header>
 <p class="small">Choose a question count in Quiz and select Start quiz. Download a JSON report for your teacher when you finish. You can retry answers and use hints. Quiz answers can be reviewed after an attempt. Practice runs separately from the quiz. Revealed and skipped questions earn no point.</p>
@@ -157,7 +157,11 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <p id="printInstructions">Use g = 9.8 m/s² and ignore air resistance. Upward and forward are positive.</p>
 </div>
 <p id="results"></p>
+<div class="actions">
 <button type="button" class="primary" id="startQuiz">Start quiz</button>
+<button type="button" id="exportQuestionSet">Download question set</button>
+</div>
+<p class="small" id="questionSetNote" role="status"></p>
 <div id="currentReview" hidden>
 <h2 id="reviewTitle">Current question</h2>
 <p id="reviewStatus"></p>
@@ -1056,6 +1060,7 @@ function recordQuizResult(result) {
     attemptHistory,
     usedHint,
     concept: conceptResult(),
+    steps: attempts ? question.steps : undefined,
     answers: question.parts.map((field, index) => ({
       calculation: field.label,
       unit: field.unit,
@@ -1081,21 +1086,43 @@ function mixedTopicRotation() {
   }
   return rotation;
 }
+function pickTopic(rotation, last, random) {
+  if (random) {
+    const choices = [...selectedTopics];
+    return choices[randomInt(0, choices.length - 1)];
+  }
+  const choices = rotation.filter(kind => kind !== last);
+  const key = activeModule === 'mixed' || !choices.length ? rotation[0] : choices[randomInt(0, choices.length - 1)];
+  rotation.splice(rotation.indexOf(key), 1);
+  return key;
+}
+function makeRotation() {
+  return activeModule === 'mixed' ? mixedTopicRotation() : [...selectedTopics];
+}
+function generateQuestion(key, difficulty) {
+  const mixed = activeModule === 'mixed';
+  const [questionModule, kind] = mixed ? key.split(':') : [activeModule, key];
+  const generator = moduleConfigs[questionModule].makeQuestion || makeQuestion;
+  return {...generator(difficulty, kind, mixed ? 'auto' : byId('situation').value), module: questionModule};
+}
+function questionPrompt(item) {
+  return item.scenario || 'A ball is launched ' + item.location + ' at ' + item.speed + ' m/s, ' +
+    (item.angle === 0 ? 'horizontally. ' : item.angle + '° above the horizontal. ') + item.prompt;
+}
+function questionAssumption(item) {
+  if (item.numerical) return '';
+  return item.assumption || (item.height
+    ? 'The launch point is ' + item.height + ' m above the landing surface (y = 0).'
+    : 'Launch and landing are at the same height (y = 0).');
+}
 function nextQuestion(focus = true) {
   if (!selectedTopics.size) return;
   const random = byId('randomTopics').checked;
-  const mixed = activeModule === 'mixed';
-  if (!bag.length) bag = mixed ? mixedTopicRotation() : [...selectedTopics];
-  const choices = random ? [...selectedTopics] : bag.filter(kind => kind !== previous);
-  const key = mixed && !random ? bag[0] : choices.length ? choices[randomInt(0, choices.length - 1)] : bag[0];
-  if (!random) bag.splice(bag.indexOf(key), 1);
-  previous = key;
+  if (!bag.length) bag = makeRotation();
+  previous = pickTopic(bag, previous, random);
   const difficulty = byId('difficulty').value;
   questionDifficulty = difficulty === 'adaptive' ? adaptiveStages[Math.min(correct, 2)] : difficulty;
-  const [questionModule, kind] = mixed ? key.split(':') : [activeModule, key];
-  const generator = moduleConfigs[questionModule].makeQuestion || makeQuestion;
-  question = generator(questionDifficulty, kind, mixed ? 'auto' : byId('situation').value);
-  question.module = questionModule;
+  question = generateQuestion(previous, questionDifficulty);
   number++;
   concept = makeConcept(question, number);
   conceptChoice = null;
@@ -1121,12 +1148,9 @@ function renderQuestion(focus = false) {
   byId('questionDifficulty').textContent = byId('difficulty').value === 'adaptive'
     ? 'Adaptive level · ' + questionDifficulty[0].toUpperCase() + questionDifficulty.slice(1)
     : '';
-  byId('scenario').textContent = question.scenario || 'A ball is launched ' + question.location + ' at ' + question.speed + ' m/s, ' +
-    (question.angle === 0 ? 'horizontally. ' : question.angle + '° above the horizontal. ') + question.prompt;
+  byId('scenario').textContent = questionPrompt(question);
   byId('assumption').hidden = Boolean(question.numerical);
-  byId('assumption').textContent = question.numerical ? '' : question.assumption || (question.height
-    ? 'The launch point is ' + question.height + ' m above the landing surface (y = 0).'
-    : 'Launch and landing are at the same height (y = 0).');
+  byId('assumption').textContent = questionAssumption(question);
   byId('fields').replaceChildren(...question.parts.map((field, index) => {
     const row = document.createElement('div');
     row.className = 'field';
@@ -1215,6 +1239,8 @@ function conceptResult() {
   if (!concept || !attempts) return null;
   return {
     prompt: concept.prompt,
+    choices: concept.choices,
+    explanation: conceptChecked ? concept.explanation : null,
     submitted: conceptChecked ? conceptChoice : null,
     expected: conceptChecked ? concept.answer : null,
     correct: conceptChecked ? conceptChoice === concept.answer : null
@@ -1414,11 +1440,51 @@ function firstTryCorrect() {
   return results.filter(result => result.outcome === 'correct' && result.attempts === 1).length;
 }
 
+function makeWorksheetSet() {
+  const selectedDifficulty = byId('difficulty').value;
+  const difficulty = selectedDifficulty === 'adaptive' ? 'standard' : selectedDifficulty;
+  const random = byId('randomTopics').checked;
+  let rotation = [];
+  let last = '';
+  const questions = Array.from({length: setSize()}, (_, index) => {
+    if (!rotation.length) rotation = makeRotation();
+    last = pickTopic(rotation, last, random);
+    const item = generateQuestion(last, difficulty);
+    const reasoning = makeConcept(item, index + 1);
+    return {
+      question: index + 1, moduleConcept: item.module, topic: item.topic,
+      prompt: questionPrompt(item), assumption: questionAssumption(item),
+      answers: item.parts.map(field => ({calculation: field.label, unit: field.unit, expected: Number(rounded(field.value))})),
+      steps: item.steps,
+      concept: reasoning ? {prompt: reasoning.prompt, choices: reasoning.choices,
+        expected: reasoning.answer, explanation: reasoning.explanation} : null
+    };
+  });
+  return {
+    format: 'scisims-question-set', schemaVersion: 1,
+    activity: 'The Revision Engine · ' + moduleConfigs[activeModule].name,
+    moduleConcept: activeModule, difficulty, questions,
+    answerTolerance: {relativePercent: relativeTolerance * 100, minimumAbsolute: minimumTolerance}
+  };
+}
+
+byId('exportQuestionSet').addEventListener('click', () => {
+  if (mode !== 'quiz' || quizStarted || !selectedTopics.size) return;
+  downloadJson(makeWorksheetSet(), 'scisims-' + activeModule + '-question-set.json');
+  byId('questionSetNote').textContent = 'Question set downloaded. Open Worksheet Builder and load the JSON file.';
+});
+
 function updateReportSummary() {
   const complete = quizComplete();
   const startQuiz = byId('startQuiz');
   startQuiz.hidden = complete;
   startQuiz.disabled = !selectedTopics.size;
+  byId('exportQuestionSet').hidden = quizStarted;
+  byId('exportQuestionSet').disabled = !selectedTopics.size;
+  byId('questionSetNote').textContent = quizStarted ? '' :
+    (byId('difficulty').value === 'adaptive'
+      ? 'Question sets use Standard when Adaptive is selected. Each download creates a fresh set.'
+      : 'Each download creates a fresh worksheet set using your selected quiz settings.');
   startQuiz.textContent = quizStarted ? 'Resume quiz' : 'Start quiz';
   byId('export').disabled = !complete;
   byId('printReport').hidden = !complete;
@@ -1683,15 +1749,18 @@ byId('export').addEventListener('click', () => {
     topics: [...selectedTopics].map(kind => topicLabels[kind]),
     questions: results
   };
-  const file = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
+  downloadJson(report, 'scisims-' + activeModule + '-quiz.json');
+  byId('reportStatus').textContent = 'Send the downloaded JSON file to your teacher.';
+});
+function downloadJson(data, filename) {
+  const file = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   const url = URL.createObjectURL(file);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'scisims-' + activeModule + '-quiz.json';
+  link.download = filename;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  byId('reportStatus').textContent = 'Send the downloaded JSON file to your teacher.';
-});
+}
 byId('restart').addEventListener('click', () => {
   results.length = 0;
   tracked.clear();

@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revision Engine Worksheet Builder | SciSims</title>
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+<style>
+:root{font:16px/1.5 Arial,Helvetica,sans-serif;color:#1f2937;background:#f5f7fb;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+main{max-width:900px;margin:auto;padding:clamp(16px,4vw,36px)}
+h1{font-size:clamp(1.75rem,5vw,2.65rem);line-height:1.12;margin:.25em 0}
+h2{font-size:1.45rem;margin:0 0 .5em}
+h3{font-size:1rem;margin:0}
+p{margin:.55em 0}
+a{color:#1d4ed8}
+.controls{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:20px;margin:20px 0}
+.controls label{display:block;font-weight:bold}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:16px}
+input,select,button{font:inherit;max-width:100%;min-height:44px}
+input[type=file]{padding:6px 0}
+select,button{border:1px solid #94a3b8;border-radius:8px;background:#fff;color:inherit;padding:8px 12px}
+button{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+#status,.muted{color:#475569;font-size:.95rem}
+#preview{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:clamp(16px,4vw,32px)}
+#questions{padding-left:1.5rem;margin:1.5rem 0 0}
+#questions>li{margin-bottom:1.35rem}
+#questions ul,#questions ol{padding-left:1.3rem}
+.answers{margin:.6em 0}
+.write-line{display:block;min-height:1.5em;border-bottom:1px solid #aeb7c3;margin:.25em 0}
+.working{margin:.75em 0}
+@media print{
+ @page{size:A4;margin:16mm}
+ :root{background:#fff;color:#000;font-size:11pt}
+ #scisimsSiteNav,.screen-only{display:none!important}
+ main{max-width:none;padding:0}
+ #preview{border:0;border-radius:0;padding:0}
+ #questions>li{break-inside:avoid}
+ h2,h3{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div id="scisimsSiteNav"></div>
+<main>
+<header class="screen-only">
+<a href="./">The Revision Engine</a>
+<h1>Worksheet Builder</h1>
+<p>Load a question set or a completed quiz report to print a student worksheet or teacher answer key. Files are read in your browser.</p>
+</header>
+<section class="controls screen-only" aria-label="Worksheet settings">
+<label for="jsonFile">Revision Engine JSON file</label>
+<input type="file" id="jsonFile" accept=".json,application/json">
+<div id="options" class="toolbar" hidden>
+<label>Questions
+<select id="scope"><option value="all">All questions</option><option value="missed">Missed questions</option></select>
+</label>
+<label>Document
+<select id="format"><option value="worksheet">Student worksheet</option><option value="key">Teacher answer key</option></select>
+</label>
+<button id="print" type="button">Print / Save as PDF</button>
+</div>
+<p id="status" role="status">Choose a JSON file to preview it.</p>
+</section>
+<section id="preview" aria-labelledby="documentTitle" hidden>
+<h2 id="documentTitle"></h2>
+<p id="sheetMeta" class="muted"></p>
+<p id="studentLine">Name ____________________________  Date ______________</p>
+<p id="rule"></p>
+<ol id="questions"></ol>
+</section>
+</main>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+let imported;
+
+function readSet(data) {
+  const fresh = data?.format === 'scisims-question-set' && data.schemaVersion === 1;
+  const report = typeof data?.activity === 'string' && /^SciSims .+ Quiz$/.test(data.activity)
+    && Number.isInteger(data.schemaVersion);
+  if ((!fresh && !report) || !Array.isArray(data.questions) || data.questions.length < 1 || data.questions.length > 100) {
+    throw new Error('Choose a question set or a completed quiz report exported by The Revision Engine.');
+  }
+  const questions = data.questions.map((question, index) => readQuestion(question, index, fresh));
+  const tolerance = data.answerTolerance;
+  return {
+    fresh,
+    activity: typeof data.activity === 'string' ? data.activity : 'The Revision Engine',
+    rule: Number.isFinite(tolerance?.relativePercent) && Number.isFinite(tolerance?.minimumAbsolute)
+      ? 'Answer tolerance is ±' + tolerance.relativePercent + '%, with a minimum allowance of ±' + tolerance.minimumAbsolute + ' in the displayed unit.'
+      : 'Use the units shown and keep extra digits until the final step.',
+    questions
+  };
+}
+
+function readQuestion(question, index, fresh) {
+  if (typeof question?.prompt !== 'string' || !question.prompt.trim() || !Array.isArray(question.answers) ||
+      !question.answers.length || question.answers.length > 12) {
+    throw new Error('Question ' + (index + 1) + ' is missing its prompt or answer fields.');
+  }
+  const answers = question.answers.map(answer => {
+    if (typeof answer?.calculation !== 'string') throw new Error('A calculation label is missing.');
+    return {
+      label: answer.calculation,
+      unit: typeof answer.unit === 'string' ? answer.unit : '',
+      expected: Number.isFinite(answer.expected) ? answer.expected : null
+    };
+  });
+  const reasoning = typeof question.concept?.prompt === 'string' &&
+    Array.isArray(question.concept.choices) && question.concept.choices.every(choice => typeof choice === 'string')
+    ? question.concept : null;
+  return {
+    number: index + 1,
+    topic: typeof question.topic === 'string' ? question.topic : 'Calculation',
+    prompt: [question.prompt, typeof question.assumption === 'string' ? question.assumption
+      : Number.isFinite(question.launchHeightMetres) ? 'Launch height above the landing surface: ' + question.launchHeightMetres + ' m.' : ''].filter(Boolean).join(' '),
+    answers, reasoning,
+    steps: Array.isArray(question.steps) ? question.steps.filter(step => typeof step === 'string') : [],
+    missed: !fresh && (question.outcome === 'skipped' || question.outcome === 'revealed' ||
+      (Array.isArray(question.attemptHistory) && question.attemptHistory.some(attempt =>
+        Array.isArray(attempt?.incorrectResponses) && attempt.incorrectResponses.length > 0)))
+  };
+}
+
+function element(tag, value) {
+  const node = document.createElement(tag);
+  if (value !== undefined) node.textContent = value;
+  return node;
+}
+function listOf(tag, entries) {
+  const list = element(tag);
+  for (const entry of entries) list.append(element('li', entry));
+  return list;
+}
+function renderQuestion(question, key) {
+  const item = element('li');
+  item.append(element('h3', question.topic), element('p', question.prompt));
+  const answers = element('ul');
+  answers.className = 'answers';
+  for (const answer of question.answers) {
+    const unit = answer.unit ? ' ' + answer.unit : '';
+    const value = answer.expected === null ? 'Answer unavailable in this export.' : answer.expected.toFixed(2) + unit;
+    answers.append(element('li', answer.label + ' · ' + (key ? value : '________________' + unit)));
+  }
+  item.append(answers);
+  if (key && question.steps.length) item.append(listOf('ol', question.steps));
+  if (!key) {
+    const working = element('div');
+    working.className = 'working';
+    working.append(element('span', 'Working'));
+    for (let i = 0; i < Math.max(3, question.answers.length * 2); i++) {
+      const line = element('span');
+      line.className = 'write-line';
+      line.setAttribute('aria-hidden', 'true');
+      working.append(line);
+    }
+    item.append(working);
+  }
+  if (question.reasoning) {
+    item.append(element('p', question.reasoning.prompt));
+    if (!key) item.append(listOf('ol', question.reasoning.choices));
+    else item.append(element('p', [
+      question.reasoning.expected || 'Answer unavailable in this export.',
+      question.reasoning.explanation
+    ].filter(Boolean).join(' ')));
+  }
+  return item;
+}
+function render() {
+  if (!imported) return;
+  const key = byId('format').value === 'key';
+  const missed = byId('scope').value === 'missed';
+  const questions = missed ? imported.questions.filter(question => question.missed) : imported.questions;
+  byId('preview').hidden = !questions.length;
+  byId('print').disabled = !questions.length;
+  byId('status').textContent = questions.length
+    ? questions.length + (questions.length === 1 ? ' question ready.' : ' questions ready.') +
+      (key && !imported.fresh ? ' The key uses the answers and working available in the quiz report.' : '')
+    : 'This report has no missed questions.';
+  if (!questions.length) return;
+  byId('documentTitle').textContent = key ? 'Teacher answer key' : 'Student worksheet';
+  byId('sheetMeta').textContent = imported.activity + (missed ? ' · Follow-up practice' : '');
+  byId('studentLine').hidden = key;
+  byId('rule').textContent = key ? imported.rule : 'Show your working. Give answers in the units shown and round to two decimal places.';
+  byId('questions').replaceChildren(...questions.map(question => renderQuestion(question, key)));
+}
+byId('jsonFile').addEventListener('change', async event => {
+  const file = event.target.files?.[0];
+  imported = null;
+  byId('preview').hidden = true;
+  byId('options').hidden = true;
+  if (!file) {
+    byId('status').textContent = 'Choose a JSON file to preview it.';
+    return;
+  }
+  try {
+    if (file.size > 1000000) throw new Error('Choose an export smaller than 1 MB.');
+    const parsed = JSON.parse(await file.text());
+    if (event.target.files?.[0] !== file) return;
+    imported = readSet(parsed);
+    byId('scope').value = imported.fresh ? 'all' : 'missed';
+    byId('scope').disabled = imported.fresh;
+    byId('format').value = 'worksheet';
+    byId('options').hidden = false;
+    render();
+  } catch (error) {
+    if (event.target.files?.[0] !== file) return;
+    byId('status').textContent = error instanceof SyntaxError ? 'This file is not valid JSON.' : error.message;
+  }
+});
+byId('scope').addEventListener('change', render);
+byId('format').addEventListener('change', render);
+byId('print').addEventListener('click', () => {
+  if (!byId('preview').hidden) window.print();
+});
+</script>
+</body>
+</html>
