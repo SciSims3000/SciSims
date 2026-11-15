@@ -109,12 +109,6 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <button type="button" id="moduleAtomic" aria-pressed="false">8 · From the Universe to the Atom</button>
 <button type="button" id="moduleYear12" aria-pressed="false">Year 12 Revision</button>
 </nav>
-<nav class="view-switch" id="mechanicsTabs" aria-label="Module 5 concepts">
-<button type="button" id="moduleProjectile" aria-pressed="true">Projectile Motion</button>
-<button type="button" id="moduleCircular" aria-pressed="false">Circular Motion</button>
-<button type="button" id="moduleGravity" aria-pressed="false">Motion in Gravitational Fields</button>
-<button type="button" id="moduleMixed" aria-pressed="false">Mixed Module 5 Quiz</button>
-</nav>
 <div class="toolbar">
 <label>Difficulty <select id="difficulty"><option value="foundation">Foundation</option><option value="standard" selected>Standard</option><option value="challenge">Challenge</option><option value="adaptive">Adaptive</option></select></label>
 <label id="situationControl">Launch situation <select id="situation">
@@ -729,12 +723,6 @@ function withinTolerance(value, expected) {
 }
 
 const byId = id => document.getElementById(id);
-const levelTopics = {
-  foundation: ['horizontal','vertical','flight','peakTime','height'],
-  standard: ['horizontal','vertical','flight','peakTime','height','range','velocity','impact'],
-  challenge: ['flight','peakTime','height','range','velocity','impact'],
-  adaptive: ['horizontal','vertical','flight','peakTime','height','range','velocity','impact']
-};
 let question, number = 0, correct = 0, completed = 0, status = 'open';
 const quizLength = byId('quizLength');
 const projectileTopicLabels = {
@@ -748,20 +736,20 @@ const projectileTopicLabels = {
   velocity: 'Speed and direction during flight'
 };
 const moduleConfigs = {
-  projectile: {name: 'Projectile Motion', button: 'moduleProjectile', topics: projectileTopicLabels,
+  projectile: {name: 'Projectile Motion', topics: projectileTopicLabels,
     instructions: 'Use g = 9.8 m/s² and ignore air resistance. Take upward and forward as positive. Use degree mode.'},
-  circular: {name: 'Circular Motion', button: 'moduleCircular', makeQuestion: makeCircularQuestion,
+  circular: {name: 'Circular Motion', makeQuestion: makeCircularQuestion,
     instructions: 'Use uniform circular motion. Measure radius from the centre and use radians for angular speed.',
     topics: {circleSpeed: 'Tangential speed', circlePeriod: 'Period', circleOmega: 'Angular speed',
       circleAcceleration: 'Centripetal acceleration', circleForce: 'Net inward force'}},
-  gravity: {name: 'Motion in Gravitational Fields', button: 'moduleGravity', makeQuestion: makeGravityQuestion,
+  gravity: {name: 'Motion in Gravitational Fields', makeQuestion: makeGravityQuestion,
     instructions: 'Use the Earth data in each question. Measure orbital radius from Earth’s centre.',
     topics: {gravityField: 'Gravitational field strength', orbitSpeed: 'Circular orbital speed', orbitPeriod: 'Orbital period',
       orbitEnergy: 'Specific orbital energy', escapeSpeed: 'Escape speed', keplerRatio: 'Kepler’s third law'}}
 };
 const conceptIds = Object.keys(moduleConfigs);
 moduleConfigs.mixed = {
-  name: 'Mixed Module 5', button: 'moduleMixed',
+  name: 'Module 5 · Advanced Mechanics', button: 'courseModule5',
   instructions: 'Choose the model that fits each scenario. Use the assumptions, constants, and units shown in the question.',
   topics: Object.fromEntries(conceptIds.flatMap(id => Object.entries(moduleConfigs[id].topics)
     .map(([kind, label]) => [id + ':' + kind, moduleConfigs[id].name + ' · ' + label])))
@@ -785,13 +773,9 @@ moduleConfigs.year12 = {
     Object.entries(moduleConfigs[id].topics).map(([kind, label]) => [id + ':' + kind, 'Module ' + (index + 5) + ' · ' + label]))))
 };
 const mixedMode = () => activeModule === 'mixed' || activeModule === 'year12';
-let activeModule = 'projectile';
-let lastMechanicsModule = 'projectile';
-let topicLabels = projectileTopicLabels;
-function defaultTopics(level) {
-  return activeModule === 'projectile' ? levelTopics[level] : Object.keys(topicLabels);
-}
-const selectedTopics = new Set(levelTopics[byId('difficulty').value]);
+let activeModule = 'mixed';
+let topicLabels = moduleConfigs.mixed.topics;
+const selectedTopics = new Set(Object.keys(topicLabels));
 let customTopics = false;
 function drawTopicChoices() {
   updateTopicCount();
@@ -1118,7 +1102,7 @@ function generateQuestion(key, difficulty) {
   const mixed = mixedMode();
   const [questionModule, kind] = mixed ? key.split(':') : [activeModule, key];
   const generator = moduleConfigs[questionModule].makeQuestion || makeQuestion;
-  return {...generator(difficulty, kind, mixed ? 'auto' : byId('situation').value), module: questionModule};
+  return {...generator(difficulty, kind, activeModule === 'year12' ? 'auto' : byId('situation').value), module: questionModule};
 }
 function questionPrompt(item) {
   return item.scenario || 'A ball is launched ' + item.location + ' at ' + item.speed + ' m/s, ' +
@@ -1626,7 +1610,7 @@ function switchMode(target, targetModule = activeModule) {
     byId('randomTopics').checked = false;
     customTopics = false;
     selectedTopics.clear();
-    for (const kind of defaultTopics('standard')) selectedTopics.add(kind);
+    for (const kind of Object.keys(topicLabels)) selectedTopics.add(kind);
     changeSetup();
   }
   drawTopicChoices();
@@ -1634,15 +1618,11 @@ function switchMode(target, targetModule = activeModule) {
 }
 function syncModuleLabels() {
   const current = moduleConfigs[activeModule];
-  const mechanics = conceptIds.includes(activeModule) || activeModule === 'mixed';
-  byId('mechanicsTabs').hidden = !mechanics;
-  byId('courseModule5').setAttribute('aria-pressed', String(mechanics));
-  if (mechanics) lastMechanicsModule = activeModule;
   for (const [id, config] of Object.entries(moduleConfigs)) {
-    byId(config.button).setAttribute('aria-pressed', String(id === activeModule));
+    if (config.button) byId(config.button).setAttribute('aria-pressed', String(id === activeModule));
   }
-  byId('situationControl').hidden = activeModule !== 'projectile';
-  byId('practiceView').hidden = mixedMode();
+  byId('situationControl').hidden = activeModule !== 'mixed';
+  byId('practiceView').hidden = activeModule === 'year12';
   const moduleNumber = courseGroups.findIndex(ids => ids.includes(activeModule)) + 5;
   byId('reportView').textContent = moduleNumber > 5 ? 'Mixed Module ' + moduleNumber + ' Quiz' : 'Quiz';
   byId('modelInstructions').textContent = current.instructions;
@@ -1669,14 +1649,14 @@ function syncMotionLabels() {
     : 'The axes scale independently to fit the box. Play to loop the flight, or move the slider to inspect a position.';
 }
 for (const [id, config] of Object.entries(moduleConfigs)) {
+  if (!config.button) continue;
   byId(config.button).addEventListener('click', () => {
     if (id === activeModule) return;
-    const mixed = id === 'mixed' || id === 'year12';
+    const mixed = id === 'year12';
     switchMode(mixed ? 'quiz' : 'practice', id);
     showView(mixed ? 'report' : 'practice');
   });
 }
-byId('courseModule5').addEventListener('click', () => byId(moduleConfigs[lastMechanicsModule].button).click());
 byId('practiceView').addEventListener('click', () => {
   switchMode('practice');
   showView('practice');
@@ -1720,7 +1700,7 @@ function changeSetup() {
 byId('difficulty').addEventListener('change', () => {
   if (!customTopics) {
     selectedTopics.clear();
-    for (const kind of defaultTopics(byId('difficulty').value)) selectedTopics.add(kind);
+    for (const kind of Object.keys(topicLabels)) selectedTopics.add(kind);
     drawTopicChoices();
   }
   changeSetup();
@@ -1753,7 +1733,7 @@ byId('export').addEventListener('click', () => {
     responseTimeBasis: 'Cumulative seconds with the quiz question visible, from opening it to submission',
     exportedAt: new Date().toISOString(),
     difficulty: byId('difficulty').value,
-    launchSituation: activeModule === 'projectile' ? byId('situation').value : undefined,
+    launchSituation: activeModule === 'mixed' ? byId('situation').value : undefined,
     score: correct,
     firstTryCorrect: firstTryCorrect(),
     correctAfterRetry: correct - firstTryCorrect(),
@@ -1803,6 +1783,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) pauseTrajectory();
   syncQuestionClock();
 });
+syncModuleLabels();
 drawTopicChoices();
 nextQuestion(false);
 </script>
