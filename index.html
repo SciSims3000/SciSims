@@ -737,7 +737,7 @@
         </div>
         <div id="versionNotes" class="version-notes" hidden>
           <strong>Latest changes</strong>
-          Featured Learning Tools brings the Periodic Table, Animation Lab, Cosmic Journey, Formula Deconstructor and Drift together at the top of the page.
+          The Revision Engine adds numerical practice for Year 12 Physics Modules 5–8 to Featured Learning Tools.
         </div>
         <p>A collection of classroom science simulations for practical inquiry, modelling, data analysis and concept development.</p>
              <p> </p>
@@ -881,6 +881,26 @@
   ];
 
     const SIMS = [
+{
+  "section": "physicssims",
+  "group": "Year 12 Revision",
+  "title": "The Revision Engine",
+  "description": "Practise numerical questions across Year 12 Physics Modules 5–8. Explore motion, check worked solutions and take quizzes with PDF and JSON reports.",
+  "path": "PhySims/RevisionEngine/",
+  "type": "Revision Tool",
+  "added": "2026-11-15",
+  "tags": [
+    "Physics",
+    "Year 12",
+    "HSC",
+    "Revision",
+    "Calculations",
+    "Advanced Mechanics",
+    "Electromagnetism",
+    "The Nature of Light",
+    "From the Universe to the Atom"
+  ]
+},
 {
   "section": "teachertools",
   "group": "Presentation and Instruction",
@@ -4096,7 +4116,7 @@
     biosims:['Cells and Classification','Disease and Microbes','Biosecurity and Ecosystems','Genetics and Inheritance','Genetics and Evolution','Evolution and Populations','Human Body and Homeostasis'],
     chemsims:['Elements and Atomic Structure','Chemical Bonding','Chemical Reactions','Chemical Equilibrium','Organic Chemistry'],
     earthsims:['Space and Astronomy','Climate and Energy Balance','Energy and Sustainability','Earthquakes and Geology','Water and Climate'],
-    physicssims:['Forces and Motion','Forces and Fields','Electricity','Electricity and Magnetism','Light and Waves','Nuclear and Atomic Physics'],
+    physicssims:['Year 12 Revision','Forces and Motion','Forces and Fields','Electricity','Electricity and Magnetism','Light and Waves','Nuclear and Atomic Physics'],
     mathsims:['Probability and Statistics'],
     brainbreak:['Science Games','Reaction and Focus Games'],
     interestingsims:['Mathematical and Cross-topic Models']
@@ -4342,6 +4362,7 @@
 
   function renderFeaturedTools(){
     const featured = [
+      ['PhySims/RevisionEngine/','The Revision Engine','Practise numerical questions across Year 12 Physics Modules 5–8. Explore motion, check worked solutions and take quizzes with PDF and JSON reports.'],
       ['ChemSims/PeriodicTable/SciSims-3000-Periodic-Table-v1.2.html','Interactive Periodic Table','Explore elements, compare their properties and discover patterns across the periodic table.'],
       ['Animation-Lab/','Animation Lab','Explore 221 short science animations, with 24-second explainers and ready-made videos for lessons.'],
       ['EarthSims/CosmicJourney/','Cosmic Journey','Watch an animated journey through the history of the Universe, with evidence, explanations and questions along the way.'],

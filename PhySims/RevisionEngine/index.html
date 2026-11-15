@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Revision Engine | SciSims</title>
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+<style>
+:root{font:16px/1.5 Arial,Helvetica,sans-serif;color:#1f2937;background:#f5f7fb;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+main{max-width:1040px;margin:auto;padding:clamp(16px,4vw,36px)}
+header{margin-bottom:20px}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.1;margin:.3rem 0}
+h2{font-size:1.3rem;margin:0 0 .65rem}
+p{margin:.65rem 0}
+.brand{color:#1d4ed8;font-weight:bold}
+.toolbar,.actions,.view-switch{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.view-switch{margin-bottom:14px}
+.view-switch button[aria-pressed="true"]{background:#2563eb;color:white;border-color:#2563eb}
+.toolbar{justify-content:space-between;margin-bottom:14px}
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.card{background:white;border:1px solid #dbe3ef;border-radius:16px;padding:clamp(16px,3vw,24px);box-shadow:0 4px 14px #0000000d}
+.small{color:#475569;font-size:.93rem}
+button,select,input{font:inherit;border:1px solid #94a3b8;border-radius:8px;padding:9px 12px;background:white;color:inherit;min-height:44px}
+button{cursor:pointer;font-weight:bold}
+button.primary{background:#2563eb;color:white;border-color:#2563eb}
+button:disabled{opacity:.6;cursor:default}
+button:hover:not(:disabled){border-color:#1d4ed8}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+.field{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0}
+.field label{flex-basis:100%;font-weight:bold}
+.field input{width:min(100%,11rem)}
+.field input[data-result="correct"]{border-color:#15803d;background:#f0fdf4}
+.field input[data-result="incorrect"]{border-color:#b91c1c;background:#fef2f2}
+.field-result{font-weight:bold;font-size:.93rem}
+.field-result[data-result="correct"]{color:#166534}
+.field-result[data-result="incorrect"]{color:#991b1b}
+.panel{background:#e0ecff;border-radius:10px;padding:12px;margin-top:12px}
+#topicPicker,#tracking{margin:14px 0;border:1px solid #dbe3ef;border-radius:10px}
+#topicPicker{padding:10px 14px;background:#fff}
+#topicPicker summary{cursor:pointer;min-height:24px}
+#quizTopics{margin:0;padding:0;border:0;min-inline-size:0}
+.layout.numerical{grid-template-columns:minmax(0,1fr)}
+#measurements,#topicChoices{margin-top:8px}
+#topicChoices{display:flex;flex-wrap:wrap;column-gap:16px}
+#topicChoices label{max-width:100%}
+.random-choice{display:inline-flex;align-items:center;gap:8px;margin-left:12px}
+.random-choice input{min-height:0;width:18px;height:18px}
+#measurements label,#topicChoices label{display:flex;align-items:center;gap:8px;min-height:44px}
+#measurements input,#topicChoices input{min-height:0;width:18px;height:18px}
+.print-only{display:none}
+#concept{margin-top:16px;border:1px solid #dbe3ef;border-radius:10px}
+#conceptChoices label{display:flex;align-items:center;gap:8px;min-height:44px}
+#conceptChoices input{min-height:0;width:18px;height:18px;flex:none}
+#answerReport{border-top:1px solid #dbe3ef;padding-top:16px}
+#answerResults{padding-left:1.5rem}
+#answerResults > li{margin-bottom:16px}
+#answerResults ul{padding-left:1.2rem}
+.panel ol{padding-left:1.4rem;margin:.4rem 0}
+.panel li + li{margin-top:.4rem}
+#feedback{font-weight:bold;min-height:1.5em}
+.trajectory-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.trajectory-heading h2{margin:0}
+#trajectoryDialog{inset:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;padding:clamp(12px,3vw,28px);border:0;background:#f5f7fb;color:#1f2937;overflow:auto}
+#trajectoryDialog #trajectoryPane{max-width:1280px;margin:auto}
+#trajectoryDialog canvas{width:min(100%, 108dvh);height:auto;margin:0 auto 12px;object-fit:contain}
+canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10px}
+#scrub{width:100%;padding:0;accent-color:#2563eb}
+.vector-options{display:flex;flex-wrap:wrap;column-gap:14px}
+.vector-options label{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:bold}
+.vector-options input{min-height:0;width:18px;height:18px;accent-color:currentColor}
+.vector-velocity{color:#9a3412}
+.vector-horizontal{color:#1d4ed8}
+.vector-vertical{color:#0f766e}
+.vector-gravity{color:#6d28d9}
+#trajectoryValues{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;margin:12px 0}
+#trajectoryValues dd{margin:0;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:bold}
+@media print{
+  @page{margin:16mm}
+  :root{background:white;color:#111;font-size:11pt}
+  main{max-width:none;padding:0}
+  main:has(#answerReport:not([hidden])) > :not(#summary),
+  main:has(#answerReport:not([hidden])) #summary > :not(.print-only,#results,#answerReport){display:none !important}
+  #summary.card{padding:0;border:0;box-shadow:none}
+  .print-only{display:block}
+  #answerResults > li{break-inside:avoid}
+  h2{break-after:avoid}
+}
+@media(max-width:740px){.layout{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div id="scisimsSiteNav"></div>
+<main>
+<header>
+<div class="brand">SciSims · Physics</div>
+<h1>The Revision Engine</h1>
+<p>Year 12 Physics · Modules 5–8</p>
+<p><a href="guide.docx" download="The Revision Engine Teacher and Student Guide.docx">Download the teacher and student guide (Word)</a></p>
+<p id="modelInstructions">Use g = 9.8 m/s² and ignore air resistance. Take upward and forward as positive. Use degree mode.</p>
+</header>
+<p class="small">Choose a question count in Quiz and select Start quiz. Download a JSON report for your teacher when you finish. You can retry answers and use hints. Quiz answers can be reviewed after an attempt. Practice runs separately from the quiz. Revealed and skipped questions earn no point.</p>
+<nav class="view-switch" aria-label="Year 12 modules">
+<button type="button" id="courseModule5" aria-pressed="true">5 · Advanced Mechanics</button>
+<button type="button" id="moduleElectromagnetism" aria-pressed="false">6 · Electromagnetism</button>
+<button type="button" id="moduleLight" aria-pressed="false">7 · The Nature of Light</button>
+<button type="button" id="moduleAtomic" aria-pressed="false">8 · From the Universe to the Atom</button>
+</nav>
+<nav class="view-switch" id="mechanicsTabs" aria-label="Module 5 concepts">
+<button type="button" id="moduleProjectile" aria-pressed="true">Projectile Motion</button>
+<button type="button" id="moduleCircular" aria-pressed="false">Circular Motion</button>
+<button type="button" id="moduleGravity" aria-pressed="false">Motion in Gravitational Fields</button>
+<button type="button" id="moduleMixed" aria-pressed="false">Mixed Module 5 Quiz</button>
+</nav>
+<div class="toolbar">
+<label>Difficulty <select id="difficulty"><option value="foundation">Foundation</option><option value="standard" selected>Standard</option><option value="challenge">Challenge</option><option value="adaptive">Adaptive</option></select></label>
+<label id="situationControl">Launch situation <select id="situation">
+<option value="auto">Use difficulty default</option>
+<option value="level">Level ground</option>
+<option value="cliff">Angled launch off a cliff</option>
+<option value="horizontal">Horizontal launch off a cliff</option>
+<option value="balcony">Launch from a balcony</option>
+</select></label>
+<label id="quizLengthControl" hidden>Number of questions
+<select id="quizLength">
+<option value="5">5</option>
+<option value="10" selected>10</option>
+<option value="15">15</option>
+<option value="20">20</option>
+</select>
+</label>
+<div id="progress" aria-live="polite"></div>
+</div>
+<details id="topicPicker" open>
+<summary><strong>What to calculate</strong> <span id="topicCount" class="small"></span></summary>
+<fieldset id="quizTopics" aria-label="Calculation topics">
+<p class="small">Choose at least one topic before starting. Challenge adds a related calculation. Topics rotate before repeating. Allow topic repeats to draw each question independently.</p>
+<button type="button" id="allTopics">Select all topics</button>
+<label class="random-choice"><input type="checkbox" id="randomTopics"> Allow topic repeats</label>
+<div id="topicChoices"></div>
+</fieldset>
+</details>
+<p id="noTopics" class="card" role="status" hidden>Select at least one calculation topic to continue.</p>
+
+<nav class="view-switch" aria-label="Activity view">
+<button id="practiceView" aria-controls="practice" aria-pressed="true">Practice</button>
+<button id="reportView" aria-controls="summary" aria-pressed="false">Quiz</button>
+</nav>
+<section id="summary" class="card" aria-labelledby="summaryTitle" hidden>
+<h2 id="summaryTitle" tabindex="-1">Quiz</h2>
+<label>Student name <input id="student" autocomplete="name" placeholder="Name for teacher report"></label>
+<div class="print-only">
+<h1 id="printTitle">Projectile Motion Quiz</h1>
+<p id="printStudent"></p>
+<p id="printInstructions">Use g = 9.8 m/s² and ignore air resistance. Upward and forward are positive.</p>
+</div>
+<p id="results"></p>
+<button type="button" class="primary" id="startQuiz">Start quiz</button>
+<div id="currentReview" hidden>
+<h2 id="reviewTitle">Current question</h2>
+<p id="reviewStatus"></p>
+<button type="button" id="solutionButton" aria-controls="solution" aria-expanded="false" disabled>Show solution</button>
+<div id="solution" class="panel" hidden></div>
+<fieldset id="tracking" hidden>
+<legend>Trajectory measurements</legend>
+<div class="actions">
+<button type="button" id="trackAll">Select all</button>
+<button type="button" id="trackNone">Clear all</button>
+</div>
+<div id="measurements"></div>
+</fieldset>
+</div>
+<div class="actions">
+<button class="primary" id="export" disabled>Download JSON report</button>
+<button type="button" id="printReport" hidden>Print / Save as PDF</button>
+<button id="restart" hidden>Start new set</button>
+</div>
+<p id="reportStatus" role="status"></p>
+<section id="answerReport" aria-labelledby="answerReportTitle" hidden>
+<h2 id="answerReportTitle">Your answers</h2>
+<ol id="answerResults"></ol>
+</section>
+</section>
+<div class="layout" id="practice">
+<section class="card" aria-labelledby="topic">
+<h2 id="topic" tabindex="-1"></h2>
+<div id="activityMode" class="brand"></div>
+<div id="questionDifficulty" class="small"></div>
+<p id="scenario"></p>
+<p class="small" id="assumption"></p>
+<form id="answerForm" novalidate>
+<div id="fields"></div>
+<p class="small" id="rounding">Round to two decimal places. Answers within 1% are accepted, with a minimum allowance of 0.005 in the displayed unit.</p>
+<div class="actions">
+<button class="primary" id="check">Check answer</button>
+<button type="button" id="hintButton" aria-controls="hint" aria-expanded="false">Hint</button>
+<button type="button" id="practiceSolutionButton" aria-controls="practiceSolution" aria-expanded="false" hidden disabled>Show worked solution</button>
+<button type="button" id="next">Next question</button>
+</div>
+</form>
+<p id="feedback" role="status"></p>
+<div id="hint" class="panel" hidden></div>
+<div id="practiceSolution" class="panel" hidden></div>
+<fieldset id="concept" hidden>
+<legend>Explain your reasoning (required)</legend>
+<p id="conceptPrompt"></p>
+<div id="conceptChoices" role="radiogroup" aria-labelledby="conceptPrompt"></div>
+<button type="button" id="checkConcept">Check explanation</button>
+<p id="conceptFeedback" role="status"></p>
+</fieldset>
+</section>
+<section class="card" id="trajectoryPane" aria-labelledby="trajectory">
+<div class="trajectory-heading">
+<h2 id="trajectory">Trajectory</h2>
+<button type="button" id="expandTrajectory" aria-controls="trajectoryDialog" aria-expanded="false">Fullscreen</button>
+</div>
+<canvas id="plot" width="720" height="380" role="img" aria-label="Schematic of the current projectile path and its position in flight"></canvas>
+<div class="actions">
+<button type="button" id="playTrajectory" aria-controls="plot">Play trajectory</button>
+<label id="motionPositionLabel" for="scrub">Position in flight</label>
+</div>
+<input id="scrub" type="range" min="0" max="100" step="any" value="0" aria-valuetext="0% of flight">
+<p class="small" id="plotInstructions">The axes scale independently to fit the box. Play to loop the flight, or move the slider to inspect a position.</p>
+<div id="trajectoryReadout" class="panel" hidden>
+<div class="vector-options" role="group" aria-label="Show trajectory vectors">
+<label class="vector-velocity"><input type="checkbox" id="vectorVelocity" checked>Velocity</label>
+<label class="vector-horizontal" id="horizontalVectorControl"><input type="checkbox" id="vectorHorizontal">Horizontal</label>
+<label class="vector-vertical" id="verticalVectorControl"><input type="checkbox" id="vectorVertical">Vertical</label>
+<label class="vector-gravity"><input type="checkbox" id="vectorGravity"><span id="accelerationLabel">Gravity</span></label>
+</div>
+<dl id="trajectoryValues">
+<dt id="liveTimeLabel">Time since launch</dt><dd id="liveTime"></dd>
+<dt id="liveHorizontalLabel">Horizontal velocity</dt><dd id="liveHorizontal"></dd>
+<dt id="liveVerticalLabel">Vertical velocity</dt><dd id="liveVertical"></dd>
+</dl>
+<button type="button" id="jumpToApex">Jump to highest point</button>
+<p class="small" id="apexNote"></p>
+</div>
+</section>
+</div>
+</main>
+<dialog id="trajectoryDialog" aria-labelledby="trajectory"></dialog>
+<script>
+'use strict';
+const gravity = 9.8;
+const degrees = Math.PI / 180;
+const randomInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+const rounded = value => (Math.abs(value) < 0.005 ? 0 : value).toFixed(2);
+const working = value => Number(value.toFixed(6));
+const part = (label, unit, value) => ({label, unit, value});
+
+function makeQuestion(level, kind, situation = 'auto') {
+  const setting = situation === 'auto' ? (level === 'challenge' ? 'cliff' : 'level') : situation;
+  const speed = level === 'foundation' ? randomInt(3, 7) * 5
+    : level === 'challenge' ? randomInt(140, 360) / 10 : randomInt(14, 36);
+  const angle = setting === 'horizontal' ? 0 : level === 'foundation'
+    ? [30, 45, 60][randomInt(0, 2)] : level === 'challenge' ? randomInt(25, 65) : randomInt(5, 13) * 5;
+  const raised = setting !== 'level';
+  const height = setting === 'balcony' ? randomInt(4, 12) : raised ? randomInt(15, 45) : 0;
+  const location = setting === 'balcony' ? 'from a balcony' : raised ? 'off a cliff' : 'from level ground';
+  const vx = speed * Math.cos(angle * degrees);
+  const vy = speed * Math.sin(angle * degrees);
+  const root = Math.sqrt(vy ** 2 + 2 * gravity * height);
+  const flight = (vy + root) / gravity;
+  const peakTime = vy / gravity;
+  const peak = height + vy ** 2 / (2 * gravity);
+  const range = vx * flight;
+  const impactVertical = vy - gravity * flight;
+  const impactSpeed = Math.hypot(vx, impactVertical);
+  const impactDirection = Math.atan2(impactVertical, vx) / degrees;
+  const time = Number((flight * (randomInt(2, 8) / 10)).toFixed(2));
+  const vertical = vy - gravity * time;
+  const magnitude = Math.hypot(vx, vertical);
+  const direction = Math.atan2(vertical, vx) / degrees;
+  const split = [
+    'Resolve horizontally: vₓ = ' + speed + ' cos(' + angle + '°) ≈ ' + working(vx) + ' m/s.',
+    'Resolve vertically: vᵧ₀ = ' + speed + ' sin(' + angle + '°) ≈ ' + working(vy) + ' m/s.'
+  ];
+  const landing = raised ? [
+    'At landing, y = 0, so 0 = ' + height + ' + ' + working(vy) + 't − 4.9t² (using the displayed value of vᵧ₀).',
+    'Use the positive quadratic root: T = (vᵧ₀ + √(vᵧ₀² + 2gh₀))/g = (' + working(vy) + ' + ' + working(root) + ')/9.8 ≈ ' + working(flight) + ' s.'
+  ] : [
+    'The landing displacement is zero: 0 = vᵧ₀T − ½gT².',
+    'Use the nonzero root: T = 2vᵧ₀/g = 2 × ' + working(vy) + '/9.8 ≈ ' + working(flight) + ' s.'
+  ];
+  const questions = {
+    horizontal: ['Horizontal velocity component', 'Find the horizontal component of the launch velocity.',
+      'Use cosine for the component adjacent to the launch angle.',
+      [part('Horizontal component', 'm/s', vx)], [split[0]]],
+    vertical: ['Initial vertical velocity component', 'Find the vertical component of the launch velocity.',
+      'Use sine for the component opposite the launch angle.',
+      [part('Vertical component', 'm/s', vy)], [split[1]]],
+    flight: ['Time of flight', 'How long until the projectile hits the ground?',
+      'Set y = 0 in y = h₀ + vᵧ₀t − ½gt² and find the positive landing time.',
+      [part('Time of flight', 's', flight)], [split[1], ...landing]],
+    peakTime: ['Time to maximum height', 'How long after launch does the projectile first reach maximum height?',
+      'At maximum height, the vertical velocity is zero. Use vᵧ = vᵧ₀ − gt.',
+      [part('Time to maximum height', 's', peakTime)], [split[1],
+        'Set vᵧ to zero: 0 = vᵧ₀ − gt. So t = vᵧ₀/g ≈ ' + working(vy) + '/9.8 ≈ ' + working(peakTime) + ' s.',
+        ...(angle === 0 ? ['For a horizontal launch, maximum height occurs at launch.'] : [])]],
+    impact: ['Impact velocity', 'Find the speed and signed direction immediately before the projectile hits the ground. Use a negative angle below the horizontal.',
+      'Find the landing time, then use it to calculate the vertical velocity at impact.',
+      [part('Impact speed', 'm/s', impactSpeed), part('Signed impact direction', '°', impactDirection)], [...split, ...landing,
+        'At impact, vᵧ = vᵧ₀ − gT ≈ ' + working(vy) + ' − 9.8 × ' + working(flight) + ' ≈ ' + working(impactVertical) + ' m/s.',
+        'Impact speed = √(vₓ² + vᵧ²) ≈ ' + working(impactSpeed) + ' m/s.',
+        'Impact direction = tan⁻¹(vᵧ/vₓ) ≈ ' + working(impactDirection) + '°.']],
+    height: ['Maximum height', 'What is the maximum height above the landing surface?',
+      angle === 0 ? 'The ball starts with zero vertical velocity. Consider whether it ever rises above the launch point.'
+        : 'At the top, vertical velocity is zero. Find the rise above launch, then include the launch height.',
+      [part('Maximum height', 'm', peak)], [split[1],
+        'At the peak, 0 = vᵧ₀² − 2gΔy. So Δy = vᵧ₀²/(2g) ≈ ' + working(peak - height) + ' m.',
+        'Add the launch height: H = ' + height + ' + ' + working(peak - height) + ' ≈ ' + working(peak) + ' m.']],
+    range: ['Horizontal range', 'How far horizontally does the projectile travel before landing?',
+      'Find the landing time from the vertical motion. The horizontal velocity stays constant.',
+      [part('Horizontal range', 'm', range)], [...split, ...landing,
+        'Multiply by horizontal velocity: R = vₓT ≈ ' + working(vx) + ' × ' + working(flight) + ' ≈ ' + working(range) + ' m.']],
+    velocity: ['Instantaneous velocity', 'At t = ' + time.toFixed(2) + ' s, find the speed and signed angle to the forward horizontal. Use a negative angle below the horizontal.',
+      'Update the vertical component using vᵧ = vᵧ₀ − gt. Use the two components to find speed and direction.',
+      [part('Speed', 'm/s', magnitude), part('Signed direction', '°', direction)], [...split,
+        'The horizontal component stays constant. The vertical component is vᵧ = ' + working(vy) + ' − 9.8 × ' + time.toFixed(2) + ' ≈ ' + working(vertical) + ' m/s.',
+        'Speed = √(vₓ² + vᵧ²) ≈ √(' + working(vx) + '² + (' + working(vertical) + ')²) ≈ ' + working(magnitude) + ' m/s.',
+        'Since vₓ is positive, direction = tan⁻¹(vᵧ/vₓ) ≈ tan⁻¹(' + working(vertical) + '/' + working(vx) + ') ≈ ' + working(direction) + '°.']]
+  };
+  const [topic, firstPrompt, firstHint, firstParts, firstSteps] = questions[kind];
+  let prompt = firstPrompt;
+  let hint = firstHint;
+  let parts = firstParts;
+  let steps = firstSteps;
+  if (level === 'challenge') {
+    const followUp = {
+      horizontal: 'range', vertical: 'peakTime', flight: 'impact', peakTime: 'height',
+      height: 'peakTime', range: 'flight', impact: 'flight', velocity: 'impact'
+    };
+    const [, extraPrompt, extraHint, extraParts, extraSteps] = questions[followUp[kind]];
+    prompt += ' ' + extraPrompt;
+    hint += ' ' + extraHint;
+    parts = [...firstParts, ...extraParts];
+    steps = [...new Set([...firstSteps, ...extraSteps])];
+  }
+  const measurements = [
+    part('Horizontal velocity component', 'm/s', vx),
+    part('Initial vertical velocity component', 'm/s', vy),
+    part('Time of flight', 's', flight),
+    part('Time to maximum height', 's', peakTime),
+    part('Maximum height above landing surface', 'm', peak),
+    part('Horizontal range', 'm', range),
+    part('Impact speed', 'm/s', impactSpeed),
+    part('Impact direction', '°', impactDirection),
+    part('Vertical velocity at impact', 'm/s', impactVertical)
+  ];
+  return {topic, prompt, hint, parts, steps, height, flight, peak, range, vx, vy, time, speed, angle, location, measurements};
+}
+
+function makeCircularQuestion(level, kind) {
+  const radius = randomInt(2, 12);
+  const period = randomInt(2, 8);
+  const mass = randomInt(2, 15);
+  const speed = 2 * Math.PI * radius / period;
+  const omega = 2 * Math.PI / period;
+  const acceleration = speed ** 2 / radius;
+  const force = mass * acceleration;
+  const speedStep = 'Use v = 2πr/T = 2π × ' + radius + '/' + period + ' ≈ ' + working(speed) + ' m/s.';
+  const accelerationStep = 'Use a = v²/r = ' + working(speed) + '²/' + radius + ' ≈ ' + working(acceleration) + ' m/s² inward.';
+  const questions = {
+    circleSpeed: ['Tangential speed', 'Find the tangential speed.', 'Divide the circumference by the period.',
+      [part('Tangential speed', 'm/s', speed)], [speedStep]],
+    circlePeriod: ['Period', 'The angular speed is ' + working(omega) + ' rad/s. Find the period.', 'One revolution covers 2π radians.',
+      [part('Period', 's', period)], ['Use T = 2π/ω ≈ ' + working(period) + ' s.']],
+    circleOmega: ['Angular speed', 'Find the angular speed.', 'Divide the angle of one revolution by the period.',
+      [part('Angular speed', 'rad/s', omega)], ['Use ω = 2π/T = 2π/' + period + ' ≈ ' + working(omega) + ' rad/s.']],
+    circleAcceleration: ['Centripetal acceleration', 'Find the magnitude of the centripetal acceleration.', 'First find tangential speed. The inward acceleration has magnitude v²/r.',
+      [part('Centripetal acceleration', 'm/s²', acceleration)], [speedStep, accelerationStep]],
+    circleForce: ['Net inward force', 'Find the magnitude of the net inward force.', 'Find the centripetal acceleration, then use Newton’s second law.',
+      [part('Net inward force', 'N', force)], [speedStep, accelerationStep, 'Use F = ma = ' + mass + ' × ' + working(acceleration) + ' ≈ ' + working(force) + ' N.']]
+  };
+  const [topic, prompt, hint, parts, steps] = questions[kind];
+  const extra = kind === 'circleAcceleration' ? questions.circleForce : questions.circleAcceleration;
+  return buildOrbitQuestion({
+    topic, prompt, hint, parts, steps, extra, level, speed, acceleration, period,
+    scenario: 'A ' + mass + ' kg object moves at constant speed around a circle of radius ' + radius + ' m.' +
+      (kind === 'circlePeriod' ? '' : ' It completes a revolution in ' + period + ' s.'),
+    assumption: 'Speed is constant. The net force and acceleration point toward the centre.',
+    speedUnit: 'm/s', timeUnit: 's',
+    measurements: [part('Radius', 'm', radius), part('Period', 's', period), part('Angular speed', 'rad/s', omega),
+      part('Tangential speed', 'm/s', speed), part('Centripetal acceleration', 'm/s²', acceleration), part('Net inward force', 'N', force)]
+  });
+}
+
+function makeGravityQuestion(level, kind) {
+  const earthRadius = 6370;
+  const mu = 398600;
+  const altitude = randomInt(3, 33) * 100;
+  const radius = earthRadius + altitude;
+  const field = 1000 * mu / radius ** 2;
+  const speed = Math.sqrt(mu / radius);
+  const hours = 2 * Math.PI * radius / speed / 3600;
+  const energy = -mu / (2 * radius);
+  const escape = Math.sqrt(2 * mu / radius);
+  const secondAltitude = altitude + randomInt(5, 25) * 100;
+  const ratio = ((earthRadius + secondAltitude) / radius) ** 1.5;
+  const radiusStep = 'Measure from Earth’s centre: r = ' + earthRadius + ' + ' + altitude + ' = ' + radius + ' km.';
+  const speedStep = 'For a circular orbit, v = √(μ/r) = √(' + mu + '/' + radius + ') ≈ ' + working(speed) + ' km/s.';
+  const questions = {
+    gravityField: ['Gravitational field strength', 'Find the magnitude of gravitational field strength at the satellite in m/s².', 'Use g = μ/r² with distance from Earth’s centre. Convert km/s² to m/s².',
+      [part('Gravitational field strength', 'm/s²', field)], [radiusStep, 'g = μ/r² ≈ ' + working(field / 1000) + ' km/s² = ' + working(field) + ' m/s².']],
+    orbitSpeed: ['Circular orbital speed', 'Find the satellite’s orbital speed.', 'Equate gravitational acceleration to v²/r.',
+      [part('Orbital speed', 'km/s', speed)], [radiusStep, speedStep]],
+    orbitPeriod: ['Orbital period', 'Find the period of the satellite in hours.', 'Find the orbital speed, then divide the circumference by that speed.',
+      [part('Orbital period', 'h', hours)], [radiusStep, speedStep, 'T = 2πr/v. Divide by 3600 to convert seconds to hours ≈ ' + working(hours) + ' h.']],
+    orbitEnergy: ['Specific orbital energy', 'Find the total mechanical energy per kilogram of the circular orbit. Use zero potential energy at infinity.', 'Add the kinetic and potential energy per kilogram. Use 1 km²/s² = 1 kJ/kg.',
+      [part('Specific orbital energy', 'kJ/kg', energy)], [radiusStep, 'For a circular orbit, v² = μ/r. Thus ε = v²/2 − μ/r = −μ/(2r) ≈ ' + working(energy) + ' kJ/kg.']],
+    escapeSpeed: ['Escape speed', 'Find the escape speed from this altitude.', 'Set total mechanical energy to zero for a marginal escape.',
+      [part('Escape speed', 'km/s', escape)], [radiusStep, 'Set v²/2 − μ/r = 0. Then v = √(2μ/r) ≈ ' + working(escape) + ' km/s.']],
+    keplerRatio: ['Kepler’s third law', 'A second satellite orbits Earth at ' + secondAltitude + ' km altitude. Find its period divided by the first satellite’s period.', 'Kepler’s third law gives T² proportional to r³. Use centre-to-centre radii.',
+      [part('Period ratio', '', ratio)], [radiusStep, 'For the second orbit, r₂ = ' + earthRadius + ' + ' + secondAltitude + ' = ' + (earthRadius + secondAltitude) + ' km.',
+        'T₂/T₁ = (r₂/r₁) raised to the power 3/2 ≈ ' + working(ratio) + '.']]
+  };
+  const [topic, prompt, hint, parts, steps] = questions[kind];
+  const extra = kind === 'orbitSpeed' ? questions.orbitPeriod : questions.orbitSpeed;
+  return buildOrbitQuestion({
+    topic, prompt, hint, parts, steps, extra, level, speed, acceleration: field, period: hours,
+    scenario: 'A satellite follows a circular orbit ' + altitude + ' km above Earth. Use Earth’s radius of ' +
+      earthRadius + ' km and μ = GM = ' + mu + ' km³/s².',
+    assumption: 'Ignore atmospheric drag. All orbital radii are measured from Earth’s centre.',
+    speedUnit: 'km/s', timeUnit: 'h',
+    measurements: [part('Orbital radius', 'km', radius), part('Orbital period', 'h', hours), part('Orbital speed', 'km/s', speed),
+      part('Gravitational field strength', 'm/s²', field), part('Specific orbital energy', 'kJ/kg', energy), part('Escape speed', 'km/s', escape)]
+  });
+}
+
+function buildOrbitQuestion(data) {
+  const {topic, prompt, hint, parts, steps, extra, level, scenario, ...motion} = data;
+  const challenging = level === 'challenge';
+  return {
+    ...motion, topic, orbit: true, flight: 6, assumption: motion.assumption,
+    scenario: scenario + ' ' + prompt + (challenging ? ' ' + extra[1] : ''),
+    hint: hint + (challenging ? ' ' + extra[2] : ''),
+    parts: challenging ? [...parts, ...extra[3]] : parts,
+    steps: challenging ? [...new Set([...steps, ...extra[4]])] : steps
+  };
+}
+
+function makeOrbitReasoning(question) {
+  if (question.timeUnit === 'h') {
+    return {
+      prompt: 'Why is Earth’s radius added to the satellite’s altitude in these calculations?',
+      answer: 'The field depends on distance from Earth’s centre.',
+      alternatives: ['Gravity is zero at the surface.', 'Altitude is the same as distance from the centre.'],
+      explanation: 'In the spherical Earth model, the field outside Earth is calculated as if its mass were concentrated at its centre.'
+    };
+  }
+  return {
+    prompt: 'How can the object accelerate when its speed is constant?',
+    answer: 'Its velocity changes direction continuously.',
+    alternatives: ['Its mass changes as it moves.', 'Its velocity stays constant but its period changes.'],
+    explanation: 'Acceleration is a change in velocity. Here the direction changes, so acceleration points inward.'
+  };
+}
+
+const electricityTopics = {
+  electricForce: 'Electric force and acceleration', electricWork: 'Electric field and work',
+  magneticParticle: 'Magnetic force and orbit radius', magneticWire: 'Force on a conductor',
+  parallelWires: 'Force between parallel currents', motorTorque: 'Motor torque',
+  flux: 'Magnetic flux', induction: 'Faraday’s law', motionalEmf: 'Motional emf', transformer: 'Ideal transformers', powerLoss: 'Transmission losses'
+};
+const lightTopics = {
+  waveSpeed: 'Wavelength and frequency', interference: 'Interference and diffraction gratings',
+  polarisation: 'Malus’ law', wien: 'Wien’s law', photons: 'Photon energy',
+  photoelectric: 'Photoelectric effect', timeDilation: 'Time dilation', lengthContraction: 'Length contraction',
+  relativisticMomentum: 'Relativistic momentum', massEnergy: 'Mass–energy equivalence'
+};
+const atomicTopics = {
+  stellarParallax: 'Stellar parallax', redshift: 'Redshift and Hubble’s law',
+  hydrogen: 'Hydrogen emission lines', matterWave: 'de Broglie wavelength',
+  thomson: 'Electron charge-to-mass ratio', millikan: 'Oil drop charge',
+  halfLife: 'Half-life and activity', decayConstant: 'Decay constant and elapsed time',
+  bindingEnergy: 'Nuclear mass defect and binding energy'
+};
+
+function makeNumericalBank(level, kind, topics, build) {
+  const choose = (min, max) => level === 'foundation' ? randomInt(min, Math.floor((min + max) / 2)) : randomInt(min, max);
+  const sample = (scenario, label, unit, value, equation, followUp) => {
+    const challenging = level === 'challenge' && followUp;
+    return {
+      topic: topics[kind], numerical: true,
+      scenario: scenario + ' Find ' + label.toLowerCase() + '.' +
+        (challenging ? ' Also find ' + followUp.label.toLowerCase() + '.' : ''),
+      hint: 'Use ' + equation.split(' = ')[0] + (challenging ? '. Then use ' + followUp.equation.split(' = ')[0] : '') + '.',
+      parts: [part(label, unit, value), ...(challenging ? [part(followUp.label, followUp.unit, followUp.value)] : [])],
+      steps: [equation + ' ≈ ' + rounded(value) + (unit ? ' ' + unit : '') + '.',
+        ...(challenging ? [followUp.equation + ' ≈ ' + rounded(followUp.value) + (followUp.unit ? ' ' + followUp.unit : '') + '.'] : [])],
+      measurements: []
+    };
+  };
+  return build(choose, sample, (label, unit, value, equation) => ({label, unit, value, equation}));
+}
+
+function makeElectricityQuestion(level, kind) {
+  return makeNumericalBank(level, kind, electricityTopics, (pick, sample, related) => {
+    const q = pick(2, 9), field = pick(2, 8), mass = pick(2, 8), gap = pick(2, 9);
+    const B = pick(2, 8) / 10, I = pick(2, 9), length = pick(2, 9) / 10;
+    const angle = [30, 45, 60, 90][pick(0, 3)], sine = Math.sin(angle * degrees);
+    const speed = pick(2, 16), turns = pick(2, 8) * 10;
+    if (kind === 'electricForce') return sample(
+      'A particle has charge +' + q + ' μC and mass ' + mass + ' g in a uniform electric field of ' + field + ' kN/C. Ignore other forces.',
+      'Electric force magnitude', 'mN', q * field, 'F = |q|E = (' + q + ' × 10⁻⁶) × (' + field + ' × 10³) N, then convert to mN',
+      related('Acceleration magnitude', 'm/s²', q * field / mass, 'a = F/m, using mN and g'));
+    if (kind === 'electricWork') return sample(
+      'A positive charge of ' + q + ' μC moves ' + gap + ' cm along a uniform field of ' + field + ' kV/m.',
+      'Potential drop', 'V', field * 10 * gap, 'ΔV = Ed = (' + field + ' × 1000) × (' + gap + '/100)',
+      related('Work done by the field', 'μJ', q * field * 10 * gap, 'W = qΔV, using μC and V'));
+    if (kind === 'magneticParticle') return sample(
+      'A particle with charge magnitude ' + q + ' μC and mass ' + mass + ' mg enters a ' + B + ' T magnetic field at ' + speed + ' m/s perpendicular to the field. Ignore other forces.',
+      'Magnetic force magnitude', 'μN', q * speed * B, 'F = |q|vB, using μC for q',
+      related('Orbit radius', 'm', mass * speed / (q * B), 'r = mv/(|q|B), using mg and μC'));
+    if (kind === 'magneticWire') return sample(
+      'A ' + length + ' m straight wire carries ' + I + ' A at ' + angle + '° to a uniform magnetic field of ' + B + ' T.',
+      'Magnetic force magnitude', 'N', B * I * length * sine, 'F = BIL sin θ = ' + B + ' × ' + I + ' × ' + length + ' × sin(' + angle + '°)',
+      related('Maximum force at the same current and field', 'N', B * I * length, 'Fmax = BIL, because sin 90° = 1'));
+    if (kind === 'parallelWires') return sample(
+      'Two long parallel wires carry ' + I + ' A and ' + (100 + q * 20) + ' A. They are ' + gap + ' cm apart. Use μ₀/(2π) = 2.00 × 10⁻⁷ N/A². Take a ' + length + ' m section of one wire.',
+      'Force per metre', 'mN/m', 0.02 * I * (100 + q * 20) / gap, 'F/L = [μ₀/(2π)] I₁I₂/r. Convert cm to m and N/m to mN/m',
+      related('Force magnitude on that section', 'mN', 0.02 * I * (100 + q * 20) / gap * length, 'F = (F/L) × L'));
+    const area = pick(2, 9) * 10;
+    if (kind === 'motorTorque') return sample(
+      'A ' + turns + '-turn coil of area ' + area + ' cm² carries ' + I + ' A in a ' + B + ' T field. The coil normal makes ' + angle + '° with the field.',
+      'Torque magnitude', 'N·m', turns * B * I * area * 1e-4 * sine, 'τ = NIAB sin θ, converting cm² to m²',
+      related('Maximum torque at the same current and field', 'N·m', turns * B * I * area * 1e-4, 'τmax = NIAB'));
+    if (kind === 'flux') return sample(
+      'A ' + turns + '-turn coil of area ' + area + ' cm² sits in a uniform ' + B + ' T field. Its normal makes ' + angle + '° with the field.',
+      'Flux through each turn', 'mWb', B * area * Math.cos(angle * degrees) / 10, 'Φ = BA cos θ. Convert cm² to m² and Wb to mWb',
+      related('Flux linkage', 'mWb·turn', turns * B * area * Math.cos(angle * degrees) / 10, 'Flux linkage = NΦ'));
+    if (kind === 'motionalEmf') return sample(
+      'A conducting rod of length ' + length + ' m moves at ' + speed + ' m/s in a ' + B +
+        ' T field. The rod, velocity, and field are mutually perpendicular. The rod completes a circuit of total resistance ' + gap + ' Ω.',
+      'Induced emf magnitude', 'V', B * length * speed, '|emf| = BLv',
+      related('Induced current magnitude', 'A', B * length * speed / gap, 'I = |emf|/R'));
+    if (kind === 'induction') {
+      const change = pick(2, 8) / 10, seconds = pick(2, 8) / 10;
+      return sample('The flux through each turn of a ' + turns + '-turn coil changes by ' + change + ' mWb in ' + seconds + ' s.',
+        'Average induced emf magnitude', 'mV', turns * change / seconds, '|emf| = N|ΔΦ|/Δt, using mWb and s',
+        related('Change in flux linkage magnitude', 'mWb·turn', turns * change, '|Δ(NΦ)| = N|ΔΦ|'));
+    }
+    const primary = turns * 10, secondary = primary * q, input = 12 * I;
+    if (kind === 'transformer') return sample(
+      'An ideal transformer has ' + primary + ' primary turns and ' + secondary + ' secondary turns. Its primary voltage is ' + input + ' V RMS and its secondary current is ' + mass + ' A RMS.',
+      'Secondary voltage', 'V', input * q, 'Vₛ = Vₚ × Nₛ/Nₚ',
+      related('Primary current', 'A', mass * q, 'Iₚ = VₛIₛ/Vₚ for an ideal transformer'));
+    const power = pick(2, 9) * 100, voltage = pick(2, 8);
+    return sample('A transmission line delivers ' + power + ' kW at ' + voltage + ' kV. The total line resistance is ' + gap + ' Ω. Use P = VI with power factor 1.',
+      'Line current', 'A', power / voltage, 'I = P/V, using kW and kV',
+      related('Power lost in the line', 'kW', (power / voltage) ** 2 * gap / 1000, 'P_loss = I²R, then divide watts by 1000'));
+  });
+}
+
+function makeLightQuestion(level, kind) {
+  return makeNumericalBank(level, kind, lightTopics, (pick, sample, related) => {
+    const wavelength = pick(41, 69) * 10, photon = 1240 / wavelength;
+    const angle = pick(2, 7) * 10, intensity = pick(2, 8) * 10;
+    const light = 'Light has a wavelength of ' + wavelength + ' nm. Use c = 3.00 × 10⁸ m/s and hc = 1240 eV·nm.';
+    if (kind === 'waveSpeed') return sample(light, 'Frequency', 'THz', 300000 / wavelength, 'f = c/λ, converting nm to m and Hz to THz',
+      related('Photon energy', 'eV', photon, 'E = hc/λ, using eV·nm and nm'));
+    if (kind === 'interference') {
+      const spacing = pick(2, 6), order = pick(1, 2), theta = Math.asin(order * wavelength / (1000 * spacing)) / degrees;
+      return sample('Light of wavelength ' + wavelength + ' nm strikes a grating at normal incidence. Slit spacing is ' + spacing + ' μm. Consider order ' + order + '.',
+        'Diffraction angle', '°', theta, 'θ = sin⁻¹(mλ/d), using matching units in degree mode',
+        related('Line density', 'lines/mm', 1000 / spacing, 'Line density = 1/d, with d in mm'));
+    }
+    if (kind === 'polarisation') return sample('Plane-polarised light of intensity ' + intensity + ' W/m² reaches an ideal analyser at ' + angle + '° to its transmission axis.',
+      'Transmitted intensity', 'W/m²', intensity * Math.cos(angle * degrees) ** 2, 'I = I₀ cos²θ',
+      related('Percentage transmitted', '%', 100 * Math.cos(angle * degrees) ** 2, 'Percentage = 100 × I/I₀'));
+    if (kind === 'wien') {
+      const peak = pick(3, 9) * 100;
+      return sample('A black body has a peak wavelength of ' + peak + ' nm. Use Wien’s constant b = 2.90 × 10⁻³ m·K.',
+        'Temperature', 'K', 2.9e6 / peak, 'T = b/λmax, converting nm to m',
+        related('Peak wavelength if the absolute temperature doubles', 'nm', peak / 2, 'λ₂ = λ₁/2, since λmaxT is constant'));
+    }
+    if (kind === 'photons') return sample(light, 'Photon energy', 'eV', photon, 'E = hc/λ, using eV·nm and nm',
+      related('Frequency', 'THz', 300000 / wavelength, 'f = c/λ, converting nm to m and Hz to THz'));
+    if (kind === 'photoelectric') {
+      const work = pick(10, 16) / 10;
+      return sample(light + ' It shines on a surface with work function ' + work + ' eV.',
+        'Maximum electron kinetic energy', 'eV', photon - work, 'Kmax = hc/λ − φ',
+        related('Stopping potential magnitude', 'V', photon - work, 'Vₛ = Kmax/e. The value in volts equals Kmax in eV'));
+    }
+    if (kind === 'massEnergy') {
+      const mass = pick(2, 9);
+      return sample('A process converts ' + mass + ' μg of mass into energy. Use c = 3.00 × 10⁸ m/s.',
+        'Energy released', 'MJ', 90 * mass, 'E = Δmc², converting μg to kg and J to MJ',
+        related('Energy released in kilowatt-hours', 'kWh', 25 * mass, 'Divide the energy in MJ by 3.6'));
+    }
+    const beta = pick(3, 9) / 10, gamma = 1 / Math.sqrt(1 - beta ** 2), value = pick(3, 9);
+    const motion = 'An object moves at ' + beta + 'c relative to the laboratory. ';
+    if (kind === 'timeDilation') return sample(motion + 'A clock travelling with it measures ' + value + ' μs between two events.',
+      'Elapsed time in the laboratory', 'μs', value * gamma, 'Δt = γΔt₀, where γ = 1/√(1 − (v/c)²)',
+      related('Lorentz factor', '', gamma, 'γ = 1/√(1 − (v/c)²)'));
+    if (kind === 'lengthContraction') return sample(motion + 'The object’s rest length along its direction of motion is ' + value + ' m.',
+      'Length measured in the laboratory', 'm', value / gamma, 'L = L₀/γ, where γ = 1/√(1 − (v/c)²)',
+      related('Lorentz factor', '', gamma, 'γ = 1/√(1 − (v/c)²)'));
+    return sample(motion + 'Its rest mass is ' + value + ' kg. Use c = 3.00 × 10⁸ m/s.',
+      'Relativistic momentum in units of 10⁸ kg·m/s', '', value * 3 * beta * gamma, 'p = γmv, then divide by 10⁸ kg·m/s',
+      related('Lorentz factor', '', gamma, 'γ = 1/√(1 − (v/c)²)'));
+  });
+}
+
+function makeAtomicQuestion(level, kind) {
+  return makeNumericalBank(level, kind, atomicTopics, (pick, sample, related) => {
+    const n = pick(3, 6), half = pick(2, 12), time = half * n + (level === 'challenge' ? half / 2 : 0);
+    const initial = pick(2, 8) * 1000, remaining = initial * 2 ** (-time / half);
+    if (kind === 'stellarParallax') {
+      const parallax = pick(2, 9) / 10;
+      return sample('A nearby star has annual parallax angle ' + parallax + ' arcsec. Use 1 pc = 3.26 ly.',
+        'Distance in parsecs', 'pc', 1 / parallax, 'd = 1/p, with p in arcsec',
+        related('Distance in light-years', 'ly', 3.26 / parallax, 'Distance in ly = distance in pc × 3.26'));
+    }
+    if (kind === 'redshift') {
+      const shifted = pick(2, 12);
+      return sample('A spectral line has a rest wavelength of 600 nm and is observed at ' + (600 + shifted) + ' nm. Use c = 300,000 km/s, H₀ = 70 km/s/Mpc, and the low-redshift approximation.',
+        'Recession speed', 'km/s', 500 * shifted, 'v ≈ cz = c(λobs − λrest)/λrest',
+        related('Distance from Hubble’s law', 'Mpc', 500 * shifted / 70, 'd = v/H₀, with v in km/s'));
+    }
+    if (kind === 'hydrogen') {
+      const wavelength = 1e9 / (1.097e7 * (1 / 4 - 1 / n ** 2));
+      return sample('Hydrogen emits light as an electron drops from n = ' + n + ' to n = 2. Use R = 1.097 × 10⁷ m⁻¹ and hc = 1240 eV·nm.',
+        'Wavelength of the emitted photon', 'nm', wavelength, 'λ = 1/[R(1/2² − 1/n²)], then convert to nm',
+        related('Energy of the emitted photon', 'eV', 1240 / wavelength, 'E = hc/λ, using eV·nm and nm'));
+    }
+    if (kind === 'matterWave') {
+      const v = pick(2, 9) * 1e5;
+      return sample('An electron moves at ' + v + ' m/s. Use h = 6.626 × 10⁻³⁴ J·s and electron mass 9.11 × 10⁻³¹ kg.',
+        'de Broglie wavelength', 'nm', 6.626e-34 / (9.11e-31 * v) * 1e9, 'λ = h/(mv), then convert to nm',
+        related('Wavelength if the speed doubles', 'nm', 6.626e-34 / (9.11e-31 * v) * 5e8, 'λ₂ = λ₁/2'));
+    }
+    if (kind === 'thomson') {
+      const volts = pick(3, 9) * 100, B = 1e-3, radius = Math.sqrt(2 * volts / 1.76e11) / B;
+      const centimetres = Number((radius * 100).toFixed(4)), r = centimetres / 100;
+      return sample('Electrons accelerated from rest through ' + volts + ' V follow a circular arc of radius ' + centimetres +
+        ' cm in a perpendicular 1.00 mT magnetic field. Use the non-relativistic approximation.',
+        'Charge-to-mass ratio in units of 10¹¹ C/kg', '', 2 * volts / (B * r) ** 2 / 1e11, '|q|/m = 2V/(Br)², then divide by 10¹¹ C/kg',
+        related('Electron speed in units of 10⁶ m/s', '', 2 * volts / (B * r) / 1e6, 'v = 2V/(Br), then divide by 10⁶ m/s'));
+    }
+    if (kind === 'millikan') {
+      const field = pick(2, 8) * 1e5, force = 1.6 * (field / 1e5) * n;
+      return sample('An oil drop is held stationary in a uniform electric field of ' + field + ' N/C. Its effective weight is ' +
+        Number(force.toFixed(2)) + ' × 10⁻¹⁴ N. Use e = 1.60 × 10⁻¹⁹ C.',
+        'Charge magnitude in units of 10⁻¹⁹ C', '', 1.6 * n, '|q| = F/E, then divide by 10⁻¹⁹ C',
+        related('Number of elementary charges', '', n, 'Number of charges = |q|/e'));
+    }
+    if (kind === 'halfLife') return sample(
+      'A sample starts at ' + initial + ' Bq and has a half-life of ' + half + ' hours. Consider its activity after ' + time + ' hours.',
+      'Remaining activity', 'Bq', remaining, 'A = A₀ × (½) raised to the power t/t½',
+      related('Percentage of initial activity remaining', '%', 100 * remaining / initial, 'Percentage = 100 × A/A₀'));
+    if (kind === 'decayConstant') return sample(
+      'A sample has a half-life of ' + half + ' hours and an initial activity of ' + initial + ' Bq. Consider time ' + time + ' hours after the start.',
+      'Decay constant', 'h⁻¹', Math.LN2 / half, 'λ = ln(2)/t½',
+      related('Remaining activity', 'Bq', remaining, 'A = A₀ exp(−λt)'));
+    const isotope = [
+      {name:'helium-4', mass:4.001506, nucleons:4, defect:0.030377},
+      {name:'carbon-12', mass:11.996709, nucleons:12, defect:0.098940},
+      {name:'oxygen-16', mass:15.990525, nucleons:16, defect:0.137004}
+    ][pick(0, 2)];
+    return sample('A ' + isotope.name + ' nucleus contains ' + isotope.nucleons + ' nucleons. Its mass is ' + isotope.mass +
+      ' u and the separated nucleons total ' + (isotope.mass + isotope.defect).toFixed(6) + ' u. Use 1 u × c² = 931.5 MeV.',
+      'Total binding energy', 'MeV', isotope.defect * 931.5, 'E = (mass of separated nucleons − nuclear mass) × 931.5 MeV/u',
+      related('Binding energy per nucleon', 'MeV', isotope.defect * 931.5 / isotope.nucleons, 'Divide total binding energy by the number of nucleons'));
+  });
+}
+
+function makeConcept(question, number) {
+  if (question.numerical || number % 3 !== 0) return null;
+  let prompt, answer, alternatives, explanation;
+  if (question.orbit) {
+    ({prompt, answer, alternatives, explanation} = makeOrbitReasoning(question));
+  } else if (question.height > 0) {
+    prompt = 'Why does the same-height formula T = 2vᵧ₀/g give the wrong landing time here?';
+    answer = 'The projectile lands below its launch point, so its vertical displacement is negative.';
+    alternatives = [
+      'Gravity becomes stronger as the projectile falls.',
+      'The horizontal velocity changes the vertical acceleration.'
+    ];
+    explanation = 'The shortcut assumes zero vertical displacement. Here, use −h₀ = vᵧ₀T − ½gT².';
+  } else if (number % 2 === 0) {
+    prompt = 'What is true at the highest point of this flight?';
+    answer = 'Vertical velocity is zero while horizontal velocity and downward acceleration remain.';
+    alternatives = [
+      'The projectile stops moving and gravity drops to zero.',
+      'Horizontal velocity is zero while vertical velocity stays positive.'
+    ];
+    explanation = 'The vertical velocity changes sign at the top. Gravity still acts downward and there is no horizontal acceleration.';
+  } else {
+    prompt = 'Why is the time from launch to the highest point equal to the time from that point to landing?';
+    answer = 'The projectile returns to its launch height under constant downward acceleration.';
+    alternatives = [
+      'The projectile has the same vertical velocity throughout the flight.',
+      'The horizontal range is the same for every launch angle.'
+    ];
+    explanation = 'With constant gravity and equal launch and landing heights, the vertical motion is symmetric about the highest point.';
+  }
+  const choices = [...alternatives];
+  choices.splice(randomInt(0, choices.length), 0, answer);
+  return {prompt, answer, choices, explanation};
+}
+
+function readAnswer(raw, unit) {
+  const match = raw.trim().replaceAll('−', '-').match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(.*)$/i);
+  if (!match) return NaN;
+  const suffix = match[2].toLowerCase().replace(/\s/g, '');
+  const aliases = {'m/s':['m/s','ms^-1','ms⁻¹'], s:['s'], m:['m'], '°':['°','deg'], 'm/s²':['m/s²','m/s^2'], 'rad/s':['rad/s'], 'n':['n'], 'km/s':['km/s'], h:['h'], 'kj/kg':['kj/kg']};
+  return !suffix || suffix === unit.toLowerCase().replace(/\s/g, '') ||
+    (aliases[unit.toLowerCase()] ?? []).includes(suffix) ? Number(match[1]) : NaN;
+}
+const relativeTolerance = 0.01;
+const minimumTolerance = 0.005;
+function withinTolerance(value, expected) {
+  const allowance = Math.max(Math.abs(expected) * relativeTolerance, minimumTolerance);
+  return Math.abs(value - expected) <= allowance + 1e-10;
+}
+
+const byId = id => document.getElementById(id);
+const levelTopics = {
+  foundation: ['horizontal','vertical','flight','peakTime','height'],
+  standard: ['horizontal','vertical','flight','peakTime','height','range','velocity','impact'],
+  challenge: ['flight','peakTime','height','range','velocity','impact'],
+  adaptive: ['horizontal','vertical','flight','peakTime','height','range','velocity','impact']
+};
+let question, number = 0, correct = 0, completed = 0, status = 'open';
+const quizLength = byId('quizLength');
+const projectileTopicLabels = {
+  horizontal: 'Horizontal velocity component',
+  vertical: 'Initial vertical velocity component',
+  flight: 'Time of flight',
+  peakTime: 'Time to maximum height',
+  height: 'Maximum height',
+  range: 'Horizontal range',
+  impact: 'Impact speed and direction',
+  velocity: 'Speed and direction during flight'
+};
+const moduleConfigs = {
+  projectile: {name: 'Projectile Motion', button: 'moduleProjectile', topics: projectileTopicLabels,
+    instructions: 'Use g = 9.8 m/s² and ignore air resistance. Take upward and forward as positive. Use degree mode.'},
+  circular: {name: 'Circular Motion', button: 'moduleCircular', makeQuestion: makeCircularQuestion,
+    instructions: 'Use uniform circular motion. Measure radius from the centre and use radians for angular speed.',
+    topics: {circleSpeed: 'Tangential speed', circlePeriod: 'Period', circleOmega: 'Angular speed',
+      circleAcceleration: 'Centripetal acceleration', circleForce: 'Net inward force'}},
+  gravity: {name: 'Motion in Gravitational Fields', button: 'moduleGravity', makeQuestion: makeGravityQuestion,
+    instructions: 'Use the Earth data in each question. Measure orbital radius from Earth’s centre.',
+    topics: {gravityField: 'Gravitational field strength', orbitSpeed: 'Circular orbital speed', orbitPeriod: 'Orbital period',
+      orbitEnergy: 'Specific orbital energy', escapeSpeed: 'Escape speed', keplerRatio: 'Kepler’s third law'}}
+};
+const conceptIds = Object.keys(moduleConfigs);
+moduleConfigs.mixed = {
+  name: 'Mixed Module 5', button: 'moduleMixed',
+  instructions: 'Choose the model that fits each scenario. Use the assumptions, constants, and units shown in the question.',
+  topics: Object.fromEntries(conceptIds.flatMap(id => Object.entries(moduleConfigs[id].topics)
+    .map(([kind, label]) => [id + ':' + kind, moduleConfigs[id].name + ' · ' + label])))
+};
+Object.assign(moduleConfigs, {
+  electromagnetism: {name: 'Module 6 · Electromagnetism', button: 'moduleElectromagnetism',
+    topics: electricityTopics, makeQuestion: makeElectricityQuestion,
+    instructions: 'Use the field, current, and geometry given in each question. Check unit conversions before substituting.'},
+  light: {name: 'Module 7 · The Nature of Light', button: 'moduleLight',
+    topics: lightTopics, makeQuestion: makeLightQuestion,
+    instructions: 'Use the constants supplied in the question. Use degree mode for diffraction and polarisation.'},
+  atomic: {name: 'Module 8 · From the Universe to the Atom', button: 'moduleAtomic',
+    topics: atomicTopics, makeQuestion: makeAtomicQuestion,
+    instructions: 'Use the supplied constants and report each answer in the displayed unit.'}
+});
+let activeModule = 'projectile';
+let lastMechanicsModule = 'projectile';
+let topicLabels = projectileTopicLabels;
+function defaultTopics(level) {
+  return activeModule === 'projectile' ? levelTopics[level] : Object.keys(topicLabels);
+}
+const selectedTopics = new Set(levelTopics[byId('difficulty').value]);
+let customTopics = false;
+function drawTopicChoices() {
+  updateTopicCount();
+  byId('topicChoices').replaceChildren(...Object.entries(topicLabels).map(([kind, title]) => {
+    const label = document.createElement('label');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = selectedTopics.has(kind);
+    box.addEventListener('change', () => {
+      if (box.checked) selectedTopics.add(kind);
+      else selectedTopics.delete(kind);
+      customTopics = true;
+      refreshTopics();
+    });
+    box.id = 'topic-' + kind;
+    const text = document.createElement('span');
+    text.textContent = title;
+    label.append(box, text);
+    return label;
+  }));
+}
+function updateTopicCount() {
+  const total = Object.keys(topicLabels).length;
+  byId('topicCount').textContent = '· ' + selectedTopics.size + ' of ' + total + ' selected';
+  byId('allTopics').textContent = selectedTopics.size === total ? 'Clear all' : 'Select all';
+}
+function refreshTopics() {
+  changeSetup();
+  updateTopicCount();
+  showView(byId('summary').hidden ? 'practice' : 'report');
+}
+byId('allTopics').addEventListener('click', () => {
+  if (selectedTopics.size === Object.keys(topicLabels).length) selectedTopics.clear();
+  else for (const kind of Object.keys(topicLabels)) selectedTopics.add(kind);
+  customTopics = true;
+  refreshTopics();
+  drawTopicChoices();
+});
+const setSize = () => Number(quizLength.value);
+let results = [];
+let tracked = new Set();
+const moduleQuizStates = {};
+let attempts = 0, usedHint = false, lastAnswers = [], attemptHistory = [];
+let concept, conceptChoice = null, conceptChecked = false;
+let questionDifficulty;
+const adaptiveStages = ['foundation', 'standard', 'challenge'];
+const sessions = {};
+let mode = 'practice';
+let quizStarted = false;
+let questionTimeMs = 0;
+let questionVisibleSince = null;
+
+function syncQuestionClock() {
+  const shouldRun = mode === 'quiz' && quizStarted && status === 'open' &&
+    !byId('practice').hidden && !trajectoryDialog.open && !document.hidden;
+  if (shouldRun && questionVisibleSince === null) questionVisibleSince = performance.now();
+  if (!shouldRun) pauseQuestionClock();
+}
+function pauseQuestionClock() {
+  if (questionVisibleSince === null) return;
+  questionTimeMs += performance.now() - questionVisibleSince;
+  questionVisibleSince = null;
+}
+function responseTimeSeconds() {
+  const runningMs = questionVisibleSince === null ? 0 : performance.now() - questionVisibleSince;
+  return Math.round((questionTimeMs + runningMs) / 10) / 100;
+}
+let bag = [], previous = '';
+const form = byId('answerForm');
+const scrub = byId('scrub');
+const playTrajectory = byId('playTrajectory');
+let animationFrame = null;
+let animationStart = null;
+
+function animateTrajectory(now) {
+  const duration = question.flight * 1000;
+  if (animationStart === null) animationStart = now - duration * Number(scrub.value) / 100;
+  scrub.value = String(((now - animationStart) % duration) / duration * 100);
+  draw();
+  animationFrame = requestAnimationFrame(animateTrajectory);
+}
+const trajectoryDialog = byId('trajectoryDialog');
+const trajectoryPane = byId('trajectoryPane');
+const expandTrajectory = byId('expandTrajectory');
+expandTrajectory.addEventListener('click', () => {
+  if (trajectoryDialog.open) {
+    trajectoryDialog.close();
+    return;
+  }
+  trajectoryDialog.append(trajectoryPane);
+  expandTrajectory.textContent = 'Exit fullscreen';
+  expandTrajectory.setAttribute('aria-expanded', 'true');
+  trajectoryDialog.showModal();
+  syncQuestionClock();
+  expandTrajectory.focus();
+});
+trajectoryDialog.addEventListener('close', () => {
+  byId('practice').append(trajectoryPane);
+  expandTrajectory.textContent = 'Fullscreen';
+  expandTrajectory.setAttribute('aria-expanded', 'false');
+  syncQuestionClock();
+  expandTrajectory.focus();
+});
+
+function pauseTrajectory() {
+  if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+  animationFrame = null;
+  animationStart = null;
+  playTrajectory.textContent = question?.orbit ? 'Play motion' : 'Play trajectory';
+}
+playTrajectory.addEventListener('click', () => {
+  if (animationFrame !== null) {
+    pauseTrajectory();
+    return;
+  }
+  playTrajectory.textContent = 'Pause trajectory';
+  animationFrame = requestAnimationFrame(animateTrajectory);
+});
+const canvas = byId('plot');
+const ctx = canvas.getContext('2d');
+
+function updateProgress() {
+  if (mode === 'practice') {
+    byId('progress').textContent = correct + ' correct in practice';
+    return;
+  }
+  byId('progress').textContent = 'Question ' + number + ' of ' + setSize() + ' · ' + correct + ' correct · ' + completed + ' completed';
+}
+function setHint(open) {
+  byId('hint').hidden = !open;
+  byId('hintButton').setAttribute('aria-expanded', String(open));
+}
+function drawVector(x, y, dx, dy, colour, dash = []) {
+  const length = Math.hypot(dx, dy);
+  if (length < 1) return;
+  const angle = Math.atan2(dy, dx);
+  const tipX = x + dx;
+  const tipY = y + dy;
+  const head = Math.min(16, length * 0.65);
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 5;
+  ctx.setLineDash(dash);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(tipX, tipY);
+  ctx.lineTo(tipX - head * Math.cos(angle - Math.PI / 6), tipY - head * Math.sin(angle - Math.PI / 6));
+  ctx.moveTo(tipX, tipY);
+  ctx.lineTo(tipX - head * Math.cos(angle + Math.PI / 6), tipY - head * Math.sin(angle + Math.PI / 6));
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+const vectorToggles = ['vectorVelocity', 'vectorHorizontal', 'vectorVertical', 'vectorGravity'];
+for (const id of vectorToggles) byId(id).addEventListener('change', draw);
+
+function drawTrajectoryVectors(x, y, verticalVelocity, horizontalScale, verticalScale) {
+  const impactVertical = question.vy - gravity * question.flight;
+  const screenVx = question.vx * horizontalScale;
+  const maxScreenVy = Math.max(question.vy, Math.abs(impactVertical)) * verticalScale;
+  const scale = 72 / Math.hypot(screenVx, maxScreenVy);
+  const dx = screenVx * scale;
+  const dy = -verticalVelocity * verticalScale * scale;
+  const showVelocity = byId('vectorVelocity').checked;
+  if (showVelocity) drawVector(x, y, dx, dy, '#9a3412');
+  if (byId('vectorHorizontal').checked) drawVector(x, y, dx, 0, '#1d4ed8', showVelocity && Math.abs(dy) < 2 ? [8, 6] : []);
+  const showVertical = byId('vectorVertical').checked;
+  if (showVertical) drawVector(x, y, 0, dy, '#0f766e');
+  if (byId('vectorGravity').checked) drawVector(x, y, 0, 52, '#6d28d9', showVertical && dy >= 1 ? [8, 6] : []);
+}
+
+function drawOrbit(fraction) {
+  const angle = 2 * Math.PI * fraction;
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  const x = 360 + 124 * cos;
+  const y = 190 - 124 * sin;
+  ctx.clearRect(0, 0, 720, 380);
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(360, 190, 124, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.fillStyle = question.timeUnit === 'h' ? '#0f766e' : '#64748b';
+  ctx.beginPath();
+  ctx.arc(360, 190, question.timeUnit === 'h' ? 27 : 5, 0, 2 * Math.PI);
+  ctx.fill();
+  if (attempts && byId('vectorVelocity').checked) drawVector(x, y, -sin * 60, -cos * 60, '#9a3412');
+  if (attempts && byId('vectorGravity').checked) drawVector(x, y, -cos * 50, sin * 50, '#6d28d9');
+  ctx.fillStyle = '#1e3a8a';
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.fill();
+  scrub.setAttribute('aria-valuetext', Math.round(fraction * 100) + '% of one revolution');
+  byId('trajectoryReadout').hidden = attempts === 0;
+  if (attempts) {
+    byId('liveTime').textContent = rounded(fraction * question.period) + ' ' + question.timeUnit;
+    byId('liveHorizontal').textContent = rounded(question.speed) + ' ' + question.speedUnit;
+    byId('liveVertical').textContent = rounded(question.acceleration) + ' m/s²';
+    byId('apexNote').textContent = 'Velocity is tangent to the path. Acceleration points inward.';
+  }
+}
+function draw() {
+  if (!question || question.numerical) return;
+  const fraction = Number(scrub.value) / 100;
+  if (question.orbit) {
+    drawOrbit(fraction);
+    return;
+  }
+  const elapsed = fraction * question.flight;
+  const verticalVelocity = question.vy - gravity * elapsed;
+  const horizontalScale = 576 / question.range;
+  const verticalScale = 235 / question.peak;
+  const groundY = 292;
+  const x = t => 60 + horizontalScale * question.vx * t;
+  const y = t => groundY - verticalScale * Math.max(0, question.height + question.vy * t - 0.5 * gravity * t ** 2);
+  const dot = (time, fill, radius) => {
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    ctx.arc(x(time), y(time), radius, 0, 2 * Math.PI);
+    ctx.fill();
+  };
+  ctx.clearRect(0, 0, 720, 380);
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(20, groundY);
+  ctx.lineTo(700, groundY);
+  ctx.stroke();
+  ctx.fillStyle = '#475569';
+  ctx.font = '22px Arial';
+  ctx.fillText('Landing surface', 24, 328);
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x(0), y(0));
+  for (let i = 1; i <= 80; i++) {
+    const time = question.flight * i / 80;
+    ctx.lineTo(x(time), y(time));
+  }
+  ctx.stroke();
+  dot(0, '#475569', 6);
+  dot(question.flight, '#475569', 6);
+  if (attempts) drawTrajectoryVectors(x(elapsed), y(elapsed), verticalVelocity, horizontalScale, verticalScale);
+  dot(elapsed, '#1e3a8a', 10);
+  scrub.setAttribute('aria-valuetext', Math.round(fraction * 100) + '% of flight');
+  byId('trajectoryReadout').hidden = attempts === 0;
+  if (attempts) {
+    byId('liveTime').textContent = rounded(elapsed) + ' s';
+    byId('liveHorizontal').textContent = rounded(question.vx) + ' m/s';
+    byId('liveVertical').textContent = rounded(verticalVelocity) + ' m/s';
+    byId('apexNote').textContent = question.vy === 0
+      ? 'For a horizontal launch, the highest point is the launch point.'
+      : 'At the highest point, vertical velocity is zero. Horizontal velocity stays constant throughout the flight.';
+  }
+}
+function finish(result) {
+  status = result;
+  if (mode === 'quiz') {
+    pauseQuestionClock();
+    recordQuizResult(result);
+  }
+  completed++;
+  if (result === 'correct') correct++;
+  byId('check').disabled = true;
+  for (const input of byId('fields').querySelectorAll('input')) input.readOnly = true;
+  updateProgress();
+}
+function recordQuizResult(result) {
+  results.push({
+    question: number,
+    topic: question.topic,
+    moduleConcept: question.module,
+    difficulty: questionDifficulty,
+    prompt: byId('scenario').textContent,
+    assumption: byId('assumption').textContent,
+    launchHeightMetres: question.height,
+    launchSpeedMetresPerSecond: question.module === 'projectile' ? question.speed : undefined,
+    launchAngleDegrees: question.angle,
+    outcome: result,
+    attempts,
+    attemptHistory,
+    usedHint,
+    concept: conceptResult(),
+    answers: question.parts.map((field, index) => ({
+      calculation: field.label,
+      unit: field.unit,
+      submitted: lastAnswers[index] ?? null,
+      expected: attempts ? Number(rounded(field.value)) : null,
+      correct: attempts ? withinTolerance(lastAnswers[index], field.value) : null
+    }))
+  });
+}
+
+function syncSetupControls() {
+  const locked = mode === 'quiz' && quizStarted;
+  for (const id of ['difficulty', 'situation', 'quizLength', 'quizTopics']) byId(id).disabled = locked;
+}
+
+function mixedTopicRotation() {
+  const groups = conceptIds.map(id => [...selectedTopics].filter(kind => kind.startsWith(id + ':')));
+  const rotation = [];
+  while (groups.some(group => group.length)) {
+    for (const group of groups) {
+      if (group.length) rotation.push(group.splice(randomInt(0, group.length - 1), 1)[0]);
+    }
+  }
+  return rotation;
+}
+function nextQuestion(focus = true) {
+  if (!selectedTopics.size) return;
+  const random = byId('randomTopics').checked;
+  const mixed = activeModule === 'mixed';
+  if (!bag.length) bag = mixed ? mixedTopicRotation() : [...selectedTopics];
+  const choices = random ? [...selectedTopics] : bag.filter(kind => kind !== previous);
+  const key = mixed && !random ? bag[0] : choices.length ? choices[randomInt(0, choices.length - 1)] : bag[0];
+  if (!random) bag.splice(bag.indexOf(key), 1);
+  previous = key;
+  const difficulty = byId('difficulty').value;
+  questionDifficulty = difficulty === 'adaptive' ? adaptiveStages[Math.min(correct, 2)] : difficulty;
+  const [questionModule, kind] = mixed ? key.split(':') : [activeModule, key];
+  const generator = moduleConfigs[questionModule].makeQuestion || makeQuestion;
+  question = generator(questionDifficulty, kind, mixed ? 'auto' : byId('situation').value);
+  question.module = questionModule;
+  number++;
+  concept = makeConcept(question, number);
+  conceptChoice = null;
+  conceptChecked = false;
+  status = 'open';
+  attempts = 0;
+  usedHint = false;
+  lastAnswers = [];
+  attemptHistory = [];
+  if (mode === 'quiz') {
+    questionTimeMs = 0;
+    questionVisibleSince = null;
+    syncQuestionClock();
+  }
+  renderQuestion(focus);
+}
+function renderQuestion(focus = false) {
+  pauseTrajectory();
+  syncMotionLabels();
+  byId('activityMode').textContent = mode === 'quiz' ? 'Quiz question ' + number + ' of ' + setSize() : 'Practice';
+  byId('next').textContent = mode === 'quiz' && number === setSize() ? 'Finish quiz' : 'Next question';
+  byId('topic').textContent = question.topic;
+  byId('questionDifficulty').textContent = byId('difficulty').value === 'adaptive'
+    ? 'Adaptive level · ' + questionDifficulty[0].toUpperCase() + questionDifficulty.slice(1)
+    : '';
+  byId('scenario').textContent = question.scenario || 'A ball is launched ' + question.location + ' at ' + question.speed + ' m/s, ' +
+    (question.angle === 0 ? 'horizontally. ' : question.angle + '° above the horizontal. ') + question.prompt;
+  byId('assumption').hidden = Boolean(question.numerical);
+  byId('assumption').textContent = question.numerical ? '' : question.assumption || (question.height
+    ? 'The launch point is ' + question.height + ' m above the landing surface (y = 0).'
+    : 'Launch and landing are at the same height (y = 0).');
+  byId('fields').replaceChildren(...question.parts.map((field, index) => {
+    const row = document.createElement('div');
+    row.className = 'field';
+    const label = document.createElement('label');
+    label.htmlFor = 'answer' + index;
+    label.textContent = field.label;
+    const input = document.createElement('input');
+    input.id = label.htmlFor;
+    input.type = 'text';
+    input.inputMode = field.unit === '°' ? 'text' : 'decimal';
+    input.autocomplete = 'off';
+    input.readOnly = status !== 'open';
+    input.setAttribute('aria-describedby', 'unit' + index + ' rounding fieldResult' + index);
+    const unit = document.createElement('span');
+    unit.id = 'unit' + index;
+    unit.textContent = field.unit;
+    const result = document.createElement('span');
+    result.id = 'fieldResult' + index;
+    result.className = 'field-result';
+    input.addEventListener('input', () => showFieldResult(input, result, ''));
+    row.append(label, input, unit, result);
+    return row;
+  }));
+  byId('hint').textContent = question.hint;
+  setHint(false);
+  setPracticeSolution(false);
+  renderConcept();
+  byId('feedback').textContent = '';
+  byId('check').disabled = status !== 'open';
+  scrub.value = '0';
+  updateProgress();
+  draw();
+  if (focus) byId('topic').focus();
+}
+function showFieldResult(input, label, result) {
+  input.setAttribute('data-result', result);
+  label.setAttribute('data-result', result);
+  input.setAttribute('aria-invalid', String(result === 'incorrect'));
+  label.textContent = result === 'correct' ? 'Correct' : result === 'incorrect' ? 'Try again' : '';
+}
+function markAnswers() {
+  question.parts.forEach((field, index) => {
+    const input = byId('answer' + index);
+    const value = readAnswer(input.value, field.unit);
+    const submitted = lastAnswers[index];
+    const result = value !== submitted || submitted === undefined ? ''
+      : withinTolerance(value, field.value) ? 'correct' : 'incorrect';
+    showFieldResult(input, byId('fieldResult' + index), result);
+  });
+}
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  if (!question || status !== 'open') return;
+  const values = question.parts.map((field, index) => readAnswer(byId('answer' + index).value, field.unit));
+  if (values.some(value => !Number.isFinite(value))) {
+    byId('feedback').textContent = 'Enter a number in every box. If you type a unit, match the unit shown.';
+    return;
+  }
+  attempts++;
+  draw();
+  if (mode === 'practice') byId('practiceSolutionButton').disabled = false;
+  lastAnswers = values;
+  if (mode === 'quiz') {
+    attemptHistory.push({
+      attempt: attempts,
+      responseTimeSeconds: responseTimeSeconds(),
+      incorrectResponses: question.parts.flatMap((field, index) =>
+        withinTolerance(values[index], field.value) ? [] : [{
+          calculation: field.label,
+          submitted: values[index],
+          unit: field.unit
+        }])
+    });
+  }
+  markAnswers();
+  renderConcept();
+  const wrong = question.parts.filter((field, index) => !withinTolerance(values[index], field.value));
+  if (wrong.length) {
+    byId('feedback').textContent = 'Try again. Check ' + wrong.map(field => field.label.toLowerCase()).join(' and ') + '.';
+    return;
+  }
+  finish('correct');
+  byId('feedback').textContent = 'Correct!';
+});
+function conceptResult() {
+  if (!concept || !attempts) return null;
+  return {
+    prompt: concept.prompt,
+    submitted: conceptChecked ? conceptChoice : null,
+    expected: conceptChecked ? concept.answer : null,
+    correct: conceptChecked ? conceptChoice === concept.answer : null
+  };
+}
+
+function renderConcept() {
+  const visible = Boolean(concept && attempts);
+  byId('concept').hidden = !visible;
+  if (!visible) return;
+  byId('conceptPrompt').textContent = concept.prompt;
+  byId('conceptChoices').replaceChildren(...concept.choices.map(choice => {
+    const label = document.createElement('label');
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'conceptChoice';
+    radio.checked = choice === conceptChoice;
+    radio.disabled = conceptChecked;
+    radio.addEventListener('change', () => {
+      conceptChoice = choice;
+      byId('checkConcept').disabled = false;
+    });
+    const text = document.createElement('span');
+    text.textContent = choice;
+    label.append(radio, text);
+    return label;
+  }));
+  byId('checkConcept').disabled = conceptChecked || conceptChoice === null;
+  byId('conceptFeedback').textContent = conceptChecked
+    ? (conceptChoice === concept.answer ? 'Correct. ' : 'Incorrect. ') + concept.explanation
+    : '';
+}
+
+byId('checkConcept').addEventListener('click', () => {
+  if (!concept || !attempts || conceptChoice === null || conceptChecked) return;
+  conceptChecked = true;
+  if (mode === 'quiz' && results[number - 1]) results[number - 1].concept = conceptResult();
+  renderConcept();
+});
+
+byId('hintButton').addEventListener('click', () => {
+  const opening = byId('hint').hidden;
+  if (opening && status === 'open') usedHint = true;
+  setHint(opening);
+});
+function closeSolution() {
+  byId('solution').hidden = true;
+  byId('solutionButton').textContent = 'Show solution';
+  byId('solutionButton').setAttribute('aria-expanded', 'false');
+}
+function updateReview() {
+  closeSolution();
+  const canReview = Boolean(question && attempts);
+  byId('currentReview').hidden = !canReview;
+  byId('reviewTitle').textContent = question ? 'Question ' + number + ' · ' + question.topic : '';
+  if (status === 'open') tracked.clear();
+  byId('solutionButton').disabled = !canReview;
+  byId('reviewStatus').textContent = status === 'open'
+    ? 'Showing the solution or a measurement ends this question without a point.'
+    : 'Review the solution or select the measurements you want to see.';
+  byId('tracking').hidden = !canReview || !question.measurements.length;
+  byId('measurements').replaceChildren();
+  if (!byId('tracking').hidden) drawMeasurements();
+}
+function revealCurrentReview() {
+  if (status === 'open') {
+    finish('revealed');
+    byId('feedback').textContent = 'Answers revealed in Quiz. This question earns no point.';
+    byId('reviewStatus').textContent = 'Answers revealed. This question earns no point.';
+    updateReportSummary();
+  }
+}
+function drawMeasurements() {
+  const {measurements} = question;
+  byId('measurements').replaceChildren(...measurements.map(field => {
+    const label = document.createElement('label');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = tracked.has(field.label);
+    const value = document.createElement('span');
+    value.textContent = field.label + (box.checked ? ' · ' + rounded(field.value) + ' ' + field.unit : '');
+    box.addEventListener('change', () => {
+      if (box.checked) {
+        tracked.add(field.label);
+        revealCurrentReview();
+      } else {
+        tracked.delete(field.label);
+      }
+      value.textContent = field.label + (box.checked ? ' · ' + rounded(field.value) + ' ' + field.unit : '');
+    });
+    label.append(box, value);
+    return label;
+  }));
+}
+byId('trackAll').addEventListener('click', () => {
+  for (const field of question.measurements) tracked.add(field.label);
+  revealCurrentReview();
+  drawMeasurements();
+});
+byId('trackNone').addEventListener('click', () => {
+  tracked.clear();
+  drawMeasurements();
+});
+function renderSolution(panel) {
+  const heading = document.createElement('strong');
+  heading.textContent = 'Worked solution';
+  const list = document.createElement('ol');
+  for (const step of question.steps) {
+    const item = document.createElement('li');
+    item.textContent = step;
+    list.append(item);
+  }
+  const answer = document.createElement('strong');
+  answer.textContent = question.parts.map(field => field.label + ' = ' + rounded(field.value) + ' ' + field.unit).join(' · ');
+  panel.replaceChildren(heading, list, answer);
+}
+
+function setPracticeSolution(open) {
+  const button = byId('practiceSolutionButton');
+  const panel = byId('practiceSolution');
+  button.hidden = mode !== 'practice';
+  button.disabled = !attempts;
+  button.textContent = open ? 'Hide worked solution' : 'Show worked solution';
+  button.setAttribute('aria-expanded', String(open));
+  panel.hidden = !open;
+  if (open) renderSolution(panel);
+}
+
+byId('practiceSolutionButton').addEventListener('click', () => {
+  if (mode !== 'practice' || !attempts) return;
+  const open = byId('practiceSolution').hidden;
+  if (open && status === 'open') {
+    finish('revealed');
+    byId('feedback').textContent = 'Worked solution shown. Try the next question to apply the method.';
+  }
+  setPracticeSolution(open);
+});
+
+byId('solutionButton').addEventListener('click', () => {
+  if (!attempts) return;
+  const panel = byId('solution');
+  if (!panel.hidden) {
+    closeSolution();
+    return;
+  }
+  revealCurrentReview();
+  renderSolution(panel);
+  panel.hidden = false;
+  byId('solutionButton').textContent = 'Hide solution';
+  byId('solutionButton').setAttribute('aria-expanded', 'true');
+});
+function needsReasoningCheck() {
+  return Boolean(concept && !conceptChecked);
+}
+function quizComplete() {
+  return completed === setSize() && !needsReasoningCheck();
+}
+
+byId('next').addEventListener('click', () => {
+  if (!question) return;
+  if (needsReasoningCheck()) {
+    if (!attempts) {
+      byId('feedback').textContent = 'Submit a numerical answer to unlock the required reasoning check.';
+      byId('answer0').focus();
+    } else {
+      byId('feedback').textContent = 'Complete the reasoning check before moving on.';
+      byId('conceptChoices').querySelector('input').focus();
+    }
+    return;
+  }
+  if (status === 'open') finish('skipped');
+  if (mode === 'practice' || completed < setSize()) {
+    nextQuestion();
+    return;
+  }
+  byId('next').textContent = 'View quiz results';
+  showView('report', true);
+});
+
+function showView(view, focusHeading = false) {
+  const report = view === 'report';
+  if (report) pauseTrajectory();
+  byId('practice').hidden = report || !selectedTopics.size;
+  byId('noTopics').hidden = Boolean(selectedTopics.size);
+  byId('quizLengthControl').hidden = !report;
+  byId('summary').hidden = !report;
+  syncQuestionClock();
+  byId('practiceView').setAttribute('aria-pressed', String(mode === 'practice'));
+  byId('reportView').setAttribute('aria-pressed', String(mode === 'quiz'));
+  if (report) {
+    updateReview();
+    updateReportSummary();
+  }
+  if (report && focusHeading) byId('summaryTitle').focus();
+}
+function firstTryCorrect() {
+  return results.filter(result => result.outcome === 'correct' && result.attempts === 1).length;
+}
+
+function updateReportSummary() {
+  const complete = quizComplete();
+  const startQuiz = byId('startQuiz');
+  startQuiz.hidden = complete;
+  startQuiz.disabled = !selectedTopics.size;
+  startQuiz.textContent = quizStarted ? 'Resume quiz' : 'Start quiz';
+  byId('export').disabled = !complete;
+  byId('printReport').hidden = !complete;
+  byId('restart').hidden = !complete;
+  byId('answerReport').hidden = !complete;
+  if (complete) renderAnswerReport();
+  else byId('answerResults').replaceChildren();
+  byId('results').textContent = completed + ' of ' + setSize() + ' completed. ' +
+    firstTryCorrect() + ' correct on the first try. ' +
+    (correct - firstTryCorrect()) + ' corrected after a retry. ' +
+    correct + ' correct overall. ' +
+    results.filter(result => result.outcome === 'revealed').length + ' solutions revealed. ' +
+    results.filter(result => result.outcome === 'skipped').length + ' skipped.';
+  if (!complete) byId('results').textContent += ' Finish the set to download your JSON report.';
+}
+function renderAnswerReport() {
+  const outcomes = {correct: 'Correct', revealed: 'Solution revealed', skipped: 'Skipped'};
+  byId('answerResults').replaceChildren(...results.map(result => {
+    const item = document.createElement('li');
+    const heading = document.createElement('strong');
+    const outcome = result.outcome === 'correct'
+      ? (result.attempts === 1 ? 'Correct on the first try' : 'Correct after a retry')
+      : outcomes[result.outcome];
+    heading.textContent = result.topic + ' · ' + outcome;
+    const prompt = document.createElement('p');
+    prompt.textContent = [result.prompt, result.assumption].filter(Boolean).join(' ');
+    if (!result.attempts) {
+      const note = document.createElement('p');
+      note.textContent = 'No answer submitted.';
+      item.append(heading, prompt, note);
+      return item;
+    }
+    const answers = document.createElement('ul');
+    for (const answer of result.answers) {
+      const detail = document.createElement('li');
+      detail.textContent = answer.calculation + ' · You entered ' + answer.submitted + ' ' + answer.unit +
+        ' · Expected ' + rounded(answer.expected) + ' ' + answer.unit +
+        ' · ' + (answer.correct ? 'Correct' : 'Incorrect');
+      answers.append(detail);
+    }
+    const count = document.createElement('p');
+    count.textContent = result.attempts + (result.attempts === 1 ? ' attempt' : ' attempts') + '.';
+    item.append(heading, prompt, count, answers);
+    const mistakes = result.attemptHistory.filter(attempt => attempt.incorrectResponses.length);
+    if (mistakes.length) {
+      const history = document.createElement('details');
+      const title = document.createElement('summary');
+      title.textContent = 'Incorrect responses by attempt';
+      const list = document.createElement('ul');
+      for (const attempt of mistakes) {
+        const entry = document.createElement('li');
+        entry.textContent = 'Attempt ' + attempt.attempt + ' · ' + attempt.incorrectResponses.map(response =>
+          response.calculation + ' = ' + response.submitted + ' ' + response.unit).join(' · ');
+        list.append(entry);
+      }
+      history.append(title, list);
+      item.append(history);
+    }
+    if (result.concept) {
+      const explanation = document.createElement('p');
+      const response = result.concept;
+      explanation.textContent = response.prompt + (response.submitted === null
+        ? ' No explanation submitted.'
+        : ' You chose ' + response.submitted + ' ' + (response.correct ? 'Correct.' : 'Expected: ' + response.expected));
+      item.append(explanation);
+    }
+    return item;
+  }));
+}
+
+function switchMode(target, targetModule = activeModule) {
+  if (mode === target && activeModule === targetModule) return;
+  pauseQuestionClock();
+  sessions[activeModule + ':' + mode] = {
+    question, number, correct, completed, status, attempts, usedHint, lastAnswers, attemptHistory, concept, conceptChoice, conceptChecked, bag, previous, questionDifficulty,
+    difficulty: byId('difficulty').value,
+    situation: byId('situation').value,
+    topics: [...selectedTopics],
+    customTopics,
+    random: byId('randomTopics').checked,
+    answers: question ? Array.from(byId('fields').querySelectorAll('input'), input => input.value) : [],
+    hintOpen: !byId('hint').hidden,
+    practiceSolutionOpen: !byId('practiceSolution').hidden,
+    feedback: byId('feedback').textContent,
+    scrubPosition: scrub.value
+  };
+  if (activeModule !== targetModule) {
+    moduleQuizStates[activeModule] = {results, tracked, quizStarted, questionTimeMs, length: quizLength.value};
+    activeModule = targetModule;
+    const quiz = moduleQuizStates[activeModule];
+    results = quiz?.results ?? [];
+    tracked = quiz?.tracked ?? new Set();
+    quizStarted = quiz?.quizStarted ?? false;
+    questionTimeMs = quiz?.questionTimeMs ?? 0;
+    quizLength.value = quiz?.length ?? '10';
+    byId('reportStatus').textContent = '';
+  }
+  mode = target;
+  topicLabels = moduleConfigs[activeModule].topics;
+  syncModuleLabels();
+  const saved = sessions[activeModule + ':' + target];
+  if (saved) {
+    ({question, number, correct, completed, status, attempts, usedHint, lastAnswers, attemptHistory, concept, conceptChoice, conceptChecked, bag, previous,
+      questionDifficulty, customTopics} = saved);
+    byId('difficulty').value = saved.difficulty;
+    byId('situation').value = saved.situation;
+    selectedTopics.clear();
+    for (const kind of saved.topics) selectedTopics.add(kind);
+    byId('randomTopics').checked = saved.random;
+    if (question) renderQuestion();
+    else updateProgress();
+    saved.answers.forEach((answer, index) => { byId('answer' + index).value = answer; });
+    if (question) markAnswers();
+    setHint(saved.hintOpen);
+    setPracticeSolution(saved.practiceSolutionOpen);
+    byId('feedback').textContent = saved.feedback;
+    scrub.value = saved.scrubPosition;
+    draw();
+  } else {
+    correct = 0;
+    completed = 0;
+    byId('difficulty').value = 'standard';
+    byId('situation').value = 'auto';
+    byId('randomTopics').checked = false;
+    customTopics = false;
+    selectedTopics.clear();
+    for (const kind of defaultTopics('standard')) selectedTopics.add(kind);
+    changeSetup();
+  }
+  drawTopicChoices();
+  syncSetupControls();
+}
+function syncModuleLabels() {
+  const current = moduleConfigs[activeModule];
+  const mechanics = conceptIds.includes(activeModule) || activeModule === 'mixed';
+  byId('mechanicsTabs').hidden = !mechanics;
+  byId('courseModule5').setAttribute('aria-pressed', String(mechanics));
+  if (mechanics) lastMechanicsModule = activeModule;
+  for (const [id, config] of Object.entries(moduleConfigs)) {
+    byId(config.button).setAttribute('aria-pressed', String(id === activeModule));
+  }
+  byId('situationControl').hidden = activeModule !== 'projectile';
+  byId('practiceView').hidden = activeModule === 'mixed';
+  byId('modelInstructions').textContent = current.instructions;
+  byId('printTitle').textContent = current.name + ' Quiz';
+  byId('printInstructions').textContent = current.instructions;
+}
+function syncMotionLabels() {
+  byId('trajectoryPane').hidden = Boolean(question.numerical);
+  byId('practice').classList.toggle('numerical', Boolean(question.numerical));
+  const orbit = Boolean(question.orbit);
+  byId('trajectory').textContent = orbit ? 'Circular path' : 'Trajectory';
+  byId('playTrajectory').textContent = orbit ? 'Play motion' : 'Play trajectory';
+  byId('motionPositionLabel').textContent = orbit ? 'Position in revolution' : 'Position in flight';
+  byId('plot').setAttribute('aria-label', orbit ? 'Animated circular path with optional velocity and inward acceleration arrows' : 'Projectile trajectory');
+  byId('horizontalVectorControl').hidden = orbit;
+  byId('verticalVectorControl').hidden = orbit;
+  byId('jumpToApex').hidden = orbit;
+  byId('accelerationLabel').textContent = orbit ? 'Inward acceleration' : 'Gravity';
+  byId('liveTimeLabel').textContent = orbit ? 'Time since start' : 'Time since launch';
+  byId('liveHorizontalLabel').textContent = orbit ? 'Tangential speed' : 'Horizontal velocity';
+  byId('liveVerticalLabel').textContent = orbit ? 'Inward acceleration' : 'Vertical velocity';
+  byId('plotInstructions').textContent = orbit
+    ? 'Play to loop one revolution, or use the slider to inspect a position. Playback speed is illustrative.'
+    : 'The axes scale independently to fit the box. Play to loop the flight, or move the slider to inspect a position.';
+}
+for (const [id, config] of Object.entries(moduleConfigs)) {
+  byId(config.button).addEventListener('click', () => {
+    if (id === activeModule) return;
+    const mixed = id === 'mixed';
+    switchMode(mixed ? 'quiz' : 'practice', id);
+    showView(mixed ? 'report' : 'practice');
+  });
+}
+byId('courseModule5').addEventListener('click', () => byId(moduleConfigs[lastMechanicsModule].button).click());
+byId('practiceView').addEventListener('click', () => {
+  switchMode('practice');
+  showView('practice');
+});
+byId('startQuiz').addEventListener('click', () => {
+  if (quizComplete() || !selectedTopics.size) return;
+  quizStarted = true;
+  syncSetupControls();
+  showView('practice');
+  byId('topic').focus();
+});
+byId('reportView').addEventListener('click', () => {
+  switchMode('quiz');
+  showView('report');
+});
+quizLength.addEventListener('change', () => {
+  updateProgress();
+  updateReportSummary();
+});
+
+byId('randomTopics').addEventListener('change', () => {
+  changeSetup();
+  if (!byId('summary').hidden) showView('report');
+});
+function changeSetup() {
+  bag = [];
+  previous = '';
+  number = 0;
+  if (!selectedTopics.size) {
+    pauseTrajectory();
+    question = null;
+    concept = null;
+    status = 'open';
+    attempts = 0;
+    setPracticeSolution(false);
+    updateProgress();
+    return;
+  }
+  nextQuestion(false);
+}
+byId('difficulty').addEventListener('change', () => {
+  if (!customTopics) {
+    selectedTopics.clear();
+    for (const kind of defaultTopics(byId('difficulty').value)) selectedTopics.add(kind);
+    drawTopicChoices();
+  }
+  changeSetup();
+  if (!byId('summary').hidden) showView('report');
+});
+byId('situation').addEventListener('change', () => {
+  changeSetup();
+  if (!byId('summary').hidden) showView('report');
+});
+byId('printReport').addEventListener('click', () => {
+  if (mode !== 'quiz' || !quizComplete()) return;
+  const student = byId('student').value.trim();
+  byId('printStudent').textContent = student ? 'Student · ' + student : '';
+  window.print();
+});
+byId('export').addEventListener('click', () => {
+  if (!quizComplete()) return;
+  const student = byId('student').value.trim();
+  if (!student) {
+    byId('reportStatus').textContent = 'Enter your name for the teacher report.';
+    byId('student').focus();
+    return;
+  }
+  const report = {
+    schemaVersion: 7,
+    activity: 'SciSims ' + moduleConfigs[activeModule].name + ' Quiz',
+    moduleConcept: activeModule,
+    student,
+    answerTolerance: {relativePercent: relativeTolerance * 100, minimumAbsolute: minimumTolerance},
+    responseTimeBasis: 'Cumulative seconds with the quiz question visible, from opening it to submission',
+    exportedAt: new Date().toISOString(),
+    difficulty: byId('difficulty').value,
+    launchSituation: activeModule === 'projectile' ? byId('situation').value : undefined,
+    score: correct,
+    firstTryCorrect: firstTryCorrect(),
+    correctAfterRetry: correct - firstTryCorrect(),
+    totalQuestions: setSize(),
+    conceptQuestions: {
+      answered: results.filter(result => result.concept?.submitted != null).length,
+      correct: results.filter(result => result.concept?.correct).length
+    },
+    questionOrder: byId('randomTopics').checked ? 'random' : 'cycle',
+    topics: [...selectedTopics].map(kind => topicLabels[kind]),
+    questions: results
+  };
+  const file = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'scisims-' + activeModule + '-quiz.json';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  byId('reportStatus').textContent = 'Send the downloaded JSON file to your teacher.';
+});
+byId('restart').addEventListener('click', () => {
+  results.length = 0;
+  tracked.clear();
+  correct = 0;
+  completed = 0;
+  quizStarted = false;
+  syncSetupControls();
+  byId('reportStatus').textContent = '';
+  changeSetup();
+  showView('report', true);
+});
+byId('jumpToApex').addEventListener('click', () => {
+  if (!attempts) return;
+  pauseTrajectory();
+  scrub.value = String(100 * question.vy / (gravity * question.flight));
+  draw();
+});
+scrub.addEventListener('input', () => {
+  pauseTrajectory();
+  draw();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) pauseTrajectory();
+  syncQuestionClock();
+});
+drawTopicChoices();
+nextQuestion(false);
+</script>
+</body>
+</html>
