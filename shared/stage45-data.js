@@ -148,6 +148,40 @@ window.SCISIMS_STAGE45 = {
   ],
   "resources": [
 {
+  "id": "year-7-revision-engine",
+  "title": "Year 7 Revision Engine",
+  "path": "PhySims/RevisionEngine/year-7.html",
+  "description": "Practise numerical skills across all four Year 7 Science units.",
+  "type": "Revision Tool",
+  "tags": [
+    "Year 7",
+    "Numeracy",
+    "Revision"
+  ],
+  "workingScientifically": [
+    "Analysing data and information"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
   "title": "Animation Lab",
   "description": "Explore 221 short science animations, including 24-second explainers, with playback controls, captions and ready-made videos for lessons.",
   "path": "Animation-Lab/",
