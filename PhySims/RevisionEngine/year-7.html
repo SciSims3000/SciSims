@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 Revision Engine | SciSims</title>
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#f5f7fb;color:#17263a;font:16px/1.5 system-ui,sans-serif}
+main{max-width:900px;margin:auto;padding:clamp(16px,4vw,34px)}
+h1{font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;margin:.25em 0}
+h2{font-size:1.25rem;margin:0 0 .5em}
+p{margin:.55em 0}
+.brand{color:#1d4ed8;font-weight:700}
+.controls,.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.controls{margin:16px 0}
+label{display:grid;gap:4px;font-weight:650;min-width:0}
+button,input,select{font:inherit;color:inherit;min-height:44px;border:1px solid #94a3b8;border-radius:8px;background:white;padding:8px 12px;max-width:100%}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+select{width:100%}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+.primary{background:#1d4ed8;color:white;border-color:#1d4ed8;font-weight:700}
+.card{background:white;border:1px solid #dbe3ef;border-radius:16px;padding:clamp(16px,4vw,28px);box-shadow:0 4px 14px #24395112}
+.small{color:#45566e}
+#question{font-size:1.12rem}
+.answer{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
+.answer input{width:12rem}
+#feedback{font-weight:700}
+input[data-result="correct"]{border-color:#15803d;background:#f0fdf4}
+input[data-result="incorrect"]{border-color:#b91c1c;background:#fef2f2}
+#help{background:#eaf2ff;border-radius:8px;padding:12px}
+#summary li{margin:0 0 12px}
+button[aria-pressed="true"]{background:#1d4ed8;color:white;border-color:#1d4ed8}
+details{background:white;border:1px solid #dbe3ef;border-radius:12px;padding:12px}
+summary{cursor:pointer}
+fieldset{border:0;padding:8px 0 0;margin:0}
+#topicChoices{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px}
+#topicChoices label{display:flex;align-items:center;min-height:34px;gap:6px}
+#topicChoices input{min-height:0;width:17px;height:17px}
+#studentLabel{max-width:280px;margin-bottom:12px}
+.print-only{display:none}
+@media print{
+ body{background:white}
+ main:has(#summary:not([hidden])) > :not(#summary),#summary .actions{display:none!important}
+ #summary{border:0;box-shadow:none}
+ #summary li{break-inside:avoid}
+ .print-only{display:block}
+}
+</style>
+<body>
+<main>
+<header>
+<div class="brand">SciSims · Year 7 Science</div>
+<h1>Year 7 Revision Engine</h1>
+<p>Choose a unit and practise the calculations you use in science.</p>
+</header>
+<nav class="actions controls" id="unitTabs" aria-label="Year 7 units"></nav>
+<div class="controls">
+<label>Difficulty<select id="difficulty"><option value="foundation">Foundation</option><option value="standard" selected>Standard</option><option value="challenge">Challenge</option><option value="adaptive">Adaptive</option></select></label>
+<label id="quizLengthLabel" hidden>Number of questions<select id="quizLength"><option>5</option><option>10</option><option>15</option><option>20</option></select></label>
+</div>
+<details open>
+<summary><strong>What to calculate</strong> · <span id="topicCount"></span></summary>
+<fieldset id="topicFilter" aria-label="Calculation topics">
+<button type="button" id="toggleTopics">Clear all</button>
+<div id="topicChoices"></div>
+</fieldset>
+</details>
+<p id="empty" role="status" hidden>Select at least one calculation topic.</p>
+<nav class="actions controls" aria-label="Activity">
+<button type="button" id="practice">Practice</button>
+<button type="button" id="quiz">Quiz</button>
+</nav>
+<label id="studentLabel" hidden>Student name<input id="student" autocomplete="name"></label>
+<section class="card" id="setup" hidden>
+<h2>Quiz</h2>
+<p>Choose the topics and question count above, then start.</p>
+<div class="actions">
+<button class="primary" type="button" id="startQuiz">Start quiz</button>
+<button type="button" id="generateQuiz">Download question set</button>
+</div>
+<p class="small" id="generatorNote">Load the downloaded JSON in <a href="https://scisims3000.github.io/SciSims/PhySims/RevisionEngine/worksheet.html" target="_blank" rel="noopener">Worksheet Builder</a> to print a worksheet and answer key. Adaptive uses Standard for question sets.</p>
+<p id="generatorStatus" role="status"></p>
+</section>
+<section id="activity" class="card" aria-labelledby="title">
+<p class="small" id="progress"></p>
+<h2 id="title" tabindex="-1"></h2>
+<p id="question"></p>
+<form id="form" novalidate>
+<label for="answer">Your answer</label>
+<div class="answer"><input id="answer" type="text" inputmode="decimal" autocomplete="off" aria-describedby="units"><span id="units"></span></div>
+<div class="actions">
+<button class="primary" id="check">Check answer</button>
+<button type="button" id="hint">Hint</button>
+<button type="button" id="solution" disabled>Show working</button>
+<button type="button" id="next">Next question</button>
+</div>
+</form>
+<p id="feedback" role="status"></p>
+<p id="help" hidden></p>
+</section>
+<section id="summary" class="card" hidden aria-labelledby="reportTitle">
+<h2 id="reportTitle" tabindex="-1">Quiz results</h2>
+<p class="print-only" id="printStudent"></p>
+<p id="score"></p>
+<div class="actions">
+<button type="button" id="download">Download JSON report</button>
+<button type="button" id="print">Print / Save as PDF</button>
+<button type="button" id="restart">Start new set</button>
+</div>
+<ol id="results"></ol>
+</section>
+</main>
+<script>
+'use strict';
+const pick = (min,max) => min + Math.floor(Math.random()*(max-min+1));
+function size(min,max) {
+  const midpoint=Math.floor((min+max)/2);
+  return questionLevel==='foundation'?pick(min,midpoint):questionLevel==='challenge'?pick(midpoint,max):pick(min,max);
+}
+function variant(max) {
+  return questionLevel==='foundation'?0:questionLevel==='challenge'?pick(1,max):pick(0,max);
+}
+const q = (prompt,value,unit,hint,working) => ({prompt,value,unit,hint,working});
+const banks = {
+  'Observing the Universe': {
+    'Distances in a scale model'() {
+      const scale=size(1,8)*1000, length=size(2,12);
+      const kind=variant(2);
+      if(kind===1) return q('On a space model, 1 cm stands for '+scale+' km. Two objects are '+length+' cm apart in the model. What is their real separation?',scale*length,'km','Multiply the model distance by the number of kilometres per centimetre.',length+' × '+scale+' = '+scale*length+' km.');
+      if(kind===2) return q('Two objects '+(scale*length)+' km apart are '+length+' cm apart in a space model. How many kilometres does 1 cm stand for?',scale,'km','Divide the real separation by the model separation.',(scale*length)+' ÷ '+length+' = '+scale+' km per centimetre.');
+      return q('In a model of space, 1 cm represents '+scale+' km. Two objects are '+(scale*length)+' km apart. How far apart are they in the model?',length,'cm','Divide the real distance by the distance represented by 1 cm.',(scale*length)+' ÷ '+scale+' = '+length+' cm.');
+    },
+    'Comparing planet sizes'() {
+      const small=size(3,8)*1000, ratio=size(2,9);
+      return q('Planet A has a diameter of '+small+' km. Planet B has a diameter of '+(small*ratio)+' km. How many times as wide is Planet B?',ratio,'times','Divide the larger diameter by the smaller diameter.',(small*ratio)+' ÷ '+small+' = '+ratio+'.');
+    },
+    'Rotation and elapsed time'() {
+      const hours=size(2,8), minutes=size(1,5)*10;
+      return q('A telescope takes one photograph and then another '+hours+' hours and '+minutes+' minutes later. How many minutes passed?',hours*60+minutes,'min','There are 60 minutes in one hour.',hours+' × 60 + '+minutes+' = '+(hours*60+minutes)+' min.');
+    }
+  },
+  'Forces': {
+    'Forces in the same direction'() {
+      const a=size(4,30), b=size(4,30);
+      return q('Two students push a trolley in the same direction. One pushes with '+a+' N and the other with '+b+' N. What is their combined force?',a+b,'N','Add forces acting in the same direction.',a+' + '+b+' = '+(a+b)+' N.');
+    },
+    'Forces in opposite directions'() {
+      const a=size(10,30), b=size(2,9), direction=size(0,1)?'right':'left';
+      if(variant(1)) return q('A rope is pulled '+direction+' with '+a+' N. Its net force is '+(a-b)+' N towards the '+direction+'. How much force is pulling the opposite way?',b,'N','The opposing pull is the larger pull minus the net force.',a+' − '+(a-b)+' = '+b+' N in the opposite direction.');
+      return q('A rope is pulled '+direction+' with '+a+' N and the opposite way with '+b+' N. What is the size of the net force?',a-b,'N','Subtract the smaller force from the larger force.',a+' − '+b+' = '+(a-b)+' N towards the '+direction+'.');
+    },
+    'Balanced forces'() {
+      const a=size(6,16), b=size(2,9);
+      return q('Two students pull a rope to the right with '+a+' N and '+b+' N. How much force must a third student pull to the left with to balance them?',a+b,'N','Forces to the left and right must add up to the same amount.',a+' + '+b+' = '+(a+b)+' N to the left.');
+    }
+  },
+  'Cells and Classification': {
+    'Millimetres and micrometres'() {
+      const tenths=size(1,9);
+      return q('A feature on a microscope image measures '+(tenths/10)+' mm. Convert the measurement to micrometres.',tenths*100,'μm','1 mm = 1,000 μm.',(tenths/10)+' × 1,000 = '+(tenths*100)+' μm.');
+    },
+    'Estimating cell width'() {
+      const count=size(3,9), width=size(2,8)*10;
+      const kind=variant(2);
+      if(kind===1) return q('A microscope field is '+(count*width)+' μm wide. Each cell is about '+width+' μm wide. About how many cells fit across the field?',count,'','Divide the field width by one cell’s width.',(count*width)+' ÷ '+width+' = '+count+' cells.');
+      if(kind===2) return q('Students estimate a cell’s width three times and get '+(width-10)+', '+width+' and '+(width+10)+' μm. What is the mean estimate?',width,'μm','Add the three results and divide by three.', '('+(width-10)+' + '+width+' + '+(width+10)+') ÷ 3 = '+width+' μm.');
+      return q(count+' similar cells fit side by side across a microscope field '+(count*width)+' μm wide. Estimate the width of one cell.',width,'μm','Divide the entire width by the number of cells.',(count*width)+' ÷ '+count+' = '+width+' μm.');
+    },
+    'Counting and comparing groups'() {
+      const a=size(15,35), b=size(3,12);
+      return q('Students classify '+a+' garden animals as insects and '+b+' as spiders. How many more insects than spiders did they count?',a-b,'','Find the difference between the two counts.',a+' − '+b+' = '+(a-b)+' more insects.');
+    }
+  },
+  'Solutions and Mixtures': {
+    'Volume by water displacement'() {
+      const start=size(20,55), volume=size(5,25);
+      return q('Water in a measuring cylinder starts at '+start+' mL. When a stone is fully submerged, the reading is '+(start+volume)+' mL. What is the stone’s volume?',volume,'mL','Subtract the starting water level from the new reading.',(start+volume)+' − '+start+' = '+volume+' mL.');
+    },
+    'Density from mass and volume'() {
+      const volume=size(4,15), density=size(2,8), start=size(20,50);
+      const kind=variant(2);
+      if(kind===1) return q('A sample has density '+density+' g/cm³ and volume '+volume+' cm³. What is its mass?',density*volume,'g','Multiply density by volume.',density+' × '+volume+' = '+(density*volume)+' g.');
+      if(kind===2) return q('A sample has mass '+(volume*density)+' g and density '+density+' g/cm³. What is its volume?',volume,'cm³','Divide mass by density.',(volume*density)+' ÷ '+density+' = '+volume+' cm³.');
+      return q('A metal sample has a mass of '+(volume*density)+' g. It raises the water level from '+start+' mL to '+(start+volume)+' mL. What is its density? Use 1 mL = 1 cm³.',density,'g/cm³','First find the increase in water level. Then divide mass by volume.',(start+volume)+' − '+start+' = '+volume+' cm³. '+(volume*density)+' ÷ '+volume+' = '+density+' g/cm³.');
+    },
+    'Mass after separation'() {
+      const sand=size(10,35), salt=size(4,20);
+      return q('A dry mixture of sand and salt has a mass of '+(sand+salt)+' g. After separation, students recover '+sand+' g of dry sand. Assuming nothing was lost, how much salt was in the mixture?',salt,'g','Subtract the sand mass from the total mass.',(sand+salt)+' − '+sand+' = '+salt+' g.');
+    }
+  }
+};
+const allTopics = Object.entries(banks).flatMap(([unit,topics]) =>
+  Object.entries(topics).map(([title,generate])=>({unit,title,generate})));
+const byId=id=>document.getElementById(id);
+const answer=byId('answer');
+const sessionByScope=new Map();
+const unitNames=Object.keys(banks);
+let unit=unitNames[0], mode='practice', state;
+let questionLevel='standard';
+
+function availableTopics() {
+  return allTopics.filter(item=>unit==='all'||unit===item.unit);
+}
+function session() {
+  const key=unit+'|'+mode;
+  if(!sessionByScope.has(key)) sessionByScope.set(key,{
+    topics:new Set(availableTopics().map(item=>item.title)),difficulty:'standard',length:5,
+    stage:mode==='practice'?'running':'setup',bag:[],current:null,attempts:[],answer:'',
+    correct:false,feedback:'',help:'',outcomes:[]
+  });
+  return sessionByScope.get(key);
+}
+function makeElement(tag,text) {
+  const element=document.createElement(tag);
+  if(text!==undefined) element.textContent=text;
+  return element;
+}
+function drawUnits() {
+  byId('unitTabs').replaceChildren(...[...unitNames,'all'].map(value=>{
+    const button=makeElement('button',value==='all'?'Year 7 Revision':value);
+    button.type='button';
+    button.setAttribute('aria-pressed',String(value===unit));
+    button.addEventListener('click',()=>{unit=value;openMode(value==='all'?'quiz':mode);});
+    return button;
+  }));
+}
+function drawTopics() {
+  const topics=availableTopics();
+  byId('topicCount').textContent=state.topics.size+' of '+topics.length+' selected';
+  byId('toggleTopics').textContent=state.topics.size===topics.length?'Clear all':'Select all';
+  byId('topicChoices').replaceChildren(...topics.map(item=>{
+    const label=makeElement('label');
+    const box=makeElement('input');
+    box.type='checkbox'; box.checked=state.topics.has(item.title);
+    box.addEventListener('change',()=>{
+      if(box.checked)state.topics.add(item.title);else state.topics.delete(item.title);
+      resetQuestions();
+      if(state.stage==='running')nextQuestion();
+      byId('topicCount').textContent=state.topics.size+' of '+topics.length+' selected';
+      byId('toggleTopics').textContent=state.topics.size===topics.length?'Clear all':'Select all';
+      draw();
+    });
+    label.append(box,makeElement('span',item.title));
+    return label;
+  }));
+}
+function resetQuestions() {
+  state.bag=[];
+  state.current=null;
+}
+function generateNext(run, balanced) {
+  if(!run.topics.size)return;
+  if(!run.bag.length){
+    const topics=availableTopics().filter(item=>run.topics.has(item.title));
+    run.bag=[...topics];
+  }
+  let choices=run.bag.filter(item=>item.title!==run.current?.title);
+  if(!choices.length) choices=run.bag;
+  if(unit==='all'&&balanced&&run.outcomes.length<unitNames.length){
+    const seen=new Set(run.outcomes.map(row=>row.courseUnit));
+    const unseen=choices.filter(item=>!seen.has(item.unit));
+    if(unseen.length)choices=unseen;
+  }
+  const template=choices[pick(0,choices.length-1)];
+  run.bag.splice(run.bag.indexOf(template),1);
+  const correctCount=run.outcomes.filter(item=>item.correct).length;
+  questionLevel=run.difficulty==='adaptive'?['foundation','standard','challenge'][Math.min(correctCount,2)]:run.difficulty;
+  return {title:template.title,courseUnit:template.unit,...template.generate()};
+}
+function nextQuestion() {
+  state.current=generateNext(state,mode==='quiz')??null;
+  state.attempts=[];state.answer='';state.correct=false;state.feedback='';state.help='';
+}
+function openMode(target) {
+  mode=target;state=session();
+  byId('generatorStatus').textContent='';
+  if(state.stage==='running'&&!state.current)nextQuestion();
+  drawUnits();drawTopics();draw();
+}
+function draw() {
+  const running=state.stage==='running';
+  const locked=mode==='quiz'&&running;
+  const active=running&&Boolean(state.current);
+  byId('practice').setAttribute('aria-pressed',String(mode==='practice'));
+  byId('quiz').setAttribute('aria-pressed',String(mode==='quiz'));
+  byId('quizLengthLabel').hidden=mode==='practice';
+  byId('quizLength').value=String(state.length);
+  byId('studentLabel').hidden=mode==='practice';
+  byId('difficulty').value=state.difficulty;
+  for(const id of ['difficulty','quizLength','topicFilter'])byId(id).disabled=locked;
+  byId('empty').hidden=state.topics.size>0;
+  byId('setup').hidden=mode!=='quiz'||state.stage!=='setup';
+  byId('startQuiz').disabled=!state.topics.size;
+  byId('generateQuiz').disabled=!state.topics.size;
+  byId('activity').hidden=!active;
+  byId('summary').hidden=state.stage!=='complete';
+  if(state.stage==='complete')renderReport();
+  if(!active)return;
+  const q=state.current;
+  byId('progress').textContent=mode==='quiz'?'Question '+(state.outcomes.length+1)+' of '+state.length+' · '+q.courseUnit:q.courseUnit+' · Practice';
+  byId('title').textContent=q.title;
+  byId('question').textContent=q.prompt;
+  byId('units').textContent=q.unit;
+  answer.value=state.answer;
+  answer.readOnly=state.correct;
+  if(state.attempts.length && parseAnswer(state.answer,q.unit)===state.attempts.at(-1))answer.setAttribute('data-result',state.correct?'correct':'incorrect');
+  else answer.removeAttribute('data-result');
+  byId('check').disabled=state.correct;
+  byId('hint').hidden=mode==='quiz';
+  byId('solution').hidden=mode==='quiz';
+  byId('solution').disabled=!state.attempts.length;
+  byId('feedback').textContent=state.feedback;
+  byId('help').textContent=state.help;
+  byId('help').hidden=!state.help;
+  byId('next').textContent=mode==='quiz'&&state.outcomes.length===state.length-1?'Finish quiz':'Next question';
+}
+function parseAnswer(raw,expectedUnit) {
+  const match=raw.trim().replace(/^−/,'-').match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*(.*)$/);
+  if(!match)return NaN;
+  const clean=value=>value.toLowerCase().replace(/\s/g,'').replace(/µ/g,'μ').replace(/³/g,'3').replace(/\^3/g,'3');
+  return !match[2]||clean(match[2])===clean(expectedUnit)?Number(match[1]):NaN;
+}
+function isCorrect(value,expected) {
+  return Math.abs(value-expected)<=Math.max(.005,.01*Math.abs(expected))+1e-10;
+}
+byId('form').addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!state.current||state.correct)return;
+  const value=parseAnswer(answer.value,state.current.unit);
+  state.answer=answer.value;
+  if(!Number.isFinite(value))state.feedback='Enter a number in the unit shown.';
+  else{
+    state.attempts.push(value);
+    state.correct=isCorrect(value,state.current.value);
+    state.feedback=state.correct?'Correct!':'Try again. Check your operation and units.';
+  }
+  draw();
+});
+answer.addEventListener('input',()=>{state.answer=answer.value;answer.removeAttribute('data-result');});
+byId('hint').addEventListener('click',()=>{state.help=state.current.hint;draw();});
+byId('solution').addEventListener('click',()=>{if(state.attempts.length){state.help=state.current.working;draw();}});
+byId('next').addEventListener('click',()=>{
+  if(!state.current)return;
+  state.outcomes.push({...state.current,correct:state.correct,attempts:[...state.attempts]});
+  const finished=mode==='quiz'&&state.outcomes.length===state.length;
+  if(finished)state.stage='complete';else nextQuestion();
+  draw();
+  byId(finished?'reportTitle':'title').focus();
+});
+byId('toggleTopics').addEventListener('click',()=>{
+  const topics=availableTopics();
+  if(state.topics.size===topics.length)state.topics.clear();
+  else for(const item of topics)state.topics.add(item.title);
+  resetQuestions();if(state.stage==='running')nextQuestion();
+  drawTopics();draw();
+});
+byId('difficulty').addEventListener('change',event=>{
+  state.difficulty=event.target.value;
+  resetQuestions();if(state.stage==='running')nextQuestion();draw();
+});
+byId('quizLength').addEventListener('change',event=>{state.length=Number(event.target.value);});
+byId('practice').addEventListener('click',()=>openMode('practice'));
+byId('quiz').addEventListener('click',()=>openMode('quiz'));
+byId('startQuiz').addEventListener('click',()=>{
+  if(!state.topics.size)return;
+  state.stage='running';nextQuestion();draw();byId('title').focus();
+});
+byId('restart').addEventListener('click',()=>{
+  state.stage='setup';state.outcomes=[];resetQuestions();draw();
+});
+function renderReport() {
+  const solved=state.outcomes.filter(item=>item.correct);
+  const first=solved.filter(item=>item.attempts.length===1).length;
+  byId('score').textContent=solved.length+' of '+state.length+' correct · '+first+' first try · '+(solved.length-first)+' after a retry';
+  byId('results').replaceChildren(...state.outcomes.map(item=>{
+    const row=makeElement('li');
+    row.append(makeElement('strong',item.title+' · '+(item.correct?'Correct':item.attempts.length?'Incorrect':'Skipped')));
+    row.append(makeElement('p',item.prompt));
+    if(item.attempts.length)row.append(makeElement('p','Attempts: '+item.attempts.join(', ')+(item.unit?' '+item.unit:'')+'. '+item.working));
+    else row.append(makeElement('p','No answer submitted.'));
+    return row;
+  }));
+}
+byId('print').addEventListener('click',()=>{
+  byId('printStudent').textContent=byId('student').value.trim();
+  window.print();
+});
+byId('download').addEventListener('click',()=>{
+  const report={
+    schemaVersion:7,activity:'SciSims Year 7 Science Quiz',student:byId('student').value.trim(),
+    answerTolerance:{relativePercent:1,minimumAbsolute:.005},
+    questions:state.outcomes.map((item,index)=>({
+      question:index+1,topic:item.title,prompt:item.prompt,
+      outcome:item.correct?'correct':item.attempts.length?'incorrect':'skipped',
+      answers:[{calculation:item.title,unit:item.unit,submitted:item.attempts.at(-1)??null,expected:item.attempts.length?item.value:null}],
+      steps:item.attempts.length?[item.working]:[],
+      attemptHistory:item.attempts.map((value,i)=>({attempt:i+1,incorrectResponses:isCorrect(value,item.value)?[]:[{submitted:value,unit:item.unit}]}))
+    }))
+  };
+  downloadJson(report,'scisims-year7-quiz.json');
+});
+function downloadJson(data,filename) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  const link=makeElement('a');link.href=url;link.download=filename;link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+byId('generateQuiz').addEventListener('click',()=>{
+  if(mode!=='quiz'||state.stage!=='setup'||!state.topics.size)return;
+  const difficulty=state.difficulty==='adaptive'?'standard':state.difficulty;
+  const run={topics:state.topics,difficulty,bag:[],outcomes:[],current:null};
+  for(let index=0;index<state.length;index++){
+    run.current=generateNext(run,true);
+    run.outcomes.push(run.current);
+  }
+  downloadJson({
+    format:'scisims-question-set',schemaVersion:1,
+    activity:'The Revision Engine · '+(unit==='all'?'Year 7 Revision':unit),difficulty,
+    answerTolerance:{relativePercent:1,minimumAbsolute:.005},
+    questions:run.outcomes.map((item,index)=>({
+      question:index+1,topic:item.title,prompt:item.prompt,
+      answers:[{calculation:item.title,unit:item.unit,expected:item.value}],
+      steps:[item.working]
+    }))
+  },'scisims-year7-question-set.json');
+  byId('generatorStatus').textContent='Question set downloaded. Open Worksheet Builder and load the JSON file.';
+});
+openMode('practice');
+</script>
+</body>
+</html>
