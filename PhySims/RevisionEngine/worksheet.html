@@ -103,7 +103,9 @@ function readSet(data) {
     fresh,
     activity: typeof data.activity === 'string' ? data.activity : 'The Revision Engine',
     rule: Number.isFinite(tolerance?.relativePercent) && Number.isFinite(tolerance?.minimumAbsolute)
-      ? 'Answer tolerance is ±' + tolerance.relativePercent + '%, with a minimum allowance of ±' + tolerance.minimumAbsolute + ' in the displayed unit.'
+      ? 'Answer tolerance is ±' + tolerance.relativePercent + '%, with a minimum allowance of ±' + tolerance.minimumAbsolute + ' in the displayed unit.' +
+        (tolerance.wholeNumberExact ? ' Questions asking for a whole number require an exact answer.' : '') +
+        (Number.isFinite(tolerance.pHAbsolute) ? ' pH tolerance is ±' + tolerance.pHAbsolute + '.' : '')
       : 'Use the units shown and keep extra digits until the final step.',
     questions
   };
@@ -130,9 +132,9 @@ function readQuestion(question, index, fresh) {
     topic: typeof question.topic === 'string' ? question.topic : 'Calculation',
     prompt: [question.prompt, typeof question.assumption === 'string' ? question.assumption
       : Number.isFinite(question.launchHeightMetres) ? 'Launch height above the landing surface: ' + question.launchHeightMetres + ' m.' : ''].filter(Boolean).join(' '),
-    answers, reasoning,
+    marking:question.marking, answers, reasoning,
     steps: Array.isArray(question.steps) ? question.steps.filter(step => typeof step === 'string') : [],
-    missed: !fresh && (question.outcome === 'skipped' || question.outcome === 'revealed' ||
+    missed: !fresh && (question.outcome === 'incorrect' || question.outcome === 'skipped' || question.outcome === 'revealed' ||
       (Array.isArray(question.attemptHistory) && question.attemptHistory.some(attempt =>
         Array.isArray(attempt?.incorrectResponses) && attempt.incorrectResponses.length > 0)))
   };
@@ -155,7 +157,13 @@ function renderQuestion(question, key) {
   answers.className = 'answers';
   for (const answer of question.answers) {
     const unit = answer.unit ? ' ' + answer.unit : '';
-    const value = answer.expected === null ? 'Answer unavailable in this export.' : answer.expected.toFixed(2) + unit;
+    let value = 'Answer unavailable in this export.';
+    if (answer.expected !== null) {
+      const formatted = question.marking === 'relative'
+        ? Number(answer.expected.toPrecision(6)).toString()
+        : question.marking === 'exact' ? String(answer.expected) : answer.expected.toFixed(2);
+      value = formatted + unit;
+    }
     answers.append(element('li', answer.label + ' · ' + (key ? value : '________________' + unit)));
   }
   item.append(answers);

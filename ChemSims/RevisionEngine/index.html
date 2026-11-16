@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSC Chemistry Revision Engine | SciSims</title>
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#f5f7fb;color:#17263a;font:16px/1.5 system-ui,sans-serif}
+main{max-width:900px;margin:auto;padding:clamp(16px,4vw,34px)}
+h1{font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;margin:.25em 0}
+h2{font-size:1.25rem;margin:0 0 .5em}
+p{margin:.55em 0}
+.brand{color:#1d4ed8;font-weight:700}
+.controls,.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.controls{margin:16px 0}
+label{display:grid;gap:4px;font-weight:650;min-width:0}
+button,input,select{font:inherit;color:inherit;min-height:44px;border:1px solid #94a3b8;border-radius:8px;background:white;padding:8px 12px;max-width:100%}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+select{width:100%}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+.primary{background:#1d4ed8;color:white;border-color:#1d4ed8;font-weight:700}
+.card{background:white;border:1px solid #dbe3ef;border-radius:16px;padding:clamp(16px,4vw,28px);box-shadow:0 4px 14px #24395112}
+.small{color:#45566e}
+#question{font-size:1.12rem}
+.answer{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
+.answer input{width:12rem}
+#feedback{font-weight:700}
+input[data-result="correct"]{border-color:#15803d;background:#f0fdf4}
+input[data-result="incorrect"]{border-color:#b91c1c;background:#fef2f2}
+#help{background:#eaf2ff;border-radius:8px;padding:12px}
+#summary li{margin:0 0 12px}
+button[aria-pressed="true"]{background:#1d4ed8;color:white;border-color:#1d4ed8}
+details{background:white;border:1px solid #dbe3ef;border-radius:12px;padding:12px}
+summary{cursor:pointer}
+fieldset{border:0;padding:8px 0 0;margin:0}
+#topicChoices{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px}
+#topicChoices label{display:flex;align-items:center;min-height:34px;gap:6px}
+#topicChoices input{min-height:0;width:17px;height:17px}
+#studentLabel{max-width:280px;margin-bottom:12px}
+.print-only{display:none}
+@media print{
+ body{background:white}
+ main:has(#summary:not([hidden])) > :not(#summary),#summary .actions{display:none!important}
+ #summary{border:0;box-shadow:none}
+ #summary li{break-inside:avoid}
+ .print-only{display:block}
+}
+</style>
+<body>
+<main>
+<header>
+<div class="brand">SciSims · HSC Chemistry</div>
+<h1>HSC Chemistry Revision Engine</h1>
+<p>Practise numerical questions from Modules 5–8 of the NSW Chemistry Stage 6 (2017) syllabus. Enter decimals or scientific notation (for example, 1.2e-5).</p>
+</header>
+<nav class="actions controls" id="unitTabs" aria-label="HSC Chemistry modules"></nav>
+<div class="controls">
+<label>Difficulty<select id="difficulty"><option value="foundation">Foundation</option><option value="standard" selected>Standard</option><option value="challenge">Challenge</option><option value="adaptive">Adaptive</option></select></label>
+<label id="quizLengthLabel" hidden>Number of questions<select id="quizLength"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option><option>40</option><option>50</option><option>75</option><option>100</option></select></label>
+</div>
+<details open>
+<summary><strong>What to calculate</strong> · <span id="topicCount"></span></summary>
+<fieldset id="topicFilter" aria-label="Calculation topics">
+<button type="button" id="toggleTopics">Clear all</button>
+<div id="topicChoices"></div>
+</fieldset>
+</details>
+<p id="empty" role="status" hidden>Select at least one calculation topic.</p>
+<nav class="actions controls" aria-label="Activity">
+<button type="button" id="practice">Practice</button>
+<button type="button" id="quiz">Quiz</button>
+</nav>
+<label id="studentLabel" hidden>Student name<input id="student" autocomplete="name"></label>
+<section class="card" id="setup" hidden>
+<h2>Quiz</h2>
+<p>Choose the topics and question count above, then start.</p>
+<div class="actions">
+<button class="primary" type="button" id="startQuiz">Start quiz</button>
+<button type="button" id="generateQuiz">Download question set</button>
+</div>
+<p class="small" id="generatorNote">Load the downloaded JSON in <a href="../../PhySims/RevisionEngine/worksheet.html" target="_blank" rel="noopener">Worksheet Builder</a> to print a worksheet and answer key. Adaptive uses Standard for question sets.</p>
+<p id="generatorStatus" role="status"></p>
+</section>
+<section id="activity" class="card" aria-labelledby="title">
+<p class="small" id="progress"></p>
+<h2 id="title" tabindex="-1"></h2>
+<p id="question"></p>
+<form id="form" novalidate>
+<label id="reasoningLabel" for="reasoningChoice" hidden><span id="reasoningPrompt"></span> <select id="reasoningChoice"></select></label>
+<label for="answer">Your answer</label>
+<div class="answer"><input id="answer" type="text" inputmode="decimal" autocomplete="off" aria-describedby="units"><span id="units"></span></div>
+<div class="actions">
+<button class="primary" id="check">Check answer</button>
+<button type="button" id="hint">Hint</button>
+<button type="button" id="solution" disabled>Show working</button>
+<button type="button" id="next">Next question</button>
+</div>
+</form>
+<p id="feedback" role="status"></p>
+<p id="help" hidden></p>
+</section>
+<section id="summary" class="card" hidden aria-labelledby="reportTitle">
+<h2 id="reportTitle" tabindex="-1">Quiz results</h2>
+<p class="print-only" id="printStudent"></p>
+<p id="score"></p>
+<div class="actions">
+<button type="button" id="download">Download JSON report</button>
+<button type="button" id="print">Print / Save as PDF</button>
+<button type="button" id="restart">Start new set</button>
+</div>
+<ol id="results"></ol>
+</section>
+</main>
+<script>
+'use strict';
+const pick = (min,max) => min + Math.floor(Math.random()*(max-min+1));
+function size(min,max) {
+  const midpoint=Math.floor((min+max)/2);
+  return questionLevel==='foundation'?pick(min,midpoint):questionLevel==='challenge'?pick(midpoint,max):pick(min,max);
+}
+const q = (prompt,value,unit,hint,working) => ({prompt,value,unit,hint,working});
+function reasoning(question,prompt,expected,...distractors) {
+  const choices=[...distractors];
+  choices.splice(pick(0,choices.length),0,expected);
+  return {...question,concept:{prompt,choices,expected}};
+}
+
+const f = n => Number(n.toPrecision(6)).toString();
+const C = 'mol/L';
+const banks = {
+  '5 · Equilibrium and Acid Reactions': {
+    'Equilibrium constant'() {
+      const a=size(2,8)/10,b=size(1,6)/10,c=size(2,9)/10;
+      const k=c*c/(a*b);
+      const reaction='For H₂(g) + I₂(g) ⇌ 2HI(g), ';
+      const inverse=questionLevel==='challenge'||(questionLevel==='standard'&&pick(0,1)===1);
+      if(inverse) return reasoning(
+        q(`${reaction} Kc = ${f(k)}, [H₂] = ${a} mol/L and [I₂] = ${b} mol/L at equilibrium. Find [HI].`,c,C,
+          'Rearrange Kc before substituting.',`[HI] = √(Kc × [H₂] × [I₂]) = √(${f(k)} × ${a} × ${b}) = ${c} mol/L.`),
+        'Which expression gives [HI]?', '√(Kc × [H₂] × [I₂])', 'Kc × [H₂] × [I₂]', '√(Kc / ([H₂] × [I₂]))');
+      return reasoning(
+        q(`${reaction} equilibrium concentrations of H₂, I₂ and HI are ${a}, ${b} and ${c} mol/L respectively. Calculate Kc.`,k,'',
+          'Use the coefficients as exponents.',`Kc = [HI]² / ([H₂][I₂]) = ${c}² / (${a} × ${b}) = ${f(k)}.`),
+        'Which expression gives Kc?', '[HI]² / ([H₂][I₂])', '[HI] / ([H₂][I₂])', '([H₂][I₂]) / [HI]²');
+    },
+    'Reaction quotient'() {
+      const a=size(2,8)/10,b=size(1,6)/10;
+      return q(`For N₂O₄(g) ⇌ 2NO₂(g), current concentrations are [N₂O₄] = ${a} mol/L and [NO₂] = ${b} mol/L. Calculate Qc.`,b*b/a,'','Use the current concentrations.',`Qc = [NO₂]² / [N₂O₄] = ${b}² / ${a} = ${f(b*b/a)}.`);
+    },
+    'Equilibrium concentration (ICE table)'() {
+      const start=size(3,9)/10,x=size(1,5)/100;
+      return q(`A vessel initially contains H₂ and I₂, each at ${start} mol/L, and no HI. For H₂(g) + I₂(g) ⇌ 2HI(g), equilibrium [HI] is ${f(2*x)} mol/L. Find equilibrium [I₂].`,start-x,C,'Two moles of HI form for each mole of I₂ consumed.',`[I₂]eq = ${start} − ${f(2*x)} / 2 = ${f(start-x)} mol/L.`);
+    },
+    'Molar solubility from Ksp'() {
+      const k=size(2,90)*1e-12,s=Math.sqrt(k);
+      return q(`A sparingly soluble salt MX dissolves as MX(s) ⇌ M⁺(aq) + X⁻(aq). Its Ksp is ${f(k)}. Calculate its molar solubility in pure water.`,s,C,'Each ion has concentration s, the molar solubility.',`Ksp = s², so s = √(${f(k)}) = ${f(s)} mol/L.`);
+    }
+  },
+  '6 · Acid/Base Reactions': {
+    'Strong acid pH'() {
+      const h=size(2,80)*.001;
+      return q(`Find the pH of fully dissociated ${f(h)} mol/L HCl. Assume an ideal dilute solution.`,-Math.log10(h),'','Use pH = −log₁₀[H₃O⁺].',`[H₃O⁺] = ${f(h)} mol/L. pH = −log₁₀(${f(h)}) = ${f(-Math.log10(h))}.`);
+    },
+    'Strong base pH'() {
+      const oh=size(2,90)*.001;
+      return q(`Find the pH of ${f(oh)} mol/L NaOH at 25 °C. Assume complete dissociation and pKw = 14.00.`,14+Math.log10(oh),'','Find pOH, then subtract it from 14.00.',`pOH = −log₁₀(${f(oh)}) = ${f(-Math.log10(oh))}. pH = 14.00 − pOH = ${f(14+Math.log10(oh))}.`);
+    },
+    'Weak acid dissociation'() {
+      const c=size(2,15)/100,k=1.8e-5,x=2*k*c/(k+Math.sqrt(k*k+4*k*c));
+      return q(`Ethanoic acid is initially ${c} mol/L and Ka = ${k}. Find its equilibrium hydronium concentration. Ignore water autoionisation.`,x,C,'Let x = [H₃O⁺] and solve Ka = x²/(c − x).',`x² + ${k}x − ${f(k*c)} = 0. The positive root is ${f(x)} mol/L.`);
+    },
+    'Acid–base titration'() {
+      const acidVolume=size(15,30), titre=size(12,34), base=size(5,20)/100;
+      const ratio=questionLevel==='foundation'?1:2;
+      const acid=ratio===1?'HCl':'H₂SO₄';
+      const concentration=base*titre/(ratio*acidVolume);
+      const kind=questionLevel==='challenge'?2:questionLevel==='standard'?pick(0,1):0;
+      let question;
+      if(kind===2){
+        const factor=pick(2,5);
+        question=q(`A ${acid} stock solution is diluted by a factor of ${factor}. A ${acidVolume} mL sample of the diluted acid requires ${titre} mL of ${base} mol/L NaOH for complete neutralisation. Find the original stock concentration.`,
+          factor*concentration,C,'Work back from the titre to the diluted concentration, then undo the dilution.',
+          `Diluted concentration = ${base} × ${titre} / (${ratio} × ${acidVolume}) = ${f(concentration)} mol/L. Stock concentration = ${factor} × diluted concentration = ${f(factor*concentration)} mol/L.`);
+      }else if(kind===1){
+        const known=size(4,12)/100;
+        question=q(`What titre of ${base} mol/L NaOH completely neutralises ${acidVolume} mL of ${known} mol/L ${acid}?`,
+          ratio*known*acidVolume/base,'mL','Find the acid moles, then apply the mole ratio.',
+          `V(NaOH) = ${ratio} × ${known} × ${acidVolume} / ${base} = ${f(ratio*known*acidVolume/base)} mL.`);
+      }else{
+        question=q(`A ${acidVolume} mL sample of ${acid} requires ${titre} mL of ${base} mol/L NaOH for complete neutralisation. Find the acid concentration.`,
+          concentration,C,'Find the moles of NaOH and use the neutralisation ratio.',
+          `c(acid) = ${base} × ${titre} / (${ratio} × ${acidVolume}) = ${f(concentration)} mol/L.`);
+      }
+      return reasoning(question,'How many moles of NaOH completely neutralise 1 mol of '+acid+'?',
+        String(ratio),String(3-ratio),'3');
+    }
+  },
+  '7 · Organic Chemistry': {
+    'Alcohol combustion enthalpy'() {
+      const m=size(5,30)/10,e=size(10,30)*m;
+      return q(`Burning ${m} g of ethanol releases ${f(e)} kJ. Use M(ethanol) = 46.07 g/mol. Find the signed molar enthalpy of combustion.`,-e*46.07/m,'kJ/mol','Find the moles burned. Heat released gives a negative enthalpy.',`n = ${m}/46.07 mol. ΔH = −${f(e)} / (${m}/46.07) = ${f(-e*46.07/m)} kJ/mol.`);
+    },
+    'Esterification yield'() {
+      const n=size(2,15)/10,m=n*88.11*size(50,90)/100;
+      return q(`Ethanoic acid reacts with excess ethanol to produce ethyl ethanoate in a 1:1 mole ratio. The starting acid amount is ${n} mol and ${f(m)} g of ester is isolated. Use M(ester) = 88.11 g/mol. Find the percentage yield.`,100*m/(88.11*n),'%','Calculate the theoretical ester mass from the acid amount.',`Theoretical mass = ${n} × 88.11 = ${f(n*88.11)} g. Yield = ${f(m)} / ${f(n*88.11)} × 100 = ${f(100*m/(88.11*n))}%.`);
+    },
+    'Addition polymer repeat units'() {
+      const count=size(10,100)*10,m=count*28.05;
+      return q(`A polyethene chain has an approximate molar mass of ${f(m)} g/mol. Its repeat unit has a molar mass of 28.05 g/mol. Ignoring end groups, how many repeat units are in the chain?`,count,'','Divide the chain molar mass by the repeat unit molar mass.',`${f(m)} / 28.05 = ${count} repeat units.`);
+    }
+  },
+  '8 · Applying Chemical Ideas': {
+    'Calibration curve concentration'() {
+      const c=size(2,30),s=size(2,5)/100,a=c*s+.02;
+      return q(`A colorimetry calibration is A = ${s}c + 0.02, where c is in mg/L. The sample absorbance is ${f(a)}. Find c.`,c,'mg/L','Subtract the intercept before dividing by the slope.',`c = (${f(a)} − 0.02) / ${s} = ${c} mg/L.`);
+    },
+    'Original concentration after dilution'() {
+      const v=size(5,25),c=size(1,15)/10;
+      return q(`A ${v} mL aliquot is diluted to 100 mL. Instrumental analysis gives ${c} mg/L in the diluted solution. Calculate the original concentration.`,100*c/v,'mg/L','The amount of dissolved analyte stays the same in the aliquot during dilution.',`c₁V₁ = c₂V₂. c₁ = ${c} × 100 / ${v} = ${f(100*c/v)} mg/L.`);
+    },
+    'Gravimetric sulfate analysis'() {
+      const m=size(10,90)/100;
+      return q(`All sulfate in a sample is recovered as ${m} g of dry BaSO₄. Use M(BaSO₄) = 233.39 g/mol and M(SO₄²⁻) = 96.06 g/mol. Calculate the sulfate mass in the sample.`,m*96.06/233.39,'g','Each mole of BaSO₄ contains one mole of sulfate.',`n(SO₄²⁻) = ${m}/233.39 mol. Mass = ${m}/233.39 × 96.06 = ${f(m*96.06/233.39)} g.`);
+    }
+  }
+};
+const allTopics = Object.entries(banks).flatMap(([unit,topics]) =>
+  Object.entries(topics).map(([title,generate])=>({unit,title,generate})));
+const byId=id=>document.getElementById(id);
+const answer=byId('answer');
+const reasoningChoice=byId('reasoningChoice');
+const sessionByScope=new Map();
+const unitNames=Object.keys(banks);
+let unit=unitNames[0], mode='practice', state;
+let questionLevel='standard';
+
+function availableTopics() {
+  return allTopics.filter(item=>unit==='all'||unit===item.unit);
+}
+function session() {
+  const key=unit+'|'+mode;
+  if(!sessionByScope.has(key)) sessionByScope.set(key,{
+    topics:new Set(availableTopics().map(item=>item.title)),difficulty:'standard',length:5,
+    stage:mode==='practice'?'running':'setup',bag:[],current:null,attempts:[],answer:'',
+    correct:false,feedback:'',help:'',outcomes:[]
+  });
+  return sessionByScope.get(key);
+}
+function makeElement(tag,text) {
+  const element=document.createElement(tag);
+  if(text!==undefined) element.textContent=text;
+  return element;
+}
+function drawUnits() {
+  byId('unitTabs').replaceChildren(...[...unitNames,'all'].map(value=>{
+    const button=makeElement('button',value==='all'?'Year 12 Revision':value);
+    button.type='button';
+    button.setAttribute('aria-pressed',String(value===unit));
+    button.addEventListener('click',()=>{unit=value;openMode(value==='all'?'quiz':mode);});
+    return button;
+  }));
+}
+function drawTopics() {
+  const topics=availableTopics();
+  byId('topicCount').textContent=state.topics.size+' of '+topics.length+' selected';
+  byId('toggleTopics').textContent=state.topics.size===topics.length?'Clear all':'Select all';
+  byId('topicChoices').replaceChildren(...topics.map(item=>{
+    const label=makeElement('label');
+    const box=makeElement('input');
+    box.type='checkbox'; box.checked=state.topics.has(item.title);
+    box.addEventListener('change',()=>{
+      if(box.checked)state.topics.add(item.title);else state.topics.delete(item.title);
+      resetQuestions();
+      if(state.stage==='running')nextQuestion();
+      byId('topicCount').textContent=state.topics.size+' of '+topics.length+' selected';
+      byId('toggleTopics').textContent=state.topics.size===topics.length?'Clear all':'Select all';
+      draw();
+    });
+    label.append(box,makeElement('span',item.title));
+    return label;
+  }));
+}
+function resetQuestions() {
+  state.bag=[];
+  state.current=null;
+}
+function generateNext(run, balanced) {
+  if(!run.topics.size)return;
+  if(!run.bag.length){
+    const topics=availableTopics().filter(item=>run.topics.has(item.title));
+    run.bag=[...topics];
+  }
+  let choices=run.bag.filter(item=>item.title!==run.current?.title);
+  if(!choices.length) choices=run.bag;
+  if(unit==='all'&&balanced&&run.outcomes.length<unitNames.length){
+    const seen=new Set(run.outcomes.map(row=>row.courseUnit));
+    const unseen=choices.filter(item=>!seen.has(item.unit));
+    if(unseen.length)choices=unseen;
+  }
+  const template=choices[pick(0,choices.length-1)];
+  run.bag.splice(run.bag.indexOf(template),1);
+  const correctCount=run.outcomes.filter(item=>item.correct).length;
+  questionLevel=run.difficulty==='adaptive'?['foundation','standard','challenge'][Math.min(correctCount,2)]:run.difficulty;
+  const marking=template.title.endsWith(' pH')?'ph':template.title==='Addition polymer repeat units'?'exact':'relative';
+  const question=template.generate();
+  if(marking==='ph')question.prompt+=' Give your answer to two decimal places.';
+  if(marking==='exact')question.prompt+=' Give a whole number.';
+  return {title:template.title,courseUnit:template.unit,marking,...question};
+}
+function nextQuestion() {
+  state.current=generateNext(state,mode==='quiz')??null;
+  state.attempts=[];state.attemptTimes=[];state.reasoningAttempts=[];state.reasoningChoice='';state.questionStarted=performance.now();state.answer='';state.correct=false;state.feedback='';state.help='';
+}
+function openMode(target) {
+  mode=target;state=session();
+  byId('generatorStatus').textContent='';
+  if(state.stage==='running'&&!state.current)nextQuestion();
+  drawUnits();drawTopics();draw();
+}
+function draw() {
+  const running=state.stage==='running';
+  const locked=mode==='quiz'&&running;
+  const active=running&&Boolean(state.current);
+  byId('practice').setAttribute('aria-pressed',String(mode==='practice'));
+  byId('quiz').setAttribute('aria-pressed',String(mode==='quiz'));
+  byId('quizLengthLabel').hidden=mode==='practice';
+  byId('quizLength').value=String(state.length);
+  byId('studentLabel').hidden=mode==='practice';
+  byId('difficulty').value=state.difficulty;
+  for(const id of ['difficulty','quizLength','topicFilter'])byId(id).disabled=locked;
+  byId('empty').hidden=state.topics.size>0;
+  byId('setup').hidden=mode!=='quiz'||state.stage!=='setup';
+  byId('startQuiz').disabled=!state.topics.size;
+  byId('generateQuiz').disabled=!state.topics.size;
+  byId('activity').hidden=!active;
+  byId('summary').hidden=state.stage!=='complete';
+  if(state.stage==='complete')renderReport();
+  if(!active)return;
+  const q=state.current;
+  byId('progress').textContent=mode==='quiz'?'Question '+(state.outcomes.length+1)+' of '+state.length+' · '+q.courseUnit:q.courseUnit+' · Practice';
+  byId('title').textContent=q.title;
+  byId('question').textContent=q.prompt;
+  byId('reasoningLabel').hidden=!q.concept;
+  if(q.concept){
+    byId('reasoningPrompt').textContent=q.concept.prompt;
+    const placeholder=makeElement('option','Select your reasoning');
+    placeholder.value='';
+    reasoningChoice.replaceChildren(placeholder,...q.concept.choices.map(choice=>makeElement('option',choice)));
+    reasoningChoice.value=state.reasoningChoice;
+    reasoningChoice.disabled=state.correct;
+  }
+  byId('units').textContent=q.unit;
+  answer.value=state.answer;
+  answer.readOnly=state.correct;
+  if(state.attempts.length && parseAnswer(state.answer,q.unit)===state.attempts.at(-1))answer.setAttribute('data-result',isCorrect(state.attempts.at(-1),q)?'correct':'incorrect');
+  else answer.removeAttribute('data-result');
+  byId('check').disabled=state.correct;
+  byId('hint').hidden=mode==='quiz';
+  byId('solution').hidden=mode==='quiz';
+  byId('solution').disabled=!state.attempts.length;
+  byId('feedback').textContent=state.feedback;
+  byId('help').textContent=state.help;
+  byId('help').hidden=!state.help;
+  byId('next').textContent=mode==='quiz'&&state.outcomes.length===state.length-1?'Finish quiz':'Next question';
+}
+function parseAnswer(raw,expectedUnit) {
+  const match=raw.trim().replace(/^−/,'-').match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)\s*(.*)$/);
+  if(!match)return NaN;
+  const clean=value=>value.toLowerCase().replace(/\s/g,'').replace(/µ/g,'μ').replace(/³/g,'3').replace(/\^3/g,'3');
+  return !match[2]||clean(match[2])===clean(expectedUnit)?Number(match[1]):NaN;
+}
+function isCorrect(value,question) {
+  if(question.marking==='exact')return value===question.value;
+  const tolerance=question.marking==='ph'?.005:.01*Math.abs(question.value);
+  return Math.abs(value-question.value)<=tolerance+1e-14;
+}
+byId('form').addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!state.current||state.correct)return;
+  const value=parseAnswer(answer.value,state.current.unit);
+  state.answer=answer.value;
+  if(!Number.isFinite(value))state.feedback='Enter a number in the unit shown.';
+  else if(state.current.concept&&!state.reasoningChoice)state.feedback='Choose an answer to the reasoning check.';
+  else{
+    state.reasoningAttempts.push(state.reasoningChoice);
+    state.attempts.push(value);
+    state.attemptTimes.push(Math.round(performance.now()-state.questionStarted));
+    const numericalCorrect=isCorrect(value,state.current);
+    const reasoningCorrect=!state.current.concept||state.reasoningChoice===state.current.concept.expected;
+    state.correct=numericalCorrect&&reasoningCorrect;
+    state.feedback=state.correct?'Correct!':!reasoningCorrect
+      ? numericalCorrect?'Your calculation is correct. Check your reasoning.':'Check your calculation and reasoning.'
+      :'Check your calculation.';
+  }
+  draw();
+});
+reasoningChoice.addEventListener('change',()=>{state.reasoningChoice=reasoningChoice.value;});
+answer.addEventListener('input',()=>{state.answer=answer.value;answer.removeAttribute('data-result');});
+byId('hint').addEventListener('click',()=>{state.help=state.current.hint;draw();});
+byId('solution').addEventListener('click',()=>{if(state.attempts.length){state.help=state.current.working;draw();}});
+byId('next').addEventListener('click',()=>{
+  if(!state.current)return;
+  state.outcomes.push({...state.current,correct:state.correct,attempts:[...state.attempts],attemptTimes:[...state.attemptTimes],reasoningAttempts:[...state.reasoningAttempts]});
+  const finished=mode==='quiz'&&state.outcomes.length===state.length;
+  if(finished)state.stage='complete';else nextQuestion();
+  draw();
+  byId(finished?'reportTitle':'title').focus();
+});
+byId('toggleTopics').addEventListener('click',()=>{
+  const topics=availableTopics();
+  if(state.topics.size===topics.length)state.topics.clear();
+  else for(const item of topics)state.topics.add(item.title);
+  resetQuestions();if(state.stage==='running')nextQuestion();
+  drawTopics();draw();
+});
+byId('difficulty').addEventListener('change',event=>{
+  state.difficulty=event.target.value;
+  resetQuestions();if(state.stage==='running')nextQuestion();draw();
+});
+byId('quizLength').addEventListener('change',event=>{state.length=Number(event.target.value);});
+byId('practice').addEventListener('click',()=>openMode('practice'));
+byId('quiz').addEventListener('click',()=>openMode('quiz'));
+byId('startQuiz').addEventListener('click',()=>{
+  if(!state.topics.size)return;
+  state.stage='running';nextQuestion();draw();byId('title').focus();
+});
+byId('restart').addEventListener('click',()=>{
+  state.stage='setup';state.outcomes=[];resetQuestions();draw();
+});
+function renderReport() {
+  const solved=state.outcomes.filter(item=>item.correct);
+  const first=solved.filter(item=>item.attempts.length===1).length;
+  byId('score').textContent=solved.length+' of '+state.length+' correct · '+first+' first try · '+(solved.length-first)+' after a retry';
+  byId('results').replaceChildren(...state.outcomes.map(item=>{
+    const row=makeElement('li');
+    row.append(makeElement('strong',item.title+' · '+(item.correct?'Correct':item.attempts.length?'Incorrect':'Skipped')));
+    row.append(makeElement('p',item.prompt));
+    if(item.attempts.length)row.append(makeElement('p','Attempts: '+item.attempts.join(', ')+(item.unit?' '+item.unit:'')+'. '+item.working));
+    else row.append(makeElement('p','No answer submitted.'));
+    if(item.concept&&item.attempts.length){
+      row.append(makeElement('p','Reasoning attempts: '+item.reasoningAttempts.join(' · ')+'. Correct reasoning: '+item.concept.expected));
+    }
+    return row;
+  }));
+}
+byId('print').addEventListener('click',()=>{
+  byId('printStudent').textContent=byId('student').value.trim();
+  window.print();
+});
+byId('download').addEventListener('click',()=>{
+  const solved=state.outcomes.filter(item=>item.correct);
+  const firstTryCorrect=solved.filter(item=>item.attempts.length===1).length;
+  const report={
+    schemaVersion:7,activity:'SciSims HSC Chemistry Quiz',student:byId('student').value.trim(),
+    answerTolerance:{relativePercent:1,minimumAbsolute:0,pHAbsolute:.005,wholeNumberExact:true},
+    exportedAt:new Date().toISOString(),difficulty:state.difficulty,topics:[...state.topics],
+    score:solved.length,firstTryCorrect,correctAfterRetry:solved.length-firstTryCorrect,totalQuestions:state.length,
+    responseTimeBasis:'Seconds elapsed since the quiz question opened, including time away from the quiz',
+    questions:state.outcomes.map((item,index)=>({
+      question:index+1,topic:item.title,prompt:item.prompt,moduleConcept:item.courseUnit,
+      attempts:item.attempts.length,
+      outcome:item.correct?'correct':item.attempts.length?'incorrect':'skipped',
+      answers:[{calculation:item.title,unit:item.unit,submitted:item.attempts.at(-1)??null,expected:item.attempts.length?item.value:null,
+        correct:item.attempts.length?isCorrect(item.attempts.at(-1),item):null}],
+      concept:item.concept?{...item.concept,expected:item.attempts.length?item.concept.expected:null,
+        submitted:item.reasoningAttempts.at(-1)??null,
+        correct:item.attempts.length?item.reasoningAttempts.at(-1)===item.concept.expected:null}:null,
+      marking:item.marking,
+      steps:item.attempts.length?[item.working]:[],
+      attemptHistory:item.attempts.map((value,i)=>{
+        const reasoning=item.concept?item.reasoningAttempts[i]:null;
+        const incorrectResponses=[];
+        if(!isCorrect(value,item))incorrectResponses.push({calculation:item.title,submitted:value,unit:item.unit});
+        if(item.concept&&reasoning!==item.concept.expected)incorrectResponses.push({submitted:reasoning,kind:'reasoning'});
+        return {attempt:i+1,elapsedMs:item.attemptTimes[i],responseTimeSeconds:item.attemptTimes[i]/1000,submitted:value,reasoning,incorrectResponses};
+      })
+    }))
+  };
+  downloadJson(report,'scisims-hsc-chemistry-quiz.json');
+});
+function downloadJson(data,filename) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  const link=makeElement('a');link.href=url;link.download=filename;link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+byId('generateQuiz').addEventListener('click',()=>{
+  if(mode!=='quiz'||state.stage!=='setup'||!state.topics.size)return;
+  const difficulty=state.difficulty==='adaptive'?'standard':state.difficulty;
+  const run={topics:state.topics,difficulty,bag:[],outcomes:[],current:null};
+  for(let index=0;index<state.length;index++){
+    run.current=generateNext(run,true);
+    run.outcomes.push(run.current);
+  }
+  downloadJson({
+    format:'scisims-question-set',schemaVersion:1,
+    activity:'The Revision Engine · HSC Chemistry · '+(unit==='all'?'Year 12 Revision':unit),difficulty,
+    answerTolerance:{relativePercent:1,minimumAbsolute:0,pHAbsolute:.005,wholeNumberExact:true},
+    questions:run.outcomes.map((item,index)=>({
+      question:index+1,topic:item.title,prompt:item.prompt,moduleConcept:item.courseUnit,
+      answers:[{calculation:item.title,unit:item.unit,expected:item.value}],
+      concept:item.concept,marking:item.marking,
+      steps:[item.working]
+    }))
+  },'scisims-hsc-chemistry-question-set.json');
+  byId('generatorStatus').textContent='Question set downloaded. Open Worksheet Builder and load the JSON file.';
+});
+openMode('practice');
+</script>
+</body>
+</html>
