@@ -52,6 +52,18 @@
 
   mount.replaceChildren(nav);
 
+  // Inject presentation controls only into the six audited SciGames pages.
+  // Keeping the loader here avoids rewriting the large curriculum-bank HTML files.
+  if (/\/Games\/(?:MysteryScienceWord|ScienceWordMatch|OddOneOut|ChainReactions|SciWord|ScienceWeb)\/(?:index\.html)?$/i.test(currentPath)) {
+    const presentationStyle = document.createElement('link');
+    presentationStyle.rel = 'stylesheet';
+    presentationStyle.href = new URL('shared/scigames-classroom.css?v=1.0.0', siteRoot).href;
+    document.head.append(presentationStyle);
+    const presentationScript = document.createElement('script');
+    presentationScript.src = new URL('shared/scigames-classroom.js?v=1.0.0', siteRoot).href;
+    document.head.append(presentationScript);
+  }
+
   const toggle = nav.querySelector('.scisims-nav-toggle');
   const setOpen = open => {
     nav.classList.toggle('is-open', open);
