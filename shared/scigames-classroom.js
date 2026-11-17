@@ -54,7 +54,7 @@
     const tools = canvas && canvas.querySelector('.canvas-tools');
     if (!canvas || !tools) return;
     let nativeSession = false;
-    const button = makeButton('⛶ Fullscreen web', 'scigames-web-toggle', () => {
+    const button = makeButton('⛶ Fullscreen web', 'btn secondary scigames-web-toggle', () => {
       const opening = !document.body.classList.contains('scigames-web-active');
       document.body.classList.toggle('scigames-web-active', opening);
       button.textContent = opening ? 'Exit fullscreen' : '⛶ Fullscreen web';
