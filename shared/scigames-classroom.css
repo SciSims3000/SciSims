@@ -4,6 +4,7 @@
 .scigames-classroom-bar .scigames-btn:hover,.scigames-drawer-close:hover{background:#24528c}
 .scigames-classroom-bar .scigames-btn:focus-visible,.scigames-drawer-close:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 .scigames-classroom-bar .scigames-btn:disabled{opacity:.45;cursor:not-allowed}
+.scigames-classroom-bar .scigames-btn[hidden]{display:none!important}
 .scigames-classroom-bar .scigames-quickbar{display:none;flex:1 1 auto;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .scigames-classroom-bar .scigames-controls-toggle{display:none}
 .scigames-classroom-bar .scigames-hint{font:600 12px/1.3 Arial,Helvetica,sans-serif;color:#475569;margin-left:auto}
