@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher guides to SciSims JSON banks</title>
+  <link rel="stylesheet" href="../shared/scisims-nav.css">
+  <script defer src="../shared/scisims-nav.js"></script>
+  <style>
+    body { margin: 0; background: #f4f8f7; color: #182b2c; font: 1rem/1.6 system-ui, sans-serif; }
+    main { max-width: 48rem; margin: auto; padding: 1.5rem 1rem 3rem; }
+    h1, h2 { line-height: 1.2; }
+    a { color: #075b58; }
+    section { margin-block: 1rem; padding: clamp(1rem, 4vw, 2rem); background: white; border: 1px solid #c8d9d6; border-radius: .75rem; }
+    section h2 { margin-top: 0; }
+    pre { padding: 1rem; background: #eef5f4; border-radius: .4rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+    :focus-visible { outline: 3px solid #075b58; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <div id="scisimsSiteNav"></div>
+  <main>
+    <header>
+      <h1>Teacher guides to SciSims JSON banks</h1>
+      <p>A JSON bank is a plain-text file containing reusable questions or starter words. Download or export a bank from your tool, edit a copy in a plain-text editor and save it with a <code>.json</code> extension. Keep the schema, field names, double quotes and brackets. Import and test one item before building the full bank.</p>
+      <nav aria-label="Tool guides"><ul>
+        <li><a href="#spot-the-mistake">Spot the Mistake</a></li>
+        <li><a href="#truth-or-lie">Truth or Lie</a></li>
+        <li><a href="#would-you-rather">Would You Rather?</a></li>
+        <li><a href="#science-letters">Science Letters</a></li>
+      </ul></nav>
+      <p>Spot the Mistake and Truth or Lie share a format. Give each bank a distinct ID using letters, numbers, hyphens or underscores, and give each item a unique ID within the bank. Optional fields are <code>stage</code> and <code>source</code>. Source URLs use HTTP or HTTPS.</p>
+    </header>
+    <section id="spot-the-mistake">
+      <h2>Spot the Mistake</h2>
+      <p>Ask students to find the error, correct it and explain why the correction works.</p>
+      <p>Open Your own question banks. Export a bank to start, or copy the example below. Put the mistake in lie, the correction in truth and the reasoning in explanation. Import your file, select the bank and check the revealed correction.</p>
+      <pre><code>{
+  "schema": "scisims-truth-or-lie-1",
+  "id": "geography-map-scale",
+  "title": "Map scale",
+  "items": [
+    {
+      "id": "scale-1",
+      "topic": "Map scale",
+      "lie": "On a 1:50,000 map, 2 cm represents 100 metres.",
+      "truth": "On a 1:50,000 map, 2 cm represents 1 kilometre.",
+      "explanation": "Multiply 2 cm by 50,000 to get 100,000 cm, then convert to 1 km."
+    }
+  ]
+}</code></pre>
+      <p><a href="../TeacherSims/SpotTheMistake/">Open Spot the Mistake</a></p>
+    </section>
+    <section id="truth-or-lie">
+      <h2>Truth or Lie</h2>
+      <p>Ask students to judge a claim and explain which evidence or rule supports their decision.</p>
+      <p>Open Your own question banks. Export a bank to start, or copy the example below. Write a true statement and a plausible false version. Write an explanation that makes sense whichever statement appears. Import and select the bank, then play a sample round.</p>
+      <pre><code>{
+  "schema": "scisims-truth-or-lie-1",
+  "id": "history-primary-sources",
+  "title": "Primary sources",
+  "items": [
+    {
+      "id": "source-1",
+      "topic": "Source usefulness",
+      "truth": "A primary source can be useful even when its author has a strong point of view.",
+      "lie": "A primary source with a strong point of view has no value to a historian.",
+      "explanation": "The source can reveal the author's perspective. Compare it with other evidence to test what it establishes about events."
+    }
+  ]
+}</code></pre>
+      <p><a href="../TeacherSims/TruthOrLie/">Open Truth or Lie</a></p>
+    </section>
+    <section id="would-you-rather">
+      <h2>Would You Rather?</h2>
+      <p>Ask students to choose between two defensible options, vote and justify a trade-off.</p>
+      <p>Under Custom JSON bank, download the template. Add a prompt, two options, an explanation and a follow-up question in think. Import the file and check the vote and explanation screens. Export your custom bank to share it, or choose Use built-in content to return to the original questions.</p>
+      <pre><code>{
+  "schema": "scisims-would-you-rather-1",
+  "title": "Commerce stall decisions",
+  "items": [
+    {
+      "prompt": "Which approach would you try first at a school stall?",
+      "optionA": "Sell more items at a lower margin.",
+      "optionB": "Sell fewer items at a higher margin.",
+      "explanation": "A lower price can increase demand. A higher margin earns more per sale. Total profit depends on sales and costs.",
+      "think": "What would change your decision if unsold stock could not be kept?"
+    }
+  ]
+}</code></pre>
+      <p><a href="../TeacherSims/WouldYou/">Open Would You Rather?</a></p>
+    </section>
+    <section id="science-letters">
+      <h2>Science Letters</h2>
+      <p>Use familiar subject words to generate letter sets, then ask students to explain why their answers fit the topic.</p>
+      <p>Under Custom JSON bank, download the template. Set the title to your topic and add words of 2–9 letters each. Use single words without spaces, punctuation or numbers. Import the file and check that your topic appears in the topic menu. Finish scoring the current round before changing banks. The bank supplies starter words for the tiles. Teachers can accept other playable words that fit the topic.</p>
+      <pre><code>{
+  "schema": "scisims-science-letters-1",
+  "title": "Music",
+  "words": [
+    "rhythm",
+    "melody",
+    "tempo",
+    "chord"
+  ]
+}</code></pre>
+      <p><a href="../BrainBreak/ScienceLetters/">Open Science Letters</a></p>
+    </section>
+    <section id="ai-prompt">
+      <h2>AI prompt for drafting a bank</h2>
+      <blockquote>Use this exported JSON file as the template for [tool name]. Create six new entries for [KLA, year and topic]. Keep the schema value, field names and data types. Use unique item IDs where the format requires them. Return valid JSON only.</blockquote>
+      <p>Review every entry for accuracy, then import and play a sample round before sharing the bank.</p>
+    </section>
+  </main>
+</body>
+</html>
