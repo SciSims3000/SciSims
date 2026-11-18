@@ -6,6 +6,103 @@
   const $ = id => document.getElementById(id);
   let data, current, history = [], votes = {a:0,b:0}, lastId = '', cracking = false, soundOn = true, audioContext;
 
+  let customBank = null;
+  const bankKey = 'scisims-would-you-rather-bank';
+  const bankTemplate = {
+    schema: 'scisims-would-you-rather-1',
+    title: 'History discussion',
+    items: [{
+      prompt: 'Which source would you examine first to study daily life?',
+      optionA: 'A personal diary',
+      optionB: 'A local newspaper',
+      explanation: 'A diary offers an individual perspective. A newspaper shows what an editor chose to publish.',
+      think: 'How would you use the other source to check your first interpretation?'
+    }]
+  };
+
+  function validateBank(bank) {
+    if (bank?.schema !== bankTemplate.schema || typeof bank.title !== 'string' || !bank.title.trim() ||
+        bank.title.length > 100 || !Array.isArray(bank.items) || bank.items.length < 1 || bank.items.length > 1000) {
+      throw new Error('Use the template schema, a title of 1–100 characters and 1–1000 questions.');
+    }
+    const fields = {prompt: 300, optionA: 300, optionB: 300, explanation: 1500, think: 600};
+    const items = bank.items.map((item, index) => Object.fromEntries(Object.entries(fields).map(([key, max]) => {
+      const value = item?.[key];
+      if (typeof value !== 'string' || !value.trim() || value.length > max) {
+        throw new Error(`Question ${index + 1}: ${key} must contain 1–${max} characters.`);
+      }
+      return [key, value.trim()];
+    })));
+    return {schema: bankTemplate.schema, title: bank.title.trim(), items};
+  }
+
+  const escapeText = value => String(value).replace(/[&<>]/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;'})[char]);
+
+  function downloadBank(bank, filename) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(bank, null, 2) + '\n'], {type: 'application/json'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function readBankFile(file) {
+  if (file.size > 2_000_000) throw new Error('Choose a JSON file no larger than 2 MB.');
+  try {
+    return JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
+  } catch {
+    throw new Error('This file is not valid JSON. Check it against the template.');
+  }
+}
+
+  function setBank(bank, persist = true) {
+    customBank = bank;
+    lastId = '';
+    for (const id of ['sectionSelect', 'statementSelect']) $(id).disabled = Boolean(bank);
+    for (const id of ['bankExport', 'bankClear']) $(id).disabled = !bank;
+    $('bankStatus').textContent = bank ? `${bank.title} · ${bank.items.length} questions` : 'Using built-in questions.';
+    if (persist) {
+      try {
+        if (bank) localStorage.setItem(bankKey, JSON.stringify(bank));
+        else localStorage.removeItem(bankKey);
+      } catch {
+        $('bankStatus').textContent += ' Browser saving is unavailable.';
+      }
+    }
+    next();
+  }
+
+  function setupCustomBank() {
+    $('bankTemplate').onclick = () => downloadBank(bankTemplate, 'would-you-rather-template.json');
+    $('bankExport').onclick = () => downloadBank(customBank, 'would-you-rather-bank.json');
+    $('bankClear').onclick = () => setBank(null);
+    $('bankFile').onchange = async event => {
+      const input = event.currentTarget;
+      const file = input.files[0];
+      input.value = '';
+      if (!file) return;
+      input.disabled = true;
+      try {
+        setBank(validateBank(await readBankFile(file)));
+      } catch (error) {
+        $('bankStatus').textContent = error.message;
+      } finally {
+        input.disabled = false;
+      }
+    };
+    try {
+      const saved = localStorage.getItem(bankKey);
+      if (saved) {
+        setBank(validateBank(JSON.parse(saved)), false);
+        return;
+      }
+    } catch {
+      $('bankStatus').textContent = 'Saved custom bank could not be restored. Import a JSON file to use it again.';
+    }
+    next();
+  }
+
   const option = (value,label) => `<option value="${value}">${label}</option>`;
   const shell = () => {
     document.querySelector('.app').innerHTML = `
@@ -19,6 +116,15 @@
           <button class="primary" id="newItemBtn">${isCookie?'Crack the cookie':'New question'}</button>
           ${isCookie?'':`<button class="secondary" id="resetVotesBtn">Reset votes</button>`}
           <div class="utility-row">${isCookie?'<button class="utility" id="soundBtn" aria-pressed="true">🔊 Sound on</button>':''}<button class="utility" id="fullscreenBtn">⛶ Full screen</button></div>
+          ${isCookie ? '' : `<fieldset id="customBankControls">
+  <legend>Custom JSON bank</legend><p><a href="../json-bank-guides.html#would-you-rather" style="color:inherit">Teacher guide to JSON banks</a></p>
+  <label for="bankFile">Import JSON</label>
+  <input id="bankFile" type="file" accept=".json,application/json">
+  <button type="button" id="bankTemplate">Download template</button>
+  <button type="button" id="bankExport" disabled>Export custom bank</button>
+  <button type="button" id="bankClear" disabled>Use built-in content</button>
+  <p id="bankStatus" role="status"></p>
+</fieldset>`}
           <p class="hint"><strong>Lesson use:</strong> Select a statement for targeted retrieval, or “All within section” for revision.</p>
         </aside>
         <section class="panel stage" id="learningStage" aria-live="polite"></section>
@@ -39,6 +145,11 @@
     else {const section=data.sections.find(s=>s.id===sid);select.innerHTML=option('all','All within section')+section.contentStatements.map(s=>option(s.id,s.wording)).join('');}
   }
   function pool(){
+    if (customBank) {
+      return customBank.items.map((item, index) => ({
+        ...item, id: 'custom-' + index, metadata: {overviewBank: customBank.title}
+      }));
+    }
     const sid=$('sectionSelect').value, stid=$('statementSelect').value, key=isCookie?'cookies':'wyr';
     if(sid==='overview'){const banks=stid==='all'?data.overview.banks:data.overview.banks.filter(b=>b.id===stid);return banks.flatMap(b=>b[key]);}
     const section=data.sections.find(s=>s.id===sid);const statements=stid==='all'?section.contentStatements:section.contentStatements.filter(s=>s.id===stid);return statements.flatMap(s=>s[key]);
@@ -56,7 +167,7 @@
   }
   function renderHistory(){const list=$('historyList');list.innerHTML=history.length?history.map(x=>`<li><div class="type">${x.metadata.overviewBank||'7.1 content'}</div><div class="text"></div></li>`).join(''):'<li class="empty">No cookies cracked yet.</li>';list.querySelectorAll('.text').forEach((el,i)=>el.textContent=history[i].statement);}
   function renderWyr(item){
-    current=item;votes={a:0,b:0};$('learningStage').innerHTML=`<div class="topic">${item.metadata.overviewBank||$('sectionSelect').selectedOptions[0].textContent}</div><h2 class="wyr-prompt">${item.prompt}</h2><div class="choices"><article class="choice a" data-side="a" tabindex="0"><div><div class="letter">OPTION A</div><div class="choice-text">${item.optionA}</div></div><div class="vote-row"><div><div class="vote-count" id="countA">0</div><div class="vote-label">votes</div></div><button class="vote-btn">Vote A</button></div></article><div class="or">OR</div><article class="choice b" data-side="b" tabindex="0"><div><div class="letter">OPTION B</div><div class="choice-text">${item.optionB}</div></div><div class="vote-row"><div><div class="vote-count" id="countB">0</div><div class="vote-label">votes</div></div><button class="vote-btn">Vote B</button></div></article></div><div class="resultbar" id="resultbar"></div>${tags(item)}<button class="explain-btn">Explain</button><div class="explanation" hidden><h3>EXPLAIN</h3><p>${item.explanation}</p><div class="think"><strong>THINK</strong><p>${item.think}</p></div></div>`;
+    current=item;votes={a:0,b:0};$('learningStage').innerHTML=`<div class="topic">${escapeText(item.metadata.overviewBank||$('sectionSelect').selectedOptions[0].textContent)}</div><h2 class="wyr-prompt">${escapeText(item.prompt)}</h2><div class="choices"><article class="choice a" data-side="a" tabindex="0"><div><div class="letter">OPTION A</div><div class="choice-text">${escapeText(item.optionA)}</div></div><div class="vote-row"><div><div class="vote-count" id="countA">0</div><div class="vote-label">votes</div></div><button class="vote-btn">Vote A</button></div></article><div class="or">OR</div><article class="choice b" data-side="b" tabindex="0"><div><div class="letter">OPTION B</div><div class="choice-text">${escapeText(item.optionB)}</div></div><div class="vote-row"><div><div class="vote-count" id="countB">0</div><div class="vote-label">votes</div></div><button class="vote-btn">Vote B</button></div></article></div><div class="resultbar" id="resultbar"></div>${customBank ? '' : tags(item)}<button class="explain-btn">Explain</button><div class="explanation" hidden><h3>EXPLAIN</h3><p>${escapeText(item.explanation)}</p><div class="think"><strong>THINK</strong><p>${escapeText(item.think)}</p></div></div>`;
     $('learningStage').querySelectorAll('[data-side]').forEach(el=>el.addEventListener('click',()=>vote(el.dataset.side)));
     $('learningStage').querySelector('.explain-btn').addEventListener('click',e=>reveal(e.currentTarget));
   }
@@ -83,7 +194,8 @@
     fillSelectors();$('sectionSelect').addEventListener('change',()=>{updateStatements();next();});$('statementSelect').addEventListener('change',next);$('newItemBtn').addEventListener('click',isCookie?crackCookie:next);
     if(isCookie){$('clearBtn').addEventListener('click',()=>{history=[];renderHistory();});$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 Sound on':'🔇 Sound off';$('soundBtn').setAttribute('aria-pressed',String(soundOn));});}else $('resetVotesBtn').addEventListener('click',()=>{votes={a:0,b:0};$('countA').textContent=0;$('countB').textContent=0;$('resultbar').style.setProperty('--aPct','50%');});
     $('fullscreenBtn').addEventListener('click',async()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());
-    next();
+    if (isCookie) next();
+    else setupCustomBank();
   }
   init();
 })();

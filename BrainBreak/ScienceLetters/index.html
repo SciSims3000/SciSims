@@ -41,6 +41,15 @@ main .word-input.dictionary-amber{border:2px solid #d97706;background:#fffbeb}
 <p class="small">All teams play at once. Type each team's nominated word, then lock its single attempt. At timeout, any typed answers lock automatically.</p>
 <div id="names" class="names"></div>
 <h3 style="margin-top:22px">Match scores</h3><div id="scoreboard" class="scoreboard"></div>
+<fieldset id="customBankControls">
+  <legend>Custom JSON bank</legend><p><a href="../../TeacherSims/json-bank-guides.html#science-letters">Teacher guide to JSON banks</a></p>
+  <label for="bankFile">Import JSON</label>
+  <input id="bankFile" type="file" accept=".json,application/json">
+  <button type="button" id="bankTemplate">Download template</button>
+  <button type="button" id="bankExport" disabled>Export custom bank</button>
+  <button type="button" id="bankClear" disabled>Use built-in topics</button>
+  <p id="bankStatus" role="status"></p>
+</fieldset>
 <details><summary>How to play</summary><ol><li>Choose a topic, teams and countdown. Press Start round.</li><li>Build a science word from the nine letters. Each tile can be used only once; not every tile is needed.</li><li>Each team has one locked answer. Answers and results are revealed together when the round closes.</li><li>Check definitions, then accept or reject each word's relevance to the selected topic.</li><li>The longest accepted word earns one point per letter. Shorter words earn zero. Tied winners each receive their full letter score.</li></ol><p class="small">Solo practice earns the accepted word's length. A dictionary match confirms an English word, not its science relevance. You can approve unfamiliar terms after checking a source, including terms the dictionary misses.</p><p class="small">Single words only, 2–9 letters. Plurals and Australian spellings are allowed if valid science terms. Spaces, hyphens, abbreviations, chemical formulae and proper names are excluded.</p><p class="small">Letter sets use a small collection of starter terms to ensure a playable science word. Those terms do not limit the answers you may submit. The revealed example is not a claim about the longest possible answer.</p></details>
 </aside>
 <div class="stack">
@@ -61,6 +70,98 @@ main .word-input.dictionary-amber{border:2px solid #d97706;background:#fffbeb}
 <script>
 'use strict';
 const TOPICS={mixed:'Mixed Science',biology:'Biology',chemistry:'Chemistry',physics:'Physics',earth:'Earth and Space'};
+let customBank = null;
+const bankKey = 'scisims-science-letters-bank';
+const bankTemplate = {
+  schema: 'scisims-science-letters-1',
+  title: 'Music',
+  words: ['rhythm', 'melody', 'tempo', 'chord']
+};
+
+function validateBank(bank) {
+  if (bank?.schema !== bankTemplate.schema || typeof bank.title !== 'string' || !bank.title.trim() ||
+      bank.title.length > 100 || !Array.isArray(bank.words) || bank.words.length < 1 || bank.words.length > 1000) {
+    throw new Error('Use the template schema, a title of 1–100 characters and 1–1000 words.');
+  }
+  const words = bank.words.map((entry, index) => {
+    if (typeof entry !== 'string' || !/^[a-z]{2,9}$/i.test(entry.trim())) {
+      throw new Error(`Word ${index + 1}: use 2–9 letters without spaces, punctuation or numbers.`);
+    }
+    return normaliseWord(entry);
+  });
+  return {schema: bankTemplate.schema, title: bank.title.trim(), words: [...new Set(words)]};
+}
+
+function downloadBank(bank, filename) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(bank, null, 2) + '\n'], {type: 'application/json'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function readBankFile(file) {
+  if (file.size > 2_000_000) throw new Error('Choose a JSON file no larger than 2 MB.');
+  try {
+    return JSON.parse((await file.text()).replace(/^\uFEFF/, ''));
+  } catch {
+    throw new Error('This file is not valid JSON. Check it against the template.');
+  }
+}
+
+function setBank(bank, persist = true) {
+  customBank = bank;
+  const select = $('topic');
+  select.querySelector('option[value="custom"]')?.remove();
+  if (bank) {
+    TOPICS.custom = bank.title;
+    select.add(new Option(bank.title, 'custom'));
+    select.value = 'custom';
+  } else {
+    delete TOPICS.custom;
+    select.value = 'mixed';
+  }
+  lastSeed = '';
+  $('bankExport').disabled = $('bankClear').disabled = !bank;
+  $('bankStatus').textContent = bank ? `${bank.title} · ${bank.words.length} starter words` : 'Using built-in topics.';
+  if (persist) {
+    try {
+      if (bank) localStorage.setItem(bankKey, JSON.stringify(bank));
+      else localStorage.removeItem(bankKey);
+    } catch {
+      $('bankStatus').textContent += ' Browser saving is unavailable.';
+    }
+  }
+}
+
+function setupCustomBank() {
+  $('bankTemplate').onclick = () => downloadBank(bankTemplate, 'science-letters-template.json');
+  $('bankExport').onclick = () => downloadBank(customBank, 'science-letters-bank.json');
+  $('bankClear').onclick = () => setBank(null);
+  $('bankFile').onchange = async event => {
+    const input = event.currentTarget;
+    const file = input.files[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      const bank = validateBank(await readBankFile(file));
+      if (state === 'playing' || state === 'review') {
+        throw new Error('Finish scoring the current round before changing banks.');
+      }
+      setBank(bank);
+    } catch (error) {
+      $('bankStatus').textContent = error.message;
+    }
+  };
+  try {
+    const saved = localStorage.getItem(bankKey);
+    if (saved) setBank(validateBank(JSON.parse(saved)), false);
+  } catch {
+    $('bankStatus').textContent = 'Saved custom bank could not be restored. Import a JSON file to use it again.';
+  }
+}
+
 // These are starting points for playable letter sets, never an answer whitelist.
 const STARTERS={
  biology:['biology','genetics','enzyme','osmosis','membrane','nucleus','mitosis','protein','habitat','species','organism','neuron','bacteria','ecology','cellulose','hormone','vacuole','diffusion','chromatin','evolution'],
@@ -81,8 +182,9 @@ function checkLetters(raw,letters){
 }
 function shuffle(items,random=Math.random){const copy=[...items];for(let i=copy.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
 function makeLetters(topic,previous='',random=Math.random){
- const pool=topic==='mixed'?Object.values(STARTERS).flat():STARTERS[topic];
- const choices=pool.filter(w=>w!==previous),seed=choices[Math.floor(random()*choices.length)];
+ const pool = topic === 'custom' ? customBank.words : topic === 'mixed' ? Object.values(STARTERS).flat() : STARTERS[topic];
+ const choices = pool.length > 1 ? pool.filter(word => word !== previous) : pool;
+ const seed = choices[Math.floor(random() * choices.length)];
  const letters=seed.toUpperCase().split(''),vowels='AAAAAEEEEEEEIIIIOOOOUU',consonants='BBCCDDFFGGHHJKLLLMMMNNNNPPRRRRSSSSTTTTTVWY';
  while(letters.length<9){const source=letters.filter(c=>'AEIOU'.includes(c)).length<3?vowels:(random()<.35?vowels:consonants);letters.push(source[Math.floor(random()*source.length)]);}
  return {letters:shuffle(letters,random),seed};
@@ -110,7 +212,7 @@ function renderHistory(){
  if(!history.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.className='muted';td.textContent='No scored rounds yet.';tr.append(td);$('history').append(tr);return;}
  for(const row of [...history].reverse()){const tr=document.createElement('tr');for(const text of [row.round,row.topic,row.name,row.word||'—',row.points]){const td=document.createElement('td');td.textContent=text;tr.append(td);}$('history').append(tr);}
 }
-function settingsLocked(lock){for(const id of ['mode','teamCount','topic','duration','untimed','hideWords'])$(id).disabled=lock;for(const input of $('names').querySelectorAll('input'))input.disabled=lock;if(!lock){$('teamCount').disabled=$('mode').value==='solo';$('duration').disabled=$('untimed').checked;}}
+function settingsLocked(lock){$('customBankControls').disabled=lock;for(const id of ['mode','teamCount','topic','duration','untimed','hideWords'])$(id).disabled=lock;for(const input of $('names').querySelectorAll('input'))input.disabled=lock;if(!lock){$('teamCount').disabled=$('mode').value==='solo';$('duration').disabled=$('untimed').checked;}}
 function renderNames(){
  $('names').replaceChildren();
  if($('mode').value==='teams')for(let i=0;i<activeCount();i++){const label=document.createElement('label');label.htmlFor='name'+i;label.textContent='Team '+(i+1)+' name';const input=document.createElement('input');input.id='name'+i;input.value=names[i];input.maxLength=32;input.oninput=()=>{names[i]=input.value.trim().slice(0,32)||'Team '+(i+1);updateScoreboard();persist();};$('names').append(label,input);}
@@ -215,7 +317,7 @@ function checkAnswerDictionary(i){
  lookupWord(a.word).then(data=>{
   if(version!==lookupVersion||state!=='review')return;
   a.lookup=data;
-  if(a.decision==='pending')a.reason=data.status==='found'?data.source+' English entry found — confirm the science topic.':data.status==='missing'?'No English dictionary entry found — teacher review required.':'Could not reach either dictionary — retry or review manually.';
+  if(a.decision==='pending')a.reason=data.status==='found'?data.source+' English entry found — confirm the selected topic.':data.status==='missing'?'No English dictionary entry found — teacher review required.':'Could not reach either dictionary — retry or review manually.';
   updateAnswer(i);
  });
 }
@@ -229,7 +331,7 @@ function retryDictionary(i){
 function decide(i,accepted){
  if(state!=='review')return;
  const a=round.answers[i];if(!checkLetters(a.word,round.letters).valid)return;
- a.decision=accepted?'accepted':'rejected';a.reason=accepted?'Accepted for '+TOPICS[round.topic]+' · '+a.word.length+' letters.':'Rejected for this science topic.';updateAnswer(i);updateAward();
+ a.decision=accepted?'accepted':'rejected';a.reason=accepted?'Accepted for '+TOPICS[round.topic]+' · '+a.word.length+' letters.':'Rejected for the selected topic.';updateAnswer(i);updateAward();
 }
 function updateAnswer(i){
  const a=round.answers[i],lettersValid=checkLetters(a.word,round.letters).valid;
@@ -245,7 +347,7 @@ function updateAnswer(i){
  if(!checkLetters(a.word,round.letters).valid){review.classList.add('hidden');updateAward();return;}
  review.classList.remove('hidden');
  const link=document.createElement('a');link.className='reference';link.href='https://en.wiktionary.org/wiki/'+encodeURIComponent(a.word);link.target='_blank';link.rel='noopener noreferrer';link.textContent='Look up word';definition.append(link);
- const accept=document.createElement('button');accept.type='button';accept.className='accept';accept.textContent=round.mode==='solo'?'Accept science word':'Accept for topic';accept.onclick=()=>decide(i,true);
+ const accept=document.createElement('button');accept.type='button';accept.className='accept';accept.textContent=round.mode==='solo'?'Accept word':'Accept for topic';accept.onclick=()=>decide(i,true);
  const reject=document.createElement('button');reject.type='button';reject.className='reject';reject.textContent='Reject word';reject.onclick=()=>decide(i,false);review.append(accept,reject);
  if(a.lookup?.status==='unavailable'){const retry=document.createElement('button');retry.type='button';retry.textContent='Retry dictionary';retry.onclick=()=>retryDictionary(i);review.append(retry);}
  updateAward();
@@ -282,6 +384,8 @@ function resetForSettings(){if(state==='scored'){$('teams').replaceChildren();$(
 $('untimed').onchange=()=>{$('duration').disabled=$('untimed').checked;};
 $('fullscreen').onclick=()=>{const promise=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();if(promise)promise.catch(()=>say('Full screen is unavailable in this browser.'));};
 displayLetters();renderNames();renderHistory();setInterval(tick,200);
+
+setupCustomBank();
 </script>
 </body>
 </html>
