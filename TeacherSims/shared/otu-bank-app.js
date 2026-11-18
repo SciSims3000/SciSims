@@ -117,7 +117,7 @@ async function readBankFile(file) {
           ${isCookie?'':`<button class="secondary" id="resetVotesBtn">Reset votes</button>`}
           <div class="utility-row">${isCookie?'<button class="utility" id="soundBtn" aria-pressed="true">🔊 Sound on</button>':''}<button class="utility" id="fullscreenBtn">⛶ Full screen</button></div>
           ${isCookie ? '' : `<fieldset id="customBankControls">
-  <legend>Custom JSON bank</legend>
+  <legend>Custom JSON bank</legend><p><a href="../json-bank-guides.html#would-you-rather" style="color:inherit">Teacher guide to JSON banks</a></p>
   <label for="bankFile">Import JSON</label>
   <input id="bankFile" type="file" accept=".json,application/json">
   <button type="button" id="bankTemplate">Download template</button>
