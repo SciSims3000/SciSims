@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b131c">
+<title>Vector Rover | SciSims</title>
+<link rel="icon" href="../../favicon.png">
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#0b131c;--panel:#131f2c;--edge:#304251;--ink:#eef6f9;--muted:#b2c5d3;--mint:#a5f3ce;--gold:#ffd38b;font:16px/1.5 "DM Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top right,#1b3644,var(--bg) 55%);color:var(--ink)}
+main{max-width:1170px;margin:auto;padding:28px clamp(14px,4vw,44px) 44px}
+header,.row,.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand,.eyebrow{font:700 .79rem/1.5 "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--mint)}
+h1{font-size:clamp(2.65rem,7vw,5rem);line-height:1;letter-spacing:-.065em;margin:22px 0 8px}
+h2,p{margin:0} .muted,small{color:var(--muted)} .intro{margin-bottom:24px}
+.score{border:1px solid var(--edge);padding:7px 12px;border-radius:7px;font-variant-numeric:tabular-nums}
+nav.missions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}
+button{font:inherit;font-weight:700;color:inherit;background:#1b2b39;border:1px solid var(--edge);border-radius:8px;padding:9px 13px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--mint)}
+button[aria-pressed=true]{color:var(--mint);border-color:var(--mint);background:#193731}
+button:disabled{opacity:.56;cursor:default}
+button.primary{background:var(--mint);color:#11251e;border-color:transparent}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,320px);gap:14px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:14px;overflow:hidden}
+.pad{padding:17px}
+canvas{width:100%;height:auto;display:block;background:#101c2a}
+.telemetry{display:grid;grid-template-columns:repeat(3,1fr);margin:0;border-top:1px solid var(--edge)}
+.telemetry div{padding:12px;border-right:1px solid var(--edge)}
+.telemetry div:last-child{border:0}
+dt{font-size:.77rem;color:var(--muted)}dd{margin:0;font:700 clamp(.9rem,2.6vw,1.2rem)/1.5 monospace}
+#facts{font-family:monospace;color:var(--gold);margin:12px 0 16px}
+label{font-weight:700}output{color:var(--mint);font-weight:700}
+input{width:100%;accent-color:var(--mint);margin:10px 0 16px}
+.actions{justify-content:flex-start}
+#feedback{min-height:5em;margin-top:12px}
+details{border-top:1px solid var(--edge);margin-top:12px;padding-top:12px}
+summary{cursor:pointer;color:var(--mint)}details p{margin-top:8px}
+footer{margin-top:16px;color:var(--muted);font-size:.9rem}
+@media(max-width:740px){.layout{grid-template-columns:1fr}nav.missions{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+<main>
+<header><span class="brand">SciSims / Physics games</span><span class="score" id="score" aria-live="polite">Score 0 / 400</span></header>
+<h1>Vector Rover</h1>
+<p class="muted intro">Pilot a cargo rover through four test ranges. Predict where it will finish, adjust one setting and run the test.</p>
+<nav class="missions" aria-label="Missions" id="missions"></nav>
+<div class="layout">
+  <section class="card" aria-labelledby="mission">
+    <div class="pad">
+      <p class="eyebrow" id="topic"></p>
+      <h2 id="mission"></h2>
+      <p class="muted" id="goal"></p>
+    </div>
+    <canvas id="track" width="900" height="400" role="img" aria-label="Rover test range with a marked target zone. Position and speed are shown below."></canvas>
+    <dl class="telemetry">
+      <div><dt>Position</dt><dd id="position"></dd></div>
+      <div><dt>Speed</dt><dd id="speed"></dd></div>
+      <div><dt>Elapsed</dt><dd id="elapsed"></dd></div>
+    </dl>
+  </section>
+  <section class="card pad" aria-labelledby="controls">
+    <h2 id="controls">Test controls</h2>
+    <p class="muted" id="brief"></p>
+    <p id="facts"></p>
+    <div class="row"><label for="setting" id="setting-label"></label><output id="value" for="setting"></output></div>
+    <input type="range" id="setting">
+    <div class="actions">
+      <button class="primary" id="run">Run test</button>
+      <button id="retry" disabled>Retry</button>
+      <button id="next" hidden>Next mission</button>
+    </div>
+    <div id="feedback" role="status"></div>
+    <details><summary>Physics hint</summary><p id="hint"></p></details>
+  </section>
+</div>
+<footer>Each successful finish earns 60–100 points. Aim for the centre of each zone to maximise your score. Your best score on each mission counts for this session.</footer>
+</main>
+<script src="game.js"></script>
+</body>
+</html>

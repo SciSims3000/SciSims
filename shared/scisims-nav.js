@@ -1,12 +1,11 @@
-/* SciSims shared site navigation | Version 1.1.0 */
+/* SciSims shared site navigation | Version 1.2.0 */
 (() => {
   'use strict';
 
   const mount = document.getElementById('scisimsSiteNav');
   if (!mount) return;
-  if (mount.classList.contains('scisims-simulation-nav')) {
-    document.body.classList.add('has-scisims-simulation-nav');
-  }
+  mount.classList.add('scisims-simulation-nav');
+  document.body.classList.add('has-scisims-simulation-nav');
 
   const script = document.currentScript || Array.from(document.scripts).find(item =>
     item.src && item.src.split('?')[0].endsWith('/scisims-nav.js')
@@ -52,6 +51,22 @@
 
   mount.replaceChildren(nav);
 
+  // Fullscreen and classroom focus views reserve the complete window for the activity.
+  const focusClasses = ['presentation', 'scigames-classroom', 'scigames-web-active',
+    'classroom', 'groups-focus', 'student-focus', 'is-fullscreen'];
+  function syncFullscreenNavigation() {
+    const active = Boolean(document.fullscreenElement || document.webkitFullscreenElement) ||
+      focusClasses.some(name => document.body.classList.contains(name));
+    document.documentElement.classList.toggle('scisims-fullscreen', active);
+    if (active) setOpen(false);
+  }
+  document.addEventListener('fullscreenchange', syncFullscreenNavigation);
+  document.addEventListener('webkitfullscreenchange', syncFullscreenNavigation);
+  new MutationObserver(syncFullscreenNavigation).observe(document.body, {
+    attributes: true, attributeFilter: ['class']
+  });
+
+
   // Inject presentation controls only into the six audited SciGames pages.
   // Keeping the loader here avoids rewriting the large curriculum-bank HTML files.
   if (/\/Games\/(?:MysteryScienceWord|ScienceWordMatch|OddOneOut|ChainReactions|SciWord|ScienceWeb)\/(?:index\.html)?$/i.test(currentPath)) {
@@ -71,6 +86,8 @@
     toggle.setAttribute('aria-label', open ? 'Close site menu' : 'Open site menu');
     toggle.textContent = open ? '×' : '☰';
   };
+
+  syncFullscreenNavigation();
 
   toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
   nav.addEventListener('click', event => {

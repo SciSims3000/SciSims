@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="../../favicon.png">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101513">
+  <title>Immersion & Imagination — The Observatory at the Edge of the World</title>
+  <meta name="description" content="A story-first science adventure at the abandoned Aster Reach observatory.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+</head>
+<body>
+<div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+  <div class="weather" aria-hidden="true"></div>
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Immersion &amp; Imagination</p>
+      <h1>The Observatory at the Edge of the World</h1>
+    </div>
+    <div class="header-actions">
+      <button id="options-open" class="quiet-button" type="button">Reading options</button>
+      <button id="restart" class="quiet-button" type="button">Begin again</button>
+    </div>
+  </header>
+
+  <main class="game-shell">
+    <section class="story-panel" aria-live="polite">
+      <div class="chapter-line">
+        <span id="place">The mountain road</span>
+        <span id="time">Dusk</span>
+      </div>
+      <div id="story" class="story"></div>
+      <div id="record-cue" class="record-cue" hidden></div>
+      <div id="prompt" class="prompt"></div>
+      <div id="choices" class="choices"></div>
+    </section>
+  <details class="game-shell"><summary>Optional teacher map reference · story spoilers</summary><p><a href="voss-eastern-sky-map-v2.png" target="_blank" rel="noopener">Open the fictional expedition map</a>. This is a story illustration, not a measured astronomical chart.</p></details>
+</main>
+
+  <dialog id="ending-dialog">
+    <p class="eyebrow ink">Expedition record</p>
+    <h2 id="ending-title"></h2>
+    <div id="ending-copy"></div>
+    <button id="ending-close" type="button">Return to Aster Reach</button>
+  </dialog>
+
+  <dialog id="options-dialog" class="options-dialog">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow ink">Display</p>
+        <h2>Reading options</h2>
+      </div>
+      <button id="options-close" class="dialog-close" type="button" aria-label="Close reading options">×</button>
+    </div>
+    <fieldset>
+      <legend>Text style</legend>
+      <label class="option-card"><input type="radio" name="font" value="sans"> <span><strong>Clear sans serif</strong><small>Recommended for easy reading</small></span></label>
+      <label class="option-card"><input type="radio" name="font" value="serif"> <span><strong>Literary serif</strong><small>A traditional storybook style</small></span></label>
+    </fieldset>
+    <fieldset>
+      <legend>Text size</legend>
+      <label class="option-card"><input type="radio" name="size" value="standard"> <span><strong>Standard</strong></span></label>
+      <label class="option-card"><input type="radio" name="size" value="large"> <span><strong>Large</strong></span></label>
+    </fieldset>
+    <fieldset>
+      <legend>Page theme</legend>
+      <label class="option-card"><input type="radio" name="theme" value="dark"> <span><strong>Dark</strong></span></label>
+      <label class="option-card"><input type="radio" name="theme" value="light"> <span><strong>Light</strong></span></label>
+    </fieldset>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

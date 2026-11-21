@@ -147,6 +147,280 @@ window.SCISIMS_STAGE45 = {
     }
   ],
   "resources": [
+    {
+      "id": "physims-vectorrover",
+      "title": "Vector Rover",
+      "path": "PhySims/VectorRover/",
+      "description": "Predict and test a cargo rover’s motion in four challenges covering net force, braking, gravity and momentum.",
+      "type": "Game",
+      "tags": [
+        "Forces",
+        "Motion",
+        "Gravity",
+        "Momentum",
+        "Years 7–10"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Questioning and predicting",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.3",
+          "relevance": "Supporting"
+        }
+      ]
+    },
+    {
+      "id": "games-girderrush",
+      "title": "Girder Rush",
+      "path": "Games/GirderRush/",
+      "description": "Climb an arcade mill, dodge drums and compare standing and running jumps in a paused replay. A prototype for exploring horizontal velocity and gravity.",
+      "type": "Game",
+      "tags": [
+        "Motion",
+        "Gravity",
+        "Horizontal velocity",
+        "Jump comparison",
+        "Prototype",
+        "Years 7–10"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Questioning and predicting",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.3",
+          "relevance": "Supporting"
+        }
+      ]
+    },
+    {
+      "id": "earthsims-spaceguessr",
+      "title": "SpaceGuessr — Observing the Universe",
+      "path": "EarthSims/SpaceGuessr/",
+      "description": "A classroom prototype with 15 team investigations about astronomical evidence, changing models, Earth–Moon–Sun relationships and scientific instruments. Includes original schematics and printable resources.",
+      "type": "Game",
+      "tags": [
+        "Year 7",
+        "7.1",
+        "Observing the Universe",
+        "Scientific evidence",
+        "Astronomy",
+        "Teams",
+        "Prototype"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Questioning and predicting",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.1",
+          "relevance": "Supporting"
+        }
+      ]
+    },
+    {
+      "id": "games-immersionimagination",
+      "title": "Immersion & Imagination — Aster Reach",
+      "path": "Games/ImmersionImagination/",
+      "description": "A story-based observatory mystery. Keep an expedition diary, separate observation from inference, revisit explanations and choose an evidence-based ending.",
+      "type": "Activity",
+      "tags": [
+        "Observation",
+        "Inference",
+        "Scientific reasoning",
+        "Astronomy",
+        "Reading",
+        "Prototype"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Questioning and predicting",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.1",
+          "relevance": "Supporting"
+        }
+      ]
+    },
+    {
+      "id": "teachersims-truthorlie",
+      "title": "Truth or Lie",
+      "path": "TeacherSims/TruthOrLie/",
+      "description": "Evaluate science statements, justify corrections and discuss misconceptions. Includes a dedicated 50-prompt bank across Year 7 units 7.1–7.4 and a general Stage 4–5 bank.",
+      "type": "Revision game",
+      "tags": [
+        "Scientific reasoning",
+        "Misconceptions",
+        "Formative assessment",
+        "Year 7",
+        "Stages 4–5",
+        "Team game"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Analysing data and information",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.4",
+          "relevance": "Supporting"
+        }
+      ]
+    },
+    {
+      "id": "teachersims-spotthemistake",
+      "title": "Spot the Mistake",
+      "path": "TeacherSims/SpotTheMistake/",
+      "description": "Find scientific errors, explain corrections and compare with a model answer. Uses 330 Stage 4–5 prompts across physics, chemistry, cells, ecology, Earth and space, and working scientifically.",
+      "type": "Revision game",
+      "tags": [
+        "Scientific reasoning",
+        "Misconceptions",
+        "Formative assessment",
+        "Year 7",
+        "Stages 4–5",
+        "Team game"
+      ],
+      "workingScientifically": [
+        "Observing",
+        "Analysing data and information",
+        "Communicating"
+      ],
+      "depthStudy": false,
+      "mappings": [
+        {
+          "module": "7.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "7.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "8.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.1",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "9.4",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.2",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.3",
+          "relevance": "Supporting"
+        },
+        {
+          "module": "10.4",
+          "relevance": "Supporting"
+        }
+      ]
+    },
 {
   "id": "year-7-revision-engine",
   "title": "Year 7 Revision Engine",

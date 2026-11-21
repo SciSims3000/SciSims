@@ -1,12 +1,12 @@
 # Earth in Motion · SciSims
 
-Version 2.1.0 — Year 7, Stage 4 Science, Module 7.1 Observing the Universe.
+Version 2.2.0 — Year 7, Stage 4 Science, Module 7.1 Observing the Universe.
 
 Open `index.html` directly in a modern browser. The simulation is a single self-contained file and needs no server, network, build step or libraries. The embedded Teacher guide explains lesson sequencing, scientific assumptions and assessment.
 
 The title-banner appearance switch offers light and dark modes. It follows the device preference initially and saves explicit choices separately from student work. Both modes work offline and printing uses light surfaces.
 
-Three investigation tabs cover daily rotation and apparent solar motion, seasons, and conceptual predictions. The notebook keeps a separate local draft for each of five investigations and exports observations as UTF-8 CSV. Browser storage is local to the current browser/origin; export before clearing data, changing devices or switching between the offline and hosted versions.
+Three investigation tabs cover daily rotation and apparent solar motion, seasons, and conceptual predictions. The notebook keeps a separate local draft for each of five investigations and exports observations, all current notebook drafts and current challenge reasoning as UTF-8 CSV (distinguished by recordType). Browser storage is local to the current browser/origin; export before clearing data, changing devices or switching between the offline and hosted versions.
 
 ## Release verification
 

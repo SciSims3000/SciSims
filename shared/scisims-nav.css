@@ -1,4 +1,4 @@
-/* SciSims shared site navigation | Version 1.1.0 */
+/* SciSims shared site navigation | Version 1.2.0 */
 :root{
   --scisims-nav-bg:#0b2f6f;
   --scisims-nav-bg-hover:#164a9b;
@@ -186,3 +186,10 @@ body.has-scisims-simulation-nav{
 @media print{
   #scisimsSiteNav{display:none!important;}
 }
+
+/* Hide site chrome in native fullscreen and the supported classroom fallbacks. */
+html:fullscreen #scisimsSiteNav,
+html.scisims-fullscreen #scisimsSiteNav{display:none!important;}
+html.scisims-fullscreen body.has-scisims-simulation-nav{padding-top:0!important;}
+html:fullscreen .search-toolbar,
+html.scisims-fullscreen .search-toolbar{top:0!important;}

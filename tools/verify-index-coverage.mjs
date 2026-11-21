@@ -6,7 +6,7 @@ const read = file => fs.readFileSync(file, 'utf8');
 const normalise = value => value.replace(/index\.html$/, '').replace(/\/$/, '');
 const failures = [];
 const targetFile = value => /\.html$/.test(value) ? value : `${normalise(value)}/index.html`;
-const alternates = new Set(['ChemSims/ChemicalReactionReactor/index1.html', 'EarthSims/SolarSystemShowdown/offline.html', 'PhySims/MagForce.html']);
+const alternates = new Set(['TeacherSims/json-bank-guides.html', 'EarthSims/SpaceGuessr/SpaceGuessr_7_1_Game.html', 'ChemSims/ChemicalReactionReactor/index1.html', 'EarthSims/SolarSystemShowdown/offline.html', 'PhySims/MagForce.html']);
 function catalogue(file, name) {
   const match = read(file).match(new RegExp(`const ${name} = (\\[[\\s\\S]*?\\n\\s*\\]);`));
   if (!match) throw new Error(`Cannot find ${name} in ${file}`);
