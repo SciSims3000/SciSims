@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<link rel="icon" type="image/png" href="../../favicon.png">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Girder Rush</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101124;color:#fff5df;font:16px system-ui}main{max-width:850px;margin:auto;padding:20px}h1{font:900 clamp(2rem,7vw,4rem)/1 monospace;letter-spacing:-.06em;margin:0;color:#ffcc69}p{margin:10px 0}.frame{border:2px solid #5a4e81;border-radius:10px;overflow:hidden}canvas{display:block;width:100%;background:#161831}#status{min-height:1.5em;color:#a7f4da}button{font:bold 1rem system-ui;padding:10px 13px;background:#302854;color:white;border:1px solid #796cac;border-radius:7px;touch-action:none}button:active{background:#5a407d}button:focus-visible{outline:3px solid #ffcc69}.controls{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+<link rel="stylesheet" href="../../shared/scisims-nav.css">
+<script defer src="../../shared/scisims-nav.js"></script>
+</head>
+<body>
+<div id="scisimsSiteNav" class="scisims-simulation-nav"></div>
+<main>
+<h1>Girder Rush</h1>
+<p>Climb the mill, dodge the rolling drums and reach the exit before your three lives run out.</p>
+<div class="frame"><canvas id="mill" width="800" height="480" aria-label="Arcade platform game with four girders and connecting ladders"></canvas></div>
+<p id="status" role="status">Stage 1 · 3 lives · 0 points</p>
+<div class="controls">
+<button data-key="ArrowLeft">← Left</button><button data-key="ArrowRight">→ Right</button>
+<button data-key="ArrowUp">↑ Climb</button><button data-key="ArrowDown">↓ Descend</button>
+<button data-key="Space">Jump</button><button id="restart">Restart</button>
+</div>
+<p>Arrow keys to run and climb. Space to jump. Clear the first gap with a running jump or use the lower walkway and climb out.</p>
+<details id="jumpReplay"><summary>Replay your last two jumps</summary>
+<p>Compare jumps from the same height. How does a running start change the distance? How much does it change the height?</p>
+<canvas id="replay" width="800" height="200" aria-label="Jump paths aligned at take-off"></canvas>
+<button id="resume">Resume game</button>
+<p>Sideways speed is fixed after take-off. Compare jumps only when they land at the same height; the lower walkway gives a longer fall.</p>
+<div id="jump-data">Complete a jump to see its path.</div>
+</details>
+</main>
+<script>
+'use strict';
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+const status = document.querySelector('#status');
+const keys = new Set();
+const floors = [410, 300, 190, 80, 464];
+const gap = { left: 315, right: 438 };
+const bypass = 476;
+const attempts = [];
+let attempt, shortcutClaimed;
+let replayPaused = false;
+const replayPanel = document.querySelector("#jumpReplay");
+const replay = document.querySelector('#replay');
+const replayContext = replay.getContext('2d');
+const jumpData = document.querySelector('#jump-data');
+const ladders = [685, 110, 685];
+const step = 1 / 120;
+const gravity = 1040;
+let player, drums, stage, lives, score, clock, nextDrum, mode, jump;
+let prior, bank = 0;
+
+function spawnPlayer() {
+  player = { x: 65, y: floors[0], vx: 0, vy: 0, floor: 0, ladder: -1, grace: 1.25 };
+  jump = false;
+  attempt = undefined;
+}
+function loadStage() {
+  drums = [];
+  shortcutClaimed = false;
+  clock = 0;
+  nextDrum = 0.8;
+  spawnPlayer();
+  announce();
+}
+function restart() {
+  replayPanel.open = false;
+  replayPaused = false;
+  attempts.length = 0;
+  drawReplay();
+  stage = 1;
+  lives = 3;
+  score = 0;
+  mode = 'playing';
+  loadStage();
+}
+function announce(message = '') {
+  status.textContent = `Stage ${stage} · ${lives} lives · ${score} points${message ? ' · ' + message : ''}`;
+}
+function movePlayer(dt) {
+  const side = Number(keys.has('ArrowRight')) - Number(keys.has('ArrowLeft'));
+  const climb = Number(keys.has('ArrowDown')) - Number(keys.has('ArrowUp'));
+  player.grace = Math.max(0, player.grace - dt);
+  if (player.floor === 4 && climb < 0 && Math.abs(player.x - bypass) < 20) {
+    player.ladder = 3;
+    player.floor = -1;
+    player.x = bypass;
+    player.vx = 0;
+  }
+  if (player.floor >= 0 && player.floor < 4 && climb) {
+    const ladder = player.floor + (climb > 0 ? -1 : 0);
+    if (Math.abs(player.x - ladders[ladder]) < 20) {
+      player.ladder = ladder;
+      player.floor = -1;
+      player.x = ladders[ladder];
+      player.vx = 0;
+    }
+  }
+  if (player.ladder >= 0) {
+    const ladder = player.ladder;
+    player.y += climb * 150 * dt;
+    if (ladder === 3) {
+      if (player.y <= floors[0] || player.y >= floors[4]) {
+        player.floor = player.y <= floors[0] ? 0 : 4;
+        player.y = floors[player.floor];
+        player.ladder = -1;
+      }
+      jump = false;
+      return;
+    }
+    const end = climb < 0 && player.y <= floors[ladder + 1] ? ladder + 1 :
+      climb > 0 && player.y >= floors[ladder] ? ladder : -1;
+    if (end >= 0) {
+      player.floor = end;
+      player.y = floors[end];
+      player.ladder = -1;
+    }
+    jump = false;
+    return;
+  }
+  const grounded = player.floor >= 0;
+  const drive = grounded ? 1250 : 0;
+  player.vx += side * drive * dt;
+  if (grounded && !side) player.vx *= Math.exp(-12 * dt);
+  player.vx = Math.max(-240, Math.min(240, player.vx));
+  const nextX = Math.max(36, Math.min(764, player.x + player.vx * dt));
+  if (nextX === 36 || nextX === 764) player.vx = 0;
+  player.x = player.floor === 4 ? Math.max(gap.left, Math.min(bypass, nextX)) : nextX;
+  if (jump && grounded) {
+    attempt = {
+      x: player.x, y: player.y, speed: player.vx,
+      seconds: 0, height: 0, points: [[0, 0]]
+    };
+    player.vy = -365;
+    player.floor = -1;
+  }
+  jump = false;
+  if (player.floor === 0 && inGap(player.x)) player.floor = -1;
+  if (player.floor >= 0) return;
+  const oldY = player.y;
+  player.vy += gravity * dt;
+  player.y += player.vy * dt;
+  const landing = floors.findIndex((y, i) =>
+    player.vy > 0 && oldY <= y && player.y >= y && supports(i, player.x));
+  // The lower walkway has walls that keep the player underneath the gap.
+  if (oldY >= floors[0] && player.y > floors[0]) {
+    player.x = Math.max(gap.left, Math.min(bypass, player.x));
+  }
+  if (landing >= 0) {
+    player.floor = landing;
+    player.y = floors[landing];
+    player.vy = 0;
+  }
+  if (attempt) {
+    attempt.seconds += dt;
+    attempt.distance = player.x - attempt.x;
+    attempt.height = Math.max(attempt.height, attempt.y - player.y);
+    attempt.points.push([attempt.distance, player.y - attempt.y]);
+    if (landing >= 0) {
+      if (!shortcutClaimed && attempt.y === floors[0] && landing === 0 && attempt.x < gap.left && player.x > gap.right) {
+        shortcutClaimed = true;
+        score += 50;
+        announce('Shortcut cleared! +50 points');
+      }
+      attempts.push(attempt);
+      if (attempts.length > 2) attempts.shift();
+      attempt = undefined;
+      drawReplay();
+    }
+  }
+}
+
+function inGap(x) {
+  return x > gap.left && x < gap.right;
+}
+
+function supports(floor, x) {
+  return floor !== 0 || !inGap(x);
+}
+
+function drawReplay() {
+  replayContext.clearRect(0, 0, 800, 200);
+  replayContext.strokeStyle = '#796cac';
+  replayContext.beginPath();
+  replayContext.moveTo(20, 116);
+  replayContext.lineTo(780, 116);
+  replayContext.moveTo(400, 12);
+  replayContext.lineTo(400, 188);
+  replayContext.stroke();
+  const reach = Math.max(190, ...attempts.map(run => Math.max(...run.points.map(([x]) => Math.abs(x)))));
+  const colours = attempts.length === 2 ? ['#a7f4da', '#ffcc69'] : ['#ffcc69'];
+  const lines = attempts.map((run, index) => {
+    replayContext.strokeStyle = colours[index];
+    replayContext.lineWidth = 3;
+    replayContext.beginPath();
+    for (const [x, y] of run.points) replayContext.lineTo(400 + x * 375 / reach, 116 + y * 1.45);
+    replayContext.stroke();
+    const direction = run.distance < 0 ? ' left' : run.distance > 0 ? ' right' : '';
+    return `${colours[index] === '#ffcc69' ? 'Latest (gold)' : 'Previous (mint)'} · Take-off ${Math.round(Math.abs(run.speed))} px/s sideways · Airtime ${run.seconds.toFixed(2)} s · ${Math.round(Math.abs(run.distance))} px${direction} · Peak ${Math.round(run.height)} px above take-off`;
+  });
+  jumpData.replaceChildren(...lines.map(line => {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = line;
+    return paragraph;
+  }));
+  if (!lines.length) jumpData.textContent = 'Complete a jump to see its path.';
+}
+function update(dt) {
+  if (mode !== 'playing' || replayPaused) return;
+  clock += dt;
+  if (clock >= nextDrum) {
+    drums.push({ x: 64, y: floors[3] - 12, floor: 3, vx: 120 + stage * 27, vy: 0 });
+    nextDrum += 4.4 - stage * 0.65;
+  }
+  movePlayer(dt);
+  for (const drum of drums) {
+    if (drum.floor < 0) continue;
+    drum.x += drum.vx * dt;
+    const edge = drum.floor === 0 && drum.vx < 0 ? gap.right : drum.vx > 0 ? 755 : 45;
+    if (drum.vy || (drum.vx > 0 ? drum.x >= edge : drum.x <= edge)) {
+      drum.x = edge;
+      drum.vy += gravity * dt;
+      drum.y += drum.vy * dt;
+      if (drum.y >= (drum.floor > 0 ? floors[drum.floor - 1] : 510) - 12) {
+        drum.floor--;
+        drum.y = (floors[drum.floor] ?? 510) - 12;
+        drum.vy = 0;
+        drum.vx *= -1;
+      }
+    }
+    const closestX = Math.max(player.x - 11, Math.min(drum.x, player.x + 11));
+    const closestY = Math.max(player.y - 30, Math.min(drum.y, player.y));
+    if (!player.grace && Math.hypot(closestX - drum.x, closestY - drum.y) < 12) {
+      lives--;
+      if (!lives) mode = 'Game over · Press Enter or Restart';
+      else spawnPlayer();
+      announce(lives ? 'Drum hit! Back to the start.' : 'Game over. Restart to play again.');
+      break;
+    }
+  }
+  drums = drums.filter(drum => drum.floor >= 0);
+  if (mode === 'playing' && player.floor === 3 && player.x < 89) {
+    score += 100;
+    if (stage === 3) {
+      mode = 'Mill cleared!';
+      announce('Mill cleared!');
+    } else {
+      stage++;
+      loadStage();
+    }
+  }
+}
+function rectangle(colour, x, y, width, height) {
+  ctx.fillStyle = colour;
+  ctx.fillRect(x, y, width, height);
+}
+function draw() {
+  rectangle('#161831',0,0,800,480);
+  for (let x = 28; x < 800; x += 40) {
+    for (let y = 15; y < 480; y += 40) rectangle('#2b2b4d',x,y,2,2);
+  }
+  for (const [i,x] of ladders.entries()) {
+    rectangle('#69c7ba',x-12,floors[i+1],4,115);
+    rectangle('#69c7ba',x+8,floors[i+1],4,115);
+    for (let y = floors[i+1]+8; y < floors[i]; y += 13) rectangle('#69c7ba',x-12,y,24,3);
+  }
+  rectangle('#69c7ba',bypass-12,floors[0],4,floors[4]-floors[0]);
+  rectangle('#69c7ba',bypass+8,floors[0],4,floors[4]-floors[0]);
+  for (let y = floors[0]+10; y < floors[4]; y+=12) rectangle('#69c7ba',bypass-12,y,24,3);
+  for (const y of floors) {
+    rectangle('#a74676',25,y,750,12);
+    rectangle('#ff82ac',25,y,750,3);
+    for (let x = 36; x < 770; x += 20) rectangle('#5f294f',x,y+6,9,3);
+  }
+  rectangle('#161831',gap.left,floors[0],gap.right-gap.left,12);
+  rectangle('#161831',25,floors[4],gap.left-25,12);
+  rectangle('#161831',bypass+15,floors[4],760-bypass,12);
+  rectangle('#295855',45,39,43,41);
+  rectangle('#93f4b9',49,48,35,3);
+  ctx.font = 'bold 12px monospace';
+  ctx.fillStyle = '#b6ffca';
+  ctx.fillText('EXIT',52,68);
+  for (const drum of drums) {
+    ctx.save();
+    ctx.translate(drum.x,drum.y);
+    ctx.rotate(drum.x / 12);
+    ctx.fillStyle = '#ffbc61';
+    ctx.beginPath();
+    ctx.arc(0,0,12,0,Math.PI*2);
+    ctx.fill();
+    rectangle('#a74c3f',-9,-3,18,6);
+    rectangle('#542744',-3,-3,6,6);
+    ctx.restore();
+  }
+  ctx.globalAlpha = player.grace ? .7 : 1;
+  rectangle('#f7e069',player.x-11,player.y-30,22,8);
+  rectangle('#b8f2ff',player.x-8,player.y-22,16,9);
+  rectangle('#6f92ff',player.x-10,player.y-13,20,9);
+  rectangle('#fff5df',player.x-10,player.y-4,7,4);
+  rectangle('#fff5df',player.x+3,player.y-4,7,4);
+  ctx.globalAlpha = 1;
+  if (mode !== 'playing' || replayPaused) {
+    rectangle('#101124ed',104,190,592,95);
+    ctx.fillStyle = '#ffcc69';
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 24px monospace';
+    ctx.fillText(replayPaused ? 'Paused · comparing jumps' : mode,400,246);
+    ctx.textAlign = 'start';
+  }
+}
+function frame(now) {
+  bank += Math.min(0.06, (now - (prior ?? now)) / 1000);
+  prior = now;
+  while (bank >= step) {
+    update(step);
+    bank -= step;
+  }
+  draw();
+  requestAnimationFrame(frame);
+}
+function press(code) {
+  if (code === 'Space' && !keys.has(code)) jump = true;
+  keys.add(code);
+}
+document.addEventListener('keydown', event => {
+  if (event.target.closest('input,select,textarea,summary,a,#scisimsSiteNav') || replayPaused) return;
+  if (event.target instanceof HTMLButtonElement && !event.code.startsWith('Arrow')) return;
+  if (event.code === 'Enter' && mode !== 'playing') restart();
+  if (event.code === 'Space' || event.code.startsWith('Arrow')) {
+    event.preventDefault();
+    press(event.code);
+  }
+});
+document.addEventListener('keyup', event => keys.delete(event.code));
+window.addEventListener('blur', () => { keys.clear(); jump = false; });
+for (const button of document.querySelectorAll('[data-key]')) {
+  const code = button.dataset.key;
+  button.addEventListener('pointerdown', event => {
+    button.setPointerCapture(event.pointerId);
+    press(code);
+  });
+  button.addEventListener('lostpointercapture', () => keys.delete(code));
+  button.addEventListener('click', event => {
+    if (!event.detail && code === 'Space') jump = true;
+  });
+  button.addEventListener('blur', () => keys.delete(code));
+}
+replayPanel.addEventListener('toggle', () => { replayPaused = replayPanel.open; keys.clear(); jump = false; });
+document.querySelector('#resume').addEventListener('click', () => { replayPanel.open = false; replayPaused = false; });
+document.querySelector('#restart').addEventListener('click', restart);
+restart();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

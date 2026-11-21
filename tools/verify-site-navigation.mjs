@@ -22,6 +22,11 @@ for (const file of files) {
   const navScripts = [...html.matchAll(/<script\b[^>]*src=["']([^"']*scisims-nav\.js)["'][^>]*>/gi)];
   const navStyles = [...html.matchAll(/<link\b[^>]*href=["']([^"']*scisims-nav\.css)["'][^>]*>/gi)];
   const mounts = [...html.matchAll(/id=["']scisimsSiteNav["']/gi)];
+  // Six self-contained physics exports load the shared files dynamically and
+  // carry an offline fallback. Verify their real loader paths as well.
+  if (!navScripts.length) navScripts.push(...html.matchAll(/shared\.src\s*=\s*["']([^"']*scisims-nav\.js)["']/gi));
+  if (!navStyles.length) navStyles.push(...html.matchAll(/style\.href\s*=\s*["']([^"']*scisims-nav\.css)["']/gi));
+
 
   if (navScripts.length !== 1) failures.push(`${label}: expected one navigation script, found ${navScripts.length}`);
   if (navStyles.length !== 1) failures.push(`${label}: expected one navigation stylesheet, found ${navStyles.length}`);
