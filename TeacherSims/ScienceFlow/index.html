@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Science Flow | SciSims</title>
+<style>
+:root{color-scheme:dark;--bg:#091623;--panel:#142738;--edge:#35516a;--text:#f1f8ff;--muted:#b9cbd9;--button:#233c51;--accent:#168b8b;--grid:#102233;--path:#aec6d5;--tile:#1e3649}
+:root[data-theme=light]{color-scheme:light;--bg:#edf4fa;--panel:#fff;--edge:#b5cad9;--text:#1c3346;--muted:#4b6071;--button:#e2eff7;--accent:#067b80;--grid:#dceaf3;--path:#486375;--tile:#edf5fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,sans-serif}button,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.43;cursor:not-allowed}
+header,main,footer{width:min(1080px,100%);padding:16px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--edge)}.brand{font-weight:850;letter-spacing:.065em}.brand b{color:#49c6bd}h1{font-size:clamp(1.9rem,4vw,3rem);margin:0}h2{font-size:1.13rem;margin:0 0 10px}p{margin:7px 0 12px}.muted{color:var(--muted)}.small{font-size:.83rem}.top,.controls,.actions,.stats{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.controls{margin-top:14px}.controls label{display:grid;gap:3px;font-size:.84rem;flex:1;min-width:145px}.btn,select{background:var(--button);color:var(--text);border:1px solid var(--edge);padding:10px 12px;border-radius:9px;min-height:44px}.primary{background:var(--accent);color:white;font-weight:700}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(270px,1fr);gap:16px;margin-top:16px}.panel{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:16px}.stats{justify-content:space-between;font-size:.87rem;margin:12px 0}.gridbox{position:relative;width:min(100%,610px);aspect-ratio:1;margin:auto;border:3px solid var(--edge);border-radius:12px;overflow:hidden;background:var(--grid);touch-action:none;user-select:none;-webkit-user-select:none}.cells{position:absolute;inset:0;display:grid;z-index:2}.cell{position:relative;min-width:0;min-height:0;border:1px solid var(--edge);background:transparent;border-radius:0;padding:0;touch-action:none}.cell:focus-visible{outline:3px solid white;outline-offset:-4px;z-index:4}.endpoint{position:absolute;inset:15%;display:grid;place-items:center;border-radius:50%;border:3px solid rgba(255,255,255,.78);color:white;font-size:clamp(.95rem,3vw,1.4rem);font-weight:850;text-shadow:0 1px 2px #0008;box-shadow:0 2px 8px #0006}.cell.hint{box-shadow:inset 0 0 0 4px #ffda75;z-index:3}.lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.lines path{fill:none;stroke-width:7.8;stroke-linecap:round;stroke-linejoin:round;opacity:.9}.actions{justify-content:center;margin:14px 0 8px}.message{min-height:55px;background:var(--button);border:1px solid var(--edge);padding:10px;border-radius:10px}.legend{display:grid;gap:10px}.pair{display:flex;gap:10px;align-items:center;background:var(--button);padding:10px;border-radius:10px}.dot{border-radius:50%;width:30px;height:30px;display:grid;place-items:center;color:white;font-weight:800;flex:none;border:2px solid #ffffffb0;text-shadow:0 1px 2px #0007}.pair .detail{font-size:.86rem}.pair strong{display:block}.note{border-left:4px solid var(--accent);background:var(--button);padding:12px;border-radius:4px}.success{border-color:#5bcba8}.foot{font-size:.78rem;color:var(--muted)}.top .btn{min-width:115px}button:focus-visible,select:focus-visible{outline:3px solid #f1c864;outline-offset:2px}
+:root.focus header,:root.focus main,:root.focus footer{width:min(1440px,100%)}@media(max-width:780px){.layout{display:block}.panel{margin-bottom:14px}.gridbox{max-width:94vw}.top{width:100%}.top .btn{flex:1}header,main{padding:12px}.endpoint{inset:11%;border-width:2px}} 
+</style></head><body>
+<header><div><div class="brand">SCI<b>SIMS</b> / PUZZLE ARCADE</div><div class="muted small">Science Flow · v1.0</div></div><div class="top"><button class="btn" id="theme" aria-label="Switch theme">☀️ Light theme</button><button class="btn" id="fullscreen" aria-label="Toggle full screen">⛶ Full screen</button></div></header>
+<main><h1>Science Flow</h1><p class="muted">Connect related science concepts without crossing paths. Every square must be filled.</p>
+<div class="controls"><label>Science topic<select id="topic"><option value="lab">Measuring Science</option><option value="space">Our Universe</option><option value="life">Living Systems</option><option value="energy">Energy &amp; Forces</option></select></label><label>Challenge<select id="level"><option value="1">Level 1 · 5 × 5</option><option value="2">Level 2 · 5 × 5</option><option value="3">Level 3 · 6 × 6</option><option value="4">Level 4 · 6 × 6</option><option value="5">Level 5 · 7 × 7</option><option value="6">Level 6 · 7 × 7</option><option value="7">Level 7 · 8 × 8</option><option value="8">Level 8 · 8 × 8</option></select></label><button class="btn primary" id="next">Next level →</button></div>
+<div class="layout"><section class="panel"><div class="stats"><strong id="status">Level 1</strong><span id="coverage">0% filled</span><span id="time">00:00</span></div><div id="grid" class="gridbox" role="group" aria-label="Science Flow puzzle"><svg class="lines" id="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg><div class="cells" id="cells"></div></div>
+<div class="actions"><button class="btn" id="reset">↺ Reset paths</button><button class="btn" id="undo">↶ Undo</button><button class="btn" id="hint">💡 Hint</button></div><p class="message" id="message" role="status" aria-live="polite">Tap or drag from one numbered circle to its match.</p></section>
+<aside><section class="panel"><h2>Science connections</h2><p class="muted small">Each colour links two related terms. Check the pairing as you solve.</p><div class="legend" id="legend"></div></section><section class="panel"><h2>How to play</h2><p>1. Start on a coloured numbered endpoint.</p><p>2. Drag through adjacent squares, or tap squares one at a time.</p><p>3. Connect its matching endpoint. Paths cannot cross or share squares.</p><p>4. Fill the entire grid to win.</p><p class="note small"><strong>Science note:</strong> These lines are a logic-puzzle representation of relationships. They do not represent real electrical wiring, energy-transfer directions or food-web arrows.</p></section><section class="panel"><h2>Learning check</h2><p id="learning" class="muted">Connect all pairs to reveal a question.</p></section></aside></div>
+</main><footer class="foot">SciSims Science Flow v1.0 · Years 7–10 · Touch, mouse and keyboard support · Local progress is not collected</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const colours=["#e24b6a","#2b9ed0","#e3a11b","#45ab78","#a178d5","#d27435"];
+const themes={
+lab:{name:"Measuring Science",pairs:[["Mass","Balance"],["Temperature","Thermometer"],["Time","Stopwatch"],["Length","Ruler"],["Force","Newton meter"],["Volume","Measuring cylinder"]],q:["Which variable is deliberately changed in a fair test?","The independent variable."]},
+space:{name:"Our Universe",pairs:[["Sun","Star"],["Earth","Planet"],["Moon","Natural satellite"],["Milky Way","Galaxy"],["Saturn","Ringed planet"],["Comet","Icy Solar System body"]],q:["Why do we see phases of the Moon?","The changing fraction of its sunlit hemisphere visible from Earth."]},
+life:{name:"Living Systems",pairs:[["Producer","Makes organic food"],["Consumer","Eats other organisms"],["Decomposer","Recycles nutrients"],["Cell membrane","Controls exchange"],["Chloroplast","Site of photosynthesis"],["DNA","Genetic information"]],q:["What do arrows in food chains show?","The direction of energy transfer, from food to consumer."]},
+energy:{name:"Energy & Forces",pairs:[["Force","newton (N)"],["Energy","joule (J)"],["Power","watt (W)"],["Speed","m/s"],["Acceleration","m/s²"],["Mass","kilogram (kg)"]],q:["Is energy created when it changes form?","No. Energy is conserved; it is transferred or transformed."]}
+};
+const sizes=[5,5,6,6,7,7,8,8],counts=[3,3,4,4,5,5,6,6];
+let S,clock=null,dragging=false,active=null,focusMode=false;
+function hash(s){let v=2166136261;for(let i=0;i<s.length;i++)v=Math.imul(v^s.charCodeAt(i),16777619);return v>>>0}
+function rng(seed){let s=seed>>>0;return n=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s%n}}
+function makePuzzle(topic,level){const n=sizes[level-1],k=counts[level-1],r=rng(hash(topic+"-"+level)),order=[];
+const swap=r(2),flipX=r(2),flipY=r(2);
+for(let y=0;y<n;y++)for(let j=0;j<n;j++){let x=y%2===0?j:n-1-j,yy=y;if(flipX)x=n-1-x;if(flipY)yy=n-1-yy;if(swap)[x,yy]=[yy,x];order.push(yy*n+x)}
+const cuts=[],total=n*n;let left=total,pos=0;
+for(let c=0;c<k;c++){const groupsLeft=k-c;if(c===k-1){cuts.push(total);break}
+const target=Math.floor(left/groupsLeft),variation=r(5)-2,len=Math.max(3,Math.min(left-(groupsLeft-1)*3,target+variation));pos+=len;cuts.push(pos);left-=len}
+const solutions=[],ends={};let start=0;for(let c=0;c<k;c++){const seq=order.slice(start,cuts[c]);solutions.push(seq);ends[seq[0]]=c;ends[seq[seq.length-1]]=c;start=cuts[c]}
+return {n,k,solutions,ends}}
+function announce(msg){$("message").textContent=msg}
+function countFilled(){const used=new Set();for(const p of S.paths)for(const id of p)used.add(id);return used.size}
+function done(c){const p=S.paths[c],seq=S.solutions[c];return p.length>=2&&S.ends[p[p.length-1]]===c&&p[p.length-1]!==p[0]}
+function isEnd(id){return Object.prototype.hasOwnProperty.call(S.ends,id)}
+function startGame(){if(clock)clearInterval(clock);const topic=$("topic").value,level=+$("level").value;const p=makePuzzle(topic,level);S={topic,level,...p,paths:Array.from({length:p.k},()=>[]),history:[],seconds:0,hints:0,won:false,hintCell:null};active=null;dragging=false;$("learning").textContent="Connect all pairs to reveal a question.";$("grid").classList.remove("success");draw();clock=setInterval(()=>{if(!S.won)S.seconds++;$("time").textContent=formatTime(S.seconds)},1000);announce("Level "+level+": connect matching numbers, then fill all squares.")}
+function formatTime(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function save(){S.history.push(S.paths.map(p=>p.slice()));if(S.history.length>200)S.history.shift()}
+function occupant(id){for(let c=0;c<S.k;c++)if(S.paths[c].includes(id))return c;return -1}
+function adjacent(a,b){return Math.abs(Math.floor(a/S.n)-Math.floor(b/S.n))+Math.abs(a%S.n-b%S.n)===1}
+function visit(id){if(S.won)return;
+const ep=isEnd(id)?S.ends[id]:-1;
+if(active===null){if(ep>=0){active=ep;save();S.paths[ep]=[id];draw()}return}
+let p=S.paths[active];
+if(!p.length){if(ep===active){save();S.paths[active]=[id];draw()}return}
+if(done(active)){if(ep>=0){active=ep;save();S.paths[ep]=[id];draw()}return}
+const existing=p.indexOf(id);
+if(existing>=0){if(existing!==p.length-1){save();S.paths[active]=p.slice(0,existing+1);draw()}return}
+if(!adjacent(p[p.length-1],id))return;
+if(ep>=0&&ep!==active)return;
+const occupied=occupant(id);if(occupied!==-1&&occupied!==active)return;
+save();p.push(id);S.hintCell=null;
+if(done(active)){const finished=active;active=null;announce("Pair "+(finished+1)+" connected. Keep going!")}
+draw();checkWin()}
+function checkWin(){if(S.won)return;const complete=S.paths.every((p,c)=>done(c));const full=countFilled()===S.n*S.n;if(complete&&full){S.won=true;active=null;if(clock)clearInterval(clock);$("grid").classList.add("success");const question=themes[S.topic].q;$("learning").innerHTML="<strong>"+question[0]+"</strong><p>"+question[1]+"</p>";announce("Puzzle solved! "+formatTime(S.seconds)+" · "+S.hints+" hints used. Try the next level.");draw()}else if(complete){announce("All pairs are connected, but "+(S.n*S.n-countFilled())+" squares are empty. Reroute paths to fill the grid.")}}
+function draw(){const n=S.n,cell=100/n;let html="";
+for(let id=0;id<n*n;id++){const e=S.ends[id],isEndpoint=e!==undefined,colour=isEndpoint?colours[e]:"";html+='<button type="button" class="cell '+(S.hintCell===id?"hint":"")+'" data-cell="'+id+'" aria-label="Row '+(Math.floor(id/n)+1)+', column '+(id%n+1)+(isEndpoint?", endpoint "+(e+1):"")+'">'+(isEndpoint?'<span class="endpoint" style="background:'+colour+'">'+(e+1)+'</span>':"")+'</button>'}
+$("cells").innerHTML=html;$("cells").style.gridTemplateColumns="repeat("+n+",1fr)";$("cells").style.gridTemplateRows="repeat("+n+",1fr)";
+$("lines").setAttribute("viewBox","0 0 "+(n*10)+" "+(n*10));$("lines").innerHTML=S.paths.map((p,i)=>p.length?'<path stroke="'+colours[i]+'" d="'+p.map((id,j)=>(j?"L":"M")+((id%n)*10+5)+" "+(Math.floor(id/n)*10+5)).join(" ")+'"/>':"").join("");
+$("coverage").textContent=Math.round(100*countFilled()/(n*n))+"% filled";$("status").textContent="Level "+S.level+" · "+S.paths.filter((p,i)=>done(i)).length+"/"+S.k+" pairs";
+$("legend").innerHTML=themes[S.topic].pairs.slice(0,S.k).map((p,i)=>'<div class="pair"><span class="dot" style="background:'+colours[i]+'">'+(i+1)+'</span><div class="detail"><strong>'+p[0]+' ↔ '+p[1]+'</strong><span class="muted">Match endpoints '+(i+1)+'</span></div></div>').join("");$("undo").disabled=!S.history.length||S.won}
+function hint(){if(S.won)return;S.hints++;let c=active!==null?active:S.paths.findIndex((p,i)=>!done(i));if(c<0)c=0;const seq=S.solutions[c],path=S.paths[c];let first=seq[0],second=seq[1];if(path.length){const pos=seq.indexOf(path[path.length-1]);if(pos>=0&&pos<seq.length-1){first=path[path.length-1];second=seq[pos+1]}}
+S.hintCell=second;draw();announce("Hint: one possible path for pair "+(c+1)+" includes the highlighted square near its route. Other solutions may exist.")}
+function undo(){if(!S.history.length||S.won)return;S.paths=S.history.pop();active=null;S.hintCell=null;draw();announce("Previous move restored.")}
+function getCell(e){const el=document.elementFromPoint(e.clientX,e.clientY)?.closest?.("[data-cell]");return el&&$("cells").contains(el)?Number(el.dataset.cell):null}
+$("cells").addEventListener("pointerdown",e=>{if(e.button!==0&&e.pointerType==="mouse")return;const id=getCell(e);if(id===null)return;dragging=true;try{$("cells").setPointerCapture(e.pointerId)}catch(x){}visit(id);e.preventDefault()});
+$("cells").addEventListener("pointermove",e=>{if(!dragging)return;const id=getCell(e);if(id!==null)visit(id);e.preventDefault()});
+function endDrag(){dragging=false}$("cells").addEventListener("pointerup",endDrag);$("cells").addEventListener("pointercancel",endDrag);
+$("cells").addEventListener("click",e=>{if(e.detail!==0)return;const el=e.target.closest("[data-cell]");if(el)visit(Number(el.dataset.cell))});
+$("reset").addEventListener("click",()=>{S.paths=Array.from({length:S.k},()=>[]);S.history=[];S.hintCell=null;S.won=false;active=null;$("learning").textContent="Connect all pairs to reveal a question.";draw();announce("All paths cleared.")});
+$("undo").addEventListener("click",undo);$("hint").addEventListener("click",hint);
+$("topic").addEventListener("change",startGame);$("level").addEventListener("change",startGame);
+$("next").addEventListener("click",()=>{$("level").value=String((S.level%8)+1);startGame()});
+function setTheme(t){document.documentElement.dataset.theme=t;$("theme").textContent=t==="light"?"🌙 Dark theme":"☀️ Light theme";try{localStorage.setItem("scisims-flow-theme",t)}catch(e){}}
+let saved="dark";try{if(localStorage.getItem("scisims-flow-theme")==="light")saved="light"}catch(e){}setTheme(saved);
+$("theme").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
+function fsState(){const v=!!document.fullscreenElement||focusMode;$("fullscreen").textContent=v?"⛶ Exit full screen":"⛶ Full screen";$("fullscreen").setAttribute("aria-pressed",String(v))}
+$("fullscreen").addEventListener("click",async()=>{if(focusMode){focusMode=false;document.documentElement.classList.remove("focus");fsState();return}if(document.fullscreenElement){try{await document.exitFullscreen()}catch(e){}fsState();return}try{if(!document.documentElement.requestFullscreen)throw Error("Not supported");await document.documentElement.requestFullscreen()}catch(e){focusMode=true;document.documentElement.classList.add("focus");announce("Expanded layout enabled. iOS may retain Safari browser controls.")}fsState()});document.addEventListener("fullscreenchange",fsState);
+startGame();
+</script></body></html>
