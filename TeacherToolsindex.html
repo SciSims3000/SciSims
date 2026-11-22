@@ -9,6 +9,20 @@
   <link rel="stylesheet" href="shared/scisims-index-pages.css">
   <script defer src="shared/scisims-nav.js"></script>
   <script defer src="shared/scisims-index-back-to-top.js"></script>
+  <style>
+    .customisation-panel{margin-bottom:22px;padding:18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}
+    .customisation-panel h2{font-size:1.2rem;margin-bottom:8px}
+    .customisation-panel p{color:#475569}
+    .customisation-filter{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+    .customisation-filter select{max-width:100%;min-height:44px;padding:9px;border:1px solid #94a3b8;border-radius:10px;background:#fff;color:var(--text);font:inherit}
+    .customisation-filter select:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
+    .customisation-badge{align-self:flex-start;margin:3px 0 8px;padding:5px 9px;border:1px solid #99f6e4;border-radius:999px;background:#f0fdfa;color:#115e59;font-size:.78rem;font-weight:bold}
+    .customisation-badge.class-list{border-color:#bfdbfe;background:#eff6ff;color:#1e40af}
+    .tool-card p.customisation-detail{flex:0;font-size:.9rem;margin-bottom:14px}
+    .tool-card[hidden],.customisation-filter[hidden]{display:none}
+    #toolCount{margin:10px 0 0;font-size:.9rem}
+    @media print{.customisation-filter{display:none}}
+  </style>
 </head>
 <body>
   <div id="scisimsSiteNav"></div>
@@ -16,28 +30,64 @@
     <span class="eyebrow">Classroom utilities</span>
     <h1>Teacher Tools</h1>
     <p>Practical tools for classroom organisation, participation, timing, discussion and short engagement activities.</p>
-    <span class="version-pill">Version 0.1.2</span>
+    <span class="version-pill">Version 0.2.0</span>
   </header>
-  <main class="tool-grid">
-    <article class="tool-card"><h2>Revision Engine Worksheet Builder</h2><p>Turn Year 7, HSC Physics and HSC Chemistry exports into printable worksheets and answer keys.</p><a class="open-link" href="PhySims/RevisionEngine/worksheet.html">Open tool</a></article>
-    <article class="tool-card"><h2>Spot the Mistake</h2><p>Find and correct scientific errors, explain your reasoning and compare with a model answer. Includes 330 science prompts, custom banks and team play.</p><a class="open-link" href="TeacherSims/SpotTheMistake/">Open tool</a></article>
-    <article class="tool-card"><h2>Truth or Lie</h2><p>Judge science statements, explain misconceptions and play with standard or custom JSON banks. Includes discussion, solo and team modes.</p><a class="open-link" href="TeacherSims/TruthOrLie/">Open tool</a></article>
-    <article class="tool-card"><h2>Animation Lab</h2><p>Play, customise and present short science animations, and open ready-made captioned videos for lessons.</p><a class="open-link" href="Animation-Lab/">Open tool</a></article>
-    <article class="tool-card"><h2>SciSims Presentation Player</h2><p>Open viewable Google Slides in a browser player with interactive Student Engagement Norms, hover explanations, click-to-pin definitions and fullscreen viewing. Google Slides retains control of slide navigation.</p><a class="open-link" href="TeacherSims/PresentationPlayer/">Open tool</a></article>
+  <section class="customisation-panel" aria-labelledby="customisationHeading">
+    <h2 id="customisationHeading">Make it your own</h2>
+    <p><strong>Add your own content</strong> marks tools that accept teacher-supplied questions, images, slides, words or text. <strong>Add your class</strong> marks tools with class lists and classroom setup. Each badge explains what you can add without editing code. Unmarked tools use built-in content and may still offer settings.</p>
+    <div class="customisation-filter" id="customisationFilter" hidden>
+      <label for="toolFilter">Show tools</label>
+      <select id="toolFilter" aria-controls="teacherTools">
+        <option value="all">All tools</option>
+        <option value="custom">All customisable tools</option>
+        <option value="content">Add your own content</option>
+        <option value="class">Add your class</option>
+      </select>
+    </div>
+    <p id="toolCount" role="status" aria-live="polite"></p>
+  </section>
+  <main class="tool-grid" id="teacherTools">
+    <article class="tool-card" data-customisation="content"><h2>Revision Engine Worksheet Builder</h2><span class="customisation-badge">Add your own content</span><p>Turn Year 7, HSC Physics and HSC Chemistry exports into printable worksheets and answer keys.</p><p class="customisation-detail">Import question sets or quiz reports exported by The Revision Engine; select questions for your worksheet.</p><a class="open-link" href="PhySims/RevisionEngine/worksheet.html">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Spot the Mistake</h2><span class="customisation-badge">Add your own content</span><p>Find and correct scientific errors, explain your reasoning and compare with a model answer. Includes 330 science prompts, custom banks and team play.</p><p class="customisation-detail">Create statement pairs, explanations and sources in the editor, or import a JSON bank.</p><a class="open-link" href="TeacherSims/SpotTheMistake/">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Truth or Lie</h2><span class="customisation-badge">Add your own content</span><p>Judge science statements, explain misconceptions and play with standard or custom JSON banks. Includes discussion, solo and team modes.</p><p class="customisation-detail">Create true/false statement pairs and explanations, or import a JSON bank.</p><a class="open-link" href="TeacherSims/TruthOrLie/">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Animation Lab</h2><span class="customisation-badge">Add your own content</span><p>Play, customise and present short science animations, and open ready-made captioned videos for lessons.</p><p class="customisation-detail">Add your own caption to built-in animations. Custom MP4 export requires the local Animation Lab helper on your Mac.</p><a class="open-link" href="Animation-Lab/">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>SciSims Presentation Player</h2><span class="customisation-badge">Add your own content</span><p>Open viewable Google Slides in a browser player with interactive Student Engagement Norms, hover explanations, click-to-pin definitions and fullscreen viewing. Google Slides retains control of slide navigation.</p><p class="customisation-detail">Paste a viewable Google Slides link or public PowerPoint URL to present your own slides.</p><a class="open-link" href="TeacherSims/PresentationPlayer/">Open tool</a></article>
 <article class="tool-card"><h2>Practice Exam Builder</h2><p>Explore the developing question library, practice-exam workflow and guides for selecting, completing and reviewing questions.</p><a class="open-link" href="PracticeExamBuilder/">Open tool</a></article>
-    <article class="tool-card"><h2>Everybody Thinks</h2><p>Run fair dual-Plinko classroom questioning with protected thinking time, weighted student selection, curriculum starter banks and participation history.</p><a class="open-link" href="TeacherSims/EverybodyThinks/">Open tool</a></article>
-    <article class="tool-card"><h2>Random Group Maker</h2><p>Create balanced classroom groups using saved class lists, attendance controls, grouping rules, optional roles and a full-screen activity display.</p><a class="open-link" href="TeacherSims/GroupMaker/">Open tool</a></article>
-    <article class="tool-card"><h2>Seating Plan Maker</h2><p>Create, save and project flexible classroom seating plans with attendance controls, learning zones, timers and random student selection.</p><a class="open-link" href="TeacherSims/SeatingPlanMaker/">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Everybody Thinks</h2><span class="customisation-badge">Add your own content</span><p>Run fair dual-Plinko classroom questioning with protected thinking time, weighted student selection, curriculum starter banks and participation history.</p><p class="customisation-detail">Edit your own question and student lists; save banks and import or export them as JSON.</p><a class="open-link" href="TeacherSims/EverybodyThinks/">Open tool</a></article>
+    <article class="tool-card" data-customisation="class"><h2>Random Group Maker</h2><span class="customisation-badge class-list">Add your class</span><p>Create balanced classroom groups using saved class lists, attendance controls, grouping rules, optional roles and a full-screen activity display.</p><p class="customisation-detail">Paste student names, save class lists and add your own group roles.</p><a class="open-link" href="TeacherSims/GroupMaker/">Open tool</a></article>
+    <article class="tool-card" data-customisation="class"><h2>Seating Plan Maker</h2><span class="customisation-badge class-list">Add your class</span><p>Create, save and project flexible classroom seating plans with attendance controls, learning zones, timers and random student selection.</p><p class="customisation-detail">Paste student names and optional marks; build your own room layout and seating plans.</p><a class="open-link" href="TeacherSims/SeatingPlanMaker/">Open tool</a></article>
     <article class="tool-card"><h2>Science Fortune Cookie</h2><p>Reveal short science-themed prompts or fortunes as a light classroom starter or transition activity.</p><a class="open-link" href="TeacherSims/Cookie/">Open tool</a></article>
-    <article class="tool-card"><h2>Dramatic Countdown</h2><p>Run a classroom countdown with a more theatrical presentation than a standard timer.</p><a class="open-link" href="TeacherSims/Countdown/">Open tool</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Dramatic Countdown</h2><span class="customisation-badge">Add your own content</span><p>Run a classroom countdown with a more theatrical presentation than a standard timer.</p><p class="customisation-detail">Type your own end-of-countdown message.</p><a class="open-link" href="TeacherSims/Countdown/">Open tool</a></article>
     <article class="tool-card"><h2>Science Magic 8-Ball</h2><p>Ask a question and generate a playful science-themed response with animated presentation.</p><a class="open-link" href="TeacherSims/Magic8/">Open tool</a></article>
     <article class="tool-card"><h2>Science Would You Rather</h2><p>Generate classroom-friendly science choices for discussion, argument and quick engagement.</p><a class="open-link" href="TeacherSims/WouldYou/">Open tool</a></article>
     <article class="tool-card"><h2>Drift — Soft-Fascination Simulator</h2><p>Offer a quiet classroom reset with looping natural scenes, layered ambience and an optional automatic Drift mode.</p><a class="open-link" href="BrainBreak/Drift/">Open tool</a></article>
     <article class="tool-card"><h2>AI Marking Machine 3000</h2><p>Generate playful simulated marking feedback and classroom discussion prompts using adjustable subjects, task types and feedback styles.</p><a class="open-link" href="TeacherSims/MarkingMachine3K/">Open tool</a></article>
-    <article class="tool-card"><h2>Science Letters</h2><p>Build the longest science word from nine shared letters. Choose a science topic, play with 2–6 classroom teams or practise solo, and use dictionary checks, teacher review and longest-word scoring.</p><a class="open-link" href="BrainBreak/ScienceLetters/">Open game</a></article>
+    <article class="tool-card" data-customisation="content"><h2>Science Letters</h2><span class="customisation-badge">Add your own content</span><p>Build the longest science word from nine shared letters. Choose a science topic, play with 2–6 classroom teams or practise solo, and use dictionary checks, teacher review and longest-word scoring.</p><p class="customisation-detail">Import your own topic word bank as JSON; a teacher guide is available in the game.</p><a class="open-link" href="BrainBreak/ScienceLetters/">Open game</a></article>
     <article class="tool-card"><h2>Target Reactor</h2><p>Build an equation to hit the target using 2–6 dice. Choose the difficulty, require every die or allow a subset, and try timed rounds, daily challenges or shared classroom codes.</p><a class="open-link" href="BrainBreak/TargetReactor/">Open game</a></article>
+    <article class="tool-card" data-customisation="content"><h2>SciSlide</h2><span class="customisation-badge">Add your own content</span><p>Reconstruct science images as sliding puzzles, then explain the science and compare with a model explanation. Includes fullscreen and light or dark themes.</p><p class="customisation-detail">Upload your own images and add questions, model explanations and success criteria; import or export challenge packs.</p><a class="open-link" href="TeacherSims/SciSlide/">Open tool</a></article>
   </main>
   <p class="footer-note">Teacher tools are separated from curriculum indexes because they support classroom practice across subjects, stages and courses.</p>
+  <script>
+    (() => {
+      const filter = document.getElementById('toolFilter');
+      const cards = Array.from(document.querySelectorAll('#teacherTools .tool-card'));
+      const count = document.getElementById('toolCount');
+      function updateTools() {
+        const value = filter.value;
+        let visible = 0;
+        cards.forEach(card => {
+          const kind = card.dataset.customisation;
+          const show = value === 'all' || (value === 'custom' ? Boolean(kind) : kind === value);
+          card.hidden = !show;
+          if (show) visible++;
+        });
+        count.textContent = `Showing ${visible} of ${cards.length} tools`;
+      }
+      filter.addEventListener('change', updateTools);
+      document.getElementById('customisationFilter').hidden = false;
+      updateTools();
+    })();
+  </script>
 </body>
 </html>
 
