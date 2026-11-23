@@ -54,7 +54,7 @@ button:disabled{opacity:.55;cursor:default}
 <div id="scisimsSiteNav"></div>
 <main>
 <header class="screen-only">
-<a href="./">The Revision Engine</a>
+<a href="./">HSC Physics Revision Engine</a>
 <h1>Worksheet Builder</h1>
 <p>Load a question set or a completed quiz report to print a student worksheet or teacher answer key. Files are read in your browser.</p>
 </header>
@@ -96,13 +96,13 @@ function readSet(data) {
   const report = typeof data?.activity === 'string' && /^SciSims .+ Quiz$/.test(data.activity)
     && Number.isInteger(data.schemaVersion);
   if ((!fresh && !report) || !Array.isArray(data.questions) || data.questions.length < 1 || data.questions.length > 100) {
-    throw new Error('Choose a question set or a completed quiz report exported by The Revision Engine.');
+    throw new Error('Choose a question set or a completed quiz report exported by a Revision Engine tool.');
   }
   const questions = data.questions.map((question, index) => readQuestion(question, index, fresh));
   const tolerance = data.answerTolerance;
   return {
     fresh,
-    activity: typeof data.activity === 'string' ? data.activity : 'The Revision Engine',
+    activity: typeof data.activity === 'string' ? data.activity : 'Revision Engine',
     rule: Number.isFinite(tolerance?.relativePercent) && Number.isFinite(tolerance?.minimumAbsolute)
       ? 'Answer tolerance is ±' + tolerance.relativePercent + '%, with a minimum allowance of ±' + tolerance.minimumAbsolute + ' in the displayed unit.' +
         (tolerance.wholeNumberExact ? ' Questions asking for a whole number require an exact answer.' : '') +

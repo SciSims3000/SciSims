@@ -14,6 +14,7 @@ for(const slug of ['ScienceCodebreaker','ScienceFlow','CircuitBuilder','LabEscap
  const path=`TeacherSims/${slug}/`;
  assert.equal(sims.filter(sim=>sim.path===path).length,1,`${slug} must be listed exactly once`);
 }
+assert.equal(sims.find(sim=>sim.path==='PhySims/RevisionEngine/').title,'HSC Physics Revision Engine','Physics engine naming drift');
 for(const sim of sims){
  assert.equal(typeof sim.title,'string','Resource title missing');
  assert.equal(typeof sim.path,'string',`${sim.title}: resource path missing`);

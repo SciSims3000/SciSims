@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Revision Engine | SciSims</title>
+<title>HSC Physics Revision Engine | SciSims</title>
 <link rel="stylesheet" href="../../shared/scisims-nav.css">
 <script defer src="../../shared/scisims-nav.js"></script>
 <link rel="icon" type="image/png" href="../../favicon.png">
@@ -97,9 +97,9 @@ canvas{display:block;width:100%;height:auto;background:#f1f5f9;border-radius:10p
 <main>
 <header>
 <div class="brand">SciSims · Physics</div>
-<h1>The Revision Engine</h1>
+<h1>HSC Physics Revision Engine</h1>
 <p>Year 12 Physics · Modules 5–8</p>
-<p><a href="guide.docx" download="The Revision Engine Teacher and Student Guide.docx">Download the teacher and student guide (Word)</a> · <a href="worksheet.html">Worksheet Builder</a></p>
+<p><a href="guide.docx" download="HSC Physics Revision Engine Teacher and Student Guide.docx">Download the teacher and student guide (Word)</a> · <a href="worksheet.html">Worksheet Builder</a></p>
 <p id="modelInstructions">Use g = 9.8 m/s² and ignore air resistance. Take upward and forward as positive. Use degree mode.</p>
 </header>
 <p class="small">Choose a question count in Quiz and select Start quiz. Download a JSON report for your teacher when you finish. You can retry answers and use hints. Quiz answers can be reviewed after an attempt. Practice runs separately from the quiz. Revealed and skipped questions earn no point.</p>
@@ -1462,7 +1462,7 @@ function makeWorksheetSet() {
   });
   return {
     format: 'scisims-question-set', schemaVersion: 1,
-    activity: 'The Revision Engine · ' + moduleConfigs[activeModule].name,
+    activity: 'HSC Physics Revision Engine · ' + moduleConfigs[activeModule].name,
     moduleConcept: activeModule, difficulty, questions,
     answerTolerance: {relativePercent: relativeTolerance * 100, minimumAbsolute: minimumTolerance}
   };
@@ -1727,7 +1727,7 @@ byId('export').addEventListener('click', () => {
   }
   const report = {
     schemaVersion: 7,
-    activity: 'SciSims ' + moduleConfigs[activeModule].name + ' Quiz',
+    activity: 'SciSims HSC Physics Revision Engine · ' + moduleConfigs[activeModule].name + ' Quiz',
     moduleConcept: activeModule,
     student,
     answerTolerance: {relativePercent: relativeTolerance * 100, minimumAbsolute: minimumTolerance},
