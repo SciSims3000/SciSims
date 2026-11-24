@@ -147,6 +147,253 @@ window.SCISIMS_STAGE45 = {
     }
   ],
   "resources": [
+{
+  "id": "science-codebreaker",
+  "title": "Science Codebreaker",
+  "path": "TeacherSims/ScienceCodebreaker/",
+  "description": "Crack hidden science-symbol codes using evidence, hints and classroom challenge codes.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Codebreaking",
+    "Scientific reasoning",
+    "Logic"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "science-flow",
+  "title": "Science Flow",
+  "path": "TeacherSims/ScienceFlow/",
+  "description": "Connect related science pictures without crossing paths. Fill the board, earn stars and continue saved puzzles.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Logic",
+    "Science connections",
+    "Saved progress"
+  ],
+  "workingScientifically": [
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "circuit-builder",
+  "title": "Circuit Builder",
+  "path": "TeacherSims/CircuitBuilder/",
+  "description": "Build and test circuits through 18 missions, then try lab contracts and free build. Explore series, parallel, switches and resistance.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Electricity",
+    "Circuits",
+    "Design challenges"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "lab-escape",
+  "title": "Lab Escape",
+  "path": "TeacherSims/LabEscape/",
+  "description": "Escape four sealed rooms by solving 12 linked science puzzles, collecting evidence and decoding the final exit.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Escape room",
+    "Scientific reasoning",
+    "Evidence"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "science-sequence",
+  "title": "Science Sequence",
+  "path": "TeacherSims/ScienceSequence/",
+  "description": "Arrange illustrated science processes across 24 rounds and six topics, explain the relationships and earn stars.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Sequencing",
+    "Science processes",
+    "Cause and effect"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "food-web-builder",
+  "title": "Food Web Builder",
+  "path": "TeacherSims/FoodWebBuilder/",
+  "description": "Investigate 24 food-web challenges across six ecosystems. Build from observations, repair faulty webs and compare direct and indirect disturbance effects.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Ecology",
+    "Food webs",
+    "Energy transfer"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "8.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "particle-detective",
+  "title": "Particle Detective",
+  "path": "TeacherSims/ParticleDetective/",
+  "description": "Solve 24 particle-model cases and run controlled investigations of gas pressure, speed and atom composition. Record evidence before making claims.",
+  "type": "Revision Game",
+  "tags": [
+    "Years 7–10",
+    "Particle model",
+    "Chemistry",
+    "Scientific reasoning"
+  ],
+  "workingScientifically": [
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": false,
+  "mappings": [
+    {
+      "module": "7.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.2",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.2",
+      "relevance": "Supporting"
+    }
+  ]
+},
     {
       "id": "physims-vectorrover",
       "title": "Vector Rover",
@@ -4440,6 +4687,48 @@ window.SCISIMS_STAGE45 = {
   ],
   "sharedTools": [
 {
+  "title": "Science Codebreaker",
+  "path": "TeacherSims/ScienceCodebreaker/",
+  "description": "Crack hidden science-symbol codes using evidence, hints and classroom challenge codes.",
+  "type": "Revision Game"
+},
+{
+  "title": "Science Flow",
+  "path": "TeacherSims/ScienceFlow/",
+  "description": "Connect related science pictures without crossing paths. Fill the board, earn stars and continue saved puzzles.",
+  "type": "Revision Game"
+},
+{
+  "title": "Circuit Builder",
+  "path": "TeacherSims/CircuitBuilder/",
+  "description": "Build and test circuits through 18 missions, then try lab contracts and free build. Explore series, parallel, switches and resistance.",
+  "type": "Revision Game"
+},
+{
+  "title": "Lab Escape",
+  "path": "TeacherSims/LabEscape/",
+  "description": "Escape four sealed rooms by solving 12 linked science puzzles, collecting evidence and decoding the final exit.",
+  "type": "Revision Game"
+},
+{
+  "title": "Science Sequence",
+  "path": "TeacherSims/ScienceSequence/",
+  "description": "Arrange illustrated science processes across 24 rounds and six topics, explain the relationships and earn stars.",
+  "type": "Revision Game"
+},
+{
+  "title": "Food Web Builder",
+  "path": "TeacherSims/FoodWebBuilder/",
+  "description": "Investigate 24 food-web challenges across six ecosystems. Build from observations, repair faulty webs and compare direct and indirect disturbance effects.",
+  "type": "Revision Game"
+},
+{
+  "title": "Particle Detective",
+  "path": "TeacherSims/ParticleDetective/",
+  "description": "Solve 24 particle-model cases and run controlled investigations of gas pressure, speed and atom composition. Record evidence before making claims.",
+  "type": "Revision Game"
+},
+{
     "id": "brainbreak-scienceletters",
     "title": "Science Letters",
     "path": "BrainBreak/ScienceLetters/",
@@ -4482,17 +4771,7 @@ window.SCISIMS_STAGE45 = {
     "depthStudy": false,
     "mappings": []
 },
-    {
-      "id": "games-revisionhub",
-      "title": "SciSims Revision Games",
-      "path": "Games/ScienceWordMatch/",
-      "description": "Switch between five revision game modes using shared, curriculum-aligned banks for every year from 7 to 12.",
-      "type": "Game",
-      "tags": ["Science vocabulary", "Years 7–12", "Module revision", "Whole-course review", "Definitions"],
-      "workingScientifically": ["Observing", "Processing data and information", "Communicating"],
-      "depthStudy": false,
-      "mappings": []
-    },
+    
     {
       "id": "games-juniorjeopardy",
       "title": "Years 7–10 Science Jeopardy",
