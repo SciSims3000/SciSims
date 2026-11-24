@@ -15,6 +15,9 @@ for(const slug of ['ScienceCodebreaker','ScienceFlow','CircuitBuilder','LabEscap
  assert.equal(sims.filter(sim=>sim.path===path).length,1,`${slug} must be listed exactly once`);
 }
 assert.equal(sims.find(sim=>sim.path==='PhySims/RevisionEngine/').title,'HSC Physics Revision Engine','Physics engine naming drift');
+assert.equal(sims.filter(sim=>sim.path==='BioSims/RevisionEngine/').length,1,'Biology engine must be listed exactly once');
+assert.equal(sims.find(sim=>sim.path==='BioSims/RevisionEngine/').section,'biosims');
+assert.equal(sims.find(sim=>sim.path==='BioSims/RevisionEngine/').title,'HSC Biology Revision Engine');
 for(const sim of sims){
  assert.equal(typeof sim.title,'string','Resource title missing');
  assert.equal(typeof sim.path,'string',`${sim.title}: resource path missing`);
