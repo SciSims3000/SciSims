@@ -18,6 +18,8 @@ assert.equal(sims.find(sim=>sim.path==='PhySims/RevisionEngine/').title,'HSC Phy
 assert.equal(sims.filter(sim=>sim.path==='BioSims/RevisionEngine/').length,1,'Biology engine must be listed exactly once');
 assert.equal(sims.find(sim=>sim.path==='BioSims/RevisionEngine/').section,'biosims');
 assert.equal(sims.find(sim=>sim.path==='BioSims/RevisionEngine/').title,'HSC Biology Revision Engine');
+assert.equal(sims.filter(sim=>sim.path==='EarthSims/RevisionEngine/').length,1,'EES engine must be listed exactly once');
+assert.equal(sims.find(sim=>sim.path==='EarthSims/RevisionEngine/').section,'earthsims');
 for(const sim of sims){
  assert.equal(typeof sim.title,'string','Resource title missing');
  assert.equal(typeof sim.path,'string',`${sim.title}: resource path missing`);
