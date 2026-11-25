@@ -1,0 +1,20 @@
+/* Integrated modules retain original room/activity controls. */
+#scisimsSiteNav,.legacy-class-notice{display:none!important}body{padding-top:0!important}.class-managed{font-weight:700;padding:12px;border-left:4px solid #177c7b}.class-rule-warning{padding:8px;color:#843800;background:#fff0cd}.class-rule-warning:empty{display:none}
+html[data-module="seating"] .hero,html[data-module="grouping"] .hero{display:none!important}
+html[data-module="participation"] .editor-card:has(textarea[aria-label="Class list one per line"]){display:none!important}
+html[data-module="participation"] .settings .json-tools,html[data-module="participation"] .json-tools{display:none!important}
+body.class-project .controls,body.class-project .hero,body.class-project .header-actions,body.class-project .settings,body.class-project .modal,body.class-project .planning-banner,body.class-project .picker-config,body.class-project .qci-label,body.class-project .class-rule-warning{display:none!important}
+body.class-project .workspace{grid-template-columns:1fr!important}
+body.class-project .panel:has(#namesInput){display:none!important}
+body.class-project .control-panel,body.class-project .setup-panel{display:none!important}
+body.class-project .room-toolbar,body.class-project .toolbar{display:none!important}
+@media print{.class-rule-warning,.class-managed{display:none!important}}
+html[data-module="grouping"] .control-section:has(#savedRosterSelect),html[data-module="grouping"] .control-section:has(#namesInput),html[data-module="grouping"] .feature-card:has(#attendanceToggle),html[data-module="grouping"] .feature-card:has(#rulesToggle){display:none!important}
+html[data-module="seating"] #qciScoreList{display:none!important}
+body.class-project [role=dialog],body.class-project .modal-backdrop,body.class-project .teacher-drawer,body.class-project .teacher-panel,body.class-project .history-panel,body.class-project .settings-panel{display:none!important}
+
+body.class-project .backdrop,body.class-project .session-bar{display:none!important}
+html[data-module="participation"] body.class-project header .header-actions{display:none!important}
+html[data-module="participation"] body.class-project footer{display:none!important}
+html[data-module="participation"] body.dark{background:#102b31;color:#f4efe1}
+html[data-module="participation"] body.dark .panel,html[data-module="participation"] body.dark .editor-card{background:#193a41;color:#f4efe1}

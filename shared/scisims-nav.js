@@ -17,6 +17,7 @@
     {label:'Stage 5', file:'Stage5index.html'},
     {label:'Stage 6', file:'Stage6index.html'},
     {label:'Teacher Tools', file:'TeacherToolsindex.html'},
+    {label:'Class', file:'TeacherSims/Class/'} ,
     {label:'More', file:'Moreindex.html'}
   ];
 
