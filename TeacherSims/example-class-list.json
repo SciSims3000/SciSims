@@ -1,0 +1,105 @@
+{
+  "schema": "scisims-class-list",
+  "version": 1,
+  "className": "7SCI1",
+  "year": "Year 7",
+  "course": "Science",
+  "students": [
+    {
+      "id": "demo-001",
+      "name": "Amelia Hart"
+    },
+    {
+      "id": "demo-002",
+      "name": "Noah Bennett"
+    },
+    {
+      "id": "demo-003",
+      "name": "Isla Morgan"
+    },
+    {
+      "id": "demo-004",
+      "name": "Oliver Chen"
+    },
+    {
+      "id": "demo-005",
+      "name": "Mia Patel"
+    },
+    {
+      "id": "demo-006",
+      "name": "Leo Thompson"
+    },
+    {
+      "id": "demo-007",
+      "name": "Ava Nguyen"
+    },
+    {
+      "id": "demo-008",
+      "name": "Jack Wilson"
+    },
+    {
+      "id": "demo-009",
+      "name": "Sofia Martin"
+    },
+    {
+      "id": "demo-010",
+      "name": "Lucas Singh"
+    },
+    {
+      "id": "demo-011",
+      "name": "Grace Taylor"
+    },
+    {
+      "id": "demo-012",
+      "name": "Ethan Brooks"
+    },
+    {
+      "id": "demo-013",
+      "name": "Chloe Davis"
+    },
+    {
+      "id": "demo-014",
+      "name": "Henry Kim"
+    },
+    {
+      "id": "demo-015",
+      "name": "Zara Ahmed"
+    },
+    {
+      "id": "demo-016",
+      "name": "Oscar Reed"
+    },
+    {
+      "id": "demo-017",
+      "name": "Ruby Clarke"
+    },
+    {
+      "id": "demo-018",
+      "name": "Finn Walker"
+    },
+    {
+      "id": "demo-019",
+      "name": "Ella Wright"
+    },
+    {
+      "id": "demo-020",
+      "name": "Arlo Scott"
+    },
+    {
+      "id": "demo-021",
+      "name": "Layla Green"
+    },
+    {
+      "id": "demo-022",
+      "name": "Hugo Evans"
+    },
+    {
+      "id": "demo-023",
+      "name": "Evie Baker"
+    },
+    {
+      "id": "demo-024",
+      "name": "Kai Roberts"
+    }
+  ]
+}
