@@ -2,6 +2,7 @@
 <!-- TeacherSims | GroupMaker | Version 1.4 -->
 <html lang="en-AU">
 <head>
+<script src="../../shared/scisims-class-list.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../../favicon.png">
@@ -1233,6 +1234,7 @@
         const existing = activeRoster();
         const roster = {
           id: existing?.id || createId('class'),
+          portableClass: existing?.portableClass,
           year: dom.yearSelect.value,
           course: dom.courseSelect.value,
           className: dom.classNameInput.value.trim(),
@@ -2188,6 +2190,10 @@
       });
 
       dom.saveRosterButton.addEventListener('click', saveRoster);
+      SciSimsClassList.bind(dom.saveRosterButton.parentElement,{
+        export(){const old=activeRoster()?.portableClass;const data=SciSimsClassList.make({className:dom.classNameInput.value,year:dom.yearSelect.value,course:dom.courseSelect.value},uniqueNames(parseNames()),old);if(activeRoster()){activeRoster().portableClass=data;saveRosters();}return data;},
+        import(data){if(!confirm("Create a new saved class? The current unsaved group setup will be cleared."))return;newRoster();dom.yearSelect.value=data.year||'Year 7';dom.courseSelect.value=data.course||'Science';dom.classNameInput.value=data.className;dom.namesInput.value=data.students.map(s=>s.name).join('\n');updateInputState();saveRoster();if(activeRoster()){activeRoster().portableClass=data;saveRosters();}}
+      });
       dom.newRosterButton.addEventListener('click', newRoster);
       dom.deleteRosterButton.addEventListener('click', deleteRoster);
       dom.savedRosterSelect.addEventListener('change', () => {
