@@ -1360,7 +1360,49 @@ for(const child of [...refs.namesInput.closest('aside').children]){
  child.hidden=true;
 }
 refs.attendanceList.closest('details').hidden=true;
-refs.ruleStudentA.closest('details').hidden=true;
+// Keep room planning controls visible; only centralised relationship controls are hidden.
+const planning=refs.ruleStudentA.closest('details');
+planning.querySelector('summary').textContent='Planning mode and room editing';
+refs.ruleStudentA.closest('.form-grid').hidden=true;
+refs.addTogetherButton.closest('.mini-actions').hidden=true;
+refs.rulesList.hidden=true;
+const ruleHint=document.createElement('p');ruleHint.className='hint';ruleHint.textContent='Manage student relationship rules in Class Manager.';
+refs.planningModeInput.closest('label').after(ruleHint);
+planning.open=true;
+// Room design is available even before a roster is imported.
+const originalRenderPlan=renderPlan;
+renderPlan=function(){
+ const tab=activeTab();
+ if(!sharedStudents().length){
+  refs.planContent.hidden=false;refs.emptyState.hidden=true;ensureSeatArrays(tab);
+  refs.planSummary.textContent=seatCount(tab)+' seats · room design';
+  refs.planSubtitle.textContent=tab.title;
+  refs.frontTop.hidden=tab.front!=='top';refs.frontBottom.hidden=tab.front!=='bottom';
+  tab.mode==='custom'?renderCustom():renderQuick();renderStudentPool();renderTimer();renderLessonTask();renderPicker();return;
+ }
+ originalRenderPlan();
+};
+// Render all empty desks while editing; refresh immediately when planning changes.
+const originalRenderRules=renderRules;
+renderRules=function(){originalRenderRules();if(activeTab().planning.enabled){refs.planContent.hidden=false;refs.emptyState.hidden=true;}};
+refs.planningModeInput.addEventListener('change',()=>renderPlan());
+refs.exitPlanningButton.addEventListener('click',()=>renderPlan());
+const originalCompact=compactSeatDisplay;
+compactSeatDisplay=function(tab=activeTab()){if(!tab.seats.some(Boolean))return;originalCompact(tab);};
+// Independent collapsible controls; no sticky overlay in teacher view.
+const dashboard=document.querySelector('.display-dashboard');
+dashboard.style.position='static';
+const collapsibles=[];
+for(const [selector,label] of [['.timer-card','Activity timer'],['.picker-card','Random student picker']]){
+ const card=dashboard.querySelector(selector),details=document.createElement('details'),summary=document.createElement('summary');
+ details.className='class-display-fold';summary.textContent=label;details.append(summary);
+ card.before(details);details.append(card);details.open=!activeTab().planning.enabled;collapsibles.push(details);
+ details.addEventListener('toggle',()=>requestAnimationFrame(applyFitToScreen));
+}
+refs.planningModeInput.addEventListener('change',()=>{if(activeTab().planning.enabled)collapsibles.forEach(d=>d.open=false);});
+const originalSetLayoutMode=setLayoutMode;
+setLayoutMode=function(mode){if(mode==='custom'){activeTab().planning.enabled=true;collapsibles.forEach(d=>d.open=false);}originalSetLayoutMode(mode);};
+
 for(const id of ['qciScoreList','qciLabelsInput','deiModeInput']){const el=document.getElementById(id);if(id==='qciScoreList')el.hidden=true;}
 refs.savedPlanSelect.closest('.control-section').querySelectorAll(':scope > :not(#planStatus)').forEach(el=>el.hidden=true);refs.exampleButton.hidden=true;
 for(const id of ['savedPlanSelect','savePlanButton','newPlanButton','duplicatePlanButton','deletePlanButton','shareWorkspaceButton','importWorkspaceButton','exportButton','importButton'])refs[id].hidden=true;
@@ -1370,7 +1412,7 @@ let previousValid=classCore.clone(workspace), lastArrangement=JSON.stringify(Obj
 const rawSaveDraft=saveDraft;
 saveDraft=function(){
  const tab=activeTab(),assignment=Object.create(null);tab.seats.forEach((name,i)=>{if(nameToId.has(name))assignment[nameToId.get(name)]=i;});
- const hasSeats=tab.seats.some(Boolean),bad=hasSeats?classCore.violations(shared,assignment,(a,b)=>seatsAreRelated(tab,a,b)):[];
+ const hasSeats=tab.seats.some(Boolean),bad=hasSeats?classCore.violations(shared,assignment,(a,b)=>seatsAreRelated(tab,a,b)).filter(rule=>assignment[rule.a]!==undefined&&assignment[rule.b]!==undefined):[];
  if(bad.length){workspace=hydrateWorkspace(previousValid);activeTabId=workspace.activeTabId;renderAll();notice.textContent=`Change rejected: ${bad.length} mandatory relationship rule(s) would be broken. Generate a valid plan or review rules in Class.`;classHost.warn(notice.textContent);return;}
  previousValid=classCore.clone(workspace);notice.textContent='';
  rawSaveDraft();classHost.saveModule('seating',{workspace:workspaceForStorage()});
