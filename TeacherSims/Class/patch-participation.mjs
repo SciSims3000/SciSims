@@ -1,0 +1,14 @@
+// Build-time patch for the integrated React module only.
+export default function patch(s){
+const replace=(a,b)=>{if(!s.includes(a))throw Error('Animation patch anchor missing: '+a.slice(0,100));s=s.replace(a,b);};
+const component='function ClassAnimationBoard({students,dropping,winner,selected,config,ms,sound}){const ref=(0,l.useRef)(null);(0,l.useEffect)(()=>{if(!dropping||!winner)return;return window.SciSimsAnimation.mount(ref.current,{names:students.map(s=>s.name),winner,mode:config.mode,ms,sound});},[dropping,winner,ms]);return (0,y.jsxs)("section",{className:"board student",children:[(0,y.jsx)("h2",{children:"Student selection"}),(0,y.jsx)("div",{ref,hidden:!dropping}),(0,y.jsx)("div",{className:"et-animation-screen",hidden:dropping,children:(0,y.jsx)("div",{className:"et-winner",children:selected?winner:"Ready"})}),(0,y.jsx)("div",{className:"et-animation-caption",children:students.length+" eligible students"})]});}';
+replace('function re(){let[e,t]',component+'function re(){let[e,t]');
+replace('[De,Oe]=(0,l.useState)(!1),ke=', '[De,Oe]=(0,l.useState)(!1),[animationConfig,setAnimationConfig]=(0,l.useState)(()=>window.SciSimsAnimation.read()),[animationMs,setAnimationMs]=(0,l.useState)(5000),ke=');
+replace('u(e.name),a(`studentDrop`),me','u(e.name),setAnimationMs(window.SciSimsAnimation.duration()),a(`studentDrop`),me');
+replace('Pe(820)},1900)},Ie=', 'Pe(820)},window.SciSimsAnimation.duration())},Ie=');
+replace('(0,y.jsx)(te,{kind:`student`,dropping:i===`studentDrop`,target:pe,students:n})','(0,y.jsx)(ClassAnimationBoard,{students:window.SciSimsClassHost.participationPool(n)||[],dropping:i==="studentDrop",selected:i==="selected",winner:c,config:animationConfig,ms:animationMs,sound:ae})');
+replace('className:`settings`,children:[','className:`settings`,children:[(0,y.jsxs)("div",{className:"et-animation-options",children:[(0,y.jsxs)("label",{children:["Student selection animation",(0,y.jsx)("select",{value:animationConfig.mode,disabled:i==="studentDrop",onChange:e=>{const config={...animationConfig,mode:e.target.value};setAnimationConfig(config);window.SciSimsAnimation.write(config.mode,config.seconds)},children:window.SciSimsAnimation.modes.map((mode,j)=>(0,y.jsx)("option",{value:mode,children:window.SciSimsAnimation.labels[j]},mode))})]}),(0,y.jsxs)("label",{children:["Animation duration",(0,y.jsx)("select",{value:animationConfig.seconds,disabled:i==="studentDrop",onChange:e=>{const config={...animationConfig,seconds:Number(e.target.value)};setAnimationConfig(config);window.SciSimsAnimation.write(config.mode,config.seconds)},children:[0,5,10].map(seconds=>(0,y.jsx)("option",{value:seconds,children:seconds?seconds+" seconds":"Instant"},seconds))})]})]}),');
+replace('`Student dropping…`','`Selecting student…`');
+replace('if(le.length)window.SciSimsClassHost.participationHistory(le);','window.SciSimsClassHost.participationHistory(le);');
+return s;
+}
