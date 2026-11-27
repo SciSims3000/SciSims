@@ -19,8 +19,8 @@ function render(){const c=current();if(!c)return;$('classSelect').replaceChildre
 function renameInRooms(c,oldName,newName){for(const room of c.modules.seating?.workspace?.tabs||[]){room.seats=room.seats.map(n=>n===oldName?newName:n);if(room.qci?.scores&&Object.hasOwn(room.qci.scores,oldName)){room.qci.scores[newName]=room.qci.scores[oldName];delete room.qci.scores[oldName];}}}
 function invalidateLayouts(c){if(c.modules.seating?.workspace)for(const room of c.modules.seating.workspace.tabs||[]){room.seats=room.seats.map(()=>null);room.locks=room.locks.map(()=>false);}if(c.modules.grouping)delete c.modules.grouping.groups;}
 function openTab(next){if(project&&next==='manager')return;tab=next;$('manager').hidden=tab!=='manager';$('modulePanel').hidden=tab==='manager';document.querySelectorAll('[data-tab]').forEach(b=>{if(b.dataset.tab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(tab==='manager'){render();$('moduleFrame').removeAttribute('src');return;}
- $('groupModeLabel').hidden=tab!=='grouping';$('ediLabel').hidden=tab!=='participation';$('moduleHelp').textContent=tab==='seating'?'Room layouts, locks, zones, tasks, timers and picker from Seating Plan Maker. Mandatory rules also protect manual edits.':tab==='grouping'?'Random or score-based grouping with shared rules, optional roles, locks and timer.':'Original Plinko questioning, banks, protected thinking time and fair participation cycles.';
- $('moduleFrame').style.visibility='hidden';$('moduleFrame').src=`modules/${tab}.html?v=1.2.0`;}
+ $('groupModeLabel').hidden=tab!=='grouping';$('ediLabel').hidden=tab!=='participation';$('moduleHelp').textContent=tab==='seating'?'Room layouts, locks, zones, tasks, timers and picker from Seating Plan Maker. Mandatory rules also protect manual edits.':tab==='grouping'?'Random or score-based grouping with shared rules, optional roles, locks and timer.':'Shared question and student selection animations, question banks, protected thinking time and fair participation cycles.';
+ $('moduleFrame').style.visibility='hidden';$('moduleFrame').src=`modules/${tab}.html?v=1.2.1`;}
 function exportJSON(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=(name||'class').replace(/[^a-z0-9_-]/gi,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 window.SciSimsClassHost={
  read:()=>C.clone(current()),options:()=>({field:$('scoreField').value,differentiation:$('groupMode').value,edi:$('edi').checked}),warn:notify,
@@ -55,3 +55,4 @@ $('project').onclick=()=>{project=!project;document.body.classList.toggle('proje
 window.addEventListener('storage',e=>{if(e.key===KEY){blocked=true;notify('Another Class tab changed the saved data. Reload before editing; this tab will not overwrite the newer copy.');}});
 render();
 })();
+
