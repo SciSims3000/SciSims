@@ -1,5 +1,13 @@
 # Inquiry labs changelog
 
+## 1.0.2 — 28/11/2026
+
+- Compact the primary workspace and place thermal actions above the visualisation.
+- Use readable house heat-rate captions and larger graph labels with an initial-temperature marker.
+- Retain matching weather preset labels, separate saving a full trial from advancing time, and preserve open settings and keyboard focus on redraw.
+- Add lab-specific worked examples, troubleshooting and checks for understanding to all four teacher guides.
+- Add regression checks for preset feedback, custom conditions, initial graph points and saving without advancing time.
+
 ## 1.0.1 — 28/11/2026
 
 - Remove duplicate main/HSC navigation from all four labs and their guides; use the shared site menu. Keep Teacher guide with theme and fullscreen.
