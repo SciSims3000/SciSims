@@ -1,5 +1,10 @@
 # Inquiry labs changelog
 
+## Projection fix — 29/11/2026
+
+- Apply the intended microscope and sampling diagram scale rules from v1.0.3.
+- Use two columns for separation techniques to reduce control panel height.
+
 ## 1.0.3 — 29/11/2026
 
 - Enlarge microscope and sampling diagrams to use available panel space so labels remain readable when projected.
