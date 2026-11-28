@@ -1,4 +1,4 @@
-/* Shared Stage 4 and Stage 5 curriculum mapping | Version 1.0.0 */
+/* Shared Stage 4 and Stage 5 curriculum mapping | Version 1.0.1 */
 window.SCISIMS_STAGE45 = {
   "modules": [
     {
@@ -147,6 +147,158 @@ window.SCISIMS_STAGE45 = {
     }
   ],
   "resources": [
+{
+  "id": "biosims-microscopemeasurement",
+  "title": "Microscope Measurement Lab",
+  "path": "BioSims/MicroscopeMeasurement/",
+  "description": "Estimate field of view, measure schematic specimens, convert mm and µm, and distinguish magnification from resolution. Includes a results notebook and teacher guide.",
+  "type": "Simulation",
+  "tags": [
+    "Microscopy",
+    "Measurement",
+    "Cells",
+    "Units",
+    "Resolution"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Planning investigations",
+    "Processing data and information",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "7.1",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "7.3",
+      "relevance": "Core"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "chemsims-separationchallenge",
+  "title": "Separation Challenge",
+  "path": "ChemSims/SeparationChallenge/",
+  "description": "Inspect physical properties and recover components using magnetic separation, sieving, dissolving, filtration, separating funnels, evaporation and distillation.",
+  "type": "Simulation",
+  "tags": [
+    "Separation",
+    "Mixtures",
+    "Physical properties",
+    "Recovery"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Planning investigations",
+    "Processing data and information",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "7.4",
+      "relevance": "Core"
+    },
+    {
+      "module": "9.3",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "physims-heattransferhouse",
+  "title": "Heat Transfer House",
+  "path": "PhySims/HeatTransferHouse/",
+  "description": "Compare insulation, glazing, shading and ventilation in a controlled thermal model. Record temperature curves, isolate variables and export results.",
+  "type": "Simulation",
+  "tags": [
+    "Heat transfer",
+    "Conduction",
+    "Convection",
+    "Radiation",
+    "Energy",
+    "Fair testing"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Planning investigations",
+    "Processing data and information",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "8.3",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "8.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "9.1",
+      "relevance": "Core"
+    },
+    {
+      "module": "9.4",
+      "relevance": "Supporting"
+    }
+  ]
+},
+{
+  "id": "workingscientifically-samplingbias",
+  "title": "Sampling and Bias Lab",
+  "path": "WorkingScientifically/SamplingBias/",
+  "description": "Compare simple random, systematic and convenience samples from a known population. Repeat trials to investigate sample size, variability and selection bias.",
+  "type": "Simulation",
+  "tags": [
+    "Sampling",
+    "Bias",
+    "Data",
+    "Reliability",
+    "Statistics"
+  ],
+  "workingScientifically": [
+    "Observing",
+    "Questioning and predicting",
+    "Planning investigations",
+    "Processing data and information",
+    "Analysing data and information",
+    "Communicating"
+  ],
+  "depthStudy": true,
+  "mappings": [
+    {
+      "module": "8.4",
+      "relevance": "Core"
+    },
+    {
+      "module": "9.4",
+      "relevance": "Supporting"
+    },
+    {
+      "module": "10.4",
+      "relevance": "Core"
+    }
+  ]
+},
 {
   "id": "science-codebreaker",
   "title": "Science Codebreaker",
