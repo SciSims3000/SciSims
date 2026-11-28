@@ -20,3 +20,4 @@ h1{font-size:clamp(1.65rem,3vw,2.35rem);line-height:1.15}.hero .eyebrow{margin-b
 @media(max-width:1000px){.workspace{grid-template-columns:1fr}.controls{display:block}.hero{display:flex}.control-panel{max-height:none}.heat-overview{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}}
 @media(max-width:700px){.hero{display:block}.hero .version{display:block;margin-left:0}.two,.heat-overview{grid-template-columns:1fr}.view svg{max-height:300px}.time-row>div{display:block}.hero .actions{margin-top:6px}.heat-overview .chart{max-height:none}.heat-overview .view svg{max-height:190px}}
 @media print{.lab-intro{display:none!important}.trial-actions,.time-row{display:none}.heat-overview{display:block}.heat-rates{color:#111;background:#fff}.heat-key{color:#111}.hero .version{margin:0}}
+
