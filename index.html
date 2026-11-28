@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SciSims main index | Version 1.5.1 -->
+<!-- SciSims main index | Version 1.5.2 -->
 <html lang="en-AU">
 <head>
   <meta charset="UTF-8" />
@@ -723,6 +723,21 @@
       .clear-recent-button{width:100%;}
       .back-to-top{right:12px;bottom:12px;}
     }
+
+    .recent-sims{background:#b8f2e7;border:2px solid #48bcae;border-radius:var(--radius);padding:22px;margin-bottom:24px;box-shadow:0 8px 24px rgba(8,126,131,.14);}
+    .recent-summary,.collapsible-featured>.section-header{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;}
+    .recent-summary::-webkit-details-marker,.collapsible-featured>.section-header::-webkit-details-marker{display:none;}
+    .recent-summary h2,.collapsible-featured>.section-header h2{margin:0 0 5px;font-size:26px;color:#123f46;}
+    .recent-summary .section-intro,.collapsible-featured>.section-header .section-intro{display:block;color:#335e60;}
+    .collapse-hint{flex:0 0 auto;border:1px solid rgba(12,91,95,.35);border-radius:999px;padding:6px 11px;color:#164e52;font-size:13px;font-weight:800;}
+    .recent-sims .cards{margin-top:16px;}
+    .recent-sims .sim-card{background:#f4fffc;border-color:#69cbbd;}
+    .recent-sims .sim-card:hover{background:#e4fff8;border-color:#168d83;}
+    .recent-created{margin:0;color:#17665f;font-size:13px;font-weight:800;}
+    .collapsible-featured>.section-header{margin-bottom:0;}
+    .collapsible-featured[open]>.section-header{margin-bottom:18px;}
+    details.recent-sims:not([open]) .recent-summary,details.collapsible-featured:not([open])>.section-header{margin-bottom:0;}
+    @media(max-width:600px){.recent-summary,.collapsible-featured>.section-header{align-items:flex-start;flex-direction:column;gap:8px}.recent-summary h2,.collapsible-featured>.section-header h2{font-size:22px}.recent-sims{padding:16px}}
   </style>
 </head>
 <body>
@@ -755,13 +770,21 @@
            <p>Modify this however you wish.</p>
     </div>
   </header>
-  <section id="learning-tools" class="section featured-tools" aria-labelledby="learningToolsTitle">
-    <div class="section-header">
-      <h2 id="learningToolsTitle">Featured Learning Tools</h2>
-      <p class="section-intro">Explore elements, watch the Universe unfold, unpack a formula or take a quiet reset.</p>
-    </div>
+  <details id="recent-sims" class="section recent-sims" open>
+    <summary class="recent-summary">
+      <span><h2>Last 10 sim pages created</h2><span class="section-intro">The newest additions to SciSims, with their original creation dates.</span></span>
+      <span class="collapse-hint">Click to collapse or expand</span>
+    </summary>
+    <div id="recentSimsGrid" class="cards"></div>
+  </details>
+
+  <details id="learning-tools" class="section featured-tools collapsible-featured">
+    <summary class="section-header">
+      <span><h2 id="learningToolsTitle">Featured Learning Tools</h2><span class="section-intro">Explore elements, watch the Universe unfold, unpack a formula or take a quiet reset.</span></span>
+      <span class="collapse-hint">Click to collapse or expand</span>
+    </summary>
     <div id="featuredToolsGrid" class="cards"></div>
-  </section>
+  </details>
 
   <section class="dashboard" aria-label="SciSims controls">
     <div class="toolbar search-toolbar">
@@ -4937,6 +4960,31 @@
     }
   });
 
+  const RECENT_SIM_PAGES = [
+    ["BioSims/MicroscopeMeasurement/", "28/11/2026"],
+    ["ChemSims/SeparationChallenge/", "28/11/2026"],
+    ["PhySims/HeatTransferHouse/", "28/11/2026"],
+    ["WorkingScientifically/SamplingBias/", "28/11/2026"],
+    ["BioSims/RevisionEngine/", "24/11/2026"],
+    ["EarthSims/RevisionEngine/", "24/11/2026"],
+    ["TeacherSims/FoodWebBuilder/", "23/11/2026"],
+    ["TeacherSims/ParticleDetective/", "23/11/2026"],
+    ["TeacherSims/ScienceSequence/", "22/11/2026"],
+    ["TeacherSims/LabEscape/", "22/11/2026"]
+  ];
+
+  function renderRecentSimPages(){
+    const grid=document.getElementById('recentSimsGrid');
+    RECENT_SIM_PAGES.forEach(([path,date])=>{
+      const sim=SIMS.find(item=>item.path===path);
+      if(!sim)return;
+      const card=createCard(sim);
+      card.appendChild(createTextElement('p','recent-created','Created '+date));
+      grid.appendChild(card);
+    });
+  }
+
+  renderRecentSimPages();
   renderFeaturedTools();
   renderContents();
   renderFilters();
