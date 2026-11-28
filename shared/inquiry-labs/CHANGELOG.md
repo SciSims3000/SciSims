@@ -1,5 +1,11 @@
 # Inquiry labs changelog
 
+## 1.0.3 — 29/11/2026
+
+- Enlarge microscope and sampling diagrams to use available panel space so labels remain readable when projected.
+- Arrange separation techniques in two compact columns and reduce control panel height.
+- Add cache versions to all four lab pages.
+
 ## 1.0.2 — 28/11/2026
 
 - Compact the primary workspace and place thermal actions above the visualisation.
